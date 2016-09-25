@@ -185,7 +185,7 @@ public class VariableHelpers {
 				if (member instanceof ICPPASTVisibilityLabel)
 					vis = (ICPPASTVisibilityLabel) member;
 			}
-		
+
 			if (vis != null) {
 				return vis.getVisibility();
 			} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
@@ -201,7 +201,7 @@ public class VariableHelpers {
 		if (decl != null) {
 			return decl;
 		}
-		
+
 	    IASTName[] declarations = (IASTName[]) field.getDeclarations();
 		if (declarations != null) {
 			for (IASTName name : declarations) {
@@ -211,9 +211,9 @@ public class VariableHelpers {
 				}
 			}
 		}
-		
+
 		char[] myName = field.getNameCharArray();
-		
+
 		ICPPClassScope scope = findClassScope(field);
 		ICPPASTCompositeTypeSpecifier compSpec =
 				(ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
@@ -231,7 +231,7 @@ public class VariableHelpers {
 		}
 		return null;
 	}
-	
+
 	private static ICPPClassScope findClassScope(ICPPInternalVariable v) {
 		IScope scope;
 		try {
@@ -239,7 +239,7 @@ public class VariableHelpers {
 		} catch (DOMException e) {
 			scope = null;
 		}
-		while (scope != null){
+		while (scope != null) {
 			if (scope instanceof ICPPClassScope) {
 				return (ICPPClassScope) scope;
 			}

@@ -80,7 +80,7 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
     }
 
     @Override
-	public int getKey(){
+	public int getKey() {
         return 0;
     }
 
@@ -91,12 +91,12 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
 
     @Override
 	public boolean isSameType(IType type) {
-    	if (this == type) 
+    	if (this == type)
     		return true;
-    	
-		if (type instanceof ITypedef) 
+
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
-		
+
 		if (type instanceof ICPPUnknownMemberClass && !(type instanceof ICPPUnknownMemberClassInstance)) {
 			ICPPUnknownMemberClass rhs= (ICPPUnknownMemberClass) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
@@ -114,12 +114,12 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);

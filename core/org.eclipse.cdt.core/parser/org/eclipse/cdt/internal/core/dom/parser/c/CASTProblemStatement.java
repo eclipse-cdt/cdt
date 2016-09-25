@@ -42,7 +42,7 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 		CASTProblemStatement copy = new CASTProblemStatement();
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
@@ -54,7 +54,7 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 		}
 
         super.accept(action);	// visits the problem
-        
+
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

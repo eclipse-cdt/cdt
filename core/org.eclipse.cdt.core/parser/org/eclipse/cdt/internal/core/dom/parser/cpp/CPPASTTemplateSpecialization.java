@@ -32,14 +32,14 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 	private short nestingLevel= -1;
 	private byte isAssociatedWithLastName= -1;
 
-    
+
     public CPPASTTemplateSpecialization() {
 	}
 
 	public CPPASTTemplateSpecialization(IASTDeclaration declaration) {
 		setDeclaration(declaration);
 	}
-	
+
 	@Override
 	public CPPASTTemplateSpecialization copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -76,9 +76,9 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 	            default: break;
 	        }
 		}
-        
+
         if (declaration != null && !declaration.accept(action)) return false;
-        
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -121,7 +121,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 			templateScope = new CPPTemplateScope(this);
 		return templateScope;
 	}
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (declaration == child) {
@@ -130,7 +130,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
             declaration = (IASTDeclaration) other;
         }
     }
-    
+
 	@Override
 	public short getNestingLevel() {
 		if (nestingLevel == -1) {
@@ -144,11 +144,11 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 	public boolean isAssociatedWithLastName() {
 		if (isAssociatedWithLastName == -1)
 			CPPTemplates.associateTemplateDeclarations(this);
-			
+
 		assert isAssociatedWithLastName != -1;
 		return isAssociatedWithLastName != 0;
 	}
-	
+
 	@Override
 	public void setAssociatedWithLastName(boolean value) {
 		isAssociatedWithLastName= value ? (byte) 1 : (byte) 0;

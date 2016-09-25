@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecExpressionStat
  */
 public class CPPASTExpressionStatement extends CPPASTAttributeOwner implements IASTExpressionStatement, ICPPExecutionOwner {
     private IASTExpression expression;
-    
+
     public CPPASTExpressionStatement() {
 	}
 
@@ -41,7 +41,7 @@ public class CPPASTExpressionStatement extends CPPASTAttributeOwner implements I
 		copy.setExpression(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression getExpression() {
         return expression;
@@ -93,7 +93,7 @@ public class CPPASTExpressionStatement extends CPPASTAttributeOwner implements I
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)getExpression();
+		ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) getExpression();
 		ICPPEvaluation exprEval = evalOwner.getEvaluation();
 		return new ExecExpressionStatement(exprEval);
 	}

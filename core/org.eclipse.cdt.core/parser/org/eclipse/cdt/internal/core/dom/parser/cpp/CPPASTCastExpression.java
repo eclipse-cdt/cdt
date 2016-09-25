@@ -42,18 +42,18 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 
     public CPPASTCastExpression() {
 	}
-    
+
     public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
 		fOperator = operator;
 		setOperand(operand);
 		setTypeId(typeId);
 	}
-    
+
 	@Override
 	public CPPASTCastExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTCastExpression copy(CopyStyle style) {
 		CPPASTCastExpression copy = new CPPASTCastExpression();
@@ -78,7 +78,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	public IASTTypeId getTypeId() {
         return fTypeId;
     }
-    
+
 	@Override
 	public int getOperator() {
         return fOperator;
@@ -104,7 +104,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 			expression.setPropertyInParent(OPERAND);
 		}
     }
- 
+
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
@@ -123,11 +123,11 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	            default: break;
 	        }
 		}
-        
+
         if (fTypeId != null && !fTypeId.accept(action)) return false;
         IASTExpression op = getOperand();
         if (op != null && !op.accept(action)) return false;
-        
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -149,25 +149,25 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
             fOperand  = (ICPPASTExpression) other;
         }
     }
-    
-    
+
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (fEvaluation == null) 
+		if (fEvaluation == null)
 			fEvaluation= computeEvaluation();
-		
+
 		return fEvaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		if (fOperand == null)
 			return EvalFixed.INCOMPLETE;
-		
+
 		IType type= CPPVisitor.createType(getTypeId());
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
-		
-		return new EvalTypeId(type, this, false, ((ICPPEvaluationOwner)fOperand).getEvaluation());
+
+		return new EvalTypeId(type, this, false, ((ICPPEvaluationOwner) fOperand).getEvaluation());
 	}
 
     @Override

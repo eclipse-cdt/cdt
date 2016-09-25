@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression, IASTAmbiguityParent {
     private int operator;
     private IASTExpression operand;
-    
+
     public CASTUnaryExpression() {
 	}
 
@@ -45,7 +45,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 	public CASTUnaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTUnaryExpression copy(CopyStyle style) {
 		CASTUnaryExpression copy =
@@ -88,7 +88,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 	            default: break;
 	        }
 		}
-      
+
         if (operand != null && !operand.accept(action)) return false;
 
         if (action.shouldVisitExpressions) {
@@ -100,7 +100,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == operand) {
@@ -109,7 +109,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
             operand = (IASTExpression) other;
         }
     }
-    
+
 	@Override
 	public IType getExpressionType() {
 		int op = getOperator();
@@ -151,7 +151,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 			return false;
 		}
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;

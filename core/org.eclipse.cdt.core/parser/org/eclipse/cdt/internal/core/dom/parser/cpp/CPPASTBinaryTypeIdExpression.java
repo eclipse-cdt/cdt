@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -30,7 +30,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
     private IASTTypeId fOperand1;
     private IASTTypeId fOperand2;
     private ICPPEvaluation fEvaluation;
-    
+
     public CPPASTBinaryTypeIdExpression() {
 	}
 
@@ -44,10 +44,10 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 	public CPPASTBinaryTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTBinaryTypeIdExpression copy(CopyStyle style) {
-		CPPASTBinaryTypeIdExpression copy = new CPPASTBinaryTypeIdExpression(fOperator, 
+		CPPASTBinaryTypeIdExpression copy = new CPPASTBinaryTypeIdExpression(fOperator,
 				fOperand1 == null ? null : fOperand1.copy(style),
 				fOperand2 == null ? null : fOperand2.copy(style));
 		return copy(copy, style);
@@ -71,7 +71,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
        	if (typeId != null) {
        		typeId.setParent(this);
        		typeId.setPropertyInParent(OPERAND1);
-       	} 
+       	}
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
        	if (typeId != null) {
        		typeId.setParent(this);
        		typeId.setPropertyInParent(OPERAND2);
-       	} 
+       	}
     }
 
     @Override
@@ -103,18 +103,18 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 	            default: break;
 	        }
 		}
-      
-        if (fOperand1 != null && !fOperand1.accept(action)) 
+
+        if (fOperand1 != null && !fOperand1.accept(action))
         	return false;
-        if (fOperand2 != null && !fOperand2.accept(action)) 
+        if (fOperand2 != null && !fOperand2.accept(action))
         	return false;
-        
-        if (action.shouldVisitExpressions && action.leave(this) ==  ASTVisitor.PROCESS_ABORT) 
+
+        if (action.shouldVisitExpressions && action.leave(this) ==  ASTVisitor.PROCESS_ABORT)
         	return false;
 
         return true;
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -137,7 +137,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 	public IType getExpressionType() {
 		return getEvaluation().getType(this);
 	}
-	
+
 	@Override
 	public boolean isLValue() {
 		return false;

@@ -33,7 +33,7 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		this.op = op;
 		setTypeId(typeId);
 	}
-	
+
 	@Override
 	public CASTTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -73,19 +73,19 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-      
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
+        if (typeId != null) if (!typeId.accept(action)) return false;
+
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -93,7 +93,7 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		}
         return true;
     }
-    
+
     @Override
 	public IType getExpressionType() {
     	if (getOperator() == op_sizeof) {
@@ -106,7 +106,7 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

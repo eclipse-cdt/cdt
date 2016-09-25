@@ -23,11 +23,11 @@ public class BacktrackException extends Exception {
 
     private IASTProblem problem;
     private IASTNode nodeBeforeProblem;	// a node has been created in spite of the problem.
-    private int offset, length; 
-  
-    public BacktrackException() {	
+    private int offset, length;
+
+    public BacktrackException() {
     }
-    
+
 	public BacktrackException(BacktrackException e) {
 		problem= e.problem;
 		nodeBeforeProblem= e.nodeBeforeProblem;
@@ -47,7 +47,7 @@ public class BacktrackException extends Exception {
     }
 
     /**
-     * 
+     *
      */
     private void reset() {
     	nodeBeforeProblem= null;
@@ -61,12 +61,12 @@ public class BacktrackException extends Exception {
     public final IASTProblem getProblem() {
         return problem;
     }
-    
+
     public final IASTNode getNodeBeforeProblem() {
     	return nodeBeforeProblem;
     }
 
-    public void initialize(int start, int l ) {
+    public void initialize(int start, int l) {
         reset();
         offset = start;
         length = l;

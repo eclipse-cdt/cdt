@@ -103,12 +103,12 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 	public IBinding[] getMemberBindings() {
 		return namespace.getMemberBindings();
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(alias, false);

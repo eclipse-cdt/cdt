@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Devin Steffler (IBM Rational Software) - Initial API and implementation 
+ *    Devin Steffler (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -34,34 +34,34 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		this.isVolatile = declSpec.isVolatile();
 		this.isRestrict = declSpec.isRestrict();
 	}
-	
+
 	public CQualifierType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict) {
 		this.type = type;
 		this.isConst = isConst;
 		this.isVolatile = isVolatile;
 		this.isRestrict = isRestrict;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType obj) {
 	    if (obj == this)
 	        return true;
 	    if (obj instanceof ITypedef)
 	        return obj.isSameType(this);
-	    
+
 	    if (obj instanceof ICQualifierType) {
 	        ICQualifierType qt = (ICQualifierType) obj;
             if (isConst() != qt.isConst()) return false;
 			if (isRestrict() != qt.isRestrict()) return false;
 			if (isVolatile() != qt.isVolatile()) return false;
-         
+
 			if (type == null)
 				return false;
 			return type.isSameType(qt.getType());
         }
     	return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
 	 */
@@ -83,9 +83,9 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	 */
 	@Override
 	public boolean isRestrict() {
-		return isRestrict; 
+		return isRestrict;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
@@ -95,7 +95,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	public void setType(IType t) {
 	    type = t;
 	}
-	
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -116,7 +116,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CQualifierType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,

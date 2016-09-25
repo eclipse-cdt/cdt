@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
     private static final ICPPEvaluation EVALUATION = new EvalFixed(CPPSemantics.VOID_TYPE, PRVALUE, IntegralValue.UNKNOWN);
-	
+
     private IASTExpression operand;
     private boolean isGlobal;
     private boolean isVectored;
@@ -49,16 +49,16 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	public CPPASTDeleteExpression(IASTExpression operand) {
 		setOperand(operand);
 	}
-	
+
 	public CPPASTDeleteExpression(CPPASTDeleteExpression from) {
 		setOperand(from.operand);
 	}
-	
+
 	@Override
 	public CPPASTDeleteExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTDeleteExpression copy(CopyStyle style) {
 		CPPASTDeleteExpression copy =
@@ -112,7 +112,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
 	    	List<IASTImplicitName> names = new ArrayList<>();
-	    	
+
 	    	if (!isVectored) {
 		    	ICPPFunction destructor = CPPSemantics.findImplicitlyCalledDestructor(this);
 		    	if (destructor != null) {
@@ -122,7 +122,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		    		names.add(destructorName);
 		    	}
 	    	}
-	    	
+
 	    	if (!isGlobal) {
 		    	ICPPFunction deleteOperator = CPPSemantics.findOverloadedOperator(this);
 		    	if (deleteOperator != null && !(deleteOperator instanceof CPPImplicitFunction)) {
@@ -133,15 +133,15 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		    		names.add(deleteName);
 		    	}
 	    	}
-	    	
+
 	    	if (names.isEmpty()) {
 	    		implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 	    	} else {
 	    		implicitNames = names.toArray(new IASTImplicitName[names.size()]);
 	    	}
     	}
-    	
-    	return implicitNames;    	
+
+    	return implicitNames;
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
-	
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == operand) {

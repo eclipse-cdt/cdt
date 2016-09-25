@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -59,7 +59,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	private ICPPNamespaceScope[] fEnclosingNamespaceSet;
 	private List<ICPPASTNamespaceDefinition> fInlineNamespaceDefinitions;
 	private ICPPInternalNamespaceScope[] fInlineNamespaces;
-	
+
 	public CPPNamespaceScope(IASTNode physicalNode) {
 		super(physicalNode);
 	}
@@ -68,7 +68,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	public EScopeKind getKind() {
 		if (getPhysicalNode() instanceof IASTTranslationUnit)
 			return EScopeKind.eGlobal;
-		
+
 		return EScopeKind.eNamespace;
 	}
 
@@ -78,7 +78,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		populateCache();
 		return fUsingDirectives.toArray(new ICPPUsingDirective[fUsingDirectives.size()]);
 	}
-	
+
 	private void initUsingDirectives() {
 		if (fUsingDirectives == null) {
 			fUsingDirectives= new ArrayList<>(1);
@@ -159,7 +159,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     		return;
     	super.addName(name);
     }
-    
+
 	public boolean canDenoteNamespaceMember(ICPPASTQualifiedName name) {
 		IScope scope= this;
 		ICPPASTNameSpecifier[] segments= name.getQualifier();
@@ -212,7 +212,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 
 		if (((ICPPASTNamespaceDefinition) node).isInline())
 			return true;
-		
+
 		IASTTranslationUnit tu= node.getTranslationUnit();
 		if (tu != null) {
 			final IIndex index= tu.getIndex();
@@ -244,18 +244,18 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		}
 		return fEnclosingNamespaceSet;
 	}
-	
+
 	@Override
 	public ICPPInternalNamespaceScope[] getInlineNamespaces() {
 		if (getKind() == EScopeKind.eLocal)
 			return NO_NAMESPACE_SCOPES;
-		
+
 		if (fInlineNamespaces == null) {
 			fInlineNamespaces= computeInlineNamespaces();
 		}
 		return fInlineNamespaces;
 	}
-	
+
 	ICPPInternalNamespaceScope[] computeInlineNamespaces() {
 		populateCache();
 		Set<ICPPInternalNamespaceScope> result= null;
@@ -268,13 +268,13 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 				}
 			}
 		}
-		
+
 		for (ICPPInternalNamespaceScope inline : getIndexInlineNamespaces()) {
 			if (result == null)
 				result = new HashSet<>();
 			result.add(inline);
 		}
-		
+
 		if (result == null) {
 			return NO_NAMESPACE_SCOPES;
 		}
@@ -283,7 +283,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 
 	private ICPPInternalNamespaceScope[] getIndexInlineNamespaces() {
 		IASTTranslationUnit tu= getPhysicalNode().getTranslationUnit();
-		if (tu instanceof CPPASTTranslationUnit) { 
+		if (tu instanceof CPPASTTranslationUnit) {
 			CPPASTTranslationUnit ast= (CPPASTTranslationUnit) tu;
 			IIndex index= tu.getIndex();
 			if (index != null) {
@@ -339,7 +339,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 				CCorePlugin.log(e);
 			}
 		}
-		
+
 		Set<ICPPInternalNamespaceScope> result= new HashSet<>();
 		result.add(nsScope);
 		addInlineNamespaces(nsScope, result);

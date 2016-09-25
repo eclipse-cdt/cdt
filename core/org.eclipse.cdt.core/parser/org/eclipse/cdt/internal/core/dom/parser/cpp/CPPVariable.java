@@ -68,7 +68,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 			return new HashSet<>();
 		}
 	};
-	
+
 	public CPPVariable(IASTName name) {
 	    boolean isDef = name != null && name.isDefinition();
 	    if (name instanceof ICPPASTQualifiedName) {
@@ -238,9 +238,9 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 		try {
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
-			if(nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
+			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
 				ICPPEvaluation initEval = getInitializerEvaluation();
-				if(initEval == null) {
+				if (initEval == null) {
 					return null;
 				}
 				return IntegralValue.create(initEval);
@@ -250,12 +250,12 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 			recursionProtectionSet.remove(this);
 		}
 	}
-	
+
 	private IASTDeclarator findDeclarator() {
 		IASTDeclarator declarator = null;
 		if (fDefinition != null) {
 			declarator = VariableHelpers.findDeclarator(fDefinition);
-			if(declarator != null) {
+			if (declarator != null) {
 				return declarator;
 			}
 		}
@@ -264,7 +264,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 				if (decl == null)
 					break;
 				declarator = VariableHelpers.findDeclarator(decl);
-				if(declarator != null) {
+				if (declarator != null) {
 					return declarator;
 				}
 			}
@@ -279,39 +279,39 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 
 	/**
 	 * Return an evaluation representing the variable's initialization.
-	 * 
+	 *
 	 * If the variable has no initializer, null is returned.
 	 */
 	public ICPPEvaluation getInitializerEvaluation() {
-		ICPPASTDeclarator declarator = (ICPPASTDeclarator)findDeclarator();
-		if(declarator != null) {
+		ICPPASTDeclarator declarator = (ICPPASTDeclarator) findDeclarator();
+		if (declarator != null) {
 			IASTInitializer initializer = declarator.getInitializer();
 			ICPPConstructor constructor = getImplicitlyCalledCtor(declarator);
-			if(constructor != null) {
+			if (constructor != null) {
 				ICPPEvaluation[] arguments = EvalConstructor.extractArguments(initializer, constructor);
 				return new EvalConstructor(getType(), constructor, arguments, declarator);
-			} else if(initializer instanceof IASTEqualsInitializer) {
-				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer)initializer;
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)equalsInitializer.getInitializerClause();
+			} else if (initializer instanceof IASTEqualsInitializer) {
+				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) equalsInitializer.getInitializerClause();
 				return evalOwner.getEvaluation();
-			} else if(initializer instanceof ICPPASTInitializerList) {
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)initializer;
+			} else if (initializer instanceof ICPPASTInitializerList) {
+				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) initializer;
 				return evalOwner.getEvaluation();
-			} else if(initializer instanceof ICPPASTConstructorInitializer) {
-				ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer)initializer;
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)ctorInitializer.getArguments()[0];
+			} else if (initializer instanceof ICPPASTConstructorInitializer) {
+				ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
+				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) ctorInitializer.getArguments()[0];
 				return evalOwner.getEvaluation();
-			} else if(initializer == null) {
+			} else if (initializer == null) {
 				return null;
-			}	
+			}
 		}
 		return EvalFixed.INCOMPLETE;
 	}
 
 	private static ICPPConstructor getImplicitlyCalledCtor(ICPPASTDeclarator declarator) {
 		IBinding ctor = CPPSemantics.findImplicitlyCalledConstructor(declarator);
-		if(ctor != null && !EvalUtil.isCompilerGeneratedCtor(ctor)) {
-			return (ICPPConstructor)ctor;
+		if (ctor != null && !EvalUtil.isCompilerGeneratedCtor(ctor)) {
+			return (ICPPConstructor) ctor;
 		}
 		return null;
 	}

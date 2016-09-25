@@ -62,7 +62,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		fArguments = args;
 		fImplicitThis = owner;
 	}
-	
+
 	public EvalFunctionCall(ICPPEvaluation[] args, ICPPEvaluation owner, IASTNode pointOfDefinition) {
 		this(args, owner, findEnclosingTemplate(pointOfDefinition));
 	}
@@ -194,7 +194,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i] = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		ICPPEvaluation implicitThis = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPEvaluation implicitThis = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalFunctionCall(args, implicitThis, templateDefinition);
 	}
@@ -204,13 +204,13 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPEvaluation[] args = instantiateCommaSeparatedSubexpressions(fArguments, context, maxDepth);
 		if (args == fArguments)
 			return this;
-		
+
 		if (args[0] instanceof EvalFunctionSet && getOverload(context.getPoint()) == null) {
 			// Resolve the function using the parameters of the function call.
 			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
 			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length), context.getPoint());
 		}
-		
+
 		ICPPEvaluation newImplicitThis = fImplicitThis != null ? fImplicitThis.instantiate(context, maxDepth) : null;
 		return new EvalFunctionCall(args, newImplicitThis, getTemplateDefinition());
 	}
@@ -227,12 +227,12 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 		ICPPEvaluation[] args = new ICPPEvaluation[fArguments.length];
 		System.arraycopy(fArguments, 0, args, 0, fArguments.length);
-		
+
 		ICPPParameter[] parameters = functionBinding.getParameters();
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(record, context.recordStep());
             if (i != 0 && isReference(parameters[i-1]) && fArguments[i] instanceof EvalBinding) {
-            	final EvalBinding evalBinding = (EvalBinding)fArguments[i];
+            	final EvalBinding evalBinding = (EvalBinding) fArguments[i];
             	IBinding binding = evalBinding.getBinding();
             	// If the binding being referenced isn't present in the activation record,
             	// we won't be able to evaluate the function call.
@@ -240,23 +240,23 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
             		return EvalFixed.INCOMPLETE;
             	}
             	arg = new EvalReference(record, binding, evalBinding.getTemplateDefinition());
-            } else if(i != 0 && !isReference(parameters[i-1])) {
+            } else if (i != 0 && !isReference(parameters[i-1])) {
             	IValue copiedValue = arg.getValue(context.getPoint()).clone();
             	arg = new EvalFixed(arg.getType(context.getPoint()), arg.getValueCategory(context.getPoint()), copiedValue);
             }
 			args[i] = arg;
 		}
-		
+
 		ICPPEvaluation owner = null;
-		if(functionBinding instanceof ICPPMethod) {
-			if(fImplicitThis instanceof EvalBinding) {
-				IBinding ownerBinding = ((EvalBinding)fImplicitThis).getBinding();
-				if(record.getVariable(ownerBinding) != null) {
+		if (functionBinding instanceof ICPPMethod) {
+			if (fImplicitThis instanceof EvalBinding) {
+				IBinding ownerBinding = ((EvalBinding) fImplicitThis).getBinding();
+				if (record.getVariable(ownerBinding) != null) {
 					owner = new EvalReference(record, ownerBinding, fImplicitThis.getTemplateDefinition());
 				} else {
 					owner = fImplicitThis;
 				}
-			} else if(fImplicitThis != null) {
+			} else if (fImplicitThis != null) {
 				owner = fImplicitThis.computeForFunctionCall(record, context);
 			} else {
 				owner = record.getImplicitThis();
@@ -265,12 +265,12 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 		return new EvalFunctionCall(args, owner, getTemplateDefinition()).evaluateFunctionBody(context.recordStep());
 	}
-	
+
 	private ICPPEvaluation evaluateFunctionBody(ConstexprEvaluationContext context) {
 		if (isValueDependent()) {
 			return this;
 		}
-		
+
 		// If the arguments are not all constant expressions, there is
 		// no point trying to substitute them into the return expression.
 		if (!areAllConstantExpressions(fArguments, 1, fArguments.length, context.getPoint())) {
@@ -284,7 +284,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		ActivationRecord record = createActivationRecord(function.getParameters(), fArguments, fImplicitThis, context.getPoint());
 		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, context.getPoint());
 		if (bodyExec == null) {
-			if (!(function instanceof ICPPTemplateInstance) 
+			if (!(function instanceof ICPPTemplateInstance)
 					|| ((ICPPTemplateInstance) function).isExplicitSpecialization()) {
 				return EvalFixed.INCOMPLETE;
 			}
@@ -296,25 +296,25 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 			// TODO(nathanridge): Instead of instantiating the execution below in instantiateFunctionBody(),
 			//                    have getFunctionBodyExecution() return the instantiated execution already.
 		}
-		if(bodyExec != null) {
+		if (bodyExec != null) {
 			bodyExec = bodyExec.executeForFunctionCall(record, context.recordStep());
-			
+
 			// If the function exited via a return statement, bodyExec.executeForFunctionCall() will have
 			// just returned the ExecReturn, which needs to be executed separately.
-			if(bodyExec != null) {
+			if (bodyExec != null) {
 				bodyExec = bodyExec.executeForFunctionCall(record, context.recordStep());
-				if(bodyExec instanceof ExecReturn) {
+				if (bodyExec instanceof ExecReturn) {
 					ExecReturn execReturn = (ExecReturn) bodyExec;
-					
+
 					ICPPEvaluation returnValueEval = execReturn.getReturnValueEvaluation();
 					// TODO(nathanridge): ExecReturn.executeForFunctionCall() already calls
-					// computeForFunctionCall() on the return value evaluation. Why do we 
+					// computeForFunctionCall() on the return value evaluation. Why do we
 					// need to do it again, and only if it's an EvalBinding?
-					if(returnValueEval instanceof EvalBinding) {
+					if (returnValueEval instanceof EvalBinding) {
 						returnValueEval = returnValueEval.computeForFunctionCall(record, context.recordStep());
 					}
 					return returnValueEval;
-				} else if(bodyExec == ExecIncomplete.INSTANCE) {
+				} else if (bodyExec == ExecIncomplete.INSTANCE) {
 					return EvalFixed.INCOMPLETE;
 				}
 			}
@@ -325,21 +325,21 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 	private ICPPFunction resolveFunctionBinding(IASTNode point) {
 		ICPPFunction function = getOverload(point);
 		if (function == null) {
-			ICPPEvaluation funcEval = fArguments[0];	
+			ICPPEvaluation funcEval = fArguments[0];
 			if (funcEval instanceof EvalFunctionSet) {
-				EvalFunctionSet funcEvalFunctionSet = (EvalFunctionSet)funcEval;
+				EvalFunctionSet funcEvalFunctionSet = (EvalFunctionSet) funcEval;
 				funcEval = funcEvalFunctionSet.resolveFunction(Arrays.copyOfRange(fArguments, 1, fArguments.length), point);
 			}
-			
+
 			IBinding binding = null;
 			if (funcEval instanceof EvalBinding) {
-				EvalBinding funcEvalBinding = (EvalBinding)funcEval;
+				EvalBinding funcEvalBinding = (EvalBinding) funcEval;
 				binding = funcEvalBinding.getBinding();
 			} else if (funcEval instanceof EvalMemberAccess) {
-				EvalMemberAccess funcEvalMemberAccess = (EvalMemberAccess)funcEval;
+				EvalMemberAccess funcEvalMemberAccess = (EvalMemberAccess) funcEval;
 				binding = funcEvalMemberAccess.getMember();
 			}
-			
+
 			if (binding instanceof ICPPFunction) {
 				function = (ICPPFunction) binding;
 			}
@@ -355,21 +355,21 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 
 	public static ActivationRecord createActivationRecord(ICPPParameter[] parameters, ICPPEvaluation[] arguments, ICPPEvaluation implicitThis, IASTNode point) {
 		ActivationRecord record = new ActivationRecord(parameters, implicitThis);
-		
+
 		// We start at arguments[1] because arguments[0] is the function's evaluation.
 		int j = 1;
-		for(ICPPParameter param : parameters) {
+		for (ICPPParameter param : parameters) {
 			if (param.isParameterPack() || isSpecializedParameterPack(param)) {
 				// The parameter pack consumes all remaining arguments.
 				int paramPackLen = arguments.length - j;
 				ICPPEvaluation[] values = new ICPPEvaluation[paramPackLen];
 				IType[] types = new IType[paramPackLen];
-				for(int i = 0; i < paramPackLen; i++) {
+				for (int i = 0; i < paramPackLen; i++) {
 					ICPPEvaluation arg = arguments[j+i];
 					values[i] = arg;
 					types[i] = arg.getType(null);
 				}
-				
+
 				IValue paramPackValue = new CompositeValue(null, values);
 				IType paramPackType = new ParameterPackType(types);
 				EvalFixed paramPack = new EvalFixed(paramPackType, ValueCategory.PRVALUE, paramPackValue);
@@ -391,13 +391,13 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		}
 		return record;
 	}
-	
+
 	private static boolean isSpecializedParameterPack(ICPPParameter param) {
-		if(param instanceof ICPPSpecialization) {
-			ICPPSpecialization paramSpecialization = (ICPPSpecialization)param;
+		if (param instanceof ICPPSpecialization) {
+			ICPPSpecialization paramSpecialization = (ICPPSpecialization) param;
 			IBinding specializedBinding = paramSpecialization.getSpecializedBinding();
-			if(specializedBinding instanceof ICPPParameter) {
-				ICPPParameter specializedParam = (ICPPParameter)specializedBinding;
+			if (specializedBinding instanceof ICPPParameter) {
+				ICPPParameter specializedParam = (ICPPParameter) specializedBinding;
 				return specializedParam.isParameterPack();
 			}
 		}
@@ -421,14 +421,14 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		}
 		return false;
 	}
-	
+
 	public static class ParameterPackType implements IType {
 		private final IType[] types;
-		
+
 		public ParameterPackType(IType[] types) {
 			this.types = types;
 		}
-		
+
 		public IType[] getTypes() {
 			return types;
 		}
@@ -437,7 +437,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		public boolean isSameType(IType type) {
 			return false;
 		}
-		
+
 		@Override
 		public Object clone() {
 			try {

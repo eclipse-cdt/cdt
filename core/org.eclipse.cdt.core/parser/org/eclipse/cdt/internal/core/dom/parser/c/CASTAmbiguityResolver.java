@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -34,22 +34,22 @@ public final class CASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		IASTNode node= astAmbiguousNode.resolveAmbiguity(this);
-		if (node instanceof IASTDeclarator || node instanceof IASTParameterDeclaration 
+		if (node instanceof IASTDeclarator || node instanceof IASTParameterDeclaration
 				|| node instanceof IASTDeclaration) {
-			while(node != null) {
+			while (node != null) {
 				if (node instanceof IASTDeclaration || node instanceof IASTParameterDeclaration) {
 					repopulateScope(node);
 					break;
 				}
 				if (node instanceof IASTExpression) {
 					break;
-				} 
+				}
 				node= node.getParent();
 			}
-		} 
+		}
 		return PROCESS_SKIP;
 	}
-	
+
 	private void repopulateScope(IASTNode node) {
 		IScope scope= CVisitor.getContainingScope(node);
 		if (scope instanceof CScope) {

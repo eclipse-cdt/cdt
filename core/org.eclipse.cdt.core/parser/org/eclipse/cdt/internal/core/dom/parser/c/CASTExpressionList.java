@@ -37,23 +37,23 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 	@Override
 	public CASTExpressionList copy(CopyStyle style) {
 		CASTExpressionList copy = new CASTExpressionList();
-		for(IASTExpression expr : getExpressions())
+		for (IASTExpression expr : getExpressions())
 			copy.addExpression(expr == null ? null : expr.copy(style));
 		return copy(copy, style);
 	}
-	
+
     @Override
 	public IASTExpression[] getExpressions() {
         if (expressions == null)
             return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return ArrayUtil.trim( IASTExpression.class, expressions );
+        return ArrayUtil.trim(IASTExpression.class, expressions);
     }
 
     @Override
 	public void addExpression(IASTExpression expression) {
         assertNotFrozen();
-        expressions = ArrayUtil.append( IASTExpression.class, expressions, expression );
-        if(expression != null) {
+        expressions = ArrayUtil.append(IASTExpression.class, expressions, expression);
+        if (expression != null) {
         	expression.setParent(this);
     		expression.setPropertyInParent(NESTED_EXPRESSION);
 		}
@@ -94,7 +94,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( expressions == null ) return;
+        if (expressions == null) return;
         for (int i = 0; i < expressions.length; ++i) {
             if (child == expressions[i]) {
                 other.setPropertyInParent(child.getPropertyInParent());
@@ -103,7 +103,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
             }
         }
     }
-    
+
     @Override
 	public IType getExpressionType() {
     	for (int i = expressions.length-1; i >= 0; i--) {
@@ -123,7 +123,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 		}
     	return false;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;

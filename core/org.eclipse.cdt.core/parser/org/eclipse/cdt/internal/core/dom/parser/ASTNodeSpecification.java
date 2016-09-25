@@ -174,7 +174,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		}
 
 		final int endOffset= offset + length;
-		switch(fRelation) {
+		switch (fRelation) {
 		case EXACT_MATCH:
 			return isParent(fBestNode, cand);
 		case FIRST_CONTAINED:
@@ -202,7 +202,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	private boolean isParent(IASTNode cand1, IASTNode cand2) {
-		while(cand2 != null) {
+		while (cand2 != null) {
 			if (cand2 == cand1) {
 				return true;
 			}

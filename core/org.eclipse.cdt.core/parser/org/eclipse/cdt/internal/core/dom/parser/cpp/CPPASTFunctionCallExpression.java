@@ -56,7 +56,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
     private IASTImplicitName[] fImplicitNames;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTFunctionCallExpression() {
     	setArguments(null);
 	}
@@ -85,7 +85,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		copy.setFunctionNameExpression(fFunctionName == null ? null : fFunctionName.copy(style));
 		return copy(copy, style);
 	}
-	
+
     @Override
 	public IASTExpression getFunctionNameExpression() {
         return fFunctionName;
@@ -100,7 +100,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			expression.setPropertyInParent(FUNCTION_NAME);
 		}
     }
-	
+
 	@Override
 	public IASTInitializerClause[] getArguments() {
         return fArguments;
@@ -126,20 +126,20 @@ public class CPPASTFunctionCallExpression extends ASTNode
     		ICPPFunction overload = getOverload();
 			if (overload == null)
 				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			
+
 			if (getEvaluation() instanceof EvalTypeId) {
 				CPPASTImplicitName n1 = new CPPASTImplicitName(overload.getNameCharArray(), this);
 				n1.setOffsetAndLength((ASTNode) fFunctionName);
 				n1.setBinding(overload);
 				return fImplicitNames= new IASTImplicitName[] {n1};
 			}
-			
+
 			if (overload instanceof CPPImplicitFunction) {
 				if (!(overload instanceof ICPPMethod) || ((ICPPMethod) overload).isImplicit()) {
 					return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 				}
 			}
-			
+
 			// Create separate implicit names for the two brackets
 			CPPASTImplicitName n1 = new CPPASTImplicitName(OverloadableOperator.PAREN, this);
 			n1.setBinding(overload);
@@ -147,19 +147,19 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			CPPASTImplicitName n2 = new CPPASTImplicitName(OverloadableOperator.PAREN, this);
 			n2.setBinding(overload);
 			n2.setAlternate(true);
-			
+
 			if (fArguments.length == 0) {
 				int idEndOffset = ((ASTNode) fFunctionName).getOffset() + ((ASTNode) fFunctionName).getLength();
 				try {
 					IToken lparen = fFunctionName.getTrailingSyntax();
 					IToken rparen = lparen.getNext();
-					
+
 					if (lparen.getType() == IToken.tLPAREN) {
 						n1.setOffsetAndLength(idEndOffset + lparen.getOffset(), 1);
 					} else {
 						n1.setOffsetAndLength(idEndOffset + lparen.getEndOffset(), 0);
 					}
-						
+
 					if (rparen.getType() == IToken.tRPAREN) {
 						n2.setOffsetAndLength(idEndOffset + rparen.getOffset(), 1);
 					} else {
@@ -173,12 +173,12 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				n1.computeOperatorOffsets(fFunctionName, true);
 				n2.computeOperatorOffsets(fArguments[fArguments.length - 1], true);
 			}
-			
+
 			fImplicitNames = new IASTImplicitName[] { n1, n2 };
     	}
     	return fImplicitNames;
     }
-    
+
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
@@ -197,15 +197,15 @@ public class CPPASTFunctionCallExpression extends ASTNode
 	            default: break;
 	        }
 		}
-      
+
 		if (fFunctionName != null && !fFunctionName.accept(action))
-			return false;        
-        
+			return false;
+
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
-        
+
 		if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
 			return false;
-        
+
 		for (IASTInitializerClause arg : fArguments) {
 			if (!arg.accept(action))
 				return false;
@@ -213,13 +213,13 @@ public class CPPASTFunctionCallExpression extends ASTNode
 
 		if (implicits != null && implicits.length > 1 && !implicits[1].accept(action))
 			return false;
-        
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-		
+
         return true;
     }
 
@@ -238,13 +238,13 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			}
 		}
 	}
-    
+
 	@Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalFunctionCall)
 			return ((EvalFunctionCall) eval).getOverload(this);
-		
+
 		if (eval instanceof EvalTypeId) {
 			if (!eval.isTypeDependent()) {
 				IType t= getNestedType(((EvalTypeId) eval).getInputType(), TDEF | CVTYPE | REF);
@@ -263,37 +263,37 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		}
 		return null;
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (fEvaluation == null) 
+		if (fEvaluation == null)
 			fEvaluation= computeEvaluation();
-		
+
 		return fEvaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		if (fFunctionName == null || fArguments == null)
 			return EvalFixed.INCOMPLETE;
-		
+
 		ICPPEvaluation conversion= checkForExplicitTypeConversion();
 		if (conversion != null)
 			return conversion;
-		
+
 		ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length + 1];
-		args[0]= ((ICPPEvaluationOwner)fFunctionName).getEvaluation();
+		args[0]= ((ICPPEvaluationOwner) fFunctionName).getEvaluation();
 		for (int i = 1; i < args.length; i++) {
 			args[i]= ((ICPPEvaluationOwner) fArguments[i - 1]).getEvaluation();
 		}
 		ICPPEvaluation fieldOwnerEval = null;
 		if (fFunctionName instanceof ICPPASTFieldReference) {
-			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference)fFunctionName;
-			ICPPEvaluationOwner fieldOwner = (ICPPEvaluationOwner)fieldRef.getFieldOwner();
+			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) fFunctionName;
+			ICPPEvaluationOwner fieldOwner = (ICPPEvaluationOwner) fieldRef.getFieldOwner();
 			fieldOwnerEval = fieldOwner.getEvaluation();
 		}
 		return new EvalFunctionCall(args, fieldOwnerEval, this);
 	}
-	
+
 	private ICPPEvaluation checkForExplicitTypeConversion() {
 		if (fFunctionName instanceof IASTIdExpression) {
 			final IASTName name = ((IASTIdExpression) fFunctionName).getName();
@@ -303,13 +303,13 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				for (int i = 0; i < args.length; i++) {
 					args[i]= ((ICPPEvaluationOwner) fArguments[i]).getEvaluation();
 				}
-				
+
 				return new EvalTypeId((IType) b, this, false, args);
 			}
 		}
 		return null;
 	}
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);

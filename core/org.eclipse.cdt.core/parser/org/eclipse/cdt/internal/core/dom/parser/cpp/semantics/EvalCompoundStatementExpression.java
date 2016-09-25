@@ -68,10 +68,10 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	public boolean isValueDependent() {
 		return fDelegate.isValueDependent();
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
-		return fDelegate.isConstantExpression(point);		
+		return fDelegate.isConstantExpression(point);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(record, context.recordStep());
-		if(delegate == fDelegate) {
+		if (delegate == fDelegate) {
 			return this;
 		} else {
 			EvalCompoundStatementExpression evalCompound = new EvalCompoundStatementExpression(delegate, getTemplateDefinition());

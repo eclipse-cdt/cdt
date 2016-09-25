@@ -17,11 +17,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
  * C-specific attribute.
  */
 public class CASTAttribute extends ASTAttribute {
-	
+
 	public CASTAttribute(char[] name, IASTToken argumentClause) {
 		super(name, argumentClause);
 	}
-	
+
 	@Override
 	public CASTAttribute copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -31,7 +31,7 @@ public class CASTAttribute extends ASTAttribute {
 	public CASTAttribute copy(CopyStyle style) {
 		IASTToken argumentClause = getArgumentClause();
 		if (argumentClause != null)
-			argumentClause = argumentClause.copy(style); 
+			argumentClause = argumentClause.copy(style);
 		return copy(new CASTAttribute(getName(), argumentClause), style);
 	}
 }

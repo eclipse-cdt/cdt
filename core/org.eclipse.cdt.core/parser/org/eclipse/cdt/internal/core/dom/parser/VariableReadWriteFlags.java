@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -62,7 +62,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 public abstract class VariableReadWriteFlags {
 	protected static final int READ = PDOMName.READ_ACCESS;
 	protected static final int WRITE = PDOMName.WRITE_ACCESS;
-	
+
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof IASTExpression) {
@@ -103,7 +103,7 @@ public abstract class VariableReadWriteFlags {
 		if (grand instanceof IASTEqualsInitializer) {
 			IASTNode grandGrand= grand.getParent();
 			if (grandGrand instanceof IASTDeclarator) {
-				IBinding binding= ((IASTDeclarator) grandGrand).getName().resolveBinding();  
+				IBinding binding= ((IASTDeclarator) grandGrand).getName().resolveBinding();
 				if (binding instanceof IVariable) {
 					IType type= ((IVariable) binding).getType();
 					if (type instanceof IArrayType) {
@@ -120,7 +120,7 @@ public abstract class VariableReadWriteFlags {
 			return rwAnyNode(expr, indirection);
 		}
 		if (expr instanceof IASTBinaryExpression) {
-			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
+			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);
 		}
 		if (expr instanceof IASTFieldReference) {
 			return rwInFieldReference(node, (IASTFieldReference) expr, indirection);
@@ -129,7 +129,7 @@ public abstract class VariableReadWriteFlags {
 			return rwAnyNode(expr, indirection);
 		}
 		if (expr instanceof IASTUnaryExpression) {
-			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);			
+			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);
 		}
 		if (expr instanceof IASTArraySubscriptExpression) {
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
@@ -158,7 +158,7 @@ public abstract class VariableReadWriteFlags {
 			return rwArgumentForFunctionCall((IASTFunctionCallExpression) expr, node, indirection);
 		}
 		if (expr instanceof IASTProblemExpression) {
-			return READ | WRITE;			
+			return READ | WRITE;
 		}
 		if (expr instanceof IASTTypeIdExpression) {
 			return 0;
@@ -200,7 +200,7 @@ public abstract class VariableReadWriteFlags {
 							IASTImplicitName name = implicitNames[0];
 							IBinding binding = name.resolveBinding();
 							if (binding instanceof IFunction) {
-								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, 
+								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i,
 										args[i], indirection);
 							}
 						}
@@ -220,8 +220,8 @@ public abstract class VariableReadWriteFlags {
 		}
 		return null;
 	}
-	
-	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, 
+
+	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx,
 			IASTInitializerClause argument, int indirection) {
 		IType[] ptypes= type.getParameterTypes();
 		IType parameterType = null;
@@ -232,7 +232,7 @@ public abstract class VariableReadWriteFlags {
 			// equal to the argument type.
 			parameterType = getArgumentType(argument);
 		}
-		
+
 		if (parameterType != null) {
 			return rwAssignmentToType(parameterType, indirection);
 		}
@@ -240,7 +240,7 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected abstract int rwAssignmentToType(IType type, int indirection);
-	
+
 	protected int rwInStatement(IASTStatement stmt, IASTNode node, int indirection) {
 		if (stmt instanceof IASTCaseStatement) {
 			if (node.getPropertyInParent() == IASTCaseStatement.EXPRESSION) {
@@ -293,10 +293,10 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInUnaryExpression(IASTNode node, IASTUnaryExpression expr, int indirection) {
-		switch(expr.getOperator()) {
+		switch (expr.getOperator()) {
 		case IASTUnaryExpression.op_bracketedPrimary:
 			return rwAnyNode(expr, indirection);
-		
+
 		case IASTUnaryExpression.op_amper:
 			return rwAnyNode(expr, indirection + 1);
 
@@ -305,13 +305,13 @@ public abstract class VariableReadWriteFlags {
 				return rwAnyNode(expr, indirection - 1);
 			}
 			return READ;
-			
+
 		case IASTUnaryExpression.op_postFixDecr:
 		case IASTUnaryExpression.op_postFixIncr:
 		case IASTUnaryExpression.op_prefixDecr:
 		case IASTUnaryExpression.op_prefixIncr:
 			return READ | WRITE;
-		
+
 		case IASTUnaryExpression.op_minus:
 		case IASTUnaryExpression.op_not:
 		case IASTUnaryExpression.op_plus:
@@ -327,13 +327,13 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInBinaryExpression(IASTNode node, IASTBinaryExpression expr, int indirection) {
-		switch(expr.getOperator()) {
+		switch (expr.getOperator()) {
 		case IASTBinaryExpression.op_assign:
 			if (node.getPropertyInParent() == IASTBinaryExpression.OPERAND_ONE) {
 				return WRITE;
 			}
 			return rwAssignmentToType(expr.getOperand1().getExpressionType(), indirection);
-			
+
 		case IASTBinaryExpression.op_binaryAndAssign:
 		case IASTBinaryExpression.op_binaryOrAssign:
 		case IASTBinaryExpression.op_binaryXorAssign:
@@ -348,7 +348,7 @@ public abstract class VariableReadWriteFlags {
 				return READ | WRITE;
 			}
 			return READ;
-			
+
 		case IASTBinaryExpression.op_binaryAnd:
 		case IASTBinaryExpression.op_binaryOr:
 		case IASTBinaryExpression.op_binaryXor:

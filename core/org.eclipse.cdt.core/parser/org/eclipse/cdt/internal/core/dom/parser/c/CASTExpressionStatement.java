@@ -44,7 +44,7 @@ public class CASTExpressionStatement extends ASTAttributeOwner
 		copy.setExpression(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression getExpression() {
         return expression;

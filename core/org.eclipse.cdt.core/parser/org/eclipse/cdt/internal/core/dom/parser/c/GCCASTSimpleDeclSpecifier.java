@@ -22,7 +22,7 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 
 	public GCCASTSimpleDeclSpecifier() {
 	}
-	
+
 	public GCCASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
 		setTypeofExpression(typeofExpression);
 	}

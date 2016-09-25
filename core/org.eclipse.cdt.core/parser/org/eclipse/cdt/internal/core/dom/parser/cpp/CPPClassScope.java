@@ -112,7 +112,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredConstructor()) {
 			// Default constructor: A(void)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, 
+			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY,
 					compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
@@ -148,7 +148,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	/**
-	 * Marks bases that serve as sources of inherited constructors. 
+	 * Marks bases that serve as sources of inherited constructors.
 	 */
 	private void markInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
 		ICPPBase[] bases = ClassTypeHelper.getBases(getClassType(), compositeTypeSpec);
@@ -191,7 +191,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			if (!(type instanceof ITypedef))
 				break;
 			type = ((ITypedef) type).getType();
-		} 
+		}
 		return false;
 	}
 
@@ -216,7 +216,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		// Don't add names from inactive code branches.
 		if (!name.isActive())
 			return;
-		
+
 		if (name instanceof ICPPASTQualifiedName) {
 			// Check whether the qualification matches.
 			IBinding b= getClassType();
@@ -225,7 +225,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			for (int i = qualifier.length; --i >= 0;) {
 				if (b == null)
 					return;
-				
+
 				char[] segmentName;
 				if (qualifier[i] instanceof IASTName) {
 					segmentName = ((IASTName) qualifier[i]).getLookupKey();
@@ -235,10 +235,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 						return;
 					segmentName = segmentBinding.getNameCharArray();
 				}
-				
+
 				if (!CharArrayUtils.equals(segmentName, b.getNameCharArray()))
 					return;
-				
+
 				b= b.getOwner();
 			}
 			if (qname.isFullyQualified() && b != null)
@@ -294,7 +294,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 	    char[] c = lookup.getLookupKey();
 	    final boolean prefixLookup= lookup.isPrefixLookup();
-	    
+
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
@@ -402,12 +402,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	public static boolean shallReturnConstructors(IASTName name, boolean isPrefixLookup) {
 		if (name == null)
 			return false;
-		
+
 		if (!isPrefixLookup) {
 			return CPPVisitor.isConstructorDeclaration(name)
 				|| CPPVisitor.isLastNameInUsingDeclaration(name);
 		}
-		
+
 		IASTNode node = name.getParent();
 		if (node instanceof ICPPASTTemplateId)
 			return false;

@@ -38,7 +38,7 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 		} else {
 			IValue value = evaluation.getValue(point);
 			if (value == IntegralValue.ERROR) {
-				fEvaluation = EvalFixed.INCOMPLETE; 
+				fEvaluation = EvalFixed.INCOMPLETE;
 			} else {
 				fEvaluation= new EvalFixed(evaluation.getType(point),
 						evaluation.getValueCategory(point), value);

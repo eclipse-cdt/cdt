@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -33,7 +33,7 @@ public class CASTCompoundStatement extends ASTAttributeOwner implements IASTComp
 	public CASTCompoundStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CASTCompoundStatement copy(CopyStyle style) {
 		CASTCompoundStatement copy = new CASTCompoundStatement();

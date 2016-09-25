@@ -25,12 +25,12 @@ public class CPPASTPointer extends CPPASTAttributeOwner implements IASTPointer {
 
     public CPPASTPointer() {
     }
-    
+
     @Override
 	public CPPASTPointer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTPointer copy(CopyStyle style) {
 		CPPASTPointer copy = new CPPASTPointer();

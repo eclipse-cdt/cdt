@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -59,13 +59,13 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 
 	protected IASTName[] declarations;
 	protected IASTName definition;
-	
+
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
 
 	private ICPPClassTemplate indexBinding;
 	private boolean checkedIndex;
-	
+
 
 	public CPPTemplateDefinition(IASTName name) {
 		if (name != null) {
@@ -89,7 +89,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			}
 		}
 	}
-	
+
 	@Override
 	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
@@ -106,7 +106,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			if (cand != null)
 				return cand;
 		}
-		
+
 		final ICPPClassTemplate ib = getIndexBinding();
 		if (ib instanceof ICPPInstanceCache) {
 			ICPPTemplateInstance cand= ((ICPPInstanceCache) ib).getInstance(arguments);
@@ -120,7 +120,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 		return null;
 	}
-	
+
 	protected ICPPClassTemplate getIndexBinding() {
 		if (!checkedIndex) {
 			checkedIndex= true;
@@ -131,7 +131,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 					IIndex index= tu.getIndex();
 					if (index != null) {
 						IIndexBinding ib = index.adaptBinding(this);
-						if (ib instanceof ICPPClassTemplate) 
+						if (ib instanceof ICPPClassTemplate)
 							indexBinding= (ICPPClassTemplate) ib;
 					}
 				}
@@ -151,7 +151,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
-	
+
 	public IASTName getTemplateName() {
 		if (definition != null)
 			return definition;
@@ -159,7 +159,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			return declarations[0];
 		return null;
 	}
-	
+
 	@Override
 	public String getName() {
 		return new String(getNameCharArray());
@@ -208,7 +208,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 		return templateParameters;
 	}
-	
+
 	@Override
 	public void addDefinition(IASTNode node) {
 	    if (node instanceof ICPPASTCompositeTypeSpecifier) {
@@ -245,12 +245,12 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 				declarations = ArrayUtil.append(IASTName.class, declarations, declName);
 			}
 	    }
-	}	
-	
+	}
+
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		int pos= templateParameter.getParameterPosition();
-		
+
     	int tdeclLen= declarations == null ? 0 : declarations.length;
     	for (int i= -1; i < tdeclLen; i++) {
     		IASTName tdecl;
@@ -263,7 +263,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     			if (tdecl == null)
     				break;
     		}
-    		
+
     		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(tdecl).getTemplateParameters();
     		if (pos < params.length) {
     			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);
@@ -277,7 +277,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     	final ICPPASTTemplateDeclaration templateDeclaration = CPPTemplates.getTemplateDeclaration(name);
     	if (templateDeclaration == null)
     		return;
-    	
+
 		ICPPASTTemplateParameter[] updateParams = templateDeclaration.getTemplateParameters();
     	int k= 0;
     	int tdeclLen= declarations == null ? 0 : declarations.length;
@@ -292,7 +292,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     			if (tdecl == null)
     				break;
     		}
-    		
+
     		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(tdecl).getTemplateParameters();
     		int end= Math.min(params.length, updateParams.length);
     		for (; k < end; k++) {
@@ -314,18 +314,18 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	public IASTNode getDefinition() {
 		return definition;
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public final IBinding getOwner() {
 		IASTName templateName= getTemplateName();
 		if (templateName == null)
 			return null;
-		
+
 		return CPPVisitor.findNameOwner(templateName, false);
 	}
 }

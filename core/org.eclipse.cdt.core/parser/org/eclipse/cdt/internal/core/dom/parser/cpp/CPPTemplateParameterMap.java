@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	public static final CPPTemplateParameterMap EMPTY = new CPPTemplateParameterMap(0);
-	
+
 	private final ObjectMap fMap;
 
 	/**
@@ -48,7 +48,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	public void put(ICPPTemplateParameter param, ICPPTemplateArgument value) {
 		fMap.put(param.getParameterID(), value);
 	}
-	
+
 	/**
 	 * Adds the mapping.
 	 */
@@ -62,7 +62,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	public void put(ICPPTemplateParameter param, ICPPTemplateArgument[] packExpansion) {
 		fMap.put(param.getParameterID(), packExpansion);
 	}
-	
+
 	/**
 	 * Adds the mapping.
 	 */
@@ -142,7 +142,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 		final Object object = fMap.get(paramID);
 		if (object instanceof ICPPTemplateArgument[]) {
 			args = (ICPPTemplateArgument[]) object;
-			if (packSize != args.length) 
+			if (packSize != args.length)
 				return false;
 		} else if (object == null) {
 			args= new ICPPTemplateArgument[packSize];
@@ -206,7 +206,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	public Integer[] getAllParameterPositions() {
 		return fMap.keyArray(Integer.class);
 	}
-	
+
 	/**
 	 * For debugging purposes, only.
 	 */
@@ -219,7 +219,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 				if (sb.length() > 1) {
 					sb.append(", "); //$NON-NLS-1$
 				}
-				
+
 				final Object obj = fMap.getAt(i);
 				if (obj instanceof ICPPTemplateArgument) {
 					appendArg(sb, key, (ICPPTemplateArgument) obj);

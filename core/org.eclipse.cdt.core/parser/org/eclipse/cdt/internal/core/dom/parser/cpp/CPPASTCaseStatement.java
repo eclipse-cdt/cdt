@@ -29,7 +29,7 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
 	public CPPASTCaseStatement(IASTExpression expression) {
 		setExpression(expression);
 	}
-	
+
 	@Override
 	public CPPASTCaseStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -60,7 +60,7 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -69,14 +69,14 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
 
         if (!acceptByAttributeSpecifiers(action)) return false;
         if (expression != null && !expression.accept(action)) return false;
-        
+
         if (action.shouldVisitStatements) {
-        	switch(action.leave(this)) {
+        	switch (action.leave(this)) {
         		case ASTVisitor.PROCESS_ABORT : return false;
         		case ASTVisitor.PROCESS_SKIP  : return true;
         		default : break;
         	}
-        }  
+        }
         return true;
     }
 
@@ -90,10 +90,10 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
         }
         super.replace(child, other);
     }
-	
+
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner caseExpr = (ICPPEvaluationOwner)getExpression();
+		ICPPEvaluationOwner caseExpr = (ICPPEvaluationOwner) getExpression();
 		ICPPEvaluation caseExprEval = caseExpr.getEvaluation();
 		return new ExecCase(caseExprEval);
 	}

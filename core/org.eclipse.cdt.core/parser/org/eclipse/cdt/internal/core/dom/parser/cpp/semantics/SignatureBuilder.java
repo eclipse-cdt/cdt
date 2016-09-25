@@ -90,7 +90,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 			eval.marshal(this, includeValues);
 		}
 	}
-	
+
 	@Override
 	public void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException {
 		if (exec == null) {
@@ -136,7 +136,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 		appendSeparator();
 		fBuffer.append(value);
 	}
-	
+
 	@Override
 	public void putInt(int value) {
 		appendSeparator();
@@ -176,7 +176,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public ISerializableExecution unmarshalExecution() throws CoreException {
 		throw new UnsupportedOperationException();
@@ -211,7 +211,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	public short getShort() throws CoreException {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public int getInt() throws CoreException {
 		throw new UnsupportedOperationException();

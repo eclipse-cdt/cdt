@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -38,7 +38,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 		this.declaration = declaration;
 		this.name = name;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
@@ -46,12 +46,12 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	public IType getType() {
 		IASTDeclSpecifier declSpec = null;
 		if (declaration instanceof IASTSimpleDeclaration)
-			declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
-			
-		if( declSpec != null && declSpec instanceof ICASTTypedefNameSpecifier ){
+			declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+
+		if (declSpec != null && declSpec instanceof ICASTTypedefNameSpecifier) {
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
 			return (IType) nameSpec.getName().resolveBinding();
-		} else if( declSpec != null && declSpec instanceof IASTElaboratedTypeSpecifier ){
+		} else if (declSpec != null && declSpec instanceof IASTElaboratedTypeSpecifier) {
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
 			return (IType) elabTypeSpec.getName().resolveBinding();
 		}
@@ -80,7 +80,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	 */
 	@Override
 	public IScope getScope() {
-		return CVisitor.getContainingScope( declaration );
+		return CVisitor.getContainingScope(declaration);
 	}
 
 	/* (non-Javadoc)
@@ -111,8 +111,8 @@ public class CKnRParameter extends PlatformObject implements IParameter {
      */
     @Override
 	public boolean isAuto() {
-        if( declaration instanceof IASTSimpleDeclaration )
-            return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_auto;
+        if (declaration instanceof IASTSimpleDeclaration)
+            return ((IASTSimpleDeclaration) declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_auto;
         return false;
     }
 
@@ -121,16 +121,16 @@ public class CKnRParameter extends PlatformObject implements IParameter {
      */
     @Override
 	public boolean isRegister() {
-        if( declaration instanceof IASTSimpleDeclaration )
-            return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_register;
+        if (declaration instanceof IASTSimpleDeclaration)
+            return ((IASTSimpleDeclaration) declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_register;
         return false;
     }
-    
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return CVisitor.findEnclosingFunction(declaration);

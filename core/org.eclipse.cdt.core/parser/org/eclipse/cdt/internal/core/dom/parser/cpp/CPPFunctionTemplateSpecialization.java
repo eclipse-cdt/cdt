@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		implements ICPPFunctionTemplate, ICPPInternalTemplate {
 	private ObjectMap instances;
-	
+
 	public CPPFunctionTemplateSpecialization(ICPPFunction original, IBinding owner,
 			ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, argumentMap, type, exceptionSpecs);
@@ -60,7 +60,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		}
 		return null;
 	}
-	
+
 	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
@@ -72,7 +72,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
-	
+
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;

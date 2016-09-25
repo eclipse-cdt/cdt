@@ -28,10 +28,10 @@ public class CASTIfStatement extends ASTAttributeOwner implements IASTIfStatemen
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
-    
+
     public CASTIfStatement() {
 	}
-    
+
 	public CASTIfStatement(IASTExpression condition, IASTStatement thenClause) {
 		setConditionExpression(condition);
 		setThenClause(thenClause);
@@ -55,7 +55,7 @@ public class CASTIfStatement extends ASTAttributeOwner implements IASTIfStatemen
 		copy.setElseClause(elseClause == null ? null : elseClause.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
@@ -118,7 +118,7 @@ public class CASTIfStatement extends ASTAttributeOwner implements IASTIfStatemen
     		if (action.shouldVisitStatements) {
     			switch (action.visit(stmt)) {
     			case ASTVisitor.PROCESS_ABORT: return false;
-    			case ASTVisitor.PROCESS_SKIP: 	
+    			case ASTVisitor.PROCESS_SKIP:
     				stmt= null;
     				break loop;
     			default: break;
@@ -169,7 +169,7 @@ public class CASTIfStatement extends ASTAttributeOwner implements IASTIfStatemen
         if (elseClause == child) {
             other.setParent(child.getParent());
             other.setPropertyInParent(child.getPropertyInParent());
-            elseClause = (IASTStatement) other;            
+            elseClause = (IASTStatement) other;
         }
         if (child == condition) {
             other.setPropertyInParent(child.getPropertyInParent());

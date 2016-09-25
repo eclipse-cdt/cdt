@@ -35,7 +35,7 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution(this);
@@ -43,38 +43,38 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
 	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
 		final IASTInitializer initializer = chainInitializer.getInitializer();
-		if(initializer instanceof ICPPEvaluationOwner) {
+		if (initializer instanceof ICPPEvaluationOwner) {
 			return ((ICPPEvaluationOwner) initializer).getEvaluation();
-		} else if(initializer instanceof ICPPASTConstructorInitializer) {
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
 			ICPPConstructor constructor = (ICPPConstructor)CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
 			if (constructor == null) {
 				boolean usesBracedInitList = (initializer instanceof ICPPASTInitializerList);
-				return new EvalTypeId(member.getType(), point, usesBracedInitList, 
+				return new EvalTypeId(member.getType(), point, usesBracedInitList,
 						EvalConstructor.extractArguments(initializer));
 			}
 			return new EvalConstructor(member.getType(), constructor, EvalConstructor.extractArguments(initializer), point);
 		}
 		return null;
 	}
-	
+
 	static ICPPExecution computeConstructorChainExecution(IASTNode def) {
 		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
 		if (fnDef != null) {
 			final ICPPASTConstructorChainInitializer[] ccInitializers = fnDef.getMemberInitializers();
 			final Map<IBinding, ICPPEvaluation> resultPairs = new HashMap<>();
-			for(ICPPASTConstructorChainInitializer ccInitializer : ccInitializers) {
+			for (ICPPASTConstructorChainInitializer ccInitializer : ccInitializers) {
 				final IBinding member = ccInitializer.getMemberInitializerId().resolveBinding();
-				if(member instanceof ICPPField) {
-					final ICPPField fieldMember = (ICPPField)member;
+				if (member instanceof ICPPField) {
+					final ICPPField fieldMember = (ICPPField) member;
 					final ICPPEvaluation memberEval = getMemberEvaluation(fieldMember, ccInitializer, fnDef);
 					resultPairs.put(fieldMember, memberEval);
-				} else if(member instanceof ICPPConstructor) {
-					final ICPPConstructor ctorMember = (ICPPConstructor)member;
+				} else if (member instanceof ICPPConstructor) {
+					final ICPPConstructor ctorMember = (ICPPConstructor) member;
 					final IASTInitializer initializer = ccInitializer.getInitializer();
-					if (initializer instanceof ICPPASTConstructorInitializer || 
+					if (initializer instanceof ICPPASTConstructorInitializer ||
 					    initializer instanceof ICPPASTInitializerList) {
-						final ICPPClassType baseClassType = (ICPPClassType)ctorMember.getOwner();				
-						EvalConstructor memberEval = new EvalConstructor(baseClassType, ctorMember, 
+						final ICPPClassType baseClassType = (ICPPClassType) ctorMember.getOwner();
+						EvalConstructor memberEval = new EvalConstructor(baseClassType, ctorMember,
 								EvalConstructor.extractArguments(initializer, ctorMember), fnDef);
 						resultPairs.put(ctorMember, memberEval);
 					}
@@ -84,9 +84,9 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 		}
 		return null;
 	}
-	
+
 	static ICPPExecution getConstructorChainExecution(CPPFunction function) {
-		if(!function.isConstexpr())
+		if (!function.isConstexpr())
 			return null;
 		return computeConstructorChainExecution(function.getDefinition());
 	}

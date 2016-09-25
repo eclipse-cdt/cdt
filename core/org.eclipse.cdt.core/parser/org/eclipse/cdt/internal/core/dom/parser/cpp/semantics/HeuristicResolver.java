@@ -51,35 +51,35 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * in contexts where the results of ordinary binding resolution (whose
  * approach to templates is "defer actual resolution until template
  * arguments become available") are undesirable.
- * 
+ *
  * Usually, this comes up in cases where the user is trying to invoke
  * certain editor functionality inside a template.
- * 
+ *
  * For example, consider the following code:
- * 
+ *
  *   struct Cat {
  *       void meow();
  *   };
- *   
+ *
  *   template <typename T>
  *   struct B {
  *       Cat foo();
  *   };
- *   
+ *
  *   template <typename T>
  *   void foo(B<T> a) {
- *       a.foo(). 
+ *       a.foo().
  *   }
  *
  * and suppose content assist is invoked after the "a.foo().".
  * To determine what completions to provide in that context, we try
  * to determine the type of 'a.foo()', and then look to see what
  * members are inside that type.
- * 
+ *
  * However, because we're in a template, the type of 'a.foo()' is
  * a deferred / unknown type (in this case, a TypeOfDependentExpression),
  * so we don't know what members it has.
- * 
+ *
  * HeuristicResolver maps that unknown type to a concrete type
  * (in this case, 'Cat') by applying the following heuristic:
  * whenever name lookup is deferred because the lookup scope is
@@ -88,12 +88,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
  * or explicit specialization), and perform the lookup in the
  * primary template scope. This heuristic gives the right answer
  * in many cases, including this one.
- * 
- * HeuristicResolver can handle some more complex situations as well, 
+ *
+ * HeuristicResolver can handle some more complex situations as well,
  * such as metafunction calls, typedefs, and nested templates. See
  * CompletionTests.testDependentScopes_bug472818c for a test case
  * that pushes it to its limit.
- * 
+ *
  * However, due to the nature of its heuristic, it cannot handle
  * cases where the correct answer requires selecting a specialization
  * rather than the primary template. Bug 487700 is on file for
@@ -116,14 +116,14 @@ public class HeuristicResolver {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Helper function for lookInside().
 	 * Specializes the given bindings in the given context.
 	 *
 	 * @param point the point of instantiation for name lookups
 	 */
-	private static IBinding[] specializeBindings(IBinding[] bindings, ICPPClassSpecialization context, 
+	private static IBinding[] specializeBindings(IBinding[] bindings, ICPPClassSpecialization context,
 			IASTNode point) {
 		IBinding[] result = new IBinding[bindings.length];
 		for (int i = 0; i < bindings.length; ++i) {
@@ -131,7 +131,7 @@ public class HeuristicResolver {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * An extension of CPPDeferredClassInstance that implements ICPPClassSpecialization,
 	 * allowing its members to be specialized via specializeMember().
@@ -154,7 +154,7 @@ public class HeuristicResolver {
 		public IBinding specializeMember(IBinding binding, IASTNode point) {
 			return CPPTemplates.createSpecialization(this, binding, point);
 		}
-		
+
 		@Override
 		public IBinding specializeMember(IBinding binding) {
 			throw new UnsupportedOperationException();
@@ -205,7 +205,7 @@ public class HeuristicResolver {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	/**
 	 * Represents a lookup of a name in a primary template scope.
 	 * The set of such lookups during a heuristic resolution operation is
@@ -219,7 +219,7 @@ public class HeuristicResolver {
 			this.scope = scope;
 			this.name = name;
 		}
-		
+
 		@Override
 		public boolean equals(Object other) {
 			if (!(other instanceof HeuristicLookup)) {
@@ -229,21 +229,21 @@ public class HeuristicResolver {
 			return scope == otherLookup.scope
 					&& CharArrayUtils.equals(name, otherLookup.name);
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return scope.hashCode() * (29 + name.hashCode());
 		}
 	}
-	
+
 	/**
 	 * Helper function for resolveUnknownType() and resolveUnknownBinding().
 	 * Heuristically resolves the given unknown type and performs name lookup inside it.
-	 * 
+	 *
 	 * If name lookup is performed inside a template scope to approximate lookup
 	 * in the scope of a dependent instantiation, the lookup results are
 	 * specialized in the context of the dependent instantiation.
-	 * 
+	 *
 	 * @param ownerType the type to perform name lookup inside
 	 * @param isPointerDeref true if 'ownerType' is a pointer type
 	 * @param name the name to be looked up
@@ -252,7 +252,7 @@ public class HeuristicResolver {
 	 * @param point point of instantiation for name lookups
 	 * @return results of the name lookup
 	 */
-	private static IBinding[] lookInside(IType ownerType, boolean isPointerDeref, char[] name, 
+	private static IBinding[] lookInside(IType ownerType, boolean isPointerDeref, char[] name,
 			ICPPTemplateArgument[] templateArgs, Set<HeuristicLookup> lookupSet, IASTNode point) {
 		// If this is a pointer dereference, the pointer type might be outside of the dependent type.
 		ownerType = SemanticUtil.getSimplifiedType(ownerType);
@@ -260,12 +260,12 @@ public class HeuristicResolver {
 			ownerType = ((IPointerType) ownerType).getType();
 			isPointerDeref = false;
 		}
-		
+
 		IType lookupType = ownerType;
 		ICPPClassSpecialization specializationContext = null;
 		if (lookupType instanceof ICPPUnknownType) {
-			// Here we have a loop similar to the one in resolveUnknownType(), but we stop when 
-			// we get a result that's an ICPPClassSpecialization or an ICPPDeferredClassInstance, 
+			// Here we have a loop similar to the one in resolveUnknownType(), but we stop when
+			// we get a result that's an ICPPClassSpecialization or an ICPPDeferredClassInstance,
 			// so we can use it to specialize the lookup results as appropriate.
 			while (true) {
 				if (lookupType instanceof ICPPClassSpecialization) {
@@ -278,7 +278,7 @@ public class HeuristicResolver {
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
-				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, lookupSet, 
+				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, lookupSet,
 						point);
 				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.REF);
 				if (resolvedType == lookupType || !(resolvedType instanceof ICPPUnknownType)) {
@@ -300,7 +300,7 @@ public class HeuristicResolver {
 				}
 			}
 		}
-			
+
 		IScope lookupScope = null;
 		if (lookupType instanceof ICPPClassType) {
 			lookupScope = ((ICPPClassType) lookupType).getCompositeScope();
@@ -327,9 +327,9 @@ public class HeuristicResolver {
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
-	
+
 	/**
-	 * Helper function for resolveUnknownType(). 
+	 * Helper function for resolveUnknownType().
 	 * Returns the type of a binding.
 	 */
 	private static IType typeForBinding(IBinding binding) {
@@ -344,29 +344,29 @@ public class HeuristicResolver {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Given an unknown type, heuristically tries to find a concrete type 
+	 * Given an unknown type, heuristically tries to find a concrete type
 	 * (i.e. not an unknown type) corresponding to it.
-	 * 
+	 *
 	 * Returns null if no heuristic resolution could be performed.
-	 * 
+	 *
 	 * Multiple rounds of resolution are performed, as the result of a single
 	 * round may yield a type which is still dependent. Resolution stops when
 	 * a concrete type is found, or the resolution of the last resolution
 	 * round is the same as the result of the previous resolution round.
 	 * In between each round, typedefs are unwrapped.
-	 * 
+	 *
 	 * @param point the point of instantiation for lookups
 	 */
 	public static IType resolveUnknownType(ICPPUnknownType type, IASTNode point) {
 		return resolveUnknownType(type, point, SemanticUtil.TDEF);
 	}
-	
+
 	/**
 	 * Similar to resolveUnknownType(type, point), but allows specifying
 	 * things other than typedefs to unwrap between rounds of resolution
-	 * (e.g. references). 
+	 * (e.g. references).
 	 */
 	private static IType resolveUnknownType(ICPPUnknownType type, IASTNode point, int unwrapOptions) {
 		while (true) {
@@ -380,11 +380,11 @@ public class HeuristicResolver {
 			return resolvedType;
 		}
 	}
-	
+
 	/**
 	 * Helper function for {@link #resolveUnknownType} which does one round of resolution.
 	 */
-	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, Set<HeuristicLookup> lookupSet, 
+	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, Set<HeuristicLookup> lookupSet,
 		IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
@@ -409,7 +409,7 @@ public class HeuristicResolver {
 				ICPPEvaluation fieldOwner = id.getFieldOwner();
 				if (fieldOwner != null) {
 					IType fieldOwnerType = fieldOwner.getType(point);
-					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(), 
+					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(),
 							id.getTemplateArgs(), lookupSet, point);
 					if (candidates.length == 1) {
 						return typeForBinding(candidates[0]);
@@ -433,9 +433,9 @@ public class HeuristicResolver {
 		} else if (type instanceof ICPPUnknownMemberClass) {
 			ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
 			IType ownerType = member.getOwnerType();
-			IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null, 
+			IBinding[] candidates = lookInside(ownerType, false, member.getNameCharArray(), null,
 					lookupSet, point);
-			if (candidates.length == 1) { 
+			if (candidates.length == 1) {
 				if (candidates[0] instanceof IType) {
 					IType result = (IType) candidates[0];
 					if (type instanceof ICPPUnknownMemberClassInstance) {
@@ -444,7 +444,7 @@ public class HeuristicResolver {
 							result = (IType) CPPTemplates.instantiate((ICPPClassTemplate) result, args, point);
 						} else if (result instanceof ICPPAliasTemplate) {
 							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
-									args, point); 
+									args, point);
 						} else if (result instanceof ICPPAliasTemplateInstance) {
 							// TODO(nathanridge): Remove this branch once we properly represent
 							// specializations of alias templates (which will then implement
@@ -459,11 +459,11 @@ public class HeuristicResolver {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Given an unknown binding, heuristically tries to find concrete bindings (i.e. not unknown bindings)
 	 * corresponding to it.
-	 * 
+	 *
 	 * Returns an empty array if no heuristic resolution could be performed.
 
 	 * @param point the point of instantiation for lookups

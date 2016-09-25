@@ -23,12 +23,12 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
 
     public GPPASTSimpleDeclSpecifier() {
 	}
-    
+
 	public GPPASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
 		super();
 		setDeclTypeExpression(typeofExpression);
 	}
-	
+
 	@Override
 	public GPPASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);

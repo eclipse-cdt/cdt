@@ -39,7 +39,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 	public CPPASTSimpleDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTSimpleDeclaration copy(CopyStyle style) {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
@@ -62,7 +62,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
         declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
-    
+
     @Override
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
@@ -95,7 +95,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 	            default: break;
 	        }
 		}
-        
+
         if (!acceptByAttributeSpecifiers(action)) return false;
         if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         IASTDeclarator[] dtors = getDeclarators();
@@ -103,7 +103,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
             if (!dtors[i].accept(action))
             	return false;
         }
-        
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -113,7 +113,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
 		IASTDeclarator[] declarators = getDeclarators();
@@ -131,8 +131,8 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 	@Override
 	public ICPPExecution getExecution() {
 		ICPPExecution[] declaratorExecutions = new ICPPExecution[declarators.length];
-		for(int i = 0; i < declarators.length; ++i) {
-			declaratorExecutions[i] = ((ICPPExecutionOwner)declarators[i]).getExecution();
+		for (int i = 0; i < declarators.length; ++i) {
+			declaratorExecutions[i] = ((ICPPExecutionOwner) declarators[i]).getExecution();
 		}
 		return new ExecSimpleDeclaration(declaratorExecutions);
 	}

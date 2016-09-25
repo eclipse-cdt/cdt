@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
- * Represents a binding for a type found in a template definition, that can be 
- * determined only after the template is instantiated. 
- * 
+ * Represents a binding for a type found in a template definition, that can be
+ * determined only after the template is instantiated.
+ *
  * This interface should be made public.
  * @since 5.0
  */

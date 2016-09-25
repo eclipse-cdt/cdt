@@ -37,14 +37,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     private CharArrayObjectMap<ILabel> labels = CharArrayObjectMap.emptyMap();
-    
+
 	/**
 	 * @param physicalNode
 	 */
 	public CPPFunctionScope(IASTFunctionDeclarator physicalNode) {
 		super(physicalNode);
 	}
-	
+
 	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
@@ -73,18 +73,18 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    		bindings.add(labels.get(key));
 	    	}
 	    }
-	    
+
 	    IBinding[] additional = super.find(name);
 	    for (IBinding element : additional) {
 	    	bindings.add(element);
 	    }
-	    
+
 	    return bindings.toArray(new IBinding[bindings.size()]);
 	}
-	
+
 	@Override
 	public IScope getParent() {
-	    // We can't just resolve the function and get its parent scope, since there are cases where that 
+	    // We can't just resolve the function and get its parent scope, since there are cases where that
 	    // could loop because resolving functions requires resolving their parameter types.
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
 	    IASTName name = fdtor.getName().getLastName();

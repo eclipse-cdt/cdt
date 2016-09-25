@@ -36,7 +36,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		this.kind = kind;
 		this.value = value;
 	}
-	
+
 	@Override
 	public CASTLiteralExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -69,7 +69,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
         assertNotFrozen();
     	this.value= value;
     }
-    
+
     @Override
 	public String toString() {
         return new String(value);
@@ -90,7 +90,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
 	        }
-		}      
+		}
         return true;
     }
 
@@ -110,7 +110,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
-	
+
 	@Override
 	public boolean isLValue() {
 		return getKind() == IASTLiteralExpression.lk_string_literal;
@@ -143,7 +143,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	private IType classifyTypeOfIntLiteral() {
 		int makelong= 0;
 		boolean unsigned= false;
-	
+
 		final char[] lit= getValue();
 		for (int i= lit.length - 1; i >= 0; i--) {
 			final char c= lit[i];
@@ -165,17 +165,17 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		int flags= 0;
 		if (unsigned) {
 			flags |= IBasicType.IS_UNSIGNED;
-		} 
-		
+		}
+
 		if (makelong > 1) {
 			flags |= IBasicType.IS_LONG_LONG;
 		} else if (makelong == 1) {
 			flags |= IBasicType.IS_LONG;
-		} 
+		}
 		return new CBasicType(IBasicType.Kind.eInt, flags, this);
 	}
-	
-	
+
+
     /**
      * @deprecated, use {@link #setValue(char[])}, instead.
      */
@@ -185,7 +185,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
         assertNotFrozen();
         this.value = value.toCharArray();
     }
-    
+
     /**
      * @deprecated use {@link #CASTLiteralExpression(int, char[])}, instead.
      */

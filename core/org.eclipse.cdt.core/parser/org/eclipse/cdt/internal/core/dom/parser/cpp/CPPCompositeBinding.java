@@ -26,7 +26,7 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 	public CPPCompositeBinding(IBinding[] bindingList) {
 		bindings = ArrayUtil.trim(bindingList, true);
 	}
-	
+
 	@Override
 	public String getName() {
 		return bindings[0].getName();
@@ -46,7 +46,7 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 	public IBinding getOwner() {
 		return bindings[0].getOwner();
 	}
-	
+
 	public IASTNode getPhysicalNode() {
 		return null;
 	}

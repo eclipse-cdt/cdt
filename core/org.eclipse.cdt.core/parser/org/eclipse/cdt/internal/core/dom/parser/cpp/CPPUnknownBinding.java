@@ -113,7 +113,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public CPPUnknownBinding clone() {
 		try {

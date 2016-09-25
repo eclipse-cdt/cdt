@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -35,10 +35,10 @@ public class CPPASTConditionalExpression extends ASTNode
     private ICPPASTExpression fNegative;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTConditionalExpression() {
 	}
-    
+
 	public CPPASTConditionalExpression(IASTExpression condition, IASTExpression postive, IASTExpression negative) {
     	setLogicalConditionExpression(condition);
     	setPositiveResultExpression(postive);
@@ -49,7 +49,7 @@ public class CPPASTConditionalExpression extends ASTNode
 	public CPPASTConditionalExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTConditionalExpression copy(CopyStyle style) {
 		CPPASTConditionalExpression copy = new CPPASTConditionalExpression();
@@ -122,7 +122,7 @@ public class CPPASTConditionalExpression extends ASTNode
 	            default: break;
 	        }
 		}
-        
+
 		if (fCondition != null && !fCondition.accept(action))
 			return false;
 		if (fPositive != null && !fPositive.accept(action))
@@ -132,7 +132,7 @@ public class CPPASTConditionalExpression extends ASTNode
 
 		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
-        
+
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
@@ -179,21 +179,21 @@ public class CPPASTConditionalExpression extends ASTNode
 			if (fCondition == null || fNegative == null) {
 				fEval= EvalFixed.INCOMPLETE;
 			} else {
-				final ICPPEvaluation condEval = ((ICPPEvaluationOwner)fCondition).getEvaluation();
-				final ICPPEvaluation posEval = fPositive == null ? null : ((ICPPEvaluationOwner)fPositive).getEvaluation();
-				final ICPPEvaluation negEval = ((ICPPEvaluationOwner)fNegative).getEvaluation();
+				final ICPPEvaluation condEval = ((ICPPEvaluationOwner) fCondition).getEvaluation();
+				final ICPPEvaluation posEval = fPositive == null ? null : ((ICPPEvaluationOwner) fPositive).getEvaluation();
+				final ICPPEvaluation negEval = ((ICPPEvaluationOwner) fNegative).getEvaluation();
 				fEval= new EvalConditional(condEval, posEval, negEval,
 						isThrowExpression(fPositive), isThrowExpression(fNegative), this);
 			}
 		}
 		return fEval;
 	}
-	
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);
     }
-    
+
 	@Override
 	public ValueCategory getValueCategory() {
     	return getEvaluation().getValueCategory(this);

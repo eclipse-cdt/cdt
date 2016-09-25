@@ -48,7 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 public class CPPASTConstructorChainInitializer extends ASTNode implements
         ICPPASTConstructorChainInitializer, IASTImplicitNameOwner, ICPPASTCompletionContext {
     private IASTName name;
-	private IASTImplicitName[] implicitNames; 
+	private IASTImplicitName[] implicitNames;
     private IASTInitializer initializer;
 	private boolean fIsPackExpansion;
 
@@ -153,9 +153,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 					bindings[j] = binding;
 				j++;
 			} else if (binding instanceof ICPPConstructor || binding instanceof ICPPClassType) {
-				if (baseClasses == null) 
+				if (baseClasses == null)
 					baseClasses = getBaseClasses(n);
-				
+
 				if (baseClasses.containsKey(binding.getNameCharArray())) {
 					if (i != j)
 						bindings[j] = binding;
@@ -230,7 +230,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
         } else if (expression instanceof IASTInitializer) {
         	setInitializer((IASTInitializer) expression);
         } else {
-        	
+
         	ctorInit.setExpression(expression);
         	ctorInit.setOffsetAndLength((ASTNode) expression);
         	setInitializer(ctorInit);
@@ -255,9 +255,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 			}
     	}
 
-    	return implicitNames;  
+    	return implicitNames;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

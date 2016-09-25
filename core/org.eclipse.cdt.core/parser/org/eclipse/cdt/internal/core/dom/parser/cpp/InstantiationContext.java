@@ -33,7 +33,7 @@ public final class InstantiationContext {
 	private final IASTNode point;
 	private boolean expandPack;
 	private boolean packExpanded;
-	
+
 	// During the instantiation of a function body, stores mapping from local variables
 	// (including function parameters) to their instantiated versions.
 	// TODO(nathanridge): Get rid of this, replacing it with something analogous to
@@ -135,7 +135,7 @@ public final class InstantiationContext {
 	 * {@code null}.
 	 */
 	public final ICPPTypeSpecialization getContextTypeSpecialization() {
-		return contextSpecialization instanceof ICPPTypeSpecialization ? (ICPPTypeSpecialization)contextSpecialization : null;
+		return contextSpecialization instanceof ICPPTypeSpecialization ? (ICPPTypeSpecialization) contextSpecialization : null;
 	}
 
 	/**
@@ -230,16 +230,16 @@ public final class InstantiationContext {
 			return (ICPPClassSpecialization) owner;
 		return null;
 	}
-	
+
 	public void putInstantiatedLocal(IBinding local, IBinding instantiatedLocal) {
 		if (fInstantiatedLocals == null) {
 			fInstantiatedLocals = new HashMap<>();
 		}
 		fInstantiatedLocals.put(local, instantiatedLocal);
 	}
-	
+
 	public IBinding getInstantiatedLocal(IBinding local) {
-		return fInstantiatedLocals == null ? null : fInstantiatedLocals.get(local);		
+		return fInstantiatedLocals == null ? null : fInstantiatedLocals.get(local);
 	}
 
 }

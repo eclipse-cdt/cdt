@@ -71,26 +71,26 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	}
 
 	private ICPPMethod[] createMethods() {
-		boolean needConversionOperator= 
+		boolean needConversionOperator=
 			fLambdaExpression.getCaptureDefault() == CaptureDefault.UNSPECIFIED &&
 			fLambdaExpression.getCaptures().length == 0;
-		
+
 		final ICPPClassScope scope= getCompositeScope();
 		ICPPMethod[] result= new ICPPMethod[needConversionOperator ? 6 : 5];
 
 		// Deleted default constructor: A()
 		CPPImplicitConstructor ctor=
-				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, 
+				new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY,
 						ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, fLambdaExpression);
 		ctor.setDeleted(true);
 		result[0]= ctor;
-		
+
 		// Copy constructor: A(const A &)
 		IType pType = new CPPReferenceType(SemanticUtil.constQualify(this), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps, fLambdaExpression);
 		result[1]= ctor;
-		
+
 		// Deleted copy assignment operator: A& operator = (const A &)
 		IType refType = new CPPReferenceType(this, false);
 		ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
@@ -101,7 +101,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		ft= CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false, false);
 		m = new CPPImplicitMethod(scope, new char[] {'~'}, ft, ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, false);
 		result[3]= m;
-		
+
 		// Function call operator
 		final IType returnType= getReturnType();
 		final IType[] parameterTypes= getParameterTypes();
@@ -116,7 +116,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 			public boolean isImplicit() { return false; }
 		};
 		result[4]= m;
-		
+
 		// Conversion operator
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
@@ -168,7 +168,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 				}
 			}
 		}
-		return CPPSemantics.VOID_TYPE;		
+		return CPPSemantics.VOID_TYPE;
 	}
 
 	private IType[] getParameterTypes() {
@@ -178,7 +178,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		return IType.EMPTY_TYPE_ARRAY;
 	}
-	
+
 	@Override
 	public final String getName() {
 		return ""; //$NON-NLS-1$
@@ -226,7 +226,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -237,7 +237,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 			return false;
 		return fLambdaExpression.getFileLocation().equals(((CPPClosureType) type).fLambdaExpression.getFileLocation());
 	}
-	
+
 	@Override
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
@@ -289,7 +289,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
@@ -308,7 +308,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		return null;
 	}
-	
+
 	/**
 	 * For debugging purposes, only.
 	 */
@@ -321,12 +321,12 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(fLambdaExpression, true);
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
-	
+
 	@Override
 	public IASTNode getDefinition() {
 		return fLambdaExpression;
@@ -447,7 +447,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		public IBinding[] getBindings(ScopeLookupData lookup) {
 			if (lookup.getLookupName() instanceof ICPPASTTemplateId)
 				return IBinding.EMPTY_BINDING_ARRAY;
-			
+
 			if (lookup.isPrefixLookup())
 				return getPrefixBindings(lookup.getLookupKey());
 			return getBindings(lookup.getLookupKey());

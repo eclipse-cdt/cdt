@@ -38,8 +38,8 @@ public class EvalFixed extends CPPEvaluation {
 	public static final ICPPEvaluation INCOMPLETE =
 			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, IntegralValue.ERROR);
 
-	
-	
+
+
 	private final IType fType;
 	private final IValue fValue;
 	private final ValueCategory fValueCategory;
@@ -225,7 +225,7 @@ public class EvalFixed extends CPPEvaluation {
 	public boolean referencesTemplateParameter() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return fType.toString() + ": " + fValue.toString(); //$NON-NLS-1$

@@ -7,14 +7,14 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 /**
  * Represents the possible cv-qualification of a type.
  */
 public enum CVQualifier {
-	CONST_VOLATILE_RESTRICT(1 | 2 | 4), CONST_VOLATILE(1 | 2), CONST_RESTRICT(1 | 4), CONST(1), 
+	CONST_VOLATILE_RESTRICT(1 | 2 | 4), CONST_VOLATILE(1 | 2), CONST_RESTRICT(1 | 4), CONST(1),
 	VOLATILE_RESTRICT(2 | 4), VOLATILE(2), RESTRICT(4), NONE(0);
 
 	private static final int C = 1;
@@ -44,7 +44,7 @@ public enum CVQualifier {
 	}
 
 	public boolean isMoreQualifiedThan(CVQualifier other) {
-		return this != other && isAtLeastAsQualifiedAs(other); 
+		return this != other && isAtLeastAsQualifiedAs(other);
 	}
 
 	public CVQualifier add(CVQualifier cvq) {
@@ -73,11 +73,11 @@ public enum CVQualifier {
 	 * ordering on cv-qualifiers, so that a type can be said to be more
 	 * cv-qualified than another.
 	 * @return <ul>
-	 * <li>7 if cv1 == const volatile restrict cv2 
+	 * <li>7 if cv1 == const volatile restrict cv2
 	 * <li>6 if cv1 == volatile restrict cv2
 	 * <li>5 if cv1 == const restrict cv2
 	 * <li>4 if cv1 == restrict cv2
-	 * <li>3 if cv1 == const volatile cv2 
+	 * <li>3 if cv1 == const volatile cv2
 	 * <li>2 if cv1 == volatile cv2
 	 * <li>1 if cv1 == const cv2
 	 * <li>EQ 0 if cv1 == cv2

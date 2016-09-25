@@ -40,7 +40,7 @@ public class CPPASTDefaultStatement extends CPPASTAttributeOwner implements IAST
 		}
         return true;
     }
-    
+
     @Override
 	public CPPASTDefaultStatement copy() {
 		return copy(CopyStyle.withoutLocations);

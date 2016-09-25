@@ -41,7 +41,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	private boolean fIsValueDependent;
 
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IASTNode pointOfDefinition) {
-		this(kind, type1, type2, findEnclosingTemplate(pointOfDefinition));		
+		this(kind, type1, type2, findEnclosingTemplate(pointOfDefinition));
 	}
 
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IBinding templateDefinition) {
@@ -104,7 +104,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 		}
 		return fIsValueDependent;
 	}
-	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
 		return true;

@@ -45,7 +45,7 @@ public class CASTBinaryExpression extends ASTNode
 		setOperand1(operand1);
 		setOperand2(operand2);
 	}
-	
+
 	@Override
 	public CASTBinaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -114,7 +114,7 @@ public class CASTBinaryExpression extends ASTNode
     	if (operand1 instanceof IASTBinaryExpression || operand2 instanceof IASTBinaryExpression) {
     		return acceptWithoutRecursion(this, action);
     	}
-    	
+
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -122,13 +122,13 @@ public class CASTBinaryExpression extends ASTNode
 	            default: break;
 	        }
 		}
-        
-		if (operand1 != null && !operand1.accept(action)) 
+
+		if (operand1 != null && !operand1.accept(action))
 			return false;
-		if (operand2 != null && !operand2.accept(action)) 
+		if (operand2 != null && !operand2.accept(action))
 			return false;
-        
-		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
+
+		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
 		return true;
@@ -143,7 +143,7 @@ public class CASTBinaryExpression extends ASTNode
 			fExpression = expr;
 		}
 	}
-	
+
 	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
 		N stack= new N(bexpr);
 		while (stack != null) {
@@ -151,9 +151,9 @@ public class CASTBinaryExpression extends ASTNode
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
 					switch (action.visit(expr)) {
-					case ASTVisitor.PROCESS_ABORT: 
+					case ASTVisitor.PROCESS_ABORT:
 						return false;
-					case ASTVisitor.PROCESS_SKIP: 
+					case ASTVisitor.PROCESS_SKIP:
 						stack= stack.fNext;
 						continue;
 					}
@@ -166,33 +166,33 @@ public class CASTBinaryExpression extends ASTNode
 					stack= n;
 					continue;
 				}
-				if (op1 != null && !op1.accept(action)) 
+				if (op1 != null && !op1.accept(action))
 					return false;
 			}
 			if (stack.fState == 1) {
 				stack.fState= 2;
-		        
+
 				IASTExpression op2 = expr.getOperand2();
 				if (op2 instanceof IASTBinaryExpression) {
 					N n= new N((IASTBinaryExpression) op2);
 					n.fNext= stack;
 					stack= n;
 					continue;
-				} 
-				if (op2 != null && !op2.accept(action)) 
+				}
+				if (op2 != null && !op2.accept(action))
 					return false;
 			}
-			
-			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT) 
+
+			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT)
 				return false;
-		
+
 			stack= stack.fNext;
 		}
-		
+
 		return true;
 	}
 
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == operand1) {
@@ -206,7 +206,7 @@ public class CASTBinaryExpression extends ASTNode
             operand2 = (IASTExpression) other;
         }
     }
-    
+
     @Override
 	public IType getExpressionType() {
         final int op = getOperator();
@@ -258,7 +258,7 @@ public class CASTBinaryExpression extends ASTNode
 				(type.isRestrict() ? CPointerType.IS_RESTRICT : 0) |
 				(type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
 	}
-    
+
 	@Override
 	public boolean isLValue() {
 		switch (getOperator()) {
@@ -277,7 +277,7 @@ public class CASTBinaryExpression extends ASTNode
 		}
 		return false;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;

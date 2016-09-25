@@ -46,12 +46,12 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
     public CASTDeclarator(IASTName name) {
 		setName(name);
 	}
-    
+
 	public CASTDeclarator(IASTName name, IASTInitializer initializer) {
 		setInitializer(initializer);
 		setName(name);
 	}
-	
+
 	@Override
 	public CASTDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -61,7 +61,7 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 	public CASTDeclarator copy(CopyStyle style) {
 		return copy(new CASTDeclarator(), style);
 	}
-	
+
 	protected <T extends CASTDeclarator> T copy(T copy, CopyStyle style) {
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
@@ -143,7 +143,7 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 	            default: break;
 	        }
 		}
-        
+
         for (int i = 0; i <= pointerOpsPos; i++) {
             if (!pointerOps[i].accept(action))
             	return false;
@@ -167,7 +167,7 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
         if (nestedDeclarator != null && !nestedDeclarator.accept(action)) {
         	return false;
         }
-        
+
         if (!postAccept(action))
 			return false;
 
@@ -176,14 +176,14 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 		}
 		return true;
     }
-    
+
     protected boolean postAccept(ASTVisitor action) {
         if (initializer != null && !initializer.accept(action))
         	return false;
-        
+
 		return true;
     }
-	
+
 	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == this.name) {
@@ -194,14 +194,14 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
                     return r_definition;
                 if (getParent instanceof IASTSimpleDeclaration) {
 					IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-	                int storage = sd.getDeclSpecifier().getStorageClass(); 
+	                int storage = sd.getDeclSpecifier().getStorageClass();
 					if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
 	                    return r_definition;
-					
+
 					if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
 	                    return r_declaration;
 	                }
-					
+
 					return fnDtor ? r_declaration : r_definition;
                 }
             }
@@ -228,7 +228,7 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 				if (t instanceof IASTTypeId)
 					return r_reference;
 			}
-			
+
 	        if (getParent instanceof IASTParameterDeclaration)
 	            return (n.toCharArray().length > 0) ? r_definition : r_declaration;
 		}

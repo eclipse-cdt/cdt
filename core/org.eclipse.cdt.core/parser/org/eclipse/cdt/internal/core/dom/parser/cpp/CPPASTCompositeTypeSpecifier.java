@@ -53,12 +53,12 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		}
 		fAmbiguitiesResolved= true;
 	}
-	
+
 	@Override
 	public CPPASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTCompositeTypeSpecifier copy(CopyStyle style) {
 		CPPASTCompositeTypeSpecifier copy =
@@ -140,7 +140,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	public void addMemberDeclaration(IASTDeclaration decl) {
 		if (decl == null)
 			return;
-		
+
 		// ignore inactive visibility labels
 		if (decl instanceof ICPPASTVisibilityLabel && !decl.isActive())
 			return;
@@ -152,7 +152,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 				++fDeclarationsPos, decl);
 		fActiveDeclarations= null;
 	}
-    
+
     @Override
 	public final void addDeclaration(IASTDeclaration decl) {
     	addMemberDeclaration(decl);
@@ -168,7 +168,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		}
 		return fScope;
 	}
-    	
+
     @Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
@@ -181,13 +181,13 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
-		
+
 		if (fName != null && !fName.accept(action))
 			return false;
 
 		if (virtSpecifier != null && !virtSpecifier.accept(action))
 			return false;
-		
+
 		ICPPASTBaseSpecifier[] bases = getBaseSpecifiers();
 		for (int i = 0; i < bases.length; i++) {
 			if (!bases[i].accept(action))
@@ -199,13 +199,13 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 			if (!decls[i].accept(action))
 				return false;
 		}
-		
-		if (action.shouldVisitDeclSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
+
+		if (action.shouldVisitDeclSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
 		return true;
 	}
-	
+
 	@Override
 	public int getRoleForName(IASTName name) {
 		if (name == this.fName)

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -33,7 +33,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 		super(null);
 		fEvaluation= evaluation;
 	}
-	
+
 	public ICPPEvaluation getEvaluation() {
 		return fEvaluation;
 	}
@@ -43,7 +43,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 		return type instanceof TypeOfDependentExpression
 				&& fEvaluation == ((TypeOfDependentExpression) type).fEvaluation;
 	}
-	
+
 	@Override
 	public TypeOfDependentExpression clone() {
 		return (TypeOfDependentExpression) super.clone();
@@ -65,7 +65,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 		buffer.putShort(ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE);
 		buffer.marshalEvaluation(fEvaluation, false);
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ISerializableEvaluation eval= buffer.unmarshalEvaluation();
 		if (eval instanceof ICPPEvaluation)

@@ -155,7 +155,7 @@ public class CPPEnumerator extends PlatformObject
 		final IASTNode parent= enumName.getParent();
 		if (parent instanceof ASTEnumerator)
 			return ((ASTEnumerator) parent).getIntegralValue();
-		
+
 		return IntegralValue.UNKNOWN;
 	}
 

@@ -55,7 +55,7 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Qualified name, which can contain any other name (unqualified, operator-name, conversion name, 
+ * Qualified name, which can contain any other name (unqualified, operator-name, conversion name,
  * template id).
  */
 public class CPPASTQualifiedName extends CPPASTNameBase
@@ -77,12 +77,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Deprecated
 	public CPPASTQualifiedName() {
 	}
-	
+
 	@Override
 	public CPPASTQualifiedName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTQualifiedName copy(CopyStyle style) {
 		CPPASTQualifiedName copy =
@@ -112,7 +112,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		// The whole qualified name resolves to the same thing as the last name.
 		return getLastName().getPreBinding();
     }
-    
+
 	@Override
 	public IBinding getBinding() {
 		return getLastName().getBinding();
@@ -129,7 +129,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			addNameSpecifier(fLastName);
 		setLastName((ICPPASTName) name);
 	}
-	
+
 	@Override
 	public void setLastName(ICPPASTName lastName) {
 		assertNotFrozen();
@@ -138,7 +138,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		fLastName.setParent(this);
 		fLastName.setPropertyInParent(SEGMENT_NAME);
 	}
-	
+
 	@Override
 	public void addNameSpecifier(ICPPASTNameSpecifier nameSpecifier) {
 		assertNotFrozen();
@@ -154,11 +154,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public ICPPASTNameSpecifier[] getQualifier() {
 		if (fQualifierPos < 0)
 			return ICPPASTNameSpecifier.EMPTY_NAME_SPECIFIER_ARRAY;
-		
+
 		fQualifier = ArrayUtil.trimAt(ICPPASTNameSpecifier.class, fQualifier, fQualifierPos);
 		return fQualifier;
 	}
-	
+
 	@Override
 	public ICPPASTNameSpecifier[] getAllSegments() {
 		ICPPASTNameSpecifier[] result = new ICPPASTNameSpecifier[fQualifierPos + (fLastName == null ? 1 : 2)];
@@ -179,12 +179,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public char[] getSimpleID() {
 		return fLastName.getSimpleID();
 	}
-	
+
 	@Override
 	public char[] getLookupKey() {
 		return fLastName.getLookupKey();
 	}
-	
+
 	@Override
 	public char[] toCharArray() {
 		if (fSignature == null) {
@@ -245,7 +245,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		// don't visit it.
 		if (fLastName != null && fLastName.getLookupKey().length > 0 && !fLastName.accept(action))
 			return false;
-		
+
 		if (action.shouldVisitNames) {
 			switch (action.leave(this)) {
 			case ASTVisitor.PROCESS_ABORT:
@@ -256,10 +256,10 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				break;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
         IASTNode parent = getParent();
@@ -275,36 +275,36 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Override
 	public int getRoleForName(IASTName n) {
 		for (int i=0; i <= fQualifierPos; ++i) {
-			if (fQualifier[i] == n) 
+			if (fQualifier[i] == n)
 				return r_reference;
 		}
 		if (getLastName() == n) {
 			IASTNode p = getParent();
 			if (p instanceof IASTNameOwner) {
-				return ((IASTNameOwner)p).getRoleForName(this);
+				return ((IASTNameOwner) p).getRoleForName(this);
 			}
 		}
 		return r_unclear;
 	}
-	
+
 	@Override
 	public boolean isConversionOrOperator() {
 		final IASTName lastName= getLastName();
 		if (lastName instanceof ICPPASTConversionName || lastName instanceof ICPPASTOperatorName) {
 			return true;
 		}
-		
+
 		// check templateId's name
 		if (lastName instanceof ICPPASTTemplateId) {
-			IASTName tempName = ((ICPPASTTemplateId)lastName).getTemplateName();
+			IASTName tempName = ((ICPPASTTemplateId) lastName).getTemplateName();
 			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-    
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
@@ -341,7 +341,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 		return bindings;
 	}
-	
+
 	private boolean canBeFieldAccess(ICPPClassType baseClass) {
 		IASTNode parent= getParent();
 		if (parent instanceof IASTFieldReference) {
@@ -350,7 +350,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		if (parent instanceof IASTIdExpression) {
 			IScope scope= CPPVisitor.getContainingScope(this);
 			try {
-				while(scope != null) {
+				while (scope != null) {
 					if (scope instanceof ICPPClassScope) {
 						ICPPClassType classType = ((ICPPClassScope) scope).getClassType();
 						if (SemanticUtil.calculateInheritanceDepth(classType, baseClass, this) >= 0) {
@@ -402,7 +402,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 		return filtered;
 	}
-	
+
 	private static boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
 		if (isPrefix)
 			return ContentAssistMatcherFactory.getInstance().match(name, potential);
@@ -414,7 +414,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		Assert.isLegal(false);
 		return null;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

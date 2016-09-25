@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -20,7 +20,7 @@ public interface ICPPInternalNamespaceScope extends ICPPNamespaceScope {
 	public ICPPInternalNamespaceScope[] EMPTY_NAMESPACE_SCOPE_ARRAY = {};
 
 	/**
-	 * Returns the enclosing namespace set (7.3.1-9) 
+	 * Returns the enclosing namespace set (7.3.1-9)
 	 */
 	public ICPPNamespaceScope[] getEnclosingNamespaceSet();
 
@@ -28,7 +28,7 @@ public interface ICPPInternalNamespaceScope extends ICPPNamespaceScope {
 	 * Returns whether this namespace scope is inline.
 	 */
 	public boolean isInlineNamepace();
-	
+
 	/**
 	 * Returns the inline namespace scopes mapped back to the AST.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2012, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -43,7 +43,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	public ICPPAliasTemplate getTemplateDefinition() {
 		return aliasTemplate;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType other) {
 		if (other == aliasedType)

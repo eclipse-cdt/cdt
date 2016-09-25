@@ -94,7 +94,7 @@ public class CPPInheritance {
 				}
 			}
 		}
-		
+
 		/**
 		 * Merges the overriders from 'source' into 'target'.
 		 * Excludes methods in 'source' which themselves have an overrider in 'target'.
@@ -119,7 +119,7 @@ public class CPPInheritance {
 	/**
 	 * Returns the final overrider map for a class hierarchy.
 	 * Final overrider maps are cached in the AST.
-	 * 
+	 *
 	 * @param classType the root of the class hierarchy
 	 * @param point The point of template instantiation, if applicable.
 	 *              Also used to access the cache in the AST.
@@ -142,15 +142,15 @@ public class CPPInheritance {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * If a given virtual method has a unique final overrider in the class hierarchy rooted at the
-	 * given class, returns that final overrider. Otherwise, returns null. 
+	 * given class, returns that final overrider. Otherwise, returns null.
 
 	 * @param point The point of template instantiation, if applicable.
 	 *              Also used to access the final overrider map cache in the AST.
 	 */
-	public static ICPPMethod getFinalOverrider(ICPPMethod method, ICPPClassType hierarchyRoot, 
+	public static ICPPMethod getFinalOverrider(ICPPMethod method, ICPPClassType hierarchyRoot,
 			IASTNode point) {
 		FinalOverriderMap map = getFinalOverriderMap(hierarchyRoot, point);
 		Map<Integer, List<ICPPMethod>> finalOverriders = map.getMap().get(method);
@@ -164,7 +164,7 @@ public class CPPInheritance {
 		}
 		return null;
 	}
-	
+
 	private static class FinalOverriderAnalysis {
 		/**
 		 * Computes the final overrider map for a class hierarchy.
@@ -256,7 +256,7 @@ public class CPPInheritance {
 					  ((ICPPClassType) method.getOwner()).isSameType(classType))) {
 					continue;
 				}
-				
+
 				// For purposes of this computation, every virtual method is
 				// deemed for override itself.
 				result.add(method, subobjectNumber, method);

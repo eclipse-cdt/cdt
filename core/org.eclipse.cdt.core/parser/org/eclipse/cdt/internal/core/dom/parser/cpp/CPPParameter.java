@@ -58,7 +58,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		this.fDeclarations = new IASTName[] { name };
 		fPosition= pos;
 	}
-	
+
 	public CPPParameter(IType type, int pos) {
 	    this.fType = type;
 	    fPosition= pos;
@@ -94,7 +94,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 			}
 	    }
 	}
-	
+
 	private boolean isDeclaredBefore(ASTNode n1, ASTNode n2) {
 		if (n1.getLength() == 0)
 			return false;
@@ -109,7 +109,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	            IASTNode node = fDeclarations[i].getParent();
 	            while (!(node instanceof IASTDeclaration))
 	                node = node.getParent();
-	            
+
 	            if (node instanceof IASTFunctionDefinition)
 	                return fDeclarations[i];
 	        }
@@ -203,7 +203,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
-    
+
     public boolean hasStorageClass(int storage) {
 		IASTNode[] ns = getDeclarations();
 		if (ns == null)
@@ -235,12 +235,12 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean hasDefaultValue() {
 		return getInitializer() != null;
 	}
-	
+
 	@Override
 	public IValue getDefaultValue() {
 		IASTInitializer init = getInitializer();
@@ -249,7 +249,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
 		return null;
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
@@ -259,13 +259,13 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	public boolean isExternC() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		String name = getName();
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		IASTFunctionDeclarator decl =
@@ -287,7 +287,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		IBinding current= name.getPreBinding();
 		if (current != this)
 			return current;
-		
+
 		IASTNode node= getPrimaryDeclaration();
 		while (node != null && !(node instanceof IASTFunctionDeclarator)) {
 			node= node.getParent();

@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -48,16 +48,16 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 		IASTNode definition = getDefinition();
 		if (definition != null) {
 			IASTNode node = definition.getParent();
-			while(node instanceof IASTDeclarator)
+			while (node instanceof IASTDeclarator)
 				node = node.getParent();
-			
+
 			ICPPASTDeclSpecifier declSpec = null;
 			if (node instanceof IASTSimpleDeclaration) {
 				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
 			} else if (node instanceof IASTFunctionDefinition) {
 				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) node).getDeclSpecifier();
 			}
-			
+
 			if (declSpec != null) {
 				return declSpec.isVirtual();
 			}
@@ -77,7 +77,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();

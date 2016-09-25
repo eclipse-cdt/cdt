@@ -37,7 +37,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
     private IBinding binding;
-    
+
     public CASTName(char[] name) {
         this.name = name;
     }
@@ -50,7 +50,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 	public CASTName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CASTName copy(CopyStyle style) {
 		CASTName copy = new CASTName(name == null ? null : name.clone());
@@ -65,7 +65,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 
         return binding;
     }
-    
+
     @Override
 	public IBinding resolvePreBinding() {
     	return resolveBinding();
@@ -75,7 +75,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 	public IBinding getBinding() {
         return binding;
     }
-    
+
     @Override
 	public IBinding getPreBinding() {
         return binding;
@@ -117,7 +117,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 	public char[] getSimpleID() {
 		return name;
 	}
-	
+
 	@Override
 	public char[] getLookupKey() {
 		return name;
@@ -135,7 +135,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
                 break;
             }
         }
-        
+
         if (action.shouldVisitNames) {
             switch (action.leave(this)) {
             case ASTVisitor.PROCESS_ABORT:
@@ -235,8 +235,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof ICompositeType) {
 				ICompositeType type = (ICompositeType) bindings[i];
-				
-				switch (type.getKey()) { 
+
+				switch (type.getKey()) {
 				case ICompositeType.k_struct:
 					if (kind != IASTElaboratedTypeSpecifier.k_struct) {
 						bindings[i] = null;

@@ -20,16 +20,16 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public class ASTPreprocessorSelectionResult  {
 	IASTNode selectedNode = null;
 	int globalOffset = 0;
-	
+
 	public ASTPreprocessorSelectionResult(IASTNode node, int offset) {
 		this.selectedNode = node;
 		this.globalOffset = offset;
 	}
-	
+
 	public IASTNode getSelectedNode() {
 		return selectedNode;
 	}
-	
+
 	public void setSelectedNode(IASTNode selectedNode) {
 		this.selectedNode = selectedNode;
 	}
@@ -37,10 +37,10 @@ public class ASTPreprocessorSelectionResult  {
 	public int getGlobalOffset() {
 		return globalOffset;
 	}
-	
+
 
 	public void setGlobalOffset(int globalOffset) {
 		this.globalOffset = globalOffset;
 	}
-	
+
 }

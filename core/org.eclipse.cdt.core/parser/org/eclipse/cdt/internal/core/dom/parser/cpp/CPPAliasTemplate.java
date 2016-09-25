@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,13 +34,13 @@ public class CPPAliasTemplate extends PlatformObject
 	private final IASTName aliasName;
 	private final IType aliasedType;
 	private ICPPTemplateParameter[] templateParameters;
-	
+
 	public CPPAliasTemplate(IASTName aliasName, IType aliasedType) {
 		this.aliasName = aliasName;
 		this.aliasedType = aliasedType;
 		aliasName.setBinding(this);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return aliasedType;
@@ -79,7 +79,7 @@ public class CPPAliasTemplate extends PlatformObject
 		IType aliasedType = getType();
 		return type.isSameType(aliasedType);
 	}
-	
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -125,7 +125,7 @@ public class CPPAliasTemplate extends PlatformObject
 		}
 		return templateParameters;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
@@ -134,7 +134,7 @@ public class CPPAliasTemplate extends PlatformObject
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		int pos= templateParameter.getParameterPosition();
-		
+
 		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(aliasName).getTemplateParameters();
 		if (pos < params.length) {
 			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);

@@ -94,7 +94,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		if (decl == null) {
 			IScope scope = getScope();
 			if (scope instanceof ICPPClassScope) {
-				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
+				ICPPClassType cls = ((ICPPClassScope) scope).getClassType();
 				if (cls != null)
 					return (cls.getKey() == ICPPClassType.k_class) ? ICPPASTVisibilityLabel.v_private : ICPPASTVisibilityLabel.v_public;
 			}
@@ -156,9 +156,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	protected ICPPASTDeclSpecifier getDeclSpec(IASTDeclaration decl) {
 		ICPPASTDeclSpecifier declSpec = null;
 		if (decl instanceof IASTSimpleDeclaration) {
-			declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+			declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 		} else if (decl instanceof IASTFunctionDefinition) {
-			declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
+			declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl).getDeclSpecifier();
 		}
 		return declSpec;
 	}
@@ -171,7 +171,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		if (decl == null)
 			return false;
 
-        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
         return declSpec.isInline();
     }
 
@@ -209,7 +209,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     @Override
 	public boolean isPureVirtual() {
 		ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
-    	if(declarator != null){
+    	if (declarator != null) {
     		return declarator.isPureVirtual();
     	}
     	return false;
@@ -218,7 +218,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     @Override
     public boolean isFinal() {
     	ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
-    	if(declarator != null){
+    	if (declarator != null) {
     		return declarator.isFinal();
     	}
     	return false;
@@ -227,13 +227,13 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     @Override
     public boolean isOverride() {
     	ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
-    	if(declarator != null){
+    	if (declarator != null) {
     		return declarator.isOverride();
     	}
     	return false;
     }
 
-    private ICPPASTFunctionDeclarator findFunctionDeclarator(){
+    private ICPPASTFunctionDeclarator findFunctionDeclarator() {
     	if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null)

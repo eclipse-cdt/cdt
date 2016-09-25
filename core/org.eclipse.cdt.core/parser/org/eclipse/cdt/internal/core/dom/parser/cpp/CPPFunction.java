@@ -155,7 +155,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			declarations = new IASTDeclarator[] { dtor };
 		} else {
 			// Keep the lowest offset declaration in [0]
-			if (((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
+			if (((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(declarations, dtor);
 			} else {
 				declarations = ArrayUtil.append(declarations, dtor);
@@ -177,7 +177,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         IASTDeclarator[] dtors = getDeclarations();
         if (dtors != null) {
     		// In case of multiple function declarations we select the one with the most
-    		// default parameter values. 
+    		// default parameter values.
 			int defaultValuePosition = -1;
         	for (IASTDeclarator dtor : dtors) {
         		if (dtor instanceof ICPPASTFunctionDeclarator) {
@@ -308,7 +308,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 				t = getNestedType(t, TDEF);
 				if (t instanceof ICPPFunctionType) {
 					type = (ICPPFunctionType) t;
-				} else if (t instanceof ISemanticProblem){
+				} else if (t instanceof ISemanticProblem) {
 					type= new ProblemFunctionType(((ISemanticProblem) t).getID());
 				} else {
 					// This case is unexpected
@@ -410,7 +410,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 //        IASTDeclSpecifier declSpec = null;
 //        IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getDefinition();
 //        if (dtor != null) {
-//	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+//	        declSpec = ((IASTFunctionDefinition) dtor.getParent()).getDeclSpecifier();
 //	        if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static) {
 //	            bits |= 3 << 2;
 //	            return true;
@@ -421,7 +421,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 //        if (dtors != null) {
 //	        for (int i = 0; i < dtors.length; i++) {
 //	            IASTNode parent = dtors[i].getParent();
-//	            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+//	            declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 //	            if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static) {
 //	                bits |= 3 << 2;
 //	                return true;
@@ -512,9 +512,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	            IASTDeclSpecifier declSpec = null;
 	            if (parent instanceof IASTSimpleDeclaration) {
-	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	                declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 	            } else if (parent instanceof IASTFunctionDefinition) {
-	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	                declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
 	            }
 
 	            if (declSpec != null && declSpec.isInline())
@@ -570,7 +570,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	static boolean isDeletedDefinition(IASTNode def) {
 		ICPPASTFunctionDefinition functionDefinition = getFunctionDefinition(def);
-		if (functionDefinition != null) 
+		if (functionDefinition != null)
 			return functionDefinition.isDeleted();
 		return false;
 	}
@@ -660,7 +660,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	public boolean hasParameterPack() {
 		return hasParameterPack(getParameters());
 	}
-	
+
 	public static boolean hasParameterPack(ICPPParameter[] pars) {
 		return pars.length > 0 && pars[pars.length - 1].isParameterPack();
 	}
@@ -715,7 +715,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		}
 		return null;
 	}
-	
+
 	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function, IASTNode point) {
 		if (function instanceof ICPPComputableFunction) {
 			return ((ICPPComputableFunction) function).getFunctionBodyExecution(point);
@@ -725,7 +725,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	@Override
 	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
-		if(!isConstexpr())
+		if (!isConstexpr())
 			return null;
 		if (getDefinition() == null) {
 			// Trigger a search for the function definition.
@@ -738,15 +738,15 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		}
 		return computeFunctionBodyExecution(getDefinition());
 	}
-	
+
 	public static ICPPExecution computeFunctionBodyExecution(IASTNode def) {
 		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
 		if (fnDef != null) {
 			// Make sure ambiguity resolution has been performed on the function body, even
 			// if it's a class method and we're still processing the class declaration.
 			((ASTNode) fnDef).resolvePendingAmbiguities();
-			if(fnDef.getBody() instanceof CPPASTCompoundStatement) {
-				CPPASTCompoundStatement body = (CPPASTCompoundStatement)fnDef.getBody();
+			if (fnDef.getBody() instanceof CPPASTCompoundStatement) {
+				CPPASTCompoundStatement body = (CPPASTCompoundStatement) fnDef.getBody();
 				return body.getExecution();
 			}
 		}

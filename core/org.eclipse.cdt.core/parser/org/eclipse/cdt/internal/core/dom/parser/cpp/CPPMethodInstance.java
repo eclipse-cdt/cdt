@@ -38,7 +38,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
-	
+
     @Override
 	public boolean isVirtual() {
         return ((ICPPMethod) getTemplateDefinition()).isVirtual();
@@ -48,7 +48,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	public boolean isPureVirtual() {
         return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();
 	}
-	
+
 	@Override
 	public boolean isExplicit() {
 		return ((ICPPMethod) getTemplateDefinition()).isExplicit();
@@ -59,7 +59,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;
-		
+
 		return false;
 	}
 

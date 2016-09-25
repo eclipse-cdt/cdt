@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -45,7 +45,7 @@ public class CPPEnumScope extends CPPScope implements ICPPEnumScope {
 		IBinding binding = name.resolveBinding();
 		if (binding instanceof ICPPEnumeration)
 			return (ICPPEnumeration) binding;
-		
+
 		return new CPPEnumeration.CPPEnumerationProblem(name, ISemanticProblem.BINDING_NO_CLASS, name.toCharArray());
 	}
 }

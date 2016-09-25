@@ -66,7 +66,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 			if (decl != null && decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
 				return decl;
 		}
-		
+
 		final char[] myName = getTemplateName().getLookupKey();
 		IScope scope = getScope();
 		if (scope instanceof ICPPTemplateScope) {
@@ -100,7 +100,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
@@ -126,10 +126,10 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 			return vis.getVisibility();
 		} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
 			return ICPPASTVisibilityLabel.v_private;
-		} 
+		}
 		return ICPPASTVisibilityLabel.v_public;
 	}
-	
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		IScope scope= getScope();
@@ -185,7 +185,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;
-		
+
 		return false;
 	}
 
@@ -193,7 +193,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	public boolean isImplicit() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExplicit() {
 		IASTDeclaration decl = getPrimaryDeclaration();

@@ -279,9 +279,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	private ICPPEvaluation computeEvaluation() {
 		if (fOperand1 == null || fOperand2 == null)
 			return EvalFixed.INCOMPLETE;
-		
-		ICPPEvaluation eval1 = ((ICPPEvaluationOwner)fOperand1).getEvaluation();
-		ICPPEvaluation eval2 = ((ICPPEvaluationOwner)fOperand2).getEvaluation();
+
+		ICPPEvaluation eval1 = ((ICPPEvaluationOwner) fOperand1).getEvaluation();
+		ICPPEvaluation eval2 = ((ICPPEvaluationOwner) fOperand2).getEvaluation();
 		return new EvalBinary(fOperator, eval1, eval2, this);
 	}
 

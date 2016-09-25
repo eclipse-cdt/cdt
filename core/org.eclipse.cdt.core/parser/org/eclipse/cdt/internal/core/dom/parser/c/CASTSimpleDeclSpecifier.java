@@ -33,7 +33,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	public CASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CASTSimpleDeclSpecifier copy(CopyStyle style) {
 		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
@@ -54,7 +54,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     	return super.copy(copy, style);
     }
-    
+
     @Override
 	public int getType() {
         return simpleType;
@@ -79,18 +79,18 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	public boolean isLong() {
         return isLong;
     }
-    
+
     @Override
 	public void setType(int type) {
         assertNotFrozen();
         simpleType = type;
     }
-    
+
     @Override
 	public void setType(Kind kind) {
     	setType(getType(kind));
     }
-    
+
     private int getType(Kind kind) {
     	switch (kind) {
     	case eBoolean:
@@ -126,25 +126,25 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     	}
     	return t_unspecified;
     }
-    
+
     @Override
 	public void setShort(boolean value) {
         assertNotFrozen();
         isShort = value;
     }
-    
+
     @Override
 	public void setLong(boolean value) {
         assertNotFrozen();
         isLong = value;
     }
-    
+
     @Override
 	public void setUnsigned(boolean value) {
         assertNotFrozen();
         isUnsigned = value;
     }
-    
+
     @Override
 	public void setSigned(boolean value) {
         assertNotFrozen();
@@ -163,24 +163,24 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
+
         if (!visitAlignmentSpecifiers(action)) {
         	return false;
         }
 
         if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
 			return false;
-        
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
+
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -208,7 +208,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	@Override
 	public void setImaginary(boolean value) {
         assertNotFrozen();
-		this.imaginary = value;		
+		this.imaginary = value;
 	}
 
 	@Override
@@ -225,7 +225,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
         	expression.setParent(this);
         }
 	}
-	
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fDeclTypeExpression) {

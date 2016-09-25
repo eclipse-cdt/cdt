@@ -56,7 +56,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 	public CPPASTRangeBasedForStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTRangeBasedForStatement copy(CopyStyle style) {
 		CPPASTRangeBasedForStatement copy = new CPPASTRangeBasedForStatement();
@@ -140,14 +140,14 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 						CPPASTImplicitName begin= new CPPASTImplicitName(name.toCharArray(), this);
 						begin.setBinding(name.resolveBinding());
 						begin.setOffsetAndLength(position);
-						
+
 						name = new CPPASTName(CPPVisitor.END);
 						name.setOffset(position.getOffset());
 						fieldRef.setFieldName(name);
 						CPPASTImplicitName end= new CPPASTImplicitName(name.toCharArray(), this);
 						end.setBinding(name.resolveBinding());
 						end.setOffsetAndLength(position);
-						
+
 						fImplicitNames= new IASTImplicitName[] {begin, end};
 					}
 				}
@@ -160,24 +160,24 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 						new IASTInitializerClause[] { forInit.copy() });
 				expr.setParent(this);
 				expr.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
-				
+
 				CPPASTImplicitName begin= new CPPASTImplicitName(name.toCharArray(), this);
 				begin.setBinding(name.resolveBinding());
 				begin.setOffsetAndLength(position);
-				
+
 				name = new CPPASTName(CPPVisitor.END);
 				name.setOffset(position.getOffset());
 				fname.setName(name);
 				CPPASTImplicitName end= new CPPASTImplicitName(name.toCharArray(), this);
 				end.setBinding(name.resolveBinding());
 				end.setOffsetAndLength(position);
-				
+
 				fImplicitNames= new IASTImplicitName[] {begin, end};
 			}
 		}
 		return fImplicitNames;
 	}
-	 
+
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
@@ -188,7 +188,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 	}
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitStatements) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -212,7 +212,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 
 		if (fBody != null && !fBody.accept(action))
 			return false;
-        
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -220,7 +220,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 			return false;
 		return true;
     }
-    
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fDeclaration) {
@@ -238,18 +238,18 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 
 	@Override
 	public ICPPExecution getExecution() {
-		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration)((ICPPExecutionOwner)fDeclaration).getExecution();
-		ICPPEvaluation initClauseEval = ((ICPPEvaluationOwner)fInitClause).getEvaluation();
+		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration)((ICPPExecutionOwner) fDeclaration).getExecution();
+		ICPPEvaluation initClauseEval = ((ICPPEvaluationOwner) fInitClause).getEvaluation();
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(fBody);
 		IASTImplicitName[] implicitNames = getImplicitNames();
 		ICPPFunction begin = null;
 		ICPPFunction end = null;
-		if(implicitNames.length == 2) {
+		if (implicitNames.length == 2) {
 			IBinding beginBinding = implicitNames[0].resolveBinding();
 			IBinding endBinding = implicitNames[1].resolveBinding();
 			if (beginBinding instanceof ICPPFunction && endBinding instanceof ICPPFunction) {
-				begin = (ICPPFunction)beginBinding;
-				end = (ICPPFunction)endBinding;	
+				begin = (ICPPFunction) beginBinding;
+				end = (ICPPFunction) endBinding;
 			}
 		}
 		return new ExecRangeBasedFor(declarationExec, initClauseEval, begin, end, bodyExec);

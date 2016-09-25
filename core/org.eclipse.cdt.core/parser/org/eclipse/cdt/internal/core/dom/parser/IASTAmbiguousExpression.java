@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 public interface IASTAmbiguousExpression extends IASTExpression {
 
-    public static final ASTNodeProperty SUBEXPRESSION = new ASTNodeProperty( "IASTAmbiguousExpression.SUBEXPRESSION"); //$NON-NLS-1$
-    public void addExpression( IASTExpression e );
+    public static final ASTNodeProperty SUBEXPRESSION = new ASTNodeProperty("IASTAmbiguousExpression.SUBEXPRESSION"); //$NON-NLS-1$
+    public void addExpression(IASTExpression e);
     public IASTExpression [] getExpressions();
 }

@@ -39,7 +39,7 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
     	setConditionDeclaration(condition);
 		setBody(body);
 	}
-    
+
     public CPPASTWhileStatement(IASTExpression condition, IASTStatement body) {
 		setCondition(condition);
 		setBody(body);
@@ -49,7 +49,7 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 	public CPPASTWhileStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTWhileStatement copy(CopyStyle style) {
 		CPPASTWhileStatement copy = new CPPASTWhileStatement();
@@ -117,19 +117,19 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 		}
 
         if (!acceptByAttributeSpecifiers(action)) return false;
-        if (condition != null && !condition.accept(action)) 
+        if (condition != null && !condition.accept(action))
         	return false;
-        if (condition2 != null && !condition2.accept(action)) 
+        if (condition2 != null && !condition2.accept(action))
         	return false;
-        if (body != null && !body.accept(action)) 
+        if (body != null && !body.accept(action))
         	return false;
-        
+
         if (action.shouldVisitStatements && action.leave(this) == ASTVisitor.PROCESS_ABORT)
         	return false;
 
         return true;
     }
-    
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (body == child) {
@@ -153,15 +153,15 @@ public class CPPASTWhileStatement extends CPPASTAttributeOwner implements ICPPAS
 	public IScope getScope() {
 		if (scope == null)
             scope = new CPPBlockScope(this);
-        return scope;	
+        return scope;
     }
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getCondition();
-		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner)getConditionDeclaration();
-		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null; 
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner) getCondition();
+		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
+		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
 		return new ExecWhile(conditionExprEval, conditionDeclExec, bodyExec);
 	}

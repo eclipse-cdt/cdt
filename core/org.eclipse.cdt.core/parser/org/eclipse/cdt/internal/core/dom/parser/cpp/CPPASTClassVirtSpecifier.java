@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 public class CPPASTClassVirtSpecifier extends ASTNode implements ICPPASTClassVirtSpecifier {
 	// Not much point storing the kind while there is only one.
-	
+
 	@Override
 	public SpecifierKind getKind() {
 		return SpecifierKind.Final;

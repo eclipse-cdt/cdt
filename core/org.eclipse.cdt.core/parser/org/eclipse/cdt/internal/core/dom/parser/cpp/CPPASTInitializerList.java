@@ -34,7 +34,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
     private int actualSize;
 	private boolean fIsPackExpansion;
 	private ICPPEvaluation fEvaluation;
-    
+
 	@Override
 	public CPPASTInitializerList copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -55,7 +55,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	public int getSize() {
 		return actualSize;
 	}
-	
+
 	@Override
 	public ICPPASTInitializerClause[] getClauses() {
 		if (initializers == null)
@@ -70,10 +70,10 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		IASTInitializerClause[] clauses= getClauses();
 		if (clauses.length == 0)
 			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
-		
+
 		IASTInitializer[] inits= new IASTInitializer[clauses.length];
 		for (int i = 0; i < inits.length; i++) {
-			IASTInitializerClause clause= clauses[i]; 
+			IASTInitializerClause clause= clauses[i];
 			if (clause instanceof IASTInitializer) {
 				inits[i]= (IASTInitializer) clause;
 			} else if (clause instanceof IASTExpression) {
@@ -85,7 +85,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		}
 		return inits;
 	}
-    
+
 	@Override
 	public void addClause(IASTInitializerClause d) {
         assertNotFrozen();
@@ -109,9 +109,9 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
         	addClause(null);
         }
     }
-        
+
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitInitializers) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -124,7 +124,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 			if (!clause.accept(action))
 				return false;
 		}
-        
+
 		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
@@ -141,7 +141,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		assertNotFrozen();
 		fIsPackExpansion= val;
 	}
-	
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (initializers != null) {
@@ -154,7 +154,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 			}
 		}
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
@@ -166,7 +166,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		final ICPPASTInitializerClause[] clauses = getClauses();
 		ICPPEvaluation[] evals= new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < evals.length; i++) {
-			ICPPEvaluationOwner clause = (ICPPEvaluationOwner)clauses[i];
+			ICPPEvaluationOwner clause = (ICPPEvaluationOwner) clauses[i];
 			evals[i]= clause.getEvaluation();
 		}
 		return new EvalInitList(evals, this);

@@ -39,7 +39,7 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 	public CASTTypedefNameSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTTypedefNameSpecifier copy(CopyStyle style) {
 		CASTTypedefNameSpecifier copy =
@@ -51,7 +51,7 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 	public IASTName getName() {
         return name;
     }
-   
+
     @Override
 	public void setName(IASTName name) {
         assertNotFrozen();
@@ -102,7 +102,7 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier
 				bindings[i]= null;
 			}
 		}
-		
+
 		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Rational Software - Initial API and implementation 
+ *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -28,13 +28,13 @@ import org.eclipse.core.runtime.PlatformObject;
  * Represents a typedef.
  */
 public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICInternalBinding {
-	private final IASTName name; 
+	private final IASTName name;
 	private IType type = null;
-	
+
 	public CTypedef(IASTName name) {
 		this.name = name;
 	}
-	
+
     @Override
 	public IASTNode getPhysicalNode() {
         return name;
@@ -43,10 +43,10 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 	@Override
 	public IType getType() {
 		if (type == null && name.getParent() instanceof IASTDeclarator)
-			type = CVisitor.createType((IASTDeclarator)name.getParent());
+			type = CVisitor.createType((IASTDeclarator) name.getParent());
 		return type;
 	}
-	
+
 	@Override
 	public void setType(IType t) {
 	    type = t;
@@ -86,16 +86,16 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 	    if (t instanceof ITypedef) {
 			IType temp = getType();
 			if (temp != null)
-			    return temp.isSameType(((ITypedef)t).getType());
+			    return temp.isSameType(((ITypedef) t).getType());
 			return false;
 		}
-	        
+
 	    IType temp = getType();
 	    if (temp != null)
 	        return temp.isSameType(t);
 	    return false;
     }
-    
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;

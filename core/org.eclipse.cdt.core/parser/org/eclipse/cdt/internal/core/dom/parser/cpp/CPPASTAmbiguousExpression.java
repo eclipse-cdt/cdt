@@ -24,18 +24,18 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
 		implements IASTAmbiguousExpression, ICPPASTExpression {
     private IASTExpression[] exp = new IASTExpression[2];
     private int expPos;
-    
+
     public CPPASTAmbiguousExpression(IASTExpression... expressions) {
 		for (IASTExpression e : expressions) {
 			addExpression(e);
 		}
 	}
-    
+
     @Override
 	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
-    
+
 	@Override
 	public IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();

@@ -72,7 +72,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	    }
 	    return unknownScope;
 	}
-	
+
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
@@ -119,13 +119,13 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 		}
 		return null;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IType d= getDefault();
 		if (d == null)
 			return null;
-		
+
 		return new CPPTemplateTypeArgument(d);
 	}
 
@@ -233,12 +233,12 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
-	
+
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;

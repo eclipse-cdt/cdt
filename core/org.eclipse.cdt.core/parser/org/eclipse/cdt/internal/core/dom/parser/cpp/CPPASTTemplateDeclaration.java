@@ -33,7 +33,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
     private ICPPTemplateScope templateScope;
     private ICPPASTTemplateParameter[] parameters;
     private int parametersPos= -1;
-    
+
     public CPPASTTemplateDeclaration() {
 	}
 
@@ -45,7 +45,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
 	public CPPASTTemplateDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTemplateDeclaration copy(CopyStyle style) {
 		CPPASTTemplateDeclaration copy = new CPPASTTemplateDeclaration();
@@ -114,14 +114,14 @@ public class CPPASTTemplateDeclaration extends ASTNode
 	            default: break;
 	        }
 		}
-        
+
         ICPPASTTemplateParameter[] params = getTemplateParameters();
         for (int i = 0; i < params.length; i++) {
             if (!params[i].accept(action)) return false;
         }
-        
+
         if (declaration != null && !declaration.accept(action)) return false;
-        
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -138,7 +138,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
 			templateScope = new CPPTemplateScope(this);
 		return templateScope;
 	}
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (declaration == child) {
@@ -161,7 +161,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
 	public boolean isAssociatedWithLastName() {
 		if (isAssociatedWithLastName == -1)
 			CPPTemplates.associateTemplateDeclarations(this);
-			
+
 		assert isAssociatedWithLastName != -1;
 		return isAssociatedWithLastName != 0;
 	}

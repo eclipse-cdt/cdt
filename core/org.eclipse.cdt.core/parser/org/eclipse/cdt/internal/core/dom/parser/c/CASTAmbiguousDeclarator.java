@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Assert;
 public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos= -1;
-    
+
     public CASTAmbiguousDeclarator(IASTDeclarator... decls) {
 		for (IASTDeclarator d : decls) {
 			if (d != null) {
@@ -43,7 +43,7 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 			}
 		}
 	}
-    
+
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
@@ -65,7 +65,7 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 
     @Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos); 
+    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
         return dtors;
     }
 

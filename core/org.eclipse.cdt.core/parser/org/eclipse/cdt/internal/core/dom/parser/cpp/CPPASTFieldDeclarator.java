@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
  */
 public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFieldDeclarator {
     private IASTExpression bitField;
- 
+
     public CPPASTFieldDeclarator() {
 	}
-    
+
     public CPPASTFieldDeclarator(IASTName name) {
 		super(name);
 	}
@@ -46,7 +46,7 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFi
 		copy.setBitFieldSize(bitField == null ? null : bitField.copy(style));
 		return copy(copy, style);
 	}
-	 
+
 	@Override
 	public IASTExpression getBitFieldSize() {
         return bitField;

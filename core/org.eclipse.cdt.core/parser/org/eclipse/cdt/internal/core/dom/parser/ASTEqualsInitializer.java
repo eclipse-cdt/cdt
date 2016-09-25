@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public abstract class ASTEqualsInitializer extends ASTNode
 		implements IASTEqualsInitializer, IASTAmbiguityParent {
     private IASTInitializerClause fArgument;
-    
+
     public ASTEqualsInitializer() {
 	}
 
@@ -55,10 +55,10 @@ public abstract class ASTEqualsInitializer extends ASTNode
 	            default: break;
 	        }
 		}
-        
+
 		if (fArgument != null && !fArgument.accept(action))
 			return false;
-        
+
 		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
@@ -78,7 +78,7 @@ public abstract class ASTEqualsInitializer extends ASTNode
 	public IASTExpression getExpression() {
 		if (fArgument instanceof IASTExpression)
 			return (IASTExpression) fArgument;
-		
+
 		return null;
 	}
 

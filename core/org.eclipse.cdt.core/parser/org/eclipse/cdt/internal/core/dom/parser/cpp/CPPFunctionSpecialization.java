@@ -55,7 +55,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		fType= type;
 		fExceptionSpecs= exceptionSpecs;
 	}
-	
+
 	private ICPPFunction getFunction() {
 		return (ICPPFunction) getSpecializedBinding();
 	}
@@ -64,7 +64,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		assert fParams == null;
 		fParams = params;
 	}
-	
+
 	@Override
 	public ICPPParameter[] getParameters() {
 		return fParams;
@@ -105,7 +105,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		}
 		return getFunction().isInline();
 	}
-	
+
 	@Override
 	public boolean isExternC() {
 		if (CPPVisitor.isExternC(getDefinition())) {
@@ -166,7 +166,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		IASTNode def = getDefinition();
 		if (def != null)
 			return CPPFunction.isDeletedDefinition(def);
-		
+
 		IBinding f = getSpecializedBinding();
 		if (f instanceof ICPPFunction) {
 			return ((ICPPFunction) f).isDeleted();
@@ -187,7 +187,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
 			return f.takesVarArgs();
-		
+
 		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
         if (dtor != null) {
             return dtor.takesVarArgs();
@@ -210,7 +210,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
     @Override
 	public IBinding resolveParameter(CPPParameter param) {
 		int pos= param.getParameterPosition();
-		
+
     	final IASTNode[] decls= getDeclarations();
 		int tdeclLen= decls == null ? 0 : decls.length;
     	for (int i= -1; i < tdeclLen; i++) {
@@ -219,14 +219,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
     			tdecl= (ICPPASTFunctionDeclarator) getDefinition();
     			if (tdecl == null)
     				continue;
-    		} else if (decls != null){
+    		} else if (decls != null) {
     			tdecl= (ICPPASTFunctionDeclarator) decls[i];
     			if (tdecl == null)
     				break;
     		} else {
     			break;
     		}
-    		
+
     		IASTParameterDeclaration[] params = tdecl.getParameters();
     		if (pos < params.length) {
     			final IASTName oName = getParamName(params[pos]);
@@ -235,7 +235,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
     	}
     	return param;
     }
-    
+
     protected void updateFunctionParameterBindings(ICPPASTFunctionDeclarator fdtor) {
 		IASTParameterDeclaration[] updateParams = fdtor.getParameters();
 
@@ -255,7 +255,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
     		} else {
     			break;
     		}
-    		
+
     		IASTParameterDeclaration[] params = tdecl.getParameters();
     		int end= Math.min(params.length, updateParams.length);
     		for (; k < end; k++) {
@@ -280,7 +280,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		node= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
 		if (!(node instanceof ICPPASTFunctionDeclarator))
 			return null;
-		
+
 		return (ICPPASTFunctionDeclarator) node;
 	}
 
@@ -350,9 +350,9 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (!isConstexpr()) {
 			return null;
 		}
-		
+
 		IASTNode def = getDefinition();
-		if(def != null) {
+		if (def != null) {
 			return CPPFunction.computeFunctionBodyExecution(def);
 		}
 		return CPPTemplates.instantiateFunctionBody(this, point);

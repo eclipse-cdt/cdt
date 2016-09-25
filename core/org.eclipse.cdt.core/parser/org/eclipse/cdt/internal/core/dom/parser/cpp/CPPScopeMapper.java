@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
@@ -172,7 +172,7 @@ public class CPPScopeMapper {
 		public ICPPNamespaceScope[] getEnclosingNamespaceSet() {
 			if (fEnclosingNamespaceSet == null)
 				return fEnclosingNamespaceSet= CPPNamespaceScope.computeEnclosingNamespaceSet(this);
-			
+
 			return fEnclosingNamespaceSet;
 		}
 
@@ -181,7 +181,7 @@ public class CPPScopeMapper {
 			IIndexBinding binding = ((IIndexScope) fScope).getScopeBinding();
 			if (binding instanceof ICPPNamespace && ((ICPPNamespace) binding).isInline())
 				return true;
-			
+
 			return false;
 		}
 
@@ -240,7 +240,7 @@ public class CPPScopeMapper {
 			return fDirective.toString();
 		}
 	}
-	
+
 	/**
 	 * Collector for class definitions.
 	 */
@@ -272,7 +272,7 @@ public class CPPScopeMapper {
 			return PROCESS_CONTINUE;
 		}
 	}
-	
+
 	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<>();
 	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<>();
 	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<>();
@@ -381,9 +381,9 @@ public class CPPScopeMapper {
 		} catch (DOMException e) {
 			assert false;	// index scopes don't throw dom-exceptions
 			return null;
-		}	
+		}
 	}
-	
+
 	private ICPPNamespaceScope getCompositeNamespaceScope(ICPPNamespaceScope scope) throws DOMException {
 		if (scope instanceof IIndexScope) {
 			IIndexBinding binding= fTu.getIndex().adaptBinding(((IIndexScope) scope).getScopeBinding());
@@ -393,7 +393,7 @@ public class CPPScopeMapper {
 		}
 		return scope;
 	}
-	
+
 	public ICPPClassType mapToAST(ICPPClassType type, IASTNode point) {
 		if (type instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst= (ICPPTemplateInstance) type;
@@ -408,7 +408,7 @@ public class CPPScopeMapper {
 			}
 			return type;
 		}
-		
+
 		if (fClasses == null) {
 			fClasses= new CharArrayMap<>();
 			fTu.accept(new Visitor());

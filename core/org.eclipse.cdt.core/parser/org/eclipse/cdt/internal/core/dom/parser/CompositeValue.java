@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -48,7 +48,7 @@ public class CompositeValue implements IValue {
 	public Number numberValue() {
 		return null;
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		return evaluation;
@@ -56,7 +56,7 @@ public class CompositeValue implements IValue {
 
 	@Override
 	public char[] getSignature() {
-		if(evaluation != null) {
+		if (evaluation != null) {
 			return evaluation.getSignature();
 		}
 		return new char[]{};
@@ -152,15 +152,15 @@ public class CompositeValue implements IValue {
 	}
 
 	// The set of class types for which composite value creation is in progress on each thread.
-	// Used to guard against infinite recursion due to a class (invalidly) aggregating itself. 
-	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress = 
+	// Used to guard against infinite recursion due to a class (invalidly) aggregating itself.
+	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress =
 			new ThreadLocal<Set<ICPPClassType>>() {
 		@Override
 		protected Set<ICPPClassType> initialValue() {
 			return new HashSet<>();
 		}
 	};
-	
+
 	/**
 	 * Creates a value representing an instance of a class type, with the values of the fields
 	 * determined by the default member initializers only. Constructors are not considered
@@ -174,16 +174,16 @@ public class CompositeValue implements IValue {
 		try {
 			ActivationRecord record = new ActivationRecord();
 			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, null).length];
-			
+
 			// recursively create all the base class member variables
 			ICPPBase[] bases = ClassTypeHelper.getBases(classType, null);
-			for(ICPPBase base : bases) {
+			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();
-				if(baseClass instanceof ICPPClassType) {
+				if (baseClass instanceof ICPPClassType) {
 					ICPPClassType baseClassType = (ICPPClassType) baseClass;
 					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, null);
 					IValue compValue = CompositeValue.create(baseClassType);
-					for(ICPPField baseField : baseFields) {
+					for (ICPPField baseField : baseFields) {
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
 						record.update(baseField, compValue.getSubValue(fieldPos));
 						// TODO(nathanridge): This won't work with multiple inheritance, since 'fieldPos'
@@ -193,12 +193,12 @@ public class CompositeValue implements IValue {
 					}
 				}
 			}
-			
+
 			ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, null);
 			for (ICPPField field : fields) {
 				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record);
 				int fieldPos = CPPASTFieldReference.getFieldPosition(field);
-				record.update(field, value);				
+				record.update(field, value);
 				values[fieldPos] = value;
 			}
 			return new CompositeValue(null, values);
@@ -221,24 +221,24 @@ public class CompositeValue implements IValue {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");								//$NON-NLS-1$
-		for(int i = 0; i < values.length; i++) {
-			if(values[i] != null) {
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] != null) {
 				builder.append(values[i].toString());
 			} else {
 				builder.append("<null>");					//$NON-NLS-1$
 			}
-			if(i != values.length-1) {
+			if (i != values.length-1) {
 				builder.append(", ");						//$NON-NLS-1$
 			}
 		}
 		builder.append("]");								//$NON-NLS-1$
 		return builder.toString();
 	}
-	
+
 	@Override
 	public IValue clone() {
 		ICPPEvaluation[] newValues = new ICPPEvaluation[values.length];
-		for(int i = 0; i < newValues.length; i++) {
+		for (int i = 0; i < newValues.length; i++) {
 			ICPPEvaluation eval = values[i];
 			IValue newValue = eval.getValue(null).clone();
 			newValues[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), newValue);
@@ -251,17 +251,17 @@ public class CompositeValue implements IValue {
 		buf.putShort(ITypeMarshalBuffer.COMPOSITE_VALUE);
 		buf.marshalEvaluation(evaluation, true);
 		buf.putInt(values.length);
-		for(ICPPEvaluation value : values) {
+		for (ICPPEvaluation value : values) {
 			buf.marshalEvaluation(value, true);
 		}
 	}
-	
+
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
-		ICPPEvaluation evaluation = (ICPPEvaluation)buf.unmarshalEvaluation();
+		ICPPEvaluation evaluation = (ICPPEvaluation) buf.unmarshalEvaluation();
 		int len = buf.getInt();
 		ICPPEvaluation values[] = new ICPPEvaluation[len];
-		for(int i = 0; i < len; i++) {
-			values[i] = (ICPPEvaluation)buf.unmarshalEvaluation();
+		for (int i = 0; i < len; i++) {
+			values[i] = (ICPPEvaluation) buf.unmarshalEvaluation();
 		}
 		return new CompositeValue(evaluation, values);
 	}

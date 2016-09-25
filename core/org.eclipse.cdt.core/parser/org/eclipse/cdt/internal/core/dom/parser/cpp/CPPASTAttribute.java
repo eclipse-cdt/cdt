@@ -27,7 +27,7 @@ public class CPPASTAttribute extends ASTAttribute implements ICPPASTAttribute {
 		this.scope = scope;
 		this.packExpansion =  packExpansion;
 	}
-	
+
 	@Override
 	public CPPASTAttribute copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -37,7 +37,7 @@ public class CPPASTAttribute extends ASTAttribute implements ICPPASTAttribute {
 	public CPPASTAttribute copy(CopyStyle style) {
 		IASTToken argumentClause = getArgumentClause();
 		if (argumentClause != null)
-			argumentClause = argumentClause.copy(style); 
+			argumentClause = argumentClause.copy(style);
 		return copy(new CPPASTAttribute(getName(), getScope(), argumentClause, hasPackExpansion()), style);
 	}
 

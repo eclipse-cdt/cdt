@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -55,7 +55,7 @@ public class ActivationRecord {
 	}
 
 	private int getParameterPosition(IBinding binding) {
-		if(binding instanceof ICPPParameter) {
+		if (binding instanceof ICPPParameter) {
 			for (int i = 0; i < params.length; i++) {
 				ICPPParameter param = params[i];
 				if (param.getName().equals(binding.getName())) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition implements ICPPASTFunctionWithTryBlock {
     private ICPPASTCatchHandler[] catchHandlers;
     private int catchHandlersPos= -1;
-    
+
     public CPPASTFunctionWithTryBlock() {
 	}
 
@@ -34,7 +34,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
 		super(declSpecifier, declarator, bodyStatement);
 	}
-	
+
 	@Override
 	public CPPASTFunctionWithTryBlock copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -82,7 +82,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 	protected boolean acceptCatchHandlers(ASTVisitor action) {
     	final ICPPASTCatchHandler[] handlers = getCatchHandlers();
         for (int i= 0; i < handlers.length; i++) {
-            if (!handlers[i].accept(action)) 
+            if (!handlers[i].accept(action))
             	return false;
         }
         return true;

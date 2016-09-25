@@ -38,7 +38,7 @@ public class CASTFieldReference extends ASTNode
 
     public CASTFieldReference() {
 	}
-    
+
 	public CASTFieldReference(IASTName name, IASTExpression owner) {
 		this(name, owner, false);
 	}
@@ -48,7 +48,7 @@ public class CASTFieldReference extends ASTNode
 		setFieldName(name);
 		this.ptr = ptr;
 	}
-	
+
 	@Override
 	public CASTFieldReference copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -113,7 +113,7 @@ public class CASTFieldReference extends ASTNode
 	            default: break;
 	        }
 		}
-      
+
         if (owner != null && !owner.accept(action)) return false;
         if (name != null && !name.accept(action)) return false;
 
@@ -142,12 +142,12 @@ public class CASTFieldReference extends ASTNode
             owner = (IASTExpression) other;
         }
     }
-    
+
     @Override
 	public IType getExpressionType() {
         IBinding binding = getFieldName().resolveBinding();
 		if (binding instanceof IVariable) {
-			return ((IVariable)binding).getType();
+			return ((IVariable) binding).getType();
 		}
     	return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }

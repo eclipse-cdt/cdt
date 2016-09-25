@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.CoreException;
 public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, ISerializableType {
 	Operator fOperator;
 	IType fOperand;
-	
+
 	public CPPUnaryTypeTransformation(Operator operator, IType operand) {
 		fOperator = operator;
 		fOperand = operand;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType other) {
 		if (this == other)
@@ -49,7 +49,7 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 	public IType getOperand() {
 		return fOperand;
 	}
-	
+
     @Override
 	public CPPUnaryTypeTransformation clone() {
     	return new CPPUnaryTypeTransformation(fOperator, (IType) fOperand.clone());
@@ -61,7 +61,7 @@ public class CPPUnaryTypeTransformation implements ICPPUnaryTypeTransformation, 
 		buffer.putByte((byte) getOperator().ordinal());
 		buffer.marshalType(getOperand());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int operator = buffer.getByte();
 		if (operator >= Operator.values().length) {

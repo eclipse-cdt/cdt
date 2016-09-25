@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTParameterDeclaration extends ASTNode implements IASTParameterDeclaration, IASTAmbiguityParent {
-	
+
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator declarator;
 
@@ -48,7 +48,7 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		copy.setDeclarator(declarator == null ? null : declarator.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
@@ -80,19 +80,19 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitParameterDeclarations ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitParameterDeclarations) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
-        if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
-        if( declarator != null ) if( !declarator.accept( action ) ) return false;    
-        if( action.shouldVisitParameterDeclarations ){
-		    switch( action.leave( this ) ){
+
+        if (declSpec != null) if (!declSpec.accept(action)) return false;
+        if (declarator != null) if (!declarator.accept(action)) return false;
+        if (action.shouldVisitParameterDeclarations) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;

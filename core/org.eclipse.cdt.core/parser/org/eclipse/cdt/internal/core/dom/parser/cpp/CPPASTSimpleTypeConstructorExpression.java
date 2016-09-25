@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -53,7 +53,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	public CPPASTSimpleTypeConstructorExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTSimpleTypeConstructorExpression copy(CopyStyle style) {
 		CPPASTSimpleTypeConstructorExpression copy = new CPPASTSimpleTypeConstructorExpression();
@@ -91,7 +91,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     		initializer.setPropertyInParent(INITIALIZER);
     	}
     }
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -111,7 +111,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);
     }
-    
+
 	@Override
 	public ValueCategory getValueCategory() {
     	return getEvaluation().getValueCategory(this);
@@ -121,7 +121,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
@@ -143,7 +143,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
 		if (fDeclSpec != null && !fDeclSpec.accept(action))
 			return false;
-		
+
 		if (action.shouldVisitImplicitNames) {
 			for (IASTImplicitName implicitName : getImplicitNames()) {
 				if (!implicitName.accept(action)) {
@@ -154,7 +154,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
-        
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -175,7 +175,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	if (type instanceof ICPPBasicType) {
     		ICPPBasicType bt= (ICPPBasicType) type;
     		Kind kind = bt.getKind();
-    		switch(kind) {
+    		switch (kind) {
 			case eBoolean:
 				return t_bool;
 			case eChar:
@@ -204,12 +204,12 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	}
 		return t_unspecified;
     }
-    
+
 	@Deprecated
     @Override
     public void setSimpleType(int value) {
 		CPPASTSimpleDeclSpecifier declspec = new CPPASTSimpleDeclSpecifier();
-    	switch(value) {
+    	switch (value) {
     	case t_bool:
     		declspec.setType(Kind.eBoolean);
     		break;
@@ -253,7 +253,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	}
     	setDeclSpecifier(declspec);
     }
-    
+
 	@Deprecated
     @Override
     public IASTExpression getInitialValue() {
@@ -262,7 +262,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	}
     	return null;
     }
-    
+
 	@Deprecated
     @Override
     public void setInitialValue(IASTExpression expression) {

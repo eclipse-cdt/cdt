@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -66,10 +66,10 @@ class NamespaceTypeCollector extends ASTVisitor {
 				}
 			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 				// 3.3.1.5 Point of declaration
-				if (simpleDeclaration.getDeclarators().length != 0) { 
+				if (simpleDeclaration.getDeclarators().length != 0) {
 					addNonSimpleElabSpec((ICPPASTElaboratedTypeSpecifier) declSpec);
 				}
-			} 
+			}
 			// Visit nested class definitions and parameter declarations
 			return PROCESS_CONTINUE;
 		} else if (declaration instanceof IASTFunctionDefinition) {
@@ -80,20 +80,20 @@ class NamespaceTypeCollector extends ASTVisitor {
 				ASTInternal.addName(fScope,  declarator.getName());
 			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 				addNonSimpleElabSpec((ICPPASTElaboratedTypeSpecifier) declSpec);
-			} 
+			}
 			// Visit parameter declarations
 			return PROCESS_CONTINUE;
-		} 
+		}
 		return PROCESS_SKIP;
 	}
 
-	
+
 	@Override
 	public int visit(IASTParameterDeclaration declaration) {
 		IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
 		if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 			addNonSimpleElabSpec((ICPPASTElaboratedTypeSpecifier) declSpec);
-		} 
+		}
 		return PROCESS_SKIP;
 	}
 

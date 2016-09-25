@@ -4,9 +4,9 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Devin Steffler (IBM Rational Software) - Initial API and implementation 
+ *     Devin Steffler (IBM Rational Software) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.CoreException;
 public class CBasicType implements ICBasicType, ISerializableType {
 	public static final CBasicType VOID = new CBasicType(Kind.eVoid, 0, null);
 	public static final CBasicType INT = new CBasicType(Kind.eInt, 0, null);
-	
+
 	private final Kind fKind;
 	private int fModifiers;
 	private IASTExpression value;
-	
+
 	public CBasicType(Kind kind, int modifiers, IASTExpression value) {
 		if (kind == Kind.eUnspecified) {
 			if ((modifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
@@ -47,11 +47,11 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	public CBasicType(Kind kind, int modifiers) {
 		this(kind, modifiers, null);
 	}
-	
+
 	public CBasicType(ICASTSimpleDeclSpecifier sds) {
 		this (getKind(sds), getQualifiers(sds), null);
 	}
-	
+
 	private static int getQualifiers(ICASTSimpleDeclSpecifier sds) {
 		return (sds.isLong() ? IS_LONG  : 0) |
 				(sds.isShort() ? IS_SHORT : 0) |
@@ -61,7 +61,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 				(sds.isComplex() ? IS_COMPLEX : 0) |
 				(sds.isImaginary() ? IS_IMAGINARY : 0);
 	}
-	
+
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
 		// Note: when adding a new kind, marshal() and unnmarshal() may need to be revised.
 		switch (sds.getType()) {
@@ -96,7 +96,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	public Kind getKind() {
 		return fKind;
 	}
-	
+
 	@Override
 	public int getModifiers() {
 		return fModifiers;
@@ -133,15 +133,15 @@ public class CBasicType implements ICBasicType, ISerializableType {
 			return true;
 		if (obj instanceof ITypedef)
 			return obj.isSameType(this);
-	    
+
 		if (!(obj instanceof ICBasicType))
 			return false;
-		
-		ICBasicType cObj = (ICBasicType)obj;
-		
+
+		ICBasicType cObj = (ICBasicType) obj;
+
 		if (fKind != cObj.getKind())
 			return false;
-		
+
 		if (fKind == Kind.eInt) {
 			// Signed int and int are equivalent
 			return (fModifiers & ~IS_SIGNED) == (cObj.getModifiers() & ~IS_SIGNED);
@@ -149,7 +149,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 			return (fModifiers == cObj.getModifiers());
 		}
 	}
-	
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -166,7 +166,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	public IASTExpression getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public boolean isComplex() {
 		return (fModifiers & IS_COMPLEX) != 0;
@@ -187,16 +187,16 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		} else {
 			buffer.putShort((short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind | ITypeMarshalBuffer.LAST_FLAG));
 			buffer.putByte((byte) modifiers);
-		} 
+		}
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean haveModifiers= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
 		int modifiers= 0;
 		int kind= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG-1))/ITypeMarshalBuffer.FIRST_FLAG;
 		if (haveModifiers) {
 			modifiers= buffer.getByte();
-		} 
+		}
 		return new CBasicType(Kind.values()[kind], modifiers);
 	}
 
@@ -232,7 +232,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		}
 		return t_unspecified;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);

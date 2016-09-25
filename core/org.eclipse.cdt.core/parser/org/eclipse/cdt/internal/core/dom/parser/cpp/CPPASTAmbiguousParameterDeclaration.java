@@ -46,17 +46,17 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
 		assert false;
     }
-	
+
     @Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
-		
+
 		// Setup the ast to use the alternative
 		owner.replace(this, fParameterDecl);
 		fParameterDecl.accept(resolver);
-		
+
 		IType t= CPPVisitor.createType(fParameterDecl, true);
-		if (!(t instanceof ICPPParameterPackType) || 
+		if (!(t instanceof ICPPParameterPackType) ||
 				!CPPTemplates.containsParameterPack(((ICPPParameterPackType) t).getType())) {
 			final ICPPASTDeclarator dtor = fParameterDecl.getDeclarator();
 			dtor.setDeclaresParameterPack(false);
@@ -70,8 +70,8 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 		IASTPointerOperator[] ptrOps= dtor.getPointerOperators();
 		final ASTNode asNode = (ASTNode) dtor;
 		if (ptrOps.length > 0) {
-			final ASTNode first = (ASTNode)ptrOps[0];
-			final ASTNode last = (ASTNode)ptrOps[ptrOps.length - 1];
+			final ASTNode first = (ASTNode) ptrOps[0];
+			final ASTNode last = (ASTNode) ptrOps[ptrOps.length - 1];
 			asNode.setOffsetAndLength(first.getOffset(), last.getOffset() + last.getLength());
 		} else {
 			asNode.setOffsetAndLength(0, 0);

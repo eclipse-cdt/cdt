@@ -34,7 +34,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	private final boolean hasRefQualifier;
 	private final boolean isRValueReference;
     private final boolean takesVarargs;
-    
+
     public CPPFunctionType(IType returnType, IType[] types) {
     	this(returnType, types, false, false, false, false, false);
     }
@@ -68,10 +68,10 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			// Constructors & destructors have null return type.
 			if ((returnType == null) ^ (ft.getReturnType() == null))
 			    return false;
-			
+
 			if (returnType != null && !returnType.isSameType(ft.getReturnType()))
 			    return false;
-			
+
 			if (parameters.length == fps.length) {
 				for (int i = 0; i < parameters.length; i++) {
 			        if (parameters[i] == null || !parameters[i].isSameType(fps[i]))
@@ -82,7 +82,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 						|| !SemanticUtil.isEmptyParameterList(fps)) {
 					return false;
 				}
-			} 
+			}
             return true;
         }
         return false;
@@ -153,16 +153,16 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		if (isVolatile) firstBytes |= ITypeMarshalBuffer.FLAG3;
 		if (hasRefQualifier) firstBytes |= ITypeMarshalBuffer.FLAG4;
 		if (isRValueReference) firstBytes |= ITypeMarshalBuffer.FLAG5;
-		
+
 		buffer.putShort(firstBytes);
 		buffer.putInt(parameters.length);
-		
+
 		buffer.marshalType(returnType);
 		for (int i = 0; i < parameters.length; i++) {
 			buffer.marshalType(parameters[i]);
 		}
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getInt();
 		IType rt= buffer.unmarshalType();

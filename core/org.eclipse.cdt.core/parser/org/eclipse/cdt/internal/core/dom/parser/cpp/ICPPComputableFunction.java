@@ -22,7 +22,7 @@ public interface ICPPComputableFunction {
 	 * @param point the point of instantiation for name lookups
 	 */
 	public ICPPEvaluation getReturnExpression(IASTNode point);
-	
+
 	/**
 	 * For a constexpr function returns the ICPPExecution for its body. Otherwise returns
 	 * {@code null}.

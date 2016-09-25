@@ -63,7 +63,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 			ICPPClassTemplatePartialSpecialization rhs) {
 		ICPPClassType ct1= lhs.getPrimaryClassTemplate();
 		ICPPClassType ct2= rhs.getPrimaryClassTemplate();
-		if(!ct1.isSameType(ct2))
+		if (!ct1.isSameType(ct2))
 			return false;
 
 		ICPPTemplateArgument[] args1= lhs.getTemplateArguments();
@@ -72,7 +72,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 			return false;
 
 		for (int i = 0; i < args2.length; i++) {
-			if (!args1[i].isSameValue(args2[i])) 
+			if (!args1[i].isSameValue(args2[i]))
 				return false;
 		}
 		return true;

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  */
 public interface ICPPInternalBase extends Cloneable {
 	public Object clone();
-	
+
 	/**
 	 * Sets the base class.
 	 */

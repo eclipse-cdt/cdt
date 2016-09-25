@@ -78,10 +78,10 @@ public class ASTTokenList extends ASTNode implements IASTTokenList {
 				break;
 			if (!token.accept(action)) return false;
 		}
-        
+
         if (action.shouldVisitTokens && action.leave(this) == ASTVisitor.PROCESS_ABORT)
         	return false;
-        
+
         return true;
     }
 }

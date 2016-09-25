@@ -24,7 +24,7 @@ public interface ICInternalFunction extends ICInternalBinding {
 
 	/**
 	 * Returns whether there is a static declaration for this function.
-	 * 
+	 *
 	 * @param resolveAll
 	 *            checks for names that are not yet resolved to this binding.
 	 */

@@ -312,10 +312,10 @@ public class ClassTypeHelper {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns all (direct or indirect) virtual base classes of {@code classType}.
-	 * 
+	 *
 	 * @param point the point of instantiation for name lookups
 	 */
 	public static ICPPClassType[] getVirtualBases(ICPPClassType classType, IASTNode point) {
@@ -341,7 +341,7 @@ public class ClassTypeHelper {
 						getVirtualBases(baseClass, virtualBases, nonvirtualBases, point);
 					}
 				} else {
-					// A non-virtual base could have virtual bases in its hierarchy. 
+					// A non-virtual base could have virtual bases in its hierarchy.
 					if (nonvirtualBases.add(baseClass)) {
 						getVirtualBases(baseClass, virtualBases, nonvirtualBases, point);
 					}
@@ -349,7 +349,7 @@ public class ClassTypeHelper {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks inheritance relationship between two classes.
 	 *
@@ -406,7 +406,7 @@ public class ClassTypeHelper {
 	public static ICPPMethod[] getImplicitMethods(ICPPClassType classType, IASTNode point) {
 		return getImplicitMethods(classType.getCompositeScope(), point);
 	}
-	
+
 	public static ICPPMethod[] getImplicitMethods(IScope scope, IASTNode point) {
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getImplicitMethods(point);
@@ -741,7 +741,7 @@ public class ClassTypeHelper {
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				findOverridden((ICPPClassType) b, point, mname, methodType, virtualInClass, 
+				findOverridden((ICPPClassType) b, point, mname, methodType, virtualInClass,
 						result, CPPSemantics.MAX_INHERITANCE_DEPTH);
 			}
 		}
@@ -764,7 +764,7 @@ public class ClassTypeHelper {
 		// Prevent recursion due to a hierarchy of unbounded depth, e.g. A<I> deriving from A<I - 1>.
 		if (maxdepth <= 0)
 			return false;
-		
+
 		Boolean visitedBefore= virtualInClass.get(classType);
 		if (visitedBefore != null)
 			return visitedBefore;
@@ -773,7 +773,7 @@ public class ClassTypeHelper {
 		ICPPMethod candidate= null;
 		boolean hasOverridden= false;
 		for (ICPPMethod method : methods) {
-			if (methodName[0] == '~' && method.isDestructor() 
+			if (methodName[0] == '~' && method.isDestructor()
 				|| (CharArrayUtils.equals(methodName, method.getNameCharArray())
 					&& functionTypesAllowOverride(methodType, method.getType()))) {
 				candidate= method;
@@ -788,7 +788,7 @@ public class ClassTypeHelper {
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				if (findOverridden((ICPPClassType) b, point, methodName, methodType, virtualInClass, 
+				if (findOverridden((ICPPClassType) b, point, methodName, methodType, virtualInClass,
 						result, maxdepth - 1)) {
 					hasOverridden= true;
 				}
@@ -1048,7 +1048,7 @@ public class ClassTypeHelper {
 				return ICPPClassType.v_public; // Fallback visibility
 			}
 		}
-		
+
 		// The concept of visibility does not apply to a lambda, which can end
 		// up having a class as its owner if they are used in the initializer
 		// of a field or a member function parameter.

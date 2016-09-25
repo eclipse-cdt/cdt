@@ -18,21 +18,21 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * Used to represent built-in variables that exist on the translation
  * unit but are not actually part of the physical AST created by CDT.
- * 
+ *
  * An example is the built-in variable __func__.
  */
 public class CPPBuiltinVariable extends CPPVariable {
     private IType type=null;
     private char[] name=null;
     private IScope scope=null;
-    
+
     public CPPBuiltinVariable(IType type, char[] name, IScope scope) {
         super(null);
         this.type = type;
         this.name = name;
         this.scope = scope;
     }
-    
+
     @Override
 	public IType getType() {
         return type;
@@ -42,17 +42,17 @@ public class CPPBuiltinVariable extends CPPVariable {
 	public String getName() {
         return String.valueOf(name);
     }
-    
+
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
-    
+
     @Override
 	public IScope getScope() {
         return scope;
     }
-            
+
     /**
      * returns null
      */
@@ -60,7 +60,7 @@ public class CPPBuiltinVariable extends CPPVariable {
 	public IASTNode[] getDeclarations() {
         return null;
     }
-    
+
     /**
      * returns null
      */
@@ -68,7 +68,7 @@ public class CPPBuiltinVariable extends CPPVariable {
 	public IASTNode getDefinition() {
         return null;
     }
-        
+
     /**
      * does nothing
      */
@@ -76,7 +76,7 @@ public class CPPBuiltinVariable extends CPPVariable {
 	public void addDefinition(IASTNode node) {
         // do nothing
     }
-    
+
     /**
      * does nothing
      */
@@ -84,24 +84,24 @@ public class CPPBuiltinVariable extends CPPVariable {
 	public void addDeclaration(IASTNode node) {
         // do nothing
     }
-        
+
     @Override
 	public String[] getQualifiedName() {
         String[] temp = new String[1];
         temp[0] = String.valueOf(name);
-        
+
         return temp;
     }
-    
+
 
     @Override
 	public char[][] getQualifiedNameCharArray() {
         char[][] temp = new char[1][];
         temp[0] = name;
-        
+
         return temp;
     }
-    
+
     /**
      * returns true
      */

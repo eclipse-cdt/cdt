@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
  * C-specific enumerator
  */
 public class CASTEnumerator extends ASTEnumerator {
-	
+
     public CASTEnumerator() {
     	super();
 	}
@@ -26,7 +26,7 @@ public class CASTEnumerator extends ASTEnumerator {
 	public CASTEnumerator(IASTName name, IASTExpression value) {
 		super(name, value);
 	}
-	
+
 	@Override
 	public CASTEnumerator copy() {
 		return copy(CopyStyle.withoutLocations);

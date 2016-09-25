@@ -151,10 +151,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 		}
 		return fType;
 	}
-	
+
 	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, IASTNode point, ICPPEvaluation arg1, ICPPEvaluation arg2) {
 		EvalFunctionCall operatorCall;
-		if(overload instanceof ICPPMethod) {
+		if (overload instanceof ICPPMethod) {
 			EvalMemberAccess opAccess = new EvalMemberAccess(arg1.getType(point), ValueCategory.LVALUE, overload, arg1, false, point);
 			ICPPEvaluation[] args = new ICPPEvaluation[]{opAccess, arg2};
 			operatorCall = new EvalFunctionCall(args, arg1, point);
@@ -186,7 +186,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 					return IntegralValue.ERROR;
 				}
 				if (fOverloadCall == null) {
-					fOverloadCall = createOperatorOverloadEvaluation(overload, point, arg1, arg2);	
+					fOverloadCall = createOperatorOverloadEvaluation(overload, point, arg1, arg2);
 				}
 				return fOverloadCall.getValue(point);
 			}
@@ -221,10 +221,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 			} else if (fOperator == op_logicalOr) {
 				return v1;
 			}
-			
+
 			Number num2 = v2.numberValue();
 			if (num2 != null) {
-				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2);				
+				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2);
 			}
 		}
 		return IntegralValue.create(this);
@@ -306,7 +306,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	private ICPPFunction computeOverload(IASTNode point) {
 		if (isTypeDependent())
 			return null;
-		
+
 		if (fOperator == op_arrayAccess) {
 			IType type = fArg1.getType(point);
 			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
@@ -434,49 +434,49 @@ public class EvalBinary extends CPPDependentEvaluation {
 			ICPPEvaluation operatorCall = createOperatorOverloadEvaluation(overload, context.getPoint(), fArg1, fArg2);
 			return operatorCall.computeForFunctionCall(record, context);
 		}
-		
+
 		Pair<ICPPEvaluation, ICPPEvaluation> vp1 = EvalUtil.getValuePair(fArg1, record, context);
 		final ICPPEvaluation updateable1 = vp1.getFirst();
 		final ICPPEvaluation fixed1 = vp1.getSecond();
 		Pair<ICPPEvaluation, ICPPEvaluation> vp2 = EvalUtil.getValuePair(fArg2, record, context);
 		final ICPPEvaluation fixed2 = vp2.getSecond();
 		ICPPEvaluation eval = fixed1 == fArg1 && fixed2 == fArg2 ? this : new EvalBinary(fOperator, fixed1, fixed2, getTemplateDefinition());
-		
-		if(isBinaryOperationWithAssignment(fOperator)) {
+
+		if (isBinaryOperationWithAssignment(fOperator)) {
 			if (isPointerToArray(fixed1) && hasIntType(fixed2, context)) {
-				EvalPointer evalPointer = (EvalPointer)fixed1;
+				EvalPointer evalPointer = (EvalPointer) fixed1;
 				int currentPos = evalPointer.getPosition();
 				int rhs = fixed2.getValue(context.getPoint()).numberValue().intValue();
-				
-				if(fOperator == op_plusAssign) {
+
+				if (fOperator == op_plusAssign) {
 					evalPointer.setPosition(currentPos + rhs);
-				} else if(fOperator == op_minusAssign) {
+				} else if (fOperator == op_minusAssign) {
 					evalPointer.setPosition(currentPos - rhs);
 				} else {
 					return EvalFixed.INCOMPLETE;
 				}
 			} else {
-				int binaryOperator = getBinaryOperatorWithoutAssignment(fOperator); 
+				int binaryOperator = getBinaryOperatorWithoutAssignment(fOperator);
 				EvalBinary binaryOpEval = new EvalBinary(binaryOperator, fixed1, fixed2, getTemplateDefinition());
 				EvalBinary assignmentEval = new EvalBinary(op_assign, updateable1, binaryOpEval, getTemplateDefinition());
 				return assignmentEval.computeForFunctionCall(record, context);
 			}
-		} else if(fOperator == op_assign) {			
+		} else if (fOperator == op_assign) {
 			ICPPEvaluation newValue = null;
-			if(fixed2 instanceof EvalPointer) {
+			if (fixed2 instanceof EvalPointer) {
 				newValue = fixed2;
 			} else {
 				newValue = new EvalFixed(fixed2.getType(context.getPoint()), fixed2.getValueCategory(context.getPoint()), fixed2.getValue(context.getPoint()));
 			}
-			
+
 			if (updateable1 instanceof EvalReference && !(updateable1 instanceof EvalPointer)) {
-				EvalReference evalRef = (EvalReference)updateable1;
+				EvalReference evalRef = (EvalReference) updateable1;
 				evalRef.update(newValue);
 			} else if (updateable1 instanceof EvalCompositeAccess) {
-				EvalCompositeAccess evalCompAccess = (EvalCompositeAccess)updateable1;
+				EvalCompositeAccess evalCompAccess = (EvalCompositeAccess) updateable1;
 				evalCompAccess.update(newValue);
 			} else if (updateable1 instanceof EvalBinding) {
-				EvalBinding evalBinding = (EvalBinding)updateable1;
+				EvalBinding evalBinding = (EvalBinding) updateable1;
 				record.update(evalBinding.getBinding(), newValue);
 			}
 			return updateable1;
@@ -498,11 +498,11 @@ public class EvalBinary extends CPPDependentEvaluation {
 		IType type = arg2.getType(context.getPoint());
 		return (type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eInt);
 	}
-	
+
 	private boolean isArray(ICPPEvaluation eval, ConstexprEvaluationContext context) {
 		return eval.getType(context.getPoint()) instanceof IArrayType;
 	}
-	
+
 	private boolean isPointerToArray(ICPPEvaluation argument) {
 		if (argument instanceof EvalPointer) {
 			EvalPointer evalPointer = (EvalPointer) argument;
@@ -526,11 +526,11 @@ public class EvalBinary extends CPPDependentEvaluation {
 			case op_shiftLeftAssign:
 			case op_shiftRightAssign:
 				return true;
-			default: 
+			default:
 				return false;
 		}
 	}
-	
+
 	private static int getBinaryOperatorWithoutAssignment(int operator) {
 		switch (operator) {
 			case op_binaryAndAssign:
@@ -567,7 +567,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return fArg1.referencesTemplateParameter() || fArg2.referencesTemplateParameter();
 	}
-	
+
 	@Override
 	public String toString() {
 		return fArg1.toString() + " <op> " + fArg2.toString(); //$NON-NLS-1$

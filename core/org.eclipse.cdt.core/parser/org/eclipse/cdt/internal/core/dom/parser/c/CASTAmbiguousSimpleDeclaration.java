@@ -39,7 +39,7 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
     private IASTSimpleDeclaration fSimpleDecl;
     private IASTDeclSpecifier fAltDeclSpec;
     private IASTDeclarator fAltDtor;
-    
+
     public CASTAmbiguousSimpleDeclaration(IASTSimpleDeclaration decl, IASTDeclSpecifier declSpec, IASTDeclarator dtor) {
     	fSimpleDecl= decl;
     	fAltDeclSpec= declSpec;
@@ -120,14 +120,14 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclSpecifier declSpec= fSimpleDecl.getDeclSpecifier();
 		declSpec.accept(resolver);
-		
+
 
 		// Find nested names.
 		final NameCollector nameCollector= new NameCollector();
 		declSpec.accept(nameCollector);
 		final IASTName[] names= nameCollector.getNames();
 
-		// Resolve names. 
+		// Resolve names.
 		boolean hasIssue= false;
 		for (IASTName name : names) {
 			try {
@@ -147,7 +147,7 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 			parent.replace(declSpec, fAltDeclSpec);
 			parent.replace(fSimpleDecl.getDeclarators()[0], fAltDtor);
 		}
-			
+
 		// Resolve further nested ambiguities.
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;

@@ -61,7 +61,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 		setDeclarator(declarator);
 		setBody(bodyStatement);
 	}
-	
+
 	@Override
 	public CPPASTFunctionDefinition copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -132,7 +132,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
         if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(FUNCTION_BODY);
-		} 
+		}
     }
 
 	@Override
@@ -147,9 +147,9 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 
 	@Override
 	public ICPPASTConstructorChainInitializer[] getMemberInitializers() {
-        if (memInits == null) 
+        if (memInits == null)
         	return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
-        
+
         return memInits= ArrayUtil.trimAt(
         		ICPPASTConstructorChainInitializer.class, memInits, memInitPos);
 	}
@@ -209,7 +209,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 			if (!memInit.accept(action))
 				return false;
 		}
-		
+
 		if (action.shouldVisitImplicitNames) {
 			for (IASTImplicitName implicitName : getImplicitNames()) {
 				if (!implicitName.accept(action)) {
@@ -224,7 +224,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 		if (!acceptCatchHandlers(action))
 			return false;
 
-		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
+		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
 		return true;
@@ -256,7 +256,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 			IBinding function = functionName.resolveBinding();
 			if (function instanceof ICPPConstructor) {
 				ICPPClassType classOwner = ((ICPPConstructor) function).getClassOwner();
-				
+
 				// Determine the bases of 'classOwner' that need to be initialized by this constructor.
 				Set<ICPPClassType> basesThatNeedInitialization = new HashSet<>();
 				for (ICPPBase base : ClassTypeHelper.getBases(classOwner, this)) {
@@ -268,7 +268,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 				for (ICPPClassType virtualBase : ClassTypeHelper.getVirtualBases(classOwner, this)) {
 					basesThatNeedInitialization.add(virtualBase);
 				}
-				
+
 				// Go through the bases determined above, and see which ones aren't initialized
 				// explicitly in the mem-initializer list.
 				for (ICPPClassType base : basesThatNeedInitialization) {
@@ -291,7 +291,7 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 		}
 		return implicitNames;
 	}
-	
+
 	// Returns whether the base type 'base' is explicitly initialized by one of the mem-initializers
 	// of this constructor.
 	private boolean isInitializedExplicitly(ICPPClassType base) {

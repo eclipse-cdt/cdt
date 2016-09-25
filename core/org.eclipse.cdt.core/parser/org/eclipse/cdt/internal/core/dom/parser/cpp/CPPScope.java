@@ -262,7 +262,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	    }
 	    return ArrayUtil.trim(result);
 	}
-	
+
 	private boolean isInsideClassScope(IScope scope) {
 		try {
 			return scope instanceof ICPPClassScope

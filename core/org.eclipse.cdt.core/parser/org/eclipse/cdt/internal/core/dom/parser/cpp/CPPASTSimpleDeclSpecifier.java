@@ -34,7 +34,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
+
 	@Override
 	public CPPASTSimpleDeclSpecifier copy(CopyStyle style) {
 		return copy(new CPPASTSimpleDeclSpecifier(), style);
@@ -74,9 +74,9 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 	public void setType(Kind kind) {
     	setType(getType(kind));
     }
-    
+
     private int getType(Kind kind) {
-    	switch(kind) {
+    	switch (kind) {
     	case eBoolean:
     		return t_bool;
 		case eChar:
@@ -113,7 +113,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     	}
     	return t_unspecified;
     }
-    
+
     @Override
 	public boolean isSigned() {
         return isSigned;
@@ -240,6 +240,6 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 			fDeclTypeExpression= (IASTExpression) other;
 			return;
 		}
-		super.replace(child, other);		
+		super.replace(child, other);
 	}
 }

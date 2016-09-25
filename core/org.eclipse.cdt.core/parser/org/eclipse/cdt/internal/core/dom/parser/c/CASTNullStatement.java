@@ -41,7 +41,7 @@ public class CASTNullStatement extends ASTAttributeOwner implements IASTNullStat
 		}
         return true;
     }
-    
+
     @Override
 	public CASTNullStatement copy() {
 		return copy(CopyStyle.withoutLocations);

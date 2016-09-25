@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
@@ -32,9 +32,9 @@ public class FindNodeForOffsetAction extends ASTGenericVisitor {
 		shouldVisitNames = true;
 		shouldVisitDeclarations= true;
 		includeInactiveNodes= true;
-		
+
 		// only visit implicit names if asked
-		shouldVisitImplicitNames = 
+		shouldVisitImplicitNames =
 		shouldVisitImplicitNameAlternates = nodeSpec.requiresClass(IASTImplicitName.class);
 	}
 

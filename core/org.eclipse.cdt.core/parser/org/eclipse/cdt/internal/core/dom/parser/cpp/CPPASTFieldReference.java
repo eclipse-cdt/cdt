@@ -145,7 +145,7 @@ public class CPPASTFieldReference extends ASTNode
     	if (fImplicitNames == null) {
     		if (!fIsDeref)
     			return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			
+
     		// Collect the function bindings
 			List<ICPPFunction> functionBindings = new ArrayList<>();
 			EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, functionBindings, false);
@@ -250,7 +250,7 @@ public class CPPASTFieldReference extends ASTNode
 				j++;
 				}
 			}
-		
+
 
 		if (j < bindings.length)
 			return Arrays.copyOfRange(bindings, 0, j);
@@ -281,7 +281,7 @@ public class CPPASTFieldReference extends ASTNode
 	}
 
 	private ICPPEvaluation createEvaluation() {
-		ICPPEvaluation ownerEval = ((ICPPEvaluationOwner)fOwner).getEvaluation();
+		ICPPEvaluation ownerEval = ((ICPPEvaluationOwner) fOwner).getEvaluation();
 		if (!ownerEval.isTypeDependent()) {
 			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(this), fIsDeref, this, null, false);
 			if (ownerType != null) {
@@ -316,24 +316,24 @@ public class CPPASTFieldReference extends ASTNode
 			} catch (DOMException e) {
 				return EvalFixed.INCOMPLETE;
 			}
-		}		
+		}
 		return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, fIsDeref, args, this);
 	}
-	
+
 	public static int getFieldPosition(ICPPField field) {
 		final ICPPClassType ownerType = field.getClassOwner();
 		final ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(ownerType, null);
 		int baseFields = 0;
-		for(ICPPClassType baseClass : baseClasses) {
+		for (ICPPClassType baseClass : baseClasses) {
 			baseFields += ClassTypeHelper.getDeclaredFields(baseClass, null).length;
 		}
 		return baseFields + field.getFieldPosition();
 	}
-	
+
 	public static int getFieldPosition(IBinding binding, IType ownerType) {
 		final IType nestedType = SemanticUtil.getNestedType(ownerType, ALLCVQ);
-		if(nestedType instanceof ICPPClassType && binding instanceof ICPPField) {
-			final ICPPField field = (ICPPField)binding;
+		if (nestedType instanceof ICPPClassType && binding instanceof ICPPField) {
+			final ICPPField field = (ICPPField) binding;
 			return getFieldPosition(field);
 		}
 		return -1;

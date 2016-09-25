@@ -33,7 +33,7 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 	public CASTASMDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTASMDeclaration copy(CopyStyle style) {
 		CASTASMDeclaration copy = new CASTASMDeclaration();
@@ -43,8 +43,8 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 
 	@Override
 	public String getAssembly() {
-        if( assembly == null ) return ""; //$NON-NLS-1$
-        return new String( assembly );
+        if (assembly == null) return ""; //$NON-NLS-1$
+        return new String(assembly);
     }
 
     @Override
@@ -54,17 +54,17 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
 
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;

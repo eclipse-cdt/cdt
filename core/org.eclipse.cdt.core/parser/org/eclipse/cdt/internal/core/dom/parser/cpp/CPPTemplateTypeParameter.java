@@ -71,13 +71,13 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		}
 		return null;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IType t= getDefault();
 		if (t == null)
 			return null;
-		
+
 		return new CPPTemplateTypeArgument(t);
 	}
 
@@ -89,7 +89,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
             return type.isSameType(this);
         if (!(type instanceof ICPPTemplateTypeParameter))
         	return false;
-        
+
         return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
     }
 }

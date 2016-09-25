@@ -38,12 +38,12 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
     	fBinaryExpression= binaryExpression;
     	fCastExpression= castExpression;
     }
-        
+
     @Override
 	public final IASTExpression copy() {
     	throw new UnsupportedOperationException();
     }
-    
+
 	@Override
 	public final IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
@@ -53,7 +53,7 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 	public final void addExpression(IASTExpression e) {
     	throw new UnsupportedOperationException();
     }
-    
+
 	@Override
 	public final IASTNode[] getNodes() {
 		return getExpressions();
@@ -77,14 +77,14 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		owner.replace(nodeToReplace, fBinaryExpression);
 		nodeToReplace= fBinaryExpression;
 		fBinaryExpression.accept(visitor);
-		
+
 
 		// find nested names
 		final NameCollector nameCollector= new NameCollector();
 		fCastExpression.getTypeId().accept(nameCollector);
 		final IASTName[] names= nameCollector.getNames();
 
-		// resolve names 
+		// resolve names
 		boolean hasIssue= false;
 		for (IASTName name : names) {
 			try {
@@ -101,7 +101,7 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		if (hasIssue) {
 			return nodeToReplace;
 		}
-		
+
 		final IASTExpression left = fBinaryExpression.getOperand1();
 		final IASTExpression right = fBinaryExpression.getOperand2();
 		left.setParent(null);
@@ -154,25 +154,25 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 				if (r == null) {
 					return middle;
 				}
-				r.setOperand1(middle);	
+				r.setOperand1(middle);
 				setStart(r, middle);
 				middle= r;
 				r= (IASTBinaryExpression) r.getParent();
-			} else if (l instanceof IASTCastExpression) { 
+			} else if (l instanceof IASTCastExpression) {
 				// cast binds stronger than binary operator
-				((IASTCastExpression) l).setOperand(middle); 
+				((IASTCastExpression) l).setOperand(middle);
 				setEnd(l, middle);
 				middle= l;				// middle becomes cast-expr, can be put into r (a binary-expr)
-				l= (IASTExpression) l.getParent(); 
+				l= (IASTExpression) l.getParent();
 			} else if (l instanceof IASTUnaryExpression) { //
 				// unary operator binds stronger than binary operator
-				((IASTUnaryExpression) l).setOperand(middle); 
+				((IASTUnaryExpression) l).setOperand(middle);
 				setEnd(l, middle);
 				middle= l;				// middle becomes unary-expr, can be put into r (a binary-expr)
-				l= (IASTExpression) l.getParent(); 
+				l= (IASTExpression) l.getParent();
 			} else {
 				if (r== null || getPrecendence((IASTBinaryExpression) l) >= getPrecendence(r)) {
-					((IASTBinaryExpression)l).setOperand2(middle);
+					((IASTBinaryExpression) l).setOperand2(middle);
 					setEnd(l, middle);
 					middle= l;			// middle becomes binary, can be put into r because precedence is greater or equal.
 					l= (IASTExpression) l.getParent();
@@ -187,19 +187,19 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 	}
 
 	private int getPrecendence(IASTBinaryExpression r) {
-		switch(r.getOperator()) {
+		switch (r.getOperator()) {
 		case IASTBinaryExpression.op_ellipses:
 		case IASTBinaryExpression.op_assign:
 		case IASTBinaryExpression.op_binaryAndAssign:
 		case IASTBinaryExpression.op_binaryOrAssign:
 		case IASTBinaryExpression.op_binaryXorAssign:
 		case IASTBinaryExpression.op_divideAssign:
-		case IASTBinaryExpression.op_minusAssign: 
-		case IASTBinaryExpression.op_moduloAssign: 
+		case IASTBinaryExpression.op_minusAssign:
+		case IASTBinaryExpression.op_moduloAssign:
 		case IASTBinaryExpression.op_multiplyAssign:
-		case IASTBinaryExpression.op_plusAssign: 
-		case IASTBinaryExpression.op_shiftLeftAssign: 
-		case IASTBinaryExpression.op_shiftRightAssign: 
+		case IASTBinaryExpression.op_plusAssign:
+		case IASTBinaryExpression.op_shiftLeftAssign:
+		case IASTBinaryExpression.op_shiftRightAssign:
 			return 0;
 		case IASTBinaryExpression.op_logicalOr:
 			return 1;
@@ -231,8 +231,8 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_modulo:
 			return 10;
-		case IASTBinaryExpression.op_pmarrow: 
-		case IASTBinaryExpression.op_pmdot: 
+		case IASTBinaryExpression.op_pmarrow:
+		case IASTBinaryExpression.op_pmdot:
 			return 11;
 		}
 		assert false;
@@ -240,14 +240,14 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 	}
 
 	private IASTUnaryExpression findTrailingBracketedPrimaryExpression(IASTExpression expr) {
-		while(true) {
+		while (true) {
 			if (expr instanceof IASTBinaryExpression) {
-				expr= ((IASTBinaryExpression) expr).getOperand2(); 
+				expr= ((IASTBinaryExpression) expr).getOperand2();
 			} else if (expr instanceof IASTCastExpression) {
-				expr= ((IASTCastExpression)expr).getOperand();
+				expr= ((IASTCastExpression) expr).getOperand();
 			} else if (expr instanceof IASTUnaryExpression) {
 				IASTUnaryExpression u= (IASTUnaryExpression) expr;
-				if (u.getOperator() == IASTUnaryExpression.op_bracketedPrimary) 
+				if (u.getOperator() == IASTUnaryExpression.op_bracketedPrimary)
 					return u;
 				expr= u.getOperand();
 			} else {
@@ -255,10 +255,10 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 			}
 		}
 	}
-	
+
 	private IASTExpression findLeadingCastExpression(IASTExpression expr) {
 		while (expr instanceof IASTBinaryExpression) {
-			expr= ((IASTBinaryExpression) expr).getOperand1(); 
+			expr= ((IASTBinaryExpression) expr).getOperand1();
 		}
 		return expr;
 	}

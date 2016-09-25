@@ -41,7 +41,7 @@ public class CASTContinueStatement extends ASTAttributeOwner implements IASTCont
         }
         return true;
     }
-    
+
     @Override
 	public CASTContinueStatement copy() {
 		return copy(CopyStyle.withoutLocations);

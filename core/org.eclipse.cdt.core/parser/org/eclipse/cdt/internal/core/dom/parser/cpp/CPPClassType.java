@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a class type.
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
-	
+
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType {
 		public CPPClassTypeProblem(IASTName name, int id) {
 			super(name, id);
@@ -177,14 +177,14 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		return null;
 	}
-	
+
 	private ICPPASTElaboratedTypeSpecifier getElaboratedTypeSpecifier() {
 		if (declarations != null) {
 			IASTNode node = declarations[0];
 			while (node instanceof IASTName)
 				node = node.getParent();
 			if (node instanceof ICPPASTElaboratedTypeSpecifier)
-				return (ICPPASTElaboratedTypeSpecifier)node;
+				return (ICPPASTElaboratedTypeSpecifier) node;
 		}
 		return null;
 	}
@@ -203,11 +203,11 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public IScope getScope() {
 		IASTName name = definition != null ? definition : declarations[0];
 		name = stripQualifier(name);
-		
+
 		IScope scope = CPPVisitor.getContainingScope(name);
 		if (definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
 			IASTNode node = declarations[0].getParent().getParent();
-			if (node instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) node).getDeclarators().length == 0 
+			if (node instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) node).getDeclarators().length == 0
 					&& !getElaboratedTypeSpecifier().isFriend()) {
 				// 3.3.1.5 class-key identifier ;
 			} else {
@@ -252,12 +252,12 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	@Override
 	public void addDefinition(IASTNode node) {
 		if (node instanceof ICPPASTCompositeTypeSpecifier) {
-			definition = ((ICPPASTCompositeTypeSpecifier)node).getName();
+			definition = ((ICPPASTCompositeTypeSpecifier) node).getName();
 		} else {
 			assert false;
 		}
 	}
-	
+
 	@Override
 	public void addDeclaration(IASTNode node) {
 		if (node instanceof ICPPASTElaboratedTypeSpecifier) {
@@ -269,7 +269,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			}
 
 			// Keep the lowest offset declaration in [0]
-			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
 				declarations = ArrayUtil.append(IASTName.class, declarations, name);
@@ -304,7 +304,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -313,7 +313,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			return type.isSameType(this);
 		return false;
 	}
-	
+
 	@Override
 	public ICPPBase[] getBases() {
 		if (bases == null) {
@@ -362,7 +362,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public IBinding[] getFriends() {
 		return ClassTypeHelper.getFriends(this);
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
@@ -372,7 +372,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
-	
+
 	@Override
 	public Object clone() {
 		try {
@@ -381,13 +381,13 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		return null;
 	}
-	
+
 	/**
 	 * For debugging purposes, only.
 	 */
 	@Override
 	public String toString() {
-		return getName(); 
+		return getName();
 	}
 
 	@Override
@@ -397,13 +397,13 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		return CPPVisitor.findDeclarationOwner(declarations[0], true);
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
-		if (getNameCharArray().length > 0) 
+		if (getNameCharArray().length > 0)
 			return false;
-		
-		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier(); 
+
+		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier();
 		if (spec != null) {
 			IASTNode node= spec.getParent();
 			if (node instanceof IASTSimpleDeclaration) {
@@ -426,7 +426,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	private IASTName stripQualifier(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
-	        name = ((ICPPASTQualifiedName)name).getLastName();
+	        name = ((ICPPASTQualifiedName) name).getLastName();
 	    }
 		return name;
 	}

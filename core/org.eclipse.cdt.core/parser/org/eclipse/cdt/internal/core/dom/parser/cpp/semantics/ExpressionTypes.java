@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
@@ -29,12 +29,12 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
  * Methods for computing the type of an expression.
  */
 public class ExpressionTypes {
-	
+
 	public static IType glvalueType(IType type) {
 		// Reference types are removed.
 		return SemanticUtil.getNestedType(type, COND_TDEF | REF);
 	}
-	
+
 	public static IType prvalueType(IType type) {
 		return Conversions.lvalue_to_rvalue(type, false);
 	}
@@ -62,7 +62,7 @@ public class ExpressionTypes {
 		}
 		return ValueCategory.PRVALUE;
 	}
-	
+
 	public static IType typeFromFunctionCall(IType functionType) {
 		IType t= SemanticUtil.getNestedType(functionType, TDEF | REF | CVTYPE);
 		if (t instanceof IPointerType) {
@@ -79,7 +79,7 @@ public class ExpressionTypes {
 		final ICPPFunctionType ft = function.getType();
 		return typeFromReturnType(ft.getReturnType());
 	}
-	
+
 	public static IType typeFromReturnType(IType type) {
 		IType t= SemanticUtil.getNestedType(type, TDEF);
 		if (t instanceof ICPPReferenceType) {
@@ -87,7 +87,7 @@ public class ExpressionTypes {
 		}
 		return prvalueType(type);
 	}
-	
+
 	public static IType restoreTypedefs(IType type, IType originalType) {
 		IType t = SemanticUtil.substituteTypedef(type, originalType);
 		if (t != null)
@@ -106,7 +106,7 @@ public class ExpressionTypes {
 		}
 		return type;
 	}
-	
+
 	private static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {
 			return ((IQualifierType) type).isConst();
@@ -115,7 +115,7 @@ public class ExpressionTypes {
 		}
 		return false;
 	}
-	
+
 	private static boolean isVolatile(IType type) {
 		if (type instanceof IQualifierType) {
 			return ((IQualifierType) type).isVolatile();
@@ -124,25 +124,25 @@ public class ExpressionTypes {
 		}
 		return false;
 	}
-	
+
 	private static IType makeConst(IType type) {
 		if (type instanceof ICQualifierType) {
 			ICQualifierType qualifierType = ((ICQualifierType) type);
-			return new CQualifierType(qualifierType.getType(), 
+			return new CQualifierType(qualifierType.getType(),
 					true, qualifierType.isVolatile(), qualifierType.isRestrict());
 		}
 		return new CQualifierType(type, true, false, false);
 	}
-	
+
 	private static IType makeVolatile(IType type) {
 		if (type instanceof ICQualifierType) {
 			ICQualifierType qualifierType = ((ICQualifierType) type);
-			return new CQualifierType(qualifierType.getType(), 
+			return new CQualifierType(qualifierType.getType(),
 					qualifierType.isConst(), true, qualifierType.isRestrict());
 		}
 		return new CQualifierType(type, false, true, false);
 	}
-	
+
 	private static IType restoreCV(IType type, IType originalType) {
 		if (isConst(originalType)) {
 			type = makeConst(type);
@@ -152,7 +152,7 @@ public class ExpressionTypes {
 		}
 		return type;
 	}
-	
+
 	public static IType restoreCV(IType type, IType originalType1, IType originalType2) {
 		return restoreCV(restoreCV(type, originalType1), originalType2);
 	}

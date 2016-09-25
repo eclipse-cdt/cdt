@@ -46,12 +46,12 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 			return (IBinding) fOwner;
 		return null;
 	}
-	
+
 	@Override
 	public IType getOwnerType() {
 		return fOwner;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER;
@@ -60,7 +60,7 @@ public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMe
 		} else if (this instanceof ICPPMethod) {
 			firstBytes |= ITypeMarshalBuffer.FLAG2;
 		}
-		
+
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getOwnerType());
 		buffer.putCharArray(getNameCharArray());

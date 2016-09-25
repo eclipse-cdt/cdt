@@ -369,7 +369,7 @@ public class CPPVisitor extends ASTQueries {
 				scope= ((ICPPClassType) t).getCompositeScope();
 			}
 		} else if (pb instanceof ICPPNamespace) {
-			scope= ((ICPPNamespace)pb).getNamespaceScope();
+			scope= ((ICPPNamespace) pb).getNamespaceScope();
 		}
 
 		return scope == inScope;
@@ -1393,7 +1393,7 @@ public class CPPVisitor extends ASTQueries {
 				name = ((IASTIdExpression) node).getName();
 				if (isLabelReference(node)) {
 					return resolveLabel(name);
-				} 
+				}
 				break;
 			} else if (node instanceof ICPPASTFieldReference) {
 				name = ((ICPPASTFieldReference) node).getFieldName();
@@ -2198,7 +2198,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		type = decorateType(type, declSpec, declarator);
-		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner)initClause).getEvaluation();
+		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner) initClause).getEvaluation();
 		initType= evaluation.getType(declarator);
 		valueCat= evaluation.getValueCategory(declarator);
 		if (initType == null || initType instanceof ISemanticProblem) {
@@ -2380,7 +2380,7 @@ public class CPPVisitor extends ASTQueries {
 						break;
 				} else if (scope instanceof ICPPClassScope) {
 					// Reached a class scope without a function scope in between.
-					// Might be in the default member initializer on a field. 
+					// Might be in the default member initializer on a field.
 					IType type = ((ICPPClassScope) scope).getClassType();
 					if (type instanceof ICPPClassTemplate) {
 				    	type= (ICPPClassType) ((ICPPClassTemplate) type).asDeferredInstance();

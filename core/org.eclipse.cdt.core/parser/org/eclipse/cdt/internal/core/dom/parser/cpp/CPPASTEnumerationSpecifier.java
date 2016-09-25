@@ -45,12 +45,12 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		setName(name);
 		setBaseType(baseType);
 	}
-	
+
 	@Override
 	public CPPASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
 		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped,
@@ -62,12 +62,12 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		}
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean startValueComputation() {
 		if (fValuesComputed != null)
 			return false;
-		
+
 		fValuesComputed= Boolean.FALSE;
 		return true;
 	}
@@ -127,7 +127,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		}
 		if (fName != null && !fName.accept(action))
 			return false;
-		
+
 		if (fBaseType != null && !fBaseType.accept(action)) {
 			return false;
 		}
@@ -139,7 +139,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 			if (!e.accept(action))
 				return false;
 		}
-				
+
 		if (action.shouldVisitDeclSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 

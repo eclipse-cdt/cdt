@@ -36,7 +36,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 	public CASTArrayDeclarator(IASTName name) {
 		super(name);
 	}
-	
+
 	@Override
 	public CASTArrayDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -66,7 +66,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
     		arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
             arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods,
-            		++arrayModsPos, arrayModifier);    		
+            		++arrayModsPos, arrayModifier);
     	}
     }
 

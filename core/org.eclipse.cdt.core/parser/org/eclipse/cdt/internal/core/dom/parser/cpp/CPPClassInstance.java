@@ -45,7 +45,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return arguments;
@@ -57,7 +57,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		checkForDefinition();
 		if (getDefinition() != null)
 			return null;
-		
+
 		return super.getSpecializationScope();
 	}
 
@@ -70,7 +70,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		final IASTNode[] decls = getDeclarations();
 		if (decls != null && decls.length > 0 && decls[0] != null)
 			return true;
-		
+
 		return false;
 	}
 
@@ -81,7 +81,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public String toString() {
 		return getName() + " " + ASTTypeUtil.getArgumentListString(arguments, true); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ICPPClassType && isSameType((ICPPClassType) obj);
@@ -99,7 +99,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 
 	public static boolean isSameClassInstance(ICPPClassSpecialization classInstance, IType type) {
 		assert classInstance instanceof ICPPTemplateInstance;
-		
+
 		// Require a class instance.
 		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance) ||
 				type instanceof IProblemBinding) {
@@ -111,7 +111,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		final ICPPClassType orig2= classSpec2.getSpecializedBinding();
 		if (!orig1.isSameType(orig2))
 			return false;
-		
+
 		return CPPTemplates.haveSameArguments((ICPPTemplateInstance) classInstance, (ICPPTemplateInstance) type);
 	}
 }

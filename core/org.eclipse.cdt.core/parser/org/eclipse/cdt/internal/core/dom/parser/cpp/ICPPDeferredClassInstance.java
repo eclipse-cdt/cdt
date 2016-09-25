@@ -17,14 +17,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
- * Interface for deferred class template instances. 
+ * Interface for deferred class template instances.
  */
 public interface ICPPDeferredClassInstance extends ICPPUnknownBinding, ICPPUnknownType, ICPPClassType, ICPPTemplateInstance {
 	/**
 	 * Returns the class template for the deferred instantiation.
 	 */
 	ICPPClassTemplate getClassTemplate();
-	
+
 	/**
 	 * Returns the mapping of the template parameters of the primary class template to the
 	 * arguments of this instance.

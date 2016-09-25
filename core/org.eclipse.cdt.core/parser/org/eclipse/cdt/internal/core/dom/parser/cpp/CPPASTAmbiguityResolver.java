@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayDeque;
@@ -51,7 +51,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	/*
 	 * The current nesting level of class definitions.
 	 * Used to handle processing of method bodies, which are deferred
-	 * until the end of the outermost class definition. 
+	 * until the end of the outermost class definition.
 	 */
 	private int fClassNestingLevel= 0;
 	private HashSet<IASTDeclaration> fRepopulate= new HashSet<>();
@@ -60,7 +60,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	 * Currently used only for method bodies.
 	 */
 	private Deque<IASTNode> fDeferredNodes = new ArrayDeque<>();
-	
+
 	/*
 	 * Used by visit(IASTDeclaration) to determine whether it should
 	 * process a function declaration now instead of deferring it
@@ -103,7 +103,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				}
 				if (node instanceof IASTExpression) {
 					break;
-				} 
+				}
 				node= node.getParent();
 			}
 		} else if (node instanceof IASTDeclaration) {
@@ -145,15 +145,15 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	private boolean shouldProcessNow(IASTFunctionDefinition func) {
-		return !fProcessNow.isEmpty() && fProcessNow.peek() == func; 
+		return !fProcessNow.isEmpty() && fProcessNow.peek() == func;
 	}
-	
+
 	@Override
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition && !shouldProcessNow((IASTFunctionDefinition) decl)) {
 			final IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
 
-			// Visit the declarator first, it may contain ambiguous template arguments needed 
+			// Visit the declarator first, it may contain ambiguous template arguments needed
 			// for associating the template declarations.
 			ICPPASTFunctionDeclarator fdecl = (ICPPASTFunctionDeclarator) fdef.getDeclarator();
 			fSkipInitializers++; // Initializers may refer to class members declared later.
@@ -166,8 +166,8 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				trailingReturnType.accept(this);
 			}
 			if (fClassNestingLevel > 0) {
-				// If this is a method defined inline inside a class declaration, defer visiting 
-				// the remaining parts of the method (notably the body) until the end of the 
+				// If this is a method defined inline inside a class declaration, defer visiting
+				// the remaining parts of the method (notably the body) until the end of the
 				// class declaration has been reached.
 				fDeferredNodes.add(decl);
 			} else {
@@ -179,7 +179,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				fProcessNow.pop();
 			}
 			return PROCESS_SKIP;
-		} 
+		}
 		return PROCESS_CONTINUE;
 	}
 
@@ -200,7 +200,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			} else if (declspec instanceof ICPPASTElaboratedTypeSpecifier
 					&& sdecl.getDeclarators().length == 0) {
 				ASTNodeProperty prop = declaration.getPropertyInParent();
-				if (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION 
+				if (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION
 						|| prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION) {
 					ICPPASTElaboratedTypeSpecifier elab= (ICPPASTElaboratedTypeSpecifier) declspec;
 					if (!elab.isFriend()) {
@@ -226,7 +226,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 	@Override
 	public int leave(IASTTranslationUnit tu) {
-		// As deferred method bodies are processed at the end of outermost 
+		// As deferred method bodies are processed at the end of outermost
 		// class definitions, there should be none left when the end of
 		// the translation unit is reached.
 		assert fDeferredNodes.isEmpty();
@@ -249,13 +249,13 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	/**
-	 * If 'node' has been deferred for later processing, process it now. 
+	 * If 'node' has been deferred for later processing, process it now.
 	 */
 	public void resolvePendingAmbiguities(IASTNode node) {
 		for (IASTNode deferredNode : fDeferredNodes) {
 			if (deferredNode == node) {
 				// Temporarily set the class nesting level to 0,
-				// to prevent the node just being deferred again. 
+				// to prevent the node just being deferred again.
 				int classNestingLevel = fClassNestingLevel;
 				fClassNestingLevel = 0;
 				try {

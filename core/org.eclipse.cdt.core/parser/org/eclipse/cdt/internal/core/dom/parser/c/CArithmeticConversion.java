@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 
 public class CArithmeticConversion extends ArithmeticConversion {
 	private static CArithmeticConversion sInstance= new CArithmeticConversion();
-	
+
 	public static IType convertCOperandTypes(int operator, IType t1, IType t2) {
 		return sInstance.convertOperandTypes(operator, t1, t2);
 	}
@@ -27,7 +27,7 @@ public class CArithmeticConversion extends ArithmeticConversion {
 	}
 
 	private CArithmeticConversion() {}
-	
+
 	@Override
 	protected IBasicType createBasicType(Kind kind, int modifiers) {
 		return new CBasicType(kind, modifiers);

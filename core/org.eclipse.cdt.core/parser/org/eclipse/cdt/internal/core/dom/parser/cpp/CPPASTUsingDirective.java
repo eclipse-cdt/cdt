@@ -38,7 +38,7 @@ public class CPPASTUsingDirective extends CPPASTAttributeOwner
 	public CPPASTUsingDirective copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTUsingDirective copy(CopyStyle style) {
 		CPPASTUsingDirective copy = new CPPASTUsingDirective(name == null ? null : name.copy(style));
@@ -109,7 +109,7 @@ public class CPPASTUsingDirective extends CPPASTAttributeOwner
 			return Arrays.copyOfRange(bindings, 0, j);
 		return bindings;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

@@ -22,9 +22,9 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
     private IASTExpression [] expressions = new IASTExpression[2];
     private int expressionsPos=-1;
 
-    
+
     public CASTAmbiguousExpression(IASTExpression... expressions) {
-		for(IASTExpression e : expressions)
+		for (IASTExpression e : expressions)
 			addExpression(e);
 	}
 
@@ -32,7 +32,7 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {
-    		expressions = ArrayUtil.appendAt( IASTExpression.class, expressions, ++expressionsPos, e );
+    		expressions = ArrayUtil.appendAt(IASTExpression.class, expressions, ++expressionsPos, e);
     		e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
     	}
@@ -40,7 +40,7 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
 
     @Override
 	public IASTExpression[] getExpressions() {
-    	expressions = ArrayUtil.trimAt( IASTExpression.class, expressions, expressionsPos ); 
+    	expressions = ArrayUtil.trimAt(IASTExpression.class, expressions, expressionsPos);
         return expressions;
     }
 
@@ -53,7 +53,7 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
 	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
-    
+
 	@Override
 	public IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();

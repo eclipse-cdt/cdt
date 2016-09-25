@@ -256,7 +256,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         backtrack.initialize(offset, (length < 0) ? 0 : length);
         throw backtrack;
     }
-    
+
     protected INodeFactory getNodeFactory() {
     	return nodeFactory;
     }
@@ -1165,7 +1165,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression unaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
     protected abstract IASTExpression primaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
     protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException;
-    
+
     // Methods for parsing a type-id and an expression with an optional trailing ellipsis.
     // The optional trailing ellipsis can only appear in C++ code, and only the C++ parser
     // allows it, but being able to invoke this from here allows reusing more productions
@@ -1649,7 +1649,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				// try second variant, if possible
 				if (dtorMark2 == null)
 					throw e;
-	
+
 				backup(dtorMark2);
 				dtor2= initDeclarator(declspec2, option);
 				return result.set(declspec2, dtor2, dtorMark2);
@@ -1796,9 +1796,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	final int compoundOffset= LA(1).getOffset();
     	final int endOffset= skipOverCompoundStatement(false).getEndOffset();
     	IASTCompoundStatement cs = nodeFactory.newCompoundStatement(); //createCompoundStatement();
-    	((ASTNode)cs).setOffsetAndLength(compoundOffset, endOffset - compoundOffset);
+    	((ASTNode) cs).setOffsetAndLength(compoundOffset, endOffset - compoundOffset);
 
-    	IASTFunctionDefinition funcDefinition = nodeFactory.newFunctionDefinition(declSpec, (IASTFunctionDeclarator)fdtor, cs);
+    	IASTFunctionDefinition funcDefinition = nodeFactory.newFunctionDefinition(declSpec, (IASTFunctionDeclarator) fdtor, cs);
     	((ASTNode) funcDefinition).setOffsetAndLength(offset, endOffset - offset);
 
     	return funcDefinition;
@@ -1978,9 +1978,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected static boolean isImplicitInt(IASTDeclaration declaration) {
     	if (declaration instanceof IASTSimpleDeclaration) {
-    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
+    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
     		if (declSpec instanceof IASTSimpleDeclSpecifier &&
-    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+    		   ((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
     			return true;
     		}
     	}
@@ -2466,17 +2466,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	 * @param endType the type of the token to stop before
 	 * @return a token sequence, possibly empty but never {@code null}
 	 */
-	protected IASTTokenList balancedTokenSeq(int offset, int endType) 
+	protected IASTTokenList balancedTokenSeq(int offset, int endType)
 			throws EndOfFileException, BacktrackException {
 		IASTTokenList result = nodeFactory.newTokenList();
 		IToken t;
 		while ((t = LA(1)).getType() != endType) {
 			t = consume();
-			
+
 			if (t.getType() == IToken.tCOMPLETION || t.getType() == IToken.tEOC) {
 				break;
 			}
-			
+
 			result.addToken(createASTToken(t));
 
 			IASTToken token;
@@ -2716,15 +2716,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected abstract IASTAlignmentSpecifier createAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression,
 			IASTAlignmentSpecifier typeId);
-	
+
 	protected IASTAlignmentSpecifier alignmentSpecifier() throws BacktrackException, EndOfFileException {
 		int startOffset = consume(IToken.t_alignas, IToken.t__Alignas).getOffset();
-		
+
 		consume(IToken.tLPAREN);
-		
+
 		IASTTypeId typeId = null;
 		IASTExpression expression = null;
-		
+
 		// Try parsing a type-id.
 		IToken beginning = mark();
 		IToken typeIdEnd = null;
@@ -2733,7 +2733,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			typeIdEnd = mark();
 		} catch (BacktrackException e) {
 		}
-		
+
 		// Back up and try parsing an expression.
 		backup(beginning);
 		try {
@@ -2744,7 +2744,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				throw e;
 			}
 		}
-		
+
 		IASTAlignmentSpecifier result;
 		if (typeId == null) {
 			// No type id - use the expression.
@@ -2771,7 +2771,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			backup(typeIdEnd);
 			result = nodeFactory.newAlignmentSpecifier(typeId);
 		}
-		
+
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 
 		setRange(result, startOffset, endOffset);

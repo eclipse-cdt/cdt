@@ -41,19 +41,19 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 
 	@Override
 	public String toString() {
-		return getName() + " " + ASTTypeUtil.getArgumentListString(arguments, true); //$NON-NLS-1$ 
+		return getName() + " " + ASTTypeUtil.getArgumentListString(arguments, true); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
-		if (this == type) 
+		if (this == type)
 			return true;
-		
+
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
-		if (type instanceof ICPPUnknownMemberClassInstance) { 
+
+		if (type instanceof ICPPUnknownMemberClassInstance) {
 			ICPPUnknownMemberClassInstance rhs= (ICPPUnknownMemberClassInstance) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
 				ICPPTemplateArgument[] lhsArgs= getArguments();
@@ -61,12 +61,12 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 				if (lhsArgs != rhsArgs) {
 					if (lhsArgs == null || rhsArgs == null)
 						return false;
-				
+
 					if (lhsArgs.length != rhsArgs.length)
 						return false;
-				
+
 					for (int i= 0; i < lhsArgs.length; i++) {
-						if (!lhsArgs[i].isSameValue(rhsArgs[i])) 
+						if (!lhsArgs[i].isSameValue(rhsArgs[i]))
 							return false;
 					}
 				}
@@ -79,7 +79,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes= ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
@@ -91,7 +91,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 			buffer.marshalTemplateArgument(arg);
 		}
 	}
-	
+
 	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType owner= buffer.unmarshalType();
 		char[] name = buffer.getCharArray();

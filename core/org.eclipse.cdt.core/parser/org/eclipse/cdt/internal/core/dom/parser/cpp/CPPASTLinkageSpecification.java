@@ -28,19 +28,19 @@ public class CPPASTLinkageSpecification extends ASTNode
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
     private int fLastDeclaration = -1;
-    
+
     public CPPASTLinkageSpecification() {
 	}
 
 	public CPPASTLinkageSpecification(String literal) {
 		this.fLiteral = literal;
 	}
-	
+
 	@Override
 	public CPPASTLinkageSpecification copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTLinkageSpecification copy(CopyStyle style) {
 		CPPASTLinkageSpecification copy = new CPPASTLinkageSpecification(fLiteral);
@@ -100,7 +100,7 @@ public class CPPASTLinkageSpecification extends ASTNode
 	            default: break;
 	        }
 		}
-        
+
 		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
 		for (IASTDeclaration decl : decls) {
 			if (!decl.accept(action)) return false;
@@ -108,7 +108,7 @@ public class CPPASTLinkageSpecification extends ASTNode
 
 		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-        
+
         return true;
     }
 

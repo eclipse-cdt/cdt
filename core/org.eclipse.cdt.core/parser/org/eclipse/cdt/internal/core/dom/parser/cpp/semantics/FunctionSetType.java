@@ -60,7 +60,7 @@ public class FunctionSetType implements IType {
 	public void applySelectedFunction(ICPPFunction selectedFunction) {
 		fFunctionSet.applySelectedFunction(selectedFunction);
 	}
-	
+
 	public CPPFunctionSet getFunctionSet() {
 		return fFunctionSet;
 	}

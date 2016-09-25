@@ -31,7 +31,7 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		setDeclSpecifier(declSpecifier);
 		setAbstractDeclarator(declarator);
 	}
-	
+
 	@Override
 	public CASTTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -84,7 +84,7 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 	            default: break;
 	        }
 		}
-        
+
         if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         if (declarator != null && !declarator.accept(action)) return false;
 

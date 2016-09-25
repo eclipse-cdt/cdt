@@ -33,7 +33,7 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 		IASTAttribute[] attributes = IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
 		for (IASTAttributeSpecifier attributeSpecifier : getAttributeSpecifiers()) {
 			if (attributeSpecifier instanceof IASTAttributeList) {
-				attributes = ArrayUtil.addAll(attributes, 
+				attributes = ArrayUtil.addAll(attributes,
 						((IASTAttributeList) attributeSpecifier).getAttributes());
 			}
 		}
@@ -101,10 +101,10 @@ public abstract class ASTAttributeOwner extends ASTNode implements IASTAttribute
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Having this here allows CPPASTAttributeOwner to implement IASTAmbiguityParent
-	 * without needing to access the field attributeSpecifiers. 
+	 * without needing to access the field attributeSpecifiers.
 	 */
 	protected void replace(IASTNode child, IASTNode other) {
 		if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {

@@ -35,7 +35,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 	public CASTInitializerList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTInitializerList copy(CopyStyle style) {
 		CASTInitializerList copy = new CASTInitializerList();
@@ -45,7 +45,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 		copy.actualSize = getSize();
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public int getSize() {
 		return actualSize;
@@ -65,10 +65,10 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 		IASTInitializerClause[] clauses= getClauses();
 		if (clauses.length == 0)
 			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
-		
+
 		IASTInitializer[] inits= new IASTInitializer[clauses.length];
 		for (int i = 0; i < inits.length; i++) {
-			IASTInitializerClause clause= clauses[i]; 
+			IASTInitializerClause clause= clauses[i];
 			if (clause instanceof IASTInitializer) {
 				inits[i]= (IASTInitializer) clause;
 			} else if (clause instanceof IASTExpression) {
@@ -104,7 +104,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
         	addClause(null);
         }
     }
-    
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitInitializers) {

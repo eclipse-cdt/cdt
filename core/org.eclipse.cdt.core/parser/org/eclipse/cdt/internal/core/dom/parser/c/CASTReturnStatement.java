@@ -30,7 +30,7 @@ public class CASTReturnStatement extends ASTAttributeOwner implements IASTReturn
 	public CASTReturnStatement(IASTExpression retValue) {
 		setReturnValue(retValue);
 	}
-	
+
 	@Override
 	public CASTReturnStatement copy() {
 		return copy(CopyStyle.withoutLocations);

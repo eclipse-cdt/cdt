@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -25,12 +25,12 @@ public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 	public CPPBlockScope(IASTNode physicalNode) {
 		super(physicalNode);
 	}
-	
+
 	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
-	
+
 	@Override
 	public IName getScopeName() {
 	    IASTNode node = getPhysicalNode();

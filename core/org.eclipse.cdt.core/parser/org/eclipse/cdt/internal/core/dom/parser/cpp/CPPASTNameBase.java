@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.regex.Pattern;
@@ -49,22 +49,22 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 			Assert.isTrue(sAllowRecursionBindings, getMessage());
 		}
 	}
-	
+
 	private RecursionResolvingBinding createRecursionResolvingBinding() {
 		// We create a recursion resolving binding when the resolution depth
 		// exceeds MAX_RESOLUTION_DEPTH. If the resolution depth exceeds
 		// MAX_RESOLUTION_DEPTH + 1, it means that attempting to create the
 		// recursion resolving binding has led us back to trying to resolve
-		// the binding for this name again, so the recursion isn't broken. 
-		// This can happen because the constructor of RecursionResolvingBinding 
-		// calls ProblemBinding.getMessage(), which can try to do name 
+		// the binding for this name again, so the recursion isn't broken.
+		// This can happen because the constructor of RecursionResolvingBinding
+		// calls ProblemBinding.getMessage(), which can try to do name
 		// resolution to build an argument string if one wasn't provided in the
 		// ProblemBinding constructor. To break the recursion in a case
 		// like, this we provide the argument string "(unknown)" instead.
 		char[] args = (fResolutionDepth > MAX_RESOLUTION_DEPTH + 1) ? "(unknown)".toCharArray() : null;  //$NON-NLS-1$
 		return new RecursionResolvingBinding(this, args);
 	}
-	
+
 	private IBinding fBinding;
 	private byte fResolutionDepth;
 	private boolean fIsFinal;
@@ -74,7 +74,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 			setBinding(createRecursionResolvingBinding());
 		}
 	}
-	
+
 	/**
 	 * Called to perform the binding resolution. Subclasses may return lazy bindings that
 	 * will not be exposed within public API.
@@ -96,7 +96,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	}
     	return fBinding;
 	}
-	
+
     @Override
 	public IBinding resolveBinding() {
     	if (fBinding == null) {
@@ -117,7 +117,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	}
     	if (!fIsFinal)
     		resolveFinalBinding(this);
-    	
+
     	return fBinding;
     }
 
@@ -141,10 +141,10 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	final IBinding cand= fBinding;
         if (cand == null)
         	return null;
-        
+
         if (!fIsFinal)
         	resolveFinalBinding(this);
-        
+
         return fBinding;
     }
 
@@ -159,13 +159,13 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	}
 		fIsFinal= true;
 	}
-	
+
 	@Override
 	public void setBinding(IBinding binding) {
 		fBinding= binding;
 		fResolutionDepth= 0;
 	}
-	
+
 	@Override
 	public IASTName getLastName() {
 		return this;
@@ -185,12 +185,12 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public final String toString() {
 		return new String(toCharArray());
 	}
-	
+
 	@Override
 	public IASTCompletionContext getCompletionContext() {
         IASTNode node = getParent();
@@ -200,7 +200,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     		}
     		node = node.getParent();
     	}
-    	
+
     	return null;
 	}
 
@@ -241,7 +241,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
         }
         return false;
     }
-    
+
     @Override
 	public boolean isDefinition() {
         IASTNode parent = getParent();

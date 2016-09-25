@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -35,21 +35,21 @@ public class ExecWhile implements ICPPExecution {
 			}
 
 			ICPPExecution result = EvalUtil.executeStatement(bodyExec, record, context);
-			if(result instanceof ExecReturn) {
+			if (result instanceof ExecReturn) {
 				return result;
-			} else if(result instanceof ExecBreak) {
+			} else if (result instanceof ExecBreak) {
 				break;
-			} else if(result instanceof ExecContinue) {
+			} else if (result instanceof ExecContinue) {
 				continue;
 			}
 		}
 		return null;
 	}
-	
+
 	private boolean conditionSatisfied(ActivationRecord record, ConstexprEvaluationContext context) {
-		if(conditionExprEval != null) {
+		if (conditionExprEval != null) {
 			return EvalUtil.conditionExprSatisfied(conditionExprEval, record, context);
-		} else if(conditionDeclExec != null) {
+		} else if (conditionDeclExec != null) {
 			return EvalUtil.conditionDeclSatisfied(conditionDeclExec, record, context);
 		}
 		return false;
@@ -58,7 +58,7 @@ public class ExecWhile implements ICPPExecution {
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPEvaluation newConditionExprEval = conditionExprEval != null ? conditionExprEval.instantiate(context, maxDepth) : null;
-		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null ? (ExecSimpleDeclaration)conditionDeclExec.instantiate(context, maxDepth) : null;
+		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null ? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth) : null;
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
 		if (newConditionExprEval == conditionExprEval && newConditionDeclExec == conditionDeclExec && newBodyExec == bodyExec) {
 			return this;
@@ -73,11 +73,11 @@ public class ExecWhile implements ICPPExecution {
 		buffer.marshalExecution(conditionDeclExec, includeValue);
 		buffer.marshalExecution(bodyExec, includeValue);
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation conditionExprEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
-		ExecSimpleDeclaration conditionDeclExec = (ExecSimpleDeclaration)buffer.unmarshalExecution();
-		ICPPExecution bodyExec = (ICPPExecution)buffer.unmarshalExecution();
+		ICPPEvaluation conditionExprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ExecSimpleDeclaration conditionDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
+		ICPPExecution bodyExec = (ICPPExecution) buffer.unmarshalExecution();
 		return new ExecWhile(conditionExprEval, conditionDeclExec, bodyExec);
 	}
 }

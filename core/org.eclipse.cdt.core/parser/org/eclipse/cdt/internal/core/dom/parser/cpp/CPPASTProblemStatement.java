@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
  * @author jcamelon
  */
 public class CPPASTProblemStatement extends CPPASTProblemOwner implements IASTProblemStatement {
-	
+
     public CPPASTProblemStatement() {
 		super();
 	}

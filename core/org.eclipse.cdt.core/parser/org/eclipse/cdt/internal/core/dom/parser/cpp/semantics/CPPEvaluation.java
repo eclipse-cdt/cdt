@@ -127,7 +127,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		ICPPEvaluation innerEval = value.getEvaluation();
 		if (innerEval == null) {
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				return value.numberValue() != null;
 			} else {
 				return true;
@@ -149,14 +149,14 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * @param targetType the type to convert to
 	 * @param point point of instantiation for name lookups
 	 */
-	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType, 
+	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
 			IASTNode point) {
 		IType type = argument.getType(point);
 		ValueCategory valueCategory = argument.getValueCategory(point);
 		ICPPFunction conversion = null;
 		if (type instanceof ICPPClassType) {
 			try {
-				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type, 
+				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type,
 						targetType, false, point);
 				conversion = cost.getUserDefinedConversion();
 			} catch (DOMException e) {

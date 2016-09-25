@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class ExecCase implements ICPPExecution {
 	private final ICPPEvaluation caseExprEval;
-	
+
 	public ExecCase(ICPPEvaluation caseExprEval) {
 		this.caseExprEval = caseExprEval;
 	}
@@ -37,24 +37,24 @@ public class ExecCase implements ICPPExecution {
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		Pair<ICPPEvaluation, ICPPEvaluation> vp = EvalUtil.getValuePair(caseExprEval, record, context);
 		ICPPEvaluation fixed = vp.getSecond();
-		if(fixed == caseExprEval) {
+		if (fixed == caseExprEval) {
 			return this;
 		}
 		return new ExecCase(fixed);
 	}
-	
+
 	public ICPPEvaluation getCaseExpressionEvaluation() {
 		return caseExprEval;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EXEC_CASE);
 		buffer.marshalEvaluation(caseExprEval, includeValue);
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation caseExprEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPEvaluation caseExprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new ExecCase(caseExprEval);
 	}
 }

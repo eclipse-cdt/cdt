@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  */
 public class CPPFunctionParameterMap {
 	public static final CPPFunctionParameterMap EMPTY = new CPPFunctionParameterMap(0);
-	
+
 	private ObjectMap fMap;
 
 	/**
@@ -45,14 +45,14 @@ public class CPPFunctionParameterMap {
 	public void put(int parameterPosition, ICPPEvaluation value) {
 		fMap.put(parameterPosition, value);
 	}
-	
+
 	/**
 	 * Adds the mapping.
 	 */
 	public void put(int parameterPosition, ICPPEvaluation[] packExpansion) {
 		fMap.put(parameterPosition, packExpansion);
 	}
-	
+
 	/**
 	 * Returns the value for the given parameter.
 	 */

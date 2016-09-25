@@ -31,7 +31,7 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 	public CASTFieldDesignator(IASTName name) {
 		setName(name);
 	}
-	
+
 	@Override
 	public CASTFieldDesignator copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -59,7 +59,7 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
     }
 
     @Override
-	public boolean accept( ASTVisitor action) {
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDesignators) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -71,10 +71,10 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 			return false;
 		if (action.shouldVisitDesignators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-		
+
         return true;
     }
-    
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return CVisitor.findBindingsForContentAssist(n, isPrefix);

@@ -166,8 +166,8 @@ public class Conversions {
 			if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.CONST) {
 				return Cost.NO_CONVERSION;
 			}
-			
-			// If the initializer expression is an xvalue, class prvalue, array prvalue, or function lvalue 
+
+			// If the initializer expression is an xvalue, class prvalue, array prvalue, or function lvalue
 			// and 'cv1 T1' is reference-compatible with 'cv2 T2', then the reference is bound to the value
 			// of the initializer expression (or the appropriate base class subobject).
 			if (valueCat == ValueCategory.XVALUE
@@ -179,7 +179,7 @@ public class Conversions {
 					return cost;
 				}
 			}
-			
+
 			// If the initializer expression has class type (i.e. T2 is a class type), where T1 is not
 			// reference-related to T2, and can be implicitly converted to an xvalue, class prvalue,
 			// or function lvalue of type 'cv3 T3', where 'cv1 T1' is reference-compatible with 'cv3 T3',
@@ -238,7 +238,7 @@ public class Conversions {
 	 * Note that there's a difference between returning null and returning Cost.NO_CONVERSION:
 	 * in the former case, the caller will continue trying other conversion methods.
 	 */
-	private static Cost initializationByConversionForDirectReference(final IType cv1T1, final IType cv2T2, final ICPPClassType T2, 
+	private static Cost initializationByConversionForDirectReference(final IType cv1T1, final IType cv2T2, final ICPPClassType T2,
 			boolean needLValue, boolean illFormedIfLValue, Context ctx, IASTNode point)
 			throws DOMException {
 		ICPPMethod[] fcns= SemanticUtil.getConversionOperators(T2, point);
@@ -272,7 +272,7 @@ public class Conversions {
 							ambiguousConversionOperator= cmp == 0;
 							operatorCost= cost;
 							operatorCost.setUserDefinedConversion(op);
-							
+
 							if (illFormedIfLValue && isLValueRef) {
 								operatorCost = Cost.NO_CONVERSION;
 							}

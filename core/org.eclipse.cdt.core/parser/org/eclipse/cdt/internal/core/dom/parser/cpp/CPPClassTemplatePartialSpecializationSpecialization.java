@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -101,7 +101,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
-	
+
 	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 	}

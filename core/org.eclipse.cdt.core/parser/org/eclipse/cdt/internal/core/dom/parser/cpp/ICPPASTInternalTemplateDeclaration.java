@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -20,11 +20,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 public interface ICPPASTInternalTemplateDeclaration extends ICPPASTTemplateDeclaration {
 	/**
 	 * Returns whether this template declaration is associated with the last name of
-	 * the possibly qualified name of the enclosing declaration. If this template declaration 
+	 * the possibly qualified name of the enclosing declaration. If this template declaration
 	 * encloses another one, <code>false</code> is returned.
 	 */
 	boolean isAssociatedWithLastName();
-	
+
 	/**
 	 * Returns the nesting level of this template declaration.
 	 * @see ICPPTemplateParameter#getTemplateNestingLevel()

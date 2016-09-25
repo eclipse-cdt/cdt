@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPLambdaExpressionParameter extends PlatformObject implements ICPPParameter {
 	private IType fType;
 	private IASTName fDeclaration;
-	
+
 	public CPPLambdaExpressionParameter(IASTName name) {
 		fDeclaration = name;
 	}
-		
+
     @Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
@@ -114,7 +114,7 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
-    
+
     private boolean hasStorageClass(int storage) {
     	IASTNode parent = fDeclaration.getParent();
     	while (parent != null && !(parent instanceof IASTParameterDeclaration))
@@ -136,7 +136,7 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 	public IValue getDefaultValue() {
 		return null;
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
@@ -146,19 +146,19 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 	public boolean isExternC() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		String name = getName();
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		IASTNode node= fDeclaration;
 		while (node != null && !(node instanceof ICPPASTLambdaExpression))
 			node= node.getParent();
-		
+
 		if (node instanceof ICPPASTLambdaExpression) {
 			IType type= ((ICPPASTLambdaExpression) node).getExpressionType();
 			if (type instanceof IBinding) {

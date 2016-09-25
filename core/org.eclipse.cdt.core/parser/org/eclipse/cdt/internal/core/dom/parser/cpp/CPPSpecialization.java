@@ -39,7 +39,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	private final ICPPTemplateParameterMap argumentMap;
 	protected IASTNode definition;
 	private IASTNode[] declarations;
-	
+
 	public CPPSpecialization(IBinding specialized, IBinding owner, ICPPTemplateParameterMap argumentMap) {
 		this.specialized = specialized;
 		this.owner = owner;
@@ -95,7 +95,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	public IBinding getOwner() {
 		return owner;
 	}
-	
+
 	@Override
 	public IScope getScope() throws DOMException {
 		if (owner instanceof ICPPClassType) {
@@ -105,11 +105,11 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		} else if (owner instanceof ICPPFunction) {
 			return ((ICPPFunction) owner).getFunctionScope();
 		}
-		if (definition != null) 
+		if (definition != null)
 			return CPPVisitor.getContainingScope(definition);
-		if (declarations != null && declarations.length > 0) 
+		if (declarations != null && declarations.length > 0)
 			return CPPVisitor.getContainingScope(declarations[0]);
-		
+
 		return specialized.getScope();
 	}
 
@@ -139,7 +139,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return argumentMap;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder(getName());

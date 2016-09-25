@@ -26,7 +26,7 @@ public class CPPClassSpecializationScope extends AbstractCPPClassSpecializationS
 	public CPPClassSpecializationScope(ICPPClassSpecialization specialization) {
 		super(specialization);
 	}
-		
+
 	// This scope does not cache its own names
 	@Override
 	public void addName(IASTName name) {}

@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationSta
 public class CPPASTDeclarationStatement extends ASTNode
 		implements IASTDeclarationStatement, IASTAmbiguityParent, ICPPExecutionOwner {
     private IASTDeclaration declaration;
-    
+
     public CPPASTDeclarationStatement() {
 	}
 
@@ -40,7 +40,7 @@ public class CPPASTDeclarationStatement extends ASTNode
 	public CPPASTDeclarationStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTDeclarationStatement copy(CopyStyle style) {
 		CPPASTDeclarationStatement copy = new CPPASTDeclarationStatement();
@@ -120,8 +120,8 @@ public class CPPASTDeclarationStatement extends ASTNode
 
 	@Override
 	public ICPPExecution getExecution() {
-		if(declaration instanceof ICPPExecutionOwner) {
-			ICPPExecutionOwner execOwner = (ICPPExecutionOwner)declaration;
+		if (declaration instanceof ICPPExecutionOwner) {
+			ICPPExecutionOwner execOwner = (ICPPExecutionOwner) declaration;
 			return new ExecDeclarationStatement(execOwner.getExecution());
 		}
 		return null;

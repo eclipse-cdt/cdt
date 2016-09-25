@@ -34,10 +34,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class IntegralValue implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
-	
+
 	// IntegralValue.THIS represents the this pointer inside a member function / constructor.
 	public static final IntegralValue THIS = new IntegralValue("this".toCharArray(), null); //$NON-NLS-1$
-	
+
 	// IntegralValue.UNKNOWN indicates general inability to determine a value. It doesn't have to be an error,
 	// it could be that evaluation ran into a performance limit, or that we can't model this kind of
 	// value (such as a pointer to a function).
@@ -47,14 +47,14 @@ public class IntegralValue implements IValue {
 			throw new UnsupportedOperationException();
 		}
 	};
-	
+
 	// IntegralValue.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
 	public static final IntegralValue ERROR= new IntegralValue("<error>".toCharArray(), null); //$NON-NLS-1$
 
 	public static final IntegralValue NOT_INITIALIZED= new IntegralValue("<__>".toCharArray(), null); //$NON-NLS-1$
 
 	private static final char UNIQUE_CHAR = '_';
-	
+
 	private final static IntegralValue[] TYPICAL= {
 			new IntegralValue(new char[] {'0'}, null),
 			new IntegralValue(new char[] {'1'}, null),
@@ -81,7 +81,7 @@ public class IntegralValue implements IValue {
 	public Long numericalValue() {
 		return (Long) numberValue();  // IntegralValue.numberValue() always returns a Long
 	}
-	
+
 	@Override
 	public Number numberValue() {
 		return fFixedValue == null ? null : parseLong(fFixedValue);
@@ -116,7 +116,7 @@ public class IntegralValue implements IValue {
 	public void marshal(ITypeMarshalBuffer buf) throws CoreException {
 		if (UNKNOWN == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1));
-		} else if(THIS == this) {
+		} else if (THIS == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG5));
 		} else {
 			Number num= numberValue();

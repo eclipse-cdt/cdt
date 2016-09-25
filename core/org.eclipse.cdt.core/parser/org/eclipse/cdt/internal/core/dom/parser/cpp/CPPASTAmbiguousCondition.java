@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -28,7 +28,7 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 	public CPPASTAmbiguousCondition(IASTExpression expression, IASTSimpleDeclaration declaration) {
 		fExpression= expression;
 		fDeclaration= declaration;
-		
+
 		expression.setParent(this);
 		expression.setPropertyInParent(SUBCONDITION);
 		declaration.setParent(this);
@@ -39,7 +39,7 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 	public IASTNode[] getNodes() {
 		return new IASTNode[] {fExpression, fDeclaration};
 	}
-	
+
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.

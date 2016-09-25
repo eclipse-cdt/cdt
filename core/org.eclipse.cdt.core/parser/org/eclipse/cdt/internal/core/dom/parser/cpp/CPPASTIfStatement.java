@@ -33,7 +33,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
     private IASTStatement elseClause;
     private IASTDeclaration condDecl;
     private IScope scope;
-    
+
     public CPPASTIfStatement() {
 	}
 
@@ -42,13 +42,13 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 		setThenClause(thenClause);
 		setElseClause(elseClause);
 	}
-    
+
     public CPPASTIfStatement(IASTExpression condition, IASTStatement thenClause, IASTStatement elseClause) {
 		setConditionExpression(condition);
 		setThenClause(thenClause);
 		setElseClause(elseClause);
 	}
-    
+
     @Override
 	public CPPASTIfStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -63,7 +63,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 		copy.setElseClause(elseClause == null ? null : elseClause.copy(style));
 		return copy(copy, style);
 	}
-    
+
 	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
@@ -107,7 +107,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
         if (elseClause != null) {
 			elseClause.setParent(this);
 			elseClause.setPropertyInParent(ELSE);
-		} 
+		}
     }
 
 	private static class N {
@@ -127,7 +127,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
     		if (action.shouldVisitStatements) {
     			switch (action.visit(stmt)) {
     			case ASTVisitor.PROCESS_ABORT: return false;
-    			case ASTVisitor.PROCESS_SKIP: 	
+    			case ASTVisitor.PROCESS_SKIP:
     				stmt= null;
     				break loop;
     			default: break;
@@ -171,7 +171,7 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
     	}
         return true;
     }
-    
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (thenClause == child) {
@@ -210,20 +210,20 @@ public class CPPASTIfStatement extends CPPASTAttributeOwner implements ICPPASTIf
 			condition= null;
 		}
     }
-    
+
 	@Override
 	public IScope getScope() {
 		if (scope == null)
             scope = new CPPBlockScope(this);
-        return scope;	
+        return scope;
     }
-	
+
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getConditionExpression();
-		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner)getConditionDeclaration();
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner) getConditionExpression();
+		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
 		ICPPExecution thenClauseExec = EvalUtil.getExecutionFromStatement(getThenClause());
 		ICPPExecution elseClauseExec = getElseClause() != null ? EvalUtil.getExecutionFromStatement(getElseClause()) : null;
 		return new ExecIf(conditionExprEval, conditionDeclExec, thenClauseExec, elseClauseExec);

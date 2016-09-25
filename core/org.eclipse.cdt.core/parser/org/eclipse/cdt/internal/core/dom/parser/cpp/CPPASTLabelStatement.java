@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 public class CPPASTLabelStatement extends CPPASTAttributeOwner implements IASTLabelStatement {
     private IASTName name;
     private IASTStatement nestedStatement;
-    
+
     public CPPASTLabelStatement() {
 	}
 
@@ -31,7 +31,7 @@ public class CPPASTLabelStatement extends CPPASTAttributeOwner implements IASTLa
 		setName(name);
 		setNestedStatement(nestedStatement);
 	}
-	
+
 	@Override
 	public CPPASTLabelStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -73,7 +73,7 @@ public class CPPASTLabelStatement extends CPPASTAttributeOwner implements IASTLa
         if (!acceptByAttributeSpecifiers(action)) return false;
         if (name != null && !name.accept(action)) return false;
         if (nestedStatement != null && !nestedStatement.accept(action)) return false;
-        
+
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

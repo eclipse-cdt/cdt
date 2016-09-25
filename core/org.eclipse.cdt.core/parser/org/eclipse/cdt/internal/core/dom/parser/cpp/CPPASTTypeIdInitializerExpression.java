@@ -81,7 +81,7 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		if (fImplicitDestructorNames == null) {
 			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
-	
+
 		return fImplicitDestructorNames;
 	}
 
@@ -94,7 +94,7 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 	            default: break;
 	        }
 		}
-        
+
         if (fTypeId != null && !fTypeId.accept(action)) return false;
         if (fInitializer != null && !fInitializer.accept(action)) return false;
 
@@ -131,9 +131,9 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (fEvaluation == null) 
+		if (fEvaluation == null)
 			fEvaluation= computeEvaluation();
-		
+
 		return fEvaluation;
 	}
 
@@ -141,11 +141,11 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		final IASTInitializer initializer = getInitializer();
 		if (!(initializer instanceof ICPPASTInitializerClause))
 			return EvalFixed.INCOMPLETE;
-		
+
 		IType type= CPPVisitor.createType(getTypeId());
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
-		
+
 		return new EvalTypeId(type, this, false, ((ICPPEvaluationOwner) initializer).getEvaluation());
 	}
 

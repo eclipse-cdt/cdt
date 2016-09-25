@@ -18,13 +18,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * GNU C goto statement.
- * 
+ *
  * <code>
  * foo:
  *   void *labelPtr = &&foo;
  *   goto *labelPtr; // this is the statement
  * </code>
- * 
+ *
  * @since 5.8
  */
 public class GNUCASTGotoStatement extends ASTAttributeOwner implements IGNUASTGotoStatement {

@@ -41,7 +41,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		setName(name);
 		setDefaultValue(defaultValue);
 	}
-	
+
 	@Override
 	public CPPASTTemplatedTypeTemplateParameter copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -83,7 +83,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		}
 	}
 
-	
+
     @Override
 	public void setIsParameterPack(boolean val) {
     	assertNotFrozen();
@@ -126,7 +126,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitTemplateParameters) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -134,7 +134,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 	            default : break;
 	        }
 		}
-        
+
         ICPPASTTemplateParameter [] ps = getTemplateParameters();
 		for (int i = 0; i < ps.length; i++) {
 			if (!ps[i].accept(action))
@@ -144,7 +144,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 			return false;
 		if (fDefaultValue != null && !fDefaultValue.accept(action))
 			return false;
-        
+
 		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
@@ -153,17 +153,17 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if( n == fName )
+		if (n == fName)
 			return r_declaration;
 		return r_unclear;
 	}
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == fDefaultValue )
+        if (child == fDefaultValue)
         {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             fDefaultValue  = (IASTExpression) other;
         }
     }

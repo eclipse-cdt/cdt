@@ -61,21 +61,21 @@ public class TypeTraits {
 
 	private TypeTraits() {}
 
-	
-	
+
+
 	public static boolean isDefaultedMethod(ICPPMethod method) {
-		if(method instanceof ICPPInternalFunction) {
-			ICPPInternalFunction internalFunc = (ICPPInternalFunction)method;
+		if (method instanceof ICPPInternalFunction) {
+			ICPPInternalFunction internalFunc = (ICPPInternalFunction) method;
 			IASTNode definition = internalFunc.getDefinition();
 			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(definition);
-			if(functionDefinition != null) {
+			if (functionDefinition != null) {
 				return functionDefinition.isDefaulted();
 			}
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
 	 *	From $3.9 / 10:
 	 *	A type is a literal type if it is:
@@ -85,41 +85,41 @@ public class TypeTraits {
 	 *		- it is an aggregate type or has at least one constexpr constructor or constructor template that is not a
 	 *		  copy or move constructor, and
 	 *		- all of its non-static data members and base classes are of non-volatile literal types
-	 *  TODO: The last property isn't being checked. 
+	 *  TODO: The last property isn't being checked.
 	*/
 	public static boolean isLiteralClass(ICPPClassType classType, IASTNode point) {
-		if(!hasTrivialDestructor(classType, point)) {
+		if (!hasTrivialDestructor(classType, point)) {
 			return false;
 		}
-		
-		if(isAggregateClass(classType, point)) {
+
+		if (isAggregateClass(classType, point)) {
 			return true;
 		}
-		
+
 		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, point);
-		for(ICPPConstructor ctor : ctors) {
+		for (ICPPConstructor ctor : ctors) {
 			MethodKind methodKind = ClassTypeHelper.getMethodKind(classType, ctor);
-			if(methodKind == MethodKind.COPY_CTOR || methodKind == MethodKind.MOVE_CTOR) {
+			if (methodKind == MethodKind.COPY_CTOR || methodKind == MethodKind.MOVE_CTOR) {
 				continue;
 			}
-			
+
 			// implicit constructors are automatically constexpr when the class is a literal type
-			if(ctor instanceof CPPImplicitConstructor || ctor.isConstexpr()) {
+			if (ctor instanceof CPPImplicitConstructor || ctor.isConstexpr()) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * C++11: 9-6
 	 */
 	public static boolean isTrivial(ICPPClassType classType, IASTNode point) {
 		return isTrivialImpl(classType, point, true);
 	}
-	
-	private static boolean isTrivialImpl(ICPPClassType classType, IASTNode point, 
+
+	private static boolean isTrivialImpl(ICPPClassType classType, IASTNode point,
 			boolean checkDefaultConstructors) {
 		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
 			if (method.isVirtual())
@@ -455,7 +455,7 @@ public class TypeTraits {
 		}
 		return false;
 	}
-	
+
 	public static IType underlyingType(IType type) {
 		if (CPPTemplates.isDependentType(type)) {
 			return new CPPUnaryTypeTransformation(Operator.underlying_type, type);
@@ -467,7 +467,7 @@ public class TypeTraits {
 			IType fixedType = enumeration.getFixedType();
 			if (fixedType != null)
 				return fixedType;
-			
+
 			// [dcl.enum] 7.2-6:
 			// "For an enumeration whose underlying type is not fixed, the
 			// underlying type is an integral type that can represent all
@@ -499,10 +499,10 @@ public class TypeTraits {
 		}
 		return types[types.length - 1];  // Assume it fits into the largest type provided.
 	}
-	
+
 	/**
 	 * Returns true if 'type' is scalar, as defined in [basic.types] p9:
-	 * 
+	 *
 	 * "Arithmetic types, enumeration types, pointer types, pointer to member
 	 * types, std::nullptr_t, and cv-qualified versions of these types are
 	 * collectively called scalar types."
@@ -511,10 +511,10 @@ public class TypeTraits {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.ALLCVQ);
 		return type instanceof IBasicType || type instanceof IEnumeration || type instanceof IPointerType;
 	}
-	
+
 	/**
 	 * Returns true if 'type' is a trivially copyable class, as defined in [class] p6:
-	 * 
+	 *
 	 * "A trivially copyable class is a class that:
 	 *    - has no non-trivial copy constructors,
 	 *    - has no non-trivial move constructors,
@@ -525,10 +525,10 @@ public class TypeTraits {
 	private static boolean isTriviallyCopyableClass(ICPPClassType type, IASTNode point) {
 		return isTrivialImpl(type, point, false);
 	}
-	
+
 	/**
 	 * Returns true if 'type' is trivially copyable, as defined in [basic.types] p9:
-	 * 
+	 *
 	 * "Cv-unqualified scalar types, trivially copyable class types, arrays
 	 * of such types, and non-volatile const-qualified versions of these
 	 * types are collectively called trivially copyable types."

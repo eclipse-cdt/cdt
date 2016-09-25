@@ -24,7 +24,7 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator absDecl;
     private boolean isPackExpansion;
-    
+
     public CPPASTTypeId() {
 	}
 
@@ -32,12 +32,12 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		setDeclSpecifier(declSpec);
 		setAbstractDeclarator(absDecl);
 	}
-	
+
 	@Override
 	public CPPASTTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTypeId copy(CopyStyle style) {
 		CPPASTTypeId copy = new CPPASTTypeId();
@@ -96,7 +96,7 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 	            default: break;
 	        }
 		}
-        
+
         if (declSpec != null && !declSpec.accept(action)) return false;
         if (absDecl != null && !absDecl.accept(action)) return false;
 

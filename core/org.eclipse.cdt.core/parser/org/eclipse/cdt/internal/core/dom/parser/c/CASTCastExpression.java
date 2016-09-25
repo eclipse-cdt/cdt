@@ -37,7 +37,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		setOperand(operand);
 		setTypeId(typeId);
 	}
-	
+
 	@Override
 	public CASTCastExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -77,7 +77,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 			expression.setPropertyInParent(OPERAND);
 		}
     }
-    
+
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
@@ -94,40 +94,40 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+
+        if (typeId != null) if (!typeId.accept(action)) return false;
         IASTExpression operand = getOperand();
-        if( operand != null ) if( !operand.accept( action ) ) return false;
-        
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
+        if (operand != null) if (!operand.accept(action)) return false;
+
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
-        
+
+
         return true;
     }
-    
+
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == operand) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			operand = (IASTExpression) other;
-		} 
+		}
 	}
-    
+
 	@Override
 	public IType getExpressionType() {
         IASTTypeId id= getTypeId();
@@ -138,7 +138,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

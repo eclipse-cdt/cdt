@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -21,7 +21,7 @@ public class ExecSimpleDeclaration implements ICPPExecution {
 	public ExecSimpleDeclaration(ICPPExecution[] declaratorExecutions) {
 		this.declaratorExecutions = declaratorExecutions;
 	}
-	
+
 	public ICPPExecution[] getDeclaratorExecutions() {
 		return declaratorExecutions;
 	}
@@ -29,7 +29,7 @@ public class ExecSimpleDeclaration implements ICPPExecution {
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPExecution[] newDeclaratorExecutions = new ICPPExecution[declaratorExecutions.length];
-		for(int i = 0; i < declaratorExecutions.length; i++) {
+		for (int i = 0; i < declaratorExecutions.length; i++) {
 			newDeclaratorExecutions[i] = declaratorExecutions[i].executeForFunctionCall(record, context);
 		}
 		return new ExecSimpleDeclaration(newDeclaratorExecutions);
@@ -38,12 +38,12 @@ public class ExecSimpleDeclaration implements ICPPExecution {
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPExecution[] newDeclaratorExecutions = new ICPPExecution[declaratorExecutions.length];
-		for(int i = 0; i < declaratorExecutions.length; i++) {
+		for (int i = 0; i < declaratorExecutions.length; i++) {
 			newDeclaratorExecutions[i] = declaratorExecutions[i].instantiate(context, maxDepth);
 		}
 		return new ExecSimpleDeclaration(newDeclaratorExecutions);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EXEC_SIMPLE_DECLARATION);
@@ -52,12 +52,12 @@ public class ExecSimpleDeclaration implements ICPPExecution {
 			buffer.marshalExecution(execution, includeValue);
 		}
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len = buffer.getInt();
 		ICPPExecution[] declaratorExecutions = new ICPPExecution[len];
 		for (int i = 0; i < declaratorExecutions.length; i++) {
-			declaratorExecutions[i] = (ICPPExecution)buffer.unmarshalExecution();
+			declaratorExecutions[i] = (ICPPExecution) buffer.unmarshalExecution();
 		}
 		return new ExecSimpleDeclaration(declaratorExecutions);
 	}

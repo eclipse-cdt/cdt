@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private final IType fType;
 	private final IValue fDefaultValue;
-	
+
 	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, IValue defaultValue,
 			ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
@@ -33,7 +33,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 		fDefaultValue = defaultValue;
 	}
 
-	private ICPPParameter getParameter(){
+	private ICPPParameter getParameter() {
 		return (ICPPParameter) getSpecializedBinding();
 	}
 
@@ -44,7 +44,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	public IType getType() {
 		return fType;
 	}
-	
+
 	@Override
 	public boolean isParameterPack() {
 		return fType instanceof ICPPParameterPackType;

@@ -65,7 +65,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	/**
 	 * The binding represented by this evaluation. For a function parameter binding may be computed
 	 * lazily to avoid infinite recursion during unmarshalling of the evaluation. If #fBinding is
-	 * {@code null}, {@link #fParameterOwner} is guaranteed to be not {@code null} and vice versa. 
+	 * {@code null}, {@link #fParameterOwner} is guaranteed to be not {@code null} and vice versa.
 	 */
 	private IBinding fBinding;
 	private final boolean fFixedType;
@@ -132,10 +132,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	/**
 	 * Finds a given object in an array.
-	 *  
+	 *
 	 * @param array the array to find the object in
 	 * @param obj the object to find
-	 * @return the index of the object in the array, or -1 if the object is not in the array 
+	 * @return the index of the object in the array, or -1 if the object is not in the array
 	 */
 	private static int findInArray(Object[] array, Object obj) {
 		for (int i = 0; i < array.length; i++) {
@@ -242,7 +242,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		return false;
 	}
- 	
+
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
 		if (!fCheckedIsConstantExpression) {
@@ -251,11 +251,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		return fIsConstantExpression;
 	}
-	
+
 	private boolean computeIsConstantExpression(IASTNode point) {
 		return fBinding instanceof IEnumerator
 			|| fBinding instanceof ICPPFunction
-			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue(), point)); 
+			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue(), point));
 	}
 
 	@Override
@@ -273,9 +273,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
-			// If the binding is a non-type parameter pack, it must have been 
-			// referenced from inside the expansion pattern of a pack expansion. 
-			// In such a context, the type of the binding is the type of each 
+			// If the binding is a non-type parameter pack, it must have been
+			// referenced from inside the expansion pattern of a pack expansion.
+			// In such a context, the type of the binding is the type of each
 			// parameter in the parameter pack, not the type of the pack itself.
 			if (type instanceof ICPPParameterPackType)
 				type = ((ICPPParameterPackType) type).getType();
@@ -328,11 +328,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 			return IntegralValue.create(this);
 
 		IValue value= null;
-		
-		if(fBinding instanceof ICPPVariable) {
-			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable)fBinding, 
+
+		if (fBinding instanceof ICPPVariable) {
+			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding,
 					new ActivationRecord());
-			if(valueEval != null) {
+			if (valueEval != null) {
 				value = valueEval.getValue(point);
 			}
 		} else if (fBinding instanceof IEnumerator) {
@@ -392,38 +392,38 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		IBinding origBinding = getBinding();
-		final CPPTemplateParameterMap tpMap = (CPPTemplateParameterMap)context.getParameterMap();
+		final CPPTemplateParameterMap tpMap = (CPPTemplateParameterMap) context.getParameterMap();
 		final int packOffset = context.getPackOffset();
-		
-		IVariable newBinding = tpMap == null ? null : (IVariable)context.getInstantiatedLocal(origBinding);
-		if(newBinding != null) {
-			IType origType = ((IVariable)origBinding).getType();
+
+		IVariable newBinding = tpMap == null ? null : (IVariable) context.getInstantiatedLocal(origBinding);
+		if (newBinding != null) {
+			IType origType = ((IVariable) origBinding).getType();
 			EvalBinding newBindingEval = null;
-			if(origType instanceof ICPPParameterPackType) {
+			if (origType instanceof ICPPParameterPackType) {
 				origType = ((ICPPParameterPackType) origType).getType();
 				IType instantiatedType = CPPTemplates.instantiateType(origType, context);
-				if(origType != instantiatedType) {
+				if (origType != instantiatedType) {
 					newBindingEval = new EvalBinding(newBinding, instantiatedType, getTemplateDefinition());
 				}
 			}
-			
-			if(newBindingEval == null) { 
+
+			if (newBindingEval == null) {
 				newBindingEval = new EvalBinding(newBinding, newBinding.getType(), getTemplateDefinition());
 			}
-			if(context.hasPackOffset()) {
+			if (context.hasPackOffset()) {
 				return new EvalCompositeAccess(newBindingEval, packOffset);
 			} else {
 				return newBindingEval;
 			}
 		}
-		
+
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
 			ICPPTemplateArgument argument = context.getArgument((ICPPTemplateNonTypeParameter) origBinding);
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}
 		} else if (origBinding instanceof ICPPParameter) {
-			ICPPParameter parameter = (ICPPParameter) origBinding;	
+			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
 			if (origType instanceof ICPPParameterPackType && context.hasPackOffset()) {
 				origType = ((ICPPParameterPackType) origType).getType();
@@ -443,8 +443,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation eval = record.getVariable(getBinding());
-		
-		if(eval != null) {
+
+		if (eval != null) {
 			return eval;
 		} else {
 			return this;
@@ -467,7 +467,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 			ICPPParameterPackType type = (ICPPParameterPackType) ((ICPPParameter) binding).getType();
 			return CPPTemplates.determinePackSize(type.getType(), tpMap);
 		}
-		
+
 		if (binding instanceof ICPPSpecialization) {
 			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
@@ -489,7 +489,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 		// represents a template parameter.
 		return fBinding instanceof ICPPTemplateParameter;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getBinding().toString();

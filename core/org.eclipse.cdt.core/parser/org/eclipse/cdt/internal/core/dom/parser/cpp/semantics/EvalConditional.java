@@ -382,7 +382,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 		if (condition == fCondition && positive == fPositive && negative == fNegative) {
 			return this;
 		}
-		
+
 		EvalConditional evalConditional = new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
 		return evalConditional;
 	}

@@ -66,7 +66,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			super.addDefinition(node);
 		}
 	}
-	
+
 	@Override
 	public void addDeclaration(IASTNode node) {
 		if (!(node instanceof IASTName))
@@ -77,20 +77,20 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 
 		if (fdecl instanceof ICPPASTFunctionDeclarator)
 			updateFunctionParameterBindings((ICPPASTFunctionDeclarator) fdecl);
-		
+
 		super.addDeclaration(node);
 	}
 
 	private ICPPASTFunctionDeclarator getFirstFunctionDtor() {
 		IASTDeclarator dtor= getDeclaratorByName(getDefinition());
-        if (dtor instanceof ICPPASTFunctionDeclarator) 
+        if (dtor instanceof ICPPASTFunctionDeclarator)
         	return (ICPPASTFunctionDeclarator) dtor;
 
         IASTNode[] decls = getDeclarations();
         if (decls != null) {
         	for (IASTNode decl : decls) {
         		dtor= getDeclaratorByName(decl);
-        		if (dtor instanceof ICPPASTFunctionDeclarator) 
+        		if (dtor instanceof ICPPASTFunctionDeclarator)
         			return (ICPPASTFunctionDeclarator) dtor;
         	}
         }
@@ -101,13 +101,13 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	public ICPPParameter[] getParameters() {
 		ICPPASTFunctionDeclarator declarator= null;
 		IASTDeclarator dtor= getDeclaratorByName(getDefinition());
-        if (dtor instanceof ICPPASTFunctionDeclarator) 
+        if (dtor instanceof ICPPASTFunctionDeclarator)
         	declarator = (ICPPASTFunctionDeclarator) dtor;
 
         IASTNode[] decls = getDeclarations();
         if (decls != null) {
     		// In case of multiple function declarations we select the one with the most
-    		// default parameter values. 
+    		// default parameter values.
 			int defaultValuePosition = -1;
         	for (IASTNode decl : decls) {
         		dtor= getDeclaratorByName(decl);
@@ -181,7 +181,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			IType t = getNestedType(CPPVisitor.createType((IASTDeclarator) parent), TDEF);
 			if (t instanceof ICPPFunctionType) {
 				type = (ICPPFunctionType) t;
-			} else if (t instanceof ISemanticProblem){
+			} else if (t instanceof ISemanticProblem) {
 				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
 			} else {
 				// This case is unexpected.
@@ -200,7 +200,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
                 IASTNode parent = name.getParent();
 	            while (parent != null && !(parent instanceof IASTDeclaration))
 	                parent = parent.getParent();
-	            
+
 	            IASTDeclSpecifier declSpec = getDeclSpecifier((IASTDeclaration) parent);
 	            if (declSpec != null && declSpec.getStorageClass() == storage) {
 	            	return true;
@@ -218,7 +218,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	protected ICPPASTDeclSpecifier getDeclSpecifier(IASTDeclaration decl) {
 		if (decl instanceof IASTSimpleDeclaration) {
 		    return (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
-		} 
+		}
 		if (decl instanceof IASTFunctionDefinition) {
 		    return (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl).getDeclSpecifier();
 		}
@@ -228,7 +228,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     @Override
 	public IBinding resolveParameter(CPPParameter param) {
 		int pos= param.getParameterPosition();
-		
+
     	final IASTNode[] decls= getDeclarations();
 		int tdeclLen= decls == null ? 0 : decls.length;
     	for (int i= -1; i < tdeclLen; i++) {
@@ -237,14 +237,14 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     			tdecl= getDeclaratorByName(getDefinition());
     			if (tdecl == null)
     				continue;
-    		} else if (decls != null){
+    		} else if (decls != null) {
     			tdecl= getDeclaratorByName(decls[i]);
     			if (tdecl == null)
     				break;
     		} else {
     			break;
     		}
-    		
+
     		if (tdecl instanceof ICPPASTFunctionDeclarator) {
     			IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) tdecl).getParameters();
     			if (pos < params.length) {
@@ -255,7 +255,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     	}
     	return param;
     }
-    
+
     protected void updateFunctionParameterBindings(ICPPASTFunctionDeclarator fdtor) {
 		IASTParameterDeclaration[] updateParams = fdtor.getParameters();
 
@@ -275,7 +275,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     		} else {
     			break;
     		}
-    		
+
     		if (tdecl instanceof ICPPASTFunctionDeclarator) {
     			IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) tdecl).getParameters();
     			int end= Math.min(params.length, updateParams.length);
@@ -314,9 +314,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
                 IASTNode parent = name.getParent();
 				while (parent != null && !(parent instanceof IASTDeclaration))
 					parent = parent.getParent();
-	            
+
 	            IASTDeclSpecifier declSpec = getDeclSpecifier((IASTDeclaration) parent);
-	            
+
 	            if (declSpec != null && declSpec.isInline())
                     return true;
             }
@@ -394,7 +394,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	private IASTDeclarator getDeclaratorByName(IASTNode node) {
 		// Skip qualified names and nested declarators.
     	while (node != null) {
-    		node= node.getParent();	
+    		node= node.getParent();
     		if (node instanceof IASTDeclarator) {
     			return ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
     		}
@@ -406,7 +406,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	public boolean isStatic(boolean resolveAll) {
     	return hasStorageClass(IASTDeclSpecifier.sc_static);
     }
-    
+
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
@@ -427,7 +427,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			if (typeIds.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
 				return IType.EMPTY_TYPE_ARRAY;
 			}
-			
+
 			IType[] types = new IType[typeIds.length];
 			for (int i = 0; i < typeIds.length; ++i) {
 				types[i] = CPPVisitor.createType(typeIds[i]);

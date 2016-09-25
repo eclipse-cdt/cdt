@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ class ChildCollector extends ASTGenericVisitor {
 		fNode.accept(this);
 		if (fNodes == null)
 			return IASTNode.EMPTY_NODE_ARRAY;
-		
+
 		return fNodes.toArray(new IASTNode[fNodes.size()]);
 	}
-	
+
 	@Override
 	protected int genericVisit(IASTNode child) {
 		if (fNodes == null) {

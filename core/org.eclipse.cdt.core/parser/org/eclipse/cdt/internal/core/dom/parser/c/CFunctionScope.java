@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Rational Software) - Initial API and implementation 
+ *    Andrew Niefer (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -23,7 +23,7 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope(IASTFunctionDefinition function) {
 	    super(function, EScopeKind.eLocal);
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
      */
@@ -32,11 +32,11 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
         return super.getBinding(NAMESPACE_TYPE_OTHER, name);
     }
 
-    
+
 	@Override
 	public IScope getBodyScope() {
 	    IASTNode node = getPhysicalNode();
-	    IASTStatement statement = ((IASTFunctionDefinition)node).getBody();
+	    IASTStatement statement = ((IASTFunctionDefinition) node).getBody();
 	    if (statement instanceof IASTCompoundStatement) {
 	        return ((IASTCompoundStatement) statement).getScope();
 	    }

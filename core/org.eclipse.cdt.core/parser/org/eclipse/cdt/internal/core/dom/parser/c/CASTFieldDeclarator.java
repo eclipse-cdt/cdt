@@ -36,7 +36,7 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 	public CASTFieldDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTFieldDeclarator copy(CopyStyle style) {
 		CASTFieldDeclarator copy = new CASTFieldDeclarator();
@@ -63,15 +63,15 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 	protected boolean postAccept(ASTVisitor action) {
 		if (bitFieldSize != null && !bitFieldSize.accept(action))
 			return false;
-		
+
 		return super.postAccept(action);
 	}
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == bitFieldSize) {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == bitFieldSize) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             bitFieldSize = (IASTExpression) other;
         } else {
         	super.replace(child, other);

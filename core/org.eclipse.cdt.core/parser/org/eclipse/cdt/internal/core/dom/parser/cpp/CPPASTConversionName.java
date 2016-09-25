@@ -28,19 +28,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConversionName {
 	private IASTTypeId typeId;
 	private char[] fName;
-	
+
 	public CPPASTConversionName() {
 	}
-	
+
 	public CPPASTConversionName(IASTTypeId typeId) {
 		setTypeId(typeId);
 	}
-	
+
 	@Override
 	public CPPASTConversionName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTConversionName copy(CopyStyle style) {
 		CPPASTConversionName copy = new CPPASTConversionName();
@@ -62,7 +62,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 			typeId.setPropertyInParent(TYPE_ID);
 		}
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitNames) {
@@ -74,7 +74,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 			default:
 				break;
 			}
-		}		
+		}
 
 		if (typeId != null && !typeId.accept(action))
 			return false;
@@ -129,7 +129,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 	public char[] getSimpleID() {
 		return toCharArray();
 	}
-	
+
 	@Override
 	public char[] getLookupKey() {
 		return Keywords.cOPERATOR;

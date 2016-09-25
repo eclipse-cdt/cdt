@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CBuiltinParameter extends PlatformObject implements IParameter {
-	
+
 	public static IParameter[] createParameterList(IFunctionType ft) {
 		if (ft == null) {
 			return IParameter.EMPTY_PARAMETER_ARRAY;
@@ -38,11 +38,11 @@ public class CBuiltinParameter extends PlatformObject implements IParameter {
 	}
 
 	private IType type= null;
-	
+
 	public CBuiltinParameter(IType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
@@ -87,7 +87,7 @@ public class CBuiltinParameter extends PlatformObject implements IParameter {
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return null;

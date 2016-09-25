@@ -29,7 +29,7 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 
 	private IASTName name;
     private IASTTranslationUnit tu;
-    
+
     public CExternalFunction(IASTTranslationUnit tu, IASTName name) {
     	super(null);
         this.name = name;
@@ -48,7 +48,7 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 		}
 		return type;
 	}
-    
+
     @Override
 	public IParameter[] getParameters() {
     	return IParameter.EMPTY_PARAMETER_ARRAY;

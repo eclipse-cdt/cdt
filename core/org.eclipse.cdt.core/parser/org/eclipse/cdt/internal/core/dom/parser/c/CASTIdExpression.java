@@ -47,7 +47,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	public CASTIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTIdExpression copy(CopyStyle style) {
 		CASTIdExpression copy = new CASTIdExpression(name == null ? null : name.copy(style));
@@ -78,7 +78,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	            default: break;
 	        }
 		}
-      
+
         if (name != null && !name.accept(action)) return false;
 
         if (action.shouldVisitExpressions) {
@@ -96,13 +96,13 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		if (n == name) return r_reference;
 		return r_unclear;
 	}
-	
+
 	@Override
 	public IType getExpressionType() {
 		IBinding binding = getName().resolveBinding();
 		if (binding instanceof IVariable) {
 			return ((IVariable) binding).getType();
-		} 
+		}
 		if (binding instanceof IFunction) {
 			return ((IFunction) binding).getType();
 		}
@@ -114,12 +114,12 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
-	
+
 	@Override
 	public boolean isLValue() {
 		return true;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.LVALUE;
@@ -134,7 +134,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 				bindings[i]= null;
 			}
 		}
-		
+
 		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 }

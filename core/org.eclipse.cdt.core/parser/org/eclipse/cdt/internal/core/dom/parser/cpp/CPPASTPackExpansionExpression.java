@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Natan Ridge
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -36,7 +36,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	@Override
 	public void setPattern(IASTExpression pattern) {
 		assertNotFrozen();
-		
+
 		fPattern= pattern;
 		if (pattern != null) {
 			pattern.setParent(this);
@@ -48,7 +48,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	public IASTExpression getPattern() {
 		return fPattern;
 	}
-	
+
 	@Override
 	public CPPASTPackExpansionExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -67,7 +67,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 		}
 		return fEvaluation;
 	}
-	
+
 	@Override
 	public IType getExpressionType() {
 		return getEvaluation().getType(this);
@@ -77,7 +77,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	public boolean isLValue() {
 		return fPattern.isLValue();
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return fPattern.getValueCategory();

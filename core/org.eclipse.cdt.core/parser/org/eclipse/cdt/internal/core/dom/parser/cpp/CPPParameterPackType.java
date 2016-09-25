@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class CPPParameterPackType implements ICPPParameterPackType, ITypeContainer, ISerializableType {
     private IType fType;
-    
+
     public CPPParameterPackType(IType type) {
     	setType(type);
     }
@@ -32,7 +32,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 	public IType getType() {
         return fType;
     }
-    
+
     @Override
 	public void setType(IType t) {
     	assert t != null;
@@ -45,7 +45,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
             return true;
         if (obj instanceof ITypedef)
             return ((ITypedef) obj).isSameType(this);
-        
+
         if (obj instanceof ICPPParameterPackType) {
             final ICPPParameterPackType rhs = (ICPPParameterPackType) obj;
             IType t1= getType();
@@ -54,7 +54,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
         }
     	return false;
     }
-    
+
     @Override
 	public Object clone() {
    		try {
@@ -64,7 +64,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
         	return null;
         }
     }
-    
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
@@ -76,12 +76,12 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		if (nested == null)
 			return new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
-		
+
 		return new CPPParameterPackType(nested);
 	}
 }

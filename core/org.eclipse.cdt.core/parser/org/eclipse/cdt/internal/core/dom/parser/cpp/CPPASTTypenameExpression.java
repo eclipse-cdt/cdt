@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -34,7 +34,7 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 	public CPPASTTypenameExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTypenameExpression copy(CopyStyle style) {
 		super.copy(style);

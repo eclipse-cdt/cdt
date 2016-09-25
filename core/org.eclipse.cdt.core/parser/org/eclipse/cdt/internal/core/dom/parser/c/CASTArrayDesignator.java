@@ -43,7 +43,7 @@ public class CASTArrayDesignator extends ASTNode implements ICASTArrayDesignator
 				new CASTArrayDesignator(expression == null ? null : expression.copy(style));
 		return copy(copy, style);
 	}
-	
+
     @Override
 	public IASTExpression getSubscriptExpression() {
         return expression;

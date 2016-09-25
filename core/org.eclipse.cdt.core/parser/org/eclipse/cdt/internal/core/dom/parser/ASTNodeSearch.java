@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
@@ -30,7 +30,7 @@ public class ASTNodeSearch extends ASTGenericVisitor {
 		fNode= node;
 		fParent= node.getParent();
 	}
-	
+
 	public IASTNode findLeftSibling() {
 		if (fParent == null)
 			return null;
@@ -55,8 +55,8 @@ public class ASTNodeSearch extends ASTGenericVisitor {
 	protected int genericVisit(IASTNode node) {
 		if (node == fParent)
 			return PROCESS_CONTINUE;
-		
-		switch(fMode) {
+
+		switch (fMode) {
 		case LEFT:
 			if (node == fNode)
 				return PROCESS_ABORT;

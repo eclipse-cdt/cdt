@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -26,22 +26,22 @@ public class EvalPointer extends EvalReference {
 
 	public EvalPointer(ActivationRecord record, EvalCompositeAccess referredSubValue, IASTNode point) {
 		this(record, referredSubValue, findEnclosingTemplate(point));
-	}	
-	
+	}
+
 	public EvalPointer(ActivationRecord record, EvalCompositeAccess referredSubValue, IBinding templateDefinition) {
 		this(record, referredSubValue, templateDefinition, referredSubValue.getElementId());
 	}
-	
+
 	public EvalPointer(ActivationRecord record, EvalCompositeAccess referredSubValue, IBinding templateDefinition, int offset) {
 		super(record, referredSubValue, templateDefinition);
 		setPosition(offset);
 	}
-	
+
 	public EvalPointer(ActivationRecord record, IBinding referredBinding, IBinding templateDefinition) {
 		super(record, referredBinding, templateDefinition);
 		setPosition(0);
 	}
-	
+
 	public EvalReference dereference() {
 		if (referredSubValue != null) {
 			final EvalCompositeAccess pointedToValue = new EvalCompositeAccess(referredSubValue.getParent(), getPosition());
@@ -50,17 +50,17 @@ public class EvalPointer extends EvalReference {
 			return new EvalReference(owningRecord,referredBinding, getTemplateDefinition());
 		}
 	}
-	
+
 	@Override
 	public IType getType(IASTNode point) {
 		IType valueType = getTargetEvaluation().getType(point);
 		return new CPPPointerType(valueType, false, false, false);
 	}
-	
+
 	public int getPosition() {
 		return position;
 	}
-	
+
 	public void setPosition(int position) {
 		this.position = position;
 		invalidatePointerIfPositionOutOfRange();
@@ -70,7 +70,7 @@ public class EvalPointer extends EvalReference {
 		if (isPositionOutOfRange()) {
 			referredSubValue = new EvalCompositeAccess(EvalFixed.INCOMPLETE, 0);
 			referredBinding = null;
-		} 
+		}
 	}
 
 	private boolean isPositionOutOfRange() {
@@ -80,19 +80,19 @@ public class EvalPointer extends EvalReference {
 	private boolean subValuePositionOutOfrange() {
 		return referredSubValue != null && (position - referredSubValue.getParent().getValue(null).numberOfSubValues() > 0 || position < 0);
 	}
-	
+
 	@Override
 	public IValue getValue(IASTNode point) {
 		// TODO(nathanridge): Why does it make sense to consider a pointer's value to be its offset
 		// into the underlying array?
 		return IntegralValue.create(position);
 	}
-	
+
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		return this;
 	}
-	
+
 	public EvalPointer copy() {
 		if (referredSubValue != null) {
 			return new EvalPointer(owningRecord, referredSubValue, getTemplateDefinition(), position);
@@ -100,7 +100,7 @@ public class EvalPointer extends EvalReference {
 			return new EvalPointer(owningRecord, referredBinding, getTemplateDefinition());
 		}
 	}
-	
+
 	public static EvalPointer createFromAddress(EvalReference reference) {
 		if (reference.referredSubValue != null) {
 			return new EvalPointer(reference.owningRecord, reference.referredSubValue, reference.getTemplateDefinition());
@@ -108,7 +108,7 @@ public class EvalPointer extends EvalReference {
 			return new EvalPointer(reference.owningRecord, reference.referredBinding, reference.getTemplateDefinition());
 		}
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.EVAL_POINTER;

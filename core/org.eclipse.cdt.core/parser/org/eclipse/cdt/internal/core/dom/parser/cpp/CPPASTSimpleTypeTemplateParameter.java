@@ -35,12 +35,12 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		setName(name);
 		setDefaultType(typeId);
 	}
-	
+
 	@Override
 	public CPPASTSimpleTypeTemplateParameter copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTSimpleTypeTemplateParameter copy(CopyStyle style) {
 		CPPASTSimpleTypeTemplateParameter copy = new CPPASTSimpleTypeTemplateParameter();
@@ -102,7 +102,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 			typeId.setPropertyInParent(DEFAULT_TYPE);
 		}
     }
-    
+
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitTemplateParameters) {
@@ -112,12 +112,12 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 	            default : break;
 	        }
 		}
-        
+
 		if (fName != null && !fName.accept(action))
 			return false;
 		if (fTypeId != null && !fTypeId.accept(action))
 			return false;
-        
+
 		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 

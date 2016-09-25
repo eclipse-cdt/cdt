@@ -35,7 +35,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 	public CASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
-	
+
 	@Override
 	public CASTCompoundStatementExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -64,18 +64,18 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-     
-        if( statement != null ) if( !statement.accept( action ) ) return false;
-        if( action.shouldVisitExpressions ){
-        	switch( action.leave( this ) ){
+
+        if (statement != null) if (!statement.accept(action)) return false;
+        if (action.shouldVisitExpressions) {
+        	switch (action.leave(this)) {
         		case ASTVisitor.PROCESS_ABORT : return false;
         		case ASTVisitor.PROCESS_SKIP  : return true;
         		default : break;
@@ -83,7 +83,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
         }
         return true;
     }
-    
+
     @Override
 	public IType getExpressionType() {
 		IASTCompoundStatement compound = getCompoundStatement();
@@ -91,7 +91,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		if (statements.length > 0) {
 			IASTStatement st = statements[statements.length - 1];
 			if (st instanceof IASTExpressionStatement)
-				return ((IASTExpressionStatement)st).getExpression().getExpressionType();
+				return ((IASTExpressionStatement) st).getExpression().getExpressionType();
 		}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
@@ -103,11 +103,11 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		if (statements.length > 0) {
 			IASTStatement st = statements[statements.length - 1];
 			if (st instanceof IASTExpressionStatement)
-				return ((IASTExpressionStatement)st).getExpression().isLValue();
+				return ((IASTExpressionStatement) st).getExpression().isLValue();
 		}
 		return false;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;

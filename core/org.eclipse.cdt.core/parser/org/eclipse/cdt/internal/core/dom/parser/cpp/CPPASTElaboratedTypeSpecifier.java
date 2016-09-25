@@ -30,7 +30,7 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
         implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
     private int kind;
     private IASTName name;
-    
+
     public CPPASTElaboratedTypeSpecifier() {
 	}
 
@@ -43,7 +43,7 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTElaboratedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		CPPASTElaboratedTypeSpecifier copy =
@@ -105,28 +105,28 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	public int getRoleForName(IASTName n) {
 		return getRoleForName(n, true);
 	}
-	
+
 	@Override
 	public int getRoleForName(IASTName n, boolean allowResolution) {
 		if (n != name) return r_unclear;
-		
+
 		IASTNode parent = getParent();
 		if (parent instanceof IASTSimpleDeclaration) {
-			IASTDeclarator[] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
+			IASTDeclarator[] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
 			if (dtors.length == 0)
 				return r_declaration;
 		}
-		
+
 		// 7.1.5.3.2: check for simple form <class-key> <identifier>, then it may be a declaration
 		final int kind= getKind();
 		if (kind == k_class || kind == k_union || kind == k_struct) {
-			if (name instanceof ICPPASTQualifiedName == false 
+			if (name instanceof ICPPASTQualifiedName == false
 					&& name instanceof ICPPASTTemplateId == false) {
 				IBinding binding = allowResolution ? name.resolveBinding() : name.getBinding();
 				if (binding != null) {
 					if (binding instanceof ICPPInternalBinding) {
-						IASTNode[] decls = ((ICPPInternalBinding)binding).getDeclarations();
-						if (ArrayUtil.contains(decls, name)) 
+						IASTNode[] decls = ((ICPPInternalBinding) binding).getDeclarations();
+						if (ArrayUtil.contains(decls, name))
 							return r_declaration;
 					}
 					return r_reference;

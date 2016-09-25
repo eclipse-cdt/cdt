@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelStatement, IASTAmbiguityParent {
     private IASTName name;
     private IASTStatement nestedStatement;
-    
+
     public CASTLabelStatement() {
 	}
 
@@ -34,7 +34,7 @@ public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelSt
 		setName(name);
 		setNestedStatement(nestedStatement);
 	}
-	
+
 	@Override
 	public CASTLabelStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -93,7 +93,7 @@ public class CASTLabelStatement extends ASTAttributeOwner implements IASTLabelSt
 			return r_declaration;
 		return r_unclear;
 	}
-    
+
     @Override
 	public IASTStatement getNestedStatement() {
         return nestedStatement;

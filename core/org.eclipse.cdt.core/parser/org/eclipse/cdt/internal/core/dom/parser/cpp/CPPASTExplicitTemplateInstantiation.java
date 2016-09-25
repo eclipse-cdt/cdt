@@ -27,7 +27,7 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
     private IASTDeclaration declaration;
     private int modifier;
 
-    
+
     public CPPASTExplicitTemplateInstantiation() {
 	}
 
@@ -39,7 +39,7 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 	public CPPASTExplicitTemplateInstantiation copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTExplicitTemplateInstantiation copy(CopyStyle style) {
 		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
@@ -63,7 +63,7 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 		}
     }
 
-    
+
     @Override
 	public int getModifier() {
 		return modifier;
@@ -76,19 +76,19 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
-        if( declaration != null ) if( !declaration.accept( action ) ) return false;
-        
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
+
+        if (declaration != null) if (!declaration.accept(action)) return false;
+
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -100,10 +100,10 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( declaration == child )
+        if (declaration == child)
         {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent(child.getParent());
+            other.setPropertyInParent(child.getPropertyInParent());
             declaration = (IASTDeclaration) other;
         }
     }

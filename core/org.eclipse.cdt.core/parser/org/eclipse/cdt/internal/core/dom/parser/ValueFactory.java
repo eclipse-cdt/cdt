@@ -86,39 +86,39 @@ public class ValueFactory {
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
+
 	public static IValue evaluateUnaryExpression(final int unaryOp, final IValue value) {
 		IValue val = applyUnaryOperator(unaryOp, value);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
-		return val; 
+		return val;
 	}
-	
+
 	public static IValue evaluateBinaryExpression(final int op, final IValue v1, final IValue v2) {
-		if(v1 instanceof FloatingPointValue && v2 instanceof FloatingPointValue) {
-			FloatingPointValue fv1 = (FloatingPointValue)v1;
-			FloatingPointValue fv2 = (FloatingPointValue)v2;
+		if (v1 instanceof FloatingPointValue && v2 instanceof FloatingPointValue) {
+			FloatingPointValue fv1 = (FloatingPointValue) v1;
+			FloatingPointValue fv2 = (FloatingPointValue) v2;
 			return applyBinaryOperator(op, fv1.numberValue().doubleValue(), fv2.numberValue().doubleValue());
-		} else if(v1 instanceof FloatingPointValue && v2 instanceof IntegralValue) {
-			FloatingPointValue fv1 = (FloatingPointValue)v1;
-			IntegralValue iv2 = (IntegralValue)v2;
+		} else if (v1 instanceof FloatingPointValue && v2 instanceof IntegralValue) {
+			FloatingPointValue fv1 = (FloatingPointValue) v1;
+			IntegralValue iv2 = (IntegralValue) v2;
 			return applyBinaryOperator(op, fv1.numberValue().doubleValue(), iv2.numberValue().doubleValue());
-		} else if(v1 instanceof IntegralValue && v2 instanceof FloatingPointValue) {
-			IntegralValue iv1 = (IntegralValue)v1;
-			FloatingPointValue fv2 = (FloatingPointValue)v2;
+		} else if (v1 instanceof IntegralValue && v2 instanceof FloatingPointValue) {
+			IntegralValue iv1 = (IntegralValue) v1;
+			FloatingPointValue fv2 = (FloatingPointValue) v2;
 			return applyBinaryOperator(op, iv1.numberValue().doubleValue(), fv2.numberValue().doubleValue());
-		} else if(v1 instanceof IntegralValue && v2 instanceof IntegralValue) {
-			IntegralValue iv1 = (IntegralValue)v1;
-			IntegralValue iv2 = (IntegralValue)v2;
-			return applyBinaryOperator(op, iv1.numberValue().longValue(), iv2.numberValue().longValue());	
+		} else if (v1 instanceof IntegralValue && v2 instanceof IntegralValue) {
+			IntegralValue iv1 = (IntegralValue) v1;
+			IntegralValue iv2 = (IntegralValue) v2;
+			return applyBinaryOperator(op, iv1.numberValue().longValue(), iv2.numberValue().longValue());
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
+
 	private static IValue applyBinaryOperator(final int op, final double v1, final double v2) {
 		Double doubleValue = null;
 		Long longValue = null;
-		
+
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
 			doubleValue = v1 * v2;
@@ -159,16 +159,16 @@ public class ValueFactory {
 			longValue = v1 != v2 ? 1l : 0l;
 			break;
 		}
-		
-		if(doubleValue != null) {
+
+		if (doubleValue != null) {
 			return FloatingPointValue.create(doubleValue);
-		} else if(longValue != null) {
+		} else if (longValue != null) {
 			return IntegralValue.create(longValue);
 		} else {
 			return IntegralValue.UNKNOWN;
 		}
 	}
-	
+
 	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2) {
 		Long value = null;
 		switch (op) {
@@ -237,8 +237,8 @@ public class ValueFactory {
         	value = Math.min(v1, v2);
         	break;
 		}
-		
-		if(value != null) {
+
+		if (value != null) {
 			return IntegralValue.create(value);
 		} else {
 			return IntegralValue.UNKNOWN;
@@ -259,7 +259,7 @@ public class ValueFactory {
 			return IntegralValue.UNKNOWN;
 		return val;
 	}
-	
+
 	/**
 	 * Computes the canonical representation of the value of the expression.
 	 */
@@ -325,7 +325,7 @@ public class ValueFactory {
 				return CStringValue.create(litEx.getValue());
 			}
 		}
-			
+
 		if (exp instanceof IASTTypeIdExpression) {
 			IASTTypeIdExpression typeIdExp = (IASTTypeIdExpression) exp;
 			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
@@ -371,11 +371,11 @@ public class ValueFactory {
 			value= ((IEnumerator) b).getValue();
 		}
 		if (isInvalidValue(value)) {
-			return IntegralValue.UNKNOWN;	
+			return IntegralValue.UNKNOWN;
 		}
 		return value;
 	}
-	
+
 	private static IValue applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {
 		switch (operator) {
 			case op_sizeof:
@@ -433,7 +433,7 @@ public class ValueFactory {
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
+
 	private static IValue getAlignment(IType type, IASTNode point) {
 		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
 		if (sizeAndAlignment == null)
@@ -447,7 +447,7 @@ public class ValueFactory {
 			 return IntegralValue.UNKNOWN;
 		return IntegralValue.create(sizeAndAlignment.size);
 	}
-	
+
 	private static IValue evaluateUnaryExpression(IASTUnaryExpression exp) {
 		final int unaryOp= exp.getOperator();
 
@@ -480,21 +480,21 @@ public class ValueFactory {
 	}
 
 	private static IValue applyUnaryOperator(final int unaryOp, final IValue value) {
-		if(isInvalidValue(value) || value.numberValue() == null) {
+		if (isInvalidValue(value) || value.numberValue() == null) {
 			return IntegralValue.UNKNOWN;
 		}
-		
-		if(!(value instanceof IntegralValue) && !(value instanceof FloatingPointValue)) {
+
+		if (!(value instanceof IntegralValue) && !(value instanceof FloatingPointValue)) {
 			return IntegralValue.UNKNOWN;
 		}
-		
+
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_plus:
 			return value;
 		case IASTUnaryExpression.op_prefixIncr:
 		case IASTUnaryExpression.op_postFixIncr:
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				return IntegralValue.create(value.numberValue().longValue() + 1);
 			} else {
 				FloatingPointValue fpv = (FloatingPointValue) value;
@@ -502,27 +502,27 @@ public class ValueFactory {
 			}
 		case IASTUnaryExpression.op_prefixDecr:
 		case IASTUnaryExpression.op_postFixDecr:
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				return IntegralValue.create(value.numberValue().longValue() - 1);
 			} else {
 				FloatingPointValue fpv = (FloatingPointValue) value;
 				return FloatingPointValue.create(fpv.numberValue().doubleValue() - 1);
 			}
 		case IASTUnaryExpression.op_minus:
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				return IntegralValue.create(-value.numberValue().longValue());
 			} else {
 				FloatingPointValue fpv = (FloatingPointValue) value;
 				return FloatingPointValue.create(-fpv.numberValue().doubleValue());
 			}
 		case IASTUnaryExpression.op_tilde:
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				return IntegralValue.create(~value.numberValue().longValue());
 			} else {
 				return IntegralValue.UNKNOWN;
 			}
 		case IASTUnaryExpression.op_not:
-			if(value instanceof IntegralValue) {
+			if (value instanceof IntegralValue) {
 				Long num = value.numberValue().longValue();
 				return IntegralValue.create(num == 0 ? 1 : 0);
 			} else {
@@ -536,7 +536,7 @@ public class ValueFactory {
 
 	private static IValue evaluateBinaryExpression(IASTBinaryExpression exp) {
 		final int op= exp.getOperator();
-		
+
 		// Optimization: if the operator is == or != and the AST nodes
 		// themselves are equal, we know the answer without having to
 		// do any evaluation.
@@ -546,7 +546,7 @@ public class ValueFactory {
 		if (op == IASTBinaryExpression.op_notequals && exp.getOperand1().equals(exp.getOperand2())) {
 			return IntegralValue.create(false);
 		}
-		
+
 		final IValue o1= evaluate(exp.getOperand1());
 		if (isInvalidValue(o1))
 			return o1;
@@ -557,7 +557,7 @@ public class ValueFactory {
 			return null;  // the value will be computed using the evaluation
 		return evaluateBinaryExpression(op, o1, o2);
 	}
-	
+
 	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
 			IType type1, IType type2, IASTNode point) {
 		switch (operator) {
@@ -575,11 +575,11 @@ public class ValueFactory {
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
+
 	private static boolean isInvalidValue(IValue value) {
 		return value == null || value == IntegralValue.UNKNOWN || value == IntegralValue.ERROR;
 	}
-	
+
 	private static boolean isDeferredValue(IValue value) {
 		return value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null;
 	}

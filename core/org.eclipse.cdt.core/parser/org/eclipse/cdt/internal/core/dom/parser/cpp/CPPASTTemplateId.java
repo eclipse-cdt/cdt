@@ -35,8 +35,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Template ID consist of an unqualified name (or operator or conversion name) 
- * and an array of template arguments. 
+ * Template ID consist of an unqualified name (or operator or conversion name)
+ * and an array of template arguments.
  */
 public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
@@ -53,7 +53,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	public CPPASTTemplateId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTemplateId copy(CopyStyle style) {
 		CPPASTTemplateId copy =
@@ -73,7 +73,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	public char[] getLookupKey() {
 		return templateName.getLookupKey();
 	}
-	
+
 	@Override
 	public IASTName getTemplateName() {
         return templateName;
@@ -89,7 +89,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 			name.setPropertyInParent(TEMPLATE_NAME);
 		}
     }
-    
+
     private void internalAddTemplateArgument(IASTNode node) {
 		assertNotFrozen();
 	    templateArguments = ArrayUtil.append(templateArguments, node);
@@ -108,7 +108,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	public void addTemplateArgument(IASTExpression expression) {
     	internalAddTemplateArgument(expression);
     }
-    
+
     @Override
 	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
     	internalAddTemplateArgument(ata);
@@ -127,7 +127,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     @Override
 	public char[] toCharArray() {
     	assert sAllowNameComputation;
-    	
+
     	StringBuilder buf= new StringBuilder();
     	buf.append(getTemplateName().toCharArray());
     	buf.append('<');
@@ -150,7 +150,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     				buf.append(arg.getRawSignature());
     				cleanupWhitespace= true;
     			}
-    		} else if (arg instanceof IASTTypeId){
+    		} else if (arg instanceof IASTTypeId) {
     			IType type= CPPVisitor.createType((IASTTypeId) arg);
     			if (type instanceof ISemanticProblem) {
     				buf.append(arg.getRawSignature());

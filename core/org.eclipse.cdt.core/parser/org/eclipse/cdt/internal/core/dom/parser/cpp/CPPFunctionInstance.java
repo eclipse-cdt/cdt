@@ -66,9 +66,9 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	 */
 	@Override
 	public String toString() {
-		return getName() + " " + ASTTypeUtil.getArgumentListString(fArguments, true); //$NON-NLS-1$ 
+		return getName() + " " + ASTTypeUtil.getArgumentListString(fArguments, true); //$NON-NLS-1$
 	}
-	
+
     @Override
 	public boolean equals(Object obj) {
     	if ((obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)) {

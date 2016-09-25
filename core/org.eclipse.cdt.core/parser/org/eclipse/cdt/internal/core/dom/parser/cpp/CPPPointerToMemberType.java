@@ -52,19 +52,19 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
         if (o instanceof ITypedef)
             return o.isSameType(this);
 
-	    if (!(o instanceof ICPPPointerToMemberType)) 
-	        return false;   
+	    if (!(o instanceof ICPPPointerToMemberType))
+	        return false;
 
 	    if (!super.isSameType(o))
 	        return false;
-	    
+
 	    ICPPPointerToMemberType pt = (ICPPPointerToMemberType) o;
 	    IType cls = pt.getMemberOfClass();
 	    if (cls != null)
 	        return cls.isSameType(getMemberOfClass());
 	    return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType#getMemberOfClass()
 	 */
@@ -83,7 +83,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 					ICPPASTNameSpecifier[] qualifier = qname.getQualifier();
 					if (qualifier.length > 0) {
 						nameSpec = qualifier[qualifier.length - 1];
-					} else { 
+					} else {
 						nameSpec = (ICPPASTName) qname.getLastName();
 					}
 				}
@@ -97,7 +97,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		}
 		return classType;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes= ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
@@ -108,7 +108,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		buffer.marshalType(getType());
 		buffer.marshalType(getMemberOfClass());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		IType memberOf= buffer.unmarshalType();

@@ -49,14 +49,14 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
             definition = enumeration;
         enumeration.setBinding(this);
 	}
-	
+
 	public void addDeclaration(IASTName decl) {
 		if (!decl.isActive())
 			return;
-    	
+
         if (decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME)
             return;
-            
+
         decl.setBinding(this);
         if (declarations == null) {
             declarations = new IASTName[] { decl };
@@ -73,26 +73,26 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         tmp[declarations.length] = decl;
         declarations = tmp;
     }
-    
+
     @Override
 	public IASTNode getPhysicalNode() {
         if (definition != null)
             return definition;
-        
+
         return declarations[0];
     }
-    
+
 	private void checkForDefinition() {
 		IASTDeclSpecifier spec = CVisitor.findDefinition((ICASTElaboratedTypeSpecifier) declarations[0].getParent());
 		if (spec != null && spec instanceof ICASTEnumerationSpecifier) {
 		    ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) spec;
-		    
+
 			enumSpec.getName().setBinding(this);
 			definition = enumSpec.getName();
 		}
 		return;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
@@ -100,14 +100,14 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 	public String getName() {
         if (definition != null)
             return definition.toString();
-        
+
         return declarations[0].toString();
     }
     @Override
 	public char[] getNameCharArray() {
         if (definition != null)
             return definition.toCharArray();
-        
+
         return declarations[0].toCharArray();
     }
 
@@ -140,11 +140,11 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
             if (definition == null)
                 return new IEnumerator[] { new CEnumerator.CEnumeratorProblem(declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, declarations[0].toCharArray()) };
         }
-        
+
         IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) definition.getParent();
         IASTEnumerationSpecifier.IASTEnumerator[] enums = enumSpec.getEnumerators();
         IEnumerator[] bindings = new IEnumerator[enums.length];
-        
+
         for (int i = 0; i < enums.length; i++) {
             bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
         }
@@ -168,7 +168,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 
         return false;
     }
-    
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
@@ -183,7 +183,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 	public IASTNode getDefinition() {
 		return definition;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		IASTNode node= definition;
@@ -198,7 +198,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
 	public long getMinValue() {
 		if (fMinValue != null)

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -35,13 +35,13 @@ public abstract class NodeFactory implements INodeFactory {
 		ASTNode e= (ASTNode) endNode;
 		a.setLength(e.getOffset() + e.getLength() - a.getOffset());
 	}
-	
+
 	@Deprecated
 	@Override
 	public org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeSpecifier newGCCAttributeSpecifier() {
 		return new GCCASTAttributeList();
 	}
-	
+
 	@Override
 	public IGCCASTAttributeList newGCCAttributeList() {
 		return new GCCASTAttributeList();

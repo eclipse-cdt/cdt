@@ -33,7 +33,7 @@ public class CASTFunctionCallExpression extends ASTNode
     private IASTExpression functionName;
     private IASTInitializerClause[] fArguments;
 
-    
+
     public CASTFunctionCallExpression() {
     	setArguments(null);
 	}
@@ -47,7 +47,7 @@ public class CASTFunctionCallExpression extends ASTNode
 	public CASTFunctionCallExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTFunctionCallExpression copy(CopyStyle style) {
 		IASTInitializerClause[] args = null;
@@ -106,9 +106,9 @@ public class CASTFunctionCallExpression extends ASTNode
 	            default: break;
 	        }
 		}
-      
+
 		if (functionName != null && !functionName.accept(action))
-			return false;        
+			return false;
 
 		for (IASTInitializerClause arg : fArguments) {
 			if (!arg.accept(action))
@@ -151,7 +151,7 @@ public class CASTFunctionCallExpression extends ASTNode
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

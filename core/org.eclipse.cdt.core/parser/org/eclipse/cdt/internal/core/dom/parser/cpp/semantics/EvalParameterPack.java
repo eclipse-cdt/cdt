@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 public class EvalParameterPack extends CPPDependentEvaluation {
 	private ICPPEvaluation fExpansionPattern;
 	private IType fType;
-	
+
 	public EvalParameterPack(ICPPEvaluation expansionPattern, IASTNode pointOfDefinition) {
 		this(expansionPattern, findEnclosingTemplate(pointOfDefinition));
 	}
@@ -40,11 +40,11 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 		super(templateDefinition);
 		fExpansionPattern = expansionPattern;
 	}
-	
+
 	public ICPPEvaluation getExpansionPattern() {
 		return fExpansionPattern;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return fExpansionPattern.isInitializerList();
@@ -85,7 +85,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return IntegralValue.create(fExpansionPattern);		
+		return IntegralValue.create(fExpansionPattern);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 		if (expansionPattern == fExpansionPattern) {
 			return this;
 		}
-		
+
 		EvalParameterPack evalParamPack = new EvalParameterPack(expansionPattern, getTemplateDefinition());
 		return evalParamPack;
 	}
@@ -128,7 +128,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 		buffer.marshalEvaluation(fExpansionPattern, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation expansionPattern = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();

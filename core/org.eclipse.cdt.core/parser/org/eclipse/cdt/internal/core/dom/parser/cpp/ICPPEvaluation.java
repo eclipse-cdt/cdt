@@ -39,17 +39,17 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * Returns {@code true} if the value of the expression depends on template parameters.
 	 */
 	boolean isValueDependent();
-	
+
 	/**
 	 * Returns {@code true} if the expression is a compile-time constant expression.
-	 * 
+	 *
 	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	boolean isConstantExpression(IASTNode point);
 
 	/**
 	 * Returns the type of the expression.
-	 * 
+	 *
 	 * If the expression evaluates to a function set, a {@code FunctionSetType} is returned.
 	 *
 	 * @param point the point of instantiation, determines the scope for name lookups
@@ -95,10 +95,10 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 		 * IDE to hang.
 		 */
 		public static final int MAX_CONSTEXPR_EVALUATION_STEPS = 1024;
-		
+
 		private int fStepsPerformed;
 		private IASTNode fPoint;
-		
+
 		/**
 		 * Constructs a ConstexprEvaluationContext for a new constexpr evaluation.
 		 * @param point the point of instantiation, determines the scope for name lookups
@@ -124,7 +124,7 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 		public int getStepsPerformed() {
 			return fStepsPerformed;
 		}
-		
+
 		/**
 		 * Returns the point of instantiation.
 		 */
@@ -132,10 +132,10 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 			return fPoint;
 		}
 	}
-	
+
 	/**
 	 * Computes the evaluation produced by substituting function parameters by their values.
-	 * 
+	 *
 	 * @param record maps function parameters and local variables to their values
 	 * @param context the context for the current constexpr evaluation
 	 * @return the computed evaluation
@@ -157,14 +157,14 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 
 	/**
 	 * Checks if the evaluation references a template parameter either directly or though nested
-	 * evaluations. 
+	 * evaluations.
 	 */
 	boolean referencesTemplateParameter();
-	
+
 	/**
 	 * If the evaluation is dependent (or instantiated from a dependent evaluation),
 	 * returns the template definition in which the evaluation occurs.
-	 * Otherwise returns {@code null}. 
+	 * Otherwise returns {@code null}.
 	 */
 	IBinding getTemplateDefinition();
 }

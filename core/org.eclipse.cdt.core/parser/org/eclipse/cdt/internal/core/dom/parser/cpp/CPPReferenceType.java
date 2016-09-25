@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISerializableType {
     private IType fType = null;
     private boolean fIsRValue;
-    
+
     public CPPReferenceType(IType type, boolean isRValue) {
     	fIsRValue= isRValue;
     	setType(type);
@@ -33,7 +33,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 	public IType getType() {
         return fType;
     }
-    
+
 	@Override
 	public boolean isRValueReference() {
 		return fIsRValue;
@@ -45,7 +45,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
     		final ICPPReferenceType rt = (ICPPReferenceType) t;
 			fIsRValue = fIsRValue && rt.isRValueReference();
     		t= rt.getType();
-    	} 
+    	}
     	assert t != null;
     	fType= t;
     }
@@ -55,15 +55,15 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
         if (obj == this)
             return true;
         if (obj instanceof ITypedef)
-            return ((ITypedef)obj).isSameType(this);
-        
+            return ((ITypedef) obj).isSameType(this);
+
         if (obj instanceof ICPPReferenceType) {
             final ICPPReferenceType rhs = (ICPPReferenceType) obj;
             IType t1= getType();
             IType t2= rhs.getType();
             boolean rv1= isRValueReference();
             boolean rv2= rhs.isRValueReference();
-            for(;;) {
+            for (;;) {
             	if (t1 instanceof ITypedef) {
             		t1= ((ITypedef) t1).getType();
             	} else if (t1 instanceof ICPPReferenceType) {
@@ -73,7 +73,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
             		break;
             	}
             }
-            for(;;) {
+            for (;;) {
             	if (t2 instanceof ITypedef) {
             		t2= ((ITypedef) t2).getType();
             	} else if (t2 instanceof ICPPReferenceType) {
@@ -85,12 +85,12 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
             }
             if (t1 == null)
             	return false;
-            
+
 			return rv1 == rv2 && t1.isSameType(t2);
         }
     	return false;
     }
-    
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -101,7 +101,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
         }
         return t;
     }
-    
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
@@ -116,7 +116,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CPPReferenceType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0);

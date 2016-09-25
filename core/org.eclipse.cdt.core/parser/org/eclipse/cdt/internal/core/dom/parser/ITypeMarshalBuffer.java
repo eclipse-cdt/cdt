@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * Buffer for marshalling and unmarshalling types.
  */
 public interface ITypeMarshalBuffer {
-	final static byte 
+	final static byte
 		BASIC_TYPE                    	= 0x01,
 		POINTER_TYPE                  	= 0x02,
 		ARRAY_TYPE                   	= 0x03,
@@ -42,9 +42,9 @@ public interface ITypeMarshalBuffer {
 		UNKNOWN_MEMBER_TYPE           	= 0x10,
 		INITIALIZER_LIST_TYPE			= 0x11,
 		DEFERRED_FUNCTION               = 0x12;
-	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE. 
-	
-	final static byte 
+	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
+
+	final static byte
 		INTEGRAL_VALUE					= 0x01,
 		FLOATING_POINT_VALUE			= 0x02,
 		C_STRING_VALUE					= 0x03,
@@ -73,7 +73,7 @@ public interface ITypeMarshalBuffer {
 		EVAL_POINTER                    = 0x13,
 		EVAL_COMPOSITE_ACCESS 	        = 0x14;
 	// Can add more evaluations up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
-	
+
 	final static byte
 		EXEC_COMPOUND_STATEMENT 	    = 0x01,
 		EXEC_BREAK					    = 0x02,
@@ -105,7 +105,7 @@ public interface ITypeMarshalBuffer {
 	final static short FLAG7 = 0x0800;
 	final static short FLAG8 = 0x1000;
 	final static short FLAG9 = 0x2000;
-	
+
 	final static short FIRST_FLAG       = FLAG1;
 	final static short SECOND_LAST_FLAG = FLAG8;
 	final static short LAST_FLAG        = FLAG9;
@@ -122,10 +122,10 @@ public interface ITypeMarshalBuffer {
 	int getFixedInt() throws CoreException;
 
 	/**
-	 * Reads a 16-bit integer stored in the variable length base-128 encoding. 
+	 * Reads a 16-bit integer stored in the variable length base-128 encoding.
 	 */
 	public short getShort() throws CoreException;
-	
+
 	/**
 	 * Reads a 32-bit integer stored in the variable length base-128 encoding.
 	 */
@@ -152,13 +152,13 @@ public interface ITypeMarshalBuffer {
 	 * @param value the value to write
 	 */
 	public void putShort(short value);
-	
+
 	/**
 	 * Writes a 32-bit integer in the variable length base-128 encoding. Each byte, except the last
 	 * byte, has the most significant bit set – this indicates that there are further bytes to come.
 	 * The lower 7 bits of each byte are used to store the two-complement representation of
 	 * the number in groups of 7 bits, least significant group first.
-	 * 
+	 *
 	 * <p>Here is number of bytes depending on the encoded value:
 	 * <pre>
 	 * Value                   Number of bytes
@@ -179,7 +179,7 @@ public interface ITypeMarshalBuffer {
 	 * byte, has the most significant bit set – this indicates that there are further bytes to come.
 	 * The lower 7 bits of each byte are used to store the two-complement representation of
 	 * the number in groups of 7 bits, least significant group first.
-	 * 
+	 *
 	 * <p>Here is number of bytes depending on the encoded value:
 	 * <pre>
 	 * Value                   Number of bytes

@@ -39,7 +39,7 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 		CASTProblemExpression copy = new CASTProblemExpression();
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -61,7 +61,7 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 		}
         return true;
     }
-    
+
     @Override
 	public IType getExpressionType() {
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
@@ -71,7 +71,7 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

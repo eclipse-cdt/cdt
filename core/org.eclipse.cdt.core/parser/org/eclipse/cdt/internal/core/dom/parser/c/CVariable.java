@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
- *     Markus Schorn (Wind River Systems) 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CVariable extends PlatformObject implements ICInternalBinding, IVariable {
 	private IASTName[] declarations = null;
 	private IType type = null;
-	
+
 	/**
 	 * The set of CVariable objects for which initial value computation is in progress on each thread.
 	 * This is used to guard against recursion during initial value computation.
@@ -52,7 +52,7 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 		@Override
 		protected Set<CVariable> initialValue() {
 			return new HashSet<>();
-		}	
+		}
 	};
 
 	public CVariable(IASTName name) {

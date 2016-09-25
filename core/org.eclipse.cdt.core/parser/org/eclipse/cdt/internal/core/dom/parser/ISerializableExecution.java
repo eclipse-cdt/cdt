@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface ISerializableExecution {
 	/**
 	 * Marshals an ICPPExecution object for storage in the index.
-	 * 
+	 *
 	 * @param  buffer The buffer that will hold the marshalled ICPPExecution object.
 	 * @param  includeValue Specifies whether nested IValue objects should be marshalled as well.
 	 * */

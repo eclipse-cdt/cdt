@@ -55,9 +55,9 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     	errorMessages.put(Integer.valueOf(PREPROCESSOR_MACRO_PASTING_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(PREPROCESSOR_MISSING_RPAREN_PARMLIST),
-    			ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$       
+    			ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_VA_ARGS),
-    			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$   
+    			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_INVALID_ESCAPECHAR),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_UNBOUNDED_STRING),
@@ -73,7 +73,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     	errorMessages.put(Integer.valueOf(SCANNER_BAD_DECIMAL_FORMAT),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badDecimalFormat")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_ASSIGNMENT_NOT_ALLOWED),
-    			ParserMessages.getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$        
+    			ParserMessages.getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_DIVIDE_BY_ZERO),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.divideByZero")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_MISSING_R_PAREN),
@@ -83,7 +83,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     	errorMessages.put(Integer.valueOf(SCANNER_ILLEGAL_IDENTIFIER),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.illegalIdentifier")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_BAD_CONDITIONAL_EXPRESSION),
-    			ParserMessages.getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$        
+    			ParserMessages.getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_UNEXPECTED_EOF),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(SCANNER_BAD_CHARACTER),
@@ -126,7 +126,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 	public ASTProblem copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public ASTProblem copy(CopyStyle style) {
 		ASTProblem copy = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
@@ -142,7 +142,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 	public boolean isError() {
         return isError;
     }
-    
+
     @Override
 	public boolean isWarning() {
         return !isError;
@@ -168,7 +168,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         }
         return msg;
     }
-    
+
     @Override
 	public String getMessage() {
     	return getMessage(id, arg == null ? null : new String(arg));

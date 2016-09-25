@@ -40,7 +40,7 @@ public class CASTGotoStatement extends ASTAttributeOwner implements IASTGotoStat
 		CASTGotoStatement copy = new CASTGotoStatement(name == null ? null : name.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTName getName() {
         return this.name;

@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
     private final IASTCastExpression fCastExpression;
     private final IASTFunctionCallExpression fFunctionCallExpression;
-    
+
     /**
      * The operand of the cast expression must start with an expression in parenthesis (which could be read as the parameter
      * list of the function call).
@@ -42,7 +42,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
     	fCastExpression= castExpression;
     	fFunctionCallExpression= functionCall;
     }
-    
+
 	@Override
 	public final IASTNode[] getNodes() {
 		return getExpressions();
@@ -52,7 +52,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 	public final IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
-    
+
 	@Override
 	public final IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
@@ -62,7 +62,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 	public void addExpression(IASTExpression e) {
 		throw new UnsupportedOperationException();
     }
-    
+
 	@Override
 	public IASTExpression[] getExpressions() {
 		return new IASTExpression[] {fCastExpression, fFunctionCallExpression};
@@ -84,13 +84,13 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 		if (primaryWithParenthesis == null)
 			return nodeToReplace;
 
-		
+
 		// find nested names
 		final NameCollector nameCollector= new NameCollector();
 		fCastExpression.getTypeId().accept(nameCollector);
 		final IASTName[] names= nameCollector.getNames();
 
-		// resolve names 
+		// resolve names
 		boolean hasIssue= false;
 		for (IASTName name : names) {
 			try {
@@ -104,7 +104,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 				break;
 			}
 		}
-		if (!hasIssue) 
+		if (!hasIssue)
 			return nodeToReplace;
 
 		final IASTExpression operand = primaryWithParenthesis.getOperand();
@@ -117,7 +117,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 			fFunctionCallExpression.setArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
 		}
 		setRange(fFunctionCallExpression, fCastExpression, primaryWithParenthesis);
-		
+
 		IASTExpression result= fFunctionCallExpression;
 		IASTExpression postFix= fCastExpression.getOperand();
 		if (postFix != primaryWithParenthesis) {
@@ -155,7 +155,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 				}
 			}
 		}
-		
+
 		owner.replace(nodeToReplace, result);
 		// Resolve ambiguities in the function-call expression
 		fFunctionCallExpression.getFunctionNameExpression().accept(visitor);

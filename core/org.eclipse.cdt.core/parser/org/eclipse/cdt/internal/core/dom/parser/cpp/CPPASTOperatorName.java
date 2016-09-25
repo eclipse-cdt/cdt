@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 
 public class CPPASTOperatorName extends CPPASTName implements ICPPASTOperatorName {
-	
+
 	public CPPASTOperatorName() {
 		super();
 	}

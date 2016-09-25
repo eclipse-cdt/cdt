@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -22,15 +22,15 @@ public class ExecCompoundStatement implements ICPPExecution {
 	private ExecCompoundStatement(ICPPExecution[] executions) {
 		this.executions = executions;
 	}
-	
+
 	public ExecCompoundStatement(IASTStatement[] statements) {
 		this(createExecutionsFromStatements(statements));
 	}
-	
+
 	private static ICPPExecution[] createExecutionsFromStatements(IASTStatement[] statements) {
 		ICPPExecution[] executions = new ICPPExecution[statements.length];
-		for(int i = 0; i < executions.length; i++) {
-			executions[i] = EvalUtil.getExecutionFromStatement(statements[i]); 
+		for (int i = 0; i < executions.length; i++) {
+			executions[i] = EvalUtil.getExecutionFromStatement(statements[i]);
 		}
 		return executions;
 	}
@@ -38,8 +38,8 @@ public class ExecCompoundStatement implements ICPPExecution {
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPExecution[] newExecutions = new ICPPExecution[executions.length];
-		for(int i = 0; i < executions.length; i++) {
-			if(executions[i] == null) {
+		for (int i = 0; i < executions.length; i++) {
+			if (executions[i] == null) {
 				continue;
 			}
 			newExecutions[i] = executions[i].instantiate(context, maxDepth);
@@ -49,15 +49,15 @@ public class ExecCompoundStatement implements ICPPExecution {
 
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
-		for(ICPPExecution execution : executions) {
-			if(execution == null) {
+		for (ICPPExecution execution : executions) {
+			if (execution == null) {
 				continue;
 			}
-			
+
 			ICPPExecution result = EvalUtil.executeStatement(execution, record, context);
-			if(result != null) {
+			if (result != null) {
 				return result;
-			}	
+			}
 		}
 		return null;
 	}
@@ -70,12 +70,12 @@ public class ExecCompoundStatement implements ICPPExecution {
 			buffer.marshalExecution(execution, includeValue);
 		}
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len = buffer.getInt();
 		ICPPExecution[] executions = new ICPPExecution[len];
 		for (int i = 0; i < executions.length; i++) {
-			executions[i] = (ICPPExecution)buffer.unmarshalExecution();
+			executions[i] = (ICPPExecution) buffer.unmarshalExecution();
 		}
 		return new ExecCompoundStatement(executions);
 	}

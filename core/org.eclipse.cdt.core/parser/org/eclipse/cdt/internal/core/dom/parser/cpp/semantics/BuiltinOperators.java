@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
@@ -64,7 +64,7 @@ class BuiltinOperators {
 			IASTNode point, Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
-		
+
 		return new BuiltinOperators(operator, args, point, globCandidates).create();
 	}
 
@@ -89,9 +89,9 @@ class BuiltinOperators {
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
 			IType type= args[0].getType(point);
-			if (!(type instanceof ISemanticProblem)) 
+			if (!(type instanceof ISemanticProblem))
 				fType1= type;
-			
+
 		}
 		if (args.length > 1) {
 			IType type= args[1].getType(point);
@@ -110,7 +110,7 @@ class BuiltinOperators {
 		case NEW_ARRAY:
 		case PAREN:
 			return EMPTY;
-			
+
 		case INCR:
 		case DECR:
 			opIncOrDec();
@@ -135,7 +135,7 @@ class BuiltinOperators {
 			} else {
 				binaryPromotedArithmetic(true, ReturnType.CONVERT);
 				pointerArithmetic(false, false);
-			}				
+			}
 			break;
 
 		case BRACKET:
@@ -148,7 +148,7 @@ class BuiltinOperators {
 			} else {
 				binaryPromotedArithmetic(true, ReturnType.CONVERT);
 				pointerArithmetic(false, true);
-			}				
+			}
 			break;
 
 		case BITCOMPLEMENT:
@@ -174,9 +174,9 @@ class BuiltinOperators {
 			break;
 
 		case AMPER:
-			if (fUnary) 
+			if (fUnary)
 				return EMPTY;
-			
+
 			binaryPromotedArithmetic(false, ReturnType.CONVERT);
 			break;
 
@@ -199,7 +199,7 @@ class BuiltinOperators {
 		case PLUSASSIGN:
 			arithmeticAssignement(true, Assignment.WITH_POINTER_OPERATION);
 			break;
-			
+
 		case DIVASSIGN:
 		case STARASSIGN:
 			arithmeticAssignement(true, Assignment.WITH_OPERATION);
@@ -218,20 +218,20 @@ class BuiltinOperators {
 		case OR:
 			addFunction(CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN);
 			break;
-			
+
 		case NOT:
 			addFunction(CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN);
 			break;
-			
+
 		case CONDITIONAL_OPERATOR:
 			binaryPromotedArithmetic(true, ReturnType.CONVERT);
 			conditional();
 			break;
 		}
-		
+
 		if (fResult == null)
 			return EMPTY;
-		
+
 		return fResult.toArray(new ICPPFunction[fResult.size()]);
 	}
 
@@ -266,10 +266,10 @@ class BuiltinOperators {
 						}
 					}
 				}
-			} 
+			}
 		}
 	}
-	
+
 	// 13.6-6, 13.6-7
 	private void opDeref() {
 		IType[] types= getClassConversionTypes(FIRST);
@@ -315,7 +315,7 @@ class BuiltinOperators {
 			}
 		}
 	}
-	
+
 	// 13.6-11
 	private void opArrowStar() {
 		List<IPointerType> classPointers= null;
@@ -335,7 +335,7 @@ class BuiltinOperators {
 		}
 		if (classPointers == null)
 			return;
-		
+
 		types= getClassConversionTypes(SECOND);
 		for (IType type : types) {
 			type= SemanticUtil.getNestedType(type, TDEF | REF);
@@ -348,7 +348,7 @@ class BuiltinOperators {
 		}
 		if (memberPointers == null)
 			return;
-		
+
 		for (IPointerType clsPtr : classPointers) {
 			IType cvClass= SemanticUtil.getNestedType(clsPtr.getType(), TDEF);
 			CVQualifier cv1= SemanticUtil.getCVQualifier(cvClass);
@@ -372,12 +372,12 @@ class BuiltinOperators {
 	private static enum ReturnType {CONVERT, USE_FIRST, USE_BOOL}
 	private void binaryPromotedArithmetic(boolean fltPt, ReturnType rstrat) {
 		List<IType> p1= null, p2= null;
-		
+
 		IType[] types1= getClassConversionTypes(FIRST);
 		IType[] types2= getClassConversionTypes(SECOND);
 		if (types1.length == 0 && types2.length == 0)
 			return;
-		
+
 		for (IType t : types1) {
 			p1 = addPromotedArithmetic(t, fltPt, p1);
 		}
@@ -388,7 +388,7 @@ class BuiltinOperators {
 		p2= addPromotedArithmetic(fType2, fltPt, p2);
 		if (p1 == null || p2 == null)
 			return;
-		
+
 		for (IType t1 : p1) {
 			for (IType t2 : p2) {
 				IType rt= null;
@@ -446,7 +446,7 @@ class BuiltinOperators {
 				}
 			}
 		}
-		
+
 		types= getClassConversionTypes(SECOND);
 		if (types.length == 0 && !fIsClass[SECOND]) {
 			types= new IType[] {fType2};
@@ -480,14 +480,14 @@ class BuiltinOperators {
 			}
 		}
 	}
-	
+
 	// 13.6-18, 13.6-29, 13.6-20, 13.6-22
 	private static enum Assignment {WITHOUT_OPERATION, WITH_POINTER_OPERATION, WITH_OPERATION}
 	private void arithmeticAssignement(boolean fltPt, Assignment assign) {
 		IType[] types2= getClassConversionTypes(SECOND);
 		if (types2.length == 0)
 			return;
-		
+
 		IType refType= SemanticUtil.getNestedType(fType1, TDEF);
 		if (refType instanceof ICPPReferenceType) {
 			IType t= SemanticUtil.getNestedType(((ICPPReferenceType) refType).getType(), TDEF);
@@ -520,9 +520,9 @@ class BuiltinOperators {
 					}
 				}
 			}
-		} 
+		}
 	}
-	
+
 	// 13.6-25
 	private void conditional() {
 		for (int i = FIRST; i <= SECOND; i++) {
@@ -531,7 +531,7 @@ class BuiltinOperators {
 				type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
 				if (isPointer(type) || isScopedEnumeration(type) || isPointerToMember(type)) {
 					addFunction(type, type, type);
-				} 
+				}
 			}
 		}
 	}
@@ -539,7 +539,7 @@ class BuiltinOperators {
 	private void addFunction(IType returnType, IType p1) {
 		addFunction(returnType, new IType[] {p1});
 	}
-		
+
 	private void addFunction(IType returnType, IType p1, IType p2) {
 		addFunction(returnType, new IType[] {p1, p2});
 	}
@@ -569,7 +569,7 @@ class BuiltinOperators {
 			fResult.add(new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, true, false));
 		}
 	}
-		
+
 	private boolean isEnumeration(IType type) {
 		return type instanceof IEnumeration;
 	}
@@ -699,7 +699,7 @@ class BuiltinOperators {
 					} catch (DOMException e) {
 					}
 				}
-			}		
+			}
 			fClassConversionTypes[idx]= result;
 		}
 		return result;

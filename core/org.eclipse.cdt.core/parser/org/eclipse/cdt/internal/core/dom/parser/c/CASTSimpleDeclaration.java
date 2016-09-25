@@ -51,7 +51,7 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
 		}
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
@@ -64,17 +64,17 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
         declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
-    
+
     @Override
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
-    		declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
+    		declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);
     	}
     }
-    
+
     @Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         assertNotFrozen();
@@ -84,7 +84,7 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
 			declSpecifier.setPropertyInParent(DECL_SPECIFIER);
 		}
     }
-    
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarations) {
@@ -103,7 +103,7 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
             if (!dtors[i].accept(action))
             	return false;
         }
-        
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -113,7 +113,7 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
     	if (declSpecifier == child) {
@@ -124,7 +124,7 @@ public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimp
     		IASTDeclarator[] declarators = getDeclarators();
     		for (int i = 0; i < declarators.length; i++) {
     			if (declarators[i] == child) {
-    				declarators[i] = (IASTDeclarator)other;
+    				declarators[i] = (IASTDeclarator) other;
     				other.setParent(child.getParent());
     				other.setPropertyInParent(child.getPropertyInParent());
     				break;

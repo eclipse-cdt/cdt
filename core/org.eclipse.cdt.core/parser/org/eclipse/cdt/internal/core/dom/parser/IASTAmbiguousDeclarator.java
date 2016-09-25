@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
  */
 public interface IASTAmbiguousDeclarator extends IASTDeclarator {
 
-    public static final ASTNodeProperty SUBDECLARATOR = new ASTNodeProperty( "IASTAmbiguousDeclarator.SUBDECLARATOR"); //$NON-NLS-1$
-    
+    public static final ASTNodeProperty SUBDECLARATOR = new ASTNodeProperty("IASTAmbiguousDeclarator.SUBDECLARATOR"); //$NON-NLS-1$
+
     /**
      * Add an alternative to this ambiguous declarator.
      */

@@ -22,14 +22,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTTypeTransformationSpecifier {
 	private Operator fOperator;
 	private ICPPASTTypeId fOperand;
-	
+
 	public CPPASTTypeTransformationSpecifier(Operator operator, ICPPASTTypeId operand) {
 		fOperator = operator;
 		fOperand = operand;
 		fOperand.setParent(this);
 		fOperand.setPropertyInParent(OPERAND);
 	}
-	
+
 	@Override
 	public ICPPASTDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -61,9 +61,9 @@ public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier i
 			}
 		}
 
-        if (!fOperand.accept(action)) 
+        if (!fOperand.accept(action))
         	return false;
-        
+
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -71,7 +71,7 @@ public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier i
 	            default: break;
 	        }
 		}
-        
+
         return true;
 	}
 }

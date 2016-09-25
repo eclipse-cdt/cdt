@@ -39,7 +39,7 @@ public class CASTDoStatement extends ASTAttributeOwner implements IASTDoStatemen
 	public CASTDoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTDoStatement copy(CopyStyle style) {
 		CASTDoStatement copy = new CASTDoStatement();
@@ -52,7 +52,7 @@ public class CASTDoStatement extends ASTAttributeOwner implements IASTDoStatemen
 	public IASTStatement getBody() {
         return body;
     }
- 
+
     @Override
 	public void setBody(IASTStatement body) {
         assertNotFrozen();

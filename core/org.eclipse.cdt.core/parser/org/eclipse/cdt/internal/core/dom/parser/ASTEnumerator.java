@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -104,7 +104,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	public int getRoleForName(IASTName n) {
 		if (n == name)
 			return r_definition;
-		
+
 		return r_reference;
 	}
 
@@ -125,7 +125,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 				if (enumeration.startValueComputation()) { // Prevent infinite recursion.
 					computeEnumValues(enumeration);
 				}
-			}		
+			}
 			if (integralValue == null) {
 				integralValue= IntegralValue.UNKNOWN;
 			}

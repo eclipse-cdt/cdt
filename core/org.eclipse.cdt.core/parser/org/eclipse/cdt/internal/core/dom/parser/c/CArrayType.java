@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Devin Steffler (IBM Corporation) - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -36,7 +36,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
     private boolean isRestrict;
     private boolean isStatic;
 	private boolean isVariableSized;
-	
+
 	public CArrayType(IType type) {
 		this.type = type;
 	}
@@ -48,7 +48,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		this.isRestrict= isRestrict;
 		this.value= size;
 	}
-	
+
 	public void setIsStatic(boolean val) {
 		isStatic= val;
 	}
@@ -74,7 +74,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
         }
     	return false;
     }
-    
+
 	private boolean hasSameSize(IArrayType rhs) {
 		IValue s1 = getSize();
 		IValue s2 = rhs.getSize();
@@ -89,12 +89,12 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	public IType getType() {
 		return type;
 	}
-	
+
 	@Override
 	public void setType(IType t) {
 	    this.type = t;
 	}
-	
+
 	public void setModifier(ICASTArrayModifier mod) {
 		isConst= mod.isConst();
 		isVolatile= mod.isVolatile();
@@ -133,7 +133,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	public IValue getSize() {
     	if (value != IntegralValue.NOT_INITIALIZED)
     		return value;
-    	
+
     	if (sizeExpression == null)
     		return value= null;
 
@@ -181,7 +181,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 				nval= num.longValue();
 				if (nval >= 0) {
 					firstBytes |= ITypeMarshalBuffer.FLAG7;
-				} 
+				}
 			}
 		}
 		buffer.putShort(firstBytes);
@@ -200,16 +200,16 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		} else if ((firstBytes & ITypeMarshalBuffer.FLAG6) != 0) {
 			value = buffer.unmarshalValue();
 		}
-		IType nested= buffer.unmarshalType();		
-		CArrayType result= new CArrayType(nested, 
-				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0, 
-				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0, 
+		IType nested= buffer.unmarshalType();
+		CArrayType result= new CArrayType(nested,
+				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0,
 				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0, value);
 		result.setIsStatic((firstBytes & ITypeMarshalBuffer.FLAG4) != 0);
 		result.setIsVariableLength((firstBytes & ITypeMarshalBuffer.FLAG5) != 0);
 		return result;
 	}
-	
+
 	@Override
 	@Deprecated
     public IASTExpression getArraySizeExpression() {

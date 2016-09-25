@@ -47,7 +47,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 	public CASTElaboratedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		CASTElaboratedTypeSpecifier copy = new CASTElaboratedTypeSpecifier(kind,
@@ -82,9 +82,9 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -93,9 +93,9 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
         if (!visitAlignmentSpecifiers(action)) {
         	return false;
         }
-        if( name != null ) if( !name.accept( action ) ) return false;
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
+        if (name != null) if (!name.accept(action)) return false;
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -105,24 +105,24 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
     }
 
 	@Override
-	public int getRoleForName(IASTName n ) {
-		if( n != name ) return r_unclear;
-		
+	public int getRoleForName(IASTName n) {
+		if (n != name) return r_unclear;
+
 		IASTNode parent = getParent();
-		if( !( parent instanceof IASTDeclaration ) )
+		if (!(parent instanceof IASTDeclaration))
 			return r_reference;
-		
-		if( parent instanceof IASTSimpleDeclaration ){
-			IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
-			if( dtors.length == 0 )
+
+		if (parent instanceof IASTSimpleDeclaration) {
+			IASTDeclarator [] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
+			if (dtors.length == 0)
 				return r_declaration;
 		}
-		
+
 		//can't tell, resolve the binding
 		IBinding binding = name.resolveBinding();
-		if( binding instanceof ICInternalBinding ){
-			IASTNode node = ((ICInternalBinding)binding).getPhysicalNode();
-			if( node == name ) 
+		if (binding instanceof ICInternalBinding) {
+			IASTNode node = ((ICInternalBinding) binding).getPhysicalNode();
+			if (node == name)
 				return r_declaration;
 		}
 		return r_reference;
@@ -138,11 +138,11 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 				ICompositeType ct= (ICompositeType) b;
 				switch (ct.getKey()) {
 				case ICompositeType.k_struct:
-					if (getKind() != k_struct) 
+					if (getKind() != k_struct)
 						b= null;
 					break;
 				case ICompositeType.k_union:
-					if (getKind() != k_union) 
+					if (getKind() != k_union)
 						b= null;
 					break;
 				}

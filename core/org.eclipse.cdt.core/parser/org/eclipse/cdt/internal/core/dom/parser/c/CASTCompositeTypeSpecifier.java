@@ -32,7 +32,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     private IASTDeclaration[] fAllDeclarations;
     private int fDeclarationsPos = -1;
     private IScope fScope;
-    
+
     public CASTCompositeTypeSpecifier() {
 	}
 
@@ -40,12 +40,12 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		this.fKey = key;
 		setName(name);
 	}
-    
+
 	@Override
 	public CASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTCompositeTypeSpecifier copy(CopyStyle style) {
 		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
@@ -60,7 +60,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		}
 		return super.copy(copy, style);
 	}
-	
+
     @Override
 	public int getKey() {
         return fKey;
@@ -76,7 +76,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 	public IASTName getName() {
         return fName;
     }
-    
+
     @Override
 	public void setName(IASTName name) {
         assertNotFrozen();
@@ -118,7 +118,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 			fActiveDeclarations= null;
     	}
     }
-    
+
     @Override
 	public void addDeclaration(IASTDeclaration declaration) {
     	addMemberDeclaration(declaration);
@@ -132,7 +132,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     }
 
     @Override
-	public boolean accept(ASTVisitor action){
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -146,7 +146,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 
 		if (fName != null && !fName.accept(action))
 			return false;
-           
+
 		IASTDeclaration[] decls= getDeclarations(action.includeInactiveNodes);
 		for (int i = 0; i < decls.length; i++) {
 			if (!decls[i].accept(action))

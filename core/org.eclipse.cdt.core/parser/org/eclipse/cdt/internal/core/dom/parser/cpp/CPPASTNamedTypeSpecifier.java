@@ -29,7 +29,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		implements ICPPASTNamedTypeSpecifier, ICPPASTCompletionContext {
     private boolean typename;
     private IASTName name;
-    
+
     public CPPASTNamedTypeSpecifier() {
 	}
 
@@ -49,7 +49,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		copy.typename = typename;
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean isTypename() {
         return typename;
@@ -91,7 +91,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 
         if (name != null && !name.accept(action))
         	return false;
-        
+
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT:
@@ -104,7 +104,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		}
         return true;
     }
-	
+
 	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == name)
@@ -134,7 +134,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 			return Arrays.copyOfRange(bindings, 0, j);
 		return bindings;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

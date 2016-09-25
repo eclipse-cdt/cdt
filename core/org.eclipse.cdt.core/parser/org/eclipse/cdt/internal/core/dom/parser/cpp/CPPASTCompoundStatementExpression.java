@@ -35,10 +35,10 @@ public class CPPASTCompoundStatementExpression extends ASTNode
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTCompoundStatementExpression() {
 	}
-    
+
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
@@ -78,8 +78,8 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 				if (statements.length > 0) {
 					IASTStatement st = statements[statements.length - 1];
 					if (st instanceof IASTExpressionStatement) {
-						IASTExpressionStatement exprStmt = (IASTExpressionStatement)st;
-						ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)exprStmt.getExpression();
+						IASTExpressionStatement exprStmt = (IASTExpressionStatement) st;
+						ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) exprStmt.getExpression();
 						fEval= new EvalCompoundStatementExpression(evalOwner.getEvaluation(), this);
 					}
 				}

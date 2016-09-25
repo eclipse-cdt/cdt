@@ -32,7 +32,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
     private int stmtsPos= -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
-    
+
     public CPPASTAmbiguousStatement(IASTStatement... statements) {
 		for (IASTStatement s : statements) {
 			addStatement(s);
@@ -41,14 +41,14 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 
 	@Override
 	protected void beforeResolution() {
-		// Populate containing scope, so that it will not be affected by the alternative 
+		// Populate containing scope, so that it will not be affected by the alternative
 		// branches.
 		fScope= CPPVisitor.getContainingScope(this);
 		if (fScope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) fScope).populateCache();
 		}
 	}
-	
+
 	@Override
 	protected void beforeAlternative(IASTNode alternative) {
 		cleanupScope();
@@ -59,7 +59,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 			}
 		}
 	}
-	
+
 	private void cleanupScope() {
 		if (fScope instanceof ICPPASTInternalScope && fDeclaration != null) {
 			((ICPPASTInternalScope) fScope).removeNestedFromCache(fDeclaration);
@@ -77,7 +77,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 	public IASTStatement copy() {
     	throw new UnsupportedOperationException();
     }
-    
+
 	@Override
 	public IASTStatement copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
@@ -98,7 +98,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
         stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
     	return stmts;
     }
-    
+
     @Override
 	public IASTNode[] getNodes() {
         return getStatements();

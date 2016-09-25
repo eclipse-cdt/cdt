@@ -45,7 +45,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 	public IBinding[] find(String name) {
         CollectNamesAction action = new CollectNamesAction(name.toCharArray());
         getPhysicalNode().accept(action);
-        
+
         IASTName[] names = action.getNames();
         IBinding[] result = null;
         for (IASTName astName : names) {
@@ -57,7 +57,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
             } catch (DOMException e) {
             }
         }
-            
+
         return ArrayUtil.trim(IBinding.class, result);
     }
 
@@ -70,7 +70,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 
 		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS, compSpec.getName().toCharArray());
 	}
-	
+
 	@Override
 	protected void doPopulateCache() {
 		ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) getPhysicalNode();

@@ -115,7 +115,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 
 	/**
 	 * Overridden to emphasize that {@link #fTemplateParameters} does not participate in the equality
-	 * relationship. 
+	 * relationship.
 	 */
 	@SuppressWarnings("javadoc")
 	@Override

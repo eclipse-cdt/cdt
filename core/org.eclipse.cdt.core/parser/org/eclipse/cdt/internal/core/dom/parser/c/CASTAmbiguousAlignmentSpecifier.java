@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 public class CASTAmbiguousAlignmentSpecifier extends ASTAmbiguousNode implements IASTAlignmentSpecifier {
 	IASTAlignmentSpecifier fExpression;
 	IASTAlignmentSpecifier fTypeId;
-	
+
 	CASTAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression, IASTAlignmentSpecifier typeId) {
 		fExpression = expression;
 		fTypeId = typeId;
 	}
-	
+
 	@Override
 	public IASTExpression getExpression() {
 		return fExpression.getExpression();

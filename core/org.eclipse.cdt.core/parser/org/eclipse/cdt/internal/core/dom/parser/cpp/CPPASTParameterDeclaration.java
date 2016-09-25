@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParameterDeclaration, IASTAmbiguityParent {
     private IASTDeclSpecifier fDeclSpec;
     private ICPPASTDeclarator fDeclarator;
-    
+
     public CPPASTParameterDeclaration() {
 	}
 
@@ -36,7 +36,7 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		setDeclSpecifier(declSpec);
 		setDeclarator(declarator);
 	}
-	
+
 	@Override
 	public boolean isParameterPack() {
 		return fDeclarator != null && CPPVisitor.findInnermostDeclarator(fDeclarator).declaresParameterPack();
@@ -96,12 +96,12 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 	            default: break;
 	        }
 		}
-        
+
 		if (fDeclSpec != null && !fDeclSpec.accept(action))
 			return false;
 		if (fDeclarator != null && !fDeclarator.accept(action))
 			return false;
-        
+
 		if (action.shouldVisitParameterDeclarations &&
 				action.leave((IASTParameterDeclaration) this) == ASTVisitor.PROCESS_ABORT) {
 			return false;

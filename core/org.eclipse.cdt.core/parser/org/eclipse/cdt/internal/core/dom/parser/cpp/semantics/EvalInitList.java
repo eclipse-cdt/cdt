@@ -99,7 +99,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 		} else {
 			return IntegralValue.UNKNOWN;
 		}
-		
+
 	}
 
 	@Override

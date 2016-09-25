@@ -49,18 +49,18 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
     private ICPPNamespace fBinding;
 	private final CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
-	
+
 	// Caches
 	private Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
-	
+
 	public CPPASTTranslationUnit() {
 	}
-	
+
 	@Override
 	public CPPASTTranslationUnit copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTranslationUnit copy(CopyStyle style) {
 		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
@@ -75,7 +75,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         }
         return fScope;
     }
-	
+
 	private void addBuiltinOperators(CPPScope theScope) {
         // void
         IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
@@ -93,12 +93,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
         temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
         theScope.addBinding(temp);
-		
+
 		// void* operator new[](std::size_t);
 		temp = null;
         temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false, false);
         theScope.addBinding(temp);
-		
+
 		// void operator delete(void*);
         temp = null;
         IType[] deleteParms = new IType[1];
@@ -109,14 +109,14 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope,
         		deleteFunctionType, deleteTheParms, false, false);
         theScope.addBinding(temp);
-		
+
 		// void operator delete[](void*);
 		temp = null;
         temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope,
         		deleteFunctionType, deleteTheParms, false, false);
         theScope.addBinding(temp);
 	}
-	
+
     @Override
 	public IASTName[] getDeclarationsInAST(IBinding binding) {
         if (binding instanceof IMacroBinding) {
@@ -146,14 +146,14 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         }
         return CPPVisitor.getReferences(this, binding);
     }
-    
+
     @Override
 	public ICPPNamespace getGlobalNamespace() {
         if (fBinding == null)
             fBinding = new CPPNamespace(this);
         return fBinding;
     }
-	
+
     @Override @Deprecated
 	public IBinding resolveBinding() {
         return getGlobalNamespace();
@@ -173,7 +173,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public void skippedFile(int offset, InternalFileContent fileContent) {
 		super.skippedFile(offset, fileContent);
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
-	}	
+	}
 
 	@Override
 	public IScope mapToASTScope(IScope scope) {
@@ -205,22 +205,22 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	@Override
 	public void resolveAmbiguities() {
 		fAmbiguityResolver = new CPPASTAmbiguityResolver();
-		accept(fAmbiguityResolver); 
+		accept(fAmbiguityResolver);
 		fAmbiguityResolver = null;
 	}
-	
+
 	@Override
 	protected IType createType(IASTTypeId typeid) {
 		return CPPVisitor.createType(typeid);
 	}
-	
+
 	@Override
 	public void resolvePendingAmbiguities(IASTNode node) {
 		if (fAmbiguityResolver != null) {
 			fAmbiguityResolver.resolvePendingAmbiguities(node);
 		}
 	}
-	
+
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
 	}

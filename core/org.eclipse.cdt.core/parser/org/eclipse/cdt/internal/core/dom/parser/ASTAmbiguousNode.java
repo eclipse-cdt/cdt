@@ -54,23 +54,23 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			return names;
 		}
 	}
-    
+
 	private IASTNode fResolution;
 
     /**
      * Return the alternative nodes for this ambiguity.
      */
     public abstract IASTNode[] getNodes();
-    
+
     @Override
 	public final boolean accept(ASTVisitor visitor) {
     	if (visitor.shouldVisitAmbiguousNodes && visitor.visit(this) == ASTVisitor.PROCESS_ABORT)
     		return false;
-    		
+
     	// Alternatives are not visited on purpose.
     	return true;
     }
-    
+
 	protected void beforeResolution() {
 	}
 
@@ -83,7 +83,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	public IASTNode resolveAmbiguity(ASTVisitor resolver) {
 		return fResolution= doResolveAmbiguity(resolver);
 	}
-	
+
     protected IASTNode doResolveAmbiguity(ASTVisitor resolver) {
     	beforeResolution();
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
@@ -91,14 +91,14 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 
 		final IASTNode[] alternatives= getNodes();
 		IASTNode bestAlternative= null;
-		
+
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
 			// Setup the ast to use the alternative
 			owner.replace(nodeToReplace, alternative);
 
 			beforeAlternative(alternative);
-			
+
 			// Handle nested ambiguities
 			alternative= resolveNestedAmbiguities(alternative, resolver);
 			nodeToReplace= alternative;
@@ -107,13 +107,13 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			final NameCollector nameCollector= new NameCollector();
 			alternative.accept(nameCollector);
 			final IASTName[] names= nameCollector.getNames();
-			
+
 			// Resolve names and count issues
 			int issues= 0;
 			for (IASTName name : names) {
 				try {
-					// Avoid resolution of parameters (can always be resolved), 
-					// it can triggers resolution of declaration it belongs to, 
+					// Avoid resolution of parameters (can always be resolved),
+					// it can triggers resolution of declaration it belongs to,
 					// while the declarator is still ambiguous. Could be solved by introducing an
 					// intermediate binding for parameters, similar to template parameters.
 					if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {
@@ -127,7 +127,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 					IBinding b= name.resolvePreBinding();
 					if (b instanceof IProblemBinding) {
 						issues++;
-					} 
+					}
 				} catch (Exception t) {
 					issues++;
 				}
@@ -143,7 +143,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 				}
 			}
 		}
-		
+
 		// Switch back to the best alternative, if necessary.
 		if (nodeToReplace != bestAlternative) {
 			owner.replace(nodeToReplace, bestAlternative);
@@ -151,7 +151,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		afterResolution(resolver, bestAlternative);
 		return bestAlternative;
 	}
-    
+
 	protected IASTNode resolveNestedAmbiguities(IASTNode alternative, ASTVisitor resolver) {
 		alternative.accept(resolver);
 		if (alternative instanceof ASTAmbiguousNode)
@@ -178,7 +178,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		logAmbiguousNodeError();
 		return EvalFixed.INCOMPLETE;
 	}
-    
+
     public final ICPPExecution getExecution() {
 		logAmbiguousNodeError();
 		return null;

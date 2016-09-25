@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IProblemType;
@@ -24,13 +24,13 @@ public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType UNKNOWN_FOR_EXPRESSION = new ProblemType(TYPE_UNKNOWN_FOR_EXPRESSION);
 	public static final IType ENUMERATION_EXPECTED = new ProblemType(TYPE_ENUMERATION_EXPECTED);
 	public static final IType RECURSION_IN_LOOKUP = new ProblemType(BINDING_RECURSION_IN_LOOKUP);
-	
+
 	private final int fID;
 
 	public ProblemType(int id) {
 		fID= id;
 	}
-	
+
 	@Override
 	public int getID() {
 		return fID;
@@ -60,11 +60,11 @@ public class ProblemType implements IProblemType, ISerializableType {
 		buffer.putShort(ITypeMarshalBuffer.PROBLEM_TYPE);
 		buffer.putInt(getID());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0)
 			return ProblemFunctionType.unmarshal(firstBytes, buffer);
-		
+
 		return new ProblemType(buffer.getInt());
 	}
 }

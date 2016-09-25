@@ -74,7 +74,7 @@ public class CASTTypeIdInitializerExpression extends ASTNode implements ICASTTyp
 	            default: break;
 	        }
 		}
-        
+
         if (fTypeId != null && !fTypeId.accept(action)) return false;
         if (fInitializer != null && !fInitializer.accept(action)) return false;
 
@@ -92,7 +92,7 @@ public class CASTTypeIdInitializerExpression extends ASTNode implements ICASTTyp
 	public final boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

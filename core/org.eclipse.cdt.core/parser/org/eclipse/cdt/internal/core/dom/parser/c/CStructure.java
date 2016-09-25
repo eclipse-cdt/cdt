@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
- *     Markus Schorn (Wind River Systems) 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -318,6 +318,6 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	 */
 	@Override
 	public String toString() {
-		return getName(); 
+		return getName();
 	}
 }

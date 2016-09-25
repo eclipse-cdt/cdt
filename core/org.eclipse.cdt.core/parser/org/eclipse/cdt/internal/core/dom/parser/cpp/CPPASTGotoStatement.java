@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  */
 public class CPPASTGotoStatement extends CPPASTAttributeOwner implements IASTGotoStatement {
 	private IASTName name;
-	
+
     public CPPASTGotoStatement() {
 	}
 
@@ -32,7 +32,7 @@ public class CPPASTGotoStatement extends CPPASTAttributeOwner implements IASTGot
 	public CPPASTGotoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTGotoStatement copy(CopyStyle style) {
 		CPPASTGotoStatement copy = new CPPASTGotoStatement(name == null ? null : name.copy(style));

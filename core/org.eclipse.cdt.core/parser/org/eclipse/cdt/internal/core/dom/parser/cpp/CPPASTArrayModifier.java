@@ -39,7 +39,7 @@ public class CPPASTArrayModifier extends CPPASTAttributeOwner implements IASTArr
 	public CPPASTArrayModifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTArrayModifier copy(CopyStyle style) {
 		CPPASTArrayModifier copy = new CPPASTArrayModifier(exp == null ? null : exp.copy(style));

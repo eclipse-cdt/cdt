@@ -405,7 +405,7 @@ public abstract class ASTNode implements IASTNode {
 
 	/**
 	 * Helper method for use in {{@link #accept(ASTVisitor)} methods.
-	 * 
+	 *
 	 * @param action the visitor to accept
 	 * @param nodes the array of nodes accepting the visitor
 	 * @return continue on ({@code true}) or quit ({@code false})

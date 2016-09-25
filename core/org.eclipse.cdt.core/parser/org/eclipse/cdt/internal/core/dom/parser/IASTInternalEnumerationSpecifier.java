@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
@@ -32,7 +32,7 @@ public interface IASTInternalEnumerationSpecifier extends IASTEnumerationSpecifi
 	 * Returns {@code true} if the value computation has started but hasn't finished yet.
 	 */
 	boolean isValueComputationInProgress();
-	
+
 	/**
 	 * @since 5.1
 	 */

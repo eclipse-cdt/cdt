@@ -31,7 +31,7 @@ public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStat
 	public CASTCaseStatement(IASTExpression expression) {
 		setExpression(expression);
 	}
-	
+
 	@Override
 	public CASTCaseStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -74,8 +74,8 @@ public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStat
         		case ASTVisitor.PROCESS_SKIP: return true;
         		default: break;
         	}
-        }      
-        
+        }
+
         return true;
     }
 

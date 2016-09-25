@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
  * @author jcamelon
  */
 public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProblemTypeId {
-	
+
     public CPPASTProblemTypeId() {
 	}
 
@@ -33,7 +33,7 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 	public CPPASTProblemTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTProblemTypeId copy(CopyStyle style) {
 		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
@@ -48,12 +48,12 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
             case ASTVisitor.PROCESS_SKIP: return true;
             default: break;
         }
-		    
+
 		// Visit the problem
 		if (!super.accept(action))
 			return false;
-    	
-        if (action.shouldVisitTypeIds && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
+
+        if (action.shouldVisitTypeIds && action.leave(this) == ASTVisitor.PROCESS_ABORT)
         	return false;
     	}
         return true;

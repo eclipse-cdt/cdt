@@ -29,20 +29,20 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization implem
 			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 	}
-	
-	static <T extends ICPPConstructor & ICPPSpecialization & ICPPInternalBinding> ICPPExecution 
+
+	static <T extends ICPPConstructor & ICPPSpecialization & ICPPInternalBinding> ICPPExecution
 			getConstructorChainExecution(T functionSpec, IASTNode point) {
 		if (!functionSpec.isConstexpr()) {
 			return null;
 		}
-		
+
 		IASTNode def = functionSpec.getDefinition();
-		if(def != null) {
+		if (def != null) {
 			return CPPConstructor.computeConstructorChainExecution(def);
 		}
 		return CPPTemplates.instantiateConstructorChain(functionSpec, point);
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution(this, point);

@@ -57,7 +57,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) {
 		this(template, arguments, null);
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return fClassTemplate.getOwner();
@@ -83,16 +83,16 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		if (type == this)
 			return true;
 
-		if (type instanceof ITypedef) 
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
 
 		// allow some fuzziness here.
 		ICPPClassTemplate classTemplate = getClassTemplate();
 		if (type instanceof ICPPDeferredClassInstance) {
 			final ICPPDeferredClassInstance rhs = (ICPPDeferredClassInstance) type;
-			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding())) 
+			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding()))
 				return false;
-			
+
 			return CPPTemplates.haveSameArguments(this, rhs);
 		}
 		return false;
@@ -102,7 +102,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	public int getKey() {
     	return getClassTemplate().getKey();
     }
-    
+
     @Override
 	public ICPPBase[] getBases() {
         return ICPPBase.EMPTY_BASE_ARRAY;
@@ -157,17 +157,17 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFinal() {
 		return false;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
@@ -193,17 +193,17 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	public IBinding getSpecializedBinding() {
 		return getTemplateDefinition();
 	}
-	
+
 	@Override
 	public IScope getScope() throws DOMException {
 		return fClassTemplate.getScope();
 	}
-	
+
 	@Override
 	public ICPPScope asScope() {
 		if (fLookupScope != null)
 			return fLookupScope;
-		
+
 		return super.asScope();
 	}
 
@@ -211,7 +211,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	public String toString() {
 		return ASTTypeUtil.getType(this, true);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes= ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE;
@@ -222,7 +222,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 			buffer.marshalTemplateArgument(arg);
 		}
 	}
-	
+
 	public static ICPPDeferredClassInstance unmarshal(IIndexFragment fragment, short firstBytes,
 			ITypeMarshalBuffer buffer) throws CoreException {
 		IBinding template= buffer.unmarshalBinding();

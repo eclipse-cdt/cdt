@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Nathan Ridge - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;

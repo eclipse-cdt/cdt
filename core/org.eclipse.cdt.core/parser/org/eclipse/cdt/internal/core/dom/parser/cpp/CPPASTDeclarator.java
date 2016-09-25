@@ -46,15 +46,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDeclarator, 
+public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDeclarator,
 		IASTImplicitNameOwner, ICPPExecutionOwner {
     private IASTInitializer initializer;
     private IASTName name;
-	private IASTImplicitName[] implicitNames; 
+	private IASTImplicitName[] implicitNames;
     private IASTDeclarator nested;
     private IASTPointerOperator[] pointerOps;
     private boolean isPackExpansion;
-   
+
     public CPPASTDeclarator() {
 	}
 
@@ -294,7 +294,7 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 			}
     	}
 
-    	return implicitNames;  
+    	return implicitNames;
 	}
 
 	@Override
@@ -307,16 +307,16 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 		}
 		super.replace(child, other);
 	}
-	
+
 	@Override
 	public ICPPExecution getExecution() {
-		final ICPPBinding binding = (ICPPBinding)getName().resolveBinding();
+		final ICPPBinding binding = (ICPPBinding) getName().resolveBinding();
 		ICPPEvaluation initializerEval = null;
-		if(binding instanceof CPPVariable) {
-			CPPVariable variable = (CPPVariable)binding;
+		if (binding instanceof CPPVariable) {
+			CPPVariable variable = (CPPVariable) binding;
 			initializerEval = variable.getInitializerEvaluation();
 		}
-		if(initializerEval == EvalFixed.INCOMPLETE) {
+		if (initializerEval == EvalFixed.INCOMPLETE) {
 			return ExecIncomplete.INSTANCE;
 		}
 		return new ExecDeclarator(binding, initializerEval);

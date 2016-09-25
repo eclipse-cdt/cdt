@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -17,17 +17,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 public class CPPVariableSpecialization extends CPPSpecialization implements ICPPVariable {
 	private final IType type;
 	private final IValue value;
-	
+
 	public CPPVariableSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap tpmap, IType type, IValue value) {
 		super(orig, owner, tpmap);
 		this.type = type;
 		this.value = value;
 	}
-	
+
 	private ICPPVariable getVariable() {
-		return (ICPPVariable)getSpecializedBinding();
+		return (ICPPVariable) getSpecializedBinding();
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;

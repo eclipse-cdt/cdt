@@ -39,7 +39,7 @@ public class CASTProblemDeclaration extends CASTProblemOwner implements IASTProb
 		CASTProblemDeclaration copy = new CASTProblemDeclaration();
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarations) {

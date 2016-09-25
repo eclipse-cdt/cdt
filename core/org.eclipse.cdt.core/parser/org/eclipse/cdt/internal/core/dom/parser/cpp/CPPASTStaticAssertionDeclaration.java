@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -35,7 +35,7 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
         	message.setPropertyInParent(MESSAGE);
 		}
 	}
-	
+
 	@Override
 	public IASTExpression getCondition() {
 		return fCondition;
@@ -51,7 +51,7 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 	public CPPASTStaticAssertionDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTStaticAssertionDeclaration copy(CopyStyle style) {
 		final IASTExpression condCopy = fCondition == null ? null : fCondition.copy(style);
@@ -62,24 +62,24 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 	}
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	        }
 		}
-        
+
 		if (fCondition != null && !fCondition.accept(action))
 			return false;
 		if (fMessage != null && !fMessage.accept(action))
 			return false;
-		
+
 		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
     	if (child == fCondition) {

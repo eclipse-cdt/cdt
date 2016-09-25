@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 /**
  * The CPPImplicitFunction is used to represent implicit functions that exist on the translation
  * unit but are not actually part of the physical AST created by CDT.
- * 
+ *
  * An example is GCC built-in functions.
  */
 public class CPPImplicitFunction extends CPPFunction {
@@ -31,7 +31,7 @@ public class CPPImplicitFunction extends CPPFunction {
 	private final boolean takesVarArgs;
 	private boolean isDeleted;
 	private final char[] name;
-	
+
 	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type,
 			ICPPParameter[] params, boolean isConstexpr, boolean takesVarArgs) {
         super(null);
@@ -47,7 +47,7 @@ public class CPPImplicitFunction extends CPPFunction {
 	public ICPPParameter[] getParameters() {
         return params;
     }
-    
+
     @Override
 	public ICPPFunctionType getType() {
     	return functionType;
@@ -95,5 +95,5 @@ public class CPPImplicitFunction extends CPPFunction {
 
     public void setDeleted(boolean val) {
     	isDeleted= val;
-    }	
+    }
 }

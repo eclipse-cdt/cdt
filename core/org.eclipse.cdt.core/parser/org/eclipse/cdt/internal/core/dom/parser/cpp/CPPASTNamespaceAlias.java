@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAlias {
     private IASTName alias;
     private IASTName qualifiedName;
-    
+
 	public CPPASTNamespaceAlias(IASTName alias, IASTName qualifiedName) {
 		setAlias(alias);
 		setMappingName(qualifiedName);
@@ -39,7 +39,7 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 				qualifiedName == null ? null : qualifiedName.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTName getAlias() {
         return alias;
@@ -79,10 +79,10 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 	            default: break;
 	        }
 		}
-        
+
         if (alias != null && !alias.accept(action)) return false;
         if (qualifiedName != null && !qualifiedName.accept(action)) return false;
-        
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

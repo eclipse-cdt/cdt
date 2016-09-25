@@ -35,7 +35,7 @@ public class CASTSwitchStatement extends ASTAttributeOwner
 		setControllerExpression(controller);
 		setBody(body);
 	}
-	
+
 	@Override
 	public CASTSwitchStatement copy() {
 		return copy(CopyStyle.withoutLocations);

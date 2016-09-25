@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -40,15 +40,15 @@ public class ExecExpressionStatement implements ICPPExecution {
 		}
 		return new ExecExpressionStatement(newExprEval);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EXEC_EXPRESSION_STATEMENT);
 		buffer.marshalEvaluation(exprEval, includeValue);
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation exprEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPEvaluation exprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new ExecExpressionStatement(exprEval);
 	}
 }

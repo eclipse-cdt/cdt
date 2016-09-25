@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
  */
 public interface IASTAmbiguousParameterDeclaration extends IASTParameterDeclaration {
 
-    public static final ASTNodeProperty SUBDECLARATION = new ASTNodeProperty( "IASTAmbiguousParameterDeclaration.SUBDECLARATION"); //$NON-NLS-1$
-    
+    public static final ASTNodeProperty SUBDECLARATION = new ASTNodeProperty("IASTAmbiguousParameterDeclaration.SUBDECLARATION"); //$NON-NLS-1$
+
     /**
      * Add an alternative to this ambiguous parameter declaration.
      */

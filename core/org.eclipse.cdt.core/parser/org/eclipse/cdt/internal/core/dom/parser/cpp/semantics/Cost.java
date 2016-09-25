@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 
 /**
  * The cost of an implicit conversion sequence.
- * 
+ *
  * See [over.best.ics] 13.3.3.1.
  */
 public class Cost {
@@ -36,7 +36,7 @@ public class Cost {
 		NONE, COPY_INIT_OF_CLASS, INIT_BY_CONVERSION, LIST_INIT_OF_CLASS, DIRECT_LIST_INIT_OF_CLASS
 	}
 	public enum Rank {
-		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
+		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL,
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
 	}
 	enum ReferenceBinding {
@@ -95,16 +95,16 @@ public class Cost {
 	private ICPPFunction fUserDefinedConversion;
 	private ReferenceBinding fReferenceBinding;
 	private boolean fCouldNarrow;
-	
+
 	// For a list-initialization sequence, 'target' is not always the original
-	// target type. Specifically, for an original target type of 
+	// target type. Specifically, for an original target type of
 	// std::initializer_list<T> or array of T, 'target' will be T, but we need
 	// to know the original target as well so we store it here.
-	// This will be null iff. this is not a list-initialization sequence. 
+	// This will be null iff. this is not a list-initialization sequence.
 	private IType fListInitializationTarget;
-	
+
 	private ICPPFunction fSelectedFunction; // For targeted functions
-	
+
 	public Cost(IType s, IType t, Rank rank) {
 		source = s;
 		target = t;
@@ -119,7 +119,7 @@ public class Cost {
 	public final boolean converts() {
 		return fRank != Rank.NO_MATCH;
 	}
-	
+
 	public void setRank(Rank rank) {
 		fRank= rank;
 	}
@@ -131,7 +131,7 @@ public class Cost {
 	public void setReferenceBinding(ReferenceBinding binding) {
 		fReferenceBinding= binding;
 	}
-	
+
 	public boolean isAmbiguousUDC() {
 		return fAmbiguousUDC;
 	}
@@ -179,12 +179,12 @@ public class Cost {
 	public int compareTo(Cost other) {
 		if (other == null)
 			return -1;
-		
+
 		// cannot compare costs with deferred user defined conversions
 		assert fDeferredUDC == DeferredUDC.NONE && other.fDeferredUDC == DeferredUDC.NONE;
 
 		// 7.3.3.13 (using declarations in classes):
-		// for overload resolution the implicit this pointer 
+		// for overload resolution the implicit this pointer
 		// is treated as if it were a pointer to the derived class
 		final boolean ignoreInheritanceDist= fImpliedObject && other.fImpliedObject;
 		Rank rank = fRank;
@@ -197,12 +197,12 @@ public class Cost {
 		}
 
 		int cmp= rank.compareTo(otherRank);
-		if (cmp != 0) 
+		if (cmp != 0)
 			return cmp;
-		
+
 		// [over.ics.rank] p3.3:
 		// List-initialization sequence L1 is a better conversion sequence than
-		// list-initialization sequence L2 if 
+		// list-initialization sequence L2 if
 		if (fListInitializationTarget != null && other.fListInitializationTarget != null) {
 			//   - L1 converts to std::initializer_list<X> for some X and L2 does not,
 			//     or if not that,
@@ -213,7 +213,7 @@ public class Cost {
 			} else if (initListType == null && otherInitListType != null) {
 				return 1;
 			}
-			
+
 			//   - L1 converts to type "array of N1 T", L2 converts to type "array of
 			//     N2 T", and N1 is smaller than N2
 			if (fListInitializationTarget instanceof IArrayType && other.fListInitializationTarget instanceof IArrayType) {
@@ -230,23 +230,23 @@ public class Cost {
 				}
 			}
 		}
-		
+
 		// rank is equal
 		if (rank == Rank.USER_DEFINED_CONVERSION) {
 			// 13.3.3.1.10
 			if (isAmbiguousUDC() || other.isAmbiguousUDC())
 				return 0;
-			
+
 			if (fUserDefinedConversion != other.fUserDefinedConversion) {
 				if (fUserDefinedConversion == null ||
 						!fUserDefinedConversion.equals(other.fUserDefinedConversion))
 					return 0;
-			}			
+			}
 			cmp= fSecondStandardConversionRank.compareTo(other.fSecondStandardConversionRank);
 			if (cmp != 0)
 				return cmp;
 		}
-		
+
 		if (!ignoreInheritanceDist) {
 			cmp= fInheritanceDistance - other.fInheritanceDistance;
 			if (cmp != 0)
@@ -265,13 +265,13 @@ public class Cost {
 		int qdiff= fQualificationAdjustments ^ other.fQualificationAdjustments;
 		if (fReferenceBinding == ReferenceBinding.NO_REF || other.fReferenceBinding == ReferenceBinding.NO_REF)
 			qdiff &= ~7;
-		
+
 		if (qdiff != 0) {
 			if ((fQualificationAdjustments & qdiff) == 0)
 				return -1;
 			if ((other.fQualificationAdjustments & qdiff) == 0)
 				return 1;
-		}		
+		}
 
 		return 0;
 	}
@@ -347,15 +347,15 @@ public class Cost {
 			// From a floating-point type to an integer type
 			return true;
 		} else if (basicSource.getKind() == Kind.eDouble
-				 && (basicTarget.getKind() == Kind.eFloat 
+				 && (basicTarget.getKind() == Kind.eFloat
 				     || (basicTarget.getKind() == Kind.eDouble && !basicTarget.isLong() && basicSource.isLong()))) {
 			// From long double to double or float, or from double to float
 			constantExprExceptionApplies = true;
 		} else if (BuiltinOperators.isIntegral(basicSource) && BuiltinOperators.isFloatingPoint(basicTarget)) {
 			// From an integer type or unscoped enumeration type to a floating-point type
 			constantExprExceptionApplies = true;
-		} else if (BuiltinOperators.isIntegral(basicSource) 
-				 && BuiltinOperators.isIntegral(basicTarget) 
+		} else if (BuiltinOperators.isIntegral(basicSource)
+				 && BuiltinOperators.isIntegral(basicTarget)
 				 && !ArithmeticConversion.fitsIntoType(basicTarget, basicSource, point)) {
 			// From an integer type or unscoped enumeration type to an integer type that
 			// cannot represent all the values of the original type
@@ -379,7 +379,7 @@ public class Cost {
 	}
 
 	/**
-	 * Stores a selected function. Used when resolving targeted functions. 
+	 * Stores a selected function. Used when resolving targeted functions.
 	 */
 	public void setSelectedFunction(ICPPFunction function) {
 		fSelectedFunction= function;
@@ -392,7 +392,7 @@ public class Cost {
 	public void setImpliedObject() {
 		fImpliedObject= true;
 	}
-	
+
 	public void setListInitializationTarget(IType target) {
 		fListInitializationTarget = target;
 	}

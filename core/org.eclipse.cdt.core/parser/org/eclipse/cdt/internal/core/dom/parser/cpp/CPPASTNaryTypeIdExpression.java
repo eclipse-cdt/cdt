@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTypeIdExpression, ICPPEvaluationOwner {
 	private Operator fOperator;
 	private ICPPASTTypeId[] fOperands;
-	
+
 	public CPPASTNaryTypeIdExpression(Operator operator, ICPPASTTypeId[] operands) {
 		fOperator = operator;
 		fOperands = operands;
@@ -30,7 +30,7 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 			operand.setPropertyInParent(OPERAND);
 		}
 	}
-	
+
 	@Override
 	public ICPPASTNaryTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -45,7 +45,7 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 		CPPASTNaryTypeIdExpression copy = new CPPASTNaryTypeIdExpression(fOperator, operands);
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public Operator getOperator() {
 		return fOperator;
@@ -55,7 +55,7 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 	public ICPPASTTypeId[] getOperands() {
 		return fOperands;
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitExpressions) {
@@ -65,20 +65,20 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 				default: break;
 			}
 		}
-		
+
 		for (ICPPASTTypeId operand : fOperands) {
 			if (!operand.accept(action)) {
 				return false;
 			}
 		}
-		
+
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		// TODO: Implement. This will need a new evaluation type, EvalNaryTypeId.
@@ -104,6 +104,6 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		// N-ary type-id expressions don't call destructors.
-		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;  
+		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
 	}
 }

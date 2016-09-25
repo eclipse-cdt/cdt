@@ -23,11 +23,11 @@ public class CFunctionType implements IFunctionType, ISerializableType {
     private final IType[] parameters;
     private final IType returnType;
     private final boolean takesVarargs;
-    
+
     public CFunctionType(IType returnType, IType[] parameters) {
     	this(returnType, parameters, false);
     }
-    
+
     public CFunctionType(IType returnType, IType[] parameters, boolean takesVarargs) {
         this.returnType = returnType;
         this.parameters = parameters;
@@ -93,13 +93,13 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 			buffer.putShort(firstBytes);
 			buffer.putInt(len);
 		}
-		
+
 		buffer.marshalType(returnType);
 		for (int i = 0; i < len; i++) {
 			buffer.marshalType(parameters[i]);
 		}
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len;
 		if (((firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0)) {

@@ -60,7 +60,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	public CPPASTUnaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTUnaryExpression copy(CopyStyle style) {
 		CPPASTUnaryExpression copy =
@@ -112,10 +112,10 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 				fImplicitNames = new IASTImplicitName[] { operatorName };
 			}
 		}
-		
+
 		return fImplicitNames;
 	}
-	
+
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
@@ -134,7 +134,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	            default: break;
 	        }
 		}
- 
+
         final boolean isPostfix = isPostfixOperator();
 
         if (!isPostfix && action.shouldVisitImplicitNames) {
@@ -183,7 +183,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return ((EvalUnary) eval).getOverload(this);
 		return null;
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -191,18 +191,18 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		}
 		return fEvaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		if (fOperand == null)
 			return EvalFixed.INCOMPLETE;
 
-		final ICPPEvaluation nestedEval = ((ICPPEvaluationOwner)fOperand).getEvaluation();
-		if (fOperator == op_bracketedPrimary) 
+		final ICPPEvaluation nestedEval = ((ICPPEvaluationOwner) fOperand).getEvaluation();
+		if (fOperator == op_bracketedPrimary)
 			return nestedEval;
 
 		if (nestedEval.isFunctionSet() && fOperator == op_amper) {
 			return nestedEval;
-		} 
+		}
 
 		IBinding addressOfQualifiedNameBinding= null;
     	if (fOperator == op_amper && fOperand instanceof IASTIdExpression) {
@@ -215,7 +215,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		}
     	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding, this);
 	}
-    
+
     @Override
 	public IType getExpressionType() {
 		IType type= getEvaluation().getType(this);

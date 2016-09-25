@@ -38,23 +38,23 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     private ICPPASTExpression noexceptExpression;
     private IASTTypeId trailingReturnType;
     private ICPPASTVirtSpecifier[] virtSpecifiers = NO_VIRT_SPECIFIERS;
-    
+
     private boolean varArgs;
     private boolean pureVirtual;
     private boolean isVolatile;
     private boolean isConst;
     private boolean isMutable;
     private RefQualifier refQualifier;
-    
+
     private ICPPFunctionScope scope;
-    
+
     public CPPASTFunctionDeclarator() {
 	}
 
 	public CPPASTFunctionDeclarator(IASTName name) {
 		super(name);
 	}
-	
+
 	@Override
 	public CPPASTFunctionDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -91,9 +91,9 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public ICPPASTParameterDeclaration[] getParameters() {
-        if (parameters == null) 
+        if (parameters == null)
         	return ICPPASTParameterDeclaration.EMPTY_CPPPARAMETERDECLARATION_ARRAY;
-        
+
         return parameters= ArrayUtil.trim(parameters);
     }
 
@@ -155,7 +155,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	public IASTTypeId[] getExceptionSpecification() {
         return typeIds= ArrayUtil.trim(typeIds);
     }
-    
+
     @Override
 	public void setEmptyExceptionSpecification() {
         assertNotFrozen();
@@ -252,7 +252,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	public ICPPFunctionScope getFunctionScope() {
         if (scope != null)
             return scope;
-        
+
         // introduce a scope for function declarations and definitions, only.
         IASTNode node= getParent();
         while (!(node instanceof IASTDeclaration)) {
@@ -262,13 +262,13 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         }
         if (node instanceof IASTParameterDeclaration)
         	return null;
-        
+
         if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
             scope = new CPPFunctionScope(this);
         }
         return scope;
     }
-    
+
     @Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTParameterDeclaration[] params = getParameters();
@@ -288,10 +288,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			if (!noexceptExpression.accept(action))
 				return false;
 		}
-		
-		if (trailingReturnType != null && !trailingReturnType.accept(action)) 
+
+		if (trailingReturnType != null && !trailingReturnType.accept(action))
 			return false;
-		
+
 		ICPPASTVirtSpecifier[] virtSpecifiers = getVirtSpecifiers();
 		for (ICPPASTVirtSpecifier virtSpecifier : virtSpecifiers) {
 			if (!virtSpecifier.accept(action)) {

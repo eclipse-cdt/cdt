@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  */
 public interface IASTInternalNameOwner extends IASTNameOwner {
 	/**
-	 * Get the role for the name. If the name needs to be resolved to determine that and 
+	 * Get the role for the name. If the name needs to be resolved to determine that and
 	 * <code>allowResolution</code> is set to <code>false</code>, then {@link IASTNameOwner#r_unclear}
-	 * is returned.  
-	 * 
+	 * is returned.
+	 *
 	 * @param n a name to determine the role of.
 	 * @param allowResolution whether or not resolving the name is allowed.
 	 * @return r_definition, r_declaration, r_reference or r_unclear.

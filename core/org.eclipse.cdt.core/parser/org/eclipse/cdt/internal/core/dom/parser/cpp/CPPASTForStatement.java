@@ -229,11 +229,11 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 	@Override
 	public ICPPExecution getExecution() {
 		ICPPExecution initializerExec = EvalUtil.getExecutionFromStatement(getInitializerStatement());
-		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getConditionExpression();
-		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner)getConditionDeclaration();
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner) getConditionExpression();
+		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
-		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration)conditionDecl.getExecution() : null;
-		ICPPEvaluationOwner iterationExpr = (ICPPEvaluationOwner)getIterationExpression();
+		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
+		ICPPEvaluationOwner iterationExpr = (ICPPEvaluationOwner) getIterationExpression();
 		ICPPEvaluation iterationEval = iterationExpr != null ? iterationExpr.getEvaluation() : null;
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
 		return new ExecFor(initializerExec, conditionExprEval, conditionDeclExec, iterationEval, bodyExec);

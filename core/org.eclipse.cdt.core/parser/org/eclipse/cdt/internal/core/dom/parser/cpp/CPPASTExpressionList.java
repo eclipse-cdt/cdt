@@ -32,9 +32,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent, ICPPEvaluationOwner {
     private IASTExpression[] expressions = new IASTExpression[2];
-    
+
 	/**
-	 * Caution: may contain nulls. 
+	 * Caution: may contain nulls.
 	 * @see #computeImplicitNames
 	 */
 	private IASTImplicitName[] fImplicitNames;
@@ -56,7 +56,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		}
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression[] getExpressions() {
         if (expressions == null) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -82,12 +82,12 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	            default: break;
 	        }
 		}
-      
+
         IASTExpression[] exps = getExpressions();
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? computeImplicitNames() : null;
 
         for (int i = 0, n = exps.length; i < n; i++) {
-        	if (!exps[i].accept(action)) { 
+        	if (!exps[i].accept(action)) {
         		return false;
         	}
         	if (i < n - 1 && implicits != null && implicits[i] != null) {
@@ -99,14 +99,14 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
 	        }
-		} 
+		}
         return true;
     }
 
@@ -120,9 +120,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 			IASTExpression[] exprs = getExpressions(); // has to be at least two
 			if (exprs.length < 2)
 				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			
+
 			fImplicitNames = new IASTImplicitName[exprs.length - 1];
-			
+
 			ICPPFunction[] overloads = getOverloads();
 			for (int i = 0; i < overloads.length; i++) {
 				ICPPFunction overload = overloads[i];
@@ -134,7 +134,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 				}
 			}
 		}
-		
+
 		return fImplicitNames;
 	}
 
@@ -171,20 +171,20 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
             }
         }
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (fEvaluation == null) 
+		if (fEvaluation == null)
 			fEvaluation= computeEvaluation();
-		
+
 		return fEvaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		final IASTExpression[] exprs = getExpressions();
 		if (exprs.length < 2)
 			return EvalFixed.INCOMPLETE;
-		
+
 		ICPPEvaluation[] evals= new ICPPEvaluation[exprs.length];
 		for (int i = 0; i < evals.length; i++) {
 			evals[i]= ((ICPPEvaluationOwner) exprs[i]).getEvaluation();

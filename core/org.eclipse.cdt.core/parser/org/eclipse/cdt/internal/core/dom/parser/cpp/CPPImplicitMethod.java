@@ -42,12 +42,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Binding for implicit methods, base class for implicit constructors.
  */
 public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
-    
+
     public CPPImplicitMethod(ICPPClassScope scope, char[] name, ICPPFunctionType type, ICPPParameter[] params,
     		boolean isConstexpr) {
 		super(name, scope, type, params, isConstexpr, false);
 	}
-   
+
 	@Override
 	public int getVisibility() {
 		IASTDeclaration decl= getPrimaryDeclaration();
@@ -55,7 +55,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 			// 12.1-5, 12.8-10 Implicit constructors and assignment operators are public.
 			return ICPPASTVisibilityLabel.v_public;
 		}
-		
+
 		IASTNode parent= decl.getParent();
 		while (parent instanceof ICPPASTTemplateDeclaration) {
 			decl= (ICPPASTTemplateDeclaration) parent;
@@ -76,17 +76,17 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				return vis.getVisibility();
 			} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
 				return ICPPASTVisibilityLabel.v_private;
-			} 
+			}
 		}
         return ICPPASTVisibilityLabel.v_public;
     }
-	
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
 	}
-	
+
 	public IASTDeclaration getPrimaryDeclaration() {
 		// First check if we already know it.
 		if (declarations != null) {
@@ -115,7 +115,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		for (IASTDeclaration member : members) {
 			while (member instanceof ICPPASTTemplateDeclaration)
 				member = ((ICPPASTTemplateDeclaration) member).getDeclaration();
-			
+
 			IASTDeclarator[] ds;
 			if (member instanceof IASTSimpleDeclaration) {
 				ds = ((IASTSimpleDeclaration) member).getDeclarators();
@@ -124,7 +124,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 			} else {
 				continue;
 			}
-			
+
 			for (IASTDeclarator dtor : ds) {
 				IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName();
 				if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof ICPPASTFunctionDeclarator
@@ -181,12 +181,12 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	public boolean isImplicit() {
 		return getPrimaryDeclaration() == null;
 	}
-	
+
     @Override
 	public boolean isExplicit() {
         return false;
     }
-	
+
 	@Override
 	public boolean isPureVirtual() {
 		return false;

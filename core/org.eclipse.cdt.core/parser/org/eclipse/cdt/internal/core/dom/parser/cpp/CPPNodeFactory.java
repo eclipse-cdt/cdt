@@ -217,7 +217,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTAttributeSpecifier newAttributeSpecifier() {
 		return new CPPASTAttributeList();
 	}
-	
+
 	@Override
 	public ICPPASTAttributeList newAttributeList() {
 		return new CPPASTAttributeList();
@@ -576,7 +576,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTNaryTypeIdExpression newNaryTypeIdExpression(Operator operator, ICPPASTTypeId[] operands) {
 		return new CPPASTNaryTypeIdExpression(operator, operands);
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId) {

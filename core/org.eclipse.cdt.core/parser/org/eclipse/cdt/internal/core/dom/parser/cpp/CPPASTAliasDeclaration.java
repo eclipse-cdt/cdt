@@ -20,7 +20,7 @@ public class CPPASTAliasDeclaration extends CPPASTAttributeOwner implements ICPP
 	private IASTName aliasName;
 	private ICPPASTTypeId mappingTypeId;
 
-	public CPPASTAliasDeclaration(IASTName aliasName, ICPPASTTypeId mappingTypeId){
+	public CPPASTAliasDeclaration(IASTName aliasName, ICPPASTTypeId mappingTypeId) {
 		setAlias(aliasName);
 		setMappingTypeId(mappingTypeId);
 	}

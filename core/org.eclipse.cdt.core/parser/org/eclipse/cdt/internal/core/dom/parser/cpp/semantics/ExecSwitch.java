@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -27,42 +27,42 @@ public class ExecSwitch implements ICPPExecution {
 		this.controllerDeclExec = controllerDeclExec;
 		this.bodyStmtExecutions = bodyStmtExecutions;
 	}
-	
+
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		final int caseIndex = getMatchingCaseIndex(record, context);
-		for(int i = caseIndex; i < bodyStmtExecutions.length; ++i) {
+		for (int i = caseIndex; i < bodyStmtExecutions.length; ++i) {
 			ICPPExecution stmtExec = bodyStmtExecutions[i];
 			ICPPExecution result = EvalUtil.executeStatement(stmtExec, record, context);
-			if(result instanceof ExecReturn || result instanceof ExecContinue) {
+			if (result instanceof ExecReturn || result instanceof ExecContinue) {
 				return result;
-			} else if(result instanceof ExecBreak) {
+			} else if (result instanceof ExecBreak) {
 				break;
 			}
 		}
 		return null;
 	}
-	
+
 	private int getMatchingCaseIndex(ActivationRecord record, ConstexprEvaluationContext context) {
 		IValue controllerValue = null;
-		if(controllerExprEval != null) {
+		if (controllerExprEval != null) {
 			controllerValue = EvalUtil.getConditionExprValue(controllerExprEval, record, context);
-		} else if(controllerDeclExec != null) {
-			controllerValue = EvalUtil.getConditionDeclValue(controllerDeclExec, record, context);	
+		} else if (controllerDeclExec != null) {
+			controllerValue = EvalUtil.getConditionDeclValue(controllerDeclExec, record, context);
 		}
-		
-		for(int i = 0; i < bodyStmtExecutions.length; ++i) {
-			if(isSatisfiedCaseStatement(bodyStmtExecutions[i], controllerValue, record, context)) {
+
+		for (int i = 0; i < bodyStmtExecutions.length; ++i) {
+			if (isSatisfiedCaseStatement(bodyStmtExecutions[i], controllerValue, record, context)) {
 				return i;
 			}
 		}
 		return bodyStmtExecutions.length;
 	}
-	
+
 	private boolean isSatisfiedCaseStatement(ICPPExecution stmtExec, IValue controllerValue, ActivationRecord record, ConstexprEvaluationContext context) {
 		if (stmtExec instanceof ExecCase) {
-			ExecCase caseStmtExec = (ExecCase)stmtExec;
-			caseStmtExec = (ExecCase)caseStmtExec.executeForFunctionCall(record, context);
+			ExecCase caseStmtExec = (ExecCase) stmtExec;
+			caseStmtExec = (ExecCase) caseStmtExec.executeForFunctionCall(record, context);
 			Number caseVal = caseStmtExec.getCaseExpressionEvaluation().getValue(null).numberValue();
 			Number controllerVal = controllerValue.numberValue();
 			return caseVal.equals(controllerVal);
@@ -73,18 +73,18 @@ public class ExecSwitch implements ICPPExecution {
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPEvaluation newControllerExprEval = controllerExprEval != null ? controllerExprEval.instantiate(context, maxDepth) : null;
-		ExecSimpleDeclaration newControllerDeclExec = controllerDeclExec != null ? (ExecSimpleDeclaration)controllerDeclExec.instantiate(context, maxDepth) : null;
+		ExecSimpleDeclaration newControllerDeclExec = controllerDeclExec != null ? (ExecSimpleDeclaration) controllerDeclExec.instantiate(context, maxDepth) : null;
 		ICPPExecution[] newBodyStmtExecutions = new ICPPExecution[bodyStmtExecutions.length];
 		boolean executionsDidChange = false;
-		for(int i = 0; i < bodyStmtExecutions.length; i++) {
+		for (int i = 0; i < bodyStmtExecutions.length; i++) {
 			ICPPExecution bodyStmtExec = bodyStmtExecutions[i];
 			ICPPExecution newBodyStmtExec = bodyStmtExec.instantiate(context, maxDepth);
-			if(newBodyStmtExec != bodyStmtExec) {
+			if (newBodyStmtExec != bodyStmtExec) {
 				executionsDidChange = true;
 			}
 			newBodyStmtExecutions[i] = newBodyStmtExec;
 		}
-		
+
 		if (newControllerExprEval == controllerExprEval && newControllerDeclExec == controllerDeclExec && !executionsDidChange) {
 			return this;
 		}
@@ -101,14 +101,14 @@ public class ExecSwitch implements ICPPExecution {
 			buffer.marshalExecution(execution, includeValue);
 		}
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation controllerExprEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
-		ExecSimpleDeclaration controllerDeclExec = (ExecSimpleDeclaration)buffer.unmarshalExecution();
+		ICPPEvaluation controllerExprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ExecSimpleDeclaration controllerDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
 		int len = buffer.getInt();
 		ICPPExecution[] bodyStmtExecutions = new ICPPExecution[len];
 		for (int i = 0; i < bodyStmtExecutions.length; i++) {
-			bodyStmtExecutions[i] = (ICPPExecution)buffer.unmarshalExecution();
+			bodyStmtExecutions[i] = (ICPPExecution) buffer.unmarshalExecution();
 		}
 		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);
 	}

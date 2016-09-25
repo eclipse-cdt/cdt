@@ -38,10 +38,10 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
     private int visibility;
     private ICPPASTNameSpecifier nameSpecifier;
 	private boolean fIsPackExpansion;
-    
+
     public CPPASTBaseSpecifier() {
 	}
-    
+
     public CPPASTBaseSpecifier(ICPPASTNameSpecifier nameSpecifier) {
 		setNameSpecifier(nameSpecifier);
 	}
@@ -65,7 +65,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		copy.fIsPackExpansion= fIsPackExpansion;
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean isVirtual() {
         return isVirtual;
@@ -103,7 +103,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	public void setName(IASTName name) {
     	setNameSpecifier((ICPPASTName) name);
     }
-    
+
 	@Override
 	public ICPPASTNameSpecifier getNameSpecifier() {
 		return nameSpecifier;

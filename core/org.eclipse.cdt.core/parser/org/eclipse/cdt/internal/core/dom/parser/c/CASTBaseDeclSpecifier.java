@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM Rational Software - Initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public abstract class CASTBaseDeclSpecifier extends ASTNode 
+public abstract class CASTBaseDeclSpecifier extends ASTNode
 		implements ICASTDeclSpecifier, IASTAmbiguityParent {
 
     protected int storageClass;
@@ -29,9 +29,9 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
     protected boolean isVolatile;
     protected boolean isRestrict;
     protected boolean isInline;
-    protected IASTAlignmentSpecifier[] alignmentSpecifiers = 
+    protected IASTAlignmentSpecifier[] alignmentSpecifiers =
     		IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
-    
+
 	@Override
 	public boolean isRestrict() {
         return isRestrict;
@@ -56,12 +56,12 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
 	public boolean isInline() {
         return isInline;
     }
-    
+
     @Override
     public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
     	return alignmentSpecifiers;
     }
-    
+
     @Override
 	public void setStorageClass(int storageClass) {
         assertNotFrozen();
@@ -73,25 +73,25 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
         assertNotFrozen();
         this.isConst = value;
     }
-    
+
     @Override
 	public void setVolatile(boolean value) {
         assertNotFrozen();
         this.isVolatile = value;
     }
-    
+
     @Override
 	public void setRestrict(boolean value) {
         assertNotFrozen();
         this.isRestrict = value;
     }
-    
+
     @Override
 	public void setInline(boolean value) {
         assertNotFrozen();
         this.isInline = value;
     }
-    
+
     @Override
     public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
     	assertNotFrozen();
@@ -101,7 +101,7 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
     	}
     	this.alignmentSpecifiers = alignmentSpecifiers;
     }
-    
+
     protected <T extends CASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
     	copy.storageClass = storageClass;
     	copy.isConst = isConst;
@@ -115,7 +115,7 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
     	}
 		return super.copy(copy, style);
     }
-    
+
     protected boolean visitAlignmentSpecifiers(ASTVisitor visitor) {
     	for (IASTAlignmentSpecifier specifier : alignmentSpecifiers) {
     		if (!specifier.accept(visitor)) {
@@ -124,7 +124,7 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode
     	}
     	return true;
     }
-    
+
     @Override
     public void replace(IASTNode child, IASTNode other) {
     	if (child instanceof IASTAlignmentSpecifier && other instanceof IASTAlignmentSpecifier) {

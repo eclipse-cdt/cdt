@@ -29,7 +29,7 @@ public abstract class CPPASTBaseDeclSpecifier extends CPPASTAttributeOwner imple
     private boolean isVolatile;
     private int sc;
     private boolean virtual;
-    
+
     @Override
 	public boolean isFriend() {
         return friend;
@@ -139,18 +139,18 @@ public abstract class CPPASTBaseDeclSpecifier extends CPPASTAttributeOwner imple
         assertNotFrozen();
         this.explicit = value;
     }
-    
+
     @Deprecated
     @Override
     public IASTAlignmentSpecifier[] getAlignmentSpecifiers() {
     	return null;
     }
-    
+
     @Deprecated
     @Override
     public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers) {
     }
-    
+
 	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
 		CPPASTBaseDeclSpecifier target = copy;
     	target.explicit = explicit;

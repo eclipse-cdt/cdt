@@ -40,7 +40,7 @@ public class CASTWhileStatement extends ASTAttributeOwner
 	public CASTWhileStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTWhileStatement copy(CopyStyle style) {
 		CASTWhileStatement copy = new CASTWhileStatement();
@@ -78,7 +78,7 @@ public class CASTWhileStatement extends ASTAttributeOwner
 			body.setPropertyInParent(BODY);
 		}
     }
-    
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {

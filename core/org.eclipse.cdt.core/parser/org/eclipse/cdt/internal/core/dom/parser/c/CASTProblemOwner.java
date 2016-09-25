@@ -33,12 +33,12 @@ abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
 		copy.setProblem(problem == null ? null : problem.copy(style));
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTProblem getProblem() {
         return problem;
     }
-    
+
     @Override
 	public void setProblem(IASTProblem p) {
         assertNotFrozen();
@@ -48,9 +48,9 @@ abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
 			p.setPropertyInParent(PROBLEM);
 		}
     }
-    
+
 	@Override
-	public boolean accept(ASTVisitor action){
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitProblems) {
 		    switch (action.visit(getProblem())) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

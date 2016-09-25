@@ -266,7 +266,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	IASTParameterDeclaration temp = null;
     	if (definition != null) {
     	    if (definition instanceof IASTStandardFunctionDeclarator) {
-    	    	IASTParameterDeclaration[] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
+    	    	IASTParameterDeclaration[] parameters = ((IASTStandardFunctionDeclarator) definition).getParameters();
     	    	if (parameters.length > idx) {
 	    	        temp = parameters[idx];
 	    	        ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding(binding);
@@ -354,9 +354,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	            IASTDeclSpecifier declSpec = null;
 	            if (parent instanceof IASTSimpleDeclaration) {
-	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	                declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 	            } else if (parent instanceof IASTFunctionDefinition)
-	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	                declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
 
 	            if (declSpec != null && declSpec.getStorageClass() == storage) {
 	            	return true;
@@ -417,9 +417,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	            IASTDeclSpecifier declSpec = null;
 	            if (parent instanceof IASTSimpleDeclaration) {
-	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	                declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 	            } else if (parent instanceof IASTFunctionDefinition) {
-	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	                declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
 	            }
 
 	            if (declSpec != null && declSpec.isInline())

@@ -38,7 +38,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos= -1;
 	private IASTInitializer fInitializer;
-    
+
     public CPPASTAmbiguousDeclarator(IASTDeclarator... decls) {
 		for (IASTDeclarator d : decls) {
 			if (d != null) {
@@ -55,7 +55,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 			((ICPPASTInternalScope) scope).populateCache();
 		}
 	}
-	
+
     @Override
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
     	// if we have an initializer it needs to be added to the chosen alternative.
@@ -75,7 +75,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	public IASTDeclarator copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
-    
+
 	@Override
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
@@ -88,7 +88,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 
     @Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos); 
+    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos);
         return dtors;
     }
 
@@ -116,7 +116,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 	public IASTPointerOperator[] getPointerOperators() {
 		return dtors[0].getPointerOperators();
 	}
-	
+
 	@Override
 	public void addPointerOperator(IASTPointerOperator operator) {
         assertNotFrozen();

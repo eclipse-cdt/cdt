@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -71,7 +71,7 @@ public class NameOrTemplateIDVariants {
 			fFirstVariant= prev;
 		}
 	}
-	
+
 	/**
 	 * A variant for a branch-point is a cast-expression that can be used within a binary expression.
 	 */
@@ -113,7 +113,7 @@ public class NameOrTemplateIDVariants {
 		}
 	}
 
-	
+
 	private BranchPoint fFirst;
 
 	public boolean isEmpty() {
@@ -131,12 +131,12 @@ public class NameOrTemplateIDVariants {
 				if (v.getTargetOperator() == null) {
 					if (offset == v.getRightOffset()) {
 						v.setTargetOperator(lastOperator);
-					} 
+					}
 				}
 			}
 		}
 	}
-	
+
 	public Variant selectFallback() {
 		// Search for an open variant, with a small right offset and a large left offset
 		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
@@ -145,7 +145,7 @@ public class NameOrTemplateIDVariants {
 				if (v.getTargetOperator() == null) {
 					if (best == null || v.fRightOffset < best.fRightOffset) {
 						best= v;
-					} 
+					}
 				}
 			}
 			if (best != null) {
@@ -176,7 +176,7 @@ public class NameOrTemplateIDVariants {
 			}
 		}
 	}
-		
+
 	private void remove(BranchPoint remove) {
 		final BranchPoint next = remove.getNext();
 		if (remove == fFirst) {
@@ -190,7 +190,7 @@ public class NameOrTemplateIDVariants {
 					break;
 				}
 				prev= n;
-			} 
+			}
 		}
 	}
 
@@ -212,7 +212,7 @@ public class NameOrTemplateIDVariants {
 		// Search for an open variant, with a small right offset and a large left offset
 		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
 			for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
-				if (v.fRightOffset > opOffset) 
+				if (v.fRightOffset > opOffset)
 					return false;
 			}
 		}
@@ -223,7 +223,7 @@ public class NameOrTemplateIDVariants {
 		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
 			if (!isReachable(p, lastOperator)) {
 				remove(p);
-			} else { 
+			} else {
 				for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
 					if (v.getTargetOperator() == null) {
 						remove(v);
@@ -231,14 +231,14 @@ public class NameOrTemplateIDVariants {
 				}
 			}
 		}
-	}	
-	
+	}
+
 	private boolean isReachable(BranchPoint bp, BinaryOperator endOperator) {
 		BinaryOperator op = bp.getLeftOperator();
 		if (op == null)
 			return true;
-		
-		for(; endOperator != null; endOperator= endOperator.getNext()) {
+
+		for (; endOperator != null; endOperator= endOperator.getNext()) {
 			if (endOperator == op)
 				return true;
 		}

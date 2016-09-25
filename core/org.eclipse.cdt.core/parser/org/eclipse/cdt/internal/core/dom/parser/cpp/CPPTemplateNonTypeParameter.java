@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		implements ICPPTemplateNonTypeParameter {
 	private IType type;
-	
+
 	public CPPTemplateNonTypeParameter(IASTName name) {
 		super(name);
 	}
@@ -47,15 +47,15 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		if (def instanceof IASTExpression) {
 			return (IASTExpression) def;
 		}
-		
+
 		return null;
 	}
-	
+
 	public IASTInitializerClause getDefaultClause() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
 		    return null;
-		
+
 		for (IASTName name : nds) {
 			if (name != null) {
 				IASTNode parent = name.getParent();
@@ -71,7 +71,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		}
 		return null;
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IASTInitializerClause dc= getDefault();
@@ -90,10 +90,10 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 				}
 			}
 		}
-		
+
 		if (d == null)
 			return null;
-		
+
 		IValue val= ValueFactory.create(d);
 		IType t= getType();
 		return new CPPTemplateNonTypeArgument(val, t);

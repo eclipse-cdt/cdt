@@ -32,15 +32,15 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
     private int stmtsPos= -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
-    
+
     public CASTAmbiguousStatement(IASTStatement... statements) {
 		for (IASTStatement s : statements)
 			addStatement(s);
 	}
-    
+
 	@Override
 	protected void beforeResolution() {
-		// Populate containing scope, so that it will not be affected by the alternative 
+		// Populate containing scope, so that it will not be affected by the alternative
 		// branches.
 		fScope= CVisitor.getContainingScope(this);
 		if (fScope instanceof ICPPASTInternalScope) {
@@ -58,7 +58,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 			}
 		}
 	}
-	
+
 	private void cleanupScope() {
 		if (fScope instanceof IASTInternalScope && fDeclaration != null) {
 			((IASTInternalScope) fScope).removeNestedFromCache(fDeclaration);

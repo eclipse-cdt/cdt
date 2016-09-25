@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -27,7 +27,7 @@ public class CPPTemplateTemplateParameterScope extends CPPScope {
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
-	
+
 	@Override
 	public IName getScopeName() {
 		return ((ICPPASTTemplatedTypeTemplateParameter) getPhysicalNode()).getName();

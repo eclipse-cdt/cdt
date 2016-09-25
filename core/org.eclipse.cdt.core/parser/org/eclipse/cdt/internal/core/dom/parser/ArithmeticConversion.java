@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Nathan Ridge
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -28,26 +28,26 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public abstract class ArithmeticConversion {
 	private static final int DOMAIN_FLAGS = IBasicType.IS_IMAGINARY | IBasicType.IS_COMPLEX;
-	
+
 	private enum Domain {
-		eReal(0), 
-		eImaginary(IBasicType.IS_IMAGINARY), 
+		eReal(0),
+		eImaginary(IBasicType.IS_IMAGINARY),
 		eComplex(IBasicType.IS_COMPLEX);
-	
+
 		private final int fModifier;
 
 		private Domain(int modifier) {
 			fModifier= modifier;
 		}
-		
+
 		int getModifier() {
 			return fModifier;
 		}
 	}
 	private enum Rank {eInt, eLong, eLongLong}
-	
+
 	protected abstract IBasicType createBasicType(IBasicType.Kind kind, int modifiers);
-	
+
 	/**
 	 * Performs an arithmetic conversion as described in section 6.3.1.8 of the C99 standard,
 	 * or 5.0.9 of C++ standard
@@ -78,19 +78,19 @@ public abstract class ArithmeticConversion {
 		case IASTBinaryExpression.op_shiftLeft:
 		case IASTBinaryExpression.op_shiftRight:
 			return promote(op1, getDomain(op1));
-			
+
 		default:
 			return null;
 		}
 	}
-	
+
 	public final IType promoteType(IType type) {
 		if (!isIntegralOrUnscopedEnum(type))
 			return null;
-		
+
 		return promote(type, getDomain(type));
 	}
-	
+
 	private boolean isArithmeticOrUnscopedEnum(IType op1) {
 		if (op1 instanceof IBasicType)  {
 			final Kind kind = ((IBasicType) op1).getKind();
@@ -114,10 +114,10 @@ public abstract class ArithmeticConversion {
 	private boolean isIntegralOrUnscopedEnum(IType op1) {
 		if (op1 instanceof IEnumeration)
 			return true;
-		
+
 		if (op1 instanceof IBasicType) {
 			Kind kind= ((IBasicType) op1).getKind();
-			switch(kind) {
+			switch (kind) {
 			case eBoolean:
 			case eChar:
 			case eChar16:
@@ -126,7 +126,7 @@ public abstract class ArithmeticConversion {
 			case eInt128:
 			case eWChar:
 				return true;
-				
+
 			case eDouble:
 			case eFloat:
 			case eFloat128:
@@ -144,7 +144,7 @@ public abstract class ArithmeticConversion {
 
 	private final IType convert(IType type1, IType type2) {
 		Domain domain= getDomain(type1, type2);
-		
+
 		// If either type is a long double, return that type
 		if (isLongDouble(type1)) {
 			return adjustDomain((IBasicType) type1, domain);
@@ -152,7 +152,7 @@ public abstract class ArithmeticConversion {
 		if (isLongDouble(type2)) {
 			return adjustDomain((IBasicType) type2, domain);
 		}
-		
+
 		// Else if either type is a double return that type
 		if (isDouble(type1)) {
 			return adjustDomain((IBasicType) type1, domain);
@@ -160,7 +160,7 @@ public abstract class ArithmeticConversion {
 		if (isDouble(type2)) {
 			return adjustDomain((IBasicType) type2, domain);
 		}
-		
+
 		// Else if either type is a float return that type
 		if (isFloat(type1)) {
 			return adjustDomain((IBasicType) type1, domain);
@@ -168,19 +168,19 @@ public abstract class ArithmeticConversion {
 		if (isFloat(type2)) {
 			return adjustDomain((IBasicType) type2, domain);
 		}
-		
+
 		// We're dealing with integer types so perform integer promotion
 		IBasicType btype1 = promote(type1, domain);
 		IBasicType btype2 = promote(type2, domain);
-		
+
 		if (btype1.isSameType(btype2)) {
 			return btype1;
 		}
-    	
+
 		if (btype1.isUnsigned() == btype2.isUnsigned()) {
 			return getIntegerRank(btype1).ordinal() >= getIntegerRank(btype2).ordinal() ? btype1 : btype2;
-		} 
-		
+		}
+
 		IBasicType unsignedType, signedType;
 		if (btype1.isUnsigned()) {
 			unsignedType= btype1;
@@ -192,32 +192,32 @@ public abstract class ArithmeticConversion {
 
 		final Rank signedRank= getIntegerRank(signedType);
 		final Rank unsignedRank= getIntegerRank(unsignedType);
-		
+
 		// same rank -> use unsigned
 		if (unsignedRank.ordinal() >= signedRank.ordinal()) {
 			return unsignedType;
 		}
-		
+
 		// The signed has the higher rank.
 		if (signedRank.ordinal() > unsignedRank.ordinal()) {
 			return signedType;
 		}
-		
+
 		return createBasicType(signedType.getKind(),
 				changeModifier(signedType.getModifiers(), IBasicType.IS_SIGNED, IBasicType.IS_UNSIGNED));
 	}
-	
+
 	private IBasicType promote(IType type, Domain domain) {
 		if (type instanceof IEnumeration) {
 			IType fixedType= null;
 			if (type instanceof ICPPEnumeration) {
 				fixedType= ((ICPPEnumeration) type).getFixedType();
 			}
-			if (fixedType == null) 
+			if (fixedType == null)
 				return createBasicType(Kind.eInt, domain.getModifier() | getEnumIntTypeModifiers((IEnumeration) type));
 			type= fixedType;
-		} 
-		
+		}
+
 		if (type instanceof IBasicType) {
 			final IBasicType bt = (IBasicType) type;
 			final Kind kind = bt.getKind();
@@ -251,7 +251,7 @@ public abstract class ArithmeticConversion {
 			case eNullPtr:
 				assert false;
 			}
-		}		
+		}
 		return createBasicType(Kind.eInt, domain.getModifier());
 	}
 
@@ -278,10 +278,10 @@ public abstract class ArithmeticConversion {
 		Domain myDomain= getDomain(t);
 		if (myDomain == d)
 			return t;
-		
+
 		return createBasicType(t.getKind(), changeModifier(t.getModifiers(), DOMAIN_FLAGS, d.getModifier()));
 	}
-	
+
 	private int changeModifier(int modifiers, int remove, int add) {
 		return (modifiers & ~remove) | add;
 	}
@@ -321,7 +321,7 @@ public abstract class ArithmeticConversion {
 		}
 		return false;
 	}
-	
+
 	public static int getEnumIntTypeModifiers(IEnumeration enumeration) {
 		final long minValue = enumeration.getMinValue();
 		final long maxValue = enumeration.getMaxValue();
@@ -333,7 +333,7 @@ public abstract class ArithmeticConversion {
 		} else if (minValue >= Long.MIN_VALUE && maxValue <= Long.MAX_VALUE) {
 			return IBasicType.IS_LONG;
 		} else {
-			// This branch is unreachable due to limitations of Java long type. 
+			// This branch is unreachable due to limitations of Java long type.
 			return IBasicType.IS_UNSIGNED | IBasicType.IS_LONG;
 		}
 	}
@@ -354,7 +354,7 @@ public abstract class ArithmeticConversion {
 			}
 			if (n < 0)
 				return false;
-			
+
 			if (basicTarget.isShort()) {
 				return n < (Short.MAX_VALUE + 1L) * 2;
 			}
@@ -380,30 +380,30 @@ public abstract class ArithmeticConversion {
 		case eFloat:
 			float f= n;
 			return (long) f == n;
-		
+
 		case eDouble:
 			double d= n;
 			return (long) d == n;
-			
+
 		default:
 			return false;
 		}
 	}
 
 	/**
-	 * Makes a best-effort guess at the sizeof() of an integral type.  
+	 * Makes a best-effort guess at the sizeof() of an integral type.
 	 */
 	private static long getApproximateSize(IBasicType type) {
 		switch (type.getKind()) {
 			case eChar: return 1;
 			case eWChar: return 2;
-			case eInt: 
-				// Note: we return 6 for long so that both long -> int 
-				//       and long long -> long conversions are reported 
+			case eInt:
+				// Note: we return 6 for long so that both long -> int
+				//       and long long -> long conversions are reported
 				//       as narrowing, to be on the safe side.
-				return type.isShort() ? 2 
+				return type.isShort() ? 2
 				     : type.isLong() ? 6
-				     : type.isLongLong() ? 8 
+				     : type.isLongLong() ? 8
 				     : 4;
 			case eBoolean: return 1;
 			case eChar16: return 2;
@@ -434,7 +434,7 @@ public abstract class ArithmeticConversion {
 			return false;
 
 		// Otherwise, go by the size and signedness of the type.
-		SizeAndAlignment sourceSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(source, point); 
+		SizeAndAlignment sourceSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(source, point);
 		SizeAndAlignment targetSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(target, point);
 		long sizeofSource = sourceSizeAndAlignment == null ? getApproximateSize(source) : sourceSizeAndAlignment.size;
 		long sizeofTarget = targetSizeAndAlignment == null ? getApproximateSize(target) : targetSizeAndAlignment.size;

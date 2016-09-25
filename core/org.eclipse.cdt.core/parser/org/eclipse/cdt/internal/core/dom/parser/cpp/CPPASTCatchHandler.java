@@ -30,7 +30,7 @@ public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTC
     private IASTDeclaration fDeclaration;
 	private IScope fScope;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTCatchHandler() {
 	}
 
@@ -38,7 +38,7 @@ public class CPPASTCatchHandler extends CPPASTAttributeOwner implements ICPPASTC
 		setCatchBody(body);
 		setDeclaration(declaration);
 	}
-	
+
 	@Override
 	public CPPASTCatchHandler copy() {
 		return copy(CopyStyle.withoutLocations);

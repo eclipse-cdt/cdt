@@ -29,17 +29,17 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 		implements ICPPASTDecltypeSpecifier, IASTAmbiguityParent {
 	private ICPPASTExpression fDecltypeExpression;
 	private char[] fSignature;
-	
+
 	public CPPASTDecltypeSpecifier(ICPPASTExpression decltypeExpression) {
 		fDecltypeExpression = decltypeExpression;
 		fDecltypeExpression.setParent(this);
 	}
-	
+
 	@Override
 	public ICPPASTExpression getDecltypeExpression() {
 		return fDecltypeExpression;
 	}
-	
+
 	@Override
 	public CPPASTDecltypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -57,7 +57,7 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(Keywords.cDECLTYPE);
 			buffer.append(Keywords.cpLPAREN);
-			buffer.append(((ICPPEvaluationOwner)fDecltypeExpression).getEvaluation().getSignature());
+			buffer.append(((ICPPEvaluationOwner) fDecltypeExpression).getEvaluation().getSignature());
 			buffer.append(Keywords.cpRPAREN);
 			final int len = buffer.length();
 			fSignature = new char[len];
@@ -75,7 +75,7 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 			default: break;
 			}
 		}
-		
+
 		if (!fDecltypeExpression.accept(visitor))
 			return false;
 
@@ -86,7 +86,7 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 			default: break;
 			}
 		}
-		
+
 		return true;
 	}
 

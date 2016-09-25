@@ -24,20 +24,20 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 
 /**
- * Used as intermediate binding for names nominating a function without calling it. 
+ * Used as intermediate binding for names nominating a function without calling it.
  * The actual function can be resolved in certain contexts.
  */
 public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	private final ICPPFunction[] fBindings;
 	private final IASTName fName;
 	private final ICPPTemplateArgument[] fTemplateArguments;
-	
+
 	public CPPFunctionSet(ICPPFunction[] bindingList, ICPPTemplateArgument[] args, IASTName name) {
 		fBindings = ArrayUtil.removeNulls(bindingList);
 		fTemplateArguments= args;
 		fName= name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return fBindings[0].getName();
@@ -57,7 +57,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	public IBinding getOwner() {
 		return fBindings[0].getOwner();
 	}
-	
+
 	public ICPPFunction[] getBindings() {
 		return fBindings;
 	}
@@ -75,7 +75,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (adapter.isAssignableFrom(getClass())) 
+		if (adapter.isAssignableFrom(getClass()))
 			return this;
 		return null;
 	}
@@ -93,7 +93,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 			fName.setBinding(selectedFunction);
 		}
 	}
-	
+
 	public void setToUnknown() {
 		if (fName != null) {
 			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray(), fBindings));

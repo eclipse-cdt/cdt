@@ -24,7 +24,7 @@ public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICP
 	public CPPASTReferenceOperator(boolean isRValueReference) {
 		fIsRValue= isRValueReference;
 	}
-	
+
 	@Override
 	public boolean isRValueReference() {
 		return fIsRValue;
@@ -34,7 +34,7 @@ public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICP
 	public CPPASTReferenceOperator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTReferenceOperator copy(CopyStyle style) {
 		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);

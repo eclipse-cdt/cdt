@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -56,14 +56,14 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	public static final CPPASTLiteralExpression INT_ZERO =
 			new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
-	
+
     private int fKind;
     private char[] fValue = CharArrayUtils.EMPTY;
     private int fStringLiteralSize = -1;  // Accounting for escape sequences and the null terminator.
     private char[] fSuffix = CharArrayUtils.EMPTY;
     private boolean fIsCompilerSuffix = true;
 	private ICPPEvaluation fEvaluation;
-	
+
 	private IBinding fUserDefinedLiteralOperator;
 	private IASTImplicitName[] fImplicitNames;
 
@@ -74,7 +74,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		this.fKind = kind;
 		this.fValue = value;
 	}
-	
+
 	public CPPASTLiteralExpression(int kind, char[] value, char[] suffix, boolean isCompilerSuffix) {
 		this(kind, value);
 		this.setSuffix(suffix);
@@ -84,7 +84,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public CPPASTLiteralExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTLiteralExpression copy(CopyStyle style) {
 		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(fKind,
@@ -116,7 +116,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
         assertNotFrozen();
     	this.fValue= value;
     }
-    
+
     public char[] getSuffix() {
 		return fSuffix;
 	}
@@ -124,11 +124,11 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public void setSuffix(char[] suffix) {
 		this.fSuffix = suffix;
 	}
-	
+
 	public void calculateSuffix() {
 		this.calculateSuffix(CharArrayUtils.EMPTY);
 	}
-	
+
 	/**
 	 * Returns the suffix of a user-defined literal integer or float
 	 * @param compilerSuffixes
@@ -148,7 +148,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					setSuffix(CharArrayUtils.subarray(fValue, udOffset, -1));
 					for (int i = 0; i < fSuffix.length; i++) {
 						switch (fSuffix[i]) {
-						case 'l': case 'L': 
+						case 'l': case 'L':
 						case 'u': case 'U':
 						case 'f': case 'F':
 							continue;
@@ -165,7 +165,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					}
 				}
 				break;
-			case lk_string_literal: 
+			case lk_string_literal:
 				{
 					final int offset = CharArrayUtils.lastIndexOf('"', fValue, CharArrayUtils.indexOf('"', fValue) + 1);
 					if (offset > 0) {
@@ -176,7 +176,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					}
 				}
 				break;
-			case lk_char_constant: 
+			case lk_char_constant:
 				{
 					final int offset = CharArrayUtils.lastIndexOf('\'', fValue, CharArrayUtils.indexOf('\'', fValue) + 1);
 					if (offset > 0) {
@@ -192,7 +192,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			// pass
 		}
 	}
-	
+
 	@Override
 	public String toString() {
         return new String(fValue);
@@ -212,38 +212,38 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	            default: break;
 	        }
 		}
-        
+
         if (action.shouldVisitImplicitNames) {
         	for (IASTImplicitName name : getImplicitNames()) {
         		if (!name.accept(action)) return false;
         	}
         }
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
 	        }
-		}  
+		}
         return true;
     }
-    
+
     private int computeStringLiteralSize() {
     	int start = 0, end = fValue.length - 1 - getSuffix().length;
     	boolean isRaw = false;
-    	
+
     	// Skip past a prefix affecting the character type.
     	if (fValue[0] == 'L' || fValue[0] == 'u' || fValue[0] == 'U') {
     		++start;
     	}
-    	
+
     	// If there is an 'R' prefix, skip past it but take note of it.
     	if (fValue[start] == 'R') {
     		++start;
     		isRaw = true;
     	}
-    	
+
     	// Now we should have a quote-enclosed string. Skip past the quotes.
     	if (!(fValue[start] == '"' && fValue[end] == '"')) {
     		// Unexpected!
@@ -251,26 +251,26 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	}
     	++start;
     	--end;
-    	
+
     	// If we have a raw string, skip past the raw prefix.
     	if (isRaw) {
     		while (fValue[start] != '(' && start <= end) {
     			++start;
     			--end;
     		}
-    		
+
     		// Now we should have a parenthesis-enclosed string.
     		if (!(fValue[start] == '(' && fValue[end] == ')')) {
     			// Unexpected!
     			return 0;
     		}
-    		
+
     		// Since the string is raw, we don't need to process
     		// escape sequences, so the size is just the number
     		// of remaining characters, plus 1 for the null terminator.
     		return (end - start + 1) + 1;
     	}
-    	
+
     	// Otherwise, we have a non-raw string and we need to
     	// process escape sequences.
     	int length = 0;
@@ -286,32 +286,32 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			}
     		// TODO: Handle fancier things like octal literals.
     	}
-    	
+
     	// + 1 for null terminator.
     	return length + 1;
     }
-    
+
 	private IValue getStringLiteralSize() {
 		if (fStringLiteralSize == -1) {
 			fStringLiteralSize = computeStringLiteralSize();
 		}
 		return IntegralValue.create(fStringLiteralSize);
 	}
-	
+
 	private IType getStringType() {
 		if (fSuffix.length > 0) {
 			return getUserDefinedLiteralOperatorType();
 		}
-		
+
 		IType type = new CPPBasicType(getBasicCharKind(), 0, this);
 		type = new CPPQualifierType(type, true, false);
 		return new CPPArrayType(type, getStringLiteralSize());
 	}
-	
+
 	private IType getCharType() {
 		return fSuffix.length > 0 ? getUserDefinedLiteralOperatorType() : new CPPBasicType(getBasicCharKind(), 0, this);
     }
-	
+
 	private IBinding getUserDefinedLiteralOperator() {
 		if (!fIsCompilerSuffix && fUserDefinedLiteralOperator == null) {
 			try {
@@ -319,29 +319,29 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			} catch (DOMException e) {
 			}
 			if (fUserDefinedLiteralOperator == null) {
-				fUserDefinedLiteralOperator = new ProblemBinding(this, ISemanticProblem.BINDING_NOT_FOUND, 
+				fUserDefinedLiteralOperator = new ProblemBinding(this, ISemanticProblem.BINDING_NOT_FOUND,
 						fSuffix);
 			}
 		}
 		return fUserDefinedLiteralOperator;
 	}
-	
+
 	// 13.5.8
 	private IType getUserDefinedLiteralOperatorType() {
 		IType ret = new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
-		
+
 		IBinding func = getUserDefinedLiteralOperator();
 		if (func != null && func instanceof ICPPFunction) {
 			ret = ((ICPPFunction) func).getType().getReturnType();
 		}
-		
+
 		return ret;
 	}
-	
+
 	public char[] getOperatorName() {
 		return CharArrayUtils.concat("operator \"\"".toCharArray(), fSuffix); //$NON-NLS-1$
 	}
-	
+
 	public Kind getBasicCharKind() {
 		switch (fValue[0]) {
     	case 'L':
@@ -354,7 +354,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		return Kind.eChar;
     	}
 	}
-    
+
 	private IType classifyTypeOfFloatLiteral() {
 		final char[] lit= fSuffix;
 		final int len= lit.length;
@@ -382,7 +382,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		boolean unsigned= false;
 		final char[] lit= fSuffix;
 		int flags= 0;
-		
+
 		if (fIsCompilerSuffix) {
 			for (int i= lit.length - 1; i >= 0; i--) {
 				final char c= lit[i];
@@ -400,26 +400,26 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					break;
 				}
 			}
-	
+
 			if (unsigned) {
 				flags |= IBasicType.IS_UNSIGNED;
 			}
-			
+
 			if (makelong > 1) {
 				flags |= IBasicType.IS_LONG_LONG;
 			} else if (makelong == 1) {
 				flags |= IBasicType.IS_LONG;
-			} 
+			}
 		} else if (lit.length > 0) {
 			return getUserDefinedLiteralOperatorType();
 		}
 		return new CPPBasicType(Kind.eInt, flags, this);
 	}
-	
+
 	private int integerLiteral() {
 		int i = 0;
 		char c = fValue[i++];
-		
+
 		if (c == '0' && i < fValue.length) {
 			// Probably octal/hex/binary
 			c = fValue[i];
@@ -451,9 +451,9 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					c = fValue[++i];
 				}
 			}
-			
+
 			/*
-			 * A floating-point constant could also have a leading zero 
+			 * A floating-point constant could also have a leading zero
 			 */
 			return handleDecimalOrExponent(c, i);
 		} else if (Character.isDigit(c)) {
@@ -472,10 +472,10 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			// Shouldn't get here
 			assert false;
 		}
-		
+
 		return i;
 	}
-	
+
 	/*
 	 * Consumes a decimal point or exponent, if present.
 	 */
@@ -487,7 +487,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 		return i;
 	}
-	
+
 	/*
 	 * Called with the expectation that fValue[i] == '.'
 	 */
@@ -496,38 +496,38 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		while (Character.isDigit(c) && i < fValue.length) {
 			c = fValue[++i];
 		}
-		
+
 		if ((c | 0x20) == 'e') {
 			return exponentPart(i);
 		}
-		
+
 		return i;
 	}
-	
+
 	/*
 	 * Called with the expectation that c == 'e'
 	 */
 	private int exponentPart(int i) {
 		char c = fValue[++i];
-		
+
 		// optional '+' or '-'
 		if (c == '+' || c == '-') {
 			c = fValue[++i];
 		}
-		
+
 		while (Character.isDigit(c) && i < fValue.length) {
 			c = fValue[++i];
 		}
 		// If there were no digits following the 'e' then we have
 		// D.De or .De which is a UDL on a double
-		
+
 		return i--;
 	}
-	
+
 	// GCC's binary constant notation
 	private int probablyBinary(int i) {
 		char c = fValue[++i];
-		
+
 		if (c == '1' || c == '0') {
 			while (c == '1' || c == '0' && i < fValue.length) {
 				c = fValue[i++];
@@ -548,7 +548,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 		return i;
 	}
-	
+
 	private int probablyHex(int i) {
 		/* hexadecimal-literal
 		 *   0x hexadecimal-digit
@@ -569,10 +569,10 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		} else {
 			return i - 1;
 		}
-		
+
 		return i;
 	}
-	
+
 	// Assumes fValue[i] == '.'
 	private int hexFloatAfterDecimal(int i) {
 		// 0xHHH.
@@ -581,7 +581,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			while (isHexDigit(c) && i < fValue.length) {
 				c = fValue[++i];
 			}
-			
+
 			if ((c | 0x20) == 'p') {
 				return hexFloatExponent(i);
 			} else {
@@ -590,21 +590,21 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				return -1;
 			}
 		}
-		
+
 		// Probably shouldn't be able to get here
 		// we have 0xHHH.
 		return -1;
 	}
-	
+
 	// Assumes image[i] == 'p'
 	private int hexFloatExponent(int i) {
 		// 0xHH.HH[pP][-+]?DDDD
 		char c = fValue[++i];
-		
+
 		if (c == '-' || c == '+') {
 			c = fValue[++i];
 		}
-		
+
 		if (Character.isDigit(c)) {
 			while (Character.isDigit(c) && i < fValue.length) {
 				c = fValue[++i];
@@ -614,12 +614,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 		return i;
 	}
-	
+
 	private boolean isHexDigit(char c) {
 		c |= 0x20;
 		return ((c <= 'f' && c >= 'a') || (c <= '9' && c >= '0'));
 	}
-	
+
 	private boolean isOctal(final char c) {
 		return c >= '0' && c <= '7';
 	}
@@ -641,20 +641,20 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public CPPASTLiteralExpression(int kind, String value) {
 		this(kind, value.toCharArray());
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
 			fEvaluation= createEvaluation();
 		return fEvaluation;
 	}
-	
+
 	private ICPPEvaluation createLiteralEvaluation() {
     	switch (fKind) {
 		case lk_this: {
 			IScope scope = CPPVisitor.getContainingScope(this);
 			IType type= CPPVisitor.getImpliedObjectType(scope);
-			if (type == null) 
+			if (type == null)
 				return EvalFixed.INCOMPLETE;
 			return new EvalFixed(new CPPPointerType(type), PRVALUE, IntegralValue.THIS);
 		}
@@ -675,32 +675,32 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	}
     	return EvalFixed.INCOMPLETE;
 	}
-	
+
 	private ICPPEvaluation createEvaluation() {
 		ICPPEvaluation literalEval = createLiteralEvaluation();
-		
+
 		IBinding udlOperator = getUserDefinedLiteralOperator();
-		if(udlOperator != null && literalEval != EvalFixed.INCOMPLETE) {
-			if(udlOperator instanceof ICPPFunction) {
-				ICPPFunction udlOpFunction = (ICPPFunction)udlOperator;
+		if (udlOperator != null && literalEval != EvalFixed.INCOMPLETE) {
+			if (udlOperator instanceof ICPPFunction) {
+				ICPPFunction udlOpFunction = (ICPPFunction) udlOperator;
 				EvalBinding op = new EvalBinding(udlOpFunction, udlOpFunction.getType(), this);
 				ICPPEvaluation[] args = null;
-				
+
 				ICPPParameter params[] = udlOpFunction.getParameters();
 				int paramCount = params.length;
-				if(paramCount == 0) {
+				if (paramCount == 0) {
 					// TODO: Support literal operator templates.
 					args = new ICPPEvaluation[]{op};
-				} else if(paramCount == 1) {
+				} else if (paramCount == 1) {
 					//this means that we need to fall back to the raw literal operator
-					if(params[0].getType() instanceof IPointerType) {
+					if (params[0].getType() instanceof IPointerType) {
 						char numValue[] = getValue();
 						int numLen = numValue.length;
 						char strValue[] = new char[numLen + 2];
 						strValue[0] = '"';
 						strValue[numLen + 1] = '"';
 						System.arraycopy(numValue, 0, strValue, 1, numLen);
-						
+
 						IType type = new CPPBasicType(Kind.eChar, 0, this);
 						type = new CPPQualifierType(type, true, false);
 						type = new CPPArrayType(type, IntegralValue.create(numLen+1));
@@ -709,7 +709,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 					} else {
 						args = new ICPPEvaluation[]{op, literalEval};
 					}
-				} else if(paramCount == 2) {
+				} else if (paramCount == 2) {
 					IValue sizeValue = IntegralValue.create(computeStringLiteralSize() - 1);
 					EvalFixed literalSizeEval = new EvalFixed(CPPBasicType.INT, PRVALUE, sizeValue);
 					args = new ICPPEvaluation[]{op, literalEval, literalSizeEval};
@@ -717,26 +717,26 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				return new EvalFunctionCall(args, null, this);
 			}
 		}
-		
+
 		//has a user-defined literal suffix but didn't find a udl operator function => error
-		if(getSuffix().length > 0 && (getKind() == lk_string_literal || !fIsCompilerSuffix)) {
+		if (getSuffix().length > 0 && (getKind() == lk_string_literal || !fIsCompilerSuffix)) {
 			return EvalFixed.INCOMPLETE;
 		}
-		
+
 		return literalEval;
 	}
 
 	private IValue createCharValue() {
 		try {
 			final char[] image= getValue();
-			if (image.length > 1 && image[0] == 'L') 
+			if (image.length > 1 && image[0] == 'L')
 				return IntegralValue.create(ExpressionEvaluator.getChar(image, 2));
 			return IntegralValue.create(ExpressionEvaluator.getChar(image, 1));
 		} catch (EvalException e) {
 			return IntegralValue.UNKNOWN;
 		}
 	}
-	
+
 	private IValue createIntValue() {
 		try {
 			return IntegralValue.create(ExpressionEvaluator.getNumber(getValue()));
@@ -749,7 +749,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public IType getExpressionType() {
 		return getEvaluation().getType(this);
 	}
-	
+
 	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;

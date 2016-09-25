@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - Initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -41,7 +41,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
     private IASTSimpleDeclaration fSimpleDecl;
     private IASTDeclSpecifier fAltDeclSpec;
     private IASTDeclarator fAltDtor;
-    
+
     public CPPASTAmbiguousSimpleDeclaration(IASTSimpleDeclaration decl, IASTDeclSpecifier declSpec, IASTDeclarator dtor) {
     	fSimpleDecl= decl;
     	fAltDeclSpec= declSpec;
@@ -91,7 +91,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
 		fSimpleDecl.setDeclSpecifier(declSpec);
 	}
-	
+
 	@Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
@@ -127,7 +127,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 			parent.replace(fSimpleDecl.getDeclSpecifier(), fAltDeclSpec);
 			parent.replace(dtor, fAltDtor);
 		}
-			
+
 		// Resolve further nested ambiguities.
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;

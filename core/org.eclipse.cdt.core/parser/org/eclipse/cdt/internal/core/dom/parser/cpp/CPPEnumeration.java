@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, ICPPInternalBinding {
 	private static final IASTName NOT_INITIALIZED = CPPASTName.NOT_INITIALIZED;
 	private static final IEnumerator[] EMPTY_ENUMERATORS = {};
-	
+
 	public static class CPPEnumerationProblem extends ProblemBinding implements ICPPEnumeration, ICPPScope {
 		public CPPEnumerationProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
@@ -127,25 +127,25 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			char[] c = name.getLookupKey();
 			final IASTNode parent = name.getParent();
 			if (parent instanceof ICPPASTEnumerationSpecifier &&
-					!((ICPPASTEnumerationSpecifier) parent).isOpaque() && 
+					!((ICPPASTEnumerationSpecifier) parent).isOpaque() &&
 					CharArrayUtils.equals(c, nameArray)) {
 				IBinding binding = name.resolveBinding();
 				if (binding == CPPEnumeration.this && getDefinition() == name) {
 					return PROCESS_ABORT;
 				}
 			}
-			return PROCESS_CONTINUE; 
+			return PROCESS_CONTINUE;
 		}
 
 		@Override
-		public int visit(IASTDeclaration declaration) { 
+		public int visit(IASTDeclaration declaration) {
 			if (declaration instanceof IASTSimpleDeclaration)
 				return PROCESS_CONTINUE;
-			return PROCESS_SKIP; 
+			return PROCESS_SKIP;
 		}
 		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
-			return (declSpec instanceof ICPPASTEnumerationSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+			return (declSpec instanceof ICPPASTEnumerationSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP;
 		}
 		@Override
 		public int visit(IASTDeclarator declarator) {
@@ -222,7 +222,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			fDeclarations= ArrayUtil.append(fDeclarations, (IASTName) node);
 		}
 	}
-	
+
     @Override
 	public boolean isSameType(IType type) {
         if (type == this)
@@ -231,7 +231,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
             return type.isSameType(this);
         return false;
     }
-    
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
@@ -246,7 +246,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
 	public long getMinValue() {
 		if (fMinValue != null)

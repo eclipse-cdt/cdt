@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -44,7 +44,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 	public void update(ICPPEvaluation newValue) {
 		parent.getValue(null).setSubValue(getElementId(), newValue);
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return getTargetEvaluation().isInitializerList();
@@ -52,8 +52,8 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 
 	private ICPPEvaluation getTargetEvaluation() {
 		return getParent().getValue(null).getSubValue(getElementId());
-	}	
-	
+	}
+
 	@Override
 	public boolean isFunctionSet() {
 		return getTargetEvaluation().isFunctionSet();
@@ -78,20 +78,20 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 	public IType getType(IASTNode point) {
 		IType type = getParent().getType(point);
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-		
-		if(type instanceof IArrayType) {
-			IArrayType arrayType = (IArrayType)type;
+
+		if (type instanceof IArrayType) {
+			IArrayType arrayType = (IArrayType) type;
 			return arrayType.getType();
-		} else if(type instanceof InitializerListType) {
-			InitializerListType initListType = (InitializerListType)type;
+		} else if (type instanceof InitializerListType) {
+			InitializerListType initListType = (InitializerListType) type;
 			return initListType.getEvaluation().getClauses()[getElementId()].getType(point);
-		} else if(type instanceof ICompositeType) {
-			ICompositeType compositeType = (ICompositeType)type;
+		} else if (type instanceof ICompositeType) {
+			ICompositeType compositeType = (ICompositeType) type;
 			return compositeType.getFields()[getElementId()].getType();
-		} else if(type instanceof ParameterPackType) {
-			ParameterPackType parameterPackType = (ParameterPackType)type;
+		} else if (type instanceof ParameterPackType) {
+			ParameterPackType parameterPackType = (ParameterPackType) type;
 			return parameterPackType.getTypes()[getElementId()];
-		} else if(type instanceof ICPPBasicType) {
+		} else if (type instanceof ICPPBasicType) {
 			return type;
 		}
 		return null;
@@ -114,7 +114,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
-		if(getTargetEvaluation() != EvalFixed.INCOMPLETE) {
+		if (getTargetEvaluation() != EvalFixed.INCOMPLETE) {
 			return getTargetEvaluation().computeForFunctionCall(record, context);
 		} else {
 			ICPPEvaluation evaluatedComposite = parent.computeForFunctionCall(record, context);
@@ -149,16 +149,16 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		return getTargetEvaluation().instantiate(context, maxDepth);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EVAL_COMPOSITE_ACCESS);
 		buffer.marshalEvaluation(parent, includeValue);
-		buffer.putInt(elementId);	
+		buffer.putInt(elementId);
 	}
 
 	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation parent = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPEvaluation parent = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		int elementId = buffer.getInt();
 		return new EvalCompositeAccess(parent, elementId);
 	}

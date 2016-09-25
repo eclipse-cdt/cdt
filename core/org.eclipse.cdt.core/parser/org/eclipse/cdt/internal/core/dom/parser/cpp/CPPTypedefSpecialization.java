@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -59,7 +59,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 			    return t.isSameType(((ITypedef) o).getType());
 			return false;
 	    }
-	        
+
         IType t = getType();
 		if (t != null)
 		    return t.isSameType(o);

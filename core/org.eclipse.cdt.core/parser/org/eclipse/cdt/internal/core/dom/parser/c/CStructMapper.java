@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -50,7 +50,7 @@ public class CStructMapper {
 
 	private final IASTTranslationUnit fTranslationUnit;
 	protected CharArrayMap<IASTName> fStructs;
-	
+
 	public CStructMapper(IASTTranslationUnit tu) {
 		fTranslationUnit= tu;
 	}

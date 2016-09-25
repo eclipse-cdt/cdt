@@ -38,7 +38,7 @@ public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoSta
 	public CPPASTDoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTDoStatement copy(CopyStyle style) {
 		CPPASTDoStatement copy = new CPPASTDoStatement();
@@ -100,7 +100,7 @@ public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoSta
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (body == child) {
@@ -120,7 +120,7 @@ public class CPPASTDoStatement extends CPPASTAttributeOwner implements IASTDoSta
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner)getCondition();
+		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner) getCondition();
 		ICPPEvaluation conditionEval = conditionExpr.getEvaluation();
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
 		return new ExecDo(conditionEval, bodyExec);

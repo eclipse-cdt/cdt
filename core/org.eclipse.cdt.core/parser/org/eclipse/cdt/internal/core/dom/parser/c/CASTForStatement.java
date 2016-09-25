@@ -53,7 +53,7 @@ public class CASTForStatement extends ASTAttributeOwner implements IASTForStatem
 		CASTForStatement copy = new CASTForStatement();
 		return copy(copy, style);
 	}
-	
+
 	protected <T extends CASTForStatement> T copy(T copy, CopyStyle style) {
 		copy.setInitializerStatement(init == null ? null : init.copy(style));
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
@@ -62,7 +62,7 @@ public class CASTForStatement extends ASTAttributeOwner implements IASTForStatem
 		copy.setBody(body == null ? null : body.copy(style));
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
@@ -92,7 +92,7 @@ public class CASTForStatement extends ASTAttributeOwner implements IASTForStatem
 			iterator.setPropertyInParent(ITERATION);
 		}
     }
-    
+
     @Override
 	public IASTStatement getInitializerStatement() {
         return init;

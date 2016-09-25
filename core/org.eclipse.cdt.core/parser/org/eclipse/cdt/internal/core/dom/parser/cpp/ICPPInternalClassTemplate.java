@@ -28,7 +28,7 @@ public interface ICPPInternalClassTemplate extends ICPPInternalTemplate {
 
 	/**
 	 * Tries to obtain a default argument for a template parameter from the index.
-	 * @throws DOMException 
+	 * @throws DOMException
 	 */
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException;
 }

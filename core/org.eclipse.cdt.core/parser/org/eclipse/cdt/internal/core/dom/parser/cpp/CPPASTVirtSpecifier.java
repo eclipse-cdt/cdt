@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -16,11 +16,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 public class CPPASTVirtSpecifier extends ASTNode implements ICPPASTVirtSpecifier {
 	private SpecifierKind fKind;
-	
+
 	public CPPASTVirtSpecifier(SpecifierKind kind) {
 		fKind = kind;
 	}
-	
+
 	@Override
 	public SpecifierKind getKind() {
 		return fKind;
@@ -36,7 +36,7 @@ public class CPPASTVirtSpecifier extends ASTNode implements ICPPASTVirtSpecifier
 		CPPASTVirtSpecifier copy = new CPPASTVirtSpecifier(fKind);
 		return copy(copy, style);
 	}
-	
+
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitVirtSpecifiers) {

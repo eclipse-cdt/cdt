@@ -63,7 +63,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	private final IBinding fMember;
 	private final ValueCategory fOwnerValueCategory;
 	private final boolean fIsPointerDeref;
-	
+
 	// An EvalMemberAccess has an owner evaluation if it does not represent
 	// a member access through the "this" pointer. If it does, the owner
 	// evaluation is derived from the activation record (passed to
@@ -108,7 +108,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	public ValueCategory getOwnerValueCategory() {
 		return fOwnerValueCategory;
 	}
-	
+
 	public ICPPEvaluation getOwnerEval() {
 		return fOwnerEval;
 	}
@@ -379,7 +379,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 		IType ownerType = buffer.unmarshalType();
 		IBinding member = buffer.unmarshalBinding();
-		ICPPEvaluation ownerEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+		ICPPEvaluation ownerEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalMemberAccess(ownerType, ownerValueCat, member, ownerEval, isDeref, templateDefinition);
 	}
@@ -407,17 +407,17 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 
 	private boolean isMemberAccessThroughThisPointer() {
-		if(fOwnerEval == null) {
+		if (fOwnerEval == null) {
 			return true;
-		} else if(fOwnerEval instanceof EvalFixed) {
-			EvalFixed evalFixed = (EvalFixed)fOwnerEval;
+		} else if (fOwnerEval instanceof EvalFixed) {
+			EvalFixed evalFixed = (EvalFixed) fOwnerEval;
 			return evalFixed.getValue() == IntegralValue.THIS;
 		}
 		return false;
 	}
 
 	private ICPPEvaluation getOwnerEval(ActivationRecord record) {
-		if(isMemberAccessThroughThisPointer()) {
+		if (isMemberAccessThroughThisPointer()) {
 			return record.getImplicitThis();
 		}
 		return fOwnerEval;
@@ -430,7 +430,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			EvalBinding evalBinding = new EvalBinding(fMember, fType, getTemplateDefinition());
 			return evalBinding;
 		}
-		if(ownerEval == null) {
+		if (ownerEval == null) {
 			return this;
 		}
 
@@ -440,9 +440,9 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			evaluatedOwner = ((EvalPointer) evaluatedOwner).dereference();
 		}
 
-		if(fMember instanceof ICPPField) {
+		if (fMember instanceof ICPPField) {
 			ICPPField field = (ICPPField) fMember;
-			if(field.getType() instanceof IArrayType) {
+			if (field.getType() instanceof IArrayType) {
 				EvalPointer evalPointer = new EvalPointer(record,
 						new EvalCompositeAccess(new EvalCompositeAccess(evaluatedOwner, fieldPos), 0),
 						getTemplateDefinition());
@@ -451,7 +451,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		}
 
 		EvalReference evalRef = new EvalReference(record,
-				new EvalCompositeAccess(evaluatedOwner, fieldPos), 
+				new EvalCompositeAccess(evaluatedOwner, fieldPos),
 				getTemplateDefinition());
 		return evalRef;
 	}

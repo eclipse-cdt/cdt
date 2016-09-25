@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -40,25 +40,25 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     	this.sizeExpression = sizeExp;
     	setType(type);
     }
-    
+
     @Override
 	public IType getType() {
         return type;
     }
-    
+
     @Override
 	public final void setType(IType t) {
     	assert t != null;
         this.type = t;
     }
-    
+
     @Override
 	public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
         if (obj instanceof ITypedef)
             return ((ITypedef) obj).isSameType(this);
-        
+
         if (obj instanceof IArrayType) {
             final IArrayType rhs = (IArrayType) obj;
 			IType objType = rhs.getType();
@@ -81,7 +81,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 	public IValue getSize() {
     	if (value != IntegralValue.NOT_INITIALIZED)
     		return value;
-    	
+
     	if (sizeExpression == null)
     		return value= null;
 
@@ -124,8 +124,8 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 			buffer.putShort(firstBytes);
 			buffer.marshalType(getType());
 			return;
-		} 
-		
+		}
+
 		Number num= val.numberValue();
 		if (num != null) {
 			long lnum= num.longValue();
@@ -134,7 +134,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 				buffer.putLong(lnum);
 				buffer.marshalType(getType());
 				return;
-			} 
+			}
 		}
 		buffer.putShort((short) (firstBytes | ITypeMarshalBuffer.FLAG2));
 		buffer.marshalValue(val);

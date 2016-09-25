@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.Arrays;
@@ -89,7 +89,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IASTTranslationUnit getTranslationUnit() {
     	return this;
     }
-    
+
 	@Override
 	public final void addDeclaration(IASTDeclaration d) {
 		if (d != null) {
@@ -133,7 +133,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			}
 		}
 	}
-    
+
 	@Override
 	public final IName[] getDeclarations(IBinding binding) {
     	IName[] names= getDeclarationsInAST(binding);
@@ -148,11 +148,11 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 		return names;
 	}
-	
+
 	protected final IASTName[] getMacroDefinitionsInAST(IMacroBinding binding) {
 		if (fLocationResolver == null)
 			return IASTName.EMPTY_NAME_ARRAY;
-		
+
 		IASTName[] declarations = fLocationResolver.getDeclarations(binding);
 		int j = 0;
 		for (int i = 0; i < declarations.length; i++) {
@@ -185,21 +185,21 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
         }
         return names;
     }
-    
+
 	@Override
 	public final IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
 		if (fLocationResolver == null)
 			return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
 		return fLocationResolver.getMacroDefinitions();
 	}
-	
+
 	@Override
 	public IASTPreprocessorMacroExpansion[] getMacroExpansions() {
 		if (fLocationResolver == null)
 			return IASTPreprocessorMacroExpansion.EMPTY_ARRAY;
 		return fLocationResolver.getMacroExpansions(getFileLocation());
 	}
-	
+
 	@Override
 	public final IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
 		if (fLocationResolver == null)
@@ -264,7 +264,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		for (IASTDeclaration decl : decls) {
 			if (!decl.accept(action)) return false;
 		}
-        
+
         if (action.shouldVisitTranslationUnit && action.leave(this) == ASTVisitor.PROCESS_ABORT)
         	return false;
 
@@ -296,7 +296,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IIndex getIndex() {
     	return fIndex;
     }
-    
+
     @Override
 	public final void setIndex(IIndex index) {
     	this.fIndex = index;
@@ -310,11 +310,11 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final INodeFactory getASTNodeFactory() {
     	return fNodeFactory;
     }
-    
+
     public final void setASTNodeFactory(INodeFactory nodeFactory) {
     	this.fNodeFactory = nodeFactory;
     }
-    
+
 	@Override
 	public final IASTComment[] getComments() {
 		if (fLocationResolver != null) {
@@ -347,7 +347,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final void setIsHeaderUnit(boolean headerUnit) {
 		fIsHeader= headerUnit;
 	}
-	
+
 	public boolean isForContentAssist() {
 		return fForContentAssist;
 	}
@@ -374,13 +374,13 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				fIndexFileSet.add(indexFile);
 			}
 		}
-	}	
-	
+	}
+
 	@Override
 	public final IIndexFileSet getIndexFileSet() {
 		return fIndexFileSet;
 	}
-	
+
 	@Override
 	public void parsingFile(InternalFileContentProvider provider, InternalFileContent fc) {
 		if (fASTFileSet != null) {
@@ -396,8 +396,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				}
 			}
 		}
-	}	
-	
+	}
+
 	@Override
 	public final IIndexFileSet getASTFileSet() {
 		return fASTFileSet;
@@ -407,7 +407,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
 		return getNodeSelector(path).findNode(realOffset, realLength);
 	}
-	
+
 	@Override
 	public final IASTNodeSelector getNodeSelector(String filePath) {
 		return new ASTNodeSelector(this, fLocationResolver, filePath);
@@ -441,14 +441,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		target.fForContentAssist = fForContentAssist;
 		target.fOriginatingTranslationUnit = fOriginatingTranslationUnit;
 		target.fNodesOmitted = fNodesOmitted;
-		
+
 		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
 		}
 
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public final void freeze() {
 		accept(new ASTGenericVisitor(true) {
@@ -480,12 +480,12 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (sigMacros != null)
 			fSignificantMacros= sigMacros;
 	}
-	
+
 	@Override
 	public boolean hasPragmaOnceSemantics() {
 		return fPragmaOnceSemantics;
 	}
-	
+
 	@Override
 	public void setPragmaOnceSemantics(boolean value) {
 		assertNotFrozen();
@@ -493,7 +493,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	/**
-	 * Starts exclusive access 
+	 * Starts exclusive access
 	 * @throws InterruptedException
 	 */
 	public void beginExclusiveAccess() throws InterruptedException {
@@ -523,7 +523,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	/**
-	 * If ambiguity resolution is in progress, and processing of 'node' has been deferred, 
+	 * If ambiguity resolution is in progress, and processing of 'node' has been deferred,
 	 * process it now. Has no effect if ambiguity resolution is not in progress.
 	 */
 	public void resolvePendingAmbiguities(IASTNode node) {}

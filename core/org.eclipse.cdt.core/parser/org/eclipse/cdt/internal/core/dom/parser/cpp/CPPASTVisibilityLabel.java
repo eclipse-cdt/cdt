@@ -28,7 +28,7 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 	public CPPASTVisibilityLabel copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTVisibilityLabel copy(CopyStyle style) {
 		return copy(new CPPASTVisibilityLabel(visibility), style);
@@ -46,7 +46,7 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitDeclarations) {
             switch (action.visit(this)) {
             case ASTVisitor.PROCESS_ABORT:

@@ -50,11 +50,11 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 			}
 		}
 	}
-	
+
 	@Override
 	protected void beforeAlternative(IASTNode node) {
-		// If the expression is an id-expression, the name may be shared 
-		// between the alternatives (see bug 316704), so make sure its parent 
+		// If the expression is an id-expression, the name may be shared
+		// between the alternatives (see bug 316704), so make sure its parent
 		// is set correctly.
 		if (node instanceof IASTTypeId) {
 			IASTDeclSpecifier declSpec = ((IASTTypeId) node).getDeclSpecifier();
@@ -75,7 +75,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 				name.setBinding(null);
 				id.setName(name);
 			}
-		} 
+		}
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		ICPPASTAmbiguousTemplateArgument ambiguityNode = new CPPASTAmbiguousTemplateArgument(copyNodes);
 		return ambiguityNode;
 	}
-	
+
 	@Override
 	public IASTNode[] getNodes() {
 		return fNodes.toArray(new IASTNode[fNodes.size()]);
@@ -116,7 +116,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
         assertNotFrozen();
 		addNode(typeId);
 	}
-	
+
 	@Override
 	public void addExpression(IASTExpression expression) {
 		assertNotFrozen();

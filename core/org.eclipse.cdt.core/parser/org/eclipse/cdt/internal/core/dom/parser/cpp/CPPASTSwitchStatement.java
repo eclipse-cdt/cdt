@@ -32,7 +32,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
     private IASTExpression controllerExpression;
     private IASTDeclaration controllerDeclaration;
     private IASTStatement body;
-    
+
     public CPPASTSwitchStatement() {
 	}
 
@@ -40,12 +40,12 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 		setControllerDeclaration(controller);
 		setBody(body);
 	}
-    
+
     public CPPASTSwitchStatement(IASTExpression controller, IASTStatement body) {
 		setControllerExpression(controller);
 		setBody(body);
 	}
-    
+
     @Override
 	public CPPASTSwitchStatement copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -82,7 +82,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 	public IASTStatement getBody() {
         return body;
     }
-    
+
     @Override
 	public void setBody(IASTStatement body) {
         assertNotFrozen();
@@ -107,7 +107,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
         if (controllerExpression != null && !controllerExpression.accept(action)) return false;
         if (controllerDeclaration != null && !controllerDeclaration.accept(action)) return false;
         if (body != null && !body.accept(action)) return false;
-        
+
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -117,7 +117,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (body == child) {
@@ -156,25 +156,25 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 	public IScope getScope() {
 		if (scope == null)
             scope = new CPPBlockScope(this);
-        return scope;	
+        return scope;
     }
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner controllerExpr = (ICPPEvaluationOwner)getControllerExpression();
-		ICPPExecutionOwner controllerDecl = (ICPPExecutionOwner)getControllerDeclaration();
+		ICPPEvaluationOwner controllerExpr = (ICPPEvaluationOwner) getControllerExpression();
+		ICPPExecutionOwner controllerDecl = (ICPPExecutionOwner) getControllerDeclaration();
 		ICPPEvaluation controllerExprEval = controllerExpr != null ? controllerExpr.getEvaluation() : null;
-		ExecSimpleDeclaration controllerDeclExec = controllerDecl != null ? (ExecSimpleDeclaration)controllerDecl.getExecution() : null;
+		ExecSimpleDeclaration controllerDeclExec = controllerDecl != null ? (ExecSimpleDeclaration) controllerDecl.getExecution() : null;
 		IASTStatement[] bodyStmts = null;
-		if(body instanceof ICPPASTCompoundStatement) {
-			ICPPASTCompoundStatement compoundStmt = (ICPPASTCompoundStatement)body;
+		if (body instanceof ICPPASTCompoundStatement) {
+			ICPPASTCompoundStatement compoundStmt = (ICPPASTCompoundStatement) body;
 			bodyStmts = compoundStmt.getStatements();
 		} else {
 			bodyStmts = new IASTStatement[]{body};
 		}
-		
+
 		ICPPExecution[] bodyStmtExecutions = new ICPPExecution[bodyStmts.length];
-		for(int i = 0; i < bodyStmts.length; i++) {
+		for (int i = 0; i < bodyStmts.length; i++) {
 			bodyStmtExecutions[i] = EvalUtil.getExecutionFromStatement(bodyStmts[i]);
 		}
 		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);

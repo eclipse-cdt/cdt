@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class EvalReference extends CPPDependentEvaluation {
 	protected final ActivationRecord owningRecord;
-	
+
 	// The following invariant must be true for instances of this class:
 	// (referredBinding == null) != (referredSubValue == null)
 	protected IBinding referredBinding;
@@ -33,18 +33,18 @@ public class EvalReference extends CPPDependentEvaluation {
 		this.owningRecord = owningRecord;
 		this.referredBinding = referredBinding;
 	}
-	
+
 	EvalReference(ActivationRecord owningRecord, IBinding referredBinding, IASTNode point) {
 		this(owningRecord, referredBinding, findEnclosingTemplate(point));
 	}
-	
+
 	EvalReference(ActivationRecord owningRecord, EvalCompositeAccess referredSubValue, IBinding templateDefinition) {
 		super(templateDefinition);
 		this.owningRecord = owningRecord;
 		this.referredSubValue = referredSubValue;
 		this.referredBinding = null;
 	}
-	
+
 	EvalReference(ActivationRecord owningRecord, EvalCompositeAccess referredSubValue, IASTNode point) {
 		this(owningRecord, referredSubValue, findEnclosingTemplate(point));
 	}
@@ -83,7 +83,7 @@ public class EvalReference extends CPPDependentEvaluation {
 	public IValue getValue(IASTNode point) {
 		return getTargetEvaluation().getValue(null);
 	}
-	
+
 	public ICPPEvaluation getTargetEvaluation() {
 		if (referredSubValue != null) {
 			return referredSubValue;
@@ -103,7 +103,7 @@ public class EvalReference extends CPPDependentEvaluation {
 			referredSubValue.update(eval);
 		}
 	}
-	
+
 	public IBinding getReferredBinding() {
 		return referredBinding;
 	}

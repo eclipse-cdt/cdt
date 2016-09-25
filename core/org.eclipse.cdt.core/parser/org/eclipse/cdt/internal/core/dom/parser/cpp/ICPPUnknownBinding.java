@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -22,7 +22,7 @@ public interface ICPPUnknownBinding extends ICPPBinding {
 
 	/**
 	 * Returns the scope this binding represents.
-	 * @throws DOMException 
+	 * @throws DOMException
 	 */
     public ICPPScope asScope() throws DOMException;
 }

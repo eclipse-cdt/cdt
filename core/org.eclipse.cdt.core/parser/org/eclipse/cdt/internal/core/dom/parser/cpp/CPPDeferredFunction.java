@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -28,10 +28,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Represents a reference to a (member) function (instance), which cannot be resolved because 
+ * Represents a reference to a (member) function (instance), which cannot be resolved because
  * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction, 
+public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferredFunction,
 		ICPPComputableFunction, ISerializableType {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
@@ -47,11 +47,11 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	public static ICPPFunction createForCandidates(ICPPFunction... candidates) {
 		if (candidates[0] instanceof ICPPConstructor)
 			return new CPPDeferredConstructor(((ICPPConstructor) candidates[0]).getClassOwner(), candidates);
-		
+
 		final IBinding owner = candidates[0].getOwner();
 		return new CPPDeferredFunction(owner, candidates[0].getNameCharArray(), candidates);
 	}
-	
+
 	/**
 	 * Creates a CPPDeferredFunction given a name. This is for cases where there
 	 * are no candidates that could be passed to {@link #createForCandidates}.
@@ -161,7 +161,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	public boolean hasParameterPack() {
 		return false;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return fOwner;
@@ -183,7 +183,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 		if (this instanceof CPPDeferredConstructor) {
 			firstBytes |= ITypeMarshalBuffer.FLAG1;
 		}
-		
+
 		buffer.putShort(firstBytes);
 		buffer.putCharArray(getNameCharArray());
 		buffer.marshalBinding(getOwner());
@@ -196,7 +196,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 			buffer.putInt(0);
 		}
 	}
-	
+
 	public static IBinding unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		char[] name = buffer.getCharArray();
 		IBinding owner = buffer.unmarshalBinding();

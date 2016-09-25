@@ -83,7 +83,7 @@ public class CPPASTDesignatedInitializer extends ASTNode
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		return ((ICPPEvaluationOwner)rhs).getEvaluation();
+		return ((ICPPEvaluationOwner) rhs).getEvaluation();
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Devin Steffler (IBM Rational Software) - Initial API and implementation 
+ *     Devin Steffler (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -21,21 +21,21 @@ import org.eclipse.core.runtime.CoreException;
 
 public class CPointerType implements ICPointerType, ITypeContainer, ISerializableType {
 	static public final CPointerType VOID_POINTER = new CPointerType(CBasicType.VOID, 0);
-	
+
 	static public final int IS_CONST    = 1;
 	static public final int IS_RESTRICT = 1 << 1;
 	static public final int IS_VOLATILE = 1 << 2;
-	
+
 	IType nextType = null;
 	private int qualifiers = 0;
-	
+
 	public CPointerType() {}
-	
+
 	public CPointerType(IType next, int qualifiers) {
 		this.nextType = next;
 		this.qualifiers = qualifiers;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType obj) {
 	    if (obj == this)
@@ -48,12 +48,12 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
             if (isConst() != pt.isConst()) return false;
 			if (isRestrict() != pt.isRestrict()) return false;
 			if (isVolatile() != pt.isVolatile()) return false;
-         
+
 			return pt.getType().isSameType(nextType);
         }
     	return false;
 	}
-	
+
 	@Override
 	public boolean isRestrict() {
 		return (qualifiers & IS_RESTRICT) != 0;
@@ -63,7 +63,7 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 	public IType getType() {
 		return nextType;
 	}
-	
+
 	@Override
 	public void setType(IType type) {
 		nextType = type;
@@ -78,7 +78,7 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 	public boolean isVolatile() {
 		return (qualifiers & IS_VOLATILE) != 0;
 	}
-		
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -103,7 +103,7 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CPointerType(nested, firstBytes/ITypeMarshalBuffer.FLAG1);

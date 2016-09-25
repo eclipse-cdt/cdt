@@ -70,8 +70,8 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	public void setParameterNames(IASTName[] names) {
         assertNotFrozen();
 		parameterNames = names;
-		if(names != null) {
-			for(IASTName name : names) {
+		if (names != null) {
+			for (IASTName name : names) {
 				if (name != null) {
 					name.setParent(this);
 					name.setPropertyInParent(PARAMETER_NAME);
@@ -89,14 +89,14 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	public void setParameterDeclarations(IASTDeclaration[] decls) {
         assertNotFrozen();
 		parameterDeclarations = decls;
-		if(decls != null) {
-			for(IASTDeclaration decl : decls) {
+		if (decls != null) {
+			for (IASTDeclaration decl : decls) {
 				if (decl != null) {
 					decl.setParent(this);
 					decl.setPropertyInParent(FUNCTION_PARAMETER);
 				}
 			}
-		}	
+		}
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 		return super.postAccept(action);
 	}
-	
+
 	@Override
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
 		boolean found= false;
@@ -130,7 +130,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		}
 		if (!found)
 			return null;
-		
+
 		for (int i= 0; i < parameterDeclarations.length; i++) {
 			if (parameterDeclarations[i] instanceof IASTSimpleDeclaration) {
 				IASTDeclarator[] decltors = ((IASTSimpleDeclaration) parameterDeclarations[i]).getDeclarators();
@@ -140,10 +140,10 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public int getRoleForName(IASTName name) {
 		IASTName [] n = getParameterNames();

@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -31,13 +31,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
  */
 public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpression, ICPPEvaluationOwner {
 	private static final ICPPASTCapture[] NO_CAPTURES = {};
-	
+
 	private CaptureDefault fCaptureDefault;
 	private ICPPASTCapture[] fCaptures;
 	private ICPPASTFunctionDeclarator fDeclarator;
 
 	private IASTCompoundStatement fBody;
-	
+
 	private IASTImplicitName fClosureTypeName;
 	private IASTImplicitName fImplicitFunctionCallName;
 
@@ -92,7 +92,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		if (fImplicitFunctionCallName == null) {
     		final CPPClosureType closureType = getExpressionType();
 			ICPPFunction callOperator= closureType.getFunctionCallOperator();
-			
+
 			CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
 			name.setBinding(callOperator);
 			name.setIsDefinition(true);
@@ -100,7 +100,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 			if (fBody instanceof ASTNode) {
 				ASTNode bodyNode= (ASTNode) fBody;
 				name.setOffsetAndLength(bodyNode.getOffset(), 1);
-			}		
+			}
 			fImplicitFunctionCallName= name;
     	}
 		return fImplicitFunctionCallName;
@@ -137,16 +137,16 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		}
 		if (fDeclarator != null && !fDeclarator.accept(visitor))
 			return false;
-		
+
 		if (visitor.shouldVisitImplicitNames && !getFunctionCallOperatorName().accept(visitor))
 			return false;
-		
+
 		if (fBody != null && !fBody.accept(visitor))
 			return false;
 
 		if (visitor.shouldVisitExpressions && visitor.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-		
+
         return true;
     }
 
@@ -212,7 +212,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		}
 		return fEvaluation;
 	}
-	
+
 	@Override
 	public CPPClosureType getExpressionType() {
 		return (CPPClosureType) getEvaluation().getType(this);
@@ -222,7 +222,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;

@@ -108,7 +108,7 @@ public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICP
         }
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         for (int i = 0; i < statements.length; ++i) {
@@ -121,7 +121,7 @@ public class CPPASTCompoundStatement extends CPPASTAttributeOwner implements ICP
         }
         super.replace(child, other);
     }
-    
+
     @Override
 	public ICPPExecution getExecution() {
     	return new ExecCompoundStatement(this.statements);

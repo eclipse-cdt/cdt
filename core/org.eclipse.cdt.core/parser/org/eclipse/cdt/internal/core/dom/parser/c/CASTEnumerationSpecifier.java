@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
 /**
  * AST node for enumeration specifiers.
  */
-public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier 
+public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		implements IASTInternalEnumerationSpecifier, ICASTEnumerationSpecifier {
     private IASTName fName;
 	private Boolean fValuesComputed;
@@ -40,7 +40,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	public CASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTEnumerationSpecifier copy(CopyStyle style) {
 		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
@@ -54,12 +54,12 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		}
 		return super.copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean startValueComputation() {
 		if (fValuesComputed != null)
 			return false;
-		
+
 		fValuesComputed= Boolean.FALSE;
 		return true;
 	}
@@ -85,7 +85,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     }
 
     @Override
-	public IASTEnumerator[] getEnumerators() {        
+	public IASTEnumerator[] getEnumerators() {
         fEnumerators = ArrayUtil.trim(fEnumerators, fNumEnumerators);
         return fEnumerators;
     }
@@ -108,7 +108,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclSpecifiers) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
@@ -125,7 +125,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
             	return false;
         }
         if (action.shouldVisitDeclSpecifiers) {
-		    switch(action.leave(this)) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;

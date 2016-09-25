@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding {
     private IASTName name;
     private IBinding[] delegates;
-    
+
     public CPPUsingDeclaration(IASTName name, IBinding[] bindings) {
     	if (name instanceof ICPPASTQualifiedName) {
     		name = name.getLastName();
@@ -36,7 +36,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         this.name = name;
         this.delegates= bindings;
     }
-        
+
     @Override
 	public IBinding[] getDelegates() {
         return delegates;
@@ -56,7 +56,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
 	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
-            if(scope instanceof ICPPBlockScope)
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -88,7 +88,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         IASTNode n = name.getParent();
         if (n instanceof ICPPASTTemplateId)
             n = n.getParent();
-            
+
         return n;
     }
 
@@ -104,7 +104,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(name, true);

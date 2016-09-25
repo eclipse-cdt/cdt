@@ -39,10 +39,10 @@ public class CASTBreakStatement extends ASTAttributeOwner implements IASTBreakSt
         		default: break;
         	}
         }
-        
+
         return true;
     }
-    
+
     @Override
 	public CASTBreakStatement copy() {
 		return copy(CopyStyle.withoutLocations);

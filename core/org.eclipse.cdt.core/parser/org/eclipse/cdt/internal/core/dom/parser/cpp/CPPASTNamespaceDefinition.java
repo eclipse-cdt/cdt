@@ -43,7 +43,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 	public CPPASTNamespaceDefinition copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTNamespaceDefinition copy(CopyStyle style) {
 		CPPASTNamespaceDefinition copy =
@@ -69,7 +69,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 			name.setPropertyInParent(NAMESPACE_NAME);
 		}
     }
-    
+
 	@Override
 	public void setIsInline(boolean isInline) {
 		assertNotFrozen();
@@ -124,7 +124,7 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 	            default: break;
 	        }
 		}
-        
+
 		if (fName != null && !fName.accept(action))
 			return false;
 

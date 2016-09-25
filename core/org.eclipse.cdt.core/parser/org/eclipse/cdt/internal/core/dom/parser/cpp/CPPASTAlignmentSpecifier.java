@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -24,19 +24,19 @@ public class CPPASTAlignmentSpecifier extends ASTNode implements ICPPASTAlignmen
 	// Precisely one of these is null.
 	private IASTExpression fExpression;
 	private IASTTypeId fTypeId;
-	
+
 	CPPASTAlignmentSpecifier(IASTExpression expression) {
 		fExpression = expression;
 		fExpression.setParent(this);
 		fExpression.setPropertyInParent(ALIGNMENT_EXPRESSION);
 	}
-	
+
 	CPPASTAlignmentSpecifier(IASTTypeId typeId) {
 		fTypeId = typeId;
 		fTypeId.setParent(this);
 		fTypeId.setPropertyInParent(ALIGNMENT_TYPEID);
 	}
-	
+
 	@Override
 	public IASTExpression getExpression() {
 		return fExpression;
@@ -62,7 +62,7 @@ public class CPPASTAlignmentSpecifier extends ASTNode implements ICPPASTAlignmen
 		}
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public boolean accept(ASTVisitor visitor) {
 		if (fExpression != null) {

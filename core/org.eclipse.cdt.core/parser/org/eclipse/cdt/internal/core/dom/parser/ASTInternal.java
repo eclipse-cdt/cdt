@@ -83,13 +83,13 @@ public class ASTInternal {
 	public static void addBinding(IScope scope, IBinding binding) {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addBinding(binding);
-		}		
+		}
 	}
 
 	public static void addName(IScope scope, IASTName name) {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addName(name);
-		}		
+		}
 	}
 
 	public static boolean isStatic(IFunction func, boolean resolveAll) {
@@ -113,7 +113,7 @@ public class ASTInternal {
 		IASTNode result = getDeclaredInSourceFileOnly(binding, requireDefinition);
 		if (result == null)
 			return null;
-		
+
 		if (requireDefinition && glob != null) {
 			try {
 				if (glob.hasDeclaration())
@@ -121,7 +121,7 @@ public class ASTInternal {
 			} catch (CoreException e) {
 			}
 		}
-		
+
 		IASTTranslationUnit tu= result.getTranslationUnit();
 		if (tu != null) {
 			if (tu.getIndexFileSet().containsNonLocalDeclaration(binding, forFragment))
@@ -193,11 +193,11 @@ public class ASTInternal {
 	private static IASTNode resolveConflict(IASTNode n1, IASTNode n2) {
 		if (n1 == null)
 			return n2;
-		
+
 		IASTFileLocation loc1= n1.getFileLocation();
 		if (loc1 == null)
 			return n2;
-		
+
 		IASTFileLocation loc2= n2.getFileLocation();
 		if (loc2 != null && loc1.getContextInclusionStatement() != loc2.getContextInclusionStatement())
 			return null;

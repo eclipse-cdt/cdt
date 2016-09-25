@@ -32,9 +32,9 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
     private IASTParameterDeclaration[] paramDecls = new IASTParameterDeclaration[2];
     private int declPos=-1;
 
-    
+
     public CASTAmbiguousParameterDeclaration(IASTParameterDeclaration... decls) {
-		for(IASTParameterDeclaration d : decls)
+		for (IASTParameterDeclaration d : decls)
 			addParameterDeclaration(d);
 	}
 
@@ -59,7 +59,7 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 
     @Override
 	public IASTParameterDeclaration[] getParameterDeclarations() {
-    	paramDecls = ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos ); 
+    	paramDecls = ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos);
         return paramDecls;
     }
 
@@ -94,7 +94,7 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 	public IASTParameterDeclaration copy() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public IASTParameterDeclaration copy(CopyStyle style) {
 		throw new UnsupportedOperationException();

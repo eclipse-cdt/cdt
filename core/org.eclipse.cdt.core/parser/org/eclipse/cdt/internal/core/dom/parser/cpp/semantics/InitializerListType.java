@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -28,7 +28,7 @@ public class InitializerListType implements IType, ISerializableType {
 	public EvalInitList getEvaluation() {
 		return fInitializerList;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		return false;
@@ -43,7 +43,7 @@ public class InitializerListType implements IType, ISerializableType {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "InitializerListType";		//$NON-NLS-1$
@@ -54,9 +54,9 @@ public class InitializerListType implements IType, ISerializableType {
 		buffer.putShort(ITypeMarshalBuffer.INITIALIZER_LIST_TYPE);
 		buffer.marshalEvaluation(fInitializerList, true);
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		EvalInitList evalInitList = (EvalInitList)buffer.unmarshalEvaluation();
+		EvalInitList evalInitList = (EvalInitList) buffer.unmarshalEvaluation();
 		return new InitializerListType(evalInitList);
 	}
 }

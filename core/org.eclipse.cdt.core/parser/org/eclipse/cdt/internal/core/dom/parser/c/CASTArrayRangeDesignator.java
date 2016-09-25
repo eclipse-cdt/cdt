@@ -47,7 +47,7 @@ public class CASTArrayRangeDesignator extends ASTNode
 		copy.setRangeCeiling(ceiling == null ? null : ceiling.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTExpression getRangeFloor() {
         return this.floor;
@@ -65,7 +65,7 @@ public class CASTArrayRangeDesignator extends ASTNode
 
     @Override
 	public IASTExpression getRangeCeiling() {
-        return ceiling;        
+        return ceiling;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CASTArrayRangeDesignator extends ASTNode
 
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == floor) {

@@ -54,12 +54,12 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     private IASTInitializer fInitializer;
     private boolean fIsGlobal;
     private boolean fIsNewTypeId;
-	
+
     private IASTExpression[] fCachedArraySizes;
 	private ICPPEvaluation fEvaluation;
     private IASTImplicitName[] fImplicitNames;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
-    
+
     public CPPASTNewExpression() {
 	}
 
@@ -106,7 +106,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	public IASTInitializerClause[] getPlacementArguments() {
     	return fPlacement;
     }
-    
+
     @Override
 	public void setPlacementArguments(IASTInitializerClause[] args) {
         assertNotFrozen();
@@ -159,7 +159,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
         assertNotFrozen();
         fIsNewTypeId = value;
     }
-    
+
     /**
      * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
      */
@@ -197,8 +197,8 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 				}
 			}
     	}
-    	
-    	return fImplicitNames;  
+
+    	return fImplicitNames;
     }
 
 	@Override
@@ -236,13 +236,13 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	            default: break;
 	        }
 		}
-        
-        if (action.shouldVisitImplicitNames) { 
+
+        if (action.shouldVisitImplicitNames) {
         	for (IASTImplicitName name : getImplicitNames()) {
         		if (!name.accept(action)) return false;
         	}
         }
-        
+
 		if (fPlacement != null) {
 			for (IASTInitializerClause arg : fPlacement) {
 				if (!arg.accept(action))
@@ -253,8 +253,8 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 			return false;
 
 		if (fInitializer != null && !fInitializer.accept(action))
-			return false;       
-        
+			return false;
+
         if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
@@ -280,7 +280,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 			}
 		}
 	}
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -300,7 +300,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		}
 		return fEvaluation;
 	}
-	
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);
@@ -310,7 +310,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	public boolean isLValue() {
 		return false;
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory() {
 		return PRVALUE;
@@ -350,13 +350,13 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     		IASTArrayDeclarator adtor= new CPPASTArrayDeclarator(dtor.getName());
     		IASTPointerOperator[] ptrOps= dtor.getPointerOperators();
     		for (IASTPointerOperator ptr : ptrOps) {
-        		adtor.addPointerOperator(ptr);				
+        		adtor.addPointerOperator(ptr);
 			}
     		fTypeId.setAbstractDeclarator(adtor);
     		dtor= adtor;
     	}
     	IASTArrayModifier mod= new CPPASTArrayModifier(expression);
-    	((ASTNode) mod).setOffsetAndLength((ASTNode)expression);
+    	((ASTNode) mod).setOffsetAndLength((ASTNode) expression);
     	((IASTArrayDeclarator) dtor).addArrayModifier(mod);
     }
 
@@ -370,7 +370,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     			return (IASTExpression) fPlacement[0];
     		return null;
     	}
-    		
+
     	CASTExpressionList result= new CASTExpressionList();
     	for (IASTInitializerClause arg : fPlacement) {
     		if (arg instanceof IASTExpression) {
@@ -381,7 +381,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     	result.setPropertyInParent(NEW_PLACEMENT);
         return result;
     }
-	
+
 	@Override
 	@Deprecated
     public void setNewPlacement(IASTExpression expression) {
@@ -394,7 +394,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
         	setPlacementArguments(new IASTExpression[] {expression});
         }
     }
-    
+
 	@Override
 	@Deprecated
     public IASTExpression getNewInitializer() {

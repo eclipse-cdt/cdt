@@ -42,7 +42,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     private final IASTName fName;
 	private final IType fScopeType;
     /**
-     * This field needs to be protected when used in PDOMCPPUnknownScope, 
+     * This field needs to be protected when used in PDOMCPPUnknownScope,
      * don't use it outside of {@link #getOrCreateBinding(IASTName, int)}
      */
     private CharArrayObjectMap<IBinding[]> map;
@@ -71,7 +71,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 	public IType getScopeType() {
     	return fScopeType;
     }
-    
+
     @Override
 	public IScope getParent() throws DOMException {
     	if (fScopeType instanceof IBinding)
@@ -128,13 +128,13 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     				type= ud.isTypename();
     				function= true;
     			}
-    			
+
     			if (!type && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
     				function= true;
     			}
     		}
     	}
-    	
+
     	int idx= type ? 0 : function ? 1 : 2;
 
     	IBinding result = getOrCreateBinding(name.getSimpleID(), idx);
@@ -156,7 +156,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     	if (lookup.isPrefixLookup()) {
 			// If name lookup is performed for the purpose of code completion in a dependent context,
 			// try to give some useful results heuristically.
-			IScope scope = HeuristicResolver.findConcreteScopeForType(fScopeType, 
+			IScope scope = HeuristicResolver.findConcreteScopeForType(fScopeType,
 					lookup.getLookupPoint());
 			if (scope != null) {
 				return scope.getBindings(lookup);
@@ -166,7 +166,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     	IASTName lookupName= lookup.getLookupName();
     	if (lookupName != null)
     		return new IBinding[] { getBinding(lookupName, lookup.isResolve(), lookup.getIncludedFiles()) };
-    	
+
     	// When dealing with dependent expressions we always create an unknown class. That is because
     	// unknown objects are not used within the expressions, they are attached to names only.
     	return new IBinding[] { getOrCreateBinding(lookup.getLookupKey(), 0) };
@@ -176,7 +176,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 	public String toString() {
 		return fName.toString();
 	}
-	
+
     @Override
 	public void addName(IASTName name) {
     }
@@ -190,7 +190,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 			o = new IBinding[3];
 			map.put(name, o);
 		}
-        
+
         IBinding result= o[idx];
         if (result == null) {
     		switch (idx) {

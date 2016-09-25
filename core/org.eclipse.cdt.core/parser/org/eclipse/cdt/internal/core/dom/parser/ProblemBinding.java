@@ -328,7 +328,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     public IValue getInitialValue() {
 		return null;
 	}
-    
+
     public ICPPEvaluation getInitializerEvaluation() {
     	return EvalFixed.INCOMPLETE;
 	}

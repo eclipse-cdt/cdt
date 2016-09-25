@@ -106,8 +106,8 @@ public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTR
 
 	@Override
 	public ICPPExecution getExecution() {
-		if(retValue instanceof ICPPEvaluationOwner) {
-			ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner)retValue;
+		if (retValue instanceof ICPPEvaluationOwner) {
+			ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) retValue;
 			return new ExecReturn(evalOwner.getEvaluation());
 		}
 		return ExecIncomplete.INSTANCE;

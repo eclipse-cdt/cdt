@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
@@ -60,8 +60,8 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
-		
-		// Try all variants and under the ones with correct template-ids select the one with 
+
+		// Try all variants and under the ones with correct template-ids select the one with
 		// the most template-ids.
 		int minOffset= -1;
 		for (BranchPoint v= fVariants; v != null; v= v.getNext()) {
@@ -86,7 +86,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 					}
 				}
 			}
-			
+
 			// Adjust the operator sequence.
 			if (selected != null) {
 				minOffset= selected.getRightOffset();
@@ -97,14 +97,14 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 				}
 			}
 		}
-		
+
 		// Important: Before building the expression remove it from the owner
 		owner.replace(nodeToReplace, this);
-		
+
 		// Create the expression and replace it
 		IASTExpression expr = fParser.buildExpression(fEndOperator.getNext(), fEndOperator.getExpression());
 		owner.replace(this, expr);
-		
+
 		// Resolve further ambiguities within the new expression.
 		expr.accept(resolver);
 		return expr;
@@ -121,11 +121,11 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 				// are hard to clear.
 				IBinding b= templateName.resolvePreBinding();
 				if (b instanceof IProblemBinding) {
-					if (!containsFunctionTemplate(((IProblemBinding) b).getCandidateBindings())) 
+					if (!containsFunctionTemplate(((IProblemBinding) b).getCandidateBindings()))
 						return -1;
 					count++;
 				} else if (b instanceof ICPPSpecialization || b instanceof ICPPTemplateDefinition
-						|| b instanceof ICPPAliasTemplateInstance || b instanceof ICPPConstructor 
+						|| b instanceof ICPPAliasTemplateInstance || b instanceof ICPPConstructor
 						|| (b instanceof IFunction && b instanceof ICPPUnknownBinding)) {
 					count++;
 				} else {
@@ -135,10 +135,10 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 		}
 		return count;
 	}
-	
+
 	private boolean containsFunctionTemplate(IBinding[] candidateBindings) {
 		for (IBinding cand : candidateBindings) {
-			if (cand instanceof ICPPFunctionTemplate || 
+			if (cand instanceof ICPPFunctionTemplate ||
 					(cand instanceof ICPPFunction && cand instanceof ICPPSpecialization)) {
 				return true;
 			}

@@ -30,7 +30,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	private boolean isConst;
 	private boolean isVolatile;
 	private boolean isRestrict;
-	
+
 	public CPPPointerType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict) {
 		this.isConst = isConst;
 		this.isVolatile = isVolatile;
@@ -41,7 +41,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	public CPPPointerType(IType type, IASTPointer operator) {
 		this(type, operator.isConst(), operator.isVolatile(), operator.isRestrict());
 	}
-	
+
 	public CPPPointerType(IType type) {
 	    this(type, false, false, false);
 	}
@@ -52,16 +52,16 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
             return true;
         if (o instanceof ITypedef)
             return o.isSameType(this);
-        
+
         if (!(o instanceof IPointerType))
         	return false;
-        
-	    if (this instanceof ICPPPointerToMemberType != o instanceof ICPPPointerToMemberType) 
+
+	    if (this instanceof ICPPPointerToMemberType != o instanceof ICPPPointerToMemberType)
 	        return false;
-	    
+
 	    if (type == null)
 	        return false;
-	    
+
 	    IPointerType pt = (IPointerType) o;
 	    if (isConst == pt.isConst() && isVolatile == pt.isVolatile() && isRestrict == pt.isRestrict()) {
 			return type.isSameType(pt.getType());
@@ -73,7 +73,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	public IType getType() {
 		return type;
 	}
-	
+
 	@Override
 	public void setType(IType t) {
 		assert t != null;
@@ -116,7 +116,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 		final IType nestedType = getType();
 		buffer.marshalType(nestedType);
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CPPPointerType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,

@@ -413,7 +413,7 @@ public class SemanticUtil {
 		if (newNestedType == null)
 			return type;
 
-		// Do not to add unnecessary qualifications (bug 24908). 
+		// Do not to add unnecessary qualifications (bug 24908).
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
 			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile(), false);
@@ -690,12 +690,12 @@ public class SemanticUtil {
 				b1= ((ICPPNamespaceAlias) b1).getBinding();
 			for (int i = 0; b2 instanceof ICPPNamespaceAlias && i < 20; i++)
 				b2= ((ICPPNamespaceAlias) b2).getBinding();
-	
+
 			if (b1 == null)
 				return b2 == null;
 			if (b2 == null)
 				return false;
-	
+
 			if (!(b1 instanceof ICPPNamespace) || !(b2 instanceof ICPPNamespace))
 				return false;
 			if (!CharArrayUtils.equals(b1.getNameCharArray(), b2.getNameCharArray()))
@@ -757,7 +757,7 @@ public class SemanticUtil {
 				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
 					if (tbase.isSameType(baseClass) ||
-							(baseClass instanceof ICPPSpecialization && // Allow some flexibility with templates.  
+							(baseClass instanceof ICPPSpecialization && // Allow some flexibility with templates.
 							((IType) ((ICPPSpecialization) baseClass).getSpecializedBinding()).isSameType(tbase))) {
 						return 1;
 					}
@@ -824,7 +824,7 @@ public class SemanticUtil {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the value of the initializer of a variable.
 	 *
@@ -851,21 +851,21 @@ public class SemanticUtil {
 			case 1:
 				clause= list.getClauses()[0];
 				break;
-			default: 
+			default:
 				return ((ICPPEvaluationOwner) init).getEvaluation().getValue(init);
-				
+
 			}
 		}
 		if (clause instanceof IASTExpression) {
 			return ValueFactory.create((IASTExpression) clause);
 		}
-		
+
 		if (clause instanceof ICPPASTInitializerList) {
 			return ((ICPPEvaluationOwner) clause).getEvaluation().getValue(clause);
 		}
 		return IntegralValue.UNKNOWN;
 	}
-	
+
 	/**
 	 * Returns whether a type is const or a reference to a const type.
 	 *
@@ -873,21 +873,21 @@ public class SemanticUtil {
 	 * @return true if the type is const, otherwise false
 	 */
 	public static boolean isConst(IType type) {
-		if(type instanceof ICPPReferenceType) {
-			ICPPReferenceType refType = (ICPPReferenceType)type;
+		if (type instanceof ICPPReferenceType) {
+			ICPPReferenceType refType = (ICPPReferenceType) type;
 			return isConst(refType.getType());
-		} else if(type instanceof CPPQualifierType) {
-			CPPQualifierType qualifierType = (CPPQualifierType)type;
+		} else if (type instanceof CPPQualifierType) {
+			CPPQualifierType qualifierType = (CPPQualifierType) type;
 			return qualifierType.isConst();
 		}
 		return false;
 	}
-	
+
 	static IType[] addImplicitParameterType(IType[] types, ICPPMethod m) {
 		IType t= CPPSemantics.getImplicitParameterType(m);
 		return concatTypes(t, types);
 	}
-	
+
 	static IType[] concatTypes(final IType t, IType[] types) {
 		IType[] result= new IType[types.length+1];
 		result[0]= t;

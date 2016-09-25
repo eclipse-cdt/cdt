@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 public class CPPUsingDeclarationSpecialization extends CPPSpecialization implements ICPPUsingDeclaration {
 	private final IBinding[] fDelegates;
 
-    public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, IBinding owner, 
+    public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, IBinding owner,
     		ICPPTemplateParameterMap tpmap, IBinding[] delegates) {
         super(specialized, owner, tpmap);
         fDelegates= delegates;

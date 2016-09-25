@@ -35,7 +35,7 @@ public class CASTPointer extends ASTAttributeOwner implements ICASTPointer {
 		copy.isConst = isConst;
 		return copy(copy, style);
 	}
-    
+
 	@Override
 	public boolean isRestrict() {
         return isRestrict;

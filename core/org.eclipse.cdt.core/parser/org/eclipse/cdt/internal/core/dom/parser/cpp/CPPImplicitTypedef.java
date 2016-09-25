@@ -19,21 +19,21 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 /**
  * The CPPImplicitTypedef is used to represent implicit typedefs that exist on the translation
  * unit but are not actually part of the physical AST created by CDT.
- * 
+ *
  * An example is the GCC built-in typedef:  typedef char * __builtin_va_list;
  */
 public class CPPImplicitTypedef extends CPPTypedef {
     private IType type;
     private char[] name;
     private IScope scope;
-    
+
     public CPPImplicitTypedef(IType type, char[] name, IScope scope) {
         super(null);
         this.type = type;
         this.name = name;
         this.scope = scope;
     }
-    
+
     @Override
 	public IType getType() {
         return type;
@@ -43,17 +43,17 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public String getName() {
         return String.valueOf(name);
     }
-    
+
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
-    
+
     @Override
 	public IScope getScope() {
         return scope;
     }
-    
+
     @Override
 	public boolean isSameType(IType t) {
 		if (t == this)
@@ -71,14 +71,14 @@ public class CPPImplicitTypedef extends CPPTypedef {
 			return temp.isSameType(t);
 		return false;
 	}
-    
+
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
         t = (IType) super.clone();
         return t;
     }
-    
+
     /**
      * returns null
      */
@@ -86,7 +86,7 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public IASTNode[] getDeclarations() {
         return null;
     }
-    
+
     /**
      * returns null
      */
@@ -94,7 +94,7 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public IASTNode getDefinition() {
         return null;
     }
-        
+
     /**
      * does nothing
      */
@@ -102,7 +102,7 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public void addDefinition(IASTNode node) {
         // do nothing
     }
-    
+
     /**
      * does nothing
      */
@@ -110,24 +110,24 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public void addDeclaration(IASTNode node) {
         // do nothing
     }
-    
+
     @Override
 	public String[] getQualifiedName() {
         String[] temp = new String[1];
         temp[0] = String.valueOf(name);
-        
+
         return temp;
     }
-    
+
 
     @Override
 	public char[][] getQualifiedNameCharArray() {
         char[][] temp = new char[1][];
         temp[0] = name;
-        
+
         return temp;
     }
-    
+
     /**
      * returns true
      */

@@ -12,7 +12,7 @@
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
- 
+
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -37,7 +37,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
     private ICPPASTInitializerClause subscriptExp;
     private ICPPEvaluation evaluation;
     private IASTImplicitName[] implicitNames;
-    
+
     public CPPASTArraySubscriptExpression() {
 	}
 
@@ -45,12 +45,12 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 		setArrayExpression(arrayExpression);
 		setArgument(operand);
 	}
-	
+
 	@Override
 	public CPPASTArraySubscriptExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTArraySubscriptExpression copy(CopyStyle style) {
 		CPPASTArraySubscriptExpression copy = new CPPASTArraySubscriptExpression();
@@ -73,7 +73,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 			expression.setParent(this);
 			expression.setPropertyInParent(ARRAY);
 		}
-        arrayExpression = (ICPPASTExpression) expression;        
+        arrayExpression = (ICPPASTExpression) expression;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 			ICPPFunction overload = getOverload();
 			if (overload == null || overload instanceof CPPImplicitFunction)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			
+
 			// create separate implicit names for the two brackets
 			CPPASTImplicitName n1 = new CPPASTImplicitName(OverloadableOperator.BRACKET, this);
 			n1.setBinding(overload);
@@ -123,13 +123,13 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 			n2.setBinding(overload);
 			n2.computeOperatorOffsets(subscriptExp, true);
 			n2.setAlternate(true);
-			
+
 			implicitNames = new IASTImplicitName[] { n1, n2 };
 		}
-		
+
 		return implicitNames;
 	}
-    
+
 	private ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalBinary)
@@ -148,18 +148,18 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 		}
         if (arrayExpression != null && !arrayExpression.accept(action))
         	return false;
-        
+
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
-        
+
         if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
         	return false;
-        
+
         if (subscriptExp != null && !subscriptExp.accept(action))
         	return false;
-        
+
         if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
         	return false;
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -183,24 +183,24 @@ public class CPPASTArraySubscriptExpression extends ASTNode
             arrayExpression  = (ICPPASTExpression) other;
         }
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		if (evaluation == null) 
+		if (evaluation == null)
 			evaluation= computeEvaluation();
-		
+
 		return evaluation;
 	}
-	
+
 	private ICPPEvaluation computeEvaluation() {
 		if (arrayExpression == null || subscriptExp == null)
 			return EvalFixed.INCOMPLETE;
-		return new EvalBinary(EvalBinary.op_arrayAccess, 
-							 ((ICPPEvaluationOwner)arrayExpression).getEvaluation(), 
-							 ((ICPPEvaluationOwner)subscriptExp).getEvaluation(), 
+		return new EvalBinary(EvalBinary.op_arrayAccess,
+							 ((ICPPEvaluationOwner) arrayExpression).getEvaluation(),
+							 ((ICPPEvaluationOwner) subscriptExp).getEvaluation(),
 							 this);
 	}
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getType(this);

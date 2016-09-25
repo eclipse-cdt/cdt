@@ -33,11 +33,11 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     private final ICPPASTBaseSpecifier base;
 	private IType baseClass;
 	private boolean inheritedConstructorsSource;
-    
+
     public CPPBaseClause(ICPPASTBaseSpecifier base) {
         this.base = base;
     }
-    
+
     @Override
 	public IBinding getBaseClass() {
 		IType type= getBaseClassType();
@@ -69,11 +69,11 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 		}
 		return baseClass;
     }
-    
+
     @Override
 	public int getVisibility() {
 		int vis = base.getVisibility();
-		
+
 		if (vis == 0) {
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) base.getParent();
 			vis = compSpec.getKey() == ICPPClassType.k_class ? ICPPBase.v_private : ICPPBase.v_public;

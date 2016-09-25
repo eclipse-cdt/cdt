@@ -57,10 +57,10 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	}
 
 	@Override
-	public void checkForDefinition() { 
+	public void checkForDefinition() {
 		// Ambiguity resolution ensures that definitions are resolved.
 	}
-	
+
 	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 		partialSpecializations = ArrayUtil.append(
@@ -93,7 +93,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 				return compSpec.getScope();
 			}
 		}
-		
+
 		// Forward declarations must be backed up from the index.
 		ICPPClassTemplate ib = getIndexBinding();
 		if (ib != null) {
@@ -126,7 +126,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 
 		return ICPPASTElaboratedTypeSpecifier.k_class;
 	}
-	
+
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (!addedPartialSpecializationsOfIndex) {
@@ -144,7 +144,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		partialSpecializations = ArrayUtil.trim(ICPPClassTemplatePartialSpecialization.class, partialSpecializations);
 		return partialSpecializations;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -153,7 +153,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 			return type.isSameType(this);
 		return false;
 	}
-	
+
 	@Override
 	public ICPPBase[] getBases() {
 		if (bases == null) {
@@ -196,7 +196,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	public IBinding[] getFriends() {
 		return ClassTypeHelper.getFriends(this);
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
@@ -206,7 +206,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
-	
+
 	@Override
 	public Object clone() {
 		try {

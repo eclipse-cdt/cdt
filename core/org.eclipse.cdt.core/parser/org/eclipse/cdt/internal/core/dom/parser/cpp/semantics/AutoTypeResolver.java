@@ -41,12 +41,12 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	public AutoTypeResolver(IType paramType) {
 		functionType = new CPPFunctionType(new CPPBasicType(Kind.eVoid, 0), new IType[] { paramType });
 	}
-	
+
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TEMPLATE_PARAMETERS;
 	}
-	
+
 	@Override
 	public ICPPFunctionType getType() {
 		return functionType;

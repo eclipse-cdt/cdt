@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -78,11 +78,11 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public CPPBasicType(Kind kind, int qualifiers) {
 		this(kind, qualifiers, null);
 	}
-	
+
 	public CPPBasicType(ICPPASTSimpleDeclSpecifier sds) {
 		this(getKind(sds), getModifiers(sds), null);
 	}
-	
+
 	private static int getModifiers(ICPPASTSimpleDeclSpecifier sds) {
 		return
 			(sds.isLong() ? IBasicType.IS_LONG  : 0) |
@@ -93,7 +93,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			(sds.isComplex() ? IBasicType.IS_COMPLEX : 0) |
 			(sds.isImaginary() ? IBasicType.IS_IMAGINARY : 0);
 	}
-	
+
 	private static Kind getKind(ICPPASTSimpleDeclSpecifier sds) {
 		return getKind(sds.getType());
 	}
@@ -162,7 +162,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public Kind getKind() {
 		return fKind;
 	}
-	
+
 	@Override
 	public boolean isSigned() {
 		return (fModifiers & IS_SIGNED) != 0;
@@ -211,7 +211,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 	/**
 	 * Sets the numerical value this type was created for.
-	 * 
+	 *
 	 * @param value the numerical value of {@code null}
 	 */
 	public final void setAssociatedNumericalValue(Long value) {
@@ -236,12 +236,12 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public final int getModifiers() {
 		return fModifiers & ~FROM_STRING_LITERAL;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final int kind= getKind().ordinal();
@@ -258,7 +258,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		if (fAssociatedValue != null)
 			buffer.putLong(getAssociatedNumericalValue());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean haveModifiers= (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
 		final boolean haveAssociatedNumericalValue= (firstBytes & ITypeMarshalBuffer.SECOND_LAST_FLAG) != 0;

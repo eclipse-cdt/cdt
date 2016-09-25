@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -27,13 +27,13 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 	public ProblemFunctionType(int id) {
 		super(id);
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		buffer.putShort((short) (ITypeMarshalBuffer.PROBLEM_TYPE | ITypeMarshalBuffer.FLAG1));
 		buffer.putInt(getID());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		return new ProblemFunctionType(buffer.getInt());
 	}

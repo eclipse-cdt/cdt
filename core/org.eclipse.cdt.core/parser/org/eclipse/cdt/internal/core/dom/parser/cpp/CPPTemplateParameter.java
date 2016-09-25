@@ -34,11 +34,11 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Base implementation for template parameter bindings in the AST.
  */
-public abstract class CPPTemplateParameter extends PlatformObject 
+public abstract class CPPTemplateParameter extends PlatformObject
 		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
 	private IASTName[] declarations;
 	private final int fParameterID;
-	
+
 	public CPPTemplateParameter(IASTName name) {
 		declarations = new IASTName[] {name};
 		fParameterID= computeParameterID(name);
@@ -88,7 +88,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
         }
         return t;
     }
-	
+
 	@Override
 	public final String getName() {
 		return new String(getNameCharArray());
@@ -100,7 +100,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		for (IASTName decl : declarations) {
 			if (decl == null)
 				break;
-			
+
 			final char[] result= decl.getSimpleID();
 			if (result.length > 0)
 				return result;
@@ -126,7 +126,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	public IASTName getPrimaryDeclaration () {
 		return declarations[0];
 	}
-	
+
 	private ICPPASTTemplateParameter getASTTemplateParameter() {
 		IASTNode node= declarations[0];
 		while (node != null && !(node instanceof ICPPASTTemplateParameter))
@@ -183,47 +183,47 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	        if (declarations.length > 0 && declarations[0] == node)
 	            return;
 			// Keep the lowest offset declaration in [0].
-			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
+			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
 				declarations = ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
-	}	
-	
+	}
+
 	@Override
 	public IBinding getOwner() {
 		if (declarations == null || declarations.length == 0)
 			return null;
-		
+
 		IASTNode node= declarations[0];
 		while (!(node instanceof ICPPASTTemplateParameter)) {
 			if (node == null)
 				return null;
-			
+
 			node= node.getParent();
 		}
-		
+
 		return CPPTemplates.getContainingTemplate((ICPPASTTemplateParameter) node);
 	}
-	
+
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
 		// Check if the binding has been updated.
 		IBinding current= name.getPreBinding();
 		if (current != this)
 			return current;
-		
+
 		ICPPTemplateDefinition template= CPPTemplates.getContainingTemplate(getASTTemplateParameter());
 		if (template instanceof ICPPTemplateParameterOwner) {
 			return ((ICPPTemplateParameterOwner) template).resolveTemplateParameter(this);
@@ -233,10 +233,10 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		if (template == null) {
 			return this;
 		}
-		
+
 		ICPPTemplateParameter[] params = template.getTemplateParameters();
 		final int pos= getParameterPosition();
-		if (pos < params.length) 
+		if (pos < params.length)
 			return params[pos];
 		return new ProblemBinding(getPrimaryDeclaration(), IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND);
 	}

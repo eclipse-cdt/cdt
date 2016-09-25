@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -17,6 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * Marks ambiguous condition nodes.
  */
 public interface IASTAmbiguousCondition extends IASTExpression {
-    public static final ASTNodeProperty SUBCONDITION = new ASTNodeProperty( "IASTAmbiguousCondition.SUBCONDITION"); //$NON-NLS-1$
+    public static final ASTNodeProperty SUBCONDITION = new ASTNodeProperty("IASTAmbiguousCondition.SUBCONDITION"); //$NON-NLS-1$
 
 }

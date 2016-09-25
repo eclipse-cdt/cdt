@@ -81,7 +81,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
  * Context data for IASTName lookup
  */
 public class LookupData extends ScopeLookupData {
-	private static final ICPPTemplateArgument[] UNINITIALIZED_TEMPLATE_ARGUMENTS = {}; 
+	private static final ICPPTemplateArgument[] UNINITIALIZED_TEMPLATE_ARGUMENTS = {};
 	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap();
 
 	/** Used to ensure we don't visit things more than once. */

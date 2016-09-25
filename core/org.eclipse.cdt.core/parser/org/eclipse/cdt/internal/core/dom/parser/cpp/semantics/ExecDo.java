@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -33,9 +33,9 @@ public class ExecDo implements ICPPExecution {
 			}
 
 			ICPPExecution result = EvalUtil.executeStatement(bodyExec, record, context);
-			if(result instanceof ExecReturn) {
+			if (result instanceof ExecReturn) {
 				return result;
-			} else if(result instanceof ExecBreak) {
+			} else if (result instanceof ExecBreak) {
 				break;
 			}
 		} while (EvalUtil.conditionExprSatisfied(conditionEval, record, context));
@@ -46,7 +46,7 @@ public class ExecDo implements ICPPExecution {
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPEvaluation newConditionEval = conditionEval.instantiate(context, maxDepth);
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
-		if(newConditionEval == conditionEval && newBodyExec == bodyExec) {
+		if (newConditionEval == conditionEval && newBodyExec == bodyExec) {
 			return this;
 		}
 		return new ExecDo(newConditionEval, newBodyExec);
@@ -58,10 +58,10 @@ public class ExecDo implements ICPPExecution {
 		buffer.marshalEvaluation(conditionEval, includeValue);
 		buffer.marshalExecution(bodyExec, includeValue);
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation conditionEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
-		ICPPExecution bodyExec = (ICPPExecution)buffer.unmarshalExecution();
+		ICPPEvaluation conditionEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPExecution bodyExec = (ICPPExecution) buffer.unmarshalExecution();
 		return new ExecDo(conditionEval, bodyExec);
 	}
 }

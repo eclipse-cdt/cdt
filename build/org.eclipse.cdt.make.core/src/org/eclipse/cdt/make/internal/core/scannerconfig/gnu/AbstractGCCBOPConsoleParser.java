@@ -100,7 +100,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         boolean rc = false;
         int lineBreakPos = line.length()-1;
         char[] lineChars = line.toCharArray();
-        while(lineBreakPos >= 0 && Character.isWhitespace(lineChars[lineBreakPos])) {
+        while (lineBreakPos >= 0 && Character.isWhitespace(lineChars[lineBreakPos])) {
         	lineBreakPos--;
         }
         if (lineBreakPos >= 0) {

@@ -40,7 +40,7 @@ public class CPPASTContinueStatement extends CPPASTAttributeOwner implements IAS
 		}
         return true;
     }
-    
+
     @Override
 	public CPPASTContinueStatement copy() {
 		return copy(CopyStyle.withoutLocations);

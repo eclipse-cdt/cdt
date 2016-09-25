@@ -40,12 +40,12 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	public CASTTranslationUnit() {
 		fStructMapper= new CStructMapper(this);
 	}
-	
+
 	@Override
 	public CASTTranslationUnit copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTTranslationUnit copy(CopyStyle style) {
 		CASTTranslationUnit copy = new CASTTranslationUnit();
@@ -68,7 +68,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	}
 
     @Override
-	public IASTName[] getDefinitionsInAST(IBinding binding) {   
+	public IASTName[] getDefinitionsInAST(IBinding binding) {
 		if (binding instanceof IMacroBinding) {
 			return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
@@ -80,7 +80,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
     	// nulls can be anywhere, don't use trim()
     	return ArrayUtil.removeNulls(IASTName.class, names);
     }
-    
+
 	@Override
 	public IASTName[] getReferences(IBinding binding) {
         if (binding instanceof IMacroBinding)
@@ -101,7 +101,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 
 	@Override
 	public void resolveAmbiguities() {
-		accept(new CASTAmbiguityResolver()); 
+		accept(new CASTAmbiguityResolver());
 	}
 
 	@Override

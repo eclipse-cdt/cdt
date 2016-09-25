@@ -109,7 +109,7 @@ public class AccessContext {
 	        }
 	        if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 	        	// A class template partial specialization inherits the visibility of its primary
-	        	// class template. 
+	        	// class template.
 	        	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
 	        }
 	        if (binding instanceof ICPPAliasTemplateInstance) {
@@ -188,14 +188,14 @@ public class AccessContext {
 		}
 		return c.isSameType(target);
 	}
-	
+
 	private boolean isAccessible(IBinding binding, int bindingVisibility, ICPPClassType owner,
 			ICPPClassType derivedClass, int accessLevel, int depth) {
 		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return false;
 
 		accessLevel = getMemberAccessLevel(derivedClass, accessLevel);
-	
+
 		if (isSameTypeOrSpecialization(owner, derivedClass)) {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
@@ -277,7 +277,7 @@ public class AccessContext {
 	private ICPPClassType getFirstCandidateForNamingClass(IASTName name) throws DOMException {
 		LookupData data = new LookupData(name);
 		isUnqualifiedLookup= !data.qualified;
-		
+
 		ICPPScope scope = CPPSemantics.getLookupScope(name);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
 			if (scope instanceof ICPPInternalUnknownScope) {

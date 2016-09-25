@@ -33,7 +33,7 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
     private ICFunctionScope scope;
-    
+
     public CASTFunctionDefinition() {
 	}
 
@@ -53,17 +53,17 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 	public CASTFunctionDefinition copy(CopyStyle style) {
 		CASTFunctionDefinition copy = new CASTFunctionDefinition();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
-		
+
 		if (declarator != null) {
 			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
 			outer = outer.copy(style);
 			copy.setDeclarator((IASTFunctionDeclarator) ASTQueries.findTypeRelevantDeclarator(outer));
-		}	
-		
+		}
+
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
 		return copy(copy, style);
 	}
-	
+
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
@@ -126,12 +126,12 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 	            default: break;
 	        }
 		}
-        
+
         if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         final IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
         if (outerDtor != null && !outerDtor.accept(action)) return false;
         if (bodyStatement != null && !bodyStatement.accept(action)) return false;
-      
+
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

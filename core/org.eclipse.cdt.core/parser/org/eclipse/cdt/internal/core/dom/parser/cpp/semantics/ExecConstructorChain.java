@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class ExecConstructorChain implements ICPPExecution {
 	private final Map<IBinding, ICPPEvaluation> ccInitializers;
-	
+
 	public ExecConstructorChain(Map<IBinding, ICPPEvaluation> ccInitializers) {
 		this.ccInitializers = ccInitializers;
 	}
@@ -33,7 +33,7 @@ public class ExecConstructorChain implements ICPPExecution {
 		Map<IBinding, ICPPEvaluation> instantiatedInitializers = new HashMap<>();
 		for (Entry<IBinding, ICPPEvaluation> initializer : ccInitializers.entrySet()) {
 			instantiatedInitializers.put(
-					CPPEvaluation.instantiateBinding(initializer.getKey(), context, maxDepth), 
+					CPPEvaluation.instantiateBinding(initializer.getKey(), context, maxDepth),
 					initializer.getValue().instantiate(context, maxDepth));
 		}
 		return new ExecConstructorChain(instantiatedInitializers);
@@ -43,7 +43,7 @@ public class ExecConstructorChain implements ICPPExecution {
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		return this;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EXEC_CONSTRUCTOR_CHAIN);
@@ -53,19 +53,19 @@ public class ExecConstructorChain implements ICPPExecution {
 			buffer.marshalEvaluation(ccInitializer.getValue(), includeValue);
 		}
 	}
-	
+
 	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len = buffer.getInt();
 		Map<IBinding, ICPPEvaluation> ccInitializers = new HashMap<>();
 		for (int i = 0; i < len; i++) {
 			IBinding member = buffer.unmarshalBinding();
-			ICPPEvaluation memberEval = (ICPPEvaluation)buffer.unmarshalEvaluation();
+			ICPPEvaluation memberEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
 			ccInitializers.put(member, memberEval);
 		}
 		return new ExecConstructorChain(ccInitializers);
 	}
-	
+
 	public Map<IBinding, ICPPEvaluation> getConstructorChainInitializers() {
 		return ccInitializers;
-	} 
+	}
 }

@@ -7,10 +7,10 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-/** 
+/**
  * Configures the parsing of a declaration in various contexts.
  */
 public class DeclarationOptions {
@@ -31,7 +31,7 @@ public class DeclarationOptions {
 	final public static int SINGLE_DTOR=					0x4000;
 	final public static int ALLOW_FUNCTION_DEFINITION=		0x8000;
 
-    public static final DeclarationOptions 
+    public static final DeclarationOptions
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM | ALLOW_FUNCTION_DEFINITION),
     	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER | ALLOW_ABSTRACT | ALLOW_FUNCTION_DEFINITION),
     	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
@@ -62,7 +62,7 @@ public class DeclarationOptions {
 	final public boolean fAllowOpaqueEnum;
 	final public boolean fSingleDtor;
 	final public boolean fAllowFunctionDefinition;
-	
+
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
 		fRequireAbstract= (options & REQUIRE_ABSTRACT) != 0;

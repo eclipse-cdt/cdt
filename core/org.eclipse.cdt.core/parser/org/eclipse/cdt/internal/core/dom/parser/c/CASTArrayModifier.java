@@ -30,7 +30,7 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
     private boolean isStatic;
     private boolean isConst;
     private boolean isVarSized;
-    
+
     public CASTArrayModifier() {
 	}
 
@@ -53,7 +53,7 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
 		copy.isVarSized = isVarSized;
 		return copy(copy, style);
 	}
-	
+
     @Override
 	public IASTExpression getConstantExpression() {
         return exp;
@@ -63,12 +63,12 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
 	public void setConstantExpression(IASTExpression expression) {
         assertNotFrozen();
         this.exp = expression;
-        if(expression != null) {
+        if (expression != null) {
         	expression.setParent(this);
         	expression.setPropertyInParent(CONSTANT_EXPRESSION);
         }
     }
-	
+
 	@Override
 	public boolean isConst() {
         return isConst;
@@ -126,8 +126,8 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
 
     @Override
 	public boolean accept(ASTVisitor action) {
-    	if( action.shouldVisitArrayModifiers ){
-    		switch( action.visit( this ) ){
+    	if (action.shouldVisitArrayModifiers) {
+    		switch (action.visit(this)) {
     		case ASTVisitor.PROCESS_ABORT : return false;
     		case ASTVisitor.PROCESS_SKIP  : return true;
     		default : break;
@@ -147,10 +147,10 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == exp )
+        if (child == exp)
         {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             exp = (IASTExpression) other;
         }
     }

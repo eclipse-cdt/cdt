@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 
 /**
- * Represents a reference to a constructor (instance), which cannot be resolved because 
+ * Represents a reference to a constructor (instance), which cannot be resolved because
  * it depends on a template parameter. A compiler would resolve it during instantiation.
  */
 public class CPPDeferredConstructor extends CPPDeferredFunction implements ICPPConstructor {
@@ -75,7 +75,7 @@ public class CPPDeferredConstructor extends CPPDeferredFunction implements ICPPC
 	public boolean isFinal() {
 		return false;
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return null;

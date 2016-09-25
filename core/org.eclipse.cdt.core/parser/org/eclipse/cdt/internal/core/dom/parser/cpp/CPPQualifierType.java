@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -24,13 +24,13 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
     private final boolean isConst;
     private final boolean isVolatile;
     private IType type;
-    
+
     public CPPQualifierType(IType type, boolean isConst, boolean isVolatile) {
         this.isConst = isConst;
         this.isVolatile = isVolatile;
         setType(type);
     }
-    
+
     @Override
 	public boolean isSameType(IType o) {
 		if (o instanceof ITypedef)
@@ -43,7 +43,7 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 			return type.isSameType(pt.getType());
 		return false;
 	}
-    
+
     @Override
 	public boolean isConst() {
         return isConst;
@@ -58,13 +58,13 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 	public IType getType() {
         return type;
     }
-    
+
     @Override
 	public void setType(IType t) {
     	assert t != null;
         type = t;
     }
-    
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -89,7 +89,7 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 		buffer.putShort(firstBytes);
 		buffer.marshalType(getType());
 	}
-	
+
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CPPQualifierType(nested, (firstBytes & ITypeMarshalBuffer.FLAG1) != 0,

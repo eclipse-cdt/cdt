@@ -30,7 +30,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 	public CPPASTPointerToMember copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTPointerToMember copy(CopyStyle style) {
 		CPPASTPointerToMember copy = new CPPASTPointerToMember(n == null ? null : n.copy(style));
@@ -69,12 +69,12 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 
 		if (action.shouldVisitPointerOperators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-		return true;	    
+		return true;
     }
 
 	@Override
-	public int getRoleForName(IASTName name ) {
-		if( name  == this.n )
+	public int getRoleForName(IASTName name) {
+		if (name  == this.n)
 			return r_reference;
 		return r_unclear;
 	}

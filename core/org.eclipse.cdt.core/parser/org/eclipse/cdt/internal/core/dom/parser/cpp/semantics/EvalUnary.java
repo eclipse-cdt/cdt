@@ -391,9 +391,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 		return new EvalUnary(fOperator, argument, binding, getTemplateDefinition());
 	}
 
-	
+
 	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, IASTNode point, ICPPEvaluation arg) {
-		if(overload instanceof ICPPMethod) {
+		if (overload instanceof ICPPMethod) {
 			EvalMemberAccess opAccess = new EvalMemberAccess(arg.getType(point), ValueCategory.LVALUE, overload, arg, false, point);
 			ICPPEvaluation[] args = new ICPPEvaluation[]{opAccess};
 			return new EvalFunctionCall(args, arg, point);
@@ -403,11 +403,11 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return new EvalFunctionCall(args, null, point);
 		}
 	}
-	
+
 	private static boolean isModifyingOperation(int op) {
 		return op == op_prefixIncr || op == op_prefixDecr || op == op_postFixIncr || op == op_postFixDecr;
 	}
-	
+
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPFunction overload = getOverload(context.getPoint());
@@ -416,53 +416,53 @@ public class EvalUnary extends CPPDependentEvaluation {
 			ICPPEvaluation eval = operatorCall.computeForFunctionCall(record, context);
 			return eval;
 		}
-		
+
 		Pair<ICPPEvaluation, ICPPEvaluation> vp = EvalUtil.getValuePair(fArgument, record, context);
 		final ICPPEvaluation updateable = vp.getFirst();
 		final ICPPEvaluation fixed = vp.getSecond();
-		
+
 		ICPPEvaluation evalUnary = fixed == fArgument || fixed == EvalFixed.INCOMPLETE ? this : new EvalUnary(fOperator, fixed, fAddressOfQualifiedNameBinding, getTemplateDefinition());
-		if(fOperator == op_star) {
-			if(fixed instanceof EvalPointer) {
-				EvalPointer evalPointer = (EvalPointer)fixed;
+		if (fOperator == op_star) {
+			if (fixed instanceof EvalPointer) {
+				EvalPointer evalPointer = (EvalPointer) fixed;
 				return evalPointer.dereference();
 			} else if (updateable instanceof EvalBinding && isStarOperatorOnArrayName(context)) {
-				EvalBinding evalBinding = (EvalBinding)updateable;
+				EvalBinding evalBinding = (EvalBinding) updateable;
 				IBinding binding = evalBinding.getBinding();
 				ICPPEvaluation value = record.getVariable(binding);
 				EvalCompositeAccess compositeAccess = new EvalCompositeAccess(value, 0);
-				return new EvalReference(record, compositeAccess, getTemplateDefinition());	
+				return new EvalReference(record, compositeAccess, getTemplateDefinition());
 			}
 			return evalUnary;
-		} else if(fOperator == op_amper) {
-			if(updateable instanceof EvalBinding) {
-				EvalBinding evalBinding = (EvalBinding)updateable;
+		} else if (fOperator == op_amper) {
+			if (updateable instanceof EvalBinding) {
+				EvalBinding evalBinding = (EvalBinding) updateable;
 				IBinding binding = evalBinding.getBinding();
 				return new EvalPointer(record, binding, getTemplateDefinition());
-			} else if(updateable instanceof EvalReference) {
-				EvalReference evalRef = (EvalReference)updateable;
+			} else if (updateable instanceof EvalReference) {
+				EvalReference evalRef = (EvalReference) updateable;
 				return EvalPointer.createFromAddress(evalRef);
 			}
 			return evalUnary;
-		} else if(isModifyingOperation(fOperator)) {
-			if(fixed instanceof EvalPointer) {
-				EvalPointer evalPointer = (EvalPointer)fixed;
+		} else if (isModifyingOperation(fOperator)) {
+			if (fixed instanceof EvalPointer) {
+				EvalPointer evalPointer = (EvalPointer) fixed;
 				applyPointerArithmetics(evalPointer);
 				return evalPointer;
 			} else {
 				EvalFixed newValue = new EvalFixed(evalUnary.getType(context.getPoint()), evalUnary.getValueCategory(context.getPoint()), evalUnary.getValue(context.getPoint()));
-				if(updateable instanceof EvalReference) {
-					EvalReference evalRef = (EvalReference)updateable; 
+				if (updateable instanceof EvalReference) {
+					EvalReference evalRef = (EvalReference) updateable;
 					evalRef.update(newValue);
-				} else if(updateable instanceof EvalCompositeAccess) {
-					EvalCompositeAccess evalCompAccess = (EvalCompositeAccess)updateable;
+				} else if (updateable instanceof EvalCompositeAccess) {
+					EvalCompositeAccess evalCompAccess = (EvalCompositeAccess) updateable;
 					evalCompAccess.update(newValue);
-				} else if(updateable instanceof EvalBinding) {
-					EvalBinding evalBinding = (EvalBinding)updateable;
+				} else if (updateable instanceof EvalBinding) {
+					EvalBinding evalBinding = (EvalBinding) updateable;
 					IBinding binding = evalBinding.getBinding();
 					record.update(binding, newValue);
 				}
-				
+
 				if (this.getValueCategory(context.getPoint()) == ValueCategory.LVALUE) {
 					return updateable;
 				} else {
@@ -479,8 +479,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	private void applyPointerArithmetics(EvalPointer poiner) {
-		switch(fOperator) {
-		case op_postFixIncr: 
+		switch (fOperator) {
+		case op_postFixIncr:
 		case op_prefixIncr:
 			poiner.setPosition(poiner.getPosition() + 1);
 			break;
@@ -490,7 +490,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 			break;
 		}
 	}
-	
+
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return fArgument.determinePackSize(tpMap);

@@ -43,7 +43,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	public CASTArraySubscriptExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CASTArraySubscriptExpression copy(CopyStyle style) {
 		CASTArraySubscriptExpression copy = new CASTArraySubscriptExpression();
@@ -61,7 +61,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	public void setArrayExpression(IASTExpression expression) {
         assertNotFrozen();
         array = expression;
-        if(expression != null) {
+        if (expression != null) {
         	expression.setParent(this);
         	expression.setPropertyInParent(ARRAY);
         }
@@ -76,7 +76,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	public void setSubscriptExpression(IASTExpression expression) {
         assertNotFrozen();
         this.subscript = expression;
-        if(expression != null) {
+        if (expression != null) {
         	expression.setParent(this);
         	expression.setPropertyInParent(SUBSCRIPT);
         }
@@ -105,7 +105,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	            default: break;
 	        }
 		}
-        
+
         if (array != null && !array.accept(action)) return false;
         if (subscript != null && !subscript.accept(action)) return false;
 
@@ -118,7 +118,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		}
         return true;
     }
-    
+
     @Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == array) {
@@ -132,15 +132,15 @@ public class CASTArraySubscriptExpression extends ASTNode implements
             subscript = (IASTExpression) other;
         }
     }
-    
+
     @Override
 	public IType getExpressionType() {
 		IType t = getArrayExpression().getExpressionType();
 		t = CVisitor.unwrapTypedefs(t);
 		if (t instanceof IPointerType)
-			return ((IPointerType)t).getType();
+			return ((IPointerType) t).getType();
 		else if (t instanceof IArrayType)
-			return ((IArrayType)t).getType();
+			return ((IArrayType) t).getType();
 		return t;
     }
 
@@ -148,7 +148,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	public boolean isLValue() {
 		return true;
 	}
-	
+
 	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.LVALUE;

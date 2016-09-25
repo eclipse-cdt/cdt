@@ -47,7 +47,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 		this.enumeratorName = enumtor.getName();
 		enumeratorName.setBinding(this);
 	}
-    
+
     public IASTNode getPhysicalNode() {
         return enumeratorName;
     }
@@ -96,9 +96,9 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 	@Override
 	public IValue getValue() {
 		IASTNode parent= enumeratorName.getParent();
-		if (parent instanceof ASTEnumerator) 
+		if (parent instanceof ASTEnumerator)
 			return ((ASTEnumerator) parent).getIntegralValue();
-		
+
 		return IntegralValue.UNKNOWN;
 	}
 

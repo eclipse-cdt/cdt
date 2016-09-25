@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
@@ -32,14 +32,14 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 	}
 
 	public CPPASTUsingDeclaration(IASTName name) {
-		setName(name);	
+		setName(name);
 	}
 
 	@Override
 	public CPPASTUsingDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTUsingDeclaration copy(CopyStyle style) {
 		CPPASTUsingDeclaration copy =
@@ -83,12 +83,12 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 	            default: break;
 	        }
 		}
-        
+
         if (!acceptByAttributeSpecifiers(action)) return false;
         if (name != null && !name.accept(action)) return false;
-        
+
         if (action.shouldVisitDeclarations) {
-		    switch(action.leave(this)) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
@@ -103,11 +103,11 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 			return r_declaration;
 		return r_unclear;
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-		
+
 		int j = 0;
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
@@ -117,7 +117,7 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 				j++;
 			}
 		}
-		
+
 		if (j < bindings.length)
 			return Arrays.copyOfRange(bindings, 0, j);
 		return bindings;
@@ -127,7 +127,7 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 	public String toString() {
 		return name.toString();
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);

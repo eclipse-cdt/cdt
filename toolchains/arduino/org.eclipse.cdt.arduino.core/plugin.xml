@@ -7,7 +7,8 @@
             delegate="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationDelegate"
             id="org.eclipse.cdt.arduino.core.launchConfigurationType"
             modes="run"
-            name="Arduino">
+            name="Arduino"
+            public="false">
       </launchConfigurationType>
    </extension>
    <extension

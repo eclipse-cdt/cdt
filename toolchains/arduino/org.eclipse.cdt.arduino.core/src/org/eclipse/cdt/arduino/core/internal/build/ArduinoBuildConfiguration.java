@@ -87,7 +87,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 	private final ArduinoRemoteConnection target;
 	private final String launchMode;
 	private ArduinoBoard defaultBoard;
-	private Properties properties;
+	private Properties boardProperties;
 
 	// for Makefile generation
 	private Configuration templateConfig;
@@ -116,7 +116,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 	@Override
 	public synchronized void connectionChanged(RemoteConnectionChangeEvent event) {
 		if (event.getConnection().equals(target.getRemoteConnection())) {
-			properties = null;
+			boardProperties = null;
 		}
 	}
 
@@ -145,32 +145,32 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
-	private synchronized Properties getProperties() throws CoreException {
-		if (properties == null) {
+	private synchronized Properties getBoardProperties() throws CoreException {
+		if (boardProperties == null) {
 			ArduinoBoard board = getBoard();
 			ArduinoPlatform platform = board.getPlatform();
 
 			// IDE generated properties
-			properties = new Properties();
-			properties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
-			properties.put("runtime.ide.version", "10608"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("software", "ARDUINO"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
-			properties.put("build.path", "."); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.core.path", //$NON-NLS-1$
+			boardProperties = new Properties();
+			boardProperties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
+			boardProperties.put("runtime.ide.version", "10608"); //$NON-NLS-1$ //$NON-NLS-2$
+			boardProperties.put("software", "ARDUINO"); //$NON-NLS-1$ //$NON-NLS-2$
+			boardProperties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
+			boardProperties.put("build.path", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			boardProperties.put("build.core.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("cores").resolve("{build.core}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.system.path", platform.getInstallPath().resolve("system").toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.variant.path", //$NON-NLS-1$
+			boardProperties.put("build.system.path", platform.getInstallPath().resolve("system").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			boardProperties.put("build.variant.path", //$NON-NLS-1$
 					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Everyone seems to want to use arduino package tools
 			ArduinoPackage arduinoPackage = manager.getPackage("arduino"); //$NON-NLS-1$
 			if (arduinoPackage != null) {
 				for (ArduinoTool tool : arduinoPackage.getLatestTools()) {
-					properties.put("runtime.tools." + tool.getName() + ".path", tool.getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					boardProperties.put("runtime.tools." + tool.getName() + ".path", tool.getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				for (ArduinoTool tool : arduinoPackage.getTools()) {
-					properties.put("runtime.tools." + tool.getName() + '-' + tool.getVersion() + ".path", //$NON-NLS-1$ //$NON-NLS-2$
+					boardProperties.put("runtime.tools." + tool.getName() + '-' + tool.getVersion() + ".path", //$NON-NLS-1$ //$NON-NLS-2$
 							tool.getInstallPath().toString());
 				}
 			}
@@ -183,21 +183,21 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 					ArduinoPlatform superPlatform = manager.getInstalledPlatform(segments[0],
 							platform.getArchitecture());
 					if (superPlatform != null) {
-						properties.putAll(superPlatform.getPlatformProperties());
+						boardProperties.putAll(superPlatform.getPlatformProperties());
 					}
 				}
 			}
 
 			// Platform
-			properties.putAll(platform.getPlatformProperties());
+			boardProperties.putAll(platform.getPlatformProperties());
 
 			// Tools
 			for (ToolDependency toolDep : platform.getToolsDependencies()) {
-				properties.putAll(toolDep.getTool().getToolProperties());
+				boardProperties.putAll(toolDep.getTool().getToolProperties());
 			}
 
 			// Board
-			properties.putAll(board.getBoardProperties());
+			boardProperties.putAll(board.getBoardProperties());
 
 			// Menus
 			HierarchicalProperties menus = board.getMenus();
@@ -213,15 +213,15 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 						}
 					}
 					if (value != null && !value.isEmpty()) {
-						properties.putAll(board.getMenuProperties(key, value));
+						boardProperties.putAll(board.getMenuProperties(key, value));
 					}
 				}
 			}
 		}
 
 		// always do this in case the project changes names
-		properties.put("build.project_name", getProject().getName()); //$NON-NLS-1$
-		return properties;
+		boardProperties.put("build.project_name", getProject().getName()); //$NON-NLS-1$
+		return boardProperties;
 	}
 
 	public Map<String, Object> getBuildModel() throws CoreException {
@@ -263,7 +263,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		buildModel.put("libraries_path", pathString(ArduinoPreferences.getArduinoHome().resolve("libraries"))); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// the recipes
-		properties.putAll(getProperties());
+		properties.putAll(getBoardProperties());
 		buildModel.put("build_path", properties.get("build.path")); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("project_name", project.getName()); //$NON-NLS-1$
 
@@ -471,7 +471,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 	}
 
 	public int getMaxCodeSize() throws CoreException {
-		String sizeStr = getProperties().getProperty("upload.maximum_size"); //$NON-NLS-1$
+		String sizeStr = getBoardProperties().getProperty("upload.maximum_size"); //$NON-NLS-1$
 		return sizeStr != null ? Integer.parseInt(sizeStr) : -1;
 	}
 
@@ -480,13 +480,13 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 	}
 
 	public int getMaxDataSize() throws CoreException {
-		String sizeStr = getProperties().getProperty("upload.maximum_data_size"); //$NON-NLS-1$
+		String sizeStr = getBoardProperties().getProperty("upload.maximum_data_size"); //$NON-NLS-1$
 		return sizeStr != null ? Integer.parseInt(sizeStr) : -1;
 	}
 
 	public String[] getUploadCommand(String serialPort) throws CoreException {
 		Properties properties = new Properties();
-		properties.putAll(getProperties());
+		properties.putAll(getBoardProperties());
 
 		String toolName = properties.getProperty("upload.tool"); //$NON-NLS-1$
 		ArduinoPlatform platform = getBoard().getPlatform();
@@ -610,7 +610,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 			ArduinoPlatform platform = getBoard().getPlatform();
 			Properties properties = new Properties();
-			properties.putAll(getProperties());
+			properties.putAll(getBoardProperties());
 
 			// Overrides for scanner discovery
 			properties.put("source_file", ""); //$NON-NLS-1$ //$NON-NLS-2$

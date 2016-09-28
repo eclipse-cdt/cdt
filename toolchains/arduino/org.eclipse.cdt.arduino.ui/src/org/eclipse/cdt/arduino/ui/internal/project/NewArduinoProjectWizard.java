@@ -15,6 +15,8 @@ public class NewArduinoProjectWizard extends NewWizard {
 
 	public NewArduinoProjectWizard() {
 		super(ARDUINO_TAG_ID);
+		setWindowTitle("New Arduino C++ Project");
+		setTemplateSelectionPageTitle("Templates for New Arduino C++ Project");
 	}
 
 }

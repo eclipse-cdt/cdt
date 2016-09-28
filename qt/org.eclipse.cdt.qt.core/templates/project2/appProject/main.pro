@@ -5,7 +5,7 @@ CONFIG += c++11
 
 RESOURCES += ${projectName}.qrc
 
-qml.files = src/${projectName}.qml
+qml.files = ${projectName}.qml
 
 launch_modeall {
 	CONFIG(debug, debug|release) {

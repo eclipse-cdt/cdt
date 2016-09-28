@@ -2575,13 +2575,5 @@
            id="org.eclipse.cdt.debug.ui.localLaunchConfigurationTypeImage">
      </launchConfigurationTypeImage>
   </extension>
-  <extension
-        point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-     <launchConfigurationTabGroup
-           class="org.eclipse.cdt.debug.internal.ui.launch.LocalLaunchConfigurationTabGroup"
-           id="org.eclipse.cdt.debug.ui.launchConfigurationTabGroup1"
-           type="org.eclipse.cdt.debug.core.localLaunchConfigurationType">
-     </launchConfigurationTabGroup>
-  </extension>
     
 </plugin>

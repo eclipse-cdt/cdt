@@ -90,4 +90,17 @@ public interface ICBuildConfigurationManager {
 	 */
 	boolean supports(IProject project) throws CoreException;
 
+	/**
+	 * To allow build configuration options to be stored as launch configuration
+	 * attributes this method generates the name of the map of options for a
+	 * given launch mode. Pass null as the launchMode to return the name to be
+	 * used to gather options for all modes.
+	 * 
+	 * @param launchMode
+	 *            launch mode or null for all launch modes
+	 * @return attribute name for attributes for a given mode or for all modes
+	 * @since 6.2
+	 */
+	String getAttributeName(String launchMode);
+
 }

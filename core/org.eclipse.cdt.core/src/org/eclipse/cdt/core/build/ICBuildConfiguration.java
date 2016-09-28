@@ -50,18 +50,65 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 */
 	IToolChain getToolChain() throws CoreException;
 	
+	/**
+	 * Ids for the Binary Parsers to use when checking whether a file is a
+	 * binary that can be launched.
+	 * 
+	 * @return binary parser ids
+	 * @throws CoreException
+	 */
 	String getBinaryParserId() throws CoreException;
 
+	/**
+	 * Return a build environment variable with a given name.
+	 * 
+	 * @param name
+	 *            build environment variable name
+	 * @return value of the build environment variable.
+	 * @throws CoreException
+	 */
 	IEnvironmentVariable getVariable(String name) throws CoreException;
 
+	/**
+	 * Return all of the build environment variables for this configuration.
+	 * 
+	 * @return
+	 * @throws CoreException
+	 */
 	IEnvironmentVariable[] getVariables() throws CoreException;
 
+	/**
+	 * Perform the build.
+	 * 
+	 * @param kind
+	 *            build type
+	 * @param args
+	 *            build arguments
+	 * @param console
+	 *            console to show build output
+	 * @param monitor
+	 *            progress monitor
+	 * @return the list of projects for which this builder would like deltas the
+	 *         next time it is run or <code>null</code> if none
+	 * @throws CoreException
+	 */
 	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * Perform clean.
+	 * 
+	 * @param console
+	 *            console to show clean output
+	 * @param monitor
+	 *            progress monitor
+	 * @throws CoreException
+	 */
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * @return build output IContainer
+	 * The binaries produced by the build.
+	 * 
+	 * @return binaries produced by the build.
 	 * @throws CoreException
 	 * @since 6.1
 	 */
@@ -70,10 +117,38 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	}
 
 	/**
+	 * Set the environment for the builds. Generally the environment from a
+	 * ProcessBuilder would be passed here.
 	 * 
 	 * @param env
+	 *            build environment
 	 * @since 6.1
 	 */
 	default void setBuildEnvironment(Map<String, String> env) {
 	}
+
+	/**
+	 * Set the properties for this build configuration. These will often come
+	 * from launch configurations which have build settings as attributes.
+	 * 
+	 * @param properties
+	 *            build properties
+	 * @since 6.2
+	 */
+	default void setProperties(Map<String, String> properties) {
+	}
+
+	/**
+	 * Returns whether this build configuration supports the given build
+	 * properties.
+	 * 
+	 * @param properties
+	 *            build properties
+	 * @return whether this build configuration supports those properties
+	 * @since 6.2
+	 */
+	default boolean supportsProperties(Map<String, String> properties) {
+		return false;
+	}
+
 }

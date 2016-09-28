@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="launchConfigAffinity" name="%launchConfigAffinity.name" schema="schema/launchConfigAffinity.exsd"/>
+   <extension-point id="coreBuildTab" name="Core Build Tab" schema="schema/coreBuildTab.exsd"/>
 
      <extension
          point="org.eclipse.debug.core.launchDelegates">
@@ -140,5 +141,13 @@
             </with>
          </enablement>
       </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.launch.internal.corebuild.LocalLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.launchConfigurationTabGroup.local"
+            type="org.eclipse.cdt.debug.core.localLaunchConfigurationType">
+      </launchConfigurationTabGroup>
    </extension>
 </plugin>

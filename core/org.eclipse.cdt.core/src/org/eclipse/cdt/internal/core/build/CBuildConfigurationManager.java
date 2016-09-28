@@ -314,4 +314,13 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		return false;
 	}
 
+	@Override
+	public String getAttributeName(String launchMode) {
+		String name = "BUILD_CONFIGURATION"; //$NON-NLS-1$
+		if (launchMode != null) {
+			name += '_' + launchMode;
+		}
+		return name;
+	}
+
 }

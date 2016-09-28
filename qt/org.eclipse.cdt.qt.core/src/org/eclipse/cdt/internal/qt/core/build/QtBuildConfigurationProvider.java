@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallManager;
-import org.eclipse.cdt.qt.core.QtMinGWToolChainProvider;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -78,6 +77,47 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 		}
 	}
 
+	@Override
+	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			IProgressMonitor monitor) throws CoreException {
+		IQtInstall qtInstall = getQtInstall(toolChain);
+		if (qtInstall != null) {
+			// See if one exists
+			for (IBuildConfiguration config : project.getBuildConfigs()) {
+				ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
+				if (cconfig != null) {
+					IQtBuildConfiguration qtConfig = cconfig.getAdapter(IQtBuildConfiguration.class);
+					if (qtConfig != null && launchMode.equals(qtConfig.getLaunchMode()) &&
+							qtConfig.getToolChain().equals(toolChain)) {
+						return qtConfig;
+					}
+				}
+			}
+
+			// TODO what if multiple matches, this returns first match
+			String configName = "qt." + qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$ //$NON-NLS-2$
+			IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
+					monitor);
+			QtBuildConfiguration qtConfig = new QtBuildConfiguration(config, configName, toolChain, qtInstall,
+					launchMode);
+			configManager.addBuildConfiguration(config, qtConfig);
+			return qtConfig;
+		}
+
+		return null;
+	}
+
+	private IQtInstall getQtInstall(IToolChain toolChain) {
+		for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
+			if (qtInstallManager.supports(qtInstall, toolChain)) {
+				return qtInstall;
+			}
+		}
+
+		return null;
+	}
+
+	// TODO this goes when the launch delegate goes
 	public IQtBuildConfiguration getConfiguration(IProject project, Map<String, String> properties, String launchMode,
 			IProgressMonitor monitor) throws CoreException {
 		Collection<IToolChain> toolChains = toolChainManager.getToolChainsMatching(properties);

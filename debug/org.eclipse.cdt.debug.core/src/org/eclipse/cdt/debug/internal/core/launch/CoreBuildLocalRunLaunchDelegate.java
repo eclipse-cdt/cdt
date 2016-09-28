@@ -64,6 +64,11 @@ public class CoreBuildLocalRunLaunchDelegate extends LaunchConfigurationTargeted
 				IProjectDescription desc = project.getDescription();
 				desc.setActiveBuildConfig(config.getBuildConfiguration().getName());
 				project.setDescription(desc, monitor);
+
+				Map<String, String> buildProps = configuration.getAttribute("COREBUILD_" + mode, new HashMap<>()); //$NON-NLS-1$
+				if (!buildProps.isEmpty()) {
+					config.setProperties(buildProps);
+				}
 			}
 		}
 

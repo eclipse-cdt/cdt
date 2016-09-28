@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +31,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 import com.google.gson.Gson;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
+
+	public static final String CMAKE_GENERATOR = "cmake.generator"; //$NON-NLS-1$
+	public static final String CMAKE_ARGUMENTS = "cmake.arguments"; //$NON-NLS-1$
+	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
+	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
 	private static final String TOOLCHAIN_FILE = "cdt.cmake.toolchainfile"; //$NON-NLS-1$
 
@@ -85,6 +88,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		IProject project = getProject();
 		try {
+			Map<String, String> properties = getProperties();
+			String generator = properties.get(CMAKE_GENERATOR);
+			if (generator == null) {
+				generator = "Unix Makefiles"; //$NON-NLS-1$
+			}
+
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
@@ -93,24 +102,19 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			outStream.write(String.format("Building in: %s\n", buildDir.toString()));
 
-			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
+			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
 				List<String> command = new ArrayList<>();
 
-				// TODO assuming cmake is in the path here, probably need a
-				// preference in case it isn't.
-				Path cmakePath = CBuildConfiguration.getCommandFromPath(Paths.get("cmake")); //$NON-NLS-1$
-				if (cmakePath == null) {
-					if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-						cmakePath = Paths.get("/usr/local/bin/cmake"); //$NON-NLS-1$
-					} else {
-						cmakePath = Paths.get("cmake"); //$NON-NLS-1$
-					}
+				// TODO location of CMake out of preferences if not found here
+				Path cmakePath = findCommand("cmake"); //$NON-NLS-1$
+				if (cmakePath != null) {
+					command.add(cmakePath.toString());
+				} else {
+					command.add("cmake"); //$NON-NLS-1$
 				}
-				command.add(cmakePath.toString());
 
 				command.add("-G"); //$NON-NLS-1$
-				// TODO ninja?
-				command.add("Unix Makefiles"); //$NON-NLS-1$
+				command.add(generator);
 
 				if (toolChainFile != null) {
 					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
@@ -128,9 +132,21 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
-				// TODO need to figure out which builder to call. Hardcoding to
-				// make for now.
-				List<String> command = Arrays.asList("make"); //$NON-NLS-1$
+				String buildCommand = properties.get(BUILD_COMMAND);
+				if (buildCommand == null) {
+					if (generator.equals("Ninja")) { //$NON-NLS-1$
+						buildCommand = "ninja"; //$NON-NLS-1$
+					} else {
+						buildCommand = "make"; //$NON-NLS-1$
+					}
+				}
+				String[] command = buildCommand.split(" "); //$NON-NLS-1$
+
+				Path cmdPath = findCommand(command[0]);
+				if (cmdPath != null) {
+					command[0] = cmdPath.toString();
+				}
+
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
@@ -153,20 +169,35 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
+			Map<String, String> properties = getProperties();
+			String generator = properties.get(CMAKE_GENERATOR);
+
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
 
 			Path buildDir = getBuildDirectory();
 
-			if (!Files.exists(buildDir.resolve("Makefile"))) { //$NON-NLS-1$
-				outStream.write("Makefile not found. Assuming clean.");
+			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
+				outStream.write("CMakeFiles not found. Assuming clean.");
 				return;
 			}
 
-			// TODO need to figure out which builder to call. Hardcoding to make
-			// for now.
-			List<String> command = Arrays.asList("make", "clean"); //$NON-NLS-1$
+			String cleanCommand = properties.get(CLEAN_COMMAND);
+			if (cleanCommand == null) {
+				if (generator.equals("Ninja")) { //$NON-NLS-1$
+					cleanCommand = "ninja clean"; //$NON-NLS-1$
+				} else {
+					cleanCommand = "make clean"; //$NON-NLS-1$
+				}
+			}
+			String[] command = cleanCommand.split(" "); //$NON-NLS-1$
+
+			Path cmdPath = findCommand(command[0]);
+			if (cmdPath != null) {
+				command[0] = cmdPath.toString();
+			}
+
 			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$

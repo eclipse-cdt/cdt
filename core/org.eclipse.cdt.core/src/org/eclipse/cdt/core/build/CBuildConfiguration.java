@@ -102,6 +102,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
 	private ScannerInfoCache scannerInfoCache;
 
+	private Map<String, String> properties;
+
 	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		this.config = config;
 		this.name = name;
@@ -169,13 +171,15 @@ public abstract class CBuildConfiguration extends PlatformObject
 		// TODO should really be passing a monitor in here or create this in
 		// a better spot. should also throw the core exception
 		// TODO make the name of this folder a project property
-		IFolder buildRootFolder = getProject().getFolder("build"); //$NON-NLS-1$
+		IProgressMonitor monitor = new NullProgressMonitor();
+		IProject project = getProject();
+		IFolder buildRootFolder = project.getFolder("build"); //$NON-NLS-1$
 		if (!buildRootFolder.exists()) {
-			buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
+			buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
 		}
 		IFolder buildFolder = buildRootFolder.getFolder(name);
 		if (!buildFolder.exists()) {
-			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, new NullProgressMonitor());
+			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
 		}
 
 		return buildFolder;
@@ -660,6 +664,22 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 
 		return null;
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	@Override
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	@Override
+	public Map<String, String> getProperties() {
+		return properties != null ? properties : new HashMap<>();
 	}
 
 }

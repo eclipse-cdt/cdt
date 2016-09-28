@@ -11,7 +11,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.cdt.cmake.core,
  org.eclipse.tools.templates.ui;bundle-version="1.1.0",
- org.eclipse.cdt.core;bundle-version="6.1.0"
+ org.eclipse.cdt.core;bundle-version="6.1.0",
+ org.eclipse.debug.ui;bundle-version="3.11.200",
+ org.eclipse.cdt.launch;bundle-version="9.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

@@ -48,17 +48,26 @@ public class QtProjectGenerator extends FMProjectGenerator {
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		super.generate(model, monitor);
 
-		// Create the sourcefolders
+		// Create the source folders
 		IProject project = getProject();
 		List<IPathEntry> entries = new ArrayList<>();
-		for (SourceRoot srcRoot : getManifest().getSrcRoots()) {
-			IFolder sourceFolder = project.getFolder(srcRoot.getDir());
-			if (!sourceFolder.exists()) {
-				sourceFolder.create(true, true, monitor);
-			}
+		List<SourceRoot> srcRoots = getManifest().getSrcRoots();
+		if (srcRoots != null && !srcRoots.isEmpty()) {
+			for (SourceRoot srcRoot : srcRoots) {
+				IFolder sourceFolder = project.getFolder(srcRoot.getDir());
+				if (!sourceFolder.exists()) {
+					sourceFolder.create(true, true, monitor);
+				}
 
-			entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+				entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+			}
+		} else {
+			entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 		}
+
+		// build directory as output folder
+		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath())); //$NON-NLS-1$
+
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

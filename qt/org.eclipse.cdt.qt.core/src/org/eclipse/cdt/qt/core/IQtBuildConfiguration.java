@@ -20,6 +20,10 @@ public interface IQtBuildConfiguration extends ICBuildConfiguration {
 
 	String[] getQmakeConfig();
 
+	/**
+	 * @deprecated use getBuildOutput() instead
+	 */
+	@Deprecated
 	Path getProgramPath() throws CoreException;
 
 	String getLaunchMode();

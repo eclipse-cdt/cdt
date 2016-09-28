@@ -115,51 +115,6 @@
         <persistent value="true"/>
     </extension>
     <extension
-          point="org.eclipse.launchbar.core.launchBarContributions">
-       <descriptorType
-             class="org.eclipse.cdt.internal.qt.core.launch.QtLaunchDescriptorType"
-             id="org.eclipse.cdt.qt.core.launchDescriptorType"
-             priority="10">
-          <enablement>
-             <instanceof
-                   value="org.eclipse.core.resources.IProject">
-             </instanceof>
-             <test
-                   forcePluginActivation="true"
-                   property="org.eclipse.core.resources.projectNature"
-                   value="org.eclipse.cdt.qt.core.qtNature">
-             </test>
-          </enablement>
-       </descriptorType>
-       <configProvider
-             class="org.eclipse.cdt.internal.qt.core.launch.QtLocalLaunchConfigationProvider"
-             descriptorType="org.eclipse.cdt.qt.core.launchDescriptorType"
-             priority="10">
-       </configProvider>
-    </extension>
-    <extension
-          point="org.eclipse.debug.core.launchConfigurationTypes">
-       <launchConfigurationType
-             delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalRunLaunchConfigDelegate"
-             id="org.eclipse.cdt.qt.core.launchConfigurationType"
-             modes="run"
-             name="Qt Local Application"
-             public="true"
-             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-       </launchConfigurationType>
-    </extension>
-    <extension
-          point="org.eclipse.debug.core.launchDelegates">
-       <launchDelegate
-             delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalDebugLaunchConfigDelegate"
-             id="org.eclipse.cdt.qt.core.launchDelegate.debug.local"
-             modes="debug"
-             name="Qt Local Debug launcher"
-             type="org.eclipse.cdt.qt.core.launchConfigurationType">
-       </launchDelegate>
-    </extension>
-    <extension
           point="org.eclipse.cdt.core.buildConfigProvider">
        <provider
              class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfigurationProvider"

@@ -51,5 +51,13 @@
          </tagReference>
       </template>
    </extension>
+   <extension
+         point="org.eclipse.cdt.launch.coreBuildTab">
+      <provider
+            nature="org.eclipse.cdt.cmake.core.cmakeNature"
+            priority="10"
+            tabClass="org.eclipse.cdt.cmake.ui.internal.CMakeBuildTab">
+      </provider>
+   </extension>
 
 </plugin>

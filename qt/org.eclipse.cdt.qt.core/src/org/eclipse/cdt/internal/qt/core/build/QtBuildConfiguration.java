@@ -115,11 +115,6 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
-	@Override
-	public <T> T getAdapter(Class<T> adapter) {
-		return super.getAdapter(adapter);
-	}
-
 	public IQtInstall getQtInstall() {
 		if (qtInstall == null && !qtInstallSpec.isEmpty()) {
 			// find one that matches the spec
@@ -176,6 +171,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
+	@Deprecated
 	@Override
 	public Path getProgramPath() throws CoreException {
 		// TODO get the app name from the .pro file.

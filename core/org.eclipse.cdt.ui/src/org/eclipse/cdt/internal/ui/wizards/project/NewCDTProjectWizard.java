@@ -15,6 +15,7 @@ public class NewCDTProjectWizard extends NewWizard {
 
 	public NewCDTProjectWizard() {
 		super(cdtTag);
+		setWindowTitle("New C/C++ Project");
 		setTemplateSelectionPageTitle("Templates for New C/C++ Project");
 	}
 

@@ -556,7 +556,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			throw Activator.coreException("Upload command not specified", null);
 		}
 		if (isWindows) {
-			return splitCommand(command);
+			List<String> args = splitCommand(command);
+			return args.toArray(new String[args.size()]);
 		} else {
 			return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -659,9 +660,9 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			}
 
 			ExtendedScannerInfo baseInfo = new ExtendedScannerInfo(null, includes);
-			String[] command = splitCommand(commandString);
-			IScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(), Paths.get(command[0]),
-					Arrays.copyOfRange(command, 1, command.length), baseInfo, resource, getBuildDirectoryURI());
+			List<String> command = splitCommand(commandString);
+			IScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(), command,
+					baseInfo, resource, getBuildDirectoryURI());
 
 			// cache the results
 			cachedScannerInfo = info;
@@ -683,9 +684,47 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		return str;
 	}
 
-	private String[] splitCommand(String command) {
-		// TODO deal with quotes properly, for now just strip
-		return command.replaceAll("\"", "").split("\\s+"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private List<String> splitCommand(String command) {
+		boolean inQuotes = false;
+		boolean inDouble = false;
+		
+		List<String> args = new ArrayList<>();
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < command.length(); i++) {
+			char c = command.charAt(i);
+			switch (c) {
+			case ' ':
+				if (inQuotes || inDouble) {
+					builder.append(c);
+				} else if (builder.length() > 0) {
+					args.add(builder.toString());
+					builder = new StringBuilder();
+				}
+				break;
+			case '\'':
+				if (inDouble) {
+					builder.append(c);
+				} else {
+					inQuotes = !inQuotes;
+				}
+				break;
+			case '"':
+				if (inQuotes) {
+					builder.append(c);
+				} else {
+					inDouble = !inDouble;
+				}
+				break;
+			default:
+				builder.append(c);
+			}
+		}
+		
+		if (builder.length() > 0) {
+			args.add(builder.toString());
+		}
+		
+		return args;
 	}
 
 	@Override

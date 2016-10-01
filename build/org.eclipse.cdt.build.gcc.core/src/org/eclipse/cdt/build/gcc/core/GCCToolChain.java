@@ -200,7 +200,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 					// TODO optimize by dealing with multi arg options like -o
 					Path filePath = buildDirectory.resolve(commandLine.get(i));
 					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(filePath.toUri());
-					if (files.length > 0) {
+					if (files.length > 0 && files[0].exists()) {
 						// replace it with a temp file
 						Path parentPath = filePath.getParent();
 						String extension = files[0].getFileExtension();

@@ -9,18 +9,12 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
-import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
-import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -50,13 +44,13 @@ import org.eclipse.ui.part.Page;
 
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
 
-	private final DsfSession fSession;
 	private final ILaunch fLaunch;
-	private PTY fGdbPty;
+	private final PTY fGdbPty;
 
 	private Composite fMainComposite;
 	private final IDebuggerConsoleView fView;
 	private final IDebuggerConsole fConsole;
+	private final IGdbTerminalControlConnector fGdbTerminalControlConnector;
 	
 	private MenuManager fMenuManager;
 
@@ -76,16 +70,12 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private IPropertyChangeListener fConsolePropertyChangeListener;
 
 
-	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
+	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view, PTY pty) {
 		fConsole = gdbConsole;
+		fGdbTerminalControlConnector = gdbConsole.getTerminalControlConnector();
 		fView = view;
 		fLaunch = gdbConsole.getLaunch();
-		if (fLaunch instanceof GdbLaunch) {
-			fSession = ((GdbLaunch)fLaunch).getSession();
-		} else {
-			fSession = null;
-			assert false;
-		}
+		fGdbPty = pty;
 
 		fConsolePropertyChangeListener = new IPropertyChangeListener() {
 			@Override
@@ -124,9 +114,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		createTerminalControl();
 		createContextMenu();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
-		
-		// Hook the terminal control to the GDB process
-		attachTerminalToGdbProcess();
 	}
 
 	private void createTerminalControl() {
@@ -139,15 +126,34 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 				fMainComposite,
 				new ITerminalConnector[] {}, 
 				true);
+
+		fTerminalControl.setConnector(new GdbTerminalPageConnector(fGdbTerminalControlConnector, fGdbPty));
 		
 		try {
 			fTerminalControl.setEncoding(Charset.defaultCharset().name());
 		} catch (UnsupportedEncodingException e) {
 		}
 	
+		if (fTerminalControl instanceof ITerminalControl) {
+			((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
+			((ITerminalControl)fTerminalControl).setVT100LineWrapping(true);
+		}
+
 		// Set the inverted colors option based on the stored preference
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		setInvertedColors(store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS));
+
+		// Must use syncExec because the logic within must complete before the rest
+		// of the class methods (specifically getProcess()) is called
+		fMainComposite.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
+					fTerminalControl.clearTerminal();
+					fTerminalControl.connectTerminal();
+				}
+			}
+		});
 	}
 
 	protected void createContextMenu() {
@@ -204,51 +210,6 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	@Override
 	public void setFocus() {
 		fTerminalControl.setFocus();
-	}
-	
-	protected void attachTerminalToGdbProcess() {
-		if (fSession == null) {
-			return;
-		}
-
-		try {
-			fSession.getExecutor().submit(new DsfRunnable() {
-	        	@Override
-	        	public void run() {
-	            	DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
-	            	IGDBBackend backend = tracker.getService(IGDBBackend.class);
-	            	tracker.dispose();
-
-	            	if (backend != null) {
-	            		if (backend.getProcess() != null) {
-	            			fGdbPty = backend.getProcessPty();
-	            			attachTerminal(backend.getProcess());
-	            		}
-	            	}
-	        	}
-	        });
-		} catch (RejectedExecutionException e) {
-		}
-    }
-	
-	protected void attachTerminal(Process process) {
-			fTerminalControl.setConnector(new GdbTerminalConnector(process, fGdbPty));
-			if (fTerminalControl instanceof ITerminalControl) {
-				((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
-				((ITerminalControl)fTerminalControl).setVT100LineWrapping(true);
-			}
-
-			// Must use syncExec because the logic within must complete before the rest
-			// of the class methods (specifically getProcess()) is called
-			fMainComposite.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
-						fTerminalControl.clearTerminal();
-						fTerminalControl.connectTerminal();
-					}
-				}
-			});
 	}
 	
 	/**

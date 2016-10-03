@@ -57,6 +57,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private Composite fMainComposite;
 	private final IDebuggerConsoleView fView;
 	private final IDebuggerConsole fConsole;
+	private final IGDBTerminalControlManager fGdbTerminalControlMngr;
 	
 	private MenuManager fMenuManager;
 
@@ -78,6 +79,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	public GdbFullCliConsolePage(GdbFullCliConsole gdbConsole, IDebuggerConsoleView view) {
 		fConsole = gdbConsole;
+		fGdbTerminalControlMngr = gdbConsole.getTerminalControlManger();
 		fView = view;
 		fLaunch = gdbConsole.getLaunch();
 		if (fLaunch instanceof GdbLaunch) {
@@ -222,7 +224,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	            	if (backend != null) {
 	            		if (backend.getProcess() != null) {
 	            			fGdbPty = backend.getProcessPty();
-	            			attachTerminal(backend.getProcess());
+	            			attachTerminal();
 	            		}
 	            	}
 	        	}
@@ -231,8 +233,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		}
     }
 	
-	protected void attachTerminal(Process process) {
-			fTerminalControl.setConnector(new GdbTerminalConnector(process, fGdbPty));
+	protected void attachTerminal() {
+			fTerminalControl.setConnector(new GdbTerminalPageConnector(fGdbTerminalControlMngr, fGdbPty));
 			if (fTerminalControl instanceof ITerminalControl) {
 				((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
 				((ITerminalControl)fTerminalControl).setVT100LineWrapping(true);

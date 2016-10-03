@@ -187,7 +187,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
         	IDebuggerConsole console;
 			if (backend != null && backend.isFullGdbConsoleSupported()) {
 				// Create a full GDB cli console
-				console = new GdbFullCliConsole(fLaunch, consoleTitle);
+				console = new GdbFullCliConsole(fLaunch, consoleTitle, backend.getProcess(), backend.getProcessPty());
 			} else if (control != null) {
 				// Create a simple text console for the cli.
 				console = new GdbBasicCliConsole(fLaunch, consoleTitle, control.getGDBBackendProcess());

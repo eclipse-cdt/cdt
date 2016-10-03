@@ -7,16 +7,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
@@ -25,20 +19,16 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 /**
  * Class that connects the GDB process I/O with the terminal.
  */
-public class GdbTerminalConnector extends PlatformObject implements ITerminalConnector {
+public class GdbTerminalPageConnector extends PlatformObject implements ITerminalConnector {
 
     private int fTerminalWidth, fTerminalHeight;
     private ITerminalControl fControl;
-    private final Process fProcess;
     private final PTY fPty;
+    private final IGDBTerminalControlManager fGdbTerminalCtrlMngr;
 
-    public GdbTerminalConnector(Process process, PTY pty) {
-    	if (process == null) {
-    		throw new IllegalArgumentException("Invalid Process"); //$NON-NLS-1$
-    	}
-
-    	fProcess = process;
+    public GdbTerminalPageConnector(IGDBTerminalControlManager gdbTerminalCtrlMngr, PTY pty) {
     	fPty = pty;
+    	fGdbTerminalCtrlMngr = gdbTerminalCtrlMngr;
 	}
 	
     @Override
@@ -47,13 +37,16 @@ public class GdbTerminalConnector extends PlatformObject implements ITerminalCon
     	if (fControl != null) {
     		fControl.setState(TerminalState.CLOSED);
     	}
+
+		fGdbTerminalCtrlMngr.removePageTerminalControl(fControl);
+
     }
 
 	@Override
 	public OutputStream getTerminalToRemoteStream() {
 		// When the user writes to the terminal, it should be sent
 		// directly to GDB
-		return fProcess.getOutputStream();
+		return fGdbTerminalCtrlMngr.getTerminalToRemoteStream();
 	}
 
 	@Override
@@ -64,12 +57,9 @@ public class GdbTerminalConnector extends PlatformObject implements ITerminalCon
 
 		fControl = control;
 
-		// connect the streams
-		new OutputReadJob(fProcess.getInputStream()).schedule();
-		new OutputReadJob(fProcess.getErrorStream()).schedule();
-
 		// Set the terminal control state to CONNECTED
 		fControl.setState(TerminalState.CONNECTED);
+		fGdbTerminalCtrlMngr.addPageTerminalControl(fControl);
 	}
 
 
@@ -136,34 +126,5 @@ public class GdbTerminalConnector extends PlatformObject implements ITerminalCon
     @Override
     public void save(ISettingsStore arg0) {
     	// we don't do settings
-    }
-
-    private class OutputReadJob extends Job {
-    	{
-    		setSystem(true); 
-    	}
-    	
-    	private InputStream fInputStream;
-    	
-    	OutputReadJob(InputStream inputStream) {
-            super("GDB CLI output Job"); //$NON-NLS-1$
-            fInputStream = inputStream;
-        }
-
-        @Override
-		protected IStatus run(IProgressMonitor monitor) {
-            try {
-                byte[] b = new byte[1024];
-                int read = 0;
-                do {
-                	read = fInputStream.read(b);
-                	if (read > 0) {
-                		fControl.getRemoteToTerminalOutputStream().write(b, 0, read);
-                	}
-                } while (read >= 0);
-            } catch (IOException e) {
-            }
-            return Status.OK_STATUS;
-        }
     }
 }

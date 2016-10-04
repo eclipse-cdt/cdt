@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -493,11 +494,24 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	/**
-	 * Starts exclusive access
-	 * @throws InterruptedException
+	 * Starts exclusive access.
+	 *
+     * @throws InterruptedException if the current thread is interrupted
 	 */
 	public void beginExclusiveAccess() throws InterruptedException {
 		fSemaphore.acquire();
+	}
+
+	/**
+	 * Starts exclusive access.
+	 *
+     * @param timeoutMillis the maximum time to wait in milliseconds
+     * @return {@code true} if exclusive access was acquired, or {@code false} if it
+     *     was not possible to acquire exclusive access before the timeout expired
+     * @throws InterruptedException if the current thread is interrupted
+	 */
+	public boolean tryBeginExclusiveAccess(long timeoutMillis) throws InterruptedException {
+		return fSemaphore.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS);
 	}
 
 	public void endExclusiveAccess() {

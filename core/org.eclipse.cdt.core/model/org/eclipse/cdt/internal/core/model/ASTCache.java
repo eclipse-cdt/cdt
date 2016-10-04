@@ -252,7 +252,13 @@ public class ASTCache {
 		IASTTranslationUnit ast= getAST(tUnit, index, wait, progressMonitor);
 		if (ast != null) {
 			try {
-				((ASTTranslationUnit) ast).beginExclusiveAccess();
+				if (wait) {
+					((ASTTranslationUnit) ast).beginExclusiveAccess();
+				} else {
+					if (!((ASTTranslationUnit) ast).tryBeginExclusiveAccess(0)) {
+						return null;
+					}
+				}
 			} catch (InterruptedException e) {
 				throw new OperationCanceledException();
 			}

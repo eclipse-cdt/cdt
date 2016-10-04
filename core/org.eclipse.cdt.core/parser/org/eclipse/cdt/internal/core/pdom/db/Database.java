@@ -277,8 +277,10 @@ public class Database {
 			Chunk chunk= fChunks[index];
 			if (chunk == null) {
 				cacheMisses++;
-				chunk = fChunks[index] = new Chunk(this, index);
+				chunk = new Chunk(this, index);
 				chunk.read();
+				// Put the chunk in fChunks after it was read successfully.
+				fChunks[index] = chunk;
 			} else {
 				cacheHits++;
 			}

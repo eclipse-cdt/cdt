@@ -7,24 +7,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.IConsoleView;
@@ -61,89 +50,6 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 	protected void dispose() {
 		fTerminalConnector.dispose();
 		super.dispose();
-	}
-
-	/**
-	 * This class will read from the GDB process output and error streams and will
-	 * write it to any registered ITerminalControl.
-	 * It must continue reading from the streams, even if there are no ITerminalControl
-	 * to write to.  This is important to prevent GDB's output buffer from getting full
-	 * and then completely stopping.
-	 */
-	private final class GdbTerminalConnector implements IGdbTerminalControlConnector {
-		private final Set<ITerminalControl> fTerminalPageControls = new HashSet<>();
-		private final Process fProcess;
-		private final Job fOutputStreamJob;
-		private final Job fErrorStreamJob;
-		
-		public GdbTerminalConnector(Process process) {
-			fProcess = process;
-			
-			fOutputStreamJob = new OutputReadJob(process.getInputStream());
-			fOutputStreamJob.schedule();
-			fErrorStreamJob = new OutputReadJob(process.getErrorStream());
-			fErrorStreamJob.schedule();
-		}
-
-		public void dispose() {
-			fOutputStreamJob.cancel();
-			fErrorStreamJob.cancel();
-		}
-		
-		@Override
-		public void addPageTerminalControl(ITerminalControl terminalControl) {
-			fTerminalPageControls.add(terminalControl);
-		}
-
-		@Override
-		public void removePageTerminalControl(ITerminalControl terminalControl) {
-			if (terminalControl != null) {
-				fTerminalPageControls.remove(terminalControl);
-			}
-		}
-
-		@Override
-		public OutputStream getTerminalToRemoteStream() {
-			// When the user writes to the terminal, it should be sent
-			// directly to GDB
-			return fProcess.getOutputStream();
-		}
-		
-		private class OutputReadJob extends Job {
-	    	{
-	    		setSystem(true); 
-	    	}
-	    	
-	    	private InputStream fInputStream;
-	    	
-	    	private OutputReadJob(InputStream inputStream) {
-	            super("GDB CLI output Job"); //$NON-NLS-1$
-	            fInputStream = inputStream;
-	        }
-
-	        @Override
-			protected IStatus run(IProgressMonitor monitor) {
-	            try {
-	                byte[] b = new byte[1024];
-	                int read = 0;
-	                do {
-	                	if (monitor.isCanceled()) {
-	                		break;
-	                	}
-	                	
-	                	read = fInputStream.read(b);
-	                	if (read > 0) {
-	                		for (ITerminalControl control : fTerminalPageControls) {
-		                		control.getRemoteToTerminalOutputStream().write(b, 0, read);	                			
-	                		}
-	                	}
-	                } while (read >= 0);
-	            } catch (IOException e) {
-	            }
-
-	            return Status.OK_STATUS;
-	        }
-	    }
 	}
 
 	@Override

@@ -7,24 +7,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.IConsoleView;
@@ -40,79 +29,19 @@ public class GdbFullCliConsole extends AbstractConsole implements IDebuggerConso
 	private final ILaunch fLaunch;
 	private final String fLabel;
 	private GdbFullCliConsolePage fConsolePage;
-	private final IGDBTerminalControlManager fTerminalConnector; 
+	private IGDBTerminalControlManager fTerminalConnector; 
 	
 	public GdbFullCliConsole(ILaunch launch, String label, Process process, PTY pty) {
 		super(label, null, false);
 		fLaunch = launch;
         fLabel = label;
         
-        // Create a lifecycle listener to call init() and dispose()
+        // Create a life cycle listener to call init() and dispose()
         new GdbConsoleLifecycleListener(this);
-        fTerminalConnector = new GdbTerminalConnector(process);
-        resetName();
+		fTerminalConnector = new GdbTerminalConnector(process);
+		resetName();
 	}
     
-	private final class GdbTerminalConnector implements IGDBTerminalControlManager {
-		private final Set<ITerminalControl> fTerminalPageControls = new HashSet<>();
-		private final Process fProcess;
-		
-		public GdbTerminalConnector(Process process) {
-			fProcess = process;
-			new OutputReadJob(process.getInputStream()).schedule();
-			new OutputReadJob(process.getErrorStream()).schedule();
-		}
-
-		@Override
-		public void addPageTerminalControl(ITerminalControl terminalControl) {
-			fTerminalPageControls.add(terminalControl);
-		}
-
-		@Override
-		public void removePageTerminalControl(ITerminalControl terminalControl) {
-			if (terminalControl != null) {
-				fTerminalPageControls.remove(terminalControl);
-			}
-		}
-
-		@Override
-		public OutputStream getTerminalToRemoteStream() {
-			return fProcess.getOutputStream();
-		}
-		
-		private class OutputReadJob extends Job {
-	    	{
-	    		setSystem(true); 
-	    	}
-	    	
-	    	private InputStream fInputStream;
-	    	
-	    	private OutputReadJob(InputStream inputStream) {
-	            super("GDB CLI output Job"); //$NON-NLS-1$
-	            fInputStream = inputStream;
-	        }
-
-	        @Override
-			protected IStatus run(IProgressMonitor monitor) {
-	            try {
-	                byte[] b = new byte[1024];
-	                int read = 0;
-	                do {
-	                	read = fInputStream.read(b);
-	                	if (read > 0) {
-	                		for (ITerminalControl control : fTerminalPageControls) {
-		                		control.getRemoteToTerminalOutputStream().write(b, 0, read);	                			
-	                		}
-	                	}
-	                } while (read >= 0);
-	            } catch (IOException e) {
-	            }
-
-	            return Status.OK_STATUS;
-	        }
-	    }
-	}
-
 	@Override
 	public ILaunch getLaunch() { return fLaunch; }
     

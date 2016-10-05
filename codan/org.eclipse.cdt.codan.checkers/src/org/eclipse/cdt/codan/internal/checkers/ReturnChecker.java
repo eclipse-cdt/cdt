@@ -106,7 +106,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				if (returnValue != null) {
 					hasret = true;
 				}
-				if (!isVoid(func) && !isConstructorDestructor(func)) {
+				if (isNonVoid(func) && !isConstructorDestructor(func)) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
 						if (returnValue == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
@@ -153,7 +153,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			return; // If it is template get out of here.
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
-		boolean nonVoid = !isVoid(func);
+		boolean nonVoid = isNonVoid(func);
 		if (nonVoid && !isMain(func)) {
 			// There a return but maybe it is only on one branch.
 			IASTStatement body = func.getBody();
@@ -199,9 +199,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		if (!hasRet) {
 			// No return at all.
 			if (!checkImplicitReturn(RET_NORET_ID) && !isExplicitReturn(func)) {
-				return;
-			}
-			if (isConstructorDestructor(func)) {
 				return;
 			}
 		}
@@ -251,18 +248,25 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return getDeclSpecType(func) != IASTSimpleDeclSpecifier.t_unspecified;
 	}
 
-	public boolean isVoid(IASTFunctionDefinition func) {
+	/**
+	 * Checks if the function has a return type other than void. Constructors and destructors
+	 * don't have return type.
+	 *
+	 * @param func the function to check
+	 * @return {@code true} if the function has a non void return type
+	 */
+	private boolean isNonVoid(IASTFunctionDefinition func) {
+		if (isConstructorDestructor(func))
+			return false;
 		int type = getDeclSpecType(func);
 		if (type == IASTSimpleDeclSpecifier.t_void) {
 			IASTFunctionDeclarator declarator = func.getDeclarator();
 			if (declarator.getPointerOperators().length == 0)
-				return true;
-		} else if (type == IASTSimpleDeclSpecifier.t_auto) {
-			if (isAutoVoid(func)) {
-				return true;
-			}
+				return false;
+		} else if (type == IASTSimpleDeclSpecifier.t_auto && isAutoVoid(func)) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	/**

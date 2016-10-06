@@ -183,7 +183,7 @@ public class CoreModel {
 	public boolean isObject(IFile file) {
 		ICElement celement = create(file);
 		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isObject();
+			return ((IBinary) celement).isObject();
 		}
 		return false;
 	}
@@ -194,7 +194,7 @@ public class CoreModel {
 	public boolean isExecutable(IFile file) {
 		ICElement celement = create(file);
 		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isExecutable();
+			return ((IBinary) celement).isExecutable();
 		}
 		return false;
 	}
@@ -204,7 +204,7 @@ public class CoreModel {
 	 */
 	public boolean isBinary(IFile file) {
 		ICElement celement = create(file);
-		return (celement instanceof IBinary);
+		return celement instanceof IBinary;
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class CoreModel {
 	 */
 	public boolean isArchive(IFile file) {
 		ICElement celement = create(file);
-		return(celement instanceof IArchive);
+		return celement instanceof IArchive;
 	}
 
 	/**
@@ -494,7 +494,6 @@ public class CoreModel {
 		return new LibraryEntry(resourcePath, null, baseRef, libraryPath, null, null, null, false);
 	}
 
-
 	/**
 	 * Creates and returns a new entry of kind {@code CDT_LIBRARY}
 	 * for the archive or folder identified by the given absolute path.
@@ -665,7 +664,7 @@ public class CoreModel {
 	 * @param includePath
 	 *            the path of the include
 	 * @param isSystemInclude
-	 *            wheter this include path should be consider the system
+	 *            whether this include path should be consider the system
 	 *            include path
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
@@ -1328,7 +1327,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * this method is a full equivalent to {@code createProjectDescription(project, loadIfExists, false)}.
+	 * This method is a full equivalent to {@code createProjectDescription(project, loadIfExists, false)}.
 	 *
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
@@ -1337,7 +1336,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * the method creates and returns a writable project description
+	 * Creates and returns a writable project description
 	 *
 	 * @param project project for which the project description is requested
 	 * @param loadIfExists if true the method first tries to load and return the project description
@@ -1356,7 +1355,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * returns the project description associated with this project or null if the project does not contain the
+	 * Returns the project description associated with this project or null if the project does not contain the
 	 * CDT data associated with it.
 	 *
 	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
@@ -1374,7 +1373,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * this method is called to save/apply the project description
+	 * This method is called to save/apply the project description
 	 * the method should be called to apply changes made to the project description
 	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)}
 	 *
@@ -1407,7 +1406,7 @@ public class CoreModel {
 	 * All set* calls to the read-only description result in the {@link WriteAccessException}
 	 *
 	 * When the writable description is requested, the description copy is created.
-	 * Changes to this description will not be reflected/used by the core and Build System untill the
+	 * Changes to this description will not be reflected/used by the core and Build System until the
 	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 *
 	 * Each getProjectDescription(project, true) returns a new copy of the project description
@@ -1465,7 +1464,7 @@ public class CoreModel {
 		if (descriptionManager != null)
 			return descriptionManager;
 		
-		// Initialization of the CoreModel hasn't finished yet. 
+		// The method was called while initialization of the CoreModel hasn't finished yet. 
 		return CProjectDescriptionManager.getInstance();
 	}
 }

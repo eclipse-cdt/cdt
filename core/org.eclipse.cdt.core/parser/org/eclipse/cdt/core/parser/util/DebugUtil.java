@@ -18,8 +18,7 @@ import java.lang.reflect.Method;
 
 
 /**
- * This class contains several convenience methods 
- * mainly for debugging purposes.
+ * This class contains several convenience methods mainly for debugging purposes.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -93,7 +92,7 @@ public class DebugUtil {
 			System.out.println("Object: " + obj);
 			BeanInfo info = Introspector.getBeanInfo(obj.getClass());
 			
-			for(PropertyDescriptor propertyDescriptor : info.getPropertyDescriptors()) {
+			for (PropertyDescriptor propertyDescriptor : info.getPropertyDescriptors()) {
 				Method getter = propertyDescriptor.getReadMethod();
 				try {
 					System.out.println("  " + getter.getName() + "=" + getter.invoke(obj, new Object[0]));

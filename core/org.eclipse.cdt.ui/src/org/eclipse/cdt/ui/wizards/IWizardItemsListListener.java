@@ -26,7 +26,7 @@ public interface IWizardItemsListListener {
 	 * @param count - number of selected toolchains.
 	 */
 	void toolChainListChanged(int count);
-	
+
 	/**
 	 * @return true if this page is visible 
 	 */
@@ -40,9 +40,9 @@ public interface IWizardItemsListListener {
 	 * - Each item has {@link}EntryDescriptor type
 	 * - Items have hierarchical relations with others,
 	 *   so removing some item(s) can break a tree. 
-	 *  
+	 *
 	 * @param items - list of EntryDescriptor objects 
 	 * @return - list with filtered items
 	 */
-	List<EntryDescriptor> filterItems(List<? extends EntryDescriptor> items);
+	List<EntryDescriptor> filterItems(List<EntryDescriptor> items);
 }

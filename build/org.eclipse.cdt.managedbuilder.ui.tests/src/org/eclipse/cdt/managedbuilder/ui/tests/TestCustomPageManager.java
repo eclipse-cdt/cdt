@@ -15,13 +15,13 @@ package org.eclipse.cdt.managedbuilder.ui.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.ui.tests.util.TestToolchain;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  *   This class is responsible for testing the functionality of the custom page manager (MBSCustomPageManager)
@@ -36,9 +36,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  *   change around what options (i.e. nature, project type, toolchain) a hypothetical user would set, and then
  *   check to see if the proper pages are displayed in the proper order.
  */
-public class TestCustomPageManager extends TestCase
-{
-
+public class TestCustomPageManager extends TestCase {
 	private static final String alwaysPresentPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage";
 	private static final String natureAPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage";
 	private static final String natureBPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage";
@@ -70,7 +68,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -146,7 +144,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -233,7 +231,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -320,7 +318,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "C"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C");
 		toolchainSet.add(toolchain);
@@ -408,7 +406,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "C"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C_2.0.0");
 		toolchainSet.add(toolchain);
@@ -510,7 +508,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "D");
 
 		// set the toolchain to "Y"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -600,7 +598,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "E");
 
 		// set the toolchain to "Y"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -682,13 +680,12 @@ public class TestCustomPageManager extends TestCase
 	/**
 	 *   Set the toolchain to "F".  Only pages with no contraints or toolchains set to "F" should show up.
 	 */
-	public void testToolchainF()
-	{
+	public void testToolchainF() {
 //		 set the project type to be "X"
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "F"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("F");
 		toolchainSet.add(toolchain);
@@ -776,7 +773,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "D");
 
 		// set the toolchain to "C"
-		List toolchainSet = new ArrayList();
+		List<TestToolchain> toolchainSet = new ArrayList<TestToolchain>();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C");
 		toolchainSet.add(toolchain);

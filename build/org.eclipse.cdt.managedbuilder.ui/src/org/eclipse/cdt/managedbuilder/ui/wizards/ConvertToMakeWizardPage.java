@@ -51,7 +51,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
-
     private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
     private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
 
@@ -147,12 +146,10 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		gd.horizontalSpan = 2;
 		show_sup.setLayoutData(gd);
 		final IWizardItemsListListener filter = new IWizardItemsListListener() {
-
 			// Show only category
 			@Override
-			public List<EntryDescriptor> filterItems(
-					List<? extends EntryDescriptor> items) {
-				List<EntryDescriptor> results = new ArrayList<EntryDescriptor>();
+			public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
+				List<EntryDescriptor> results = new ArrayList<>();
 
 				for (EntryDescriptor entry : items) {
 					if (entry.isCategory()) {

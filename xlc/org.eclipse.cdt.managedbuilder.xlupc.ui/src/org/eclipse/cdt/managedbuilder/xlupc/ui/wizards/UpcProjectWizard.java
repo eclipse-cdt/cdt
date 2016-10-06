@@ -61,15 +61,13 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 	@Override
 	public void addPages()  {
 		fMainPage = new CDTMainWizardPage(PAGE_NAME) {
-
 			@Override
-			@SuppressWarnings("unchecked")
-			public List filterItems(List items)  {
+			public List<EntryDescriptor> filterItems(List<EntryDescriptor> items)  {
 				// filter out all non-UPC project types
 				if (items != null) {
-					Iterator iter = items.iterator();
+					Iterator<EntryDescriptor> iter = items.iterator();
 					while (iter.hasNext()) {
-						EntryDescriptor entryDescriptor = (EntryDescriptor) iter.next();
+						EntryDescriptor entryDescriptor = iter.next();
 						if(!ALL_TYPES.contains(entryDescriptor.getId()))
 							iter.remove();
 					}

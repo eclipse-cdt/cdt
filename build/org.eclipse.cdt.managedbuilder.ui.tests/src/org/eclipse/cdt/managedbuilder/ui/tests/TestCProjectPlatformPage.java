@@ -12,14 +12,13 @@ package org.eclipse.cdt.managedbuilder.ui.tests;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CDTProjectWizard;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
+import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.wizard.WizardPage;
@@ -27,12 +26,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import junit.framework.TestCase;
+
 /**
  * Tests for the get/setSelectedProjectType() of CProjectPlatformPage.
  * @author Elias Volanakis
  */
 public class TestCProjectPlatformPage extends TestCase implements IWizardItemsListListener {
-
 	//TODO: migrate to the new UI functionality
 	private CDTProjectWizard wizard;
 	private TestPage page;
@@ -141,7 +141,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 
 		}
 		@Override
-		public List filterItems(List items) {
+		public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
 			return items;
 		}
 	}
@@ -149,11 +149,12 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	// methods of IToolChainListListener
 	@Override
 	public boolean isCurrent() { return currentState; }
+
 	@Override
 	public void toolChainListChanged(int count) {}
 
 	@Override
-	public List filterItems(List items) {
+	public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
 		return items;
 	}
 }

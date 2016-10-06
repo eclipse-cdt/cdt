@@ -20,29 +20,25 @@ import java.util.List;
  */
 public interface IWizardItemsListListener {
 	/**
-	 * Called by ICNewWizard instance when 
-	 * user has changed tool chains selection
+	 * Called by ICNewWizard instance when user has changed tool chains selection.
 	 *  
 	 * @param count - number of selected toolchains.
 	 */
 	void toolChainListChanged(int count);
-	
+
 	/**
 	 * @return true if this page is visible 
 	 */
 	boolean isCurrent();
 
 	/**
-	 * Ability to filter items which would be shown
-	 * in the left pane of Main Wizard Page.
-	 * Standard implementation: return unchanged list.
-	 * When filtering, please note :
-	 * - Each item has {@link}EntryDescriptor type
-	 * - Items have hierarchical relations with others,
-	 *   so removing some item(s) can break a tree. 
-	 *  
+	 * Ability to filter items which would be shown in the left pane of Main Wizard Page.
+	 * Standard implementation: returns unchanged list. When filtering, please note that
+	 * the items have hierarchical relations with others, so removing some item(s) can
+	 * break a tree. 
+	 *
 	 * @param items - list of EntryDescriptor objects 
 	 * @return - list with filtered items
 	 */
-	List<EntryDescriptor> filterItems(List<? extends EntryDescriptor> items);
+	List<EntryDescriptor> filterItems(List<EntryDescriptor> items);
 }

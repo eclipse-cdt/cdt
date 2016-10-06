@@ -517,8 +517,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List filterItems(List items) {
+	public List<EntryDescriptor> filterItems(List<EntryDescriptor> items) {
 		return items;
 	}
 }

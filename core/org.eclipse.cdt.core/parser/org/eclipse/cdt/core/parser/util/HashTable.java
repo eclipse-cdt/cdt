@@ -184,9 +184,13 @@ public class HashTable implements Cloneable {
 		} else {
 			// Need to link.
 			j--;
-			int k;
-			while ((k = nextTable[j]) != 0 && k != j + 1) {
-				j = k - 1;
+			int maxIterationsLeft = nextTable.length;
+			for (int k; (k = nextTable[j]) != 0 && k != j + 1; j = k - 1) {
+				if (--maxIterationsLeft < 0) {
+					throw new IllegalStateException("i = " + i + " hash = " + hash + " j = " + j //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ "\n  nextTable = " + Arrays.toString(nextTable) //$NON-NLS-1$
+							+ "\n  hashTable = " + Arrays.toString(hashTable)); //$NON-NLS-1$
+				}
 			}
 			nextTable[j] = i + 1;
 		}

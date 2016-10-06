@@ -56,7 +56,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
@@ -581,11 +580,9 @@ public class ControlFlowGraphBuilder {
 		if (node instanceof ICfgData) {
 			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
 			if (ast instanceof IASTExpression) {
-				IValue dvalue = ValueFactory.create((IASTExpression) ast);
-				Number numericalValue = dvalue.numberValue();
-				if (numericalValue == null)
-					return false;
-				return numericalValue.longValue() == testvalue;
+				Number numericalValue = ValueFactory.getConstantNumericalValue((IASTExpression) ast);
+				if (numericalValue != null)
+					return numericalValue.longValue() == testvalue;
 			}
 		}
 		return false;

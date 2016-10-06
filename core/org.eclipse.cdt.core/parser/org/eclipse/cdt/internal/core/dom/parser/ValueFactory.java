@@ -583,4 +583,26 @@ public class ValueFactory {
 	private static boolean isDeferredValue(IValue value) {
 		return value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null;
 	}
+
+	/**
+	 * Returns the numerical value of the given expression if the expression can be evaluated
+	 * at compile time.
+	 *
+	 * @param expr the expression to evaluate
+	 * @return the numerical value of the expression, or {@code null} if the expression cannot be evaluated
+	 *     to a constant
+	 */
+	public static Number getConstantNumericalValue(IASTExpression expr) {
+		IValue val= evaluate(expr);
+		if (val != null) {
+			return val.numberValue();
+		}
+
+		if (expr instanceof ICPPEvaluationOwner) {
+			ICPPEvaluation eval = ((ICPPEvaluationOwner) expr).getEvaluation();
+			if (eval.isConstantExpression(expr) && !eval.isValueDependent())
+				return eval.getValue(expr).numberValue();
+		}
+		return null;
+	}
 }

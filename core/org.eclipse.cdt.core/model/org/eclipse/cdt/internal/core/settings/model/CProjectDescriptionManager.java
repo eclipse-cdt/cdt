@@ -267,7 +267,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			synchronized (CProjectDescriptionManager.class) {
 				if (fInstance == null) {
 					fInstance = new CProjectDescriptionManager();
-					fInstance.initProviderInfo();
 				}
 			}
 		}
@@ -342,6 +341,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		Job rcJob = new Job(SettingsModelMessages.getString("CProjectDescriptionManager.0")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				fInstance.initProviderInfo();
+
 				try {
 					startSaveParticipant();
 				} catch (CoreException e) {

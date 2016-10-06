@@ -67,10 +67,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CoreModel {
-	private static CoreModel cmodel = null;
-	private static CModelManager manager = CModelManager.getDefault();
-	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
-	private static CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+	private static CoreModel cmodel;
+	private static final CModelManager manager = CModelManager.getDefault();
+	private static final PathEntryManager pathEntryManager = PathEntryManager.getDefault();
+	private static final  CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
 
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
@@ -1461,7 +1461,11 @@ public class CoreModel {
 		descriptionManager.removeCProjectDescriptionListener(listener);
 	}
 
-	public ICProjectDescriptionManager getProjectDescriptionManager(){
-		return descriptionManager;
+	public ICProjectDescriptionManager getProjectDescriptionManager() {
+		if (descriptionManager != null)
+			return descriptionManager;
+		
+		// Initialization of the CoreModel hasn't finished yet. 
+		return CProjectDescriptionManager.getInstance();
 	}
 }

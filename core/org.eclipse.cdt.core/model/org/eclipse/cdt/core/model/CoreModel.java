@@ -67,10 +67,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CoreModel {
-	private static CoreModel cmodel = null;
-	private static CModelManager manager = CModelManager.getDefault();
-	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
-	private static CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+	private static CoreModel cmodel;
 
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
@@ -78,14 +75,14 @@ public class CoreModel {
 	 * Creates an ICElement for an IPath. Returns null if not found.
 	 */
 	public ICElement create(IPath path) {
-		return manager.create(path);
+		return CModelManager.getDefault().create(path);
 	}
 
 	/**
 	 * Creates a translation from an IPath. Returns null if not found.
 	 */
 	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, IPath path) {
-		return manager.createTranslationUnitFrom(cproject, path);
+		return CModelManager.getDefault().createTranslationUnitFrom(cproject, path);
 	}
 
 	/**
@@ -93,7 +90,7 @@ public class CoreModel {
 	 * @since 5.0
 	 */
 	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, URI locationURI) {
-		return manager.createTranslationUnitFrom(cproject, locationURI);
+		return CModelManager.getDefault().createTranslationUnitFrom(cproject, locationURI);
 	}
 
 	/**
@@ -111,21 +108,21 @@ public class CoreModel {
 			return null;
 		}
 		MementoTokenizer memento = new MementoTokenizer(handleIdentifier);
-		return manager.getCModel().getHandleFromMemento(memento);
+		return CModelManager.getDefault().getCModel().getHandleFromMemento(memento);
 	}
 
 	/**
 	 * Creates an ICElement for an IFile. Returns null if not found.
 	 */
 	public ICElement create(IFile file) {
-		return manager.create(file, null);
+		return CModelManager.getDefault().create(file, null);
 	}
 
 	/**
 	 * Creates an ICElement for an IFolder. Returns null if not found.
 	 */
 	public ICContainer create(IFolder folder) {
-		return manager.create(folder, null);
+		return CModelManager.getDefault().create(folder, null);
 	}
 
 	/**
@@ -135,7 +132,7 @@ public class CoreModel {
 		if (project == null) {
 			return null;
 		}
-		CModel cModel = manager.getCModel();
+		CModel cModel = CModelManager.getDefault().getCModel();
 		return cModel.getCProject(project);
 	}
 
@@ -143,7 +140,7 @@ public class CoreModel {
 	 * Creates an ICElement for an IResource. Returns null if not found.
 	 */
 	public ICElement create(IResource resource) {
-		return manager.create(resource, null);
+		return CModelManager.getDefault().create(resource, null);
 	}
 
 	/**
@@ -156,14 +153,14 @@ public class CoreModel {
 		if (root == null) {
 			return null;
 		}
-		return manager.getCModel();
+		return CModelManager.getDefault().getCModel();
 	}
 
 	/**
 	 * Returns the default ICModel.
 	 */
 	public ICModel getCModel() {
-		return manager.getCModel();
+		return CModelManager.getDefault().getCModel();
 	}
 
 	/**
@@ -842,7 +839,7 @@ public class CoreModel {
 	 * @see #setPathEntryContainer(ICProject[], IPathEntryContainer, IProgressMonitor)
 	 */
 	public static IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project) throws CModelException {
-		return pathEntryManager.getPathEntryContainer(containerPath, project);
+		return PathEntryManager.getDefault().getPathEntryContainer(containerPath, project);
 	}
 
 	/**
@@ -879,7 +876,7 @@ public class CoreModel {
 	 */
 	public static void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container, IProgressMonitor monitor)
 			throws CModelException {
-		pathEntryManager.setPathEntryContainer(affectedProjects, container, monitor);
+		PathEntryManager.getDefault().setPathEntryContainer(affectedProjects, container, monitor);
 	}
 
 	/**
@@ -893,7 +890,7 @@ public class CoreModel {
 	 * @param monitor progress monitor
 	 */
 	public static void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
-		pathEntryManager.pathEntryContainerUpdates(container, changes, monitor);
+		PathEntryManager.getDefault().pathEntryContainerUpdates(container, changes, monitor);
 	}
 
 	/**
@@ -912,7 +909,7 @@ public class CoreModel {
 	 *                if the entries could not be set. Reasons include:
 	 */
 	public static void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
-		pathEntryManager.setRawPathEntries(cproject, newEntries, monitor);
+		PathEntryManager.getDefault().setRawPathEntries(cproject, newEntries, monitor);
 	}
 
 	/**
@@ -927,7 +924,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
-		return pathEntryManager.getRawPathEntries(cproject);
+		return PathEntryManager.getDefault().getRawPathEntries(cproject);
 	}
 
 	/**
@@ -945,7 +942,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		return pathEntryManager.getResolvedPathEntries(cproject);
+		return PathEntryManager.getDefault().getResolvedPathEntries(cproject);
 	}
 
 	/**
@@ -962,7 +959,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IIncludeEntry[] getIncludeEntries(IPath path) throws CModelException {
-		return pathEntryManager.getIncludeEntries(path);
+		return PathEntryManager.getDefault().getIncludeEntries(path);
 	}
 
 	/**
@@ -979,7 +976,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IIncludeFileEntry[] getIncludeFileEntries(IPath path) throws CModelException {
-		return pathEntryManager.getIncludeFileEntries(path);
+		return PathEntryManager.getDefault().getIncludeFileEntries(path);
 	}
 
 	/**
@@ -996,7 +993,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IMacroEntry[] getMacroEntries(IPath path) throws CModelException {
-		return pathEntryManager.getMacroEntries(path);
+		return PathEntryManager.getDefault().getMacroEntries(path);
 	}
 
 	/**
@@ -1013,7 +1010,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public static IMacroFileEntry[] getMacroFileEntries(IPath path) throws CModelException {
-		return pathEntryManager.getMacroFileEntries(path);
+		return PathEntryManager.getDefault().getMacroFileEntries(path);
 	}
 
 	/**
@@ -1032,7 +1029,7 @@ public class CoreModel {
 	 *         container initializer or {@code null} if none was found.
 	 */
 	public static PathEntryContainerInitializer getPathEntryContainerInitializer(String containerID) {
-		return pathEntryManager.getPathEntryContainerInitializer(containerID);
+		return PathEntryManager.getDefault().getPathEntryContainerInitializer(containerID);
 	}
 
 	/**
@@ -1040,7 +1037,7 @@ public class CoreModel {
 	 * @throws CoreException
 	 */
 	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
-		return pathEntryManager.getPathEntryStore(project, true);
+		return PathEntryManager.getDefault().getPathEntryStore(project, true);
 	}
 
 	/**
@@ -1050,7 +1047,7 @@ public class CoreModel {
 	 * @param store
 	 */
 	public static void setPathEntryStore(IProject project, IPathEntryStore store) {
-		pathEntryManager.setPathEntryStore(project, store);
+		PathEntryManager.getDefault().setPathEntryStore(project, store);
 	}
 
 	/**
@@ -1092,7 +1089,7 @@ public class CoreModel {
 	 *		object indicating what is wrong with them
 	 */
 	public static ICModelStatus validatePathEntries(ICProject cProject, IPathEntry[] entries) {
-		return pathEntryManager.validatePathEntry(cProject, entries);
+		return PathEntryManager.getDefault().validatePathEntry(cProject, entries);
 	}
 
 	/**
@@ -1109,7 +1106,7 @@ public class CoreModel {
 	 *     with code {@code IStatus.OK} if the entry is fine
 	 */
 	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment, boolean recurseInContainers){
-		return pathEntryManager.validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
+		return PathEntryManager.getDefault().validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
 	}
 
 	/**
@@ -1123,7 +1120,7 @@ public class CoreModel {
 	}
 
 	public void addElementChangedListener(IElementChangedListener listener) {
-		manager.addElementChangedListener(listener);
+		CModelManager.getDefault().addElementChangedListener(listener);
 	}
 
 	/**
@@ -1134,18 +1131,18 @@ public class CoreModel {
 	 *            the listener
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
-		manager.removeElementChangedListener(listener);
+		CModelManager.getDefault().removeElementChangedListener(listener);
 	}
 
 	/**
 	 * @see Plugin#startup
 	 */
 	public void startup() {
-		manager.startup();
+		CModelManager.getDefault().startup();
 	}
 
 	public void shutdown() {
-		manager.shutdown();
+		CModelManager.getDefault().shutdown();
 	}
 
 	private CoreModel() {
@@ -1333,7 +1330,7 @@ public class CoreModel {
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
 	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException{
-		return descriptionManager.createProjectDescription(project, loadIfExists);
+		return CProjectDescriptionManager.getInstance().createProjectDescription(project, loadIfExists);
 	}
 
 	/**
@@ -1352,7 +1349,7 @@ public class CoreModel {
 	 * @throws CoreException
 	 */
 	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException{
-		return descriptionManager.createProjectDescription(project, loadIfExists, creating);
+		return CProjectDescriptionManager.getInstance().createProjectDescription(project, loadIfExists, creating);
 	}
 
 	/**
@@ -1370,7 +1367,7 @@ public class CoreModel {
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
 	public ICProjectDescription getProjectDescription(IProject project){
-		return descriptionManager.getProjectDescription(project);
+		return CProjectDescriptionManager.getInstance().getProjectDescription(project);
 	}
 
 	/**
@@ -1386,11 +1383,11 @@ public class CoreModel {
 	 * @see #createProjectDescription(IProject, boolean)
 	 */
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
-		descriptionManager.setProjectDescription(project, des);
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, des);
 	}
 
 	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
-		descriptionManager.setProjectDescription(project, des, force, monitor);
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, des, force, monitor);
 	}
 
 	/**
@@ -1421,7 +1418,7 @@ public class CoreModel {
 	 * CDT data associated with it.
 	 */
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
-		return descriptionManager.getProjectDescription(project, write);
+		return CProjectDescriptionManager.getInstance().getProjectDescription(project, write);
 	}
 
 	/**
@@ -1434,7 +1431,7 @@ public class CoreModel {
 	 * @throws CoreException
 	 */
 	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException{
-		descriptionManager.updateProjectDescriptions(projects, monitor);
+		CProjectDescriptionManager.getInstance().updateProjectDescriptions(projects, monitor);
 	}
 
 	/**
@@ -1442,7 +1439,7 @@ public class CoreModel {
 	 * i.e. CConfigurationDataProvider-driven.
 	 */
 	public boolean isNewStyleProject(IProject project){
-		return descriptionManager.isNewStyleProject(project);
+		return CProjectDescriptionManager.getInstance().isNewStyleProject(project);
 	}
 
 	/**
@@ -1450,18 +1447,18 @@ public class CoreModel {
 	 * i.e. CConfigurationDataProvider-driven
 	 */
 	public boolean isNewStyleProject(ICProjectDescription des){
-		return descriptionManager.isNewStyleProject(des);
+		return CProjectDescriptionManager.getInstance().isNewStyleProject(des);
 	}
 
 	public void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes){
-		descriptionManager.addCProjectDescriptionListener(listener, eventTypes);
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(listener, eventTypes);
 	}
 
 	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener){
-		descriptionManager.removeCProjectDescriptionListener(listener);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(listener);
 	}
 
 	public ICProjectDescriptionManager getProjectDescriptionManager(){
-		return descriptionManager;
+		return CProjectDescriptionManager.getInstance();
 	}
 }

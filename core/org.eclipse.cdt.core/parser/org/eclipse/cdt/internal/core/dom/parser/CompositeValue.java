@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeValue implements IValue {
+public final class CompositeValue implements IValue {
+	private final ICPPEvaluation evaluation;
 	private final ICPPEvaluation[] values;
-	private ICPPEvaluation evaluation;
 
 	public CompositeValue(ICPPEvaluation evaluation, ICPPEvaluation[] values) {
 		this.evaluation = evaluation;

@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.core.runtime.CoreException;
 
-public class CStringValue implements IValue {
+public final class CStringValue implements IValue {
 	private static final Map<Character, Character> escapeSequences;
 	static {
 		Map<Character, Character> map = new HashMap<Character, Character>();

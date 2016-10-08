@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.core.runtime.CoreException;
 
-public class FloatingPointValue implements IValue {
+public final class FloatingPointValue implements IValue {
 	private final char[] fFixedValue;
 
 	private FloatingPointValue(char[] fixedValue) {

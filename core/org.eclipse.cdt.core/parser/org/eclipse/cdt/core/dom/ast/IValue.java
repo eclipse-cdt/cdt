@@ -60,7 +60,7 @@ public interface IValue {
 	
 	/**
 	 * Returns the evaluation object if this value cannot be represented as a single numerical value, or
-	 * {@code null} otherwise. This cam happen if the value is dependent, or it's a composite value.
+	 * {@code null} otherwise. This can happen if the value is dependent, or it's a composite value.
 	 * If {@link #numberValue()} returns {@code null}, {@link #getEvaluation()} returns
 	 * not {@code null} and vice versa.
 	 * @noreference This method is not intended to be referenced by clients. 

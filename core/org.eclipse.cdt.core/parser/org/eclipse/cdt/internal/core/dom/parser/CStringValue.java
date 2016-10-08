@@ -186,7 +186,7 @@ public final class CStringValue implements IValue {
 			IValue val = IntegralValue.create(c);
 			return new EvalFixed(CPPBasicType.CHAR, ValueCategory.PRVALUE, val);
 		}
-		return null;
+		return EvalFixed.INCOMPLETE;
 	}
 
 	@Override

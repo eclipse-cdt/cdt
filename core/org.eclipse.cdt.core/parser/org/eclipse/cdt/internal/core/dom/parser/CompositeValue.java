@@ -81,18 +81,18 @@ public final class CompositeValue implements IValue {
 
 	@Override
 	public ICPPEvaluation getSubValue(final int index) {
-		return rangeIsValid(index) ? values[index] : EvalFixed.INCOMPLETE;
+		return rangeIsValid(index) && values[index] != null ? values[index] : EvalFixed.INCOMPLETE;
 	}
 
-	private boolean rangeIsValid(final int index) {
-		return numberOfSubValues() > index && index >= 0;
+	private boolean rangeIsValid(int index) {
+		return 0 <= index && index < values.length;
 	}
 
 	public static IValue create(EvalInitList initList) {
 		ICPPEvaluation[] values = new ICPPEvaluation[initList.getClauses().length];
 		for (int i = 0; i < initList.getClauses().length; i++) {
 			ICPPEvaluation eval = initList.getClauses()[i];
-			values[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null),	eval.getValue(null));
+			values[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), eval.getValue(null));
 		}
 		return new CompositeValue(initList, values);
 	}
@@ -175,7 +175,7 @@ public final class CompositeValue implements IValue {
 			ActivationRecord record = new ActivationRecord();
 			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, null).length];
 
-			// recursively create all the base class member variables
+			// Recursively create all the base class member variables.
 			ICPPBase[] bases = ClassTypeHelper.getBases(classType, null);
 			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();

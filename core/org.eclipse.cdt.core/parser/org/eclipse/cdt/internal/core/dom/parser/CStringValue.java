@@ -251,4 +251,12 @@ public final class CStringValue implements IValue {
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
 		return new CStringValue(buf.getCharArray());
 	}
+
+	/**
+	 * For debugging only.
+	 */
+	@Override
+	public String toString() {
+		return new String(fFixedValue);
+	}
 }

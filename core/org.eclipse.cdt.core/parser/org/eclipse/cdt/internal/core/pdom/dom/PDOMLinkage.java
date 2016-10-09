@@ -92,17 +92,17 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		db.putRecPtr(record + ID_OFFSET, db.newString(linkageID).getRecord());
 		pdom.insertLinkage(this);
 	}
-	
+
 	@Override
 	public final PDOM getPDOM() {
 		return fPDOM;
 	}
-	
+
 	@Override
 	public final PDOMLinkage getLinkage() {
 		return this;
 	}
-	
+
 	@Override
 	public final Database getDB()  {
 		return fDatabase;
@@ -172,7 +172,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
-	
+
 	public final PDOMBinding getBinding(long record) throws CoreException {
 		final PDOMNode node= PDOMNode.load(fPDOM, record);
 		if (node instanceof PDOMBinding)
@@ -202,11 +202,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return false;
 	}
-	
+
 	protected final PDOMBinding attemptFastAdaptBinding(final IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding= binding.getAdapter(PDOMBinding.class);
 		// There is no guarantee, that the binding is from the same PDOM object.
-		if (pdomBinding != null && pdomBinding.getPDOM() == getPDOM()) {
+		if (pdomBinding != null && pdomBinding.getPDOM() == fPDOM) {
 			return pdomBinding;
 		}
 		return (PDOMBinding) fPDOM.getCachedResult(binding);
@@ -215,7 +215,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public final PDOMBinding adaptBinding(IBinding binding) throws CoreException {
 		return adaptBinding(binding, true);
 	}
-	
+
 	public abstract PDOMBinding adaptBinding(IBinding binding, boolean includeLocal) throws CoreException;
 
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
@@ -286,7 +286,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @param file the file that has triggered the creation of the name
 	 * @param name the name that caused the insertion
 	 * @param pdomName the name that was inserted into the linkage
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 4.0
 	 */
 	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
@@ -305,7 +305,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * Callback informing the linkage that a name is about to be deleted. This is
 	 * used to do additional processing, like removing inheritance relationships.
 	 * @param name the name that is about to be deleted
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 4.0
 	 */
 	public void onDeleteName(PDOMName name) throws CoreException {
@@ -338,7 +338,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
 		return ICPPUsingDirective.EMPTY_ARRAY;
 	}
-	
+
 	public BTree getMacroIndex() {
 		if (fMacroIndex == null) {
 			fMacroIndex= new BTree(getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(fDatabase));
@@ -356,7 +356,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return ((PDOMMacroContainer) result);
 		}
 		assert result==null;
-		
+
 		MacroContainerFinder visitor = new MacroContainerFinder(this, name);
 		getMacroIndex().accept(visitor);
 		PDOMMacroContainer container= visitor.getMacroContainer();
@@ -393,7 +393,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	/**
 	 * Returns the list of global bindings for the given name.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public PDOMBinding[] getBindingsViaCache(char[] name, IProgressMonitor monitor) throws CoreException {
 		CharArrayMap<PDOMBinding[]> map = getBindingMap();
@@ -402,7 +402,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (result != null)
 				return result;
 		}
-		
+
 		BindingCollector visitor = new BindingCollector(this, name, null, false, false, true);
 		visitor.setMonitor(monitor);
 		getIndex().accept(visitor);
@@ -412,7 +412,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return result;
 	}
-	
+
 	private CharArrayMap<PDOMBinding[]> getBindingMap() {
 		final Long key= getRecord();
 		final PDOM pdom = getPDOM();
@@ -508,7 +508,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				chunkPtr += Database.PTR_SIZE;
 				chunkLength -= Database.PTR_SIZE;
 			}
-			chunkLength -= pos; 
+			chunkLength -= pos;
 			db.getBytes(chunkPtr, data, bufferPos, chunkLength);
 			bufferPos += chunkLength;
 			pos = 0;
@@ -528,7 +528,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				b = db.getByte(ptr++);
 				len |= (b & 0x7F) << shift;
 			}
-			
+
 			len += ptr - chunkPtr;
 			while (len > 0) {
 				int chunkLength = len;
@@ -555,7 +555,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		byte[] data= null;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			data = loadLinkedSerializedData(db, offset + 1);			
+			data = loadLinkedSerializedData(db, offset + 1);
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 			return TypeMarshalBuffer.UNSTORABLE_TYPE_PROBLEM;
@@ -593,7 +593,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		byte[] data= null;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			data = loadLinkedSerializedData(db, offset + 1);			
+			data = loadLinkedSerializedData(db, offset + 1);
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
@@ -631,7 +631,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		byte[] data= null;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			data = loadLinkedSerializedData(db, offset + 1);			
+			data = loadLinkedSerializedData(db, offset + 1);
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 		case TypeMarshalBuffer.NULL_TYPE:
@@ -649,7 +649,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		deleteValue(db, offset);
 		storeValue(db, offset, value);
 	}
-	
+
 	private void storeValue(Database db, long offset, IValue value) throws CoreException {
 		if (value != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
@@ -674,7 +674,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		deleteEvaluation(db, offset);
 		storeEvaluation(db, offset, eval);
 	}
-	
+
 	private void storeEvaluation(Database db, long offset, ISerializableEvaluation eval) throws CoreException {
 		if (eval != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
@@ -693,13 +693,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return null;
 		return buffer.unmarshalEvaluation();
 	}
-	
+
 	public void storeExecution(long offset, ISerializableExecution exec) throws CoreException {
 		final Database db = getDB();
 		deleteExecution(db, offset);
 		storeExecution(db, offset, exec);
 	}
-	
+
 	private void storeExecution(Database db, long offset, ISerializableExecution exec) throws CoreException {
 		if (exec != null) {
 			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
@@ -707,11 +707,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			storeBuffer(db, offset, bc, Database.EXECUTION_SIZE);
 		}
 	}
-	
+
 	private void deleteExecution(Database db, long offset) throws CoreException {
 		deleteSerializedData(db, offset, Database.EXECUTION_SIZE);
 	}
-	
+
 	public ISerializableExecution loadExecution(long offset) throws CoreException {
 		TypeMarshalBuffer buffer = loadBuffer(offset, Database.EXECUTION_SIZE);
 		if (buffer == null)
@@ -725,7 +725,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		byte[] data;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			data = loadLinkedSerializedData(db, offset + 1);			
+			data = loadLinkedSerializedData(db, offset + 1);
 			break;
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;

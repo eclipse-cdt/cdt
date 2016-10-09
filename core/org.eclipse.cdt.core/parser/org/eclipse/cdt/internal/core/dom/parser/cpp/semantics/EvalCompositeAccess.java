@@ -32,9 +32,9 @@ import org.eclipse.core.runtime.CoreException;
  * Represents an access to a sub-value of a composite value, identified by an index.
  * Composite values can include arrays, structures, and parameter packs (see {@code CompositeValue}).
  */
-public class EvalCompositeAccess implements ICPPEvaluation {
-	private final ICPPEvaluation parent;  // the composite value being accessed
-	private final int elementId;          // the index of the sub-value being accessed
+public final class EvalCompositeAccess implements ICPPEvaluation {
+	private final ICPPEvaluation parent;  // The composite value being accessed
+	private final int elementId;          // The index of the sub-value being accessed
 
 	public EvalCompositeAccess(ICPPEvaluation parent, int elementId) {
 		this.parent = parent;
@@ -42,7 +42,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	public void update(ICPPEvaluation newValue) {
-		parent.getValue(null).setSubValue(getElementId(), newValue);
+		parent.getValue(null).setSubValue(elementId, newValue);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	private ICPPEvaluation getTargetEvaluation() {
-		return getParent().getValue(null).getSubValue(getElementId());
+		return parent.getValue(null).getSubValue(elementId);
 	}
 
 	@Override
@@ -84,13 +84,13 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 			return arrayType.getType();
 		} else if (type instanceof InitializerListType) {
 			InitializerListType initListType = (InitializerListType) type;
-			return initListType.getEvaluation().getClauses()[getElementId()].getType(point);
+			return initListType.getEvaluation().getClauses()[elementId].getType(point);
 		} else if (type instanceof ICompositeType) {
 			ICompositeType compositeType = (ICompositeType) type;
-			return compositeType.getFields()[getElementId()].getType();
+			return compositeType.getFields()[elementId].getType();
 		} else if (type instanceof ParameterPackType) {
 			ParameterPackType parameterPackType = (ParameterPackType) type;
-			return parameterPackType.getTypes()[getElementId()];
+			return parameterPackType.getTypes()[elementId];
 		} else if (type instanceof ICPPBasicType) {
 			return type;
 		}
@@ -99,7 +99,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return getTargetEvaluation().getValue(null);
+		return getTargetEvaluation().getValue(point);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class EvalCompositeAccess implements ICPPEvaluation {
 			return getTargetEvaluation().computeForFunctionCall(record, context);
 		} else {
 			ICPPEvaluation evaluatedComposite = parent.computeForFunctionCall(record, context);
-			return evaluatedComposite.getValue(context.getPoint()).getSubValue(getElementId()).computeForFunctionCall(record, context);
+			return evaluatedComposite.getValue(context.getPoint()).getSubValue(elementId).computeForFunctionCall(record, context);
 		}
 	}
 

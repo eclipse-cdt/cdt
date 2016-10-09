@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalPointer extends EvalReference {
+public final class EvalPointer extends EvalReference {
 	// The position will only be nonzero if the EvalReference has a referredSubValue,
 	// not a referredBinding.
 	private int position;

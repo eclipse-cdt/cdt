@@ -50,27 +50,27 @@ public class EvalReference extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isInitializerList() {
+	public final boolean isInitializerList() {
 		return getTargetEvaluation().isInitializerList();
 	}
 
 	@Override
-	public boolean isFunctionSet() {
+	public final boolean isFunctionSet() {
 		return getTargetEvaluation().isFunctionSet();
 	}
 
 	@Override
-	public boolean isTypeDependent() {
+	public final boolean isTypeDependent() {
 		return getTargetEvaluation().isTypeDependent();
 	}
 
 	@Override
-	public boolean isValueDependent() {
+	public final boolean isValueDependent() {
 		return getTargetEvaluation().isValueDependent();
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public final boolean isConstantExpression(IASTNode point) {
 		return getTargetEvaluation().isConstantExpression(point);
 	}
 
@@ -81,10 +81,10 @@ public class EvalReference extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return getTargetEvaluation().getValue(null);
+		return getTargetEvaluation().getValue(point);
 	}
 
-	public ICPPEvaluation getTargetEvaluation() {
+	public final ICPPEvaluation getTargetEvaluation() {
 		if (referredSubValue != null) {
 			return referredSubValue;
 		}
@@ -104,7 +104,7 @@ public class EvalReference extends CPPDependentEvaluation {
 		}
 	}
 
-	public IBinding getReferredBinding() {
+	public final IBinding getReferredBinding() {
 		return referredBinding;
 	}
 

@@ -83,17 +83,17 @@ public class IntegralValue implements IValue {
 	}
 
 	@Override
-	public Number numberValue() {
+	public final Number numberValue() {
 		return fFixedValue == null ? null : parseLong(fFixedValue);
 	}
 
 	@Override
-	public ICPPEvaluation getEvaluation() {
+	public final ICPPEvaluation getEvaluation() {
 		return fEvaluation;
 	}
 
 	@Override
-	public char[] getSignature() {
+	public final char[] getSignature() {
 		if (fSignature == null) {
 			fSignature = fFixedValue != null ? fFixedValue : fEvaluation.getSignature();
 		}
@@ -315,35 +315,35 @@ public class IntegralValue implements IValue {
 	}
 
 	@Override
-	public int numberOfSubValues() {
+	public final int numberOfSubValues() {
 		return 1;
 	}
 
 	@Override
-	public ICPPEvaluation getSubValue(int index) {
-		return index == 0 ? (fEvaluation != null ? fEvaluation : EvalFixed.INCOMPLETE) : EvalFixed.INCOMPLETE;
+	public final ICPPEvaluation getSubValue(int index) {
+		return index == 0 && fEvaluation != null ? fEvaluation : EvalFixed.INCOMPLETE;
 	}
 
 	@Override
-	public ICPPEvaluation[] getAllSubValues() {
+	public final ICPPEvaluation[] getAllSubValues() {
 		return new ICPPEvaluation[] { getEvaluation() };
 	}
 
 	@Override
 	public void setSubValue(int position, ICPPEvaluation newValue) {
 		if (fEvaluation == null) {
-			throw new RuntimeException("trying to set incomplete value"); //$NON-NLS-1$
+			throw new IllegalStateException("Trying to set incomplete value"); //$NON-NLS-1$
 		}
 		if (position == 0) {
 			fEvaluation = newValue;
 		} else {
-			throw new RuntimeException("invalid offset in POD value: " + position); //$NON-NLS-1$
+			throw new IllegalArgumentException("Invalid offset in POD value: " + position); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public IValue clone() {
-		char[] newFixedValue = fFixedValue != null ? Arrays.copyOf(fFixedValue, fFixedValue.length) : null;
+		char[] newFixedValue = fFixedValue == null ? null : Arrays.copyOf(fFixedValue, fFixedValue.length);
 		return new IntegralValue(newFixedValue, fEvaluation);
 	}
 }

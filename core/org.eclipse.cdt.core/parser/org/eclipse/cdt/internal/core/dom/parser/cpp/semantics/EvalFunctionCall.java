@@ -18,6 +18,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -46,9 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-import java.util.Arrays;
-
-public class EvalFunctionCall extends CPPDependentEvaluation {
+public final class EvalFunctionCall extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction fOverload = CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
@@ -156,8 +156,7 @@ public class EvalFunctionCall extends CPPDependentEvaluation {
 		if (eval == this) {
 			return IntegralValue.create(eval);
 		}
-		IValue value = eval.getValue(point);
-		return value;
+		return eval.getValue(point);
 	}
 
 	@Override

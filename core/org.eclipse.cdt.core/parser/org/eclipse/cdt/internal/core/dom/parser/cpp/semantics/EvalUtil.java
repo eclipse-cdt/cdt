@@ -57,22 +57,23 @@ public class EvalUtil {
 		return null;
 	}
 
-	// a return value != null means that there was a return, break or continue in that statement
+	// A return value != null means that there was a return, break or continue in that statement.
 	public static ICPPExecution executeStatement(ICPPExecution exec, ActivationRecord record, ConstexprEvaluationContext context) {
 		if (exec instanceof ExecExpressionStatement
-			|| exec instanceof ExecDeclarationStatement
-			|| exec instanceof ExecCase
-			|| exec instanceof ExecDefault) {
+				|| exec instanceof ExecDeclarationStatement
+				|| exec instanceof ExecCase
+				|| exec instanceof ExecDefault) {
 			exec.executeForFunctionCall(record, context.recordStep());
 			return null;
-		} else if (exec instanceof ExecCompoundStatement
-			|| exec instanceof ExecWhile
-			|| exec instanceof ExecFor
-			|| exec instanceof ExecRangeBasedFor
-			|| exec instanceof ExecDo
-			|| exec instanceof ExecIf
-			|| exec instanceof ExecSwitch) {
+		}
 
+		if (exec instanceof ExecCompoundStatement
+				|| exec instanceof ExecWhile
+				|| exec instanceof ExecFor
+				|| exec instanceof ExecRangeBasedFor
+				|| exec instanceof ExecDo
+				|| exec instanceof ExecIf
+				|| exec instanceof ExecSwitch) {
 			ICPPExecution innerResult = exec.executeForFunctionCall(record, context.recordStep());
 			if (innerResult instanceof ExecReturn || innerResult instanceof ExecBreak || innerResult instanceof ExecContinue) {
 				return innerResult;
@@ -80,16 +81,16 @@ public class EvalUtil {
 				return ExecIncomplete.INSTANCE;
 			}
 			return null;
-		} else {
-			return exec;
 		}
+
+		return exec;
 	}
 
 	private static boolean isUpdateable(ICPPEvaluation eval) {
 		return eval instanceof EvalBinding || (eval instanceof EvalReference && !(eval instanceof EvalPointer)) || eval instanceof EvalCompositeAccess;
 	}
 
-	/*
+	/**
 	 * Returns a pair of evaluations, each representing the value of 'eval'.
 	 * The first, "updateable", is an lvalue (EvalBinding, EvalReference, or EvalCompositeAccess).
 	 * The second, "fixed", is a value (usually EvalFixed or EvalPointer).
@@ -132,7 +133,7 @@ public class EvalUtil {
 	}
 
 	/**
-	 * Get the initial value of the given variable, evaluated in the context of
+	 * Returns the initial value of the given variable, evaluated in the context of
 	 * the given activation record.
 	 */
 	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record) {

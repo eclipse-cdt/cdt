@@ -13,7 +13,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -49,19 +48,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalConstructor extends CPPDependentEvaluation {
-	private final IType type;
-	private final ICPPConstructor constructor;
-	private final ICPPEvaluation[] arguments;
-	private boolean checkedIsTypeDependent;
-	private boolean isTypeDependent;
-	static private final IASTName tempName = ASTNodeFactoryFactory.getDefaultCPPNodeFactory().newName();
+public final class EvalConstructor extends CPPDependentEvaluation {
+	private final IType fType;
+	private final ICPPConstructor fConstructor;
+	private final ICPPEvaluation[] fArguments;
+	private boolean fCheckedIsTypeDependent;
+	private boolean fIsTypeDependent;
+	private static final IASTName TEMP_NAME = ASTNodeFactoryFactory.getDefaultCPPNodeFactory().newName();
 
 	public EvalConstructor(IType type, ICPPConstructor constructor, ICPPEvaluation[] arguments, IBinding templateDefinition) {
 		super(templateDefinition);
-		this.type = type;
-		this.constructor = constructor;
-		this.arguments = arguments != null ? arguments : new ICPPEvaluation[0];
+		fType = type;
+		fConstructor = constructor;
+		fArguments = arguments != null ? arguments : ICPPEvaluation.EMPTY_ARRAY;
 	}
 
 	public EvalConstructor(IType type, ICPPConstructor constructor, ICPPEvaluation[] arguments, IASTNode pointOfDefinition) {
@@ -80,18 +79,18 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		if (!checkedIsTypeDependent) {
-			checkedIsTypeDependent = true;
-			isTypeDependent = CPPTemplates.isDependentType(type) || containsDependentType(arguments);
+		if (!fCheckedIsTypeDependent) {
+			fCheckedIsTypeDependent = true;
+			fIsTypeDependent = CPPTemplates.isDependentType(fType) || containsDependentType(fArguments);
 		}
-		return isTypeDependent;
+		return fIsTypeDependent;
 	}
 
 	@Override
 	public boolean isValueDependent() {
-		if (CPPTemplates.isDependentType(type))
+		if (CPPTemplates.isDependentType(fType))
 			return true;
-		for (ICPPEvaluation arg : arguments) {
+		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isValueDependent())
 				return true;
 		}
@@ -105,7 +104,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public IType getType(IASTNode point) {
-		return type;
+		return fType;
 	}
 
 	@Override
@@ -123,34 +122,33 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord callSiteRecord, ConstexprEvaluationContext context) {
-		final ICPPClassType classType = (ICPPClassType)SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+		final ICPPClassType classType = (ICPPClassType)SemanticUtil.getNestedType(fType, TDEF | REF | CVTYPE);
 		final CompositeValue compositeValue = CompositeValue.create(classType);
-		ICPPEvaluation[] argList = evaluateArguments(arguments, callSiteRecord, context);
-		EvalFixed constructedObject = new EvalFixed(type, ValueCategory.PRVALUE, compositeValue);
-		CPPVariable binding = new CPPVariable(tempName);
+		ICPPEvaluation[] argList = evaluateArguments(fArguments, callSiteRecord, context);
+		EvalFixed constructedObject = new EvalFixed(fType, ValueCategory.PRVALUE, compositeValue);
+		CPPVariable binding = new CPPVariable(TEMP_NAME);
 
 		ActivationRecord localRecord = EvalFunctionCall.createActivationRecord(
-				this.constructor.getParameters(), argList, constructedObject, context.getPoint());
+				fConstructor.getParameters(), argList, constructedObject, context.getPoint());
 		localRecord.update(binding, constructedObject);
 
-		ICPPExecution exec = constructor.getConstructorChainExecution(context.getPoint());
+		ICPPExecution exec = fConstructor.getConstructorChainExecution(context.getPoint());
 		if (exec instanceof ExecConstructorChain) {
 			ExecConstructorChain memberInitList = (ExecConstructorChain) exec;
 			Map<IBinding, ICPPEvaluation> ccInitializers = memberInitList.getConstructorChainInitializers();
-			for (Entry<IBinding, ICPPEvaluation> ccInitializer : ccInitializers.entrySet()) {
+			for (Map.Entry<IBinding, ICPPEvaluation> ccInitializer : ccInitializers.entrySet()) {
 				if (ccInitializer.getKey() instanceof ICPPConstructor) {
 					ICPPClassType baseClassType = (ICPPClassType) ccInitializer.getKey().getOwner();
 					final ICPPEvaluation memberEval = ccInitializer.getValue();
 					ICPPEvaluation memberValue =  memberEval.computeForFunctionCall(localRecord, context.recordStep());
 					ICPPEvaluation[] baseClassValues = memberValue.getValue(context.getPoint()).getAllSubValues();
 
-					ICPPField[] baseFields = (ICPPField[])ClassTypeHelper.getFields(baseClassType, context.getPoint());
+					ICPPField[] baseFields = (ICPPField[]) ClassTypeHelper.getFields(baseClassType, context.getPoint());
 					for (ICPPField baseField : baseFields) {
 						// TODO: This has the same problem with multiple inheritance as
 						//       CompositeValue.create(ICPPClassType).
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
-						constructedObject.getValue(context.getPoint()).setSubValue(fieldPos,
-								baseClassValues[fieldPos]);
+						constructedObject.getValue(context.getPoint()).setSubValue(fieldPos, baseClassValues[fieldPos]);
 					}
 				}
 			}
@@ -159,7 +157,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, context.getPoint());
 		for (ICPPField field : fields) {
-			final Entry<IBinding, ICPPEvaluation> ccInitializer = getInitializerFromMemberInitializerList(field, exec);
+			final Map.Entry<IBinding, ICPPEvaluation> ccInitializer = getInitializerFromMemberInitializerList(field, exec);
 
 			ICPPEvaluation value = null;
 			if (ccInitializer != null) {
@@ -178,17 +176,16 @@ public class EvalConstructor extends CPPDependentEvaluation {
 		// Are these necessary?
 		new EvalFunctionCall(argList, constructedObject, context.getPoint()).computeForFunctionCall(
 				localRecord, context.recordStep());
-		ICPPEvaluation resultingObject = localRecord.getVariable(binding);
-		return resultingObject;
+		return localRecord.getVariable(binding);
 	}
 
-	private Entry<IBinding, ICPPEvaluation> getInitializerFromMemberInitializerList(ICPPField field, ICPPExecution exec) {
+	private Map.Entry<IBinding, ICPPEvaluation> getInitializerFromMemberInitializerList(ICPPField field, ICPPExecution exec) {
 		if (!(exec instanceof ExecConstructorChain)) {
 			return null;
 		}
 
 		final ExecConstructorChain memberInitList = (ExecConstructorChain) exec;
-		for (Entry<IBinding, ICPPEvaluation> ccInitializer : memberInitList.getConstructorChainInitializers().entrySet()) {
+		for (Map.Entry<IBinding, ICPPEvaluation> ccInitializer : memberInitList.getConstructorChainInitializers().entrySet()) {
 			final IBinding member = ccInitializer.getKey();
 			if (member instanceof ICPPField && member.getName().equals(field.getName())) {
 				return ccInitializer;
@@ -197,7 +194,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 		return null;
 	}
 
-	private ExecDeclarator getDeclaratorExecutionFromMemberInitializerList(Entry<IBinding, ICPPEvaluation> ccInitializer) {
+	private ExecDeclarator getDeclaratorExecutionFromMemberInitializerList(Map.Entry<IBinding, ICPPEvaluation> ccInitializer) {
 		final ICPPBinding member = (ICPPBinding) ccInitializer.getKey();
 		final ICPPEvaluation memberEval = ccInitializer.getValue();
 		return new ExecDeclarator(member, memberEval);
@@ -226,7 +223,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	public static ICPPEvaluation[] extractArguments(IASTInitializer initializer) {
 		if (initializer == null) {
-			return new ICPPEvaluation[0];
+			return ICPPEvaluation.EMPTY_ARRAY;
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
 			ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
 			return evaluateArguments(ctorInitializer.getArguments());
@@ -238,7 +235,8 @@ public class EvalConstructor extends CPPDependentEvaluation {
 			IASTInitializerClause initClause = equalsInitalizer.getInitializerClause();
 			return evaluateArguments(initClause);
 		} else {
-			throw new RuntimeException("this type of initializer is not supported"); //$NON-NLS-1$
+			throw new IllegalArgumentException(initializer.getClass().getSimpleName()
+					+ " type of initializer is not supported"); //$NON-NLS-1$
 		}
 	}
 
@@ -253,7 +251,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	private ICPPEvaluation[] evaluateArguments(ICPPEvaluation[] arguments, ActivationRecord record,	ConstexprEvaluationContext context) {
 		ICPPEvaluation[] argList = new ICPPEvaluation[arguments.length + 1];
-		EvalBinding constructorBinding = new EvalBinding(constructor, constructor.getType(), getTemplateDefinition());
+		EvalBinding constructorBinding = new EvalBinding(fConstructor, fConstructor.getType(), getTemplateDefinition());
 		argList[0] = constructorBinding;
 		for (int i = 0; i < arguments.length; i++) {
 			ICPPEvaluation evaluatedClause = arguments[i].computeForFunctionCall(record, context.recordStep());
@@ -265,8 +263,8 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
-		int r = CPPTemplates.determinePackSize(type, tpMap);
-		for (ICPPEvaluation arg : arguments) {
+		int r = CPPTemplates.determinePackSize(fType, tpMap);
+		for (ICPPEvaluation arg : fArguments) {
 			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
 		}
 		return r;
@@ -274,7 +272,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		for (ICPPEvaluation arg : arguments) {
+		for (ICPPEvaluation arg : fArguments) {
 			if (arg.referencesTemplateParameter())
 				return true;
 		}
@@ -284,10 +282,10 @@ public class EvalConstructor extends CPPDependentEvaluation {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EVAL_CONSTRUCTOR);
-		buffer.marshalType(type);
-		buffer.marshalBinding(constructor);
-		buffer.putInt(arguments.length);
-		for (ICPPEvaluation arg : arguments) {
+		buffer.marshalType(fType);
+		buffer.marshalBinding(fConstructor);
+		buffer.putInt(fArguments.length);
+		for (ICPPEvaluation arg : fArguments) {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
 		marshalTemplateDefinition(buffer);
@@ -307,16 +305,16 @@ public class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		IType newType = CPPTemplates.instantiateType(type, context);
+		IType newType = CPPTemplates.instantiateType(fType, context);
 
-		ICPPEvaluation[] newArguments = new ICPPEvaluation[arguments.length];
-		for (int i = 0; i < arguments.length; i++) {
-			newArguments[i] = arguments[i].instantiate(context, maxDepth);
+		ICPPEvaluation[] newArguments = new ICPPEvaluation[fArguments.length];
+		for (int i = 0; i < fArguments.length; i++) {
+			newArguments[i] = fArguments[i].instantiate(context, maxDepth);
 		}
 
 		ICPPConstructor newConstructor;
 		try {
-			newConstructor = (ICPPConstructor)CPPTemplates.instantiateBinding(constructor, context, maxDepth);
+			newConstructor = (ICPPConstructor)CPPTemplates.instantiateBinding(fConstructor, context, maxDepth);
 			if (newConstructor instanceof CPPDeferredFunction) {
 				ICPPFunction[] candidates = ((CPPDeferredFunction) newConstructor).getCandidates();
 				if (candidates != null) {
@@ -331,7 +329,7 @@ public class EvalConstructor extends CPPDependentEvaluation {
 				}
 			}
 		} catch (DOMException e) {
-			newConstructor = constructor;
+			newConstructor = fConstructor;
 		}
 
 		return new EvalConstructor(newType, newConstructor, newArguments, getTemplateDefinition());

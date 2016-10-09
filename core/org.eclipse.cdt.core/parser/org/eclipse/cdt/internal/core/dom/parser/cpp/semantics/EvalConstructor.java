@@ -54,6 +54,8 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private boolean fCheckedIsTypeDependent;
 	private boolean fIsTypeDependent;
+	private boolean fCheckedIsConstantExpression;
+	private boolean fIsConstantExpression;
 	private static final IASTName TEMP_NAME = ASTNodeFactoryFactory.getDefaultCPPNodeFactory().newName();
 
 	public EvalConstructor(IType type, ICPPConstructor constructor, ICPPEvaluation[] arguments, IBinding templateDefinition) {
@@ -99,7 +101,15 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
-		return true;
+		if (!fCheckedIsConstantExpression) {
+			fCheckedIsConstantExpression = true;
+			fIsConstantExpression = computeIsConstantExpression(point);
+		}
+		return fIsConstantExpression;
+	}
+
+	private boolean computeIsConstantExpression(IASTNode point) {
+		return fConstructor.isConstexpr() && areAllConstantExpressions(fArguments, point);
 	}
 
 	@Override

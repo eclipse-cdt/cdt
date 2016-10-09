@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Binding for a c++ variable in the index, serves as a base class for fields.
+ * Binding for a C++ variable in the index, serves as a base class for fields.
  */
 class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	private static final int TYPE_OFFSET = PDOMCPPBinding.RECORD_SIZE;
@@ -40,7 +40,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 
-	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable, boolean setTypeAndValue) throws CoreException {
+	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable, boolean setTypeAndValue)
+			throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
 		// Find the type record
@@ -69,7 +70,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	}
 
 	protected void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
-		linkage.storeType(record+TYPE_OFFSET, newType);
+		linkage.storeType(record + TYPE_OFFSET, newType);
 	}
 
 	protected byte encodeFlags(IVariable variable) {

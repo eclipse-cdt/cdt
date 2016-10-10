@@ -132,7 +132,7 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord callSiteRecord, ConstexprEvaluationContext context) {
-		final ICPPClassType classType = (ICPPClassType)SemanticUtil.getNestedType(fType, TDEF | REF | CVTYPE);
+		final ICPPClassType classType = (ICPPClassType) SemanticUtil.getNestedType(fType, TDEF | REF | CVTYPE);
 		final CompositeValue compositeValue = CompositeValue.create(classType);
 		ICPPEvaluation[] argList = evaluateArguments(fArguments, callSiteRecord, context);
 		EvalFixed constructedObject = new EvalFixed(fType, ValueCategory.PRVALUE, compositeValue);
@@ -324,7 +324,7 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 		ICPPConstructor newConstructor;
 		try {
-			newConstructor = (ICPPConstructor)CPPTemplates.instantiateBinding(fConstructor, context, maxDepth);
+			newConstructor = (ICPPConstructor) CPPTemplates.instantiateBinding(fConstructor, context, maxDepth);
 			if (newConstructor instanceof CPPDeferredFunction) {
 				ICPPFunction[] candidates = ((CPPDeferredFunction) newConstructor).getCandidates();
 				if (candidates != null) {

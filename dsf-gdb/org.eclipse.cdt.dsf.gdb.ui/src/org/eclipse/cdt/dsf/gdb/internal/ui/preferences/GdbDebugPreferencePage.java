@@ -543,6 +543,9 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				group1);
 
 		stringFieldEditorCommand.fillIntoGrid(group1, 2);
+		GridData stringFieldLayoutData = (GridData) stringFieldEditorCommand.getTextControl(group1).getLayoutData();
+		stringFieldLayoutData.widthHint = 300;
+
 		addField(stringFieldEditorCommand);
 		Button browsebutton = new Button(group1, SWT.PUSH);
 		browsebutton.setText(MessagesForPreferences.GdbDebugPreferencePage_Browse_button);

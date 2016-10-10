@@ -37,9 +37,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -154,7 +154,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	public IValue getValue(IASTNode point) {
 		ICPPEvaluation eval = evaluateFunctionBody(new ConstexprEvaluationContext(point));
 		if (eval == this) {
-			return IntegralValue.create(eval);
+			return DependentValue.create(eval);
 		}
 		return eval.getValue(point);
 	}

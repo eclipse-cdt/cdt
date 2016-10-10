@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -155,7 +156,7 @@ public class EvalComma extends CPPDependentEvaluation {
 		ICPPFunction[] overloads = getOverloads(point);
 		if (overloads.length > 0) {
 			// TODO(sprigogin): Simulate execution of a function call.
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 		}
 
 		return fArguments[fArguments.length - 1].getValue(point);

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -89,13 +90,13 @@ public class EvalInitList extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent()) {
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 		}
 		if (getClauses().length > 1) {
 			return CompositeValue.create(this);
 		}
 		else if (getClauses().length == 1) {
-			return IntegralValue.create(getClauses()[0]);
+			return DependentValue.create(getClauses()[0]);
 		} else {
 			return IntegralValue.UNKNOWN;
 		}

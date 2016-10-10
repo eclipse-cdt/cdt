@@ -65,7 +65,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecializatio
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
-import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -520,7 +520,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			return v;
 
 		eval = getCompositeEvaluation(eval);
-		return IntegralValue.fromInternalRepresentation(eval);
+		return DependentValue.create(eval);
 	}
 
 	private ICPPNamespace[] getNamespaces(IBinding rbinding) throws CoreException {

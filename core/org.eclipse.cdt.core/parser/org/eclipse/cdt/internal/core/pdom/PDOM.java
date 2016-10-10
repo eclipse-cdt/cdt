@@ -277,10 +277,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  203.0 - Use 16 bits to store field position, bug 501616.
 	 *  204.0 - Do not store return expression in index, follow-up to bug 490475.
 	 *  205.0 - Reworked storage of annotations, bug 505832.
+	 *  206.0 - DependentValue split out from IntegralValue.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(205, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(205, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(205, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(206, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(206, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(206, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

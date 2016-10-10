@@ -81,6 +81,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
+	private static final int DEFAULT_GDB_COMMAND_LABEL_WIDTH_HINT = 300;
+
 	/**
 	 * A vehicle in order to be able to register a selection listener with
 	 * a {@link BooleanFieldEditor}.
@@ -543,6 +545,9 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				group1);
 
 		stringFieldEditorCommand.fillIntoGrid(group1, 2);
+		GridData stringFieldLayoutData = (GridData) stringFieldEditorCommand.getTextControl(group1).getLayoutData();
+		stringFieldLayoutData.widthHint = DEFAULT_GDB_COMMAND_LABEL_WIDTH_HINT;
+
 		addField(stringFieldEditorCommand);
 		Button browsebutton = new Button(group1, SWT.PUSH);
 		browsebutton.setText(MessagesForPreferences.GdbDebugPreferencePage_Browse_button);

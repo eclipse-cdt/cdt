@@ -50,8 +50,10 @@ public class LaunchBarControl implements ILaunchBarListener {
 
 	private ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
 
+	private Composite container;
 	private ConfigSelector configSelector;
 	private ModeSelector modeSelector;
+	private Label onLabel;
 	private TargetSelector targetSelector;
 
 	private static final int SELECTION_DELAY = 200;
@@ -60,7 +62,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 	public void createControl(Composite parent) {
 		manager.addListener(this);
 
-		Composite container = new Composite(parent, SWT.NONE);
+		container = new Composite(parent, SWT.NONE);
 		container.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		GridLayout layout = new GridLayout(5, false);
 		layout.marginHeight = 2;
@@ -94,18 +96,32 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
 
+		// TODO remove
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
-		if (enabled) {
-			Label label = new Label(container, SWT.NONE);
-			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-			label.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
 
-			targetSelector = new TargetSelector(container, SWT.NONE);
-			targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-			targetSelector.setInput(manager);
+		boolean supportsTargets = true;
+		try {
+			ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
+			supportsTargets = desc.getType().supportsTargets();
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
+
+		if (supportsTargets) {
+			createTargetSelector();
 		}
 
 		syncSelectors();
+	}
+
+	private void createTargetSelector() {
+		onLabel = new Label(container, SWT.NONE);
+		onLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		onLabel.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
+
+		targetSelector = new TargetSelector(container, SWT.NONE);
+		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		targetSelector.setInput(manager);
 	}
 
 	protected void syncSelectors() {
@@ -145,13 +161,13 @@ public class LaunchBarControl implements ILaunchBarListener {
 				final Event trigger = new Event();
 				final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 				ExecutionEvent executionEvent = handlerService.createExecutionEvent(command, trigger);
-					try {
-						command.executeWithChecks(executionEvent);
-					} catch (OperationCanceledException ex) {
-						// abort
-					} catch (Exception ex) {
-						Activator.log(ex);
-					}
+				try {
+					command.executeWithChecks(executionEvent);
+				} catch (OperationCanceledException ex) {
+					// abort
+				} catch (Exception ex) {
+					Activator.log(ex);
+				}
 			};
 		});
 		button.addDisposeListener(new DisposeListener() {
@@ -165,9 +181,32 @@ public class LaunchBarControl implements ILaunchBarListener {
 
 	@Override
 	public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
-		if (configSelector != null) {
-			configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
-		}
+		container.getDisplay().syncExec(() -> {
+			if (configSelector != null) {
+				configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
+			}
+
+			boolean supportsTargets = true;
+			try {
+				supportsTargets = descriptor.getType().supportsTargets();
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+
+			if (supportsTargets) {
+				if (targetSelector == null || targetSelector.isDisposed()) {
+					createTargetSelector();
+					syncSelectors();
+					container.getParent().layout(true);
+				}
+			} else {
+				if (targetSelector != null && !targetSelector.isDisposed()) {
+					onLabel.dispose();
+					targetSelector.dispose();
+					container.getParent().layout(true);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -194,5 +233,5 @@ public class LaunchBarControl implements ILaunchBarListener {
 	public ConfigSelector getConfigSelector() {
 		return configSelector;
 	}
-	
+
 }

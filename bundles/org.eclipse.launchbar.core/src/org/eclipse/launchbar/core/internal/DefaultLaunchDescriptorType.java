@@ -31,6 +31,12 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 	private Map<ILaunchConfiguration, DefaultLaunchDescriptor> descriptors = new HashMap<>();
 
 	@Override
+	public boolean supportsTargets() throws CoreException {
+		// Old style launch configs do not support targets.
+		return false;
+	}
+
+	@Override
 	public ILaunchDescriptor getDescriptor(Object launchObject) {
 		if (launchObject instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration) launchObject;

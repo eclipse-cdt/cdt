@@ -33,4 +33,15 @@ public interface ILaunchDescriptorType {
 	 */
 	ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException;
 
+	/**
+	 * Does this descriptor type support launching on targets other than Local?
+	 * 
+	 * @return supports targets
+	 * @throws CoreException
+	 * @since 2.1
+	 */
+	default boolean supportsTargets() throws CoreException {
+		return true;
+	}
+
 }

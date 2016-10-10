@@ -102,7 +102,7 @@ public class TestBase extends IndexBindingResolutionTestBase {
 
 	private IValue getValue() throws Exception {
 		ICPPASTInitializerClause point = getLastDeclarationInitializer();
-		ICPPEvaluation evaluation = ((ICPPEvaluationOwner)point).getEvaluation();
+		ICPPEvaluation evaluation = ((ICPPEvaluationOwner) point).getEvaluation();
 		return evaluation.getValue(point);
 	}
 

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -322,7 +323,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (fMember instanceof IFunction) {
 			return IntegralValue.UNKNOWN;
 		}
-		return IntegralValue.create(this);
+		return DependentValue.create(this);
 	}
 
 	@Override

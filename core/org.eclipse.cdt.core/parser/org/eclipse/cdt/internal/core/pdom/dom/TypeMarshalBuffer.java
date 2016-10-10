@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
@@ -209,6 +210,8 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			return CStringValue.unmarshal(firstBytes, this);
 		case ITypeMarshalBuffer.COMPOSITE_VALUE:
 			return CompositeValue.unmarshal(firstBytes, this);
+		case ITypeMarshalBuffer.DEPENDENT_VALUE:
+			return DependentValue.unmarshal(firstBytes, this);
 		}
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a value, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}

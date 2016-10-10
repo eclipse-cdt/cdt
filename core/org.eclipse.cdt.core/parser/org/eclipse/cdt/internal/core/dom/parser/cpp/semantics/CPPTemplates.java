@@ -123,6 +123,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -631,7 +632,7 @@ public class CPPTemplates {
 			} else if (tp instanceof ICPPTemplateNonTypeParameter) {
 				// Non-type template parameter pack already has type 'ICPPParameterPackType'
 				final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
-				args[i] = new CPPTemplateNonTypeArgument(IntegralValue.create(template, nttp), nttp.getType());
+				args[i] = new CPPTemplateNonTypeArgument(DependentValue.create(template, nttp), nttp.getType());
 			} else {
 				assert false;
 			}

@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -159,7 +160,7 @@ public class EvalID extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		// Name lookup is not needed here because it was already done in the "instantiate" method.
-		return IntegralValue.create(this);
+		return DependentValue.create(this);
 	}
 
 	@Override

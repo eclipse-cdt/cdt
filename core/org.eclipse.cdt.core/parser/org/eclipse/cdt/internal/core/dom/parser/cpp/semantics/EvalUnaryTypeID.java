@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -180,7 +181,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 
 		return ValueFactory.evaluateUnaryTypeIdExpression(fOperator, fOrigType, point);
 	}

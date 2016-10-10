@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -140,9 +141,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 		if (isTypeDependent())
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 		if (fRepresentsNewExpression)
 			return IntegralValue.UNKNOWN;
 

@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -36,12 +34,12 @@ public class IntegralValue implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 
 	// IntegralValue.THIS represents the this pointer inside a member function / constructor.
-	public static final IntegralValue THIS = new IntegralValue("this".toCharArray(), null); //$NON-NLS-1$
+	public static final IntegralValue THIS = new IntegralValue("this".toCharArray()); //$NON-NLS-1$
 
 	// IntegralValue.UNKNOWN indicates general inability to determine a value. It doesn't have to be an error,
 	// it could be that evaluation ran into a performance limit, or that we can't model this kind of
 	// value (such as a pointer to a function).
-	public static final IntegralValue UNKNOWN = new IntegralValue("<unknown>".toCharArray(), null) { //$NON-NLS-1$
+	public static final IntegralValue UNKNOWN = new IntegralValue("<unknown>".toCharArray()) { //$NON-NLS-1$
 		@Override
 		public void setSubValue(int position, ICPPEvaluation newValue) {
 			throw new UnsupportedOperationException();
@@ -49,32 +47,28 @@ public class IntegralValue implements IValue {
 	};
 
 	// IntegralValue.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
-	public static final IntegralValue ERROR= new IntegralValue("<error>".toCharArray(), null); //$NON-NLS-1$
+	public static final IntegralValue ERROR= new IntegralValue("<error>".toCharArray()); //$NON-NLS-1$
 
-	public static final IntegralValue NOT_INITIALIZED= new IntegralValue("<__>".toCharArray(), null); //$NON-NLS-1$
+	public static final IntegralValue NOT_INITIALIZED= new IntegralValue("<__>".toCharArray()); //$NON-NLS-1$
 
 	private static final char UNIQUE_CHAR = '_';
 
 	private final static IntegralValue[] TYPICAL= {
-			new IntegralValue(new char[] {'0'}, null),
-			new IntegralValue(new char[] {'1'}, null),
-			new IntegralValue(new char[] {'2'}, null),
-			new IntegralValue(new char[] {'3'}, null),
-			new IntegralValue(new char[] {'4'}, null),
-			new IntegralValue(new char[] {'5'}, null),
-			new IntegralValue(new char[] {'6'}, null)};
+			new IntegralValue(new char[] {'0'}),
+			new IntegralValue(new char[] {'1'}),
+			new IntegralValue(new char[] {'2'}),
+			new IntegralValue(new char[] {'3'}),
+			new IntegralValue(new char[] {'4'}),
+			new IntegralValue(new char[] {'5'}),
+			new IntegralValue(new char[] {'6'})};
 
 	private static int sUnique= 0;
 
 	// The following invariant always holds: (fFixedValue == null) != (fEvaluation == null)
 	private final char[] fFixedValue;
-	private ICPPEvaluation fEvaluation;
-	private char[] fSignature;
 
-	private IntegralValue(char[] fixedValue, ICPPEvaluation evaluation) {
-		assert (fixedValue == null) != (evaluation == null);
+	private IntegralValue(char[] fixedValue) {
 		fFixedValue = fixedValue;
-		fEvaluation = evaluation;
 	}
 
 	@Override
@@ -84,20 +78,17 @@ public class IntegralValue implements IValue {
 
 	@Override
 	public final Number numberValue() {
-		return fFixedValue == null ? null : parseLong(fFixedValue);
+		return parseLong(fFixedValue);
 	}
-
+	
 	@Override
-	public final ICPPEvaluation getEvaluation() {
-		return fEvaluation;
+	public ICPPEvaluation getEvaluation() {
+		return null;
 	}
 
 	@Override
 	public final char[] getSignature() {
-		if (fSignature == null) {
-			fSignature = fFixedValue != null ? fFixedValue : fEvaluation.getSignature();
-		}
-		return fSignature;
+		return fFixedValue;
 	}
 
 	@Deprecated
@@ -129,12 +120,9 @@ public class IntegralValue implements IValue {
 					buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG3));
 					buf.putLong(-lv);
 				}
-			} else if (fFixedValue != null) {
+			} else {
 				buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG4));
 				buf.putCharArray(fFixedValue);
-			} else {
-				buf.putShort(ITypeMarshalBuffer.INTEGRAL_VALUE);
-				fEvaluation.marshal(buf, true);
 			}
 		}
 	}
@@ -149,13 +137,10 @@ public class IntegralValue implements IValue {
 		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0)
 			return IntegralValue.create(-buf.getLong());
 		if ((firstBytes & ITypeMarshalBuffer.FLAG4) != 0)
-			return new IntegralValue(buf.getCharArray(), null);
+			return new IntegralValue(buf.getCharArray());
 		if ((firstBytes & ITypeMarshalBuffer.FLAG5) != 0)
 			return IntegralValue.THIS;
 
-		ISerializableEvaluation eval= buf.unmarshalEvaluation();
-		if (eval instanceof ICPPEvaluation)
-			return new IntegralValue(null, (ICPPEvaluation) eval);
 		return IntegralValue.UNKNOWN;
 	}
 
@@ -187,7 +172,7 @@ public class IntegralValue implements IValue {
 	public static IntegralValue create(long value) {
 		if (value >= 0 && value < TYPICAL.length)
 			return TYPICAL[(int) value];
-		return new IntegralValue(toCharArray(value), null);
+		return new IntegralValue(toCharArray(value));
 	}
 
 	/**
@@ -195,22 +180,6 @@ public class IntegralValue implements IValue {
 	 */
 	public static IntegralValue create(boolean value) {
 		return create(value ? 1 : 0);
-	}
-
-	/**
-	 * Creates a value representing the given template parameter
-	 * in the given template.
-	 */
-	public static IntegralValue create(ICPPTemplateDefinition template, ICPPTemplateNonTypeParameter tntp) {
-		EvalBinding eval = new EvalBinding(tntp, null, template);
-		return new IntegralValue(null, eval);
-	}
-
-	/**
-	 * Create a value wrapping the given evaluation.
-	 */
-	public static IntegralValue create(ICPPEvaluation eval) {
-		return new IntegralValue(null, eval);
 	}
 
 	public static IValue incrementedValue(IValue value, int increment) {
@@ -222,7 +191,8 @@ public class IntegralValue implements IValue {
 		}
 		ICPPEvaluation arg1 = value.getEvaluation();
 		EvalFixed arg2 = new EvalFixed(CPPBasicType.INT, ValueCategory.PRVALUE, create(increment));
-		return create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, arg1.getTemplateDefinition()));
+		return DependentValue.create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, 
+				arg1.getTemplateDefinition()));
 	}
 
 	/**
@@ -260,20 +230,13 @@ public class IntegralValue implements IValue {
 	}
 
 	/**
-	 * Creates a value off its canonical representation.
-	 */
-	public static IValue fromInternalRepresentation(ICPPEvaluation evaluation) {
-		return new IntegralValue(null, evaluation);
-	}
-
-	/**
 	 * Creates a unique value needed during template instantiation.
 	 */
 	public static IValue unique() {
 		StringBuilder buf= new StringBuilder(10);
 		buf.append(UNIQUE_CHAR);
 		buf.append(++sUnique);
-		return new IntegralValue(CharArrayUtils.extractChars(buf), null);
+		return new IntegralValue(CharArrayUtils.extractChars(buf));
 	}
 
 	/**
@@ -321,7 +284,7 @@ public class IntegralValue implements IValue {
 
 	@Override
 	public final ICPPEvaluation getSubValue(int index) {
-		return index == 0 && fEvaluation != null ? fEvaluation : EvalFixed.INCOMPLETE;
+		return EvalFixed.INCOMPLETE;
 	}
 
 	@Override
@@ -331,19 +294,11 @@ public class IntegralValue implements IValue {
 
 	@Override
 	public void setSubValue(int position, ICPPEvaluation newValue) {
-		if (fEvaluation == null) {
-			throw new IllegalStateException("Trying to set incomplete value"); //$NON-NLS-1$
-		}
-		if (position == 0) {
-			fEvaluation = newValue;
-		} else {
-			throw new IllegalArgumentException("Invalid offset in POD value: " + position); //$NON-NLS-1$
-		}
+		throw new IllegalStateException("Trying to set incomplete value"); //$NON-NLS-1$
 	}
 
 	@Override
 	public IValue clone() {
-		char[] newFixedValue = fFixedValue == null ? null : Arrays.copyOf(fFixedValue, fFixedValue.length);
-		return new IntegralValue(newFixedValue, fEvaluation);
+		return new IntegralValue(Arrays.copyOf(fFixedValue, fFixedValue.length));
 	}
 }

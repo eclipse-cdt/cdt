@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -325,7 +326,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		if (isValueDependent())
-			return IntegralValue.create(this);
+			return DependentValue.create(this);
 
 		IValue value= null;
 
@@ -430,7 +431,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 			}
 			IType instantiatedType = CPPTemplates.instantiateType(origType, context);
 			if (origType != instantiatedType) {
-				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, IntegralValue.create(this));
+				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, DependentValue.create(this));
 			}
 		} else {
 			IBinding instantiatedBinding = instantiateBinding(origBinding, context, maxDepth);

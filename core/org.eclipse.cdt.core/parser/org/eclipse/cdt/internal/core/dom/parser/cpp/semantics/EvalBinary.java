@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -227,7 +228,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2);
 			}
 		}
-		return IntegralValue.create(this);
+		return DependentValue.create(this);
 	}
 
 	@Override

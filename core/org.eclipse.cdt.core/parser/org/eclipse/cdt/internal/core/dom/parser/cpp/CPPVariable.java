@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -243,7 +244,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 				if (initEval == null) {
 					return null;
 				}
-				return IntegralValue.create(initEval);
+				return DependentValue.create(initEval);
 			}
 			return initialValue;
 		} finally {

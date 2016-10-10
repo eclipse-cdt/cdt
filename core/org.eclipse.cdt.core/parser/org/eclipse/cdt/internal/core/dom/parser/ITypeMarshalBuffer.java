@@ -48,7 +48,8 @@ public interface ITypeMarshalBuffer {
 		INTEGRAL_VALUE					= 0x01,
 		FLOATING_POINT_VALUE			= 0x02,
 		C_STRING_VALUE					= 0x03,
-		COMPOSITE_VALUE					= 0x04;
+		COMPOSITE_VALUE					= 0x04,
+		DEPENDENT_VALUE                 = 0x05;
 	// Can add more values up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
 	final static byte

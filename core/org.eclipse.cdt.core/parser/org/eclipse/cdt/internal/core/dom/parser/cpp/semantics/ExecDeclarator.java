@@ -88,8 +88,13 @@ public final class ExecDeclarator implements ICPPExecution {
 		} else if (isPointerType(nestedType) && !isCStringType(nestedType)) {
 			return createPointerValue(record, context, computedInitializerEval);
 		} else if (isArrayType(nestedType) && !isCStringType(nestedType)) {
-			IValue value = CompositeValue.create((EvalInitList) computedInitializerEval,(IArrayType) (type));
-			return new EvalFixed(type, computedInitializerEval.getValueCategory(context.getPoint()), value);
+			if (computedInitializerEval instanceof EvalInitList) {
+				IValue value = CompositeValue.create((EvalInitList) computedInitializerEval, (IArrayType) (type));
+				return new EvalFixed(type, computedInitializerEval.getValueCategory(context.getPoint()), value);
+			} else {
+				// TODO(sprigogin): Should something else be done here?
+				return EvalFixed.INCOMPLETE;
+			}
 		} else if (isValueInitialization(computedInitializerEval)) {
 			ICPPEvaluation defaultValue = new EvalTypeId(type, context.getPoint(), false, new ICPPEvaluation[]{});
 			return new EvalFixed(type, defaultValue.getValueCategory(context.getPoint()), defaultValue.getValue(context.getPoint()));

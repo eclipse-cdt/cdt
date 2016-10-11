@@ -88,7 +88,8 @@ public class EvalReference extends CPPDependentEvaluation {
 		if (referredSubValue != null) {
 			return referredSubValue;
 		}
-		return owningRecord.getVariable(referredBinding);
+		ICPPEvaluation targetValue = owningRecord.getVariable(referredBinding);
+		return targetValue == null ? EvalFixed.INCOMPLETE : targetValue;
 	}
 
 	public void update(ICPPEvaluation eval) {

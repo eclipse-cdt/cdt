@@ -245,4 +245,20 @@ public class FunctionTests extends TestBase {
 		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, clause);
 		assertNull(bodyExec);
 	}
+
+	//	// Empty header file
+	
+	//	struct A {
+	//	  A() {}
+	//	  A& m(int p) {
+	//	    return *this;
+	//	  }
+	//	};
+	//
+	//	A a = A()
+	//	    .m(1).m(2).m(3).m(4).m(5).m(6).m(7).m(8).m(9).m(10)
+	//	    .m(11).m(12).m(13).m(14).m(15).m(16).m(17).m(18).m(19).m(20)
+	//	    .m(21).m(22).m(23).m(24).m(25).m(26).m(27).m(28).m(29).m(30);
+	public void testLongCallChain_505606() throws Exception {
+	}
 }

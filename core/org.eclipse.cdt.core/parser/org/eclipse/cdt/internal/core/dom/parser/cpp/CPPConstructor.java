@@ -46,7 +46,7 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 		if (initializer instanceof ICPPEvaluationOwner) {
 			return ((ICPPEvaluationOwner) initializer).getEvaluation();
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
-			ICPPConstructor constructor = (ICPPConstructor)CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
+			ICPPConstructor constructor = (ICPPConstructor) CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
 			if (constructor == null) {
 				boolean usesBracedInitList = (initializer instanceof ICPPASTInitializerList);
 				return new EvalTypeId(member.getType(), point, usesBracedInitList,

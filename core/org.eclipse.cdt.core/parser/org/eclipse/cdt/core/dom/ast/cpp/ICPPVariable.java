@@ -19,12 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  */
 public interface ICPPVariable extends IVariable, ICPPBinding {
     /**
-     * does this variable have the mutable storage class specifier
+     * Checks whether this variable has the mutable storage class specifier.
      */
     public boolean isMutable();
 
     /**
-     * Returns whether this variable is declared as extern "C".
+     * Checks whether this variable is declared as extern "C".
      */
     public boolean isExternC();
 }

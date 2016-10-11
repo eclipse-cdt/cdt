@@ -36,6 +36,10 @@ public final class CompositeValue implements IValue {
 
 	public CompositeValue(ICPPEvaluation evaluation, ICPPEvaluation[] values) {
 		this.evaluation = evaluation;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] == null)
+				values[i] = EvalFixed.INCOMPLETE;
+		}
 		this.values = values;
 	}
 
@@ -81,7 +85,7 @@ public final class CompositeValue implements IValue {
 
 	@Override
 	public ICPPEvaluation getSubValue(final int index) {
-		return rangeIsValid(index) && values[index] != null ? values[index] : EvalFixed.INCOMPLETE;
+		return rangeIsValid(index) ? values[index] : EvalFixed.INCOMPLETE;
 	}
 
 	private boolean rangeIsValid(int index) {
@@ -89,9 +93,10 @@ public final class CompositeValue implements IValue {
 	}
 
 	public static IValue create(EvalInitList initList) {
-		ICPPEvaluation[] values = new ICPPEvaluation[initList.getClauses().length];
-		for (int i = 0; i < initList.getClauses().length; i++) {
-			ICPPEvaluation eval = initList.getClauses()[i];
+		ICPPEvaluation[] clauses = initList.getClauses();
+		ICPPEvaluation[] values = new ICPPEvaluation[clauses.length];
+		for (int i = 0; i < clauses.length; i++) {
+			ICPPEvaluation eval = clauses[i];
 			values[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), eval.getValue(null));
 		}
 		return new CompositeValue(initList, values);
@@ -141,9 +146,10 @@ public final class CompositeValue implements IValue {
 	public static IValue create(EvalInitList initList, ICompositeType type) {
 		IField[] fields = type.getFields();
 		ICPPEvaluation[] values = new ICPPEvaluation[fields.length];
+		ICPPEvaluation[] clauses = initList.getClauses();
 		for (int i = 0; i < fields.length; i++) {
 			IField field = fields[i];
-			ICPPEvaluation eval = initList.getClauses()[i];
+			ICPPEvaluation eval = clauses[i];
 			IType fieldType = field.getType();
 			IValue value = getValue(fieldType, eval);
 			values[i] = new EvalFixed(fieldType, eval.getValueCategory(null), value);
@@ -214,24 +220,20 @@ public final class CompositeValue implements IValue {
 
 	@Override
 	public void setSubValue(int position, ICPPEvaluation newValue) {
-		values[position] = newValue;
+		values[position] = newValue == null ? EvalFixed.INCOMPLETE : newValue;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("[");								//$NON-NLS-1$
+		builder.append('[');
 		for (int i = 0; i < values.length; i++) {
-			if (values[i] != null) {
-				builder.append(values[i].toString());
-			} else {
-				builder.append("<null>");					//$NON-NLS-1$
+			if (i != 0) {
+				builder.append(',').append(' ');
 			}
-			if (i != values.length-1) {
-				builder.append(", ");						//$NON-NLS-1$
-			}
+			builder.append(values[i].toString());
 		}
-		builder.append("]");								//$NON-NLS-1$
+		builder.append(']');
 		return builder.toString();
 	}
 
@@ -240,8 +242,12 @@ public final class CompositeValue implements IValue {
 		ICPPEvaluation[] newValues = new ICPPEvaluation[values.length];
 		for (int i = 0; i < newValues.length; i++) {
 			ICPPEvaluation eval = values[i];
-			IValue newValue = eval.getValue(null).clone();
-			newValues[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), newValue);
+			if (eval == EvalFixed.INCOMPLETE) {
+				newValues[i] = eval;
+			} else {
+				IValue newValue = eval.getValue(null).clone();
+				newValues[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), newValue);
+			}
 		}
 		return new CompositeValue(evaluation, newValues);
 	}

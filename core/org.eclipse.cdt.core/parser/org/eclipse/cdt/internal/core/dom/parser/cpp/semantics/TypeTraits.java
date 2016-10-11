@@ -14,6 +14,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -380,20 +383,28 @@ public class TypeTraits {
 	 * @return {@code true} if the class has a trivial destructor
 	 */
 	public static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point) {
+		return hasTrivialDestructor(classType, point, new HashSet<>());
+	}
+
+	private static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point,
+			Set<ICPPClassType> checkedClasses) {
+		if (!checkedClasses.add(classType))
+			return true;  // Checked already.
+
 		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
 			if (method.isDestructor() && !isDefaultedMethod(method))
 				return false;
 		}
 		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, point)) {
-			if (!classType.isSameType(baseClass) && !hasTrivialDestructor(baseClass, point))
+			if (!hasTrivialDestructor(baseClass, point, checkedClasses))
 				return false;
 		}
 		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
-				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialDestructor((ICPPClassType) type, point)) {
+				if (type instanceof ICPPClassType &&
+						!hasTrivialDestructor((ICPPClassType) type, point, checkedClasses)) {
 					return false;
 				}
 			}

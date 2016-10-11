@@ -243,6 +243,9 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 				if (initEval == null) {
 					return null;
 				}
+				if (!initEval.isValueDependent() ) {
+					return initEval.getValue(fDefinition);
+				}
 				return IntegralValue.create(initEval);
 			}
 			return initialValue;

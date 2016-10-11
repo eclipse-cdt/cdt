@@ -119,10 +119,12 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		// An EvalConstructor is never used to directly represent the evaluation of an expression.
-		// It only comes up while evaluating other evaluations. As such, its getValue() doesn't
-		// do anything; computeForFunctionCall() must be called on it to obtain a useful result.
-		return IntegralValue.ERROR;
+		ICPPEvaluation computed =
+				computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext(point));
+		if (computed == this)
+			return IntegralValue.ERROR;
+
+		return computed.getValue(point);
 	}
 
 	@Override

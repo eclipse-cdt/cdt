@@ -230,7 +230,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPParameter[] parameters = functionBinding.getParameters();
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(record, context.recordStep());
-            if (i != 0 && isReference(parameters[i-1]) && fArguments[i] instanceof EvalBinding) {
+            if (0 < i && i <= parameters.length && isReference(parameters[i - 1]) && fArguments[i] instanceof EvalBinding) {
             	final EvalBinding evalBinding = (EvalBinding) fArguments[i];
             	IBinding binding = evalBinding.getBinding();
             	// If the binding being referenced isn't present in the activation record,
@@ -239,7 +239,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
             		return EvalFixed.INCOMPLETE;
             	}
             	arg = new EvalReference(record, binding, evalBinding.getTemplateDefinition());
-            } else if (i != 0 && !isReference(parameters[i-1])) {
+            } else if (0 < i && i <= parameters.length && !isReference(parameters[i - 1])) {
             	IValue copiedValue = arg.getValue(context.getPoint()).clone();
             	arg = new EvalFixed(arg.getType(context.getPoint()), arg.getValueCategory(context.getPoint()), copiedValue);
             }
@@ -272,13 +272,15 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 
 		// If the arguments are not all constant expressions, there is
 		// no point trying to substitute them into the return expression.
-		if (!areAllConstantExpressions(fArguments, 1, fArguments.length, context.getPoint())) {
+		if (!areAllConstantExpressions(fArguments, 1, fArguments.length, context.getPoint()))
 			return EvalFixed.INCOMPLETE;
-		}
+
 		ICPPFunction function = resolveFunctionBinding(context.getPoint());
-		if (function == null) {
+		if (function == null)
 			return this;
-		}
+
+		if (!function.isConstexpr())
+			return EvalFixed.INCOMPLETE;
 
 		ActivationRecord record = createActivationRecord(function.getParameters(), fArguments, fImplicitThis, context.getPoint());
 		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, context.getPoint());

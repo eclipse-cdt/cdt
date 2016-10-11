@@ -312,6 +312,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private ICPPConstructor[] getInitializerListConstructors(ICPPConstructor[] constructors, IASTNode point) {
 		ICPPConstructor[] result = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		ICPPClassTemplate template = CPPVisitor.get_initializer_list(point);
+		if (template == null)
+			return result;
+
 		for (ICPPConstructor ctor : constructors) {
 			if (ctor.getRequiredArgumentCount() <= 1) {
 				IType[] parameterTypes = ctor.getType().getParameterTypes();

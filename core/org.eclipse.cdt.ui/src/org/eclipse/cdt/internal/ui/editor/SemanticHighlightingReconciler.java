@@ -49,6 +49,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTCache;
+import org.eclipse.cdt.internal.core.parser.scanner.ASTPreprocessorName;
 
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
@@ -67,10 +68,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private class PositionCollector extends ASTVisitor {
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
-		private int fMinLocation;
 		
 		public PositionCollector(boolean visitImplicitNames) {
-			fMinLocation= -1;
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
@@ -92,7 +91,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					visitNode(macroDef.getName());
 				}
 			}
-			fMinLocation= -1;
 
 			// Visit macro expansions.
 			IASTPreprocessorMacroExpansion[] macroExps= tu.getMacroExpansions();
@@ -106,7 +104,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 				}
 			}
-			fMinLocation= -1;
 
 			// Visit ordinary code.
 			return super.visit(tu);
@@ -215,11 +212,18 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				}
 			} else {
 				// Fallback in case no image location available.
-				IASTNodeLocation[] nodeLocations= node.getNodeLocations();
-				if (nodeLocations.length == 1) {
-					IASTNodeLocation nodeLocation = nodeLocations[0];
-					if (!(nodeLocation instanceof IASTMacroExpansionLocation)) {
-						return nodeLocation;
+				// Only use the fallback for nodes that are not preprocessor nodes,
+				// because in the case of nested macro expansions, a preprocessor node 
+				// can have a node location that is not representative of its actual
+				// image; such nodes should have an image location (accessed via
+				// getImageLocation(), above) where appropriate.
+				if (!(node instanceof ASTPreprocessorName)) {
+					IASTNodeLocation[] nodeLocations= node.getNodeLocations();
+					if (nodeLocations.length == 1) {
+						IASTNodeLocation nodeLocation = nodeLocations[0];
+						if (!(nodeLocation instanceof IASTMacroExpansionLocation)) {
+							return nodeLocation;
+						}
 					}
 				}
 			}
@@ -234,12 +238,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		private void highlightLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlightingStyle) {
 			int offset= nodeLocation.getNodeOffset();
-			if (offset >= fMinLocation) {
-				int length= nodeLocation.getNodeLength();
-				if (offset > -1 && length > 0) {
-					fMinLocation= offset + length;
-					addPosition(offset, length, highlightingStyle);
-				}
+			int length= nodeLocation.getNodeLength();
+			if (offset > -1 && length > 0) {
+				addPosition(offset, length, highlightingStyle);
 			}
 		}
 

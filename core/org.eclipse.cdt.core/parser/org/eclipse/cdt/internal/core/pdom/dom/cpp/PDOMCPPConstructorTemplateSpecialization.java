@@ -45,6 +45,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 		super(linkage, bindingRecord);
 	}
 
+	@Override
 	public void initData(ICPPExecution constructorChain) {
 		if (constructorChain == null)
 			return;

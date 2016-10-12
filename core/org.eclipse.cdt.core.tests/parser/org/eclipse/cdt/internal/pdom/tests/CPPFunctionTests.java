@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -116,7 +116,6 @@ public class CPPFunctionTests extends PDOMTestBase {
 		ICPPFunction function = (ICPPFunction) bindings[0];
 		IParameter[] parameters = function.getParameters();
 		assertEquals(2, parameters.length);
-		assertEquals(true, parameters[0].isRegister());
 	}
 	
 	public void testExternCPPFunction() throws Exception {

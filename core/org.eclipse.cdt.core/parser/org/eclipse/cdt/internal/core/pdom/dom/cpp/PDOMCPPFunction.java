@@ -35,17 +35,12 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Binding for c++ functions in the index.
  */
 class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader, ICPPComputableFunction {
-	private static final short ANNOT_PARAMETER_PACK = 8;
-	private static final short ANNOT_IS_DELETED = 9;
-	private static final short ANNOT_IS_CONSTEXPR = 10;
-
 	/**
 	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
@@ -89,7 +84,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = FUNCTION_BODY + Database.EXECUTION_SIZE;
 
-	private short fAnnotation = -1;
+	private short fAnnotations = -1;
 	private int fRequiredArgCount = -1;
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 
@@ -99,25 +94,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		Database db = getDB();
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
 		getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
-		db.putShort(record + ANNOTATION, getAnnotation(function));
+		db.putShort(record + ANNOTATION, getAnnotations(function));
 		db.putShort(record + REQUIRED_ARG_COUNT, (short) function.getRequiredArgumentCount());
 		if (setTypes) {
 			linkage.new ConfigureFunction(function, this, point);
 		}
 	}
 
-	private short getAnnotation(ICPPFunction function) {
-		int annot = PDOMCPPAnnotation.encodeAnnotation(function) & 0xff;
-		if (function.hasParameterPack()) {
-			annot |= (1 << ANNOT_PARAMETER_PACK);
-		}
-		if (function.isDeleted()) {
-			annot |= (1 << ANNOT_IS_DELETED);
-		}
-		if (function.isConstexpr()) {
-			annot |= (1 << ANNOT_IS_CONSTEXPR);
-		}
-		return (short) annot;
+	private short getAnnotations(ICPPFunction function) {
+		return PDOMCPPAnnotations.encodeFunctionAnnotations(function);
 	}
 
 	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec,
@@ -144,7 +129,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		int newBindingRequiredArgCount;
 		newType = func.getType();
 		newParams = func.getParameters();
-		newAnnotation = getAnnotation(func);
+		newAnnotation = getAnnotations(func);
 		newBindingRequiredArgCount = func.getRequiredArgumentCount();
 
 		fType = null;
@@ -177,7 +162,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 		final Database db = getDB();
 		db.putShort(record + ANNOTATION, newAnnotation);
-		fAnnotation = newAnnotation;
+		fAnnotations = newAnnotation;
 		db.putShort(record + REQUIRED_ARG_COUNT, (short) requiredCount);
 		fRequiredArgCount = requiredCount;
 
@@ -252,7 +237,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	@Override
 	public boolean isInline() {
-		return getBit(getAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
+		return PDOMCPPAnnotations.isInline(getAnnotations());
 	}
 
 	@Override
@@ -267,20 +252,20 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return fRequiredArgCount;
 	}
 
-	final protected short getAnnotation() {
-		if (fAnnotation == -1) {
+	protected final short getAnnotations() {
+		if (fAnnotations == -1) {
 			try {
-				fAnnotation = getDB().getShort(record + ANNOTATION);
+				fAnnotations = getDB().getShort(record + ANNOTATION);
 			} catch (CoreException e) {
-				fAnnotation = 0;
+				fAnnotations = 0;
 			}
 		}
-		return fAnnotation;
+		return fAnnotations;
 	}
 
 	@Override
 	public boolean isExternC() {
-		return getBit(getAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return PDOMCPPAnnotations.isExternC(getAnnotations());
 	}
 
 	@Override
@@ -339,17 +324,17 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	@Override
 	public boolean isConstexpr() {
-		return getBit(getAnnotation(), ANNOT_IS_CONSTEXPR);
+		return PDOMCPPAnnotations.isConstexpr(getAnnotations());
 	}
 
 	@Override
 	public boolean isDeleted() {
-		return getBit(getAnnotation(), ANNOT_IS_DELETED);
+		return PDOMCPPAnnotations.isDeletedFunction(getAnnotations());
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(getAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCPPAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
@@ -360,22 +345,22 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	@Override
 	public boolean isStatic() {
-		return getBit(getAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCPPAnnotations.isStatic(getAnnotations());
 	}
 
 	@Override
 	public boolean takesVarArgs() {
-		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+		return PDOMCPPAnnotations.isVarargsFunction(getAnnotations());
 	}
 
 	@Override
 	public boolean isNoReturn() {
-		return getBit(getAnnotation(), PDOMCAnnotation.NO_RETURN);
+		return PDOMCPPAnnotations.isNoReturnFunction(getAnnotations());
 	}
 
 	@Override
 	public boolean hasParameterPack() {
-		return getBit(getAnnotation(), ANNOT_PARAMETER_PACK);
+		return PDOMCPPAnnotations.hasParameterPack(getAnnotations());
 	}
 
 	@Override

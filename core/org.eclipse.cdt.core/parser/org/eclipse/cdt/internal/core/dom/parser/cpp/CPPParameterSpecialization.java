@@ -37,9 +37,6 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 		return (ICPPParameter) getSpecializedBinding();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
 	@Override
 	public IType getType() {
 		return fType;
@@ -50,45 +47,35 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 		return fType instanceof ICPPParameterPackType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-	 */
 	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
     @Override
 	public boolean isExtern() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
     @Override
 	public boolean isAuto() {
         return getParameter().isAuto();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
     @Override
 	public boolean isRegister() {
         return getParameter().isRegister();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
-     */
     @Override
 	public boolean isMutable() {
         return false;
     }
+
+	@Override
+	public boolean isConstexpr() {
+		return false;
+	}
 
 	@Override
 	public boolean hasDefaultValue() {

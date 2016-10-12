@@ -58,7 +58,12 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 	public boolean isStatic() {
 		return ((ICPPVariable) rbinding).isStatic();
 	}
-	
+
+	@Override
+	public boolean isConstexpr() {
+		return ((ICPPVariable) rbinding).isConstexpr();
+	}
+
 	@Override
 	public IValue getInitialValue() {
 		return ((ICPPVariable) rbinding).getInitialValue();

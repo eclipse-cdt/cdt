@@ -54,7 +54,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 		db.putRecPtr(record + NEXT_PARAM, 0);
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
-		db.putByte(record + FLAG_OFFSET, encodeFlags(param));
+		db.putByte(record + FLAG_OFFSET, PDOMCAnnotations.encodeVariableAnnotations(param));
 	}
 
 	@Override
@@ -74,14 +74,12 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 	@Override
 	public boolean isAuto() {
-		byte flag = 1 << PDOMCAnnotation.AUTO_OFFSET;
-		return hasFlag(flag, true);
+		return true;
 	}
 
 	@Override
 	public boolean isRegister() {
-		byte flag = 1 << PDOMCAnnotation.REGISTER_OFFSET;
-		return hasFlag(flag, false);
+		return PDOMCAnnotations.isRegister(getFlags());
 	}
 
 	@Override
@@ -172,22 +170,13 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return null;
 	}
 
-	protected byte encodeFlags(IParameter param) {
-		// C99 ISO/IEC 9899: 6.7.5.3.2
-		byte flags= 0;
-		flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
-		flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-		return flags;
-	}
-
-	protected boolean hasFlag(byte flag, boolean defValue) {
+	private byte getFlags() {
 		try {
-			byte myflags= getDB().getByte(record + FLAG_OFFSET);
-			return (myflags & flag) == flag;
+			return getDB().getByte(record + FLAG_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return defValue;
+		return 0;
 	}
 
 	@Override

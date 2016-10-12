@@ -193,7 +193,12 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
         return false;
     }
 
-    @Override
+	@Override
+	public boolean isConstexpr() {
+		return VariableHelpers.isConstexpr(fDefinition);
+	}
+
+	@Override
 	public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}

@@ -38,6 +38,11 @@ public class CPPUnknownField extends CPPUnknownMember implements ICPPField {
 	}
 
 	@Override
+	public boolean isConstexpr() {
+		return false;
+	}
+
+	@Override
 	public boolean isAuto() {
 		return false;
 	}

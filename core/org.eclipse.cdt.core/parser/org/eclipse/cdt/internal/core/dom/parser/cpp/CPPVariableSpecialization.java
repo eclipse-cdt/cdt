@@ -18,7 +18,8 @@ public class CPPVariableSpecialization extends CPPSpecialization implements ICPP
 	private final IType type;
 	private final IValue value;
 
-	public CPPVariableSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap tpmap, IType type, IValue value) {
+	public CPPVariableSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap tpmap, IType type,
+			IValue value) {
 		super(orig, owner, tpmap);
 		this.type = type;
 		this.value = value;
@@ -61,6 +62,11 @@ public class CPPVariableSpecialization extends CPPSpecialization implements ICPP
 	@Override
 	public boolean isMutable() {
 		return getVariable().isMutable();
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return getVariable().isConstexpr();
 	}
 
 	@Override

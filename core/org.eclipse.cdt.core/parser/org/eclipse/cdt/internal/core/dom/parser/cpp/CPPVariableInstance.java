@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 
 /**
@@ -66,6 +67,11 @@ public class CPPVariableInstance extends CPPSpecialization
 	@Override
 	public boolean isMutable() {
 		return false;
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return ((ICPPVariable) getSpecializedBinding()).isConstexpr();
 	}
 
 	@Override

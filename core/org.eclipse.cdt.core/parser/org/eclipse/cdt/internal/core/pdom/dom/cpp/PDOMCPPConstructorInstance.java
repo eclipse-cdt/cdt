@@ -47,6 +47,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance
 		super(linkage, bindingRecord);
 	}
 
+	@Override
 	public void initData(ICPPExecution constructorChain) {
 		if (constructorChain == null)
 			return;

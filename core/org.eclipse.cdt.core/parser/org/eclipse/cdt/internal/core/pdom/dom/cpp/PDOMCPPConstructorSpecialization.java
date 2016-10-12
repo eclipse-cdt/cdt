@@ -47,6 +47,7 @@ class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization
 		super(linkage, bindingRecord);
 	}
 	
+	@Override
 	public void initData(ICPPExecution constructorChain) {
 		if (constructorChain == null)
 			return;

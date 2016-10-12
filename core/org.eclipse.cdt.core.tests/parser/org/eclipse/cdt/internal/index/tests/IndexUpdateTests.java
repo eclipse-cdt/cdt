@@ -263,7 +263,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		updateFile();
 		checkCppVariable("globalVar", SHORT, new String[]{});
 		updateFile();
-		checkCppVariable("globalVar", INT, new String[]{REGISTER});
+		checkCppVariable("globalVar", INT, new String[]{});
 	}
 
 	private void checkCppVariable(String name, String type, String[] modifiers) throws Exception {

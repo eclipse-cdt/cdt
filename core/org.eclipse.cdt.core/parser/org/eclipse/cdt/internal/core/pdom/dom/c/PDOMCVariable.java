@@ -60,20 +60,18 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	public PDOMCVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
-		final Database db = getDB();
 		linkage.storeType(record + TYPE_OFFSET, variable.getType());
 		linkage.storeValue(record + VALUE_OFFSET, variable.getInitialValue());
-		db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
+		getDB().putByte(record + ANNOTATIONS, PDOMCAnnotations.encodeVariableAnnotations(variable));
 	}
 
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof IVariable) {
-			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			linkage.storeType(record + TYPE_OFFSET, var.getType());
 			linkage.storeValue(record + VALUE_OFFSET, var.getInitialValue());
-			db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(var));
+			getDB().putByte(record + ANNOTATIONS, PDOMCAnnotations.encodeVariableAnnotations(var));
 		}
 	}
 
@@ -113,22 +111,26 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	@Override
 	public boolean isStatic() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCAnnotations.isStatic(getAnnotations());
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
 	public boolean isAuto() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
+		return PDOMCAnnotations.isAuto(getAnnotations());
 	}
 
 	@Override
 	public boolean isRegister() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
+		return PDOMCAnnotations.isRegister(getAnnotations());
+	}
+
+	private byte getAnnotations() {
+		return getByte(record + ANNOTATIONS);
 	}
 
 	@Override

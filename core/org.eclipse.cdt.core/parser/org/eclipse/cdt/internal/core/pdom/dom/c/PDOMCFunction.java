@@ -72,7 +72,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		setType(getLinkage(), type);
 		IParameter[] parameters = function.getParameters();
 		setParameters(parameters);
-		byte annotations = PDOMCAnnotation.encodeAnnotation(function);
+		byte annotations = PDOMCAnnotations.encodeFunctionAnnotations(function);
 		getDB().putByte(record + ANNOTATIONS, annotations);
 	}
 
@@ -91,7 +91,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		if (oldParams != null) {
 			oldParams.delete(linkage);
 		}
-		byte newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
+		byte newAnnotation = PDOMCAnnotations.encodeFunctionAnnotations(func);
 		getDB().putByte(record + ANNOTATIONS, newAnnotation);
 	}
 
@@ -138,12 +138,12 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	@Override
 	public boolean isStatic() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCAnnotations.isStatic(getAnnotations());
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
@@ -185,17 +185,21 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	@Override
 	public boolean isInline() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.INLINE_OFFSET);
+		return PDOMCAnnotations.isInline(getAnnotations());
+	}
+
+	private byte getAnnotations() {
+		return getByte(record + ANNOTATIONS);
 	}
 
 	@Override
 	public boolean takesVarArgs() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
+		return PDOMCAnnotations.isVarargsFunction(getAnnotations());
 	}
 
 	@Override
 	public boolean isNoReturn() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.NO_RETURN);
+		return PDOMCAnnotations.isNoReturnFunction(getAnnotations());
 	}
 
 	@Override

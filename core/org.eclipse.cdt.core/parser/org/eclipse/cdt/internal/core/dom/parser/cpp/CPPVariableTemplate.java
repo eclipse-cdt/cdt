@@ -37,6 +37,11 @@ public class CPPVariableTemplate extends CPPTemplateDefinition
 	}
 
 	@Override
+	public boolean isConstexpr() {
+		return VariableHelpers.isConstexpr((IASTName) getDefinition());
+	}
+
+	@Override
 	public boolean isExternC() {
 		return CPPVisitor.isExternC(getDefinition(), getDeclarations());
 	}

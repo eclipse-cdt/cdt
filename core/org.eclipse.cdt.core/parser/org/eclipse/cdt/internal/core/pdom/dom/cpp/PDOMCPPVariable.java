@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -40,13 +39,13 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 
-	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable, boolean setTypeAndValue)
+	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, ICPPVariable variable, boolean setTypeAndValue)
 			throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
 		// Find the type record
 		Database db = getDB();
-		db.putByte(record + ANNOTATIONS, encodeFlags(variable));
+		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(variable));
 		if (setTypeAndValue) {
 			setType(parent.getLinkage(), variable.getType());
 			setValue(variable.getInitialValue());
@@ -61,20 +60,16 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
-			IVariable var= (IVariable) newBinding;
+			ICPPVariable var= (ICPPVariable) newBinding;
 			IType newType= var.getType();
 			setType(linkage, newType);
 			setValue(var.getInitialValue());
-			db.putByte(record + ANNOTATIONS, encodeFlags(var));
+			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(var));
 		}
 	}
 
 	protected void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
 		linkage.storeType(record + TYPE_OFFSET, newType);
-	}
-
-	protected byte encodeFlags(IVariable variable) {
-		return PDOMCPPAnnotation.encodeAnnotation(variable);
 	}
 
 	public PDOMCPPVariable(PDOMLinkage linkage, long record) {
@@ -119,27 +114,37 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	@Override
 	public boolean isAuto() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
+		byte annotation = getAnnotations();
+		return !PDOMCPPAnnotations.isExtern(annotation) && !PDOMCPPAnnotations.isStatic(annotation);
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCPPAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
 	public boolean isExternC() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return PDOMCPPAnnotations.isExternC(getAnnotations());
 	}
 
 	@Override
 	public boolean isRegister() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
+		return false;  // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override
 	public boolean isStatic() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCPPAnnotations.isStatic(getAnnotations());
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return PDOMCPPAnnotations.isConstexpr(getAnnotations());
+	}
+
+	private byte getAnnotations() {
+		return getByte(record + ANNOTATIONS);
 	}
 
 	@Override

@@ -47,6 +47,11 @@ public class CPPTemplateNonTypeParameterSpecialization extends CPPTemplateParame
 	}
 
 	@Override
+	public boolean isConstexpr() {
+		return false;
+	}
+
+	@Override
 	public boolean isExternC() {
 		return false;
 	}

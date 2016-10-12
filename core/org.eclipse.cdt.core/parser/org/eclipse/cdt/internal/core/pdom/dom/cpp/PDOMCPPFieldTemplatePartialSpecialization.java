@@ -49,7 +49,7 @@ public class PDOMCPPFieldTemplatePartialSpecialization extends PDOMCPPVariableTe
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + PDOMCPPVariableTemplate.ANNOTATIONS));
+		return PDOMCPPAnnotations.getVisibility(getByte(record + PDOMCPPVariableTemplate.ANNOTATIONS));
 	}
 
 	@Override

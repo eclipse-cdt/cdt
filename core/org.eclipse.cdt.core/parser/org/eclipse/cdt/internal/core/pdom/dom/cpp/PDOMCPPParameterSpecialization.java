@@ -164,6 +164,11 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return false;
 	}
 
+    @Override
+	public boolean isConstexpr() {
+        return false;
+    }
+
 	@Override
 	public IValue getInitialValue() {
 		return null;

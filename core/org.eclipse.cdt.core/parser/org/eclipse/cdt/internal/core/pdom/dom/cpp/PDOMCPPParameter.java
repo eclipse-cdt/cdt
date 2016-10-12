@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -68,7 +67,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	private void storeAnnotations(Database db, ICPPParameter param) throws CoreException {
-		byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
+		byte annotations = PDOMCPPAnnotations.encodeVariableAnnotations(param);
 		db.putByte(record + ANNOTATIONS, annotations);
 	}
 
@@ -119,6 +118,11 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return false;
 	}
 
+    @Override
+	public boolean isConstexpr() {
+        return false;
+    }
+
 	@Override
 	public IType getType() {
 		return fType;
@@ -126,9 +130,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public boolean isAuto() {
-		// ISO/IEC 14882:2003 7.1.1.2
-		byte flag = 1 << PDOMCAnnotation.AUTO_OFFSET;
-		return hasFlag(flag, true, ANNOTATIONS);
+		return true;
 	}
 
 	@Override
@@ -144,9 +146,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public boolean isRegister() {
-		// ISO/IEC 14882:2003 7.1.1.2
-		byte flag = 1 << PDOMCAnnotation.REGISTER_OFFSET;
-		return hasFlag(flag, true, ANNOTATIONS);
+		return false;  // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override
@@ -203,16 +203,6 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return getType() instanceof ICPPParameterPackType;
 	}
 
-	private boolean hasFlag(byte flag, boolean defValue, int offset) {
-		try {
-			byte myflags= getDB().getByte(record + offset);
-			return (myflags & flag) == flag;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return defValue;
-	}
-
 	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
@@ -220,13 +210,13 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public boolean hasDefinition() throws CoreException {
-		// parameter bindings do not span index fragments
+		// Parameter bindings do not span index fragments.
 		return true;
 	}
 
 	@Override
 	public boolean hasDeclaration() throws CoreException {
-		// parameter bindings do not span index fragments
+		// Parameter bindings do not span index fragments.
 		return true;
 	}
 

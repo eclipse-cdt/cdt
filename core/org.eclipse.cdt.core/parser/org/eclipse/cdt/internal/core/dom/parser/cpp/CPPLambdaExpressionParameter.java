@@ -105,7 +105,12 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
         return false;
     }
 
-    @Override
+	@Override
+	public boolean isConstexpr() {
+		return false;
+	}
+
+	@Override
 	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }

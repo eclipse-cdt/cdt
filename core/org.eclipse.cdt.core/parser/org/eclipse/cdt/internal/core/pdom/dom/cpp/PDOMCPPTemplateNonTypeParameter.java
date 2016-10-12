@@ -213,6 +213,11 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	public boolean isMutable() {
 		return false;
 	}
+
+    @Override
+	public boolean isConstexpr() {
+        return false;
+    }
 	
 	@Override
 	public Object clone() {

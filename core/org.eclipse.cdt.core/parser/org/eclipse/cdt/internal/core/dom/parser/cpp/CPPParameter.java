@@ -194,7 +194,12 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
         return false;
     }
 
-    @Override
+	@Override
+	public boolean isConstexpr() {
+		return false;
+	}
+
+	@Override
 	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }

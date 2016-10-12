@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -66,7 +65,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	/**
 	 * Offset of annotation information (relative to the beginning of the record).
 	 */
-	protected static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // short
+	private static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // short
 
 	/** Offset of the number of the required arguments. */
 	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2; // short
@@ -85,7 +84,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private static final short ANNOT_IS_CONSTEXPR = 10;
 
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
-	private short fAnnotation= -1;
+	private short fAnnotations= -1;
 	private int fRequiredArgCount= -1;
 	
 	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
@@ -124,8 +123,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			}
 			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 		}
-		fAnnotation = getAnnotation(astFunction);
-		db.putShort(record + ANNOTATION, fAnnotation);	
+		fAnnotations = PDOMCPPAnnotations.encodeFunctionAnnotations(astFunction);
+		db.putShort(record + ANNOTATION, fAnnotations);	
 		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
@@ -138,20 +137,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 				|| ((ICPPTemplateInstance) astFunction).isExplicitSpecialization()) {
 			linkage.new ConfigureFunctionSpecialization(astFunction, this, point);
 		}
-	}
-
-	private short getAnnotation(ICPPFunction astFunction) {
-		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction) & 0xff;
-		if (astFunction.hasParameterPack()) {
-			annot |= (1 << ANNOT_PARAMETER_PACK);
-		}
-		if (astFunction.isDeleted()) {
-			annot |= (1 << ANNOT_IS_DELETED);
-		}
-		if (astFunction.isConstexpr()) {
-			annot |= (1 << ANNOT_IS_CONSTEXPR);
-		}
-		return (short) annot;
 	}
 
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -180,18 +165,19 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public boolean isInline() {
-		return getBit(readAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
+		return PDOMCPPAnnotations.isInline(getAnnotations());
 	}
 
-	private short readAnnotation() {
-		if (fAnnotation == -1) {
+	protected final short getAnnotations() {
+		if (fAnnotations == -1) {
 			try {
-				fAnnotation= getDB().getShort(record + ANNOTATION);
+				fAnnotations= getDB().getShort(record + ANNOTATION);
 			} catch (CoreException e) {
-				fAnnotation= 0;
+				CCorePlugin.log(e);
+				fAnnotations= 0;
 			}
 		}
-		return fAnnotation;
+		return fAnnotations;
 	}
 
 	@Override
@@ -251,17 +237,17 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public boolean isConstexpr() {
-		return getBit(readAnnotation(), ANNOT_IS_CONSTEXPR);
+		return getBit(getAnnotations(), ANNOT_IS_CONSTEXPR);
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(readAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCPPAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
 	public boolean isExternC() {
-		return getBit(readAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return PDOMCPPAnnotations.isExternC(getAnnotations());
 	}
 
 	@Override
@@ -272,17 +258,17 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public boolean isStatic() {
-		return getBit(readAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCPPAnnotations.isStatic(getAnnotations());
 	}
 
 	@Override
 	public boolean takesVarArgs() {
-		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+		return PDOMCPPAnnotations.isVarargsFunction(getAnnotations());
 	}
 
 	@Override
 	public boolean isNoReturn() {
-		return getBit(readAnnotation(), PDOMCAnnotation.NO_RETURN);
+		return PDOMCPPAnnotations.isNoReturnFunction(getAnnotations());
 	}
 
 	@Override
@@ -299,24 +285,12 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public boolean hasParameterPack() {
-		return getBit(readAnnotation(), ANNOT_PARAMETER_PACK);
+		return getBit(getAnnotations(), ANNOT_PARAMETER_PACK);
 	}
 
 	@Override
 	public boolean isDeleted() {
-		return getBit(readAnnotation(), ANNOT_IS_DELETED);
-	}
-
-	public boolean isConst() {
-		// ISO/IEC 14882:2003 9.3.1.3
-		// Only applicable to member functions
-		return false; 
-	}
-
-	public boolean isVolatile() {
-		// ISO/IEC 14882:2003 9.3.1.3
-		// Only applicable to member functions
-		return false; 
+		return getBit(getAnnotations(), ANNOT_IS_DELETED);
 	}
 
 	@Override

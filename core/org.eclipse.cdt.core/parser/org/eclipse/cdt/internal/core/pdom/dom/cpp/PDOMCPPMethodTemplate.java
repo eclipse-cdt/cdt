@@ -16,55 +16,29 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Template for a method.
  */
 class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMethod {
-
-	/**
-	 * Offset of remaining annotation information (relative to the beginning of
-	 * the record).
-	 */
-	private static final int ANNOTATION1 = PDOMCPPFunctionTemplate.RECORD_SIZE; // byte
-	
-	/**
-	 * The size in bytes of a PDOMCPPMethodTemplate record in the database.
-	 */
+	/** Offset of remaining annotation information (relative to the beginning of the record). */
+	private static final int METHOD_ANNOTATION = PDOMCPPFunctionTemplate.RECORD_SIZE; // byte
+	/** The size in bytes of a PDOMCPPMethodTemplate record in the database. */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionTemplate.RECORD_SIZE + 1;
 	
-	/**
-	 * The bit offset of CV qualifier flags within ANNOTATION1.
-	 */
-	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
-
-	private byte annotation1= -1;
+	private byte methodAnnotation= -1;
 	
 	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, IASTNode point) 
 			throws CoreException, DOMException {
 		super(linkage, parent, (ICPPFunctionTemplate) method, point);
-		
-		Database db = getDB();
-
-		try {
-			ICPPFunctionType type = method.getType();
-			byte annotation = 0;
-			annotation |= PDOMCAnnotation.encodeCVQualifiers(type) << CV_OFFSET;
-			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);
-			db.putByte(record + ANNOTATION1, annotation);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		methodAnnotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
+		getDB().putByte(record + METHOD_ANNOTATION, methodAnnotation);
 	}
 	
 	public PDOMCPPMethodTemplate(PDOMLinkage linkage, long bindingRecord) {
@@ -83,28 +57,28 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 
 	@Override
 	public boolean isDestructor() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
-	}
-
-	final protected byte getAnnotation1() {
-		if (annotation1 == -1)
-			annotation1= getByte(record + ANNOTATION1);
-		return annotation1;
+		return PDOMCPPAnnotations.isDestructor(getMethodAnnotation());
 	}
 
 	@Override
 	public boolean isImplicit() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
+		return PDOMCPPAnnotations.isImplicitMethod(getMethodAnnotation());
 	}
 
 	@Override
 	public boolean isExplicit() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
+		return PDOMCPPAnnotations.isExplicitMethod(getMethodAnnotation());
 	}
 
 	@Override
 	public boolean isVirtual() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
+		return PDOMCPPAnnotations.isVirtualMethod(getMethodAnnotation());
+	}
+
+	private byte getMethodAnnotation() {
+		if (methodAnnotation == -1)
+			methodAnnotation= getByte(record + METHOD_ANNOTATION);
+		return methodAnnotation;
 	}
 
 	@Override
@@ -114,17 +88,9 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getAnnotation());
+		return PDOMCPPAnnotations.getVisibility(getAnnotations());
 	}
 
-	public boolean isConst() {
-		return getBit(getAnnotation1(), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
-	}
-
-	public boolean isVolatile() {
-		return getBit(getAnnotation1(), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
-	}
-	
 	@Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6

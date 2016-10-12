@@ -24,6 +24,12 @@ public interface ICPPVariable extends IVariable, ICPPBinding {
     public boolean isMutable();
 
     /**
+     * Checks whether this variable is declared as constexpr.
+     * @since 6.2
+     */
+	public boolean isConstexpr();
+
+    /**
      * Checks whether this variable is declared as extern "C".
      */
     public boolean isExternC();

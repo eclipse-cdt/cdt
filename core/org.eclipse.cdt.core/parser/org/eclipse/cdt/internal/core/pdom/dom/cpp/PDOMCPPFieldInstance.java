@@ -40,7 +40,7 @@ public class PDOMCPPFieldInstance extends PDOMCPPVariableInstance implements ICP
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + PDOMCPPVariableInstance.ANNOTATIONS));
+		return PDOMCPPAnnotations.getVisibility(getAnnotations());
 	}
 
 	@Override

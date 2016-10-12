@@ -309,6 +309,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     	return false;
     }
 
+    public boolean isConstexpr() {
+    	return false;
+    }
+
     public boolean isExtern() {
     	return false;
     }

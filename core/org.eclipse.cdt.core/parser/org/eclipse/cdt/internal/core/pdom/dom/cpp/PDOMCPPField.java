@@ -68,12 +68,12 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATIONS));
+		return PDOMCPPAnnotations.getVisibility(getAnnotations());
 	}
 
 	@Override
 	public boolean isMutable() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.MUTABLE_OFFSET);
+		return PDOMCPPAnnotations.isMutable(getAnnotations());
 	}
 
 	@Override

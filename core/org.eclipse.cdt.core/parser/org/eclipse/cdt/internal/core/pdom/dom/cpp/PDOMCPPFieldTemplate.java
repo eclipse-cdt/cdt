@@ -51,7 +51,7 @@ public class PDOMCPPFieldTemplate extends PDOMCPPVariableTemplate implements ICP
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + PDOMCPPVariableTemplate.ANNOTATIONS));
+		return PDOMCPPAnnotations.getVisibility(getAnnotations());
 	}
 
 	@Override

@@ -12,8 +12,6 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICProject;
@@ -21,6 +19,8 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -69,7 +69,6 @@ public class CPPVariableTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "registerCPPVariable");
 		assertEquals(1, bindings.length);
 		ICPPVariable variable = (ICPPVariable) bindings[0];
-		assertTrue(variable.isRegister());
 	}
 
 	public void testCPPStaticVariable() throws Exception {

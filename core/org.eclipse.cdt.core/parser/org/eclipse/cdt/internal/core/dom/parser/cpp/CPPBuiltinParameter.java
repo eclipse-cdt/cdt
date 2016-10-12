@@ -101,6 +101,11 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
     }
 
     @Override
+	public boolean isConstexpr() {
+        return false;
+    }
+
+    @Override
 	public String[] getQualifiedName() {
         return new String[0];
     }

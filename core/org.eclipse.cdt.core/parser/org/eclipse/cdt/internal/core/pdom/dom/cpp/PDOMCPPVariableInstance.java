@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
@@ -25,14 +26,13 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMCPPVariableInstance extends PDOMCPPSpecialization implements ICPPVariableInstance {
 	private static final int TEMPLATE_ARGUMENTS = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int TYPE = TEMPLATE_ARGUMENTS + Database.PTR_SIZE;
 	private static final int VALUE = TYPE + Database.TYPE_SIZE;
-	protected static final int ANNOTATIONS = VALUE + Database.VALUE_SIZE;
+	private static final int ANNOTATIONS = VALUE + Database.VALUE_SIZE; // byte
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
@@ -48,7 +48,7 @@ public class PDOMCPPVariableInstance extends PDOMCPPSpecialization implements IC
 		db.putRecPtr(record + TEMPLATE_ARGUMENTS, argListRec);
 		getLinkage().storeType(record + TYPE, specialization.getType());
 		getLinkage().storeValue(record + VALUE, specialization.getInitialValue());
-		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(specialization));
+		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(specialization));
 	}
 
 	public PDOMCPPVariableInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -87,27 +87,38 @@ public class PDOMCPPVariableInstance extends PDOMCPPSpecialization implements IC
 
 	@Override
 	public boolean isAuto() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
+		byte annotation = getAnnotations();
+		return !PDOMCPPAnnotations.isExtern(annotation) && !PDOMCPPAnnotations.isStatic(annotation)
+				&& getOwner() instanceof ICPPFunction;
 	}
 
 	@Override
 	public boolean isExtern() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
+		return PDOMCPPAnnotations.isExtern(getAnnotations());
 	}
 
 	@Override
 	public boolean isExternC() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return PDOMCPPAnnotations.isExternC(getAnnotations());
 	}
 
 	@Override
 	public boolean isRegister() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
+		return false;  // We don't care whether the parameter has register storage class specifier or not.
 	}
 
 	@Override
 	public boolean isStatic() {
-		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
+		return PDOMCPPAnnotations.isStatic(getAnnotations());
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return PDOMCPPAnnotations.isConstexpr(getAnnotations());
+	}
+
+	protected final byte getAnnotations() {
+		return getByte(record + ANNOTATIONS);
 	}
 
 	@Override

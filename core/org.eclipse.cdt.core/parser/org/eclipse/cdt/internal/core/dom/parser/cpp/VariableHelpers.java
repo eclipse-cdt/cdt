@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -61,6 +62,24 @@ public class VariableHelpers {
 				break;
 			}
 		} while (name != null);
+		return false;
+	}
+
+	public static boolean isConstexpr(IASTName definition) {
+		if (definition == null)
+			return false;
+
+		IASTNode parent = definition.getParent();
+		while (!(parent instanceof IASTDeclaration)) {
+			parent = parent.getParent();
+		}
+
+		if (parent instanceof IASTSimpleDeclaration) {
+			ICPPASTDeclSpecifier declSpec =
+					(ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+			if (declSpec != null)
+				return declSpec.isConstexpr();
+		}
 		return false;
 	}
 

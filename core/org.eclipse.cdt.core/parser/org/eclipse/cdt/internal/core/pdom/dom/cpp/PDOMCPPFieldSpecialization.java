@@ -33,8 +33,7 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for a specialization of a field, used in the index.
  */
 class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPField {
-
-	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
+	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE;
 	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
@@ -129,6 +128,11 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	@Override
 	public boolean isMutable() {
 		return getField().isMutable();
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return getField().isConstexpr();
 	}
 
 	@Override

@@ -218,7 +218,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 		if (dir != null) {
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
+//					fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()),
+					fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toOSString()), 
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
 		} else {
 			requestMonitor.done();
@@ -563,7 +564,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			String binary = null;
 			final IPath execPath = fGDBBackend.getProgramPath();
 			if (!noBinarySpecified && execPath != null && !execPath.isEmpty()) {
-				binary = execPath.toPortableString();
+//				binary = execPath.toPortableString();
+				binary = execPath.toOSString();
 			}
 
 			// Even if binary is null, we must call this to do all the other steps

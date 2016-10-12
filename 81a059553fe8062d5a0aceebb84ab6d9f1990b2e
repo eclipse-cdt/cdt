@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_56ed5cff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-12T22:03:58Z",
+      "side": 1,
+      "message": "Please clean up before submitting.",
+      "range": {
+        "startLine": 221,
+        "startChar": 0,
+        "endLine": 221,
+        "endChar": 99
+      },
+      "revId": "81a059553fe8062d5a0aceebb84ab6d9f1990b2e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_16d4c42e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-12T22:03:58Z",
+      "side": 1,
+      "message": "Please clean up before submitting.",
+      "range": {
+        "startLine": 567,
+        "startChar": 0,
+        "endLine": 567,
+        "endChar": 43
+      },
+      "revId": "81a059553fe8062d5a0aceebb84ab6d9f1990b2e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

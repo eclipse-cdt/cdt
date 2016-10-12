@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * Models IASTNames as needed for the preprocessor statements and macro expansions.
  * @since 5.0
  */
-class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
+public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	private final char[] fName;
 	private final IBinding fBinding;
 
@@ -236,6 +236,16 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 			}
 			return null;
 		}
-		return super.getImageLocation();
+		// ASTNode.getImageLocation() computes an image location based on the node location.
+		// Macro reference names which are nested references rather than the name of the
+		// macro being expanded itself, have their node location set to the entire macro
+		// expansion (see LocationMap.pushMacroExpansion()), which doesn't produce a
+		// useful image location. 
+		if (getParent() instanceof ASTMacroExpansion) {
+			if (((ASTMacroExpansion) getParent()).getContext().getMacroReference() == this) {
+				return super.getImageLocation();
+			}
+		}
+		return null;
 	}
 }

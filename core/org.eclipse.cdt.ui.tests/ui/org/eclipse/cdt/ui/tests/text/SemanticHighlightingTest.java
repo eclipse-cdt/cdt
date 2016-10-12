@@ -569,4 +569,37 @@ public class SemanticHighlightingTest extends TestCase {
     public void testVariableTemplates_486672() throws Exception {
     	makeAssertions();
     }
+    
+    //	#define MACRO(Name, Type) Type Name();           //$macroDefinition
+    //	typedef int Int;                                 //$typedef
+    //	class S {                                        //$class
+    //		MACRO(foo, Int)                              //$macroSubstitution,methodDeclaration,typedef
+    //	};
+    public void testMethodNameInsideMacro_486682() throws Exception {
+    	makeAssertions();
+    }
+    
+	//	#define IF_0(t, f) f                             //$macroDefinition
+	//	#define IF(bit, t, f) IF_ ## bit(t, f)           //$macroDefinition
+	//	#define WALDO                                    //$macroDefinition
+	//	#define MAIN(...) int main() { __VA_ARGS__ }     //$macroDefinition
+	//	
+	//	MAIN                                             //$macroSubstitution
+	//	(
+	//	    int x;                                       //$localVariableDeclaration
+	//	    IF(0, WALDO, WALDO)                          //$macroSubstitution,macroSubstitution,macroSubstitution
+	//	)
+    public void testLexicalColoringInsideMacroExpansion_490415() throws Exception {
+    	makeAssertions();
+    }
+    
+    //	#define N1(x) x
+    //	#define M1(x) N1(x)
+    
+    //	int main() {                                     //$functionDeclaration
+    //		M1(0);                                       //$macroSubstitution
+    //	}
+    public void testLexicalColoringInsideMacroExpansion_496696() throws Exception {
+    	makeAssertions();
+    }
 }

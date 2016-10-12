@@ -73,23 +73,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -477,7 +476,6 @@ public class CCorePlugin extends Plugin {
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	public static String getOption(String optionName) {
-
 		if (CORE_ENCODING.equals(optionName)) {
 			return ResourcesPlugin.getEncoding();
 		}
@@ -902,34 +900,26 @@ public class CCorePlugin extends Plugin {
 	 */
 	public IProject createCProject(final IProjectDescription description, final IProject projectHandle,
 			IProgressMonitor monitor, final String projectID)
-					throws CoreException, OperationCanceledException {
-
-		getWorkspace().run(new IWorkspaceRunnable() {
+			throws CoreException, OperationCanceledException {
+		getWorkspace().run(new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				try {
-					if (monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
-					monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
-					if (!projectHandle.exists()) {
-						projectHandle.create(description, new SubProgressMonitor(monitor, 1));
-					}
-
-					if (monitor.isCanceled()) {
-						throw new OperationCanceledException();
-					}
-
-					// Open first.
-					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
-
-					mapCProjectOwner(projectHandle, projectID, false);
-
-					// Add C Nature ... does not add duplicates
-					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-				} finally {
-					monitor.done();
+				SubMonitor progress = SubMonitor.convert(monitor, "Creating C Project...", 3); //$NON-NLS-1$
+				if (!projectHandle.exists()) {
+					projectHandle.create(description, progress.split(1));
 				}
+
+				if (progress.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+
+				// Open first.
+				projectHandle.open(IResource.BACKGROUND_REFRESH, progress.split(1));
+
+				mapCProjectOwner(projectHandle, projectID, false);
+
+				// Add C Nature ... does not add duplicates
+				CProjectNature.addCNature(projectHandle, progress.split(1));
 			}
 		}, getWorkspace().getRoot(), 0, monitor);
 		return projectHandle;
@@ -942,56 +932,48 @@ public class CCorePlugin extends Plugin {
 
 	public IProject createCDTProject(final IProjectDescription description, final IProject projectHandle,
 			final String bsId, IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-
-		getWorkspace().run(new IWorkspaceRunnable() {
+		getWorkspace().run(new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				try {
-					if (monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
-					monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
-					if (!projectHandle.exists()) {
-						projectHandle.create(description, new SubProgressMonitor(monitor, 1));
-					}
+				SubMonitor progress = SubMonitor.convert(monitor, "Creating C Project...", 3); //$NON-NLS-1$
+				if (!projectHandle.exists()) {
+					projectHandle.create(description, progress.split(1));
+				}
 
-					if (monitor.isCanceled()) {
-						throw new OperationCanceledException();
-					}
+				if (progress.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 
-					// Open first.
-					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
+				// Open first.
+				projectHandle.open(IResource.BACKGROUND_REFRESH, progress.split(1));
 
-					// mapCProjectOwner(projectHandle, projectID, false);
+				// mapCProjectOwner(projectHandle, projectID, false);
 
-					// Add C Nature ... does not add duplicates
-					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
+				// Add C Nature ... does not add duplicates
+				CProjectNature.addCNature(projectHandle, progress.split(1));
 
-					if (bsId != null) {
-						ICProjectDescription projDes = createProjectDescription(projectHandle, true);
-						ICConfigurationDescription cfgs[] = projDes.getConfigurations();
-						ICConfigurationDescription cfg = null;
-						for (ICConfigurationDescription cfg2 : cfgs) {
-							if (bsId.equals(cfg2.getBuildSystemId())) {
-								cfg = cfg2;
-								break;
-							}
-						}
-
-						if (cfg == null) {
-							ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
-							if (prefCfg != null) {
-								cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()),
-										prefCfg.getName(), prefCfg);
-							}
-						}
-
-						if (cfg != null) {
-							setProjectDescription(projectHandle, projDes);
+				if (bsId != null) {
+					ICProjectDescription projDes = createProjectDescription(projectHandle, true);
+					ICConfigurationDescription cfgs[] = projDes.getConfigurations();
+					ICConfigurationDescription cfg = null;
+					for (ICConfigurationDescription cfg2 : cfgs) {
+						if (bsId.equals(cfg2.getBuildSystemId())) {
+							cfg = cfg2;
+							break;
 						}
 					}
-				} finally {
-					monitor.done();
+
+					if (cfg == null) {
+						ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
+						if (prefCfg != null) {
+							cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()),
+									prefCfg.getName(), prefCfg);
+						}
+					}
+
+					if (cfg != null) {
+						setProjectDescription(projectHandle, projDes);
+					}
 				}
 			}
 		}, getWorkspace().getRoot(), 0, monitor);
@@ -1023,7 +1005,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 			throws CoreException {
-		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
+		if (projectHandle == null || projectID == null) {
 			return;
 		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -1034,7 +1016,7 @@ public class CCorePlugin extends Plugin {
 
 	public void convertProjectToNewC(IProject projectHandle, String bsId, IProgressMonitor monitor)
 			throws CoreException {
-		if ((projectHandle == null) || (monitor == null) || (bsId == null)) {
+		if (projectHandle == null || bsId == null) {
 			throw new NullPointerException();
 		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -1048,7 +1030,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 			throws CoreException {
-		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
+		if (projectHandle == null || projectID == null) {
 			return;
 		}
 		createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
@@ -1058,7 +1040,7 @@ public class CCorePlugin extends Plugin {
 
 	public void convertProjectToNewCC(IProject projectHandle, String bsId, IProgressMonitor monitor)
 			throws CoreException {
-		if ((projectHandle == null) || (monitor == null) || (bsId == null)) {
+		if (projectHandle == null || bsId == null) {
 			throw new NullPointerException();
 		}
 		createCDTProject(projectHandle.getDescription(), projectHandle, bsId, monitor);
@@ -1102,10 +1084,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated since CDT 6.1. Use
-	 *             {@link ErrorParserManager#getErrorParserAvailableIds()}
-	 *             instead
-	 * @return array of error parsers ids
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserAvailableIds()} instead
 	 */
 	@Deprecated
 	public String[] getAllErrorParsersIDs() {
@@ -1115,11 +1094,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated since CDT 6.1. Use
-	 *             {@link ErrorParserManager#getErrorParserCopy(String)} instead
-	 * @param id
-	 *            - id of error parser
-	 * @return array of error parsers
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserCopy(String)} instead
 	 */
 	@Deprecated
 	public IErrorParser[] getErrorParser(String id) {

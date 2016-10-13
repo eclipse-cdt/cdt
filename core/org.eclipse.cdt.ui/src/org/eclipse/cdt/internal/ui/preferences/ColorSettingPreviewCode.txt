@@ -9,6 +9,7 @@ int static myfunc(uint parameter) {
   cout << "hello\n";
   return parameter - 1;
 }
+void mutator(int&);
 class MyClass {
 public:
   enum Number { ZERO, ONE, TWO };
@@ -21,6 +22,7 @@ label: myfunc(local);
     vmethod();
     staticMethod();
     problem();
+    mutator(local);
   }
   static void staticMethod();
 };

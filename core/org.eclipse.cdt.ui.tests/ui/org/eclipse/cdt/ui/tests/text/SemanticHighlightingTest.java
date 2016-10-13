@@ -602,4 +602,28 @@ public class SemanticHighlightingTest extends TestCase {
     public void testLexicalColoringInsideMacroExpansion_496696() throws Exception {
     	makeAssertions();
     }
+    
+    //	void foo(int&);                                  //$functionDeclaration
+    //	struct S {                                       //$class
+    //		int x;                                       //$field
+    //  };                                     
+    //	void bar(int x) {                                //$functionDeclaration,parameterVariable
+    //		foo(x);                                      //$function,variablePassedByNonconstRef
+    //		S s;                                         //$class,localVariableDeclaration
+    //	    foo(s.x);                                    //$function,variablePassedByNonconstRef
+    //	}
+    public void testVariablePassedByNonconstRef_487764a() throws Exception {
+    	makeAssertions();
+    }
+    
+    //	template <typename... Args>                      //$templateParameter
+    //	void foo(Args&&... args);                        //$functionDeclaration,templateParameter,parameterVariable
+    //	void bar() {                                     //$functionDeclaration
+    //		const int x;                                 //$localVariableDeclaration
+    //		int y;                                       //$localVariableDeclaration
+    //		foo(x, y, "waldo");                          //$function,localVariable,variablePassedByNonconstRef
+    //	}
+    public void testVariablePassedByNonconstRef_487764b() throws Exception {
+    	makeAssertions();
+    }
 }

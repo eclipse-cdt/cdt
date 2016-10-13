@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_c79ff8e5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_47fda82d",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_67f8ec3d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 5
@@ -47,6 +65,24 @@
       "writtenOn": "2016-10-13T18:10:17Z",
       "side": 1,
       "message": "no longer needed - see below",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_e7a23c2a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_67f8ec3d",
       "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_079ad0f4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_87f7c04b",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_c7145804",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 5
@@ -81,6 +135,24 @@
       "writtenOn": "2016-10-13T18:10:17Z",
       "side": 1,
       "message": "as discussed, here we can just use the same high watermark as the low one - it will make the buffer\u0027s size more constant, instead of varying between 2 sizes. \nWe can also get rid of the check of minimal number of lines we cant the buffer to be , since that check is already done in the preferences page.",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_4793e8dd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_c7145804",
       "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_678e2cba",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_c76618a0",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_7c4b1f7f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
         "patchSetId": 5
@@ -115,6 +205,24 @@
       "writtenOn": "2016-10-13T18:10:17Z",
       "side": 1,
       "message": "\"are having its own\" -\u003e \"are having their own\" ?",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_878d00bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_7c4b1f7f",
       "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_a78844aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_a77f641b",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_a19e74b2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
         "patchSetId": 5
@@ -149,6 +275,24 @@
       "writtenOn": "2016-10-13T18:10:17Z",
       "side": 1,
       "message": "as discussed, 16 might look like a less odd value here",
+      "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_471e88f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:13:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07b223f6_a19e74b2",
       "revId": "8af2a32d0216dc5b9cefd49d2d1cf7858e3bffc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

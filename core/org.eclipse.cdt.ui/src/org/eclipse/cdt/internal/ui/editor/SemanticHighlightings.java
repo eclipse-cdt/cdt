@@ -24,11 +24,15 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -39,9 +43,12 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
@@ -59,8 +66,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -77,6 +86,10 @@ import org.eclipse.cdt.ui.text.ISemanticToken;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 /**
  * Semantic highlightings.
@@ -201,6 +214,11 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of operators that have been overloaded.
 	 */
 	public static final String OVERLOADED_OPERATOR= "overloadedOperator"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference part that controls the highlighting of variables passed by non-const reference.
+	 */
+	public static final String VARIABLE_PASSED_BY_NONCONST_REF= "variablePassedByNonconstRef";  //$NON-NLS-1$
 	
 	/** Init debugging mode */
 	private static final boolean DEBUG= Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$
@@ -1597,6 +1615,111 @@ public class SemanticHighlightings {
 	}
 	
 	/**
+	 * Semantic highlighting for variables passed by non-const reference.
+	 * 
+	 * The purpose of having a highlighting for this is that there's an important
+	 * semantic difference between passing a variable by non-const reference 
+	 * (where the called function can modify the original variable) and passing
+	 * a variable by const reference or value (where it cannot), but syntactically
+	 * these two forms of passing look the same at the call site.
+	 */
+	private static final class VariablePassedByNonconstRefHighlighting 
+			extends SemanticHighlightingWithOwnPreference {
+
+		@Override
+		public String getPreferenceKey() {
+			return VARIABLE_PASSED_BY_NONCONST_REF;
+		}
+		
+		@Override
+		public boolean requiresExpressions() {
+			return true;
+		}
+
+		@Override
+		public RGB getDefaultDefaultTextColor() {
+			return new RGB(200, 100, 150); // dark pink
+		}
+		
+		@Override
+		public boolean isBoldByDefault() {
+			return true;
+		}
+
+		@Override
+		public boolean isEnabledByDefault() {
+			return false;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return CEditorMessages.SemanticHighlighting_variablePassedByNonConstReference;
+		}
+
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			IASTNode node = token.getNode();
+			
+			// This highlighting only applies to function arguments.
+			boolean isFunctionArgument = (node instanceof IASTExpression) &&
+					                     (node.getParent() instanceof IASTFunctionCallExpression) &&
+					                     (node.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT);
+			if (!isFunctionArgument) {
+				return false;
+			}
+			
+			// If the argument expression is not an lvalue, we don't care if the function
+			// modifies it. 
+			IASTExpression expression = (IASTExpression) node;
+			if (expression.getValueCategory() != ValueCategory.LVALUE) {
+				return false;
+			}
+			
+			// Resolve the type of the function being called.
+			// Note that, in the case of a call to a template function or a set of overloaded functions,
+			// the function name expression will be an id-expression, and 
+			// CPPASTIdExpression.getExpressionType() will perform template instantiation and overload 
+			// resolution, and we'll get the instantiated function type.
+			IASTFunctionCallExpression functionCall = ((IASTFunctionCallExpression) node.getParent());
+			IType functionType = functionCall.getFunctionNameExpression().getExpressionType();
+			functionType = SemanticUtil.getNestedType(functionType, TDEF | REF);
+			if (!(functionType instanceof ICPPFunctionType)) {
+				return false;
+			}
+			
+			// Find the parameter type matching the argument.
+			IType[] parameterTypes = ((ICPPFunctionType) functionType).getParameterTypes();
+			int argIndex = -1;
+			IASTInitializerClause[] arguments = functionCall.getArguments();
+			for (int i = 0; i < arguments.length; ++i) {
+				if (arguments[i] == expression) {
+					argIndex = i;
+					break;
+				}
+			}
+			if (argIndex == -1 || argIndex >= parameterTypes.length) {
+				return false;
+			}
+			IType parameterType = parameterTypes[argIndex];
+			
+			// Consume the node if the parameter type is a non-const reference.
+			// In the case of an reference to an array type, it is the element type
+			// which must be non-const.
+			parameterType = SemanticUtil.getNestedType(parameterType, TDEF);
+			if (parameterType instanceof ICPPReferenceType) {
+				IType referredType = ((ICPPReferenceType) parameterType).getType();
+				if (referredType instanceof IArrayType) {
+					referredType = ((IArrayType) referredType).getType();
+				}
+				boolean isConstRef = (referredType instanceof IQualifierType) &&
+						             ((IQualifierType) referredType).isConst();
+				return !isConstRef;
+			}
+			return false;
+		}
+	}
+	
+	/**
 	 * Semantic highlighting for context-sensitive keywords.
 	 * 
 	 * This does not get its own color and style; rather, it uses
@@ -1799,6 +1922,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(220), new LabelHighlighting());
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
 		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
+		highlightings.put(new Key(250), new VariablePassedByNonconstRefHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$

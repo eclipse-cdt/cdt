@@ -1104,6 +1104,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, progress.split(10));
 				resultCacheCleared = true;  // The cache was cleared while writing to the index.
 			}
+			if (fShowActivity) {
+				long time = System.currentTimeMillis() - start;
+				trace("Indexer: parsed " + path.toOSString() + " [" + time + " ms]");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 		} catch (OperationCanceledException e) {
 		} catch (RuntimeException e) {
 			final Throwable cause = e.getCause();

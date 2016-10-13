@@ -46,6 +46,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildStep implements IBuildStep {
+	private static final int PER_ARGUMENT_PADDING = 3;
+	private static final int MAX_CLEAN_LENGTH = 6000;
 	private List<BuildIOType> fInputTypes = new ArrayList<BuildIOType>();
 	private List<BuildIOType> fOutputTypes = new ArrayList<BuildIOType>();
 	private ITool fTool;
@@ -230,46 +232,79 @@ public class BuildStep implements IBuildStep {
 			cwd = calcCWD();
 
 		if (fTool == null) {
-			String step = null;
-			String appendToLastStep = null;
-			if (this == fBuildDescription.getInputStep()) {
-				step = fBuildDescription.getConfiguration().getPrebuildStep();
-			} else if (this == fBuildDescription.getOutputStep()) {
-				step = fBuildDescription.getConfiguration().getPostbuildStep();
-			} else if (this == fBuildDescription.getCleanStep()) {
-				step = fBuildDescription.getConfiguration().getCleanCommand();
+			if (this == fBuildDescription.getCleanStep()) {
 
-				IBuildResource[] generated = fBuildDescription.getResources(true);
-
-				if (generated.length != 0) {
-					StringBuilder buf = new StringBuilder();
-					for (int i = 0; i < generated.length; i++) {
-						buf.append(' ');
-
-						IPath rel = BuildDescriptionManager.getRelPath(cwd, generated[i].getLocation());
-						buf.append(rel.toString());
-					}
-					appendToLastStep = buf.toString();
-				}
-			}
-
-			if (step != null && (step = step.trim()).length() > 0) {
-				step = resolveMacros(step, resolveAll);
-				if (step != null && (step = step.trim()).length() > 0) {
-					String commands[] = step.split(";"); //$NON-NLS-1$
-
-					if (appendToLastStep != null && commands.length != 0) {
-						commands[commands.length - 1] = commands[commands.length - 1] + appendToLastStep;
-					}
-
+				String cleanCmd = fBuildDescription.getConfiguration().getCleanCommand();
+				if (cleanCmd != null && (cleanCmd = cleanCmd.trim()).length() > 0) {
 					List<IBuildCommand> list = new ArrayList<IBuildCommand>();
-					for (int i = 0; i < commands.length; i++) {
-						IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
-						for (int j = 0; j < cmds.length; j++) {
-							list.add(cmds[j]);
-						}
+					cleanCmd = resolveMacros(cleanCmd, resolveAll);
+					String commands[] = cleanCmd.split(";"); //$NON-NLS-1$
+					for (int i = 0; i < commands.length - 1; i++) {
+						list.add(createCommandFromString(commands[0], cwd, getEnvironment()));
 					}
+
+					List<String> cleanCmdArgs = convertStringToArguments(commands[commands.length - 1]);
+					final int initialLen = cleanCmdArgs.stream()
+							.mapToInt(w -> w.length() + PER_ARGUMENT_PADDING).sum();
+					IPath cleanCmdPath = new Path(cleanCmdArgs.get(0));
+					Map<String, String> env = getEnvironment();
+
+					IBuildResource[] resources = fBuildDescription.getResources(true);
+
+					List<String> args = new ArrayList<>();
+					args.addAll(cleanCmdArgs.subList(1, cleanCmdArgs.size()));
+					int totalLen = initialLen;
+					for (IBuildResource resource : resources) {
+						IPath resLoc = BuildDescriptionManager.getRelPath(cwd, resource.getLocation());
+						String path = resLoc.toString();
+						int pathLen = path.length() + PER_ARGUMENT_PADDING;
+
+						if (totalLen + pathLen > MAX_CLEAN_LENGTH && totalLen != initialLen) {
+							// adding new path takes us over limit, emit what we have...
+							BuildCommand buildCommand = new BuildCommand(cleanCmdPath,
+									args.toArray(new String[args.size()]), env, cwd, this);
+							list.add(buildCommand);
+
+							// ...and restart
+							totalLen = initialLen;
+							args.clear();
+						}
+
+						args.add(path);
+						totalLen += pathLen;
+					}
+
+					// add remaining files
+					BuildCommand buildCommand = new BuildCommand(cleanCmdPath,
+							args.toArray(new String[args.size()]), env, cwd, this);
+					list.add(buildCommand);
+
 					return list.toArray(new BuildCommand[list.size()]);
+				}
+
+			} else {
+				String step = null;
+				if (this == fBuildDescription.getInputStep()) {
+					step = fBuildDescription.getConfiguration().getPrebuildStep();
+				} else if (this == fBuildDescription.getOutputStep()) {
+					step = fBuildDescription.getConfiguration().getPostbuildStep();
+				}
+
+				if (step != null && (step = step.trim()).length() > 0) {
+					step = resolveMacros(step, resolveAll);
+					if (step != null && (step = step.trim()).length() > 0) {
+						String commands[] = step.split(";"); //$NON-NLS-1$
+
+						List<IBuildCommand> list = new ArrayList<IBuildCommand>();
+						for (int i = 0; i < commands.length; i++) {
+							IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd,
+									getEnvironment());
+							for (int j = 0; j < cmds.length; j++) {
+								list.add(cmds[j]);
+							}
+						}
+						return list.toArray(new BuildCommand[list.size()]);
+					}
 				}
 			}
 			return new IBuildCommand[0];
@@ -354,7 +389,29 @@ public class BuildStep implements IBuildStep {
 	}
 
 	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map<String, String> env) {
-		char arr[] = cmd.toCharArray();
+		IBuildCommand buildCommand = createCommandFromString(cmd, cwd, env);
+		return new IBuildCommand[] { buildCommand };
+	}
+
+	protected IBuildCommand createCommandFromString(String cmd, IPath cwd, Map<String, String> env) {
+		List<String> list = convertStringToArguments(cmd);
+
+		IPath c = new Path(list.remove(0));
+		String[] args = list.toArray(new String[list.size()]);
+
+		BuildCommand buildCommand = new BuildCommand(c, args, env, cwd, this);
+		return buildCommand;
+	}
+
+	/**
+	 * Convert string to arguments, first argument is command
+	 *
+	 * @param commandLine
+	 *            to parse
+	 * @return arguments as a list
+	 */
+	protected List<String> convertStringToArguments(String commandLine) {
+		char arr[] = commandLine.toCharArray();
 		char expect = 0;
 		char prev = 0;
 		// int start = 0;
@@ -400,11 +457,7 @@ public class BuildStep implements IBuildStep {
 
 		if (buf.length() > 0)
 			list.add(buf.toString());
-
-		IPath c = new Path(list.remove(0));
-		String[] args = list.toArray(new String[list.size()]);
-
-		return new IBuildCommand[] { new BuildCommand(c, args, env, cwd, this) };
+		return list;
 	}
 
 	private BuildResource[] getPrimaryResources(boolean input) {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
-import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -32,7 +30,6 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 public class HeaderSubstitutor {
@@ -213,7 +210,6 @@ public class HeaderSubstitutor {
 
 				while (!front.isEmpty()) {
 					IIndexFile file = front.remove();
-
 					String path = IncludeUtil.getPath(file);
 
 					if (getFilename(path).equalsIgnoreCase(symbolName)) {
@@ -242,39 +238,12 @@ public class HeaderSubstitutor {
 				}
 			}
 
-			if (bestCandidate == null) {
+			if (bestCandidate == null)
 				bestCandidate = candidateWithoutExtension;
-			}
-			if (bestCandidate == null) {
+
+			if (bestCandidate == null)
 				bestCandidate = candidateWithMatchingName;
-			}
 
-			if (bestCandidate == null) {
-				// Repeat inclusion tree search, this time looking for any header included by a source file.
-				front.clear();
-				front.addAll(indexFiles);
-				processed.clear();
-				processed.addAll(indexFiles);
-
-				while (!front.isEmpty()) {
-					IIndexFile file = front.remove();
-
-					// Process the next level of the include hierarchy.
-					IIndexInclude[] includes = fContext.getIndex().findIncludedBy(file, 0);
-					for (IIndexInclude include : includes) {
-						IIndexFile includer = include.getIncludedBy();
-						if (!processed.contains(includer)) {
-							URI uri = includer.getLocation().getURI();
-							if (IncludeUtil.isSource(includer, fContext.getProject()) || isWorkspaceFile(uri)) {
-								bestCandidate = file;
-								break;
-							}
-							front.add(includer);
-							processed.add(includer);
-						}
-					}
-				}
-			}
 			if (bestCandidate != null)
 				return IndexLocationFactory.getAbsolutePath(bestCandidate.getLocation());
 		} catch (CoreException e) {
@@ -292,18 +261,6 @@ public class HeaderSubstitutor {
 		if (headers == null)
 			return Collections.emptySet();
 		return headers;
-	}
-
-	/**
-	 * Returns whether the given URI points within the workspace.
-	 */
-	private static boolean isWorkspaceFile(URI uri) {
-		for (IFile file : ResourceLookup.findFilesForLocationURI(uri)) {
-			if (file.exists()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

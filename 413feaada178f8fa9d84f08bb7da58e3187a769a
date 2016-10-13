@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_a73a044a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-13T18:19:53Z",
+      "side": 1,
+      "message": "It turns-out this is not permitted. I now get an IllegalArgumentExcexception, saying high watermark has to be higher than low. I will add a small high watermark buffer, then.",
+      "revId": "413feaada178f8fa9d84f08bb7da58e3187a769a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -885,7 +885,13 @@
             id="org.eclipse.cdt.ui.overloadedOperatorHighlighting"
             isEditable="false"
             label="%Dummy.label"
-            value="200, 100, 0">
+            value="200, 100, 0">            
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.variablePassedByNonConstReferenceHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="200, 100, 150">            
       </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">

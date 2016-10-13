@@ -38,6 +38,13 @@ public abstract class SemanticHighlighting {
 	public boolean requiresImplicitNames() {
 		return false;
 	}
+	
+	/**
+	 * Indicates that the highlighting needs to visit expressions.
+	 */
+	public boolean requiresExpressions() {
+		return false;
+	}
 
 	/**
 	 * Returns <code>true</code> iff the semantic highlighting consumes the semantic token.

@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -61,6 +62,12 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
  * @since 4.0
  */
 public class SemanticHighlightingReconciler implements ICReconcilingListener {
+	
+	private class PositionCollectorRequirements {
+		public boolean visitImplicitNames = false;
+		public boolean visitExpressions = false;
+	}
+	
 	/**
 	 * Collects positions from the AST.
 	 */
@@ -69,18 +76,18 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		private SemanticToken fToken= new SemanticToken();
 		private int fMinLocation;
 		
-		public PositionCollector(boolean visitImplicitNames) {
+		public PositionCollector(PositionCollectorRequirements requirements) {
 			fMinLocation= -1;
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
-			shouldVisitExpressions= true;
+			shouldVisitExpressions= requirements.visitExpressions;
 			shouldVisitStatements= true;
 			shouldVisitDeclarators= true;
 			shouldVisitNamespaces= true;
 			shouldVisitVirtSpecifiers= true;
-			shouldVisitImplicitNames = visitImplicitNames;
-			shouldVisitImplicitNameAlternates = visitImplicitNames;
+			shouldVisitImplicitNames = requirements.visitImplicitNames;
+			shouldVisitImplicitNameAlternates = requirements.visitImplicitNames;
 		}
 
 		@Override
@@ -178,11 +185,24 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			return PROCESS_CONTINUE;
 		}
 		
+		@Override
+		public int visit(IASTExpression expression) {
+			if (visitNode(expression)) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+		
 		private boolean visitNode(IASTNode node) {
 			boolean consumed= false;
 			fToken.update(node);
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
+				// If the semantic highlighting doesn't color expressions, don't bother
+				// passing it one to begin with.
+				if (node instanceof IASTExpression && !semanticHighlighting.requiresExpressions()) {
+					continue;
+				}
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
 					IASTNodeLocation location = getLocationToHighlight(node);
 					if (location != null) {
@@ -343,7 +363,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
 			
-			PositionCollector collector= new PositionCollector(requiresImplicitNames());
+			PositionCollector collector= new PositionCollector(getRequirements());
 
 			startReconcilingPositions();
 			
@@ -368,14 +388,20 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 	}
 
-	private boolean requiresImplicitNames() {
+	private PositionCollectorRequirements getRequirements() {
+		PositionCollectorRequirements result = new PositionCollectorRequirements();
 		for (int i = 0; i < fSemanticHighlightings.length; i++) {
 			SemanticHighlighting sh = fSemanticHighlightings[i];
-			if (sh.requiresImplicitNames() && fHighlightings[i].isEnabled()) {
-				return true;
+			if (fHighlightings[i].isEnabled()) {
+				if (sh.requiresImplicitNames()) {
+					result.visitImplicitNames = true;
+				}
+				if (sh.requiresExpressions()) {
+					result.visitExpressions = true;
+				}
 			}
 		}
-		return false;
+		return result;
 	}
 
 	/**

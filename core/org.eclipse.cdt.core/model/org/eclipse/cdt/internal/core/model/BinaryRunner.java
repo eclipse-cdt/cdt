@@ -86,7 +86,6 @@ public class BinaryRunner {
 	private final Job runnerJob;		// final fields don't need synchronization
 	private IOutputEntry[] entries = new IOutputEntry[0];
 	private boolean isStopped= false;   // access to isStopped must be synchronized.
-	private final static Object BINARY_RUNNER_FAMILY = new Object();
 
 	public BinaryRunner(IProject prj) {
 		cproject = CModelManager.getDefault().create(prj);
@@ -136,11 +135,6 @@ public class BinaryRunner {
 				}
 				return status;
 			}
-			
-			@Override
-			public boolean belongsTo(Object family) {
-				return family == BINARY_RUNNER_FAMILY;
-			}
 		};
 		job.setPriority(Job.LONG);
 		return job;
@@ -159,7 +153,9 @@ public class BinaryRunner {
 	 */
 	public void waitIfRunning() {
 		try {
-			Job.getJobManager().join(BINARY_RUNNER_FAMILY, null);
+			if (runnerJob != null && !runnerJob.equals(Job.getJobManager().currentJob())) {
+				runnerJob.join();
+			}
 		} catch (InterruptedException e) {
 		}
 	}

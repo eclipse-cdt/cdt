@@ -22,6 +22,30 @@
       "revId": "0c68d499de09a820f8b11344b05d1d9ad1a372ad",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_8ffd12a6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/AbstractIndexerTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-10-14T15:23:59Z",
+      "side": 1,
+      "message": "Would it help if I replaced \"parsing\" with \"processing\"? I think it\u0027s useful to print a number that reflects the total time spent by the indexer.",
+      "parentUuid": "07b223f6_ac03c482",
+      "range": {
+        "startLine": 1108,
+        "startChar": 23,
+        "endLine": 1108,
+        "endChar": 40
+      },
+      "revId": "0c68d499de09a820f8b11344b05d1d9ad1a372ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

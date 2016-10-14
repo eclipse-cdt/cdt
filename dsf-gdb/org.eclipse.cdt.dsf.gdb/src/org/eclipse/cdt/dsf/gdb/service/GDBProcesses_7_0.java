@@ -1137,6 +1137,37 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		attachDebuggerToProcess(procCtx, null, rm);
 	}
 	
+	/**
+	 * Creates a PTY for the specified process to be used in case of a restart.
+	 * 
+	 * @since 5.2
+	 */
+	protected void createPty(IMIContainerDMContext containerDmc, RequestMonitor rm) {
+		try {
+    		// Use a PersistentPTY so it can be re-used for restarts.
+    		// It is possible that the inferior will be restarted by the user from
+    		// the GDB console, in which case, we are not able to create a new PTY
+    		// for it; using a persistentPTY allows this to work since the persistentPTY
+    		// does not need to be replaced but can continue to be used.
+    		PTY pty = new PersistentPTY();
+    		pty.validateSlaveName();
+
+    		// Tell GDB to use this PTY
+    		fCommandControl.queueCommand(
+    				fCommandFactory.createMIInferiorTTYSet(containerDmc, pty.getSlaveName()), 
+    				new ImmediateDataRequestMonitor<MIInfo>(rm) {
+    					@Override
+    					protected void handleSuccess() {
+    						// Store the PTY so we know about it in case of a restart
+    						fGroupIdToPTYMap.put(containerDmc.getGroupId(), pty);
+    						rm.done();
+    					}
+    				});
+    	} catch (IOException e) {
+    		rm.done();
+    	}
+	}
+	
     /**
 	 * @since 4.0
 	 */
@@ -1217,6 +1248,17 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 								memory.initializeMemoryData(memContext, rm);
 	    					}
 	    				},
+	    				// Create a PTY in case the user restarts the attached process,
+	    				// in which case we'll take the I/O of the new process and handle
+	    				// it in an eclipse console.
+	    				// For GDB <= 7.1, we must do this after the process has been attached
+	    				// to so that we get the proper GroupId
+		                new Step() { 
+		                    @Override
+		                    public void execute(RequestMonitor rm) {
+		                    	createPty(fContainerDmc, rm);
+		                    }
+		                },
 	    				new Step() { 
 	    					@Override
 	    					public void execute(RequestMonitor rm) {
@@ -1650,7 +1692,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	/** @since 4.0 */
 	@Override
 	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
-    	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
+    	if (fBackend.getSessionType() == SessionType.CORE) {
         	rm.setData(false);
         	rm.done();
         	return;

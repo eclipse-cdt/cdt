@@ -433,6 +433,18 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	    				    	rm.done();
 	    					}
 	    				},
+	    				// Create a PTY in case the user restarts the attached process,
+	    				// in which case we'll take the I/O of the new process and handle
+	    				// it in an eclipse console.
+	    				// For GDB >= 7.2, we can do this even before we actually attach
+	    				// since we already know the groupId.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+	    						createPty(fContainerDmc, rm);
+	    					}
+	    				},	    				
+
 		                // Now, actually do the attach
 		                new Step() { 
 		                    @Override

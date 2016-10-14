@@ -45,6 +45,8 @@ import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
@@ -71,9 +73,8 @@ public class MIInferiorProcess extends Process
 {
     
 	// Indicates that the inferior has been started
-	// This is important for the case of a restart
-	// where we need to make sure not to terminate
-	// the new inferior, which was not started yet.
+	// It implies the ContainerDMContext is fully-formed
+	// with the pid of the process (as a parent dmc)
 	private boolean fStarted;
 	
 	// Indicates that the inferior has been terminated
@@ -115,10 +116,8 @@ public class MIInferiorProcess extends Process
     Integer fExitCode = null;
     
     /**
-     * @returns if that the inferior has been started.
-	 * This is important for the case of a restart
-	 * where we need to make sure not to terminate
-	 * the new inferior, which was not started yet.
+     * @returns whether the inferior has been started, which means
+     *          we can obtain its process id.
 	 * @since 4.7
 	 */
     protected boolean isStarted() {
@@ -168,6 +167,14 @@ public class MIInferiorProcess extends Process
         fSession.addServiceEventListener(this, null);
         
         fContainerDMContext = container;
+        IMIProcessDMContext processDmc = DMContexts.getAncestorOfType(fContainerDMContext, IMIProcessDMContext.class);
+        if (processDmc != null && processDmc.getProcId() != MIProcesses.UNKNOWN_PROCESS_ID) {
+        	// If we already know the pid, it implies the process is already started.
+        	// It also means we won't get the IStartedDMEvent for the process.
+        	// This happens when the inferior is restarted, in which case, this class
+        	// is created after the process is running and the IStartedDMEvent was sent.
+        	fStarted = true;
+        }
         
         DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
         fCommandControl = tracker.getService(IMICommandControl.class);
@@ -466,11 +473,18 @@ public class MIInferiorProcess extends Process
     		// For multi-process, make sure the exited event
     		// is actually for this inferior.
     		if (e.getDMContext().equals(fContainerDMContext)) {
+    			// With recent changes, we notice a restart by the exited/started
+    			// events, and only then create the new inferior; this means the new
+    			// inferior will no longer receive the exited event for the old inferior.
+    			// But it does not hurt to leave the below if check just in case.
+    			assert fStarted : "Exited event should only be received for a started inferior"; //$NON-NLS-1$
     			if (fStarted) {
     				// Only mark this process as terminated if it was already
-    				// started.  This is to protect ourselves in the case of
-    				// a restart, where the new inferior is already created
-    				// and gets the exited event for the old inferior.
+    				// started.  This was to protect ourselves in the case of
+    				// a restart, where we used to create the new inferior before
+    				// killing the old one.  In that case we would get the exited 
+    				// event of the old inferior, which we had to ignore.
+    				//
     				setTerminated();
     			}
     		}
@@ -489,7 +503,7 @@ public class MIInferiorProcess extends Process
     public void eventDispatched(IStartedDMEvent e) {
     	if (e.getDMContext() instanceof IMIContainerDMContext) {
     		// Mark the inferior started if the event is for this inferior.
-    		// We may get other started events in the cases of a restarts
+    		// We may get other started events in the case of a restart
     		if (!fStarted) {
     			// For multi-process, make sure the started event
     			// is actually for this inferior.

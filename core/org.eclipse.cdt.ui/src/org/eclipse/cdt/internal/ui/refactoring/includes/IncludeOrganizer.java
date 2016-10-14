@@ -696,7 +696,7 @@ public class IncludeOrganizer {
 					} else {
 						IPath header = headerSubstitutor.getPreferredRepresentativeHeader(path);
 						if (header.equals(path) && fContext.getPreferences().heuristicHeaderSubstitution) {
-							header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request);
+							header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request, header);
 						}
 						request.resolve(header);
 						if (DEBUG_HEADER_SUBSTITUTION) {

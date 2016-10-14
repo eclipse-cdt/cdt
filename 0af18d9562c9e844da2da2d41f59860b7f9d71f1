@@ -22,6 +22,30 @@
       "revId": "0af18d9562c9e844da2da2d41f59860b7f9d71f1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_aa8f2438",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-14T19:06:20Z",
+      "side": 1,
+      "message": "Ok, looking at the two GDB commands being created, using the result of toPortableString()/toOSString(), they seem to be interpreted by the GDB client, not the server. So using toOSString() would probably work ok for the remote case.\n\nHowever since we believe that Windows host -\u003e Linux remote client is the most popular CDT debugging scenario, we should probably test this first. I do not have access to a Windows machine ATM. I will see what I can do.",
+      "parentUuid": "07b223f6_2f7406f1",
+      "range": {
+        "startLine": 221,
+        "startChar": 77,
+        "endLine": 221,
+        "endChar": 87
+      },
+      "revId": "0af18d9562c9e844da2da2d41f59860b7f9d71f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

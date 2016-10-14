@@ -20,6 +20,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/dsf/gdb/service/IGDBProcesses.java" type="org.eclipse.cdt.dsf.gdb.service.IGDBProcesses">
+        <filter comment="CDT allows for default methods without considering an API break" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.service.IGDBProcesses"/>
+                <message_argument value="addInferiorToLaunch(IRunControl.IContainerDMContext, PTY, RequestMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/dsf/gdb/service/command/IGDBControl.java" type="org.eclipse.cdt.dsf.gdb.service.command.IGDBControl">
         <filter comment="CDT allows adding default methods in a minor release" id="404000815">
             <message_arguments>

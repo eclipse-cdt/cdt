@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_ac03c482",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/AbstractIndexerTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 190
+      },
+      "writtenOn": "2016-10-14T14:58:33Z",
+      "side": 1,
+      "message": "Many thanks, Nathan, for taking a look at this. I also had experimented with this in a temporary scratch area ... let me dig out my files and compare with your approach, I\u0027ll follow up separately.\n\nOne note on the particular line here, the parsing time is already computed in line 1097 above; with your approach you log a _different_ time now (parsing + writeToIndex time). This may cause confusion, when your logged parsing times do not add up to the \"total parsing time\" statistics which appear in the errorlog.",
+      "range": {
+        "startLine": 1108,
+        "startChar": 23,
+        "endLine": 1108,
+        "endChar": 40
+      },
+      "revId": "0c68d499de09a820f8b11344b05d1d9ad1a372ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

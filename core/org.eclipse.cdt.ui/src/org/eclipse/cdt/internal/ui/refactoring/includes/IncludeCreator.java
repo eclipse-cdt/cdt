@@ -488,7 +488,7 @@ public class IncludeCreator {
 				boolean reachable = ast.getIndexFileSet().contains(file);
 				InclusionRequest request =
 						new InclusionRequest(binding, Collections.singletonMap(file, header), reachable);
-				header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request);
+				header = headerSubstitutor.getPreferredRepresentativeHeaderByHeuristic(request, header);
 			}
 			IncludeGroupStyle style = fContext.getIncludeStyle(header);
 			include = fContext.createIncludeInfo(header, style);

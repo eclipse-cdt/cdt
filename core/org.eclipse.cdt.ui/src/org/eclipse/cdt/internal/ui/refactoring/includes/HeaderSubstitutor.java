@@ -33,6 +33,10 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 public class HeaderSubstitutor {
+	private static int HEURISTIC_SCORE_NAME_MATCH = 1;
+	private static int HEURISTIC_SCORE_NO_EXTENSION = 2;
+	private static int HEURISTIC_SCORE_MAX = HEURISTIC_SCORE_NAME_MATCH + HEURISTIC_SCORE_NO_EXTENSION;
+
 	private final IncludeCreationContext fContext;
 	private IncludeMap[] fIncludeMaps;
 	private SymbolExportMap fSymbolExportMap;
@@ -192,57 +196,48 @@ public class HeaderSubstitutor {
 
 	/**
 	 * Performs heuristic header substitution.
+	 *
+	 * @param request the inclusion request
+	 * @param preferredHeader the header selected using regular header substitution rules
 	 */
-	public IPath getPreferredRepresentativeHeaderByHeuristic(InclusionRequest request) {
-		Set<IIndexFile> indexFiles = request.getDeclaringFiles().keySet();
+	public IPath getPreferredRepresentativeHeaderByHeuristic(InclusionRequest request, IPath preferredHeader) {
+		if (!fContext.isCXXLanguage())
+			return preferredHeader;
+
 		String symbolName = request.getBinding().getName();
+		int bestScore = getScore(preferredHeader.toString(), symbolName);
+		if (bestScore == HEURISTIC_SCORE_MAX)
+			return preferredHeader;  // Nothing can be better than preferredHeader.
+
+		IIndexFile bestCandidate = null;
+		Set<IIndexFile> indexFiles = request.getDeclaringFiles().keySet();
 		ArrayDeque<IIndexFile> front = new ArrayDeque<>();
 		HashSet<IIndexFile> processed = new HashSet<>();
-		IIndexFile bestCandidate = null;
-		IIndexFile candidateWithoutExtension = null;
-		IIndexFile candidateWithMatchingName = null;
+		front.addAll(indexFiles);
+		processed.addAll(indexFiles);
 
 		try {
 			// Look for headers matching by name and headers without an extension.
-			if (fContext.isCXXLanguage()) {
-				front.addAll(indexFiles);
-				processed.addAll(indexFiles);
+			while (!front.isEmpty()) {
+				IIndexFile file = front.remove();
+				String path = IncludeUtil.getPath(file);
 
-				while (!front.isEmpty()) {
-					IIndexFile file = front.remove();
-					String path = IncludeUtil.getPath(file);
+				int score = getScore(path, symbolName);
+				if (score > bestScore) {
+					bestScore = score;
+					bestCandidate = file;
+				}
 
-					if (getFilename(path).equalsIgnoreCase(symbolName)) {
-						if (!hasExtension(path)) {
-							// A C++ header without an extension and with a name which matches the name
-							// of the symbol that should be declared is a perfect candidate for inclusion.
-							bestCandidate = file;
-							break;
-						}
-						if (candidateWithMatchingName == null)
-							candidateWithMatchingName = file;
-					} else if (!hasExtension(path)) {
-						if (candidateWithoutExtension == null)
-							candidateWithoutExtension = file;
-					}
-
-					// Process the next level of the include hierarchy.
-					IIndexInclude[] includes = fContext.getIndex().findIncludedBy(file, 0);
-					for (IIndexInclude include : includes) {
-						IIndexFile includer = include.getIncludedBy();
-						if (!processed.contains(includer)) {
-							front.add(includer);
-							processed.add(includer);
-						}
+				// Process the next level of the include hierarchy.
+				IIndexInclude[] includes = fContext.getIndex().findIncludedBy(file, 0);
+				for (IIndexInclude include : includes) {
+					IIndexFile includer = include.getIncludedBy();
+					if (!processed.contains(includer)) {
+						front.add(includer);
+						processed.add(includer);
 					}
 				}
 			}
-
-			if (bestCandidate == null)
-				bestCandidate = candidateWithoutExtension;
-
-			if (bestCandidate == null)
-				bestCandidate = candidateWithMatchingName;
 
 			if (bestCandidate != null)
 				return IndexLocationFactory.getAbsolutePath(bestCandidate.getLocation());
@@ -250,7 +245,16 @@ public class HeaderSubstitutor {
 			CUIPlugin.log(e);
 		}
 
-		return request.getCandidatePaths().iterator().next();
+		return preferredHeader;
+	}
+
+	private static int getScore(String path, String symbolName) {
+		int score = 0;
+		if (getFilename(path).equalsIgnoreCase(symbolName))
+			score += HEURISTIC_SCORE_NAME_MATCH;
+		if (!hasExtension(path))
+			score += HEURISTIC_SCORE_NO_EXTENSION;
+		return score;
 	}
 
 	/**

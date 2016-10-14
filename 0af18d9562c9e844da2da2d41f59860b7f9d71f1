@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_2f7406f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-10-14T18:14:54Z",
+      "side": 1,
+      "message": "I\u0027m not sure this would work correctly for the case where your host is Windows and you are debugging a Linux target. toOSString would replace forward slashes with backward slashes. We\u0027d have to double check that this code path is not taken when remote debugging.",
+      "range": {
+        "startLine": 221,
+        "startChar": 77,
+        "endLine": 221,
+        "endChar": 87
+      },
+      "revId": "0af18d9562c9e844da2da2d41f59860b7f9d71f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

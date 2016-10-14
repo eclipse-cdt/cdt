@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess_7_3;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 
 /**
  * Version for GDB 7.3
@@ -38,6 +42,16 @@ public class GDBProcesses_7_3 extends GDBProcesses_7_2_1 {
 		return new StartOrRestartProcessSequence_7_3(executor, containerDmc, attributes, restart, rm);
 	}
 	
+	@Override
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
+		return new MIInferiorProcess_7_3(container, outputStream);
+	}
+
+	@Override
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
+		return new MIInferiorProcess_7_3(container, pty);
+	}
+
 	@Override
     @DsfServiceEventHandler
 	public void eventDispatched(MIThreadGroupExitedEvent e) {

@@ -275,6 +275,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBProcesses_7_12(session);
+		}
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBProcesses_7_10(session);
 		}

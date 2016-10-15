@@ -158,7 +158,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			if (astComment.getRawSignature().contains(suppressionComment))
 				return false;
 		}
-		return true;
+		return super.shouldProduceProblem(problem, loc, args);		
 	}
 
 	protected List<IASTComment> getLineCommentsForLocation(IProblemLocation loc) {

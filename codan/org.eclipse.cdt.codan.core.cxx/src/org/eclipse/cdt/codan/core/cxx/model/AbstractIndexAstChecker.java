@@ -152,13 +152,13 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	protected boolean shouldProduceProblem(IProblem problem, IProblemLocation loc, Object... args) {
 		String suppressionComment = (String) getSuppressionCommentPreference(problem).getValue();
 		if (suppressionComment.isEmpty())
-			return true;
+			return super.shouldProduceProblem(problem, loc, args);
 		List<IASTComment> lineComments = getLineCommentsForLocation(loc);
 		for (IASTComment astComment : lineComments) {
 			if (astComment.getRawSignature().contains(suppressionComment))
 				return false;
 		}
-		return true;
+		return super.shouldProduceProblem(problem, loc, args);		
 	}
 
 	protected List<IASTComment> getLineCommentsForLocation(IProblemLocation loc) {

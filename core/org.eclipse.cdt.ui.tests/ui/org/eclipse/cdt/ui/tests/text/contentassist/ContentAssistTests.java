@@ -256,8 +256,8 @@ public class ContentAssistTests extends BaseUITestCase {
         
         results = getResults(cu, c2.indexOf("::") + 2); //$NON-NLS-1$
         assertEquals(3, results.length);
-        assertEquals("getAbility(void) : enum _Ability", results[1].getDisplayString()); //$NON-NLS-1$
-        assertEquals("Strategy(enum _Ability a)", results[0].getDisplayString()); //$NON-NLS-1$
+        assertEquals("getAbility(void) : enum Strategy::_Ability", results[1].getDisplayString()); //$NON-NLS-1$
+        assertEquals("Strategy(enum Strategy::_Ability a)", results[0].getDisplayString()); //$NON-NLS-1$
         assertEquals("_Ability", results[2].getDisplayString()); //$NON-NLS-1$
     }
     

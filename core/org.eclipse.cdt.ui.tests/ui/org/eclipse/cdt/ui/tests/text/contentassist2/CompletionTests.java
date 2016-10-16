@@ -1537,6 +1537,23 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "i" };
 		assertContentAssistResults(fCursorOffset, expected, true, ID);
 	}
+	
+	//	template <typename T>
+	//	struct meta1;
+	//
+	//	template <typename T>
+	//	struct meta2;
+	//
+	//	template <typename T>
+	//	void waldo(T, typename meta1<T>::type, typename meta2<T>::type);
+	//
+	//	int main() {
+	//	    wald/*cursor*/
+	//	}
+	public void testNestingClassNameInCompletion_395571() throws Exception {
+		final String[] expected = { "waldo(T, meta1<T>::type, meta2<T>::type) : void" };
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
+	}
 
 	//	void foo() { Specialization<int, /*cursor*/
 	public void testTemplateArgumentList() throws Exception {

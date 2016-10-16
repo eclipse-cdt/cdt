@@ -532,8 +532,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					idArgs.append(parameterDelimiter);
 				}
 
-				dispArgs.append(ASTTypeUtil.getType(paramType, false));
-				idArgs.append(ASTTypeUtil.getType(paramType, false));
+				String paramTypeString = ASTTypeUtil.getType(paramType, false);
+				dispArgs.append(paramTypeString);
+				idArgs.append(paramTypeString);
 				String paramName = param.getName();
 				if (paramName != null && paramName.length() > 0) {
 					dispArgs.append(' ');

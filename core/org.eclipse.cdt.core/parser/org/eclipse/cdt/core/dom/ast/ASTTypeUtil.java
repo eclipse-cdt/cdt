@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -445,8 +446,10 @@ public class ASTTypeUtil {
 				result.append(Keywords.ENUM);
 				result.append(SPACE);
 			}
-			boolean qualify = normalize || (type instanceof ITypedef && type instanceof ICPPSpecialization);
-			appendCppName((ICPPBinding) type, normalize, qualify, result);
+			ICPPBinding binding = ((ICPPBinding) type);
+			boolean nested = binding.getOwner() instanceof ICPPClassType;
+			boolean qualify = normalize || nested || (type instanceof ITypedef && type instanceof ICPPSpecialization);
+			appendCppName(binding, normalize, qualify, result);
 		} else if (type instanceof ICompositeType) {
 			// Don't display class, and for consistency don't display struct/union as well (bug 101114).
 			appendNameCheckAnonymous((ICompositeType) type, result);

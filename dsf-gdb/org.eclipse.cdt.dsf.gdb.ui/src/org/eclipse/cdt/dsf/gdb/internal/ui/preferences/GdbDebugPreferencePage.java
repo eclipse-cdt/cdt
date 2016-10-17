@@ -661,16 +661,25 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 		
-		final IntegerWithBooleanFieldEditor enableGdbTracesField = new IntegerWithBooleanFieldEditor(
+		boolField= new BooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
-				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
 				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
 				group2);
+
+		boolField.fillIntoGrid(group2, 1);
+		addField(boolField);
+		group2.setLayout(groupLayout);
+
+		final IntegerFieldEditor gdbTracesLimit = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
+				"", //$NON-NLS-1$
+				group2);
+
 		// Instead of using Integer.MAX_VALUE which is some obscure number,
 		// using 2 billion is nice and readable.
-		enableGdbTracesField.setValidRange(10000, 2000000000);
-		enableGdbTracesField.fillIntoGrid(group2, 2);
-		addField(enableGdbTracesField);
+		gdbTracesLimit.setValidRange(10000, 2000000000);
+		gdbTracesLimit.fillIntoGrid(group2, 2);
+		addField(gdbTracesLimit);
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 

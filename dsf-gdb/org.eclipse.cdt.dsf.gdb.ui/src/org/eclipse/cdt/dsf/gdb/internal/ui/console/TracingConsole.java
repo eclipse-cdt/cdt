@@ -50,7 +50,7 @@ public class TracingConsole extends IOConsole {
 	private String fLabel = ""; //$NON-NLS-1$
 
 	public TracingConsole(ILaunch launch, String label) {
-		super("", null, null, true); //$NON-NLS-1$
+		super("", null, null, false); //$NON-NLS-1$
 		fLaunch = launch;
         fTracingStream = newOutputStream();
         fSession = ((GdbLaunch)launch).getSession();

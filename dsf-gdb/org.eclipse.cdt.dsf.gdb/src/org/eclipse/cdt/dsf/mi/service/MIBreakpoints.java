@@ -98,6 +98,11 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     public static final String EXPRESSION    = PREFIX + ".expression";  //$NON-NLS-1$
     public static final String READ          = PREFIX + ".read";        //$NON-NLS-1$
     public static final String WRITE         = PREFIX + ".write";       //$NON-NLS-1$
+    /** @since 5.3 */
+    public static final String RANGE         = PREFIX + ".range";       //$NON-NLS-1$
+    /** @since 5.3 */
+    public static final String MEMSPACE      = PREFIX + ".memoryspace"; //$NON-NLS-1$
+
     
     // Catchpoint properties
 
@@ -753,11 +758,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		boolean isRead    = (Boolean) getProperty(attributes, READ,    false);
 		boolean isWrite   = (Boolean) getProperty(attributes, WRITE,   false);
 
-		if (!expression.isEmpty() && Character.isDigit(expression.charAt(0))) {
-			// If expression is an address, we need the '*' prefix.
-			expression = "*" + expression; //$NON-NLS-1$
-		}
-		
+		expression = adjustWatchPointExpression(attributes, expression);
+
 		// The DataRequestMonitor for the add request
 		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM =
 			new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), drm) {
@@ -806,6 +808,21 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 			// Execute the command
 	        fConnection.queueCommand(fCommandFactory.createMIBreakWatch(context, isRead, isWrite, expression), addWatchpointDRM);
+	}
+
+	/**
+	 * Adjust the expression to a format suitable for the debugger back end e.g. adding memory space, range,
+	 * etc..
+	 * 
+	 * @since 5.3
+	 */
+	protected String adjustWatchPointExpression(final Map<String, Object> attributes, String origExpression) {
+		String adjustedExpression = origExpression;
+		if (!origExpression.isEmpty() && Character.isDigit(origExpression.charAt(0))) {
+			// If expression is a single address, we need the '*' prefix.
+			adjustedExpression = "*" + origExpression; //$NON-NLS-1$
+		}
+		return adjustedExpression;
 	}
 
 	/**

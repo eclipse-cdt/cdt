@@ -166,16 +166,14 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException {
 		initProviders();
+		ICBuildConfiguration config = null;
+		boolean resetBinaryParser = false;
 		synchronized (configs) {
-			if (noConfigs.contains(buildConfig)) {
-				return null;
-			} else {
-				ICBuildConfiguration config = configs.get(buildConfig);
-				if (config != null) {
-					return config;
-				} else {
-					String configName;
-					ICBuildConfigurationProvider provider;
+			if (!noConfigs.contains(buildConfig)) {
+				config = configs.get(buildConfig);
+				if (config == null) {
+					String configName = null;
+					ICBuildConfigurationProvider provider = null;
 					if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
 						configName = ICBuildConfiguration.DEFAULT_NAME;
 						provider = getProvider(buildConfig.getProject());
@@ -187,12 +185,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 							Provider delegate = getProviderDelegate(providerId);
 							if (delegate != null && delegate.supports(buildConfig.getProject())) {
 								provider = delegate.getProvider();
-							} else {
-								return null;
 							}
-						} else {
-							// Not ours
-							return null;
 						}
 					}
 
@@ -200,18 +193,25 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 						config = provider.getCBuildConfiguration(buildConfig, configName);
 						if (config != null) {
 							configs.put(buildConfig, config);
-
 							// Also make sure we reset the binary parser cache for the new config
-							CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
-							return config;
+							resetBinaryParser = true;
 						}
 					}
 
-					noConfigs.add(buildConfig);
-					return null;
+					if (config == null) {
+						noConfigs.add(buildConfig);
+					}
 				}
 			}
 		}
+
+		if (resetBinaryParser) {
+			// Do this outside of the synchronized block to avoid deadlock with
+			// BinaryRunner
+			CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
+		}
+
+		return config;
 	}
 
 	@Override

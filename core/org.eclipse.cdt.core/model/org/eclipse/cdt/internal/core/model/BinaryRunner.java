@@ -153,10 +153,12 @@ public class BinaryRunner {
 	 */
 	public void waitIfRunning() {
 		try {
-			if (runnerJob != null && !runnerJob.equals(Job.getJobManager().currentJob())) {
+			Job currentJob = Job.getJobManager().currentJob();
+			if (!runnerJob.equals(currentJob)) {
 				runnerJob.join();
 			}
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | IllegalStateException e) {
+			CCorePlugin.log(e);
 		}
 	}
 

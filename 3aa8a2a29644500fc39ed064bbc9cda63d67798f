@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_8dda755d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CProject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-10-17T17:36:46Z",
+      "side": 1,
+      "message": "I\u0027m not sure but I think sourceroots only affects some views and the editor, not the build.",
+      "range": {
+        "startLine": 586,
+        "startChar": 40,
+        "endLine": 586,
+        "endChar": 62
+      },
+      "revId": "3aa8a2a29644500fc39ed064bbc9cda63d67798f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

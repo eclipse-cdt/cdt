@@ -36,6 +36,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private ILaunchConfigurationTabGroup group;
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection;
+	private boolean initing;
 
 	public LaunchBarLaunchConfigDialog(Shell shell, ILaunchConfigurationWorkingCopy workingCopy,
 			ILaunchDescriptor descriptor, ILaunchMode mode, ILaunchTarget target) {
@@ -55,6 +56,8 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		initing = true;
+
 		// create the top level composite for the dialog area
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -132,6 +135,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			Activator.log(e.getStatus());
 		}
 
+		initing = false;
 		return composite;
 	}
 
@@ -150,7 +154,16 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	@Override
 	public void updateButtons() {
-		// TODO
+		// Lots of tabs want to be applied when this is called
+		if (!initing) {
+			ILaunchConfigurationTab[] tabs = getTabs();
+			if (tabFolder != null && tabs != null) {
+				int pageIndex = tabFolder.getSelectionIndex();
+				if (pageIndex >= 0) {
+					tabs[pageIndex].performApply(workingCopy);
+				}
+			}
+		}
 	}
 
 	@Override

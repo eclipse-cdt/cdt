@@ -280,7 +280,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new Object[] {arg});
+		return MessageFormat.format(getResourceString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {
@@ -477,7 +477,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		fgCPlugin = this;
 		fDocumentProvider = null;
 		fTextTools = null;
-		fBuildConsoleManagers = new HashMap<String, BuildConsoleManager>();
+		fBuildConsoleManagers = new HashMap<>();
 	}
 
 	/**

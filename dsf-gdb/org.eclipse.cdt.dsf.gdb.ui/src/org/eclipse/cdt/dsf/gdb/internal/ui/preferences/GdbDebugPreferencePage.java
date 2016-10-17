@@ -233,9 +233,6 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		protected Control createDialogArea( Composite parent ) {
 			getShell().setText( MessagesForPreferences.GdbDebugPreferencePage_Advanced_Timeout_Settings ); 
@@ -661,16 +658,34 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 		
-		final IntegerWithBooleanFieldEditor enableGdbTracesField = new IntegerWithBooleanFieldEditor(
+		boolField= new BooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
-				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
 				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
 				group2);
+
+		boolField.fillIntoGrid(group2, 1);
+		addField(boolField);
+		group2.setLayout(groupLayout);
+
+		// The field below sets the size of the buffer for the gdb traces.
+		// It is located to the right of the previous field (which shows or not the
+		// gdb traces) and uses its label.  However, we don't want to tightly
+		// couple the two fields using IntegerWithBooleanFieldEditor because
+		// we want the gdb traces limit to stay enabled even when the gdb traces
+		// are not actually shown (when the above preference is not selected).
+		// The reason is that since the gdb traces record even when they are not 
+		// shown, we want the user to be able to set the limit on those consoles,
+		// even if they are not currently shown.
+		final IntegerFieldEditor gdbTracesLimit = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
+				"", // Empty title as we reuse the string of the previous field //$NON-NLS-1$
+				group2);
+
 		// Instead of using Integer.MAX_VALUE which is some obscure number,
 		// using 2 billion is nice and readable.
-		enableGdbTracesField.setValidRange(10000, 2000000000);
-		enableGdbTracesField.fillIntoGrid(group2, 2);
-		addField(enableGdbTracesField);
+		gdbTracesLimit.setValidRange(10000, 2000000000);
+		gdbTracesLimit.fillIntoGrid(group2, 2);
+		addField(gdbTracesLimit);
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 
@@ -781,9 +796,6 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		updateTimeoutButtons();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		getPreferenceStore().setValue( IGdbDebugPreferenceConstants.PREF_COMMAND_CUSTOM_TIMEOUTS, fCustomTimeouts.getMemento() );

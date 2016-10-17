@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
+import java.util.HashMap;
+
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.ITracedLaunch;
@@ -21,11 +23,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
 
 /**
  * A tracing console manager which adds and removes tracing consoles
  * based on launch events and preference events.
+ * TracingConsoles are always running but are only shown in the console
+ * view if enabled by the user preference.
  * 
  * @since 2.1
  * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
@@ -62,6 +65,13 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	private int fMinNumCharacters = fMaxNumCharacters - NUMBER_OF_CHARS_TO_DELETE;
 	
 	/**
+	 * A map of all TracingConsoles for their corresponding launch.
+	 * We keep this list because TracingConsoles may not be registered
+	 * with the ConsoleManager, so we need another way to find them.
+	 */
+	private HashMap<ITracedLaunch, TracingConsole> fTracingConsoles = new HashMap<>();
+	
+	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
 	 * we need to use <code>this</code>.
 	 */
@@ -73,9 +83,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		int maxChars = store.getInt(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES);
 		setWaterMarks(maxChars);
 		
-		if (fTracingEnabled) {
-			toggleTracing(true);
-		}
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	public void shutdown() {
@@ -84,23 +92,16 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		removeAllConsoles();
 	}
 
-	protected void toggleTracing(boolean enabled) {
-		if (enabled) {
-			DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-			addAllConsoles();
+	protected void toggleTracingVisibility(boolean visible) {
+		if (visible) {
+			ConsolePlugin.getDefault().getConsoleManager().addConsoles(
+					fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
 		} else {
-			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-			removeAllConsoles();
+			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(
+					fTracingConsoles.values().toArray(new IConsole[fTracingConsoles.size()]));
 		}
 	}
 	
-	protected void addAllConsoles() {
-		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		for (ILaunch launch : launches) {
-			addConsole(launch);
-		}
-	}
-
 	protected void removeAllConsoles() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (ILaunch launch : launches) {
@@ -139,12 +140,11 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE)) {
 			fTracingEnabled = (Boolean)event.getNewValue();
-			toggleTracing(fTracingEnabled);
+			toggleTracingVisibility(fTracingEnabled);
 		} else if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES)) {
 			int maxChars = (Integer)event.getNewValue();
 			updateAllConsoleWaterMarks(maxChars);
 		}
-
 	}
 
 	protected void addConsole(ILaunch launch) {
@@ -152,50 +152,40 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		if (launch instanceof ITracedLaunch) {
 			// Make sure we didn't already add this console
 			if (getConsole(launch) == null) {
-				if (launch.isTerminated() == false) {
-					// Create and  new tracing console.
+				if (!launch.isTerminated()) {
+					// Create a new tracing console.
 					TracingConsole console = new TracingConsole(launch, ConsoleMessages.ConsoleMessages_trace_console_name);
+					console.initialize();
 					console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
-					ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
+					
+					fTracingConsoles.put((ITracedLaunch)launch, console);
+					if (fTracingEnabled) {
+						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
+					}
 				} // else we don't display a new console for a terminated launch
 			}
 		}
 	}
 
 	protected void removeConsole(ILaunch launch) {
-		if (launch instanceof ITracedLaunch) {
-			TracingConsole console = getConsole(launch);
-			if (console != null) {
+		TracingConsole console = fTracingConsoles.remove(launch);
+		if (console != null) {
+			console.destroy();
+			if (fTracingEnabled) {
 				ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[]{console});
 			}
 		}
 	}
 
 	protected void renameConsole(ILaunch launch) {
-		if (launch instanceof ITracedLaunch) {
-			TracingConsole console = getConsole(launch);
-			if (console != null) {
-				console.resetName();
-			}		
+		TracingConsole console = getConsole(launch);
+		if (console != null) {
+			console.resetName();
 		}
 	}
 	
 	private TracingConsole getConsole(ILaunch launch) {
-		ConsolePlugin plugin = ConsolePlugin.getDefault();
-		if (plugin != null) {
-			// I've seen the plugin be null when running headless JUnit tests
-			IConsoleManager manager = plugin.getConsoleManager(); 
-			IConsole[] consoles = manager.getConsoles();
-			for (IConsole console : consoles) {
-				if (console instanceof TracingConsole) {
-					TracingConsole tracingConsole = (TracingConsole)console;
-					if (tracingConsole.getLaunch().equals(launch)) {
-						return tracingConsole;
-					}
-				}
-			}
-		}
-		return null;
+		return fTracingConsoles.get(launch);
 	}
 	
 	/** @since 2.2 */
@@ -224,11 +214,9 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	
 	/** @since 2.2 */
 	protected void updateConsoleWaterMarks(ILaunch launch) {
-		if (launch instanceof ITracedLaunch) {
-			TracingConsole console = getConsole(launch);
-			if (console != null) {
-				console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
-			}		
-		}
+		TracingConsole console = getConsole(launch);
+		if (console != null) {
+			console.setWaterMarks(fMinNumCharacters, fMaxNumCharacters);
+		}		
 	}
 }

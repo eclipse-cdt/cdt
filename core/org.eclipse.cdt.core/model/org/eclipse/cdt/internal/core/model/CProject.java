@@ -583,7 +583,7 @@ public class CProject extends Openable implements ICProject {
 		ICSourceEntry[] entries = null;
 		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(getProject(), false);
 		if (des != null) {
-			ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
+			ICConfigurationDescription cfg = des.getActiveConfiguration();
 			if (cfg != null)
 				entries = cfg.getResolvedSourceEntries();
 		}

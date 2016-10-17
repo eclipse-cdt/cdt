@@ -153,7 +153,8 @@ public class BinaryRunner {
 	 */
 	public void waitIfRunning() {
 		try {
-			if (runnerJob != null && !runnerJob.equals(Job.getJobManager().currentJob())) {
+			if (runnerJob != null && runnerJob.getState() == Job.RUNNING
+					&& !runnerJob.equals(Job.getJobManager().currentJob())) {
 				runnerJob.join();
 			}
 		} catch (InterruptedException e) {

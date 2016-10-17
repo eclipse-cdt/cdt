@@ -88,6 +88,31 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	}
 
 	@Override
+	protected String adjustWatchPointExpression(final Map<String, Object> attributes, String origExpression) {
+		String adjustedExpression = origExpression;
+		if (!origExpression.isEmpty()) {
+			// Resolve the address range
+			String sRange = (String) getProperty(attributes, RANGE, NULL_STRING);
+			int addressRange = 0;
+			if (!sRange.equals(NULL_STRING)) {
+				addressRange = Integer.valueOf(sRange);
+			}
+
+			if (addressRange > 1 && Character.isDigit(origExpression.charAt(0))) {
+				// Monitoring a range of addresses,
+				// The following line formats the string to a valid GDB expression
+				// i.e. casting to an array of char with the size given by range
+				// Taking the size of the character type to resolve the addressable size
+				adjustedExpression = String.format("*((char (*)[ %d ]) %s)", addressRange, origExpression); //$NON-NLS-1$
+			} else if (Character.isDigit(origExpression.charAt(0))) {
+				// If expression is a single address, we need the '*' prefix.
+				adjustedExpression = "*" + origExpression; //$NON-NLS-1$
+			}
+		}
+		return adjustedExpression;
+	}
+
+	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
         unregister();
 		super.shutdown(requestMonitor);

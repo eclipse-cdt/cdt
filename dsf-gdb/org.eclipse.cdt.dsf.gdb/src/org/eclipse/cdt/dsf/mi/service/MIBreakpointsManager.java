@@ -44,6 +44,7 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -2020,6 +2021,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             properties.put(MIBreakpoints.EXPRESSION,      attributes.get(ICWatchpoint.EXPRESSION));
             properties.put(MIBreakpoints.READ,            attributes.get(ICWatchpoint.READ));
             properties.put(MIBreakpoints.WRITE,           attributes.get(ICWatchpoint.WRITE));
+            properties.put(MIBreakpoints.RANGE,           attributes.get(ICWatchpoint2.RANGE));
+            properties.put(MIBreakpoints.MEMSPACE,        attributes.get(ICWatchpoint2.MEMORYSPACE));
         }
         else if (breakpoint instanceof ICLineBreakpoint) {
             properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);

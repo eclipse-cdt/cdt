@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -54,15 +55,21 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 			try {
 				for (String childName : prefs.childrenNames()) {
 					Preferences tcNode = prefs.node(childName);
-					String path = tcNode.get(PATH, "/"); //$NON-NLS-1$
-					ICMakeToolChainFile file = new CMakeToolChainFile(childName, Paths.get(path));
-					for (String key : tcNode.keys()) {
-						String value = tcNode.get(key, ""); //$NON-NLS-1$
-						if (!value.isEmpty()) {
-							file.setProperty(key, value);
+					String pathStr = tcNode.get(PATH, "/"); //$NON-NLS-1$
+					Path path = Paths.get(pathStr);
+					if (Files.exists(path) && !files.containsKey(path)) {
+						ICMakeToolChainFile file = new CMakeToolChainFile(childName, path);
+						for (String key : tcNode.keys()) {
+							String value = tcNode.get(key, ""); //$NON-NLS-1$
+							if (!value.isEmpty()) {
+								file.setProperty(key, value);
+							}
 						}
+						files.put(path, file);
+					} else {
+						tcNode.removeNode();
+						prefs.flush();
 					}
-					files.put(file.getPath(), file);
 				}
 			} catch (BackingStoreException e) {
 				Activator.log(e);
@@ -93,6 +100,9 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 	@Override
 	public void addToolChainFile(ICMakeToolChainFile file) {
 		init();
+		if (files.containsKey(file.getPath())) {
+			removeToolChainFile(file);
+		}
 		files.put(file.getPath(), file);
 
 		// save it

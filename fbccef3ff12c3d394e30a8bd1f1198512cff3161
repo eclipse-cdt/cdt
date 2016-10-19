@@ -69,6 +69,30 @@
       "revId": "fbccef3ff12c3d394e30a8bd1f1198512cff3161",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_265c2376",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/includes/BindingClassifier.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 965,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-19T22:50:35Z",
+      "side": 1,
+      "message": "AST is shared with the editor (OrganizeIncludesAction.run uses SharedASTJob).\n\nI\u0027m in favor of the second option. In fact, we need to ignore only ProblemBindings since all other bindings are still usable.",
+      "parentUuid": "07b223f6_86c6cfab",
+      "range": {
+        "startLine": 965,
+        "startChar": 16,
+        "endLine": 965,
+        "endChar": 50
+      },
+      "revId": "fbccef3ff12c3d394e30a8bd1f1198512cff3161",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

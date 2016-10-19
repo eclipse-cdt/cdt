@@ -37,11 +37,26 @@
       </tag>
       <template
             icon="icons/cmake_logo-main.png"
-            id="org.eclipse.cdt.cmake.ui.emptyProjectTemplate"
+            id="org.eclipse.cdt.cmake.ui.newProjectTemplate"
             label="CMake Project"
             wizard="org.eclipse.cdt.cmake.ui.internal.NewCMakeProjectWizard">
          <description>
             A CMake project with a Hello World executable to get started.
+         </description>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.cmake.ui.tag">
+         </tagReference>
+      </template>
+      <template
+            icon="icons/cmake_logo-main.png"
+            id="org.eclipse.cdt.cmake.ui.emptyProjectTemplate"
+            label="Empty or Existing CMake Project"
+            wizard="org.eclipse.cdt.cmake.ui.internal.EmptyCMakeProjectWizard">
+         <description>
+            Create a CMake project with no files. Can be used to create one over existing content.
          </description>
          <tagReference
                id="org.eclipse.cdt.ui.cdtTag">

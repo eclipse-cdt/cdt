@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (C) 2014, Red Hat, Inc.
+
+   All rights reserved. This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License v1.0
+   which accompanies this distribution, and is available at
+   http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.cdt</groupId>
+    <artifactId>cdt-parent</artifactId>
+    <version>9.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>org.eclipse.cdt.dsf.gdb.swtbot.tests</artifactId>
+  <packaging>eclipse-test-plugin</packaging>
+
+	<properties>
+		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
+	</properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>false</useUIThread>
+          <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+          
+          <product>org.eclipse.platform.ide</product>
+          
+          <environmentVariables>
+             <SWT_GTK3>0</SWT_GTK3>
+             
+             <UBUNTU_MENUPROXY>0</UBUNTU_MENUPROXY>
+             <LIBOVERLAY_SCROLLBAR>0</LIBOVERLAY_SCROLLBAR> 
+             
+          </environmentVariables>
+          
+          <!--
+          <reuseForks>false</reuseForks>
+          <forkCount>1</forkCount>
+          -->
+          
+          <argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M -Dcdt.tests.dsf.gdb.path=${dsf.gdb.tests.gdbPath} -Ddsf.gdb.tests.timeout.multiplier=${dsf.gdb.tests.timeout.multiplier} -Dcdt.tests.dsf.gdb.versions=${cdt.tests.dsf.gdb.versions}</argLine>
+          <includes>
+             <include>**/AllTests.*</include>
+          </includes>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+                <dependency-resolution>
+                        <extraRequirements>
+                                <requirement>
+                                    <type>eclipse-feature</type>
+                                    <id>org.eclipse.platform</id>
+                                    <versionRange>0.0.0</versionRange>
+                                </requirement>
+                                <requirement>
+									<type>eclipse-feature</type>
+									<id>org.eclipse.cdt</id>
+									<versionRange>0.0.0</versionRange>
+								</requirement>
+                        </extraRequirements>
+                </dependency-resolution>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

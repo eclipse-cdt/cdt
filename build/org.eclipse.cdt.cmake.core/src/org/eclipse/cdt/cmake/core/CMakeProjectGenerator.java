@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
 import org.eclipse.tools.templates.freemarker.SourceRoot;
+import org.eclipse.tools.templates.freemarker.TemplateManifest;
 import org.osgi.framework.Bundle;
 
 public class CMakeProjectGenerator extends FMProjectGenerator {
@@ -54,25 +55,29 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 	public void generate(Map<String, Object> model, IProgressMonitor monitor) throws CoreException {
 		super.generate(model, monitor);
 
-		// Create the source folders
-		IProject project = getProject();
 		List<IPathEntry> entries = new ArrayList<>();
-		List<SourceRoot> srcRoots = getManifest().getSrcRoots();
-		if (srcRoots != null && !srcRoots.isEmpty()) {
-			for (SourceRoot srcRoot : srcRoots) {
-				IFolder sourceFolder = project.getFolder(srcRoot.getDir());
-				if (!sourceFolder.exists()) {
-					sourceFolder.create(true, true, monitor);
+		IProject project = getProject();
+
+		// Create the source folders
+		TemplateManifest manifest = getManifest();
+		if (manifest != null) {
+			List<SourceRoot> srcRoots = getManifest().getSrcRoots();
+			if (srcRoots != null && !srcRoots.isEmpty()) {
+				for (SourceRoot srcRoot : srcRoots) {
+					IFolder sourceFolder = project.getFolder(srcRoot.getDir());
+					if (!sourceFolder.exists()) {
+						sourceFolder.create(true, true, monitor);
+					}
+
+					entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
 				}
-	
-				entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+			} else {
+				entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 			}
-		} else {
-			entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 		}
 
-		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath(),
-				new IPath[] { new Path("**/CMakeFiles/**") }));
+		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath(), //$NON-NLS-1$
+				new IPath[] { new Path("**/CMakeFiles/**") })); //$NON-NLS-1$
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

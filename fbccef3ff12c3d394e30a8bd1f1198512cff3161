@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_c637e767",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 8931,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-19T20:35:07Z",
+      "side": 1,
+      "message": "Indentation is off",
+      "range": {
+        "startLine": 8931,
+        "startChar": 9,
+        "endLine": 8931,
+        "endChar": 30
+      },
+      "revId": "fbccef3ff12c3d394e30a8bd1f1198512cff3161",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_e6286b0c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/includes/BindingClassifier.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 965,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-19T20:35:07Z",
+      "side": 1,
+      "message": "Will this work in a non-test environment where all names have already been resolved by the reconciler?",
+      "range": {
+        "startLine": 965,
+        "startChar": 16,
+        "endLine": 965,
+        "endChar": 50
+      },
+      "revId": "fbccef3ff12c3d394e30a8bd1f1198512cff3161",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

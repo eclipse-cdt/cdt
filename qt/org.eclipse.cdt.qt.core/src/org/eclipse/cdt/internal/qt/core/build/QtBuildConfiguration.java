@@ -277,11 +277,8 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		for (int i = 0; i < includePaths.length; ++i) {
 			Path path = Paths.get(includePaths[i]);
 			if (!path.isAbsolute()) {
-				try {
-					includePaths[i] = getBuildDirectory().resolve(path).toString();
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
+				Path projectDir = getProjectFile().getParent();
+				includePaths[i] = projectDir.resolve(path).toString();
 			}
 		}
 

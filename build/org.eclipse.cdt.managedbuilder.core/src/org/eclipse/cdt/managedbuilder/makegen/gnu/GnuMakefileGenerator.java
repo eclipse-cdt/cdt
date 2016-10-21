@@ -3256,58 +3256,60 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					IPath[] inPaths = new IPath[1];
 					inPaths[0] = sourceLocation;
 					IPath[] outPaths = nameProvider.getOutputNames(tool, inPaths);
-					for (int j=0; j<outPaths.length; j++) {
-						IPath outPath = outPaths[j];
-						String outputName = outPaths[j].toString();
+					if (outPaths != null) {
+						for (int j=0; j<outPaths.length; j++) {
+							IPath outPath = outPaths[j];
+							String outputName = outPaths[j].toString();
 
 
-						// try to resolve the build macros in the output names
-						try {
+							// try to resolve the build macros in the output names
+							try {
 
-							String resolved = null;
+								String resolved = null;
 
-							if (containsSpecialCharacters(sourceLocation.toString()))
-							{
-								resolved = ManagedBuildManager
-										.getBuildMacroProvider()
-										.resolveValue(
-												outputName,
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_FILE,
-												new FileContextData(
-														sourceLocation, null,
-														option, tool));
+								if (containsSpecialCharacters(sourceLocation.toString()))
+								{
+									resolved = ManagedBuildManager
+											.getBuildMacroProvider()
+											.resolveValue(
+													outputName,
+													"", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_FILE,
+													new FileContextData(
+															sourceLocation, null,
+															option, tool));
+								}
+
+								else {
+									resolved = ManagedBuildManager
+											.getBuildMacroProvider()
+											.resolveValueToMakefileFormat(
+													outputName,
+													"", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_FILE,
+													new FileContextData(
+															sourceLocation, null,
+															option, tool));
+								}
+
+								if ((resolved = resolved.trim()).length() > 0)
+									outputName = resolved;
+							} catch (BuildMacroException e) {
 							}
 
-							else {
-								resolved = ManagedBuildManager
-										.getBuildMacroProvider()
-										.resolveValueToMakefileFormat(
-												outputName,
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_FILE,
-												new FileContextData(
-														sourceLocation, null,
-														option, tool));
+							//  If only a file name is specified, add the relative path of this output directory
+							if (outPath.segmentCount() == 1) {
+								outPath = Path.fromOSString(relativePath + outPath.toString());
 							}
-
-							if ((resolved = resolved.trim()).length() > 0)
-								outputName = resolved;
-						} catch (BuildMacroException e) {
-						}
-
-						//  If only a file name is specified, add the relative path of this output directory
-						if (outPath.segmentCount() == 1) {
-							outPath = Path.fromOSString(relativePath + outPath.toString());
-						}
-						if (primaryOutput) {
-							ruleOutputs.add(j, outPath);
-							enumeratedPrimaryOutputs.add(j, resolvePercent(outPath, sourceLocation));
-						} else {
-							ruleOutputs.add(outPath);
-							enumeratedSecondaryOutputs.add(resolvePercent(outPath, sourceLocation));
+							if (primaryOutput) {
+								ruleOutputs.add(j, outPath);
+								enumeratedPrimaryOutputs.add(j, resolvePercent(outPath, sourceLocation));
+							} else {
+								ruleOutputs.add(outPath);
+								enumeratedSecondaryOutputs.add(resolvePercent(outPath, sourceLocation));
+							}
 						}
 					}
 				} else

@@ -2106,6 +2106,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				// Try to add the rule for the file
 				Vector<IPath> generatedOutputs = new Vector<IPath>();		//  IPath's - build directory relative
 				Vector<IPath> generatedDepFiles = new Vector<IPath>();	//  IPath's - build directory relative or absolute
+				usedOutType = null;
 				addRuleForSource(relativePath, ruleBuffer, resource, sourceLocation, rcInfo, generatedSource, generatedDepFiles, generatedOutputs);
 
 				// If the rule generates a dependency file(s), add the file(s) to the variable
@@ -2124,9 +2125,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				// 1. add the output to the appropriate macro
 				// 2. If the tool does not have multipleOfType input, generate the rule.
 
-				IOutputType outType = tool.getPrimaryOutputType();
+				usedOutType = tool.getPrimaryOutputType();
 				String buildVariable = null;
-				if (outType != null) {
+				if (usedOutType != null) {
 					if (tool.getCustomBuildStep()) {
 						// TODO: This is somewhat of a hack since a custom build step
 						//       tool does not currently define a build variable
@@ -2146,7 +2147,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 							}
 						}
 					} else {
-						buildVariable = outType.getBuildVariable();
+						buildVariable = usedOutType.getBuildVariable();
 					}
 				} else {
 					// For support of pre-CDT 3.0 integrations.
@@ -3091,6 +3092,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IOutputType[] outTypes = tool.getOutputTypes();
 		if (outTypes != null && outTypes.length > 0) {
 			for (IOutputType type : outTypes) {
+				/*tool.getPrimaryOutputType does not make sense because there can be multiple 
+				primary output types
+				So the code below should actually be
+				boolean primaryOutput = tool.getPrimaryOutputTypes().contains(type));
+				*/
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
 				//if (primaryOutput && ignorePrimary) continue;
 				String outputPrefix = type.getOutputPrefix();
@@ -3256,7 +3262,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					inPaths[0] = sourceLocation;
 					IPath[] outPaths = nameProvider.getOutputNames(tool, inPaths);
 					if (outPaths != null) {
-						for (int j=0; j<outPaths.length; j++) {
+						usedOutType=type;
+						for (int j = 0; j < outPaths.length; j++) {
+
 							IPath outPath = outPaths[j];
 							String outputName = outPaths[j].toString();
 
@@ -3753,6 +3761,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	static public String ECHO_BLANK_LINE = ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE;
+
+	private IOutputType usedOutType;
 
 	/**
 	 * Outputs a comment formatted as follows:

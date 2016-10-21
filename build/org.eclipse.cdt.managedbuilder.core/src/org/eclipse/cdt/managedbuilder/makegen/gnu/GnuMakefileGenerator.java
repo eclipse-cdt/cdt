@@ -3092,7 +3092,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IOutputType[] outTypes = tool.getOutputTypes();
 		if (outTypes != null && outTypes.length > 0) {
 			for (IOutputType type : outTypes) {
-				boolean primaryOutput = type.getPrimaryOutput();
+				boolean primaryOutput = (type == tool.getPrimaryOutputType());
 				//if (primaryOutput && ignorePrimary) continue;
 				String outputPrefix = type.getOutputPrefix();
 
@@ -3257,7 +3257,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					inPaths[0] = sourceLocation;
 					IPath[] outPaths = nameProvider.getOutputNames(tool, inPaths);
 					if (outPaths != null) {
-						for (int j=0; j<outPaths.length; j++) {
+						usedOutType=type;
+						for (int j = 0; j < outPaths.length; j++) {
+
 							IPath outPath = outPaths[j];
 							String outputName = outPaths[j].toString();
 

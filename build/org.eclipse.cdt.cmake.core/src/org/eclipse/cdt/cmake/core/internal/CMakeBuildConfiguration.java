@@ -60,12 +60,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, null);
+		this(config, name, toolChain, null, "run"); //$NON-NLS-1$
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			ICMakeToolChainFile toolChainFile) {
-		super(config, name, toolChain);
+			ICMakeToolChainFile toolChainFile, String launchMode) {
+		super(config, name, toolChain, launchMode);
 		this.toolChainFile = toolChainFile;
 
 		if (toolChainFile != null) {
@@ -118,6 +118,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				if (toolChainFile != null) {
 					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
+				}
+
+				switch (getLaunchMode()) {
+				// TODO what to do with other modes
+				case "debug": //$NON-NLS-1$
+					command.add("-DCMAKE_BUILD_TYPE=Debug"); //$NON-NLS-1$
+					break;
 				}
 
 				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$

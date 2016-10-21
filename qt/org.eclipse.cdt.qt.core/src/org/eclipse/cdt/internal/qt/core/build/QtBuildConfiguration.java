@@ -57,7 +57,6 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	private static final String QTINSTALL_SPEC = "cdt.qt.install.spec"; //$NON-NLS-1$
 	private static final String LAUNCH_MODE = "cdt.qt.launchMode"; //$NON-NLS-1$
 
-	private final String launchMode;
 	private final String qtInstallSpec;
 	private IQtInstall qtInstall;
 	private Map<String, String> properties;
@@ -89,15 +88,23 @@ public class QtBuildConfiguration extends CBuildConfiguration
 					Activator.error(String.format("Qt Install for build configuration %s not found.", name)));
 		}
 
-		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
+		String oldLaunchMode = settings.get(LAUNCH_MODE, null);
+		if (oldLaunchMode != null) {
+			setLaunchMode(oldLaunchMode);
+			settings.remove(LAUNCH_MODE);
+			try {
+				settings.flush();
+			} catch (BackingStoreException e) {
+				Activator.log(e);
+			}
+		}
 	}
 
 	QtBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, IQtInstall qtInstall,
 			String launchMode) throws CoreException {
-		super(config, name, toolChain);
+		super(config, name, toolChain, launchMode);
 		this.qtInstall = qtInstall;
 		this.qtInstallSpec = qtInstall.getSpec();
-		this.launchMode = launchMode;
 
 		IQtInstallManager manager = Activator.getService(IQtInstallManager.class);
 		manager.addListener(this);
@@ -136,17 +143,13 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	}
 
 	@Override
-	public String getLaunchMode() {
-		return launchMode;
-	}
-
-	@Override
 	public Path getQmakeCommand() {
 		return getQtInstall().getQmakePath();
 	}
 
 	@Override
 	public String[] getQmakeConfig() {
+		String launchMode = getLaunchMode();
 		if (launchMode != null) {
 			switch (launchMode) {
 			case "run": //$NON-NLS-1$
@@ -185,7 +188,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		case Platform.OS_WIN32:
 			return getBuildDirectory().resolve(projectName + ".exe"); //$NON-NLS-1$
 		case Platform.OS_LINUX:
-			return getBuildDirectory().resolve(projectName); //$NON-NLS-1$
+			return getBuildDirectory().resolve(projectName);
 		default:
 			Path releaseFolder = getBuildDirectory().resolve("release"); //$NON-NLS-1$
 			return releaseFolder.resolve(projectName);
@@ -344,7 +347,8 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				// run make
-				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "all").directory(buildDir.toFile());
+				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "all") //$NON-NLS-1$
+						.directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(makeCommand.toString() + '\n');

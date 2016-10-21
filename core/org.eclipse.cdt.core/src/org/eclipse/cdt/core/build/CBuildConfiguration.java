@@ -92,12 +92,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 	private static final String TOOLCHAIN_TYPE = "cdt.toolChain.type"; //$NON-NLS-1$
 	private static final String TOOLCHAIN_ID = "cdt.toolChain.id"; //$NON-NLS-1$
 	private static final String TOOLCHAIN_VERSION = "cdt.toolChain.version"; //$NON-NLS-1$
+	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
 	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
 
 	private final String name;
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
+	private String launchMode;
 
 	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
 	private ScannerInfoCache scannerInfoCache;
@@ -127,12 +129,23 @@ public abstract class CBuildConfiguration extends PlatformObject
 			}
 		}
 		toolChain = tc;
+
+		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
+		this(config, name, toolChain, "run"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
+			String launchMode) {
 		this.config = config;
 		this.name = name;
 		this.toolChain = toolChain;
+		this.launchMode = launchMode;
 
 		Preferences settings = getSettings();
 		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
@@ -156,6 +169,27 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	public String getLaunchMode() {
+		return launchMode;
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	protected void setLaunchMode(String launchMode) {
+		this.launchMode = launchMode;
+		Preferences settings = getSettings();
+		settings.put(LAUNCH_MODE, launchMode);
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	public IProject getProject() {

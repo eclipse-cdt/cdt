@@ -29,7 +29,6 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 	public static final String ID = "org.eclipse.cdt.cmake.core.provider"; //$NON-NLS-1$
 
 	private ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-	private IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 	private ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
 
 	@Override
@@ -79,7 +78,8 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
 			if (cconfig != null) {
 				CMakeBuildConfiguration cmakeConfig = cconfig.getAdapter(CMakeBuildConfiguration.class);
-				if (cmakeConfig != null && cmakeConfig.getToolChain().equals(toolChain)) {
+				if (cmakeConfig != null && cmakeConfig.getToolChain().equals(toolChain)
+						&& launchMode.equals(cmakeConfig.getLaunchMode())) {
 					return cconfig;
 				}
 			}
@@ -104,7 +104,8 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		// create config
 		String configName = "cmake." + launchMode + '.' + toolChain.getId(); //$NON-NLS-1$
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
-		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, configName, toolChain, file);
+		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, configName, toolChain, file,
+				launchMode);
 		configManager.addBuildConfiguration(config, cmakeConfig);
 		return cmakeConfig;
 	}

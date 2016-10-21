@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_75d79b68",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_ba584007",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
         "patchSetId": 9
@@ -30,6 +47,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Please use the same order of params as above as it makes it easier to compare.\nAlso, add \u0027preferences\u0027 in the id like above.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_95d42f64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_9587cf98",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_9af1bc58",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
         "patchSetId": 9
@@ -70,6 +121,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_f511ebdf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_5a780435",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
         "patchSetId": 9
@@ -81,6 +149,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "You can use the same pattern as the Disassembly view ActionOpenPreferences.java to avoid using this internal call",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_15173fd4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +206,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_351fe3ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_da0974a4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 9
@@ -132,6 +234,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Remove as it should not be an API",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_551c57f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +274,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_7525db34",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_f532cba6",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
         "patchSetId": 9
@@ -166,6 +302,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Since the below settings are now all preferences, they no longer need to be APIs of the consoles.\nInstead, each console can listen for the change and update itself.\nThat is what we need to do for the setAutoTerminateGDB() anyway, so I think it makes\nsense to do it for all three.  To avoid code duplication, we can use an abstract class.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_95226f2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +342,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_b5321378",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "I made the change but I\u0027d like you to confirm.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_5591b7d2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
         "patchSetId": 9
@@ -200,6 +370,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Currently, when the user uses the context-menu \"Invert Colors\", the call to setInvertedColors() actually happens\ntwice: once here and once from the action itself.  Since we react to the preference, we don\u0027t need\nto make the call in the action itself, but instead simply set the preference.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d5378767",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -240,6 +427,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_354603d9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_5aaac408",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
         "patchSetId": 9
@@ -251,6 +455,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Comment does not add clarity",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_554377c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -274,6 +495,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_753cfb48",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_3aad1021",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
         "patchSetId": 9
@@ -285,6 +523,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "We should call our local setBufferLineLimit() directly.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_95398f59",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +580,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_b5ddb390",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_b5b93368",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGdbCliConsole.java",
         "patchSetId": 9
@@ -336,6 +608,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "It turns out that now that each method below is mapped to a preference,\nwe don\u0027t need to call them through this API.  The whole class can be removed.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d5e2274a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGdbCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -359,6 +648,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_f5e3ab4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGdbCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_1a176cd4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
         "patchSetId": 9
@@ -370,6 +676,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Like in our GDB preference page, let\u0027s use 2 billion instead of this obscure MAX_VALUE which is hard to parse for a user",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_f5280b0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -393,6 +716,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_152e5f16",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_da76d47c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
         "patchSetId": 9
@@ -404,6 +744,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Why all caps?  Let\u0027s make it consistent with the rest of the file?\t\nLet\u0027s not use the word \"terminal\" but instead use \"console\".\nI worry users will wonder why we are using a different name here.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_55ce17d9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -427,6 +784,23 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_15e9ff2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_bac3e002",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 9
@@ -438,6 +812,23 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Use \"consoleBufferLines\" to avoid future conflicts if we use some other preference for buffered lines",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_35d1a375",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T03:00:26Z",
+      "side": 1,
+      "message": "Done in patchset 11",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

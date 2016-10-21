@@ -3257,6 +3257,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					inPaths[0] = sourceLocation;
 					IPath[] outPaths = nameProvider.getOutputNames(tool, inPaths);
 					if (outPaths != null) {
+					usedOutType=type;
 						for (int j=0; j<outPaths.length; j++) {
 							IPath outPath = outPaths[j];
 							String outputName = outPaths[j].toString();

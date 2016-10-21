@@ -1,0 +1,446 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_ba712087",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "I think the name should be just \"Console\".  Since it is under the \"GDB\" preference\npage, it implies in it the GDB Console.  If you look for other console pages in \nthe preferences, they are all called just \"Console\" since they are a sub-preference\nof something else.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ba584007",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Please use the same order of params as above as it makes it easier to compare.\nAlso, add \u0027preferences\u0027 in the id like above.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ba15a0ff",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Rename to GdbConsoleShowPreferencesAction",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9af1bc58",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Must be translatable and should end with ....\nAlso we cannot put the \u0026 before the P because the letter P is already\nuse as a shortcut in that menu (Paste).  No shortcut is fine.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_5a780435",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsoleShowPreferencesAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "You can use the same pattern as the Disassembly view ActionOpenPreferences.java to avoid using this internal call",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_7aa068ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "I\u0027m affraid this is much too low.  That means once we reach the highwater mark,\nwe would delete 100 characters and wait for another 100 to appear, then delete again.\nSeems like it would be happening often.\tWe should look at how it is done in TracingConsoleManager",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d51a272d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "No need to put \u0027final\u0027 now that we use java 8.  It does not hurt, but I think it is\nbetter practice not to put final to make the code less verbose.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_da0974a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Remove as it should not be an API",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_fafab8e7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Keep code logically together, so move this up close to setInvertedColors()",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_f532cba6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Since the below settings are now all preferences, they no longer need to be APIs of the consoles.\nInstead, each console can listen for the change and update itself.\nThat is what we need to do for the setAutoTerminateGDB() anyway, so I think it makes\nsense to do it for all three.  To avoid code duplication, we can use an abstract class.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_950c2ff7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "I don\u0027t think we need asyncExec().  The property change listener is called on the UI thread.\nHave you seen it differently?",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_5591b7d2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Currently, when the user uses the context-menu \"Invert Colors\", the call to setInvertedColors() actually happens\ntwice: once here and once from the action itself.  Since we react to the preference, we don\u0027t need\nto make the call in the action itself, but instead simply set the preference.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_d5a5c733",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbConsoleInvertColorsAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Now that we have a preference listener that reacts to the preference change\nwe don\u0027t need to perform the change here, but can let the preference listener\nhandle it.  Currently, the call to setInvertedColors() actually happens\ntwice: once here and once from the property change listener.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_f5bf2b47",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "The three methods above are no longer needed since we can use the\npreferences to know when to make the corresponding changes.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_5aaac408",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Comment does not add clarity",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_1ac5acd4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "No need to store it in a variable first, which we don\u0027t do above.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_3aad1021",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "We should call our local setBufferLineLimit() directly.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_75f4fb47",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Out of curiousity, why set the defaults here compare to before?",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_5a43a4c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "The name is not quite right.  Above \"setInvertedColors() is an API to actually\nset the inverted colors; setAutoTerminateGDB() does not set the preference\nbut just sets the checkmark in the menu.\nBut truth is, I don\u0027t think this should be an API.  Setting the check state is not something\nsomething else should call.  I think that should all be done locally like we used to do.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_b5b93368",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGdbCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "It turns out that now that each method below is mapped to a preference,\nwe don\u0027t need to call them through this API.  The whole class can be removed.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ba04c08c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGdbCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "This should not be part of the interface: it is not a actual action on the console.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_1a176cd4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Like in our GDB preference page, let\u0027s use 2 billion instead of this obscure MAX_VALUE which is hard to parse for a user",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_da1094de",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "These should be set in GdbPreferenceInitializer instead.\nThis method here would only get called once the preference page has been opened,\nwhich might be much later than when we actually read the preferences and use them.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_da76d47c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Why all caps?  Let\u0027s make it consistent with the rest of the file?\t\nLet\u0027s not use the word \"terminal\" but instead use \"console\".\nI worry users will wonder why we are using a different name here.",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9a3ffc8b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Please locate these values with their preference contant, and name them *_DEFAULT",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_bac3e002",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-21T02:54:29Z",
+      "side": 1,
+      "message": "Use \"consoleBufferLines\" to avoid future conflicts if we use some other preference for buffered lines",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

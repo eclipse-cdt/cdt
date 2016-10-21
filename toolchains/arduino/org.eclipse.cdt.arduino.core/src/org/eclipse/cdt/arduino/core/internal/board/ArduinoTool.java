@@ -7,14 +7,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

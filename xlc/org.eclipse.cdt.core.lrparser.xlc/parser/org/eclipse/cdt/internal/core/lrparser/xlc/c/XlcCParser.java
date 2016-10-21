@@ -28,17 +28,11 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
 
-import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
-
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
 
 import org.eclipse.cdt.core.lrparser.xlc.action.XlcCBuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
 import org.eclipse.cdt.internal.core.lrparser.xlc.ast.XlcCNodeFactory;
 
 public class XlcCParser extends PrsStream implements RuleAction, ITokenStream, 

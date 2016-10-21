@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.parser.xlc.tests.base;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.lrparser.tests.AbstractLRHangingTest;
 import org.eclipse.cdt.core.lrparser.tests.LRCompletionHangingTest;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;

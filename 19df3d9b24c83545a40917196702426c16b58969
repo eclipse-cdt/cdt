@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_9fb9a9b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "We should dispose of this instance to stop the two Jobs.\nIt is not strictly necessary since GDB will be dead and the streams\nwill close and the jobs will end, but might as well cleanup properly\nto be future-proof",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_df86c1f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Add javadoc",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9f52895e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "We need a dispose() in this class to stop the two jobs",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_7f593584",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "This class starts reading from GDB before we have our terminalControl registered,\nso the initial printouts (e.g., the version printout) are lost.\nHowever, we can leave this as is for now since a future\npatch will be storing all output anyway.",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_7fe5b5c5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Typo in method name.  Rename to match new interface name",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_bf4f4db9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Rename var to match new interface name",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_e2b3ee33",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Considering we don\u0027t need to actually make the connection to the\nprocess directly, but with the new GdbTerminalControlConnector instead,\nwe no longer actually need to contact the service to find the\nprocess.  If we had the pty, we could dramatically simplify this\nclass.  So, since the GdbFullCliConsole class can provided the\nPTY, we can then avoid calling anything DSF here",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_df688116",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalPageConnector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Let\u0027s remove the page terminal control (effectively disconnecting)\nbefore we mark the fControl as CLOSED",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ff6d4524",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalPageConnector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "Same idea of marking CONNECTED _after_ we actually connected",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ffa46590",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGDBTerminalControlManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-22T23:54:08Z",
+      "side": 1,
+      "message": "It is not actually a terminal control manager but more of a\nterminal control connector for a GDB.  Let\u0027s rename to IGdbTerminalControlConnector",
+      "revId": "19df3d9b24c83545a40917196702426c16b58969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

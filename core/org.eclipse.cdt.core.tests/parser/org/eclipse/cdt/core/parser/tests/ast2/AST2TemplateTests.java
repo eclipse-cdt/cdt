@@ -8928,7 +8928,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//		x.woof();
 	//	}
 	public void testUnqualifiedFunctionCallInTemplate_402498d() throws Exception {
-	        parseAndCheckBindings();
+		parseAndCheckBindings();
 	}
 	
 	//	void bar();

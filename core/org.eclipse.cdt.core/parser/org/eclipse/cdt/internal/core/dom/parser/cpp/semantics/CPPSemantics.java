@@ -1972,7 +1972,7 @@ public class CPPSemantics {
 	    if (pointOfDecl < 0) {
 	    	if (nd != null) {
 	    		pointOfDecl = getPointOfDeclaration(nd);
-	    	} else if (obj instanceof IIndexBinding && !fAllowPromiscuousBindingResolution.get()) {
+	    	} else if (obj instanceof IIndexBinding && !isUsingPromiscuousBindingResolution()) {
 	    		IIndexBinding indexBinding = ((IIndexBinding) obj);
 	    		if (indexBinding instanceof ICPPMethod && ((ICPPMethod) indexBinding).isImplicit()) {
 	    			return true;
@@ -4250,7 +4250,12 @@ public class CPPSemantics {
 	public static void enablePromiscuousBindingResolution() {
 		fAllowPromiscuousBindingResolution.set(true);
 	}
+
 	public static void disablePromiscuousBindingResolution() {
 		fAllowPromiscuousBindingResolution.set(false);
+	}
+	
+	public static boolean isUsingPromiscuousBindingResolution() {
+		return fAllowPromiscuousBindingResolution.get();
 	}
 }

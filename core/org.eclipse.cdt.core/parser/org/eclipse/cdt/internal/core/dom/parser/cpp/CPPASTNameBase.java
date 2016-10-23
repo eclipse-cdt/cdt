@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -97,9 +98,27 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	return fBinding;
 	}
 
+	// Returns whether binding resolution should use a previously computed and cached binding.
+	private boolean useCachedBinding() {
+		// If there is no cached binidng, there's nothing to use.
+		if (fBinding == null) {
+			return false;
+		}
+		
+		// If promiscuous binding resolution is enabled and the cached binding
+		// is a ProblemBinding, it's possible that it was computed when
+		// promiscuous binding resolution was disabled, and we may get a 
+		// different result if we recompute the binding now.
+		if (CPPSemantics.isUsingPromiscuousBindingResolution() && fBinding instanceof IProblemBinding) {
+			return false;
+		}
+		
+		return true;
+	}
+	
     @Override
 	public IBinding resolveBinding() {
-    	if (fBinding == null) {
+    	if (!useCachedBinding()) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			setBinding(createRecursionResolvingBinding());
     		} else {

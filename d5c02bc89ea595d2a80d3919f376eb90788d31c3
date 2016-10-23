@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_22d406e7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-23T02:31:56Z",
+      "side": 1,
+      "message": "This change seems to mean that symbols unresolved due to missing includes will become resolved as a side effect of Organize Includes. It is preferable for Organize Includes not to have side effects.",
+      "range": {
+        "startLine": 121,
+        "startChar": 10,
+        "endLine": 121,
+        "endChar": 26
+      },
+      "revId": "d5c02bc89ea595d2a80d3919f376eb90788d31c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

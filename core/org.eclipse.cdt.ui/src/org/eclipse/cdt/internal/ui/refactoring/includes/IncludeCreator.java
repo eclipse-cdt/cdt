@@ -77,6 +77,7 @@ import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
@@ -105,6 +106,16 @@ public class IncludeCreator {
 	}
 
 	public MultiTextEdit createInclude(IASTTranslationUnit ast, ITextSelection selection)
+			throws CoreException {
+		try {
+			CPPSemantics.enablePromiscuousBindingResolution();
+			return createIncludeImpl(ast, selection);
+		} finally {
+			CPPSemantics.disablePromiscuousBindingResolution();
+		}
+	}
+	
+	private MultiTextEdit createIncludeImpl(IASTTranslationUnit ast, ITextSelection selection)
 			throws CoreException {
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		ITranslationUnit tu = fContext.getTranslationUnit();

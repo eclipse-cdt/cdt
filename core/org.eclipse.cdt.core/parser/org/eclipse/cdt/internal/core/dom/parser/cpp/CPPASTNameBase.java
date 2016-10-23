@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -97,8 +98,32 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	return fBinding;
 	}
 
-    @Override
-	public IBinding resolveBinding() {
+	// Promiscuous binding resolution can sometimes produce a non-ProblemBinding
+	// when normal binding resolution would produce a ProblemBinding.
+	private IBinding resolveBindingPromiscuous() {
+		// If the cached binding is a ProblemBinding, re-resolving it in
+		// promiscuous mode wouldn't return anything different, so just
+		// returned the cached binding.
+		if (fBinding instanceof IProblemBinding) {
+			return fBinding;
+		}
+		
+		// Otherwise, clear any cached binding and re-resolve.
+		setBinding(null);
+		IBinding result = resolveBindingNormal();
+		
+		// If the binding computed in promiscuous mode is *not* a
+		// ProblemBinding, clear it so a future resolution in
+		// non-promiscuous mode can produce a ProblemBinding if
+		// appropriate.
+		if (!(result instanceof IProblemBinding)) {
+			setBinding(null);
+		}
+		
+		return result;
+	}
+	
+    private IBinding resolveBindingNormal() {	
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			setBinding(createRecursionResolvingBinding());
@@ -120,7 +145,14 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 
     	return fBinding;
     }
-
+	
+    @Override
+	public IBinding resolveBinding() {
+    	return CPPSemantics.isUsingPromiscuousBindingResolution()
+    		? resolveBindingPromiscuous()
+    	    : resolveBindingNormal();
+    }
+    
     /**
      * If this name has not yet been resolved at all, <code>null</code> will be returned.
      * Otherwise the intermediate or final binding for this name is returned.

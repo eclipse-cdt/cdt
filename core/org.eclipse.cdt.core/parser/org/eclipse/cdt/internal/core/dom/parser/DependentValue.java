@@ -86,10 +86,10 @@ public class DependentValue implements IValue {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof IntegralValue)) {
+		if (!(obj instanceof DependentValue)) {
 			return false;
 		}
-		final IntegralValue rhs = (IntegralValue) obj;
+		final DependentValue rhs = (DependentValue) obj;
 		return CharArrayUtils.equals(getSignature(), rhs.getSignature());
 	}
 

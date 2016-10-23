@@ -581,7 +581,8 @@ public class ValueFactory {
 	}
 
 	private static boolean isDeferredValue(IValue value) {
-		return value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null;
+		return value instanceof DependentValue || 
+			(value instanceof IntegralValue && ((IntegralValue) value).numberValue() == null);
 	}
 
 	/**

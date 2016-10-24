@@ -189,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_13c032c4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-24T18:45:16Z",
+      "side": 1,
+      "message": "Looking at the default console implementation, they use constant of 8000 char.\n\n So I am updating it to 8000 to get an equivalent behavior\n\nUpdated in Patchset 12.",
+      "parentUuid": "07b223f6_7aa068ed",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_d51a272d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
         "patchSetId": 9
@@ -557,6 +575,24 @@
       "writtenOn": "2016-10-21T02:54:29Z",
       "side": 1,
       "message": "Out of curiousity, why set the defaults here compare to before?",
+      "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_930fe2ea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-24T18:45:16Z",
+      "side": 1,
+      "message": "I have added the following comment (in patchset 12)\n\n\"The actual terminal widget initializes its defaults in the line above,\nlets override them with our application defaults right after\"",
+      "parentUuid": "07b223f6_75f4fb47",
       "revId": "6ee58a18e152067180c424b012f3b503e9b4f0da",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

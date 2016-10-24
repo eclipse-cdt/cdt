@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_f3765e7c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbConsolePreferencePage.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-24T18:46:47Z",
+      "side": 1,
+      "message": "Similarly to the MIN value, lets define a constant for the MAX value as well. \n  Done in patch set 12",
+      "revId": "8ee3144182d4f323e7fc8c0746a7e42c44a91ebf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

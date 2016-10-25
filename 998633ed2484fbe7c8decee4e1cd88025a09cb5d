@@ -22,6 +22,30 @@
       "revId": "998633ed2484fbe7c8decee4e1cd88025a09cb5d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ee9bd5c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-10-25T07:03:36Z",
+      "side": 1,
+      "message": "It\u0027s actually worse than that. We are getting test failures, because there is code (e.g. CPPVisitor.areEquivalentBindings()) that assumes that two calls to resolveBinding() on the same IASTName will return the same binding object.\n\nI will give your suggestion a try.",
+      "parentUuid": "07b223f6_aed47d63",
+      "range": {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 20
+      },
+      "revId": "998633ed2484fbe7c8decee4e1cd88025a09cb5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

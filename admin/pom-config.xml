@@ -52,7 +52,7 @@
 
         <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
 
-        <tm-stream>mars</tm-stream>
+        <tm-stream>development</tm-stream>
         <tm-zipfile>${project.artifactId}.zip</tm-zipfile>
         <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
         <sdk-version>4.5</sdk-version>
@@ -60,7 +60,7 @@
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/</orbit-site>
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
         <terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
       </properties>

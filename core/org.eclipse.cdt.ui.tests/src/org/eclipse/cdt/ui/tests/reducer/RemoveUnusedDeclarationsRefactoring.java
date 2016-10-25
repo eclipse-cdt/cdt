@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
+	private static final String PROTECTION_TOKEN = "PRESERVE";
 	private static final IASTName UNUSED_NAME = new CPPASTName(null);
 	private static final ProblemFinder problemFinder = new ProblemFinder();
 
@@ -160,11 +161,14 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		// it is too slow for the gigantic changes this refactoring has to deal with.
 		NavigableSet<IASTName> names = NameCollector.getContainedNames(ast);
 
+		String code = ast.getRawSignature();
+
 		SortedNodeSet<IASTNode> nodesToDelete = new SortedNodeSet<>();
 		IASTPreprocessorMacroExpansion[] macroExpansions = ast.getMacroExpansions();
 		for (IASTPreprocessorMacroExpansion macroExpansion : macroExpansions) {
 			IASTName name = macroExpansion.getMacroReference();
 			if (SelectionHelper.isNodeInsideRegion(name, region)
+					&& !containsProtectionToken(name, code)
 					&& macroExpansion.getMacroDefinition().getExpansion().isEmpty()) {
 				nodesToDelete.add(macroExpansion);
 			}
@@ -177,6 +181,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		for (int i = declarations.size(); --i >= 0;) {
 			IASTDeclaration declaration = declarations.get(i);
 			if (SelectionHelper.isNodeInsideRegion(declaration, region)
+					&& !containsProtectionToken(declaration, code)
 					&& !problemFinder.containsProblemBinding(declaration)
 					&& !isPossiblyUsed(declaration, names, nodesToDelete)) {
 				nodesToDelete.add(declaration);
@@ -184,7 +189,6 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			}
 		}
 
-		String code = ast.getRawSignature();
 		CTextFileChange fileChange = new CTextFileChange(tu.getElementName(), tu);
 		fileChange.setEdit(new MultiTextEdit());
 
@@ -213,6 +217,19 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		change.add(fileChange);
 		change.setDescription(new RefactoringChangeDescriptor(getRefactoringDescriptor()));
 		return change;
+	}
+
+	/**
+	 * Checks if the node or the rest of its last line contain text matching {@link #PROTECTION_TOKEN}.
+	 */
+	private boolean containsProtectionToken(IASTNode node, String code) {
+		int offset = ASTNodes.offset(node);
+		int endOffset = ASTNodes.skipToNextLineAfterNode(code, node);
+		for (int i = offset; i < endOffset - PROTECTION_TOKEN.length(); i++) {
+			if (code.regionMatches(i, PROTECTION_TOKEN, 0, PROTECTION_TOKEN.length()))
+				return true;
+		}
+		return false;
 	}
 
 	private boolean containsAncestor(Collection<IASTNode> nodes, IASTNode node) {

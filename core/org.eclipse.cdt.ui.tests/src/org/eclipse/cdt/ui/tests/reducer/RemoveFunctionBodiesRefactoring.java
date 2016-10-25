@@ -61,6 +61,7 @@ import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class RemoveFunctionBodiesRefactoring extends CRefactoring {
+	private static final String PROTECTION_TOKEN = "PRESERVE";
 	private INodeFactory nodeFactory;
 	private final DefaultCodeFormatterOptions formattingOptions;
 
@@ -124,7 +125,7 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 		CTextFileChange fileChange = new CTextFileChange(tu.getElementName(), tu);
 		fileChange.setEdit(new MultiTextEdit());
 		for (IASTFunctionDefinition definition : finder.functionDefinitions) {
-			if (!SelectionHelper.isNodeInsideRegion(definition, region))
+			if (!SelectionHelper.isNodeInsideRegion(definition, region) || containsProtectionToken(definition, code))
 				continue;
 			IASTStatement body = definition.getBody();
 			IASTName name = definition.getDeclarator().getName();
@@ -168,6 +169,19 @@ public class RemoveFunctionBodiesRefactoring extends CRefactoring {
 		change.add(fileChange);
 		change.setDescription(new RefactoringChangeDescriptor(getRefactoringDescriptor()));
 		return change;
+	}
+
+	/**
+	 * Checks if the node or the rest of its last line contain text matching {@link #PROTECTION_TOKEN}.
+	 */
+	private boolean containsProtectionToken(IASTNode node, String code) {
+		int offset = ASTNodes.offset(node);
+		int endOffset = ASTNodes.skipToNextLineAfterNode(code, node);
+		for (int i = offset; i < endOffset - PROTECTION_TOKEN.length(); i++) {
+			if (code.regionMatches(i, PROTECTION_TOKEN, 0, PROTECTION_TOKEN.length()))
+				return true;
+		}
+		return false;
 	}
 
 	private static int skipWhitespaceBefore(int offset, String text) {

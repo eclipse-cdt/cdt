@@ -419,6 +419,18 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared("A", "B");
 	}
 
+	//	class A {};
+	//	class B : public A {};
+	//	extern A* a;
+	//	extern B* b;
+
+	//	void test() {
+	//	  a = { b };
+	//	}
+	public void testInitializerList_506529() throws Exception {
+		assertDefined("B", "a", "b");
+	}
+
 	//	namespace ns1 {
 	//	namespace ns2 {
 	//	class A {};

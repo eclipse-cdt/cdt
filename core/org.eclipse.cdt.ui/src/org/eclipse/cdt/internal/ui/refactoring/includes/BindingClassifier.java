@@ -90,6 +90,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -641,7 +642,26 @@ public class BindingClassifier {
 				}
 
 				IType operand1Type = binaryExpression.getOperand1().getExpressionType();
-				IType operand2Type = binaryExpression.getOperand2().getExpressionType();
+				IASTInitializerClause operand2 = binaryExpression.getInitOperand2();
+				IType operand2Type;
+				if (operand2 instanceof IASTExpression) {
+					operand2Type = ((IASTExpression) operand2).getExpressionType();
+				} else if (operand2 instanceof ICPPASTInitializerList) {
+					ICPPASTInitializerList initializerList = (ICPPASTInitializerList) operand2;
+					if (binaryExpression.getOperator() == IASTBinaryExpression.op_assign
+							&& initializerList.getSize() == 1) {
+						IASTInitializerClause element = initializerList.getClauses()[0];
+						if (element instanceof IASTExpression) {
+							operand2Type = ((IASTExpression) element).getExpressionType();
+						} else {
+							operand2Type = initializerList.getEvaluation().getType(operand2);
+						}
+					} else {
+						operand2Type = initializerList.getEvaluation().getType(operand2);
+					}
+				} else {
+					operand2Type = operand1Type;
+				}
 
 				boolean expression1DefinitionRequired = true;
 				boolean expression2DefinitionRequired = true;
@@ -664,8 +684,7 @@ public class BindingClassifier {
 				case IASTBinaryExpression.op_greaterThan:
 				case IASTBinaryExpression.op_lessEqual:
 				case IASTBinaryExpression.op_lessThan:
-					// If both operands are identical pointer types, then they don't need to be
-					// defined.
+					// If both operands are identical pointer types, then they don't need to be defined.
 					if (operand1Type instanceof IPointerType && operand2Type instanceof IPointerType) {
 						if (!isTypeDefinitionRequiredForConversion(operand2Type, operand1Type)) {
 							expression1DefinitionRequired = false;

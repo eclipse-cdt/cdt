@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_aed47d63",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-25T05:29:35Z",
+      "side": 1,
+      "message": "This early clearing may cause the same binding to be resolved many many times when resolving other names.\n\nInstead of storing promiscuously resolved binding directly in the name we can store in a new field of ProblemBinding. This way we don\u0027t need to re-resolve anything after turning off promiscuous resolution and even after turning it on again.",
+      "range": {
+        "startLine": 120,
+        "startChar": 3,
+        "endLine": 120,
+        "endChar": 20
+      },
+      "revId": "998633ed2484fbe7c8decee4e1cd88025a09cb5d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

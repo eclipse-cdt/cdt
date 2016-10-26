@@ -82,6 +82,9 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	private static final String THREAD_ID_DEFAULT = "1"; //$NON-NLS-1$
 	private static final String STACKFRAME_ID_DEFAULT = "0"; //$NON-NLS-1$
 		
+	// one value for all instances of this service - either we synchronize for all sessions or none 
+	private static boolean fSyncEnabled = true;
+	
 	public GDBSynchronizer(DsfSession session) {
 		super(session);
 	}
@@ -203,9 +206,14 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 			return;
 		}
 
-		// Create a mi-thread-select and send the command
-		ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(newThread, getThreadIdFromContext(newThread));
-		fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {});
+		if (fSyncEnabled) {
+			// Create a mi-thread-select and send the command
+			ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(newThread, getThreadIdFromContext(newThread));
+			fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {});
+		}
+		else {
+			rm.done();
+		}
 	}
 
 	protected void setFrameFocus(final IFrameDMContext newFrame, ImmediateRequestMonitor rm) {
@@ -216,7 +224,7 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		}
 		// a stack frame was selected. If it was required, we already switched the thread, now take
 		// care of the frame
-		if (isThreadSuspended(getThreadFromFrame(newFrame))) {
+		if (fSyncEnabled && isThreadSuspended(getThreadFromFrame(newFrame))) {
 			// Create a mi-stack-select-frame and send the command
 			ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(newFrame, newFrame.getLevel());
 			fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {});
@@ -304,17 +312,18 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
     				fCurrentThreadCtx = createExecContextFromThreadId(tid);
     				fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, frameLevel);
     				
-    				createAndDispatchGDBFocusChangedEvent();
+    				createAndDispatchGDBFocusChangedEvent(false);
     			}
     		}
     	}
 	}
 
-	private void createAndDispatchGDBFocusChangedEvent() {
+	private void createAndDispatchGDBFocusChangedEvent(boolean force) {
 		assert fCurrentThreadCtx != null;
-
-		fCommandControl.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentThreadCtx),
-				fCommandControl.getProperties());
+		if (fSyncEnabled || force) {
+			fCommandControl.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentThreadCtx),
+					fCommandControl.getProperties());
+		}
 	}
 
     /**
@@ -350,8 +359,9 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	
 	@Override
 	public void sessionSelected() {
-		// get debug view to select this session's current thread/frame
-		createAndDispatchGDBFocusChangedEvent();
+		// get debug view to select this session's current thread/frame, 
+		// even if synchronization is off
+		createAndDispatchGDBFocusChangedEvent(true);
 	}
 
 	@Override
@@ -367,4 +377,14 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		fCurrentThreadCtx = createExecContextFromThreadId(THREAD_ID_DEFAULT);
 	    fCurrentStackFrameCtx = createFrameContext(fCurrentThreadCtx, STACKFRAME_ID_DEFAULT);
 	}
+	
+	/**
+     * Enables or disables the synchronization between the Debug View
+     * selection and GDB focus. This setting applies to all instances 
+     * of this service, i.e. all debug sessions share the value set here.
+     */
+	public static void setSynchronizationEnabled(boolean enable) {
+		fSyncEnabled = enable;
+	}
+	
 }

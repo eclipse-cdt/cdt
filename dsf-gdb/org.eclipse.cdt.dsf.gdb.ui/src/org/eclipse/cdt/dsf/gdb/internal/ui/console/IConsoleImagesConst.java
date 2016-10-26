@@ -28,4 +28,7 @@ public interface IConsoleImagesConst {
 
 	public static final String IMG_CONSOLE_SCROLL_LOCK_ACTIVE_COLOR = "icons/full/elcl16/lock_co.png"; //$NON-NLS-1$
 	public static final String IMG_CONSOLE_SCROLL_LOCK_DISABLED_COLOR = "icons/full/dlcl16/lock_co.png"; //$NON-NLS-1$
+	
+	public static final String IMG_CONSOLE_SYNCHRONIZATION_ACTIVE_IMG = "icons/full/elcl16/synchronize.png"; //$NON-NLS-1$
+	public static final String IMG_CONSOLE_SYNCHRONIZATION_DISABLED_IMG = "icons/full/dlcl16/synchronize.png"; //$NON-NLS-1$
 }

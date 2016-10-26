@@ -22,6 +22,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsolePasteAction
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleScrollLockAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleSelectAllAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleShowPreferencesAction;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleSyncEnabledAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleTerminateLaunchAction;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IAdaptable;
@@ -71,6 +72,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private GdbConsoleScrollLockAction fScrollLockAction;
 	private GdbConsoleSelectAllAction fSelectAllAction;
 	private GdbAutoTerminateAction fAutoTerminateAction;
+	private GdbConsoleSyncEnabledAction fSynchEnabledAction;
 
 	private GdbConsoleShowPreferencesAction fShowPreferencePageAction;
 
@@ -197,9 +199,11 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		fSelectAllAction = new GdbConsoleSelectAllAction(fTerminalControl);
 		fAutoTerminateAction = new GdbAutoTerminateAction();
 		fShowPreferencePageAction = new GdbConsoleShowPreferencesAction(getSite().getShell());
+		fSynchEnabledAction = GdbConsoleSyncEnabledAction.getInstance(); 
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fSynchEnabledAction);
 		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fTerminateLaunchAction);
 		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fClearAction);
 		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fScrollLockAction);

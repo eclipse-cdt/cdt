@@ -86,9 +86,12 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	public IScope getParent() {
 	    // We can't just resolve the function and get its parent scope, since there are cases where that
 	    // could loop because resolving functions requires resolving their parameter types.
-	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
-	    IASTName name = fdtor.getName().getLastName();
-	    return CPPVisitor.getContainingNonTemplateScope(name);
+	    IASTFunctionDeclarator funcDeclarator = (IASTFunctionDeclarator) getPhysicalNode();
+	    IASTName name = funcDeclarator.getName();
+	    if (name != null)
+	    	return CPPVisitor.getContainingNonTemplateScope(name.getLastName());
+
+	    return super.getParent();
 	}
 
     @Override

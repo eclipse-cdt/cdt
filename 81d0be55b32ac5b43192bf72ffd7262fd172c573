@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_166e5b20",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ProblemBinding.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-26T13:51:35Z",
+      "side": 1,
+      "message": "Make final.",
+      "range": {
+        "startLine": 398,
+        "startChar": 1,
+        "endLine": 398,
+        "endChar": 7
+      },
+      "revId": "81d0be55b32ac5b43192bf72ffd7262fd172c573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_365fdf6e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ProblemBinding.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-26T13:51:35Z",
+      "side": 1,
+      "message": "Make final.",
+      "range": {
+        "startLine": 402,
+        "startChar": 1,
+        "endLine": 402,
+        "endChar": 7
+      },
+      "revId": "81d0be55b32ac5b43192bf72ffd7262fd172c573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_31ba8909",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTNameBase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-26T13:51:35Z",
+      "side": 1,
+      "message": "Better to write:\nIBinding promiscuous \u003d problem.getPromiscuousBinding();\nif (promiscuous \u003d\u003d null) {\n  ...\n}\nreturn promiscuous;",
+      "range": {
+        "startLine": 120,
+        "startChar": 14,
+        "endLine": 120,
+        "endChar": 35
+      },
+      "revId": "81d0be55b32ac5b43192bf72ffd7262fd172c573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_96726b03",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4253,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2016-10-26T13:51:35Z",
+      "side": 1,
+      "message": "Please separate methods by blank lines.",
+      "revId": "81d0be55b32ac5b43192bf72ffd7262fd172c573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

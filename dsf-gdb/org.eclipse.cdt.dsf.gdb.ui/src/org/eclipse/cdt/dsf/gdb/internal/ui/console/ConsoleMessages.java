@@ -48,6 +48,9 @@ public class ConsoleMessages extends NLS {
 
 	public static String GdbConsolePreferences_name;
 	
+	public static String ConsoleSyncEnabledAction_name;
+	public static String ConsoleSyncEnabledAction_description;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);

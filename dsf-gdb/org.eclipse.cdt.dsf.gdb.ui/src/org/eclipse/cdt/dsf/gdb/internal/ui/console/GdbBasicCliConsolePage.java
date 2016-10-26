@@ -10,6 +10,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleShowPreferencesAction;
+import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleSyncEnabledAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.actions.GdbConsoleTerminateLaunchAction;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -32,6 +33,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 	private GdbConsoleShowPreferencesAction fShowPreferencePageAction;
+	private GdbConsoleSyncEnabledAction fSynchEnabledAction;
 
 	public GdbBasicCliConsolePage(GdbBasicCliConsole gdbConsole, IConsoleView view) {
 		super(gdbConsole, view);
@@ -54,6 +56,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 
 	@Override
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fSynchEnabledAction);
 		mgr.insertBefore(DebuggerConsoleView.DROP_DOWN_ACTION_ID, fTerminateLaunchAction);
 	}
 
@@ -61,6 +64,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	protected void createActions() {
 		fTerminateLaunchAction = new GdbConsoleTerminateLaunchAction(fLaunch);
 		fShowPreferencePageAction = new GdbConsoleShowPreferencesAction(getSite().getShell());
+		fSynchEnabledAction = GdbConsoleSyncEnabledAction.getInstance(); 
 	}
 
 	@Override

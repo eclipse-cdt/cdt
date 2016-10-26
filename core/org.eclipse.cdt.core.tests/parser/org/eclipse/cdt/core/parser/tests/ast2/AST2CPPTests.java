@@ -12131,4 +12131,10 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testDecltypeAutoReturnType_482225() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int waldo = (sizeof(double) % 16);
+	public void testSizeofDouble_506170() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 8);
+	}
 }

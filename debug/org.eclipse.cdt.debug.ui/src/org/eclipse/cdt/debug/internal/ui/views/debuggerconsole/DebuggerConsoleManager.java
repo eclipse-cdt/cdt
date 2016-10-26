@@ -102,7 +102,8 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            if (window != null && fConsole != null) {
+            IConsole c = fConsole;
+            if (window != null && c != null) {
                 IWorkbenchPage page = window.getActivePage();
                 if (page != null) {
                 	boolean consoleFound = false;
@@ -113,6 +114,7 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 						if (consoleVisible) {
 							consoleFound = true;
 							page.bringToTop(consoleView);
+							consoleView.display(c);
 						}
 					}
 
@@ -123,6 +125,7 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 																	   null,
 																	   IWorkbenchPage.VIEW_CREATE);
 							page.bringToTop(consoleView);
+							consoleView.display(c);
 						} catch (PartInitException e) {
 							CDebugUIPlugin.log(e);
 						}

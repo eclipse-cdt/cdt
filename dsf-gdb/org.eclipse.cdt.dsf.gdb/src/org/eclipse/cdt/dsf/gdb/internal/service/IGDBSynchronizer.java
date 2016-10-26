@@ -58,4 +58,19 @@ public interface IGDBSynchronizer extends IDsfService {
 	 * @param tid The thread id on which the execution context is based
 	 */
     IExecutionDMContext createExecContextFromThreadId(String tid);
+    
+    /**
+     * Enables or disables the propagation of the synchronization of the DV selection
+     * and GDB focus. This setting applies to all instances of this 
+     * service, i.e. all debug sessions share the value set here.
+     */
+    void setSyncEnabled(boolean enable);
+    
+    /** 
+     * 
+     * @return whether the propagation of the synchronization of the DV selection
+     * and GDB focus, is enabled or not.
+     */
+    boolean isSyncEnabled();
+ 
 }

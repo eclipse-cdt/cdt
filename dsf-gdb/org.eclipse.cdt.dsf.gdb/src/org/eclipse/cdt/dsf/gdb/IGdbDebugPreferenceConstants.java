@@ -195,5 +195,18 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 5.2
 	 */
 	public static final int CONSOLE_BUFFERLINES_DEFAULT = 1000;
+	
+	/**
+	 * Preference key controlling whether the synchronization between the debugger console 
+	 * and Debug View is enabled or not
+	 * @since 5.2
+	 */
+	public static final String PREF_CONSOLE_SYNC_ENABLED = PREFIX + "syncEnabled"; //$NON-NLS-1$
+	
+	/**
+	 * Default preference value for the colors used by GDB CLI consoles
+	 * @since 5.2
+	 */
+	public static final Boolean CONSOLE_SYNC_ENABLED_DEFAULT = true;
 
 }

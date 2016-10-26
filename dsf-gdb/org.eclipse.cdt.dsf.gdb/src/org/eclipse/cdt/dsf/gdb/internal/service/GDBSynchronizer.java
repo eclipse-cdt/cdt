@@ -86,6 +86,9 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	// default initial values
 	private static final String THREAD_ID_DEFAULT = "1"; //$NON-NLS-1$
 	private static final String STACKFRAME_ID_DEFAULT = "0"; //$NON-NLS-1$
+	
+	// one value for all instances of this service - all or nothing
+	private static boolean SYNC_ENABLED = true;
 		
 	public GDBSynchronizer(DsfSession session) {
 		super(session);
@@ -176,23 +179,33 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 		if (!(newThread instanceof IMIExecutionDMContext)) {
 			return;
 		}
-
-		// Create a mi-thread-select and send the command
-		ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(newThread, getThreadIdFromContext(newThread));
-		fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {});
-
 		fCurrentThreadCtx = newThread;
+		
+		if (SYNC_ENABLED) {
+			// Create a mi-thread-select and send the command
+			ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(newThread, getThreadIdFromContext(newThread));
+			fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {});
+		}
+		else {
+			rm.done();
+		}
 	}
 
 	protected void setFrameFocus(final IFrameDMContext newFrame, ImmediateRequestMonitor rm) {
 		// a stack frame was selected. If it was required, we already switched the thread, now take
 		// care of the frame
-		if (isThreadSuspended(getThreadFromFrame(newFrame))) {
-			// Create a mi-stack-select-frame and send the command
-			ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(newFrame, newFrame.getLevel());
-			fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {});
-		}
 		fCurrentStackFrameCtx = newFrame;
+		
+		if (SYNC_ENABLED) {
+			if (isThreadSuspended(getThreadFromFrame(newFrame))) {
+				// Create a mi-stack-select-frame and send the command
+				ICommand<MIInfo> command = fCommandFactory.createMIStackSelectFrame(newFrame, newFrame.getLevel());
+				fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {});
+			}
+		}
+		else {
+			rm.done();
+		}
 	}
 	
 	/**  
@@ -261,8 +274,10 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	}
 
 	protected void createAndDispatchGDBFocusChangedEvent() {
-		fCommandControl.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentThreadCtx),
-				fCommandControl.getProperties());
+		if (SYNC_ENABLED) {
+			fCommandControl.getSession().dispatchEvent(new GDBFocusChangedEvent(fCurrentThreadCtx),
+					fCommandControl.getProperties());
+		}
 	}
 
 	/**
@@ -331,6 +346,16 @@ public class GDBSynchronizer extends AbstractDsfService implements IGDBSynchroni
 	
 	private IExecutionDMContext getThreadFromFrame(IFrameDMContext frame) {
 		return DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
+	}
+
+	@Override
+	public void setSyncEnabled(boolean enable) {
+		SYNC_ENABLED = enable;
+	}
+
+	@Override
+	public boolean isSyncEnabled() {
+		return SYNC_ENABLED;
 	}
 	
 }

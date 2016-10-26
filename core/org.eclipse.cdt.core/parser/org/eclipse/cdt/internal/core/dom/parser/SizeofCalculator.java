@@ -238,8 +238,8 @@ public class SizeofCalculator {
 			return type.isComplex() ? sizeof_complex_float : sizeof_float;
 		case eDouble:
 			return type.isComplex() ?
-					(type.isLong() ? sizeof_long_double : sizeof_double) :
-					(type.isLong() ? sizeof_complex_long_double : sizeof_complex_double);
+					(type.isLong() ? sizeof_complex_long_double : sizeof_complex_double) :
+					(type.isLong() ? sizeof_long_double : sizeof_double);
 		case eFloat128:
 			return type.isComplex() ? sizeof_complex_float128 : sizeof_float128;
 		case eDecimal32:

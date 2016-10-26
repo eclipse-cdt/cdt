@@ -151,6 +151,7 @@ public class AST2TestBase extends BaseTestCase {
 		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
+		map.put("__SIZEOF_DOUBLE__", "8");
 		map.put("__SIZEOF_POINTER__", "8");
 		return map;
 	}
@@ -160,6 +161,7 @@ public class AST2TestBase extends BaseTestCase {
 		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
+		map.put("__SIZEOF_DOUBLE__", "8");
 		map.put("__SIZEOF_POINTER__", "8");
 		return map;
 	}

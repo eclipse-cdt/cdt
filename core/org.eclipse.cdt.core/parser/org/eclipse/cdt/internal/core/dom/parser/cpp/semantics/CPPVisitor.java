@@ -1006,7 +1006,7 @@ public class CPPVisitor extends ASTQueries {
 	public static IScope getContainingNonTemplateScope(final IASTNode inputNode) {
 		IScope scope= getContainingScope(inputNode);
 		while (scope instanceof ICPPTemplateScope) {
-			scope= CPPVisitor.getContainingScope(((ICPPTemplateScope) scope).getTemplateDeclaration());
+			scope= getContainingScope(((ICPPTemplateScope) scope).getTemplateDeclaration());
 		}
 		return scope;
 	}
@@ -1851,7 +1851,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		pt= adjustParameterType(pt, forFuncType);
 
-		if (pDtor != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
+		if (pDtor != null && findInnermostDeclarator(pDtor).declaresParameterPack()) {
 			pt= new CPPParameterPackType(pt);
 		}
 		return pt;
@@ -2075,7 +2075,7 @@ public class CPPVisitor extends ASTQueries {
 	private static IASTInitializerClause getInitializerClauseForDecltypeAuto(IASTDeclarator declarator) {
 		IASTInitializer initializer = declarator.getInitializer();
 		if (initializer == null) {
-			ICPPASTNewExpression newExpression = CPPVisitor.findAncestorWithType(declarator, ICPPASTNewExpression.class);
+			ICPPASTNewExpression newExpression = findAncestorWithType(declarator, ICPPASTNewExpression.class);
 			if (newExpression != null) {
 				initializer = newExpression.getInitializer();
 			}

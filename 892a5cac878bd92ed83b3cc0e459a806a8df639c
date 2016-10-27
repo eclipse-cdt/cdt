@@ -16,6 +16,23 @@
       "revId": "892a5cac878bd92ed83b3cc0e459a806a8df639c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_07870768",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-27T15:38:52Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "892a5cac878bd92ed83b3cc0e459a806a8df639c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

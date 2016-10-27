@@ -698,20 +698,18 @@ public class BindingClassifier {
 				if (isPartOfExternalMacroDefinition(functionNameExpression))
 					return PROCESS_CONTINUE;
 
-				IASTInitializerClause[] arguments = functionCallExpression.getArguments();
 				IBinding binding = getBindingOfExpression(functionNameExpression);
 				if (binding != null) {
-					if (binding instanceof IProblemBinding) {
-						IBinding[] candidates = ((IProblemBinding) binding).getCandidateBindings();
-						if (candidates.length != 0) {
-							for (IBinding candidate : candidates) {
-								defineBindingForFunctionCall(candidate, arguments);
-							}
-						} else {
-							defineBinding(binding);
+					if (binding instanceof IFunction) {
+						defineForFunctionCall((IFunction) binding, functionCallExpression.getArguments());
+					} else if (binding instanceof ICPPMember) {
+						try {
+							IType memberType = ((ICPPMember) binding).getType();
+							defineIndirectTypes(memberType);
+						} catch (DOMException e) {
 						}
-					} else {
-						defineBindingForFunctionCall(binding, arguments);
+					} else if (binding instanceof ITypedef) {
+						defineBinding(binding);
 					}
 				}
 				if (functionCallExpression instanceof IASTImplicitNameOwner) {
@@ -719,7 +717,7 @@ public class BindingClassifier {
 					for (IASTName name : implicitNames) {
 						binding = name.resolveBinding();
 						if (binding instanceof IFunction) {
-							defineForFunctionCall((IFunction) binding, arguments);
+							defineForFunctionCall((IFunction) binding, functionCallExpression.getArguments());
 						}
 					}
 				}
@@ -786,20 +784,6 @@ public class BindingClassifier {
 				}
 			}
 			return PROCESS_CONTINUE;
-		}
-
-		protected void defineBindingForFunctionCall(IBinding binding, IASTInitializerClause[] arguments) {
-			if (binding instanceof IFunction) {
-				defineForFunctionCall((IFunction) binding, arguments);
-			} else if (binding instanceof ICPPMember) {
-				try {
-					IType memberType = ((ICPPMember) binding).getType();
-					defineIndirectTypes(memberType);
-				} catch (DOMException e) {
-				}
-			} else if (binding instanceof ITypedef) {
-				defineBinding(binding);
-			}
 		}
 
 		@Override
@@ -1101,7 +1085,16 @@ public class BindingClassifier {
 	}
 
 	private void addRequiredBindings(IBinding binding, Deque<IBinding> newBindings) {
-		if (binding instanceof IProblemBinding) {
+		if (binding instanceof ICPPMethod) {
+			newBindings.add(binding);  // Include the method in case we need its inline definition.
+			if (binding instanceof ICPPConstructor)
+				newBindings.add(binding.getOwner()); 
+		} else if (binding instanceof IType) {
+			// Remove type qualifiers.
+			IBinding b = getTypeBinding((IType) binding);
+			if (b != null)
+				newBindings.add(b);
+		} else if (binding instanceof IProblemBinding) {
 			IProblemBinding problemBinding = (IProblemBinding) binding;
 
 			IBinding[] candidateBindings = problemBinding.getCandidateBindings();
@@ -1120,15 +1113,6 @@ public class BindingClassifier {
 				} catch (CoreException e) {
 				}
 			}
-		} else if (binding instanceof ICPPMethod) {
-			newBindings.add(binding);  // Include the method in case we need its inline definition.
-			if (binding instanceof ICPPConstructor)
-				newBindings.add(binding.getOwner()); 
-		} else if (binding instanceof IType) {
-			// Remove type qualifiers.
-			IBinding b = getTypeBinding((IType) binding);
-			if (b != null)
-				newBindings.add(b);
 		} else {
 			newBindings.add(binding);
 		}
@@ -1191,9 +1175,7 @@ public class BindingClassifier {
 	 */
 	private boolean canForwardDeclare(IBinding binding) {
 		boolean canDeclare = false;
-		if (binding instanceof IProblemBinding && ((IProblemBinding) binding).getCandidateBindings().length != 0) {
-			return true;  // Return true to consider delegates later on.
-		} if (binding instanceof ICPPUsingDeclaration) {
+		if (binding instanceof ICPPUsingDeclaration) {
 			return true;  // Return true to consider delegates later on.
 		} if (binding instanceof ICompositeType) {
 			canDeclare = fPreferences.forwardDeclareCompositeTypes;

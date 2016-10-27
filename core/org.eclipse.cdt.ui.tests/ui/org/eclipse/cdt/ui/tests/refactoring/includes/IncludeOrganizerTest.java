@@ -507,7 +507,6 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//class C {};
 
 	//source.cpp
-	//#include "h2.h"
 	//A a;
 	//B* b;
 	//C* c;

@@ -52,11 +52,8 @@ public interface IDebuggerConsoleManager {
 	public IDebuggerConsole[] getConsoles();
 	
 	/**
-	 * Opens the console view and displays given the console.
+	 * Opens the console view.
 	 * If the view is already open, it is brought to the front.
-	 * Has no effect if the given console is not currently registered.
-	 * 
-	 * @param console console to display
 	 */
-	public void showConsoleView(IDebuggerConsole console);
+	public void showConsoleView();
 }

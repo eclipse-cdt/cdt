@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_e7af73eb",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-10-27T15:37:10Z",
+      "side": 1,
+      "message": "With this change, we no longer have an API that allows to show\nthe Debugger Console AND bring it to the top.  We currently don\u0027t\nneed that, but I think extenders may want to do it in some cases\nso I suggest having two calls: one to show the console and bring\nit to the top (like before) and one to just open it (like you are\ndoing below).",
+      "revId": "892a5cac878bd92ed83b3cc0e459a806a8df639c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -282,8 +282,10 @@ public class ValueFactory {
 		if (exp instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
 			IValue v= evaluate(cexpr.getLogicalConditionExpression());
-			if (isInvalidValue(v) || v.numberValue() == null)
+			if (isInvalidValue(v))
 				return v;
+			if (isDeferredValue(v))
+				return null;  // the value will be computed using the evaluation
 			if (v.numberValue().longValue() == 0) {
 				return evaluate(cexpr.getNegativeResultExpression());
 			}

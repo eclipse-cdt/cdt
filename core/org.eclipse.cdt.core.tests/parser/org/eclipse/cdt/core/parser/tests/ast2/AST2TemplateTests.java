@@ -9315,6 +9315,23 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPVariable waldo = helper.assertNonProblem("waldo");
 		assertConstantValue(0, waldo);
 	}
+	
+	//	template <typename T>
+	//	struct traits {
+	//	    static constexpr int Flags = 1;
+	//	};
+	//	
+	//	template <typename T>
+	//	struct S {
+	//	    static constexpr int a = traits<T>::Flags;
+	//	    static constexpr int b = a ? 42 : 0;
+	//	};
+	//
+	//	constexpr int waldo = S<int>::b;
+	public void testDependentConditionalExpression_506170() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 42);
+	}
 
 	//	template <typename>
 	//	struct C {

@@ -289,7 +289,7 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 		new PageSwitcher(this) {
 			@Override
 			public void activatePage(Object page) {
-				getConsoleManager().showConsoleView((IDebuggerConsole)page);
+				display((IDebuggerConsole)page);
 			}
 
 			@Override

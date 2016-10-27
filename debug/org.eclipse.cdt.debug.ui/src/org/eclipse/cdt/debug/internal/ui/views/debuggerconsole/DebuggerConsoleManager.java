@@ -81,29 +81,21 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	}
 
 	@Override
-	public void showConsoleView(IDebuggerConsole console) {
-		fShowDebuggerConsoleViewJob.setConsole(console);
+	public void showConsoleView() {
 		fShowDebuggerConsoleViewJob.schedule(100);
 	}
 
 	private class ShowDebuggerConsoleViewJob extends WorkbenchJob {
-		private IConsole fConsole;
-
 		ShowDebuggerConsoleViewJob() {
 			super("Show GDB Console View"); //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.SHORT);
 		}
 
-		void setConsole(IConsole console) {
-			fConsole = console;
-		}
-
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            IConsole c = fConsole;
-            if (window != null && c != null) {
+            if (window != null) {
                 IWorkbenchPage page = window.getActivePage();
                 if (page != null) {
                 	boolean consoleFound = false;
@@ -114,7 +106,6 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 						if (consoleVisible) {
 							consoleFound = true;
 							page.bringToTop(consoleView);
-							consoleView.display(c);
 						}
 					}
 
@@ -125,14 +116,12 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 																	   null,
 																	   IWorkbenchPage.VIEW_CREATE);
 							page.bringToTop(consoleView);
-							consoleView.display(c);
 						} catch (PartInitException e) {
 							CDebugUIPlugin.log(e);
 						}
 					}
                 }
             }
-            fConsole = null;
 			return Status.OK_STATUS;
 		}
 	}

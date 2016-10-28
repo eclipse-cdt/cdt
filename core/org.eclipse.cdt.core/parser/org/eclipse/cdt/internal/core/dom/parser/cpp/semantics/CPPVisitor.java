@@ -528,16 +528,16 @@ public class CPPVisitor extends ASTQueries {
         			return binding;
 
         		if (binding instanceof ICPPClassType) {
-        			final ICPPInternalBinding ib = (ICPPInternalBinding) binding;
+        			ICPPInternalBinding internalBinding = (ICPPInternalBinding) binding;
         			if (templateParametersMatch((ICPPClassType) binding, templateDecl)) {
-        				ib.addDeclaration(elabType);
+        				internalBinding.addDeclaration(elabType);
         				return binding;
         			}
 
-        			if (CPPSemantics.declaredBefore(ib, name, false)) {
+        			if (CPPSemantics.declaredBefore(internalBinding, name, false)) {
         				return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         			}
-        			markRedeclaration(ib);
+        			markRedeclaration(internalBinding);
         		}
         	}
 
@@ -614,7 +614,7 @@ public class CPPVisitor extends ASTQueries {
             return e.getProblem();
         }
 
-    		// Can't lookup anonymous names
+    	// Can't lookup anonymous names.
 		IBinding binding= null;
 		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 		if (name.getLookupKey().length > 0 && scope != null) {
@@ -622,16 +622,16 @@ public class CPPVisitor extends ASTQueries {
 
 			if (binding instanceof ICPPInternalBinding
 					&& binding instanceof ICPPClassType && name.isActive()) {
-				ICPPInternalBinding ib = (ICPPInternalBinding) binding;
-				if (ib.getDefinition() == null
+				ICPPInternalBinding internalBinding = (ICPPInternalBinding) binding;
+				if (internalBinding.getDefinition() == null
 						&& templateParametersMatch((ICPPClassType) binding, templateDecl)) {
-					ASTInternal.addDefinition(ib, compType);
+					ASTInternal.addDefinition(internalBinding, compType);
 					return binding;
 				}
-				if (CPPSemantics.declaredBefore(ib, name, false)) {
+				if (CPPSemantics.declaredBefore(internalBinding, name, false)) {
 					return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
 				}
-				markRedeclaration(ib);
+				markRedeclaration(internalBinding);
 			}
 		}
 		if (templateDecl != null)

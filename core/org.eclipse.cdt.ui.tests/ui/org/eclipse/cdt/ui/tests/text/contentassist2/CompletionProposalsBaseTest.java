@@ -15,8 +15,7 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 /**
  * @author hamer
  *
- *	This abstract class is the base class for all completion proposals test cases
- *	 
+ *	This abstract class is the base class for all completion proposals test cases.
  */
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +30,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public abstract class CompletionProposalsBaseTest extends AbstractContentAssistTest {
-
 	private boolean fFailingTest;
 
 	public CompletionProposalsBaseTest(String name) {
@@ -42,9 +40,6 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 		super(name, isCpp);
 	}
 	
-	/*
-	 * @see junit.framework.TestCase#getName()
-	 */
 	@Override
 	public String getName() {
 		if (fFailingTest) {
@@ -53,9 +48,6 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 		return super.getName();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setExpectFailure(int)
-	 */
 	@Override
 	public void setExpectFailure(int bugnumber) {
 		super.setExpectFailure(bugnumber);

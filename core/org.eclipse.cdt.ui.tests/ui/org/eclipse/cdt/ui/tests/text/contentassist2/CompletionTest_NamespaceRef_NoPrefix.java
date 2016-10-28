@@ -18,10 +18,8 @@ import junit.framework.TestSuite;
  * 
  * Testing Namespace_Reference, with no prefix
  * Bug#50471 : Wrong completion kind after the "using" keyword
- *
  */
 public class CompletionTest_NamespaceRef_NoPrefix  extends CompletionProposalsBaseTest{
-	
 	private final String fileName = "CompletionTestStart32.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
@@ -43,59 +41,38 @@ public class CompletionTest_NamespaceRef_NoPrefix  extends CompletionProposalsBa
 		return suite;
 	}		
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
-	 */
 	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("namespace ") + 10;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedPrefix()
-	 */
 	@Override
 	protected String getExpectedPrefix() {
 		return expectedPrefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedResultsValues()
-	 */
 	@Override
 	protected String[] getExpectedResultsValues() {
 		return expectedResults;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileName()
-	 */
 	@Override
 	protected String getFileName() {
 		return fileName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileFullPath()
-	 */
 	@Override
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
-	 */
+
 	@Override
 	protected String getHeaderFileFullPath() {
 		return headerFileFullPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileName()
-	 */
 	@Override
 	protected String getHeaderFileName() {
 		return headerFileName;
 	}
-
 }

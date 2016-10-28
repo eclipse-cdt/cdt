@@ -1,0 +1,565 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_8c725755",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsole.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "May be clarify a bit that this is a notification, so actions can be triggered from it",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_29969da2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbBasicCliConsole.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The Basic console could also react to the consoleSelected, so lets introduce an \nIGDBDebuggerConsole with a default implementation for both",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_c9a6010b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Lets use an IGDBDebuggerConsole to inherit a default implementation for consoleSelected",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_499bd1c9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Java doc missing",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ac7abb2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Javadoc missing",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_cc77ef43",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Javadoc mising",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ec80339b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Javadoc missing",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_099d59b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "remove nodeOffset as it\u0027s not used",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_29813d53",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The request monitor is left hanging, needs to call rm.done() before return;",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_4986716c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "handleCompleted swallows an unsuccessful result, so we now need to make sure the Request monitor is terminated, \nor since we only care about Success, lets change this to handleSuccess()",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_6987b566",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "if newFrame \u003d\u003d null, we done close the request monitor",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ecb2f37a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Better to use DsfRunnable to provide some traceability features",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_8c9b37f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "handleComplete gives us full control to close the request monitor,\nsince we are only validating for success, we should replace it to handleSuccess",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_898c098b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "I prefer to add nested interfaces and classes right after the constructor, this is for readability of\nthe main class. But still a preference, I leave it upto you.",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_6c0b4363",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The field variable stackService should follow the naming convention and be called fStackService ?",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_a9746df2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "We are casting it directly to MIStack, so it\u0027s probably better to resolve MIStack directly",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_c971a101",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "This is where we can get MIStack directly",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ecccb3b0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "I think we can replace the setting of the thread and frame by \nthe setting of the frame directly.\n  This seems more efficient and reliable as the Command control service will send a thread selection \n before sending the frame selection anyhow.  \n  The command control does this for the commnands not supporting the --thread switch, \n the command for the selection of a frame does not support --thread and therefore\n the thread selectionn will be issued just before.\n  \nAs the thread selection does not carry a frame information we can set it to the default frame",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0ccac791",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "We should aslo set the fCurrentThreadCtx",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2cda2b5f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Lets reduce the API and make this one private,\t\nIt would also be better to assert fCurrentThreadCtx !\u003d null",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_ece3d30f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "This one should be private or if we want to make it public it would be better to offer it from the IGDBProcesses interface",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2c05cb4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "if we make it private, and we make sure the calling method does not send a null, we can thenn skip the null checks",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_4c0aff60",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "This cast can then be remove if stackService is of type MIStack",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0cfc87a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "This method would no longer be needed if we don\u0027t send thread selected from this interface",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2c2cebcf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Similarly this method may no longer be needed",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0c7e4720",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The ruturn array is too generic, replace with e.g. IDMContext",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2c4eab15",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The argument array is too generic, replace with e.g. IDMContext",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0c556796",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "The type is too restrictive, so this API supports other selection types we can change it to IDMContext",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_2cb94b66",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "This API would be more apropriate in the IMIProcesses interface",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_a9a9cddd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Remove the 7.11.50 condition as GDB 7.12 is now available",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_4cbe7f4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/ThreadStackFrameSyncTest.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "I suggest to move this method togeher with the other ones after the constant and field declarations",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_acac7b25",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/nonstop/ThreadStackFrameSyncTest.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "since we are not performing null checks, we can at least get an assertion \n\t\tAssert.assertNotNull(fSession);",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_e9c825bc",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:28:12Z",
+      "side": 1,
+      "message": "Add the exception to the Status message",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

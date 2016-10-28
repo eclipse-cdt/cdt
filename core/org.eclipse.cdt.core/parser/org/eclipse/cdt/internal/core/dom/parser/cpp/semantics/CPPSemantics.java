@@ -2012,7 +2012,7 @@ public class CPPSemantics {
                 pointOfDecl = nd.getOffset() + nd.getLength();
             }
 	    }
-	    return (pointOfDecl < pointOfRef);
+	    return pointOfDecl <= pointOfRef;
 	}
 
 	private static boolean acceptDeclaredAfter(ICPPInternalBinding cpp) {

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_ec3bd34e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:50:07Z",
+      "side": 1,
+      "message": "N/A on new code as method has been removed",
+      "parentUuid": "07b223f6_63afd69b",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_a3a9eedd",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
         "patchSetId": 31

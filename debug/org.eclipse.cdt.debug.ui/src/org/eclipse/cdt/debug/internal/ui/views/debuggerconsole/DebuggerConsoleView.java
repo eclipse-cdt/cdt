@@ -211,7 +211,15 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 								DebuggerConsoleWorkbenchPart part = new DebuggerConsoleWorkbenchPart(registered, getSite());
 								fConsoleToPart.put(registered, part);
 								fPartToConsole.put(part, registered);
+								// Must call partActivated() to create the page
+								// However, this will also show the page, which is not
+								// what we want.  Therefore, let's force the previous
+								// page to be shown again right after.
+								IDebuggerConsole previouslyShown = getCurrentConsole();
 								partActivated(part);
+								if (previouslyShown != null) {
+									display(previouslyShown);
+								}
 								break;
 							}
 						}

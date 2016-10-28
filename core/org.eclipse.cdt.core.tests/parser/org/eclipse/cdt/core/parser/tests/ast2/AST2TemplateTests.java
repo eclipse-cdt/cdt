@@ -8123,6 +8123,39 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals(1, num.longValue());
 	}
 
+	//	template <int> 
+	//	struct A {
+	//	    void waldo();
+	//	};
+	//	    
+	//	template <typename> 
+	//	struct traits {
+	//	  enum {
+	//	    E = 1,
+	//	  };
+	//	};
+	//
+	//	template <typename T> 
+	//	struct L {
+	//	  enum { 
+	//	      X = traits<T>::E & 1
+	//	  };
+	//	};
+	//	    
+	//	template <typename T> 
+	//	struct B : A<L<T>::X> {
+	//	    using A<L<T>::X>::waldo;
+	//	};
+	//
+	//	class M : public B<M> {};
+	//
+	//	void bar(B<M>& v) {
+	//	    v.waldo();
+	//	}
+	public void testArgumentDependentLookupForEnumeration_506170() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <int...> struct A {};
 	//	template <int... I> void foo(A<I...>);
 	//	int main() {

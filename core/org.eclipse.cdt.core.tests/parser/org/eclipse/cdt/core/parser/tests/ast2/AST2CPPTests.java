@@ -30,8 +30,6 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -156,6 +154,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 public class AST2CPPTests extends AST2TestBase {
 
@@ -3740,6 +3740,17 @@ public class AST2CPPTests extends AST2TestBase {
 		s = alias.getQualifiedName();
 		assertEquals(s[0], "B");
 		assertTrue(alias.isGloballyQualified());
+	}
+
+	//	namespace ns { struct A {}; }
+	//
+	//	#define MACRO []() { namespace waldo = ::ns; waldo::A x; return x; }()
+	//
+	//	void test() {
+	//	  MACRO;
+	//	}
+	public void testNamespaceAliasInMacroExpansion_506668() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	// class A{};

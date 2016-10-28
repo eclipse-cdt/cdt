@@ -1930,6 +1930,7 @@ public class CPPSemantics {
 	    }
 
 	    int pointOfDecl= -1;
+	    boolean pointOfDeclIsEndOffset = false;
 	    if (obj instanceof ICPPInternalBinding) {
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
@@ -1937,9 +1938,8 @@ public class CPPSemantics {
 	        	nd = (ASTNode) n[0];
 	        }
 	        ASTNode def = (ASTNode) cpp.getDefinition();
-	        if (def != null) {
-	        	if (nd == null || def.getOffset() < nd.getOffset())
-	        		nd = def;
+	        if (def != null && (nd == null || def.getOffset() < nd.getOffset())) {
+	        	nd = def;
 	        }
 	        if (nd == null)
 	            return true;
@@ -1974,10 +1974,12 @@ public class CPPSemantics {
                 // because function parameter declarations implement ICPPASTTemplateParameter too.
                 boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
                 	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
-                if (init != null && !isTemplateParameter)
+                if (init != null && !isTemplateParameter) {
                     pointOfDecl = ((ASTNode) init).getOffset() - 1;
-                else
+                } else {
                     pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
+                    pointOfDeclIsEndOffset = true;
+                }
             } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
                 // Point of declaration for an enumerator is immediately after it
             	// enumerator-definition
@@ -1988,17 +1990,20 @@ public class CPPSemantics {
                 } else {
                     pointOfDecl = nd.getOffset() + nd.getLength();
                 }
+                pointOfDeclIsEndOffset = true;
             } else if (prop == ICPPASTUsingDeclaration.NAME) {
                 nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset();
             } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();
+                pointOfDeclIsEndOffset = true;
             } else if (prop == ICPPASTAliasDeclaration.ALIAS_NAME) {
             	// [basic.scope.pdecl]/p3: The point of declaration of an alias or alias template
             	// immediately follows the type-id to which the alias refers.
             	ASTNode targetType = (ASTNode) ((ICPPASTAliasDeclaration) nd.getParent()).getMappingTypeId();
             	pointOfDecl = targetType.getOffset() + targetType.getLength();
+                pointOfDeclIsEndOffset = true;
             } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
             		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
             	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter
@@ -2008,11 +2013,13 @@ public class CPPSemantics {
             	// case above.
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();
+                pointOfDeclIsEndOffset = true;
             } else {
                 pointOfDecl = nd.getOffset() + nd.getLength();
+                pointOfDeclIsEndOffset = true;
             }
 	    }
-	    return (pointOfDecl < pointOfRef);
+		return pointOfDecl < pointOfRef || (pointOfDecl == pointOfRef && pointOfDeclIsEndOffset); 
 	}
 
 	private static boolean acceptDeclaredAfter(ICPPInternalBinding cpp) {

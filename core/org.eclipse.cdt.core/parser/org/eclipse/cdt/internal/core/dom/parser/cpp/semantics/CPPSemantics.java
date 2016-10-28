@@ -787,14 +787,20 @@ public class CPPSemantics {
             if (handled.containsKey(t))
             	return;
             handled.put(t);
-
-    		IBinding owner= ((IBinding) t).getOwner();
-    		if (owner instanceof ICPPClassType) {
-    			getAssociatedScopes((IType) owner, namespaces, friendFns, handled, tu,
-    					false /* do not look at base classes of the enclosing class */);
-    		} else {
-    			getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
-    		}
+            
+            if (t instanceof IEnumeration) {
+            	// [basic.lookup.argdep] p2.3: an enumeration's only associated namespace
+            	// is the innermost enclosing namespace of its declaration.
+            	getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
+            } else {
+	    		IBinding owner= ((IBinding) t).getOwner();
+	    		if (owner instanceof ICPPClassType) {
+	    			getAssociatedScopes((IType) owner, namespaces, friendFns, handled, tu,
+	    					false /* do not look at base classes of the enclosing class */);
+	    		} else {
+	    			getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
+	    		}
+            }
     	}
 		if (t instanceof ICPPClassType && !(t instanceof ICPPClassTemplate)) {
 			ICPPClassType ct= (ICPPClassType) t;

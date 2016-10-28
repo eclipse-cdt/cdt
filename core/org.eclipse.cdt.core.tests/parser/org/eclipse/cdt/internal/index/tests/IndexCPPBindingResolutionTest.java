@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -53,6 +51,8 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding CPP language resolution

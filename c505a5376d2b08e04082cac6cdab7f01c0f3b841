@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_63afd69b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:29:37Z",
+      "side": 1,
+      "message": "Why does it need to be instanceof IMIExecutionDMContext  ?\n  it seems we have all we need with IExecutionDMContext",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_a3a9eedd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:29:37Z",
+      "side": 1,
+      "message": "This name is quite specific to a view, \nwhat about something more generic like \n  * selectFocusRequest\n\nThen it\u0027s up to the implementation to do what ever appropriate to request the actual selection.",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_0c11ecdf",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-10-28T16:29:37Z",
+      "side": 1,
+      "message": "Shouldn\u0027t indexFailed be -1 ?",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

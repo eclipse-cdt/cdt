@@ -24,14 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestFailure;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -53,6 +47,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestFailure;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 public class BaseTestCase extends TestCase {
 	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
@@ -367,5 +368,21 @@ public class BaseTestCase extends TestCase {
 	
 	protected static void assertVariableValue(IVariable var, long expectedValue) {
 		assertValue(var.getInitialValue(), expectedValue);
+	}
+
+	protected static String formatForPrinting(IASTName name) {
+		String signature = name.getRawSignature();
+		boolean saved = CPPASTNameBase.sAllowNameComputation;
+			CPPASTNameBase.sAllowNameComputation = true;
+		try {
+			String nameStr = name.toString();
+			if (signature.replace(" ", "").equals(nameStr.replace(" ", "")))
+				return signature;
+			return nameStr + " in " + signature;
+		} catch (Throwable e) {
+			return signature;
+		} finally {
+			CPPASTNameBase.sAllowNameComputation = saved;
+		}
 	}
 }

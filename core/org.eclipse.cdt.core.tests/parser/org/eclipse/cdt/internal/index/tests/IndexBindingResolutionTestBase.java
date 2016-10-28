@@ -365,7 +365,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		NameCollector col = new NameCollector();
 		ast.accept(col);
 		for (IASTName n : col.nameList) {
-			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
+			if (n.resolveBinding() instanceof IProblemBinding)
+				fail("ProblemBinding for " + formatForPrinting(n));
 		}
 	}
 

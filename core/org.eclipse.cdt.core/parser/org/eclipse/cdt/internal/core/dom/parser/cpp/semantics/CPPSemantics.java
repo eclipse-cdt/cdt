@@ -279,6 +279,17 @@ public class CPPSemantics {
 	//       "a"             => { null, "a",   null     }
 	//       "::  i"         => { "::", "i",   null     }
 	private static final Pattern QUALNAME_REGEX = Pattern.compile("^\\s*(::)?\\s*([^\\s:]+)\\s*(?:::(.*))?$"); //$NON-NLS-1$
+	
+	// This flag controls whether name lookup is allowed to find bindings in headers
+	// that are not reachable via includes from the file containing the name.
+	// Generally this is not allowed, but certain consumers, such as IncludeOrganizer,
+	// need it (since the whole point of IncludeOrganizer is to find missing headers).
+	private static final ThreadLocal<Boolean> fAllowPromiscuousBindingResolution = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return false;
+		}
+	};
 
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
@@ -1923,14 +1934,15 @@ public class CPPSemantics {
 	    if (node == null)
 	    	return true;
 
-	    final int pointOfRef= ((ASTNode) node).getOffset();
+	    // The pointOfRef and pointOfDecl variables contain node offsets scaled by a factor of two.
+	    // This is done to distinguish between between left and right points for the same offset.
+	    final int pointOfRef= ((ASTNode) node).getOffset() * 2;
 	    ASTNode nd = null;
 	    if (obj instanceof ICPPSpecialization) {
 	        obj = ((ICPPSpecialization) obj).getSpecializedBinding();
 	    }
 
 	    int pointOfDecl= -1;
-	    boolean pointOfDeclIsEndOffset = false;
 	    if (obj instanceof ICPPInternalBinding) {
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
@@ -1954,72 +1966,84 @@ public class CPPSemantics {
 	    	if (obj instanceof ASTNode) {
 	    		nd = (ASTNode) obj;
 	    	} else if (obj instanceof ICPPUsingDirective) {
-	    		pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration();
+	    		pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration() * 2;
 	    	}
 	    }
 
-	    if (pointOfDecl < 0 && nd != null) {
-            ASTNodeProperty prop = nd.getPropertyInParent();
-            if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
-                // Point of declaration for a name is immediately after its complete declarator
-            	// and before its initializer.
-                IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
-                while (dtor.getParent() instanceof IASTDeclarator) {
-                    dtor = (IASTDeclarator) dtor.getParent();
-                }
-                IASTInitializer init = dtor.getInitializer();
-            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter
-            	// is immediately after its complete template-parameter.
-                // Note: can't just check "dtor.getParent() instanceof ICPPASTTemplateParameter"
-                // because function parameter declarations implement ICPPASTTemplateParameter too.
-                boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
-                	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
-                if (init != null && !isTemplateParameter) {
-                    pointOfDecl = ((ASTNode) init).getOffset() - 1;
-                } else {
-                    pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
-                    pointOfDeclIsEndOffset = true;
-                }
-            } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
-                // Point of declaration for an enumerator is immediately after it
-            	// enumerator-definition
-                IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
-                if (enumtor.getValue() != null) {
-                    ASTNode exp = (ASTNode) enumtor.getValue();
-                    pointOfDecl = exp.getOffset() + exp.getLength();
-                } else {
-                    pointOfDecl = nd.getOffset() + nd.getLength();
-                }
-                pointOfDeclIsEndOffset = true;
-            } else if (prop == ICPPASTUsingDeclaration.NAME) {
-                nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset();
-            } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
-            	nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset() + nd.getLength();
-                pointOfDeclIsEndOffset = true;
-            } else if (prop == ICPPASTAliasDeclaration.ALIAS_NAME) {
-            	// [basic.scope.pdecl]/p3: The point of declaration of an alias or alias template
-            	// immediately follows the type-id to which the alias refers.
-            	ASTNode targetType = (ASTNode) ((ICPPASTAliasDeclaration) nd.getParent()).getMappingTypeId();
-            	pointOfDecl = targetType.getOffset() + targetType.getLength();
-                pointOfDeclIsEndOffset = true;
-            } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
-            		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
-            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter
-            	// is immediately after its complete template-parameter.
-            	// Type and template template parameters are handled here;
-            	// non-type template parameters are handled in the DECLARATOR_NAME
-            	// case above.
-            	nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset() + nd.getLength();
-                pointOfDeclIsEndOffset = true;
-            } else {
-                pointOfDecl = nd.getOffset() + nd.getLength();
-                pointOfDeclIsEndOffset = true;
-            }
+	    if (pointOfDecl < 0) {
+	    	if (nd != null) {
+	    		pointOfDecl = getPointOfDeclaration(nd);
+	    	} else if (obj instanceof IIndexBinding && !isUsingPromiscuousBindingResolution()) {
+	    		IIndexBinding indexBinding = ((IIndexBinding) obj);
+	    		if (indexBinding instanceof ICPPMethod && ((ICPPMethod) indexBinding).isImplicit()) {
+	    			return true;
+	    		}
+	    		IASTTranslationUnit tu = node.getTranslationUnit();
+	    		IIndexFileSet indexFileSet = tu.getIndexFileSet();
+	    		return (indexFileSet != null && indexFileSet.containsDeclaration(indexBinding));
+	    	}
 	    }
-		return pointOfDecl < pointOfRef || (pointOfDecl == pointOfRef && pointOfDeclIsEndOffset); 
+	    return pointOfDecl < pointOfRef;
+	}
+
+	/**
+	 * Returns the point of declaration for the given AST node. The point of declaration is a node offset
+	 * scaled by a factor of two. This is done to distinguish between left and right points for the offset.
+	 */
+	private static int getPointOfDeclaration(ASTNode nd) {
+        ASTNodeProperty prop = nd.getPropertyInParent();
+        if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
+            // Point of declaration for a name is immediately after its complete declarator
+        	// and before its initializer.
+            IASTDeclarator dtor = (IASTDeclarator) (nd instanceof IASTDeclarator ? nd : nd.getParent());
+            while (dtor.getParent() instanceof IASTDeclarator) {
+                dtor = (IASTDeclarator) dtor.getParent();
+            }
+            IASTInitializer init = dtor.getInitializer();
+        	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+        	// is immediately after its complete template-parameter.
+            // Note: can't just check "dtor.getParent() instanceof ICPPASTTemplateParameter"
+            // because function parameter declarations implement ICPPASTTemplateParameter too.
+            boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
+            	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
+            if (init != null && !isTemplateParameter) {
+                return ((ASTNode) init).getOffset() * 2 - 1;
+            } else {
+                return (((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength()) * 2 - 1;
+            }
+        } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
+            // Point of declaration for an enumerator is immediately after it
+        	// enumerator-definition
+            IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
+            if (enumtor.getValue() != null) {
+                ASTNode exp = (ASTNode) enumtor.getValue();
+                return (exp.getOffset() + exp.getLength()) * 2 - 1;
+            } else {
+                return (nd.getOffset() + nd.getLength()) * 2 - 1;
+            }
+        } else if (prop == ICPPASTUsingDeclaration.NAME) {
+            nd = (ASTNode) nd.getParent();
+        	return nd.getOffset() * 2;
+        } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
+        	nd = (ASTNode) nd.getParent();
+        	return (nd.getOffset() + nd.getLength()) * 2 - 1;
+        } else if (prop == ICPPASTAliasDeclaration.ALIAS_NAME) {
+        	// [basic.scope.pdecl]/p3: The point of declaration of an alias or alias template
+        	// immediately follows the type-id to which the alias refers.
+        	ASTNode targetType = (ASTNode) ((ICPPASTAliasDeclaration) nd.getParent()).getMappingTypeId();
+        	return (targetType.getOffset() + targetType.getLength()) * 2 - 1;
+        } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
+        		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
+        	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+        	// is immediately after its complete template-parameter.
+        	// Type and template template parameters are handled here;
+        	// non-type template parameters are handled in the DECLARATOR_NAME
+        	// case above.
+        	nd = (ASTNode) nd.getParent();
+        	return (nd.getOffset() + nd.getLength()) * 2 - 1;
+        } else {
+            return (nd.getOffset() + nd.getLength()) * 2 - 1;
+        }
 	}
 
 	private static boolean acceptDeclaredAfter(ICPPInternalBinding cpp) {
@@ -4228,5 +4252,17 @@ public class CPPSemantics {
 			binding = new ProblemBinding(new CPPASTName(unknownName), point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 
 		return binding;
+	}
+	
+	public static void enablePromiscuousBindingResolution() {
+		fAllowPromiscuousBindingResolution.set(true);
+	}
+
+	public static void disablePromiscuousBindingResolution() {
+		fAllowPromiscuousBindingResolution.set(false);
+	}
+	
+	public static boolean isUsingPromiscuousBindingResolution() {
+		return fAllowPromiscuousBindingResolution.get();
 	}
 }

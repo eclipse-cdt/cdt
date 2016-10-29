@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -97,8 +98,41 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
     	return fBinding;
 	}
 
-    @Override
-	public IBinding resolveBinding() {
+	private IBinding resolveBindingPromiscuous() {
+		// If we haven't already resolved the non-promiscuous binding, do so now.
+		if (fBinding == null) {
+			try {
+				CPPSemantics.disablePromiscuousBindingResolution();
+				resolveBindingNormal();
+			} finally {
+				CPPSemantics.enablePromiscuousBindingResolution();
+			}
+		}
+
+		// If the non-promiscuous binding is not a ProblemBinding, the promiscuous
+		// binding will be the same, so just return it.
+		if (!(fBinding instanceof ProblemBinding)) {
+			return fBinding;
+		}
+
+		// Otherwise, the non-promiscuous binding is a ProblemBinding.
+		ProblemBinding problem = (ProblemBinding) fBinding;
+		IBinding promiscuous = problem.getPromiscuousBinding();
+		if (promiscuous == null) {
+			// Clear the cached ProblemBinding.
+			setBinding(null);
+
+			// Resolve the promiscuous binding, and store it in the ProblemBinding.
+			promiscuous = resolveBindingNormal();
+			problem.setPromiscuousBinding(promiscuous);
+			
+			// Restore the cached ProblemBinding.
+			setBinding(problem);
+		}
+		return promiscuous;
+	}
+	
+    private IBinding resolveBindingNormal() {	
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			setBinding(createRecursionResolvingBinding());
@@ -120,7 +154,14 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 
     	return fBinding;
     }
-
+	
+    @Override
+	public IBinding resolveBinding() {
+    	return CPPSemantics.isUsingPromiscuousBindingResolution()
+    		? resolveBindingPromiscuous()
+    	    : resolveBindingNormal();
+    }
+    
     /**
      * If this name has not yet been resolved at all, <code>null</code> will be returned.
      * Otherwise the intermediate or final binding for this name is returned.

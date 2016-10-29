@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -505,7 +506,7 @@ public class SemanticUtil {
 		}
 		return type;
 	}
-
+	
 	public static ICPPTemplateArgument[] mapToAST(ICPPTemplateArgument[] args, IASTNode point) {
 		if (point == null)
 			return args;
@@ -557,6 +558,27 @@ public class SemanticUtil {
 			}
 		}
 		return scope;
+	}
+
+	public static void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec, 
+			ICPPClassTemplatePartialSpecialization astSpec, IASTNode point) {
+		if (point != null) {
+			IASTTranslationUnit ast = point.getTranslationUnit();
+			if (ast instanceof CPPASTTranslationUnit) {
+				((CPPASTTranslationUnit) ast).recordPartialSpecialization(indexSpec, astSpec);
+			}
+		}
+	}
+	
+	public static ICPPClassTemplatePartialSpecialization mapToAST(
+			ICPPClassTemplatePartialSpecialization indexSpec, IASTNode point) {
+		if (point != null) {
+			IASTTranslationUnit ast = point.getTranslationUnit();
+			if (ast instanceof CPPASTTranslationUnit) {
+				return ((CPPASTTranslationUnit) ast).mapToAST(indexSpec);
+			}
+		}
+		return indexSpec;
 	}
 
 	public static IType[] getSimplifiedTypes(IType[] types) {

@@ -49,6 +49,12 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     protected char[] arg;
     protected IASTNode node;
 	private IBinding[] candidateBindings;
+	
+	// Sometimes, promiscuous binding resolution (see CPPSemantics.fAllowPromiscuousBindingResolution)
+	// yields a non-ProblemBinding for a name when regular binding resolution yields a ProblemBinding.
+	// Since we may need both in a given AST, in such cases CPPASTNameBase.fBinding stores the
+	// ProblemBinding, while the ProblemBinding stores the non-ProblemBinding in promiscuousBinding.
+	private IBinding promiscuousBinding;
 
     public ProblemBinding(IASTName name, int id) {
     	this(name, id, null, null);
@@ -387,5 +393,13 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	public boolean isParameterPack() {
 		return false;
+	}
+	
+	public final IBinding getPromiscuousBinding() {
+		return promiscuousBinding;
+	}
+	
+	public final void setPromiscuousBinding(IBinding binding) {
+		promiscuousBinding = binding;
 	}
 }

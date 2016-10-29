@@ -837,6 +837,12 @@ public class CPPTemplates {
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
 						}
 						ICPPPartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
+						ICPPClassTemplatePartialSpecialization indexSpec = null;
+						if ((isDeclaration || isDefinition) && (classTemplate instanceof IIndexBinding) &&
+							(partialSpec instanceof ICPPClassTemplatePartialSpecialization)) {
+							indexSpec = (ICPPClassTemplatePartialSpecialization) partialSpec;
+							partialSpec = null;
+						}
 						if (partialSpec == null) {
 							if (isDeclaration || isDefinition) {
 								if (template instanceof ICPPClassTemplate) {
@@ -844,6 +850,9 @@ public class CPPTemplates {
 									if (template instanceof ICPPInternalClassTemplate) {
 										((ICPPInternalClassTemplate) template).addPartialSpecialization(
 												(ICPPClassTemplatePartialSpecialization) partialSpec);
+									} else {
+										SemanticUtil.recordPartialSpecialization(indexSpec, 
+												(ICPPClassTemplatePartialSpecialization) partialSpec, id);
 									}
 								} else if (template instanceof ICPPVariableTemplate) {
 									if (template instanceof ICPPFieldTemplate) {
@@ -2500,9 +2509,9 @@ public class CPPTemplates {
 		return (f instanceof ICPPMethod) && !((ICPPMethod) f).isStatic();
 	}
 
-	private static ICPPPartialSpecialization findPartialSpecialization(ICPPPartiallySpecializable ct,
+	private static ICPPPartialSpecialization findPartialSpecialization(ICPPPartiallySpecializable template, 
 			ICPPTemplateArgument[] args) throws DOMException {
-		ICPPPartialSpecialization[] pspecs = ct.getPartialSpecializations();
+		ICPPPartialSpecialization[] pspecs = template.getPartialSpecializations();
 		if (pspecs != null && pspecs.length > 0) {
 			final String argStr= ASTTypeUtil.getArgumentListString(args, true);
 			for (ICPPPartialSpecialization pspec : pspecs) {
@@ -2512,6 +2521,7 @@ public class CPPTemplates {
 		}
 		return null;
 	}
+
 
 	private static IBinding selectSpecialization(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args,
 			boolean isDef, IASTNode point) throws DOMException {
@@ -2554,6 +2564,10 @@ public class CPPTemplates {
 		if (bestMatch == null)
 			return null;
 
+		if (bestMatch instanceof ICPPClassTemplatePartialSpecialization) {
+			bestMatch = SemanticUtil.mapToAST((ICPPClassTemplatePartialSpecialization) bestMatch, point);
+		}
+		
 		return instantiatePartialSpecialization(bestMatch, args, isDef, bestMap, point);
 	}
 

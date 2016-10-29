@@ -2995,4 +2995,37 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testBracedInitList_490475() throws Exception {
 		checkBindings();
 	}
+	
+	//	struct Cat { void meow(); };
+	//	struct Dog { void woof(); };
+	
+	//	template <typename T>
+	//	Dog bar(T);
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	Cat bar(int);
+	//
+	//	int main() {
+	//		auto x = foo(0);
+	//		x.woof();
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
+		checkBindings();
+	}
+	
+	//	template<typename T> struct traits;
+
+	//	template <typename> struct M;    
+	//	    
+	//	template<typename T>
+	//	struct traits<M<T>> {
+	//	  typedef T type;
+	//	};
+	//
+	//	typedef traits<M<int>>::type waldo;  // ERROR
+	public void testRegression_402498() throws Exception {
+		checkBindings();
+	}
 }

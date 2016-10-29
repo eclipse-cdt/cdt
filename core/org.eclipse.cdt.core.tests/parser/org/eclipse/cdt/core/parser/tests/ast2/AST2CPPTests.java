@@ -1748,6 +1748,21 @@ public class AST2CPPTests extends AST2TestBase {
 		// This assertion fails because conv is the copy ctor A(const A&), not the conversion operator B::operator A()
 		assertSame(oper, conv);
 	}
+	
+	//	struct S {
+	//	  operator int() &;
+	//	  operator int() &&;
+	//	};
+	//	
+	//	void waldo(int);
+	//	
+	//	int main() {
+	//	  S s;
+	//	  waldo(s);  // ERROR
+	//	}
+	public void testOverloadedRefQualifiedConversionOperators_506728() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// namespace A { int x; }
 	// namespace B = A;

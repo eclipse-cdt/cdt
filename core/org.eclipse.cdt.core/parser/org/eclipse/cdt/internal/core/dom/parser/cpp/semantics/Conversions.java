@@ -856,7 +856,8 @@ public class Conversions {
 				if (isExplicitConversion /** && !direct **/)
 					continue;
 
-				final IType returnType = op.getType().getReturnType();
+				ICPPFunctionType functionType = op.getType();
+				final IType returnType = functionType.getReturnType();
 				IType uqReturnType= getNestedType(returnType, TDEF | ALLCVQ);
 				Cost c2= checkImplicitConversionSequence(target, uqReturnType, valueCategoryFromReturnType(uqReturnType), UDCMode.FORBIDDEN, Context.ORDINARY, point);
 				if (c2.converts()) {
@@ -866,7 +867,11 @@ public class Conversions {
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true, point);
 					if (udcCost != null) {
 						// Make sure top-level cv-qualifiers are compared
-						udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
+						if (functionType.hasRefQualifier() && functionType.isRValueReference()) {
+							udcCost.setReferenceBinding(ReferenceBinding.RVALUE_REF_BINDS_RVALUE);
+						} else {
+							udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
+						}
 						FunctionCost c1= new FunctionCost(op, udcCost, point);
 						int cmp= c1.compareTo(null, cost1);
 						if (cmp <= 0) {

@@ -8908,6 +8908,29 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertFalse(x.getType().isSameType(CommonCPPTypes.int_));
 	}
 
+	//	struct Cat { void meow(); };
+	//	struct Dog { void woof(); };
+	//
+	//	template <typename T>
+	//	Dog bar(T);
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	namespace N {
+	//		class A {};
+	//	}
+	//
+	//	Cat bar(N::A);
+	//
+	//	int main() {
+	//		auto x = foo(N::A());
+	//		x.woof();
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498d() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	void bar();
 	//
 	//	template <typename T>
@@ -8937,7 +8960,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testUnqualifiedFunctionCallInTemplate_458316b() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
 	//	template <typename>
 	//	struct no_type {};
 	//

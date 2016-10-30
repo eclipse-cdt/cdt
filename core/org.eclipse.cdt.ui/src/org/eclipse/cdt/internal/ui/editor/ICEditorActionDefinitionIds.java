@@ -97,6 +97,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String RENAME_ELEMENT= "org.eclipse.cdt.ui.edit.text.rename.element"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the refactor -> delete element action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.delete.element"</code>).
+	 */
+	public static final String DELETE_ELEMENT = "org.eclipse.cdt.ui.edit.text.delete.element"; //$NON-NLS-1$}
+
+	/**
 	 * Action definition ID of the refactor -> extract constant action
 	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.constant"</code>).
 	 */

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_a2d39fcb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsole.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-10-31T20:49:03Z",
+      "side": 1,
+      "message": "Shall we get rid oif this implementation since it\u0027s now provided as a default method in IGDBDebuggerConsole?",
+      "revId": "872ef3cc9469b0d7773db8b27a53437c1eae2a47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

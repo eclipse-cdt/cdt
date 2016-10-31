@@ -9,13 +9,13 @@
 package org.eclipse.cdt.ui.refactoring.actions;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 /**
  * Launches a delete refactoring.
  *
- * @since 5.12
+ * @since 6.2
  * @noextend This class is not intended to be subclassed by clients.
  * @author Luis Yanes
  */

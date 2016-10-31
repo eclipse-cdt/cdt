@@ -26,7 +26,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -114,7 +113,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 
     private String fGroupName= IWorkbenchActionConstants.GROUP_REORGANIZE;
     private CRenameAction fRenameAction;
-    private CDeleteAction fDeleteAction;
     private RefactoringAction fExtractConstantAction;
     private RefactoringAction fExtractLocalVariableAction;
     private RefactoringAction fExtractFunctionAction;
@@ -167,12 +165,8 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			fToggleFunctionAction = new ToggleFunctionAction();
 			fToggleFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_FUNCTION);
 			fAllActions.add(fToggleFunctionAction);
-        } else {
-        	fDeleteAction = new CDeleteAction();
-        	fDeleteAction.setActionDefinitionId(ICEditorActionDefinitionIds.DELETE_ELEMENT);
-        	fAllActions.add(fDeleteAction);
         }
-        
+
         fHideMethodAction = new HideMethodAction();
         fHideMethodAction.setActionDefinitionId(ICEditorActionDefinitionIds.HIDE_METHOD);
         fAllActions.add(fHideMethodAction);
@@ -242,7 +236,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			IMenuManager refactorSubmenu = new MenuManager(Messages.CRefactoringActionGroup_menu, MENU_ID); 
 			refactorSubmenu.add(new Separator(GROUP_REORG));
 			addAction(refactorSubmenu, fRenameAction);
-			addAction(refactorSubmenu, fDeleteAction);
 			refactorSubmenu.add(new Separator(GROUP_CODING));
 			addAction(refactorSubmenu, fExtractConstantAction);
 			addAction(refactorSubmenu, fExtractLocalVariableAction);

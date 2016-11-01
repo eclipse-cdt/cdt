@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems) - bug 224187
  *     Alex Collins (Broadcom Corp.) - choose build config automatically
  *     James Blackburn (Broadcom Corp.)
+ *     Philip Langer (EclipseSource Services GmbH) - bug 506843
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -548,6 +549,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 
+		buildFailed = false;
 		workspaceBuildBeforeLaunch = true;
 		
 		// check the build before launch setting and honor it

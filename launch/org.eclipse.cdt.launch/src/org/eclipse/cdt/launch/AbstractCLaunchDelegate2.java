@@ -9,6 +9,7 @@
  *     Ken Ryall (Nokia)
  *     James Blackburn (Broadcom Corp.)
  *     Marc Khouzam (Ericsson) - Modernize Run launch (bug 464636)
+ *     Philip Langer (EclipseSource Services GmbH) - bug 506843
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -321,6 +322,8 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 */
 	protected void buildProject(final IProject project, final String buildConfigID, IProgressMonitor monitor) throws CoreException {
 		final int TOTAL_TICKS = 1000;
+		
+		buildFailed = false;
 
 		// Some day, this will hopefully be a simple pass-thru to a cdt.core
 		// utility. See bug 313927

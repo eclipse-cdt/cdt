@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_20da275f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T14:13:01Z",
+      "side": 1,
+      "message": "missing rm.done() ?",
+      "revId": "c7e59b6d6103d8b1704c3b176088a7664b90168f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_40df1b4e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T14:13:01Z",
+      "side": 1,
+      "message": "missing rm.done() ?",
+      "revId": "c7e59b6d6103d8b1704c3b176088a7664b90168f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_e0e3cf0f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T14:13:01Z",
+      "side": 1,
+      "message": "missing rm.done(), when this \"if\" branch is not taken ?",
+      "revId": "c7e59b6d6103d8b1704c3b176088a7664b90168f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

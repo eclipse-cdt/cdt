@@ -632,6 +632,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_c53b3d4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T13:07:40Z",
+      "side": 1,
+      "message": "I found an issue with this - when a thread is running, the GDBControl service will inhibit the MIStackSelect GDB command, and so GDB will not switch thread. This breaks the synchronization.",
+      "parentUuid": "07b223f6_ecccb3b0",
+      "revId": "b361db4b758270fbddb39543abaadcb1a1a1ae50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_0ccac791",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 32

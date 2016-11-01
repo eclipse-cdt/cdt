@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_60017f10",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T15:49:08Z",
+      "side": 1,
+      "message": "It\u0027s back now in the latest patchset :)\n\nWe need the thread contexts to be IMIExecutionDMContext because that type has the \"getThreadId()\" interface, that we need to be able to obtain the id from the context. See getThreadIdFromcontext(), called from setThreadFocus().",
+      "parentUuid": "07b223f6_ec3bd34e",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_a3a9eedd",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
         "patchSetId": 31
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "07b223f6_0029a388",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/IGDBSynchronizer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T15:49:08Z",
+      "side": 1,
+      "message": "Agreed. I have changed it to \"sessionSelected()\". It\u0027s up-to the implementation to decide what to do when this happens.",
+      "parentUuid": "07b223f6_a3a9eedd",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_0c11ecdf",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
         "patchSetId": 31
@@ -65,6 +101,24 @@
       "writtenOn": "2016-10-28T16:29:37Z",
       "side": 1,
       "message": "Shouldn\u0027t indexFailed be -1 ?",
+      "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_80aa1358",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-01T15:49:08Z",
+      "side": 1,
+      "message": "Right - I think it was at the beginning but this was causing some issue, so I changed it and forgot to update the doc. Doc updated",
+      "parentUuid": "07b223f6_0c11ecdf",
       "revId": "c505a5376d2b08e04082cac6cdab7f01c0f3b841",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

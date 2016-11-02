@@ -161,6 +161,9 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		synchronized (configs) {
 			configs.put(buildConfig, cConfig);
 		}
+
+		// reset the binary parsers
+		CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
 	}
 
 	@Override
@@ -193,7 +196,8 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 						config = provider.getCBuildConfiguration(buildConfig, configName);
 						if (config != null) {
 							configs.put(buildConfig, config);
-							// Also make sure we reset the binary parser cache for the new config
+							// Also make sure we reset the binary parser cache
+							// for the new config
 							resetBinaryParser = true;
 						}
 					}

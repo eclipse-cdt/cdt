@@ -787,21 +787,13 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		if (project != null) {
 			ICProject cproject = create(project);
 			if (cproject != null) {
-				// Let the function remove the children
-				// but it has the side of effect of removing the CProject also
-				// so we have to recall create again.
-				try {
-					cproject.close();
-				} catch (CModelException e) {
-					CCorePlugin.log(e);
+				if (binaryParsersMap.remove(project) != null) {
+					// Fired and ICElementDelta.PARSER_CHANGED
+					CElementDelta delta = new CElementDelta(getCModel());
+					delta.binaryParserChanged(cproject);
+					registerCModelDelta(delta);
+					fire(ElementChangedEvent.POST_CHANGE);
 				}
-				binaryParsersMap.remove(project);
-
-				// Fired and ICElementDelta.PARSER_CHANGED
-				CElementDelta delta = new CElementDelta(getCModel());
-				delta.binaryParserChanged(cproject);
-				registerCModelDelta(delta);
-				fire(ElementChangedEvent.POST_CHANGE);
 			}
 		}
 	}

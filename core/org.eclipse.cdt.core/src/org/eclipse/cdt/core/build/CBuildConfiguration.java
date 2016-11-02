@@ -48,6 +48,8 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.model.BinaryRunner;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -246,6 +248,20 @@ public abstract class CBuildConfiguration extends PlatformObject
 				outputs.add(binary);
 			}
 		}
+
+		if (outputs.isEmpty()) {
+			// Give the binary runner a kick and try again.
+			BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(cproject);
+			runner.start();
+			runner.waitIfRunning();
+			
+			for (IBinary binary : binaries.getBinaries()) {
+				if (binary.isExecutable() && outputPath.isPrefixOf(binary.getPath())) {
+					outputs.add(binary);
+				}
+			}
+		}
+
 		return outputs.toArray(new IBinary[outputs.size()]);
 	}
 

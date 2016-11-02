@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_12;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
@@ -207,6 +208,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBControl_7_12(session, config, new CommandFactory_6_8());			
+		}
 		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBControl_7_7(session, config, new CommandFactory_6_8());
 		}
@@ -226,9 +230,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
-		if (compareVersionWith(GDB_7_12_VERSION) >= 0
-				|| compareVersionWith("7.11.50") >= 0  // TODO remove once GDB 7.12 is released
-				) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
 			return new GDBBackend_7_12(session, lc);
 		}
 		return new GDBBackend(session, lc);
@@ -312,6 +314,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 
 		// Else, handle all-stop mode
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBRunControl_7_12(session);
+		}
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBRunControl_7_10(session);
 		}

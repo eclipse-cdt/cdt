@@ -279,6 +279,8 @@ public class BaseTestCase {
 		ILaunch[] launches = launchManager.getLaunches();
 		for (ILaunch launch : launches) {
 			if (!launch.isTerminated()) {
+				//TODO; temporary change to avoid cascading failures to the next test cases
+				launch.terminate();
 				fail("Something has gone wrong, there is an unterminated launch from a previous test!");
 			}
 		}

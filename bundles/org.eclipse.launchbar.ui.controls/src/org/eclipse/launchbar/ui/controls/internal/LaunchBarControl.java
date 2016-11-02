@@ -96,17 +96,23 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
 
-		// TODO remove
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
-
-		boolean supportsTargets = true;
-		try {
-			ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-			supportsTargets = desc.getType().supportsTargets();
-		} catch (CoreException e) {
-			Activator.log(e);
+		boolean supportsTargets;
+		if (!enabled) {
+			supportsTargets = false;
+		} else {
+			try {
+				ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
+				if (desc != null) {
+					supportsTargets = desc.getType().supportsTargets();
+				} else {
+					supportsTargets = true;
+				}
+			} catch (CoreException e) {
+				Activator.log(e);
+				supportsTargets = true;
+			}
 		}
-
 		if (supportsTargets) {
 			createTargetSelector();
 		}

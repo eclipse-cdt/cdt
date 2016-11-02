@@ -312,6 +312,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 
 		// Else, handle all-stop mode
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBRunControl_7_12(session);
+		}
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBRunControl_7_10(session);
 		}

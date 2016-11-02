@@ -405,9 +405,10 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						}
 					});
 		} else {
-			// Explicitly set target-async to off for all-stop mode.
+			// Use target async with all-stop mode, 
+			// this will allow us to use the new enhanced GDB Full CLI console
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), false),
+					fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), true),
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
 						@Override
 						protected void handleError() {

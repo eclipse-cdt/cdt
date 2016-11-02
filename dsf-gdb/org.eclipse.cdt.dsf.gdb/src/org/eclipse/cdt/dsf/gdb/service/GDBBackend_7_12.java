@@ -14,7 +14,6 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.pty.PTY.Mode;
@@ -48,20 +47,16 @@ public class GDBBackend_7_12 extends GDBBackend {
 	/** Indicate that we failed to create a PTY. */
 	private boolean fPtyFailure;
 	
-	private boolean fIsAllStop;
-	
 	private InputStream fDummyErrorStream;
 
 	public GDBBackend_7_12(DsfSession session, ILaunchConfiguration lc) {
 		super(session, lc);
-		fIsAllStop = !LaunchUtils.getIsNonStopMode(lc);
 		createPty();
 	}
 
 	@Override
 	public boolean isFullGdbConsoleSupported() {
 		return !Platform.getOS().equals(Platform.OS_WIN32)
-				&& !fIsAllStop
 				&& !fPtyFailure;
 	}
 	
@@ -159,6 +154,12 @@ public class GDBBackend_7_12 extends GDBBackend {
 				// Now trigger the new console towards our PTY.
 				"-ex", "new-ui mi " + fMIPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
 								
+				// With GDB.7.12, pagination can lock up the whole debug session
+				// when using the full GDB console, so we turn it off.
+				// We must turn it off before calling 'show version' as even
+				// that command could cause pagination to trigger
+				"-ex", "set pagination off",  //$NON-NLS-1$//$NON-NLS-2$
+
 				// Now print the version so the user gets that familiar output
 				"-ex", "show version"  //$NON-NLS-1$ //$NON-NLS-2$
 		};

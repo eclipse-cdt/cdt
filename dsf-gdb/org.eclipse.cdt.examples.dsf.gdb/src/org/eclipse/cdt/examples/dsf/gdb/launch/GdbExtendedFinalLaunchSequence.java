@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
-import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence_7_7;
+import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence_7_12;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -29,7 +29,7 @@ import org.eclipse.cdt.examples.dsf.gdb.service.IGDBExtendedFunctions;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class GdbExtendedFinalLaunchSequence extends FinalLaunchSequence_7_7 {
+public class GdbExtendedFinalLaunchSequence extends FinalLaunchSequence_7_12 {
 
 	private IGDBControl fControl;
 	private DsfServicesTracker fTracker;

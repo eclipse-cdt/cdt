@@ -14,7 +14,6 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.pty.PTY.Mode;
@@ -48,20 +47,16 @@ public class GDBBackend_7_12 extends GDBBackend {
 	/** Indicate that we failed to create a PTY. */
 	private boolean fPtyFailure;
 	
-	private boolean fIsAllStop;
-	
 	private InputStream fDummyErrorStream;
 
 	public GDBBackend_7_12(DsfSession session, ILaunchConfiguration lc) {
 		super(session, lc);
-		fIsAllStop = !LaunchUtils.getIsNonStopMode(lc);
 		createPty();
 	}
 
 	@Override
 	public boolean isFullGdbConsoleSupported() {
 		return !Platform.getOS().equals(Platform.OS_WIN32)
-				&& !fIsAllStop
 				&& !fPtyFailure;
 	}
 	
@@ -160,7 +155,8 @@ public class GDBBackend_7_12 extends GDBBackend {
 				"-ex", "new-ui mi " + fMIPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
 								
 				// Now print the version so the user gets that familiar output
-				"-ex", "show version"  //$NON-NLS-1$ //$NON-NLS-2$
+				"-ex", "show version",  //$NON-NLS-1$ //$NON-NLS-2$
+				"-ex", "set pagination off"  //$NON-NLS-1$//$NON-NLS-2$
 		};
 
 		int oriLength = originalCommandLine.length;

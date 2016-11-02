@@ -74,6 +74,17 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 		requestMonitor.done();
 	}
 
+	@Override
+	public void setReverseModeEnabled(boolean enabled) {
+		super.setReverseModeEnabled(enabled);
+		if (!enabled) {
+			// Keep the disabled state in sync with the trace method
+			// This is needed e.g. to restart reverse mode during
+			// a process restart
+			fReverseTraceMethod = ReverseDebugMethod.OFF;
+		}
+	}
+
 	/** @since 5.1 */
 	protected void setReverseTraceMethod(ReverseDebugMethod traceMethod) {
 	   	if (fReverseTraceMethod != traceMethod) {

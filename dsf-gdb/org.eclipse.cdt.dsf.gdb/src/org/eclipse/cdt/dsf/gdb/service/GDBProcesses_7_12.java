@@ -7,11 +7,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.Map;
+
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
@@ -27,6 +33,13 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_10 {
 
 	public GDBProcesses_7_12(DsfSession session) {
 		super(session);
+	}
+
+	@Override
+	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor,
+			IContainerDMContext containerDmc, Map<String, Object> attributes, boolean restart,
+			DataRequestMonitor<IContainerDMContext> rm) {
+		return new StartOrRestartProcessSequence_7_12(executor, containerDmc, attributes, restart, rm);
 	}
 
 	@Override

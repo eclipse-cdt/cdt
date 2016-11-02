@@ -135,6 +135,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetRecordFullStopAtLimit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
@@ -821,6 +822,11 @@ public class CommandFactory {
 		return new MIGDBSetPythonPrintStack(ctx, option);
 	}	
 
+	/** @since 5.2 */
+	public ICommand<MIInfo> createMIGDBSetRecordFullStopAtLimit(ICommandControlDMContext ctx, boolean isSet) {
+		return new MIGDBSetRecordFullStopAtLimit(ctx, isSet);
+	}
+	
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
 		return new MIGDBSetSchedulerLocking(ctx, mode);

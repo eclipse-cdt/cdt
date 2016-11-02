@@ -31,6 +31,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.command;
 
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
@@ -133,6 +134,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetRecordFullStopAtLimit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
@@ -195,6 +197,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
@@ -242,8 +245,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
-import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebugMethod;
 
 /**
  * Factory to create MI/CLI commands.
@@ -815,6 +816,11 @@ public class CommandFactory {
 		return new MIGDBSetPythonPrintStack(ctx, option);
 	}	
 
+	/** @since 5.2 */
+	public ICommand<MIInfo> createMIGDBSetRecordFullStopAtLimit(ICommandControlDMContext ctx, boolean isSet) {
+		return new MIGDBSetRecordFullStopAtLimit(ctx, isSet);
+	}
+	
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
 		return new MIGDBSetSchedulerLocking(ctx, mode);

@@ -98,8 +98,10 @@
 		<module>debug/org.eclipse.cdt.debug.application.doc</module>
 		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
 		<module>debug/org.eclipse.cdt.debug.standalone.source-feature</module>
+<!-- 	
+		TODO:  Investigate/Fix hanging before re-enable re-enabling
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
-
+-->
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>

@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_d7e55e17",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-03T22:06:31Z",
+      "side": 1,
+      "message": "Done, Thanks! I missed this one when extracting it from the GDBFullCLIConsole",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_55c43634",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 6
@@ -30,6 +47,23 @@
       "writtenOn": "2016-11-03T19:20:14Z",
       "side": 1,
       "message": "Let\u0027s add javadoc to the two above constant",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b7f382d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-03T22:06:31Z",
+      "side": 1,
+      "message": "Done",
       "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_b74c6299",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-03T22:06:31Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07b223f6_9b319d26",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 6
@@ -64,6 +115,24 @@
       "writtenOn": "2016-11-03T19:20:14Z",
       "side": 1,
       "message": "I\u0027m not too sure, but I don\u0027t think using synchronized in the methods below is enough.",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_577eae5e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-03T22:06:31Z",
+      "side": 1,
+      "message": "Here goes my thinking,\nI have performed the updates mentioned below in patch set 7,  Let me know what concerns you have.\n\n\nWe have a couple of threads sharing an instance of ConsoleHistoryLinesBuffer,\n\nThe threads don\u0027t depend on each other so no chances of a dead lock,\n\nnow when it comes to data consistency:\n\n* fHistoryRemainder :\n        all the methods returning the contents, are returning a copy of the contents not the actual object\n        all methods that affect it are synchronized so this warranties a sequential write,\n        there are chances of intercalated information comming from different streams, we can not really determine\n        in what order and how fragmented the information will be, this can be adjusted if needed at a later point.\n\n        Due to the updates mentioned below, I have actually remove the getter\n\n\n* appendHistory:\n        This method was intentionally placed inside the ConsoleHistoryLinesBuffer, so it can use all its synchronized methods before returning\n        So all derived changes affecting the instance are atomic\n\n* WriteHistoryJob\n        The first thing we do is take a copy of the contents in a local array, therefore things can change underneath but we will generate a consistent output\n\n        However I just noticed we were getting this copy using toArray and size, which could be pre-empted and cause and inconsistency,\n        so I have now overriden  toArray() to be synchronized and call toArray(T[] which uses size() which is already synchronized, this will make sure we get\n        the copy of contents atomically.\n\n        Following this sequence I have also noticed that copy of the history lines and the remainder are taked at different times, and could cause inconsistent information,\n        So I have added the synhronized method getHistorySnapShot:HistorySnapShot, so the returned class holds the copy of the history lines and the remainder from the same\n        method call.",
+      "parentUuid": "07b223f6_9b319d26",
       "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

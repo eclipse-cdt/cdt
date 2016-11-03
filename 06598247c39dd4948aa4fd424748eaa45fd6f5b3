@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07b223f6_f5c0ea24",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-03T19:20:14Z",
+      "side": 1,
+      "message": "Do we want this class final?",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_55c43634",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-03T19:20:14Z",
+      "side": 1,
+      "message": "Let\u0027s add javadoc to the two above constant",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_95f96e77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-03T19:20:14Z",
+      "side": 1,
+      "message": "Can you add to the above comment to explain why we do this?  Why we have such a maximum?",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07b223f6_9b319d26",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-03T19:20:14Z",
+      "side": 1,
+      "message": "I\u0027m not too sure, but I don\u0027t think using synchronized in the methods below is enough.",
+      "revId": "06598247c39dd4948aa4fd424748eaa45fd6f5b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

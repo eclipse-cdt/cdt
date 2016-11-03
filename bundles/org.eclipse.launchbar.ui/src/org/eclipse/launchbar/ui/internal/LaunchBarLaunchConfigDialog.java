@@ -8,8 +8,11 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.ILaunchBarLaunchConfigDialog;
@@ -36,6 +39,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private ILaunchConfigurationTabGroup group;
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection;
+	private ProgressMonitorPart pmPart;
 	private boolean initing;
 
 	public LaunchBarLaunchConfigDialog(Shell shell, ILaunchConfigurationWorkingCopy workingCopy,
@@ -135,6 +139,10 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			Activator.log(e.getStatus());
 		}
 
+		pmPart = new ProgressMonitorPart(composite, new GridLayout(), true);
+		pmPart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		pmPart.setVisible(false);
+
 		initing = false;
 		return composite;
 	}
@@ -148,8 +156,25 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		// TODO Auto-generated method stub
+		Control lastControl = getShell().getDisplay().getFocusControl();
+		if (lastControl != null && lastControl.getShell() != getShell()) {
+			lastControl = null;
+		}
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
+		getButton(IDialogConstants.CANCEL_ID).setEnabled(false);
+		pmPart.attachToCancelComponent(null);
 
+		try {
+			ModalContext.run(runnable, fork, pmPart, getShell().getDisplay());
+		} finally {
+			pmPart.removeFromCancelComponent(null);
+			getButton(IDialogConstants.OK_ID).setEnabled(true);
+			getButton(IDialogConstants.CANCEL_ID).setEnabled(true);
+			if (lastControl != null) {
+				lastControl.setFocus();
+			}
+			updateButtons();
+		}
 	}
 
 	@Override

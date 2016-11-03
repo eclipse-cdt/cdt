@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_9497641a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIInferiorProcess.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-03T17:04:20Z",
+      "side": 1,
+      "message": "typo: \"if that the\"\n -\u003e \"whether the\"",
+      "revId": "0520fba8a95ebf1a51c12e20e20f8d59d9f922b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

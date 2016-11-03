@@ -97,8 +97,12 @@ public class TemplateTable implements Listener {
 	}
 
 	private void computeItemArea(Event event) {
+		GC gc = event.gc;
+		FontMetrics metrics = gc.getFontMetrics();
+		int height = (int) (metrics.getHeight() * 3.15);
+
 		event.width = table.getClientArea().width - event.x;
-		event.height = 56; // 48 for icon, 8 buffer
+		event.height = Math.max(48, height) + 8; // 48 for icon/text, 8 buffer
 	}
 
 	private void paintItem(Event event) {

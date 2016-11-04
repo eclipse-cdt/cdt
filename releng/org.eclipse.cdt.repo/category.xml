@@ -47,6 +47,9 @@
    <feature url="features/org.eclipse.cdt.launch.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.launch.remote.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.msw_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw" version="0.0.0">
       <category name="extra"/>
    </feature>

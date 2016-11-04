@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_9d9a277a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-04T17:11:30Z",
+      "side": 1,
+      "message": "--stackframe shall be --frame",
+      "revId": "4d02e7a7fec13df2f8ddd634ea456add636006df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3de03342",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-04T17:11:30Z",
+      "side": 1,
+      "message": "This is a bit confusing but I think it\u0027s ok, \nbut it\u0027s best to add a nice comment, \n\ne.g. if setting the thread fails we try setting the frame which will include the --thread flag.\n This can be seen as a second attempt to select the thread and a first attempt to select the frame, however the selection of the frame will only succeed if the thread is stopped.",
+      "revId": "4d02e7a7fec13df2f8ddd634ea456add636006df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9dcea7d8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 39
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-04T17:11:30Z",
+      "side": 1,
+      "message": "The Request monitor needs to closed or we could cause a hanging",
+      "revId": "4d02e7a7fec13df2f8ddd634ea456add636006df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

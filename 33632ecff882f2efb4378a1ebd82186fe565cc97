@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_4eb61727",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3259,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-06T19:48:03Z",
+      "side": 1,
+      "message": "I am fine with this null pointer check. Can you update the Javadoc/API doc of getOutputNames to explain what null means and how that is different from IPath[0]?",
+      "revId": "33632ecff882f2efb4378a1ebd82186fe565cc97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

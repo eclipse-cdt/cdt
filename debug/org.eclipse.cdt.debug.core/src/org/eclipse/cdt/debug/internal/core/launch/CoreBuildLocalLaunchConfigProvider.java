@@ -25,7 +25,7 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 public class CoreBuildLocalLaunchConfigProvider extends AbstractLaunchConfigProvider {
 
-	private static final String TYPE_ID = "org.eclipse.cdt.debug.core.localLaunchConfigurationType"; //$NON-NLS-1$
+	private static final String TYPE_ID = "org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType"; //$NON-NLS-1$
 
 	private Map<IProject, ILaunchConfiguration> configs = new HashMap<>();
 

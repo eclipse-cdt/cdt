@@ -60,6 +60,28 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	private final String qtInstallSpec;
 	private IQtInstall qtInstall;
 	private Map<String, String> properties;
+	
+	private IEnvironmentVariable pathVar = new IEnvironmentVariable() {
+		@Override
+		public String getValue() {
+			return getQmakeCommand().getParent().toString();
+		}
+		
+		@Override
+		public int getOperation() {
+			return IEnvironmentVariable.ENVVAR_PREPEND;
+		}
+		
+		@Override
+		public String getName() {
+			return "PATH";
+		}
+		
+		@Override
+		public String getDelimiter() {
+			return File.pathSeparator;
+		}
+	};
 
 	public QtBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -236,14 +258,16 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		if ("PATH".equals(name)) {
+			return pathVar;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public IEnvironmentVariable[] getVariables() {
-		// TODO
-		return new IEnvironmentVariable[0];
+		return new IEnvironmentVariable[] { pathVar };
 	}
 
 	@Override

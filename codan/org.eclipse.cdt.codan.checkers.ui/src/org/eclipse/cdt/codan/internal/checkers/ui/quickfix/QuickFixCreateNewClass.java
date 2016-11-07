@@ -8,6 +8,7 @@
  * Contributors:
  *     Alena Laskavaia - initial API and implementation,
  *     inspired by work of Erik Johansson <erik.johansson.979@gmail.com>
+ *     Dominic Scharfe (COSEDA Technologies GmbH) - Fix for bug 507148 
  *
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
@@ -19,7 +20,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.wizards.NewClassCreationWizard;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,8 +31,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.ResourceUtil;
 
 public class QuickFixCreateNewClass extends AbstractCodanCMarkerResolution implements IMarkerResolution2 {
 	@Override
@@ -39,7 +46,7 @@ public class QuickFixCreateNewClass extends AbstractCodanCMarkerResolution imple
 
 	@Override
 	public boolean isApplicable(IMarker marker) {
-		ITranslationUnit tu = getTranslationUnitViaEditor(marker);
+		ITranslationUnit tu = getTranslationUnitViaEditorOrWorkspace(marker);
 		try {
 			if (tu.getLanguage().getLinkageID() == ILinkage.C_LINKAGE_ID)
 				return false;
@@ -47,6 +54,29 @@ public class QuickFixCreateNewClass extends AbstractCodanCMarkerResolution imple
 			// ignore
 		}
 		return true;
+	}
+	
+	/**
+	 * Receives a translation unit from a given marker. The TU is received from an editor (if opened),
+	 * or by calling {@link #getTranslationUnitViaWorkspace(IMarker)}.
+	 *
+	 * @param marker
+	 *        A marker in a translation unit
+	 * @return The translation unit
+	 */
+	protected ITranslationUnit getTranslationUnitViaEditorOrWorkspace(IMarker marker) {
+		IResource resource = marker.getResource();
+
+		if (resource instanceof IFile) {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IEditorPart editor = ResourceUtil.findEditor(page, (IFile) resource);
+			
+			if (editor != null) {
+				return (ITranslationUnit) CDTUITools.getEditorInputCElement(editor.getEditorInput());
+			}
+		}
+		return getTranslationUnitViaWorkspace(marker);
+		
 	}
 
 	@Override

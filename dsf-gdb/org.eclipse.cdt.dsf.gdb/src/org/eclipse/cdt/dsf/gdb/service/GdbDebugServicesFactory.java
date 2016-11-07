@@ -231,9 +231,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
-		if (compareVersionWith(GDB_7_12_VERSION) >= 0
-				|| compareVersionWith("7.11.50") >= 0  // TODO remove once GDB 7.12 is released
-				) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
 			return new GDBBackend_7_12(session, lc);
 		}
 		return new GDBBackend(session, lc);

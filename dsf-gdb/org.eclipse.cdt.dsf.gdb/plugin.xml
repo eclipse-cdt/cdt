@@ -85,4 +85,20 @@
 		</bundle>
 	</component>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            delegate="org.eclipse.cdt.dsf.gdb.internal.launching.CoreBuildLocalDebugLaunchDelegate"
+            id="org.eclipse.cdt.dsf.gdb.coreBuildLocalDebug"
+            modes="debug"
+            name="Core Build Local Debug"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.debug.core.localLaunchConfigurationType">
+         <modeCombination
+               modes="debug"
+               perspective="org.eclipse.debug.ui.DebugPerspective">
+         </modeCombination>
+      </launchDelegate>
+   </extension>
 </plugin>

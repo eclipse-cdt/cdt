@@ -113,6 +113,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	private IMemoryBlockRetrievalManager fMemRetrievalManager;
 	private IDsfDebugServicesFactory fServiceFactory;
 	private ILaunchTarget fLaunchTarget;
+	private Properties fInitialEnv;
 	
 	private String fGdbVersion;
 
@@ -897,6 +898,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 */
 	public Properties getEnvironmentVariables() throws CoreException {
 		Properties envVariables = new Properties();
+		if (fInitialEnv != null) {
+			envVariables.putAll(fInitialEnv);
+		}
 
 		// if the attribute ATTR_APPEND_ENVIRONMENT_VARIABLES is set,
 		// the LaunchManager will return both the new variables and the
@@ -984,4 +988,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		return fLaunchTarget;
 	}
 
+	/**
+	 * Set the initial environment variables. These can then be overriden
+	 * by launch configuration attributes.
+	 * 
+	 * @since 5.2
+	 */
+	public void setInitialEnvironment(Properties initialEnv) {
+		this.fInitialEnv = initialEnv;
+	}
 }

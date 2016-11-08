@@ -22,6 +22,7 @@
 package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -808,9 +809,32 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * 
      * @since 4.2
      */
-    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
-            final ICBreakpoint breakpoint, final RequestMonitor rm)
-    {
+    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc, final ICBreakpoint breakpoint, RequestMonitor rm) {
+        // Remove all relevant target filters
+        // Note that this call is important if a breakpoint is removed directly
+        // from the gdb console, or else we will try to re-install it (bug 433044)
+       	removeAllTargetFilters(dmc, breakpoint);
+
+        // Remove breakpoint problem marker (if any)
+        removeBreakpointProblemMarker(breakpoint);
+        
+        doUninstallBreakpoint(dmc, breakpoint, new ImmediateRequestMonitor(rm) {
+        	@Override
+        	protected void handleSuccess() {
+        		Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformToAttributesMaps.get(dmc);
+        		platformBPs.remove(breakpoint);
+        		super.handleSuccess();
+        	}
+        });
+    }
+
+    /*
+     * Un-install the target breakpoints associated with the given platform breakpoint. 
+     * The information related to the platform breakpoints is not cleared from the session.
+     * This allows the target breakpoints to be re-installed when an attribute of the platform 
+     * breakpoint is changed.
+     */
+    private void doUninstallBreakpoint(final IBreakpointsTargetDMContext dmc, final ICBreakpoint breakpoint, final RequestMonitor rm) {
         // Retrieve the breakpoint maps
         final Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformToAttributesMaps.get(dmc);
         assert platformBPs != null;
@@ -823,14 +847,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         final Map<ICBreakpoint, Set<String>> threadsIDs = fPlatformToBPThreadsMaps.get(dmc);
         assert threadsIDs != null;
-
-        // Remove all relevant target filters
-        // Note that this call is important if a breakpoint is removed directly
-        // from the gdb console, or else we will try to re-install it (bug 433044)
-       	removeAllTargetFilters(dmc, breakpoint);
-
-        // Remove breakpoint problem marker (if any)
-        removeBreakpointProblemMarker(breakpoint);
 
         // Minimal validation
         if (!platformBPs.containsKey(breakpoint) || !breakpointIDs.containsKey(breakpoint) || !targetBPs.containsValue(breakpoint)) {
@@ -845,7 +861,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             @Override
             protected void handleSuccess() {
                 // Update the mappings
-                platformBPs.remove(breakpoint);
                 threadsIDs.remove(breakpoint);
                 fPendingRequests.remove(breakpoint);
 
@@ -942,15 +957,25 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // some attribute might have changed which will make the install succeed.
         if (!breakpointIDs.containsKey(breakpoint) && !targetBPs.containsValue(breakpoint)) {
         	if (!filtered) {
-                attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
-                attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));
-                attributes.put(ATTR_THREAD_ID, NULL_STRING);
-                determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                      	installBreakpoint(dmc, breakpoint, attributes, rm);
-                    }
-                });
+        		// Do not try to re-install the breakpoint if the change event is the result of changes 
+        		// in the breakpoint's install count.
+        		// Excluding ATTR_DEBUGGER_PATH from the comparison because it has been set just before
+        		// "modifyBreakpoint()" was called.
+        		String[] diff = compareAttributes(oldValues.getAttributes(), attributes, new String[] { ATTR_DEBUGGER_PATH });
+        		if (diff.length != 1 || !diff[0].equals(ICBreakpoint.INSTALL_COUNT)) {
+	                attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
+	                attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));
+	                attributes.put(ATTR_THREAD_ID, NULL_STRING);
+	                determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), rm) {
+	                    @Override
+	                    protected void handleSuccess() {
+                			installBreakpoint(dmc, breakpoint, attributes, rm);
+	                    }
+	                });
+        		}
+        		else {
+        			rm.done();
+        		}
         	}
         	else {
                 rm.done();
@@ -1018,15 +1043,32 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
             @Override
             protected void handleError() {
-                // Reset the breakpoint attributes. This will trigger a
-                // breakpoint change event and the correct delta will be
-                // computed, resulting in a correctly restored breakpoint
-                // at the back-end.
-                rollbackAttributes(breakpoint, oldValues);
-                platformBPs.put(breakpoint, attributes);
+            	// Try to uninstall the target breakpoints and add the problem marker 
+            	// with the error message to the platform breakpoint.
+				doUninstallBreakpoint(
+					dmc, 
+					breakpoint, 
+					new ImmediateRequestMonitor(rm) {
+						@Override
+						protected void handleSuccess() {
+							addBreakpointProblemMarker(breakpoint, getStatus().getMessage(), IMarker.SEVERITY_WARNING);
+					        rm.done();
+						}
 
-                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
-                rm.done();
+						@Override
+						protected void handleError() {
+			                // Reset the breakpoint attributes. This will trigger a
+			                // breakpoint change event and the correct delta will be
+			                // computed, resulting in a correctly restored breakpoint
+			                // at the back-end.
+			                rollbackAttributes(breakpoint, oldValues);
+			                platformBPs.put(breakpoint, attributes);
+
+			                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
+			                rm.done();
+						};
+					}
+				);
             }
         };
 
@@ -1080,12 +1122,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 
                 @Override
                 protected void handleError() {
-                    // Keep the old threads list and reset the attributes
-                    // (bad attributes are the likely cause of failure)
-                    updateRM.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
-                    updateRM.setDoneCount(0);
+					doUninstallBreakpoint(
+						dmc, 
+						breakpoint, 
+						new ImmediateRequestMonitor(updateRM) {
+							@Override
+							protected void handleSuccess() {
+						        addBreakpointProblemMarker(breakpoint, getStatus().getMessage(), IMarker.SEVERITY_WARNING);	
+						        updateRM.setDoneCount(0);
+							};
+						}
+					);
                 }
-        };
+        	};
 
         // If the changes in the breakpoint attributes justify it, install a
         // new set of back-end breakpoint(s) and then update them
@@ -2176,4 +2225,25 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public void removeBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
     	fTrackingListeners.remove(listener);
     }
+
+	private String[] compareAttributes(Map<String, Object> oldAttr, Map<String, Object> newAttr, String[] exclude) {
+		List<String> list = new ArrayList<String>();
+		Set<String> names = new HashSet<String>(oldAttr.keySet());
+		names.addAll(newAttr.keySet());
+		for (String n : names) {
+			if (exclude != null && Arrays.asList(exclude).contains(n)) {
+				continue;
+			}
+			Object oldValue = oldAttr.get(n);
+			if (oldValue != null && !oldValue.equals(newAttr.get(n))) {
+				list.add(n);
+			}
+			else if (oldValue == null) {
+				if (newAttr.get(n) != null) {
+					list.add(n);
+				}
+			}
+		}
+		return list.toArray(new String[list.size()]);
+	}
 }

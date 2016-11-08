@@ -209,6 +209,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 */
 	private static final String NA_MEMORY_SPACE_ID = "   -----"; //$NON-NLS-1$
 
+	/**
+	 * Constants for hexadecimal numbers
+	 */
+	private final String HEX_PREFIX = "0x"; //$NON-NLS-1$
+	private final int HEX_RADIX = 16;
+	
 	public MemoryBrowser() {
 	}
 	
@@ -511,7 +517,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			{
 				try {
 					item = createTab(activeFolder, activeFolder.getSelectionIndex() + 1);
-					rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression);
+					rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression, getDefaultRenderingTypeId());
 					fContextFolders.put(retrieval, activeFolder);
 					activeFolder.setSelection(item);
 					getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
@@ -534,7 +540,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				if ((oldMemorySpaceId != null && !oldMemorySpaceId.equals(memorySpaceId)) 
 						|| (oldMemorySpaceId == null && memorySpaceId != null)) {
 					try {
-						rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression);
+						rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression, getDefaultRenderingTypeId());
 						activeFolder.setSelection(item);
 						getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 						handleTabActivated(item);
@@ -1018,6 +1024,38 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					fContextFolders.put(retrieval, tabFolder);
 					fStackLayout.topControl = tabFolder;
 				}
+				
+				// if the context has changed, update the memory rendering
+				final Object oldContext = tabFolder.getData(KEY_CONTEXT);
+				if (oldContext != null && !oldContext.equals(context)) {
+					// save the active tab
+					CTabItem selectedItem = tabFolder.getSelection();
+					for (CTabItem item : tabFolder.getItems()) {
+						if (item != null) {
+							String expression = (String) item.getData(KEY_EXPRESSION);
+							if (expression == null) {
+								BigInteger evaluatedAddress = (BigInteger)item.getData(KEY_EXPRESSION_ADDRESS);	
+								expression = HEX_PREFIX + evaluatedAddress.toString(HEX_RADIX);
+							}
+							String memorySpaceId = memorySpaces.length>0?memorySpaces[0]:(String) item.getData(KEY_MEMORY_SPACE);
+							String renderingTypeId = ((IMemoryRendering) item.getData(KEY_RENDERING)).getRenderingId();
+							try {
+								getRenderings(item).clear();
+								
+								populateTabWithRendering(item, retrieval, context,
+										memorySpaceId, expression, renderingTypeId);
+							}
+							catch (DebugException e) {
+								e = null;
+							}
+						}
+					}
+					if (selectedItem != null) {
+						// restore active tab
+						tabFolder.setSelection(selectedItem);
+					}
+				}
+				
 				// update debug context to the new selection
 				tabFolder.setData(KEY_CONTEXT, context);
 				
@@ -1167,12 +1205,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 * @param context memory block would be retrieved
 	 * @param memorySpaceId of the expression or null if not supported
 	 * @param expression from where to retrieve the memory block
+	 * @param renderingTypeId rendering type used to render memory
 	 * @return return the memory rendering or null if could not be created
 	 * 
 	 * @throws DebugException if could not retrieve memory block (e.g. invalid expression)
 	 */
-	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context, String memorySpaceId, String expression) throws DebugException {
-		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getDefaultRenderingTypeId());
+	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context, String memorySpaceId, String expression, String renderingTypeId) throws DebugException {
+		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(renderingTypeId);
 		IMemoryRenderingContainer container = (IMemoryRenderingContainer)tab.getData(KEY_CONTAINER);
 		if (container == null) {
 			container = new MemoryBrowserRenderingContainer();

@@ -71,6 +71,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6aed7883",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T20:39:32Z",
+      "side": 1,
+      "message": "Ah, ok then.",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_4a551c25",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
         "patchSetId": 1
@@ -135,6 +152,23 @@
       "side": 1,
       "message": "Why. That makes it too easy for people to use. That\u0027s why it\u0027s internal ;).",
       "parentUuid": "a7c23755_ea650810",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4ae8bc74",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/launching/CoreBuildLocalDebugLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T20:39:32Z",
+      "side": 1,
+      "message": "I go by the \"Export everything\" rule I read here: https://wiki.eclipse.org/Export-Package",
       "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

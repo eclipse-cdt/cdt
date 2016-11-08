@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_0abb24aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-11-08T20:02:33Z",
+      "side": 1,
+      "message": "This name is private and never seen in the UI.",
+      "parentUuid": "a7c23755_2a15406f",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_4a551c25",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
         "patchSetId": 1
@@ -70,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_cab04cc8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-11-08T20:02:33Z",
+      "side": 1,
+      "message": "Your suggestion is too long. But I ran into this confusion too. I\u0027ll fix it in the next patch set.",
+      "parentUuid": "a7c23755_4a551c25",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_ea650810",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/launching/CoreBuildLocalDebugLaunchDelegate.java",
         "patchSetId": 1
@@ -81,6 +117,24 @@
       "writtenOn": "2016-11-08T19:32:57Z",
       "side": 1,
       "message": "We should export this new package in MANIFEST.MF and mark internal:\r\n org.eclipse.cdt.dsf.gdb.internal.launching;x-internal:\u003dtrue,",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2ab8e0aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/launching/CoreBuildLocalDebugLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2016-11-08T20:02:33Z",
+      "side": 1,
+      "message": "Why. That makes it too easy for people to use. That\u0027s why it\u0027s internal ;).",
+      "parentUuid": "a7c23755_ea650810",
       "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

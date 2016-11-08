@@ -808,9 +808,32 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * 
      * @since 4.2
      */
-    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
-            final ICBreakpoint breakpoint, final RequestMonitor rm)
-    {
+    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc, final ICBreakpoint breakpoint, RequestMonitor rm) {
+        // Remove all relevant target filters
+        // Note that this call is important if a breakpoint is removed directly
+        // from the gdb console, or else we will try to re-install it (bug 433044)
+       	removeAllTargetFilters(dmc, breakpoint);
+
+        // Remove breakpoint problem marker (if any)
+        removeBreakpointProblemMarker(breakpoint);
+        
+        doUninstallBreakpoint(dmc, breakpoint, new ImmediateRequestMonitor(rm) {
+        	@Override
+        	protected void handleSuccess() {
+        		Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformToAttributesMaps.get(dmc);
+        		platformBPs.remove(breakpoint);
+        		super.handleSuccess();
+        	}
+        });
+    }
+
+    /*
+     * Un-install the target breakpoints associated with the given platform breakpoint. 
+     * The information related to the platform breakpoints is not cleared from the session.
+     * This allows the target breakpoints to be re-installed when an attribute of the platform 
+     * breakpoint is changed.
+     */
+    private void doUninstallBreakpoint(final IBreakpointsTargetDMContext dmc, final ICBreakpoint breakpoint, final RequestMonitor rm) {
         // Retrieve the breakpoint maps
         final Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformToAttributesMaps.get(dmc);
         assert platformBPs != null;
@@ -823,14 +846,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         final Map<ICBreakpoint, Set<String>> threadsIDs = fPlatformToBPThreadsMaps.get(dmc);
         assert threadsIDs != null;
-
-        // Remove all relevant target filters
-        // Note that this call is important if a breakpoint is removed directly
-        // from the gdb console, or else we will try to re-install it (bug 433044)
-       	removeAllTargetFilters(dmc, breakpoint);
-
-        // Remove breakpoint problem marker (if any)
-        removeBreakpointProblemMarker(breakpoint);
 
         // Minimal validation
         if (!platformBPs.containsKey(breakpoint) || !breakpointIDs.containsKey(breakpoint) || !targetBPs.containsValue(breakpoint)) {
@@ -845,7 +860,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             @Override
             protected void handleSuccess() {
                 // Update the mappings
-                platformBPs.remove(breakpoint);
                 threadsIDs.remove(breakpoint);
                 fPendingRequests.remove(breakpoint);
 
@@ -1018,15 +1032,32 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
             @Override
             protected void handleError() {
-                // Reset the breakpoint attributes. This will trigger a
-                // breakpoint change event and the correct delta will be
-                // computed, resulting in a correctly restored breakpoint
-                // at the back-end.
-                rollbackAttributes(breakpoint, oldValues);
-                platformBPs.put(breakpoint, attributes);
+            	// Try to uninstall the target breakpoints and add the problem marker 
+            	// with the error message to the platform breakpoint.
+				doUninstallBreakpoint(
+					dmc, 
+					breakpoint, 
+					new ImmediateRequestMonitor(rm) {
+						@Override
+						protected void handleSuccess() {
+							addBreakpointProblemMarker(breakpoint, getStatus().getMessage(), IMarker.SEVERITY_WARNING);
+					        rm.done();
+						}
 
-                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
-                rm.done();
+						@Override
+						protected void handleError() {
+			                // Reset the breakpoint attributes. This will trigger a
+			                // breakpoint change event and the correct delta will be
+			                // computed, resulting in a correctly restored breakpoint
+			                // at the back-end.
+			                rollbackAttributes(breakpoint, oldValues);
+			                platformBPs.put(breakpoint, attributes);
+
+			                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
+			                rm.done();
+						};
+					}
+				);
             }
         };
 
@@ -1080,12 +1111,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 
                 @Override
                 protected void handleError() {
-                    // Keep the old threads list and reset the attributes
-                    // (bad attributes are the likely cause of failure)
-                    updateRM.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_PARAMETER, null));
-                    updateRM.setDoneCount(0);
+					doUninstallBreakpoint(
+						dmc, 
+						breakpoint, 
+						new ImmediateRequestMonitor(updateRM) {
+							@Override
+							protected void handleSuccess() {
+						        addBreakpointProblemMarker(breakpoint, getStatus().getMessage(), IMarker.SEVERITY_WARNING);	
+						        updateRM.setDoneCount(0);
+							};
+						}
+					);
                 }
-        };
+        	};
 
         // If the changes in the breakpoint attributes justify it, install a
         // new set of back-end breakpoint(s) and then update them

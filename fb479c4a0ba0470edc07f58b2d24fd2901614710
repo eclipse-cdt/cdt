@@ -1,0 +1,361 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_3155b726",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGDBDebuggerConsole.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "This is interesting.  You\u0027re doing multiple inheritance by using\na default method of an abstract class.  This goes beyond my\nknowledge of java 8.  I don\u0027t know if this is recommended or not.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_715f2f46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Why did we decide not to synchronize a process context?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7b2470e6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Does not seem to be needed to extract the IMIExecutionDMContext, since we don\u0027t use it after.\nI think the if check further above for IMIExecutionDMContext or IFrameDMContext does this already.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1be37c12",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "This does not seem like a very valuable interface.  Why\nnot use its inheriting class GdbDebugContextSyncManager directly?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b181c709",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Why is there no EXPAND here but there is one in getDeltaFlags",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_71880f2f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Should we do an EXPAND as well, in case the process node was closed and there is no\nstack frame selected?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b14f078d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Can you add javadoc for the two above?  It is not clear if these\nrepresent the thread/frame in GDB or in eclipse, or both",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9b1f8c64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "IGDBControl is a subclass of ICommandControlService.  You can get rid of the above and keep fGdbControl below",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_fb916024",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "We should not call a service directly, but always go through an interface.\nIf an extender has implemented their own version of the stack service, we\nwon\u0027t be able to find it like this.\nI realize there is not way to call createFrameDMContext() through an interface though.\nSo, to get the frame you want you can either call\nIStack.getTopFrame() or IStack.getFrames().\nThe async nature of those calls will slightly complicate the code though.\nThe alternative is to create an interface to make createFrameDMContext() public.\nI\u0027m hoping that other comments below could actually help solve this issue\nmore easily, so I recommend you leave this comment for the end",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9b74ec44",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Could we simplify things here by only setting the frame?\nSince the frameDmc has the thread as a parent, then\nthe -stack-select-frame will specify the thread through\na --thread flag automatically.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9b55cccd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Could we simplify things here by not setting the frame in GDB when the new selection\nis a thread?  I believe GDB will automatically set the frame to 0.\nAnd if the thread is running, then GDB will not set the frame.\nWe wouldn\u0027t have to care about it.\t\nI\u0027m not sure of the impact to the fCurrentStackFrameCtx variable though...",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3b5678db",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Need a\n\t\trm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,\n\t\t\t\tINVALID_HANDLE, \"Invalid context to set focus to\", null)); //$NON-NLS-1$",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7b4630fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "I think we should set the error in the RM  instead",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_db5ca4c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "You can also use fGdbControl.getContext() as a shortcut for this context.  That\u0027s what we usually do,\nand put it directly in the call below.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_bbaa8807",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "I think we should set the error in the RM  instead",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1bb29c7b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "You should check for null just in case",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3b303871",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Upon \u0027suspend\u0027?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_51415361",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Why always specify the thread when the focus changes?  Couldn\u0027t we send the most specific\ncontext?  So by sending the frame, the receiver could know both the frame and its parent thread\nwhich is stored in the context hierarchy",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_31a777c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "The current thread is part of the hierarchy of the current frame.\nI think that we should only send one IDMContext, the frame if it exists,\nor the thread when the frame does not.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_11151b6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Avoid doing unrelated cleanup within a different patch.\nThis change should be on its own.  In fact, review 84541 does exactly this.\nIf your patch is not committed or reverted, this change would be lost.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_318e973e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T02:45:14Z",
+      "side": 1,
+      "message": "Why put this in the base class in DSF?  It is only used once in GdbStackFramesVMNode.\nAnd the calls being made are synchronous.  It seems it would be easier to just\ncall them in-line directly in the method that needs them.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

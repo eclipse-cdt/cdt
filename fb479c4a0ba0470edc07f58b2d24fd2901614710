@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_9474b944",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "missing MI notifications for that case, when switching inferior in the gdb console, so it would only be synchronized in one direction?",
+      "parentUuid": "a7c23755_715f2f46",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_7b2470e6",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
         "patchSetId": 44
@@ -47,6 +65,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Does not seem to be needed to extract the IMIExecutionDMContext, since we don\u0027t use it after.\nI think the if check further above for IMIExecutionDMContext or IFrameDMContext does this already.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_34e84574",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_7b2470e6",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_94e759a1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/GdbStackFramesVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "there is nothing to expand: stack frames do not have children. Removed from getDeltaFlags()",
+      "parentUuid": "a7c23755_b181c709",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_71880f2f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
         "patchSetId": 44
@@ -98,6 +152,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Should we do an EXPAND as well, in case the process node was closed and there is no\nstack frame selected?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f4f5ed44",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "no need for that: the SELECT, with correct index, will achieve that (this one and/or the SELECT done in GDBStackFrameVMNode.",
+      "parentUuid": "a7c23755_71880f2f",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_aa123091",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_b14f078d",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_9b1f8c64",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -132,6 +222,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "IGDBControl is a subclass of ICommandControlService.  You can get rid of the above and keep fGdbControl below",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3494c599",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_9b1f8c64",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_8a0d7479",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done - I have added createFrameDMContext() to the IFrame  interface using a default method.",
+      "parentUuid": "a7c23755_fb916024",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_9b74ec44",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -166,6 +292,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Could we simplify things here by only setting the frame?\nSince the frameDmc has the thread as a parent, then\nthe -stack-select-frame will specify the thread through\na --thread flag automatically.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ea7ee889",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_9b74ec44",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_0a7c0490",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_9b55cccd",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_3b5678db",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -200,6 +362,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Need a\n\t\trm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,\n\t\t\t\tINVALID_HANDLE, \"Invalid context to set focus to\", null)); //$NON-NLS-1$",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0fe6d622",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_3b5678db",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_eaf348d7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_7b4630fc",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_db5ca4c8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -234,6 +432,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "You can also use fGdbControl.getContext() as a shortcut for this context.  That\u0027s what we usually do,\nand put it directly in the call below.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af124291",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_db5ca4c8",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +473,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6f082a68",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_bbaa8807",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_1bb29c7b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -268,6 +502,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "You should check for null just in case",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4f2a8eb6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_1bb29c7b",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +543,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6f2f4ac5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_3b303871",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_51415361",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 44
@@ -302,6 +572,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Why always specify the thread when the focus changes?  Couldn\u0027t we send the most specific\ncontext?  So by sending the frame, the receiver could know both the frame and its parent thread\nwhich is stored in the context hierarchy",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2a79c09f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_51415361",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +613,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6afe5878",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "done - but i have kept the return type as an array, for more future flexibility.",
+      "parentUuid": "a7c23755_31a777c6",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_11151b6f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
         "patchSetId": 44
@@ -342,6 +648,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_3413e51b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Reverted",
+      "parentUuid": "a7c23755_11151b6f",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_318e973e",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
         "patchSetId": 44
@@ -353,6 +677,24 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "Why put this in the base class in DSF?  It is only used once in GdbStackFramesVMNode.\nAnd the calls being made are synchronous.  It seems it would be easier to just\ncall them in-line directly in the method that needs them.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f4108d09",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-08T19:25:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_318e973e",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

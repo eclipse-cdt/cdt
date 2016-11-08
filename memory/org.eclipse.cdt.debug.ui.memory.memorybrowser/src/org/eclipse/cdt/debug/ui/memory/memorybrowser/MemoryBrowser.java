@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Ted R Williams (Mentor Graphics, Inc.) - address space enhancements
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Norman Yee (Analog Devices, Inc.) - save/restore memory tabs     
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
@@ -37,12 +39,19 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -54,6 +63,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -110,6 +120,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A lightweight rendering container.
@@ -125,7 +139,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 @SuppressWarnings("restriction") /* Debug Platform's Flexible hierarchy is still provisional */
 
-public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener, IMemoryBrowser
+public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener, IMemoryBrowser, ILaunchesListener2
 {
 	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
 	
@@ -139,6 +153,34 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	private Composite fMainComposite;
 	private String defaultRenderingTypeId = null;
 	private IMemoryRendering fActiveRendering;
+	
+	/**
+	 * target state
+	 */
+	public enum TargetState {
+		STATE_UNKNOWN,
+		STATE_RESUME,
+		STATE_SUSPEND,
+		STATE_TERMINATE };
+	private TargetState targetState;
+	
+	/**
+	 * get target state
+	 * 
+	 * @return target state
+	 */
+	private synchronized TargetState getTargetState() {
+		return targetState;
+	}
+
+	/**
+	 * set the target state
+	 * 
+	 * @param targetState the target state
+	 */
+	private synchronized void setTargetState(TargetState targetState) {
+		this.targetState = targetState;
+	}
 	
 	/**
 	 * Every memory retrieval object is given its own tab folder. Typically all
@@ -209,6 +251,52 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 */
 	private static final String NA_MEMORY_SPACE_ID = "   -----"; //$NON-NLS-1$
 
+	/**
+	 * The memory tabs list.
+	 */
+	private static final String MEMORY_TABS_LIST   = "memoryTabsList";
+	
+	/**
+	 * The memory tab.
+	 */
+	private static final String MEMORY_TAB        = "memoryTab";	
+	
+	/**
+	 * The memory tabs attribute.
+	 */
+	private static final String ATTR_MEMORY_TABS = MemoryBrowserPlugin.PLUGIN_ID + ".MEMORY_TABS";
+	
+	/**
+	 * The memory space attribute.
+	 */
+	private static final String ATTR_MEMORY_SPACE   = "memorySpace";
+	
+	/**
+	 * The expression attribute.
+	 */
+	private static final String ATTR_ADDRESS = "address";
+	
+	/**
+	 * The rendering attribute.
+	 */
+	private static final String ATTR_RENDERING   = "rendering";
+	
+	/**
+	 * List of memory tab data serialized to string.
+	 */
+	private String fMemento = null;
+	
+	/**
+	 * Flag to indicate a debug configuration is launching.
+	 */
+	private boolean fLaunching = false;	
+
+	/**
+	 * Constants for hexadecimal numbers
+	 */
+	private final String HEX_PREFIX = "0x"; //$NON-NLS-1$
+	private final int HEX_RADIX = 16;
+	
 	public MemoryBrowser() {
 	}
 	
@@ -369,6 +457,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		
+		// when the view is first opened, the target state is unknown
+		setTargetState(TargetState.STATE_UNKNOWN);
+		
 		if(selection instanceof StructuredSelection)
 			handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
 	}
@@ -423,6 +516,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
         } else {
         	DebugUITools.removePartDebugContextListener(getSite(), this); 
         }
+        
+        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+        
 		super.dispose();
 	}
 	
@@ -434,6 +530,26 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			Object source = event.getSource();
 			if (event.getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) {
 				releaseTabFolder((IMemoryBlockRetrieval)source);
+			}
+			
+			if (source instanceof RuntimeProcess || source instanceof IDebugElement
+					|| source instanceof IThread || source instanceof IMemoryBlockRetrieval) {
+				// process debug event occur, update target state
+				if (event.getKind() == DebugEvent.TERMINATE) {
+					setTargetState(TargetState.STATE_TERMINATE);
+				}
+				else if (event.getKind() == DebugEvent.SUSPEND) {
+					setTargetState(TargetState.STATE_SUSPEND);
+				}
+				else if (event.getKind() == DebugEvent.RESUME) {
+					setTargetState(TargetState.STATE_RESUME);
+				}
+				else if (event.getKind() != DebugEvent.CHANGE) {
+					/**
+					 * here we ignore DebugEvent.CHANGE
+					 */
+					setTargetState(TargetState.STATE_UNKNOWN);
+				}
 			}
 		}
 	}
@@ -484,7 +600,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				context = activeFolder.getData(KEY_CONTEXT);
 			}
 			fGotoAddressBar.addExpressionToHistory(context, expression, memorySpace);
-			performGo(inNewTab, expression, memorySpace);	
+			try {
+				performGo(inNewTab, expression, memorySpace);
+			} catch (DebugException e) {
+			}
 		}
 	}
 
@@ -499,7 +618,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		return (IMemoryBlockRetrieval) activeFolder.getData(KEY_RETRIEVAL);		
 	}
 	
-	public void performGo(boolean inNewTab, final String expression, final String memorySpaceId) {
+	public void performGo(boolean inNewTab, final String expression, final String memorySpaceId) throws DebugException {
 		final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
 		if (activeFolder != null) {	
 			final IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) activeFolder.getData(KEY_RETRIEVAL);
@@ -511,7 +630,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			{
 				try {
 					item = createTab(activeFolder, activeFolder.getSelectionIndex() + 1);
-					rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression);
+					rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression, getDefaultRenderingTypeId());
 					fContextFolders.put(retrieval, activeFolder);
 					activeFolder.setSelection(item);
 					getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
@@ -522,7 +641,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					if (item != null) {
 						item.dispose();
 					}
-					return;
+					// throw the exception so that the caller can detect that
+					// it failed to create the tab
+					throw e1;
 				} 
 			} else {
 				// Tab is already in place. However, the user may have selected
@@ -534,7 +655,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				if ((oldMemorySpaceId != null && !oldMemorySpaceId.equals(memorySpaceId)) 
 						|| (oldMemorySpaceId == null && memorySpaceId != null)) {
 					try {
-						rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression);
+						rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression, getDefaultRenderingTypeId());
 						activeFolder.setSelection(item);
 						getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 						handleTabActivated(item);
@@ -576,6 +697,15 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 									selection.setData(KEY_EXPRESSION_ADDRESS, newBase);											
 									fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 									updateLabel(selection, renderingFinal);
+									
+									// a new memory tab has been created.  save the list
+									// of tabs to the memento
+									try {
+										saveMemento(activeFolder);
+									} catch (CoreException e) {
+										MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR,
+												MemoryBrowserPlugin.PLUGIN_ID, "Could not get memory tabs memento", e)); //$NON-NLS-1$			
+									}
 								}
 							});
 						} catch (final DebugException e1) {
@@ -620,11 +750,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if (memorySpaceID != null) {
 				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) tab.getParent().getData(KEY_RETRIEVAL);
 				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID);
+					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress(HEX_PREFIX + viewportAddress.toString(HEX_RADIX), memorySpaceID);
 				}
 			}
 			if (label == null) {
-				label = "0x" + viewportAddress.toString(16);
+				label = HEX_PREFIX + viewportAddress.toString(HEX_RADIX);
 			}
 			
 			// If the expression that was went to ("Go") is not a hex address,
@@ -638,13 +768,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			//
 			String expression = (String)tab.getData(KEY_EXPRESSION);
 			BigInteger evaluatedAddress = (BigInteger)tab.getData(KEY_EXPRESSION_ADDRESS);	
-			if(expression != null && !expression.equals("0x" + viewportAddress.toString(16))) {
+			if(expression != null && !expression.equals(HEX_PREFIX + viewportAddress.toString(HEX_RADIX))) {
 				label += " - " + expression;
 				BigInteger delta = evaluatedAddress.subtract(viewportAddress);
 				if (!delta.equals(BigInteger.ZERO)) {
 					label += "(";
 					label += delta.signum() < 0 ? '+' : '-';
-					label += "0x" + delta.abs().toString(16) +")";				
+					label += HEX_PREFIX + delta.abs().toString(HEX_RADIX) +")";				
 				}
 			}
 			
@@ -685,6 +815,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				event.doit = true;
 				CTabItem item = (CTabItem) event.item;
 				disposeTab(item);
+				
+				try {
+					saveMemento(folder);
+				} catch (CoreException e) {
+					MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR,
+							MemoryBrowserPlugin.PLUGIN_ID, "Could not get memory tabs memento", e)); //$NON-NLS-1$		
+				}
 			}
 		});
 		
@@ -695,6 +832,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					disposeTab(tab);
 				}
 				folder.removeDisposeListener(this);
+				
+				fMemento = null;
 			}
 		});
 		return folder;
@@ -943,30 +1082,92 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			adaptable = (IAdaptable) context;
 			retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
 			launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+			
+			Object obj = adaptable.getAdapter(IDMContext.class);
+			if (obj != null) {
+				// in DSF session, there is no need to check the target state
+				setTargetState(TargetState.STATE_UNKNOWN);
+			}			
 		}
 
-		if(retrieval != null && launch != null && !launch.isTerminated()) {
-			if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-			    final IMemoryBlockRetrieval _retrieval = retrieval;
-				((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(context, new GetMemorySpacesRequest(){
-					@Override
-					public void done() {
-						updateTab(_retrieval, context, isSuccess() ? getMemorySpaces() : new String[0]);
-					}
-				}); 
-			}
-			else {
-				updateTab(retrieval, context, new String[0]);
-			}
-		}
-		else {
-			handleUnsupportedSelection();
+        TargetState state = getTargetState();
+        //CHECKSTYLE:OFF
+        // STATE_RESUME can be ignored
+		switch (state) {
+			case STATE_UNKNOWN:
+			case STATE_SUSPEND:
+				updateMemoryBrowserView(context, retrieval, launch);
+				break;
+			case STATE_TERMINATE:
+				fUnsupportedLabel.setText("");
+				handleUnsupportedSelection();
+				break;
+			default:
+				break;			
 		}
 
 		fGotoMemorySpaceControl.pack(true);
 		fStackLayout.topControl.getParent().layout(true);
 	}
 
+	/**
+	 * update the memory browser view
+	 * 
+	 * @param context debug context
+	 * @param retrieval memory block retriever
+	 * @param launch launch for this debug
+	 */
+	private void updateMemoryBrowserView(final Object context,
+		final IMemoryBlockRetrieval retrieval, final ILaunch launch) {
+		if (retrieval != null && launch != null && !launch.isTerminated()) {
+			if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+				String[] memorySpaces={};
+				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+					((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(context,
+						new GetMemorySpacesRequest() {
+							public void done() {
+								updateTab(retrieval, context,
+									isSuccess() ? getMemorySpaces() : new String[0]);
+								// get the list of memory tabs stored in the launch
+								// configuration and restore them	
+								if (fLaunching && launch != null) {
+									ILaunchConfiguration launchConfig = launch
+										.getLaunchConfiguration();
+									try {
+										String attr = ATTR_MEMORY_TABS;
+										String secondaryId = ((IViewSite)getSite())
+											.getSecondaryId();
+										if (secondaryId != null) {
+											attr = attr + "." + secondaryId;
+										}
+										String memento = launchConfig.getAttribute(attr, "");
+										if (memento != null && memento.length() != 0) {
+											createMemoryTabsFromMemento(memento, context);
+										}
+										fLaunching = false;
+									}
+									catch (Exception e) {
+										// do nothing.  we probably got here because the
+										// context was not valid and it failed to fetch
+										// the memory.  we will try to re-create the tabs
+										// on the next debug context change.
+									}
+								}
+							}
+						});
+				}
+				updateTab(retrieval, context, memorySpaces);
+			}
+			else {
+				updateTab(retrieval, context, new String[0]);
+			}
+		}
+		else {
+			fUnsupportedLabel.setText("");
+			handleUnsupportedSelection();
+		}
+	}
+	
 	/**
 	 * Called to update the tab once the asynchronous query for memory spaces
 	 * has returned a result.
@@ -1018,6 +1219,38 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					fContextFolders.put(retrieval, tabFolder);
 					fStackLayout.topControl = tabFolder;
 				}
+				
+				// if the context has changed, update the memory rendering
+				final Object oldContext = tabFolder.getData(KEY_CONTEXT);
+				if (oldContext != null && !oldContext.equals(context)) {
+					// save the active tab
+					CTabItem selectedItem = tabFolder.getSelection();
+					for (CTabItem item : tabFolder.getItems()) {
+						if (item != null) {
+							String expression = (String) item.getData(KEY_EXPRESSION);
+							if (expression == null) {
+								BigInteger evaluatedAddress = (BigInteger)item.getData(KEY_EXPRESSION_ADDRESS);	
+								expression = HEX_PREFIX + evaluatedAddress.toString(HEX_RADIX);
+							}
+							String memorySpaceId = (String) item.getData(KEY_MEMORY_SPACE);
+							String renderingTypeId = ((IMemoryRendering) item.getData(KEY_RENDERING)).getRenderingId();
+							try {
+								getRenderings(item).clear();
+				
+								populateTabWithRendering(item, retrieval, context,
+										memorySpaceId, expression, renderingTypeId);
+							}
+							catch (DebugException e) {
+								e = null;
+							}
+						}
+					}
+					if (selectedItem != null) {
+						// restore active tab
+						tabFolder.setSelection(selectedItem);
+					}
+				}				
+				
 				// update debug context to the new selection
 				tabFolder.setData(KEY_CONTEXT, context);
 				
@@ -1167,12 +1400,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 * @param context memory block would be retrieved
 	 * @param memorySpaceId of the expression or null if not supported
 	 * @param expression from where to retrieve the memory block
+	 * @param renderingTypeId rendering type used to render memory
 	 * @return return the memory rendering or null if could not be created
 	 * 
 	 * @throws DebugException if could not retrieve memory block (e.g. invalid expression)
 	 */
-	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context, String memorySpaceId, String expression) throws DebugException {
-		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getDefaultRenderingTypeId());
+	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context, String memorySpaceId, String expression, String renderingTypeId) throws DebugException {
+		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(renderingTypeId);
 		IMemoryRenderingContainer container = (IMemoryRenderingContainer)tab.getData(KEY_CONTAINER);
 		if (container == null) {
 			container = new MemoryBrowserRenderingContainer();
@@ -1392,4 +1626,204 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		}
 		return null;
 	}
+	
+	/**
+	 * Execute callable on UI thread if the current thread is not an UI thread.
+	 * Otherwise execute it directly.
+	 * 
+	 * @param runnable the callable to execute
+	 * @throws Exception if the callable failed
+	 */
+	private void runOnUIThread(final Callable<Object> callable) throws Exception {
+		if (Display.getCurrent() != null) {
+			callable.call();
+		}
+		else {
+			UIJob job = new UIJob("Memory Browser UI Job"){ //$NON-NLS-1$
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					try {
+						callable.call();
+						return Status.OK_STATUS;
+					} catch (Exception e) {
+						return new Status(IStatus.ERROR,
+								MemoryBrowserPlugin.PLUGIN_ID,
+								DebugException.INTERNAL_ERROR,
+								null, e);
+					}
+
+				}};
+				job.setSystem(true);
+				job.schedule();
+		}
+	}
+
+	/**
+	 * Gets the memory tab data in a serialized string
+	 * 
+	 * @param activeFolder the active folder
+	 * @return the memory tab data in a serialized string
+	 * @throws CoreException if unable to create serialized string
+	 */
+	protected String getMemento(CTabFolder activeFolder) throws CoreException {
+
+		Document document = DebugPlugin.newDocument();
+		Element memoryTabsList = document.createElement(MEMORY_TABS_LIST);
+		
+		int tabCount = 0;
+		for (CTabItem tab : activeFolder.getItems()) {
+			if (getMemoryBlocks(tab).isEmpty()) {
+				continue;
+			}
+			
+			Element memoryTab = document.createElement(MEMORY_TAB);
+			
+			String memorySpace = (String) tab.getData(KEY_MEMORY_SPACE);
+			memoryTab.setAttribute(ATTR_MEMORY_SPACE, memorySpace);
+
+			IMemoryRenderingType type = (IMemoryRenderingType) tab.getData(KEY_RENDERING_TYPE);
+			memoryTab.setAttribute(ATTR_RENDERING, type.getId());
+
+			BigInteger evaluatedAddress = (BigInteger)tab.getData(KEY_EXPRESSION_ADDRESS);	
+			memoryTab.setAttribute(ATTR_ADDRESS, HEX_PREFIX + evaluatedAddress.toString(HEX_RADIX));
+
+			memoryTabsList.appendChild(memoryTab);
+			tabCount++;
+		}
+		if (tabCount == 0) {
+			return null;
+		}
+		else {
+			document.appendChild(memoryTabsList);
+			return DebugPlugin.serializeDocument(document);
+		}
+	}
+
+	/**
+	 * Save the memory tab data to the launch configuration so that we can
+	 * re-create the tabs the next time the configuration is re-launched.
+	 * 
+	 * @param activeFolder the active folder
+	 * @throws CoreException if unable to create serialized string 
+	 */
+	protected void saveMemento(CTabFolder activeFolder) throws CoreException {
+		fMemento = getMemento(activeFolder);
+		
+		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = lm.getLaunches();
+		for (ILaunch launch : launches) {
+			ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
+			ILaunchConfigurationWorkingCopy wc;
+			try {
+				wc = launchConfig.getWorkingCopy();
+
+				// save each memory browser view's tabs to the launch
+				// configuration.  if there is more than one view, the
+				// secondary id is appended to the tabs attribute.
+				String attr = ATTR_MEMORY_TABS;
+				String secondaryId = ((IViewSite)getSite()).getSecondaryId();
+				if (secondaryId != null) {
+					attr = attr + "." + secondaryId;
+				}
+				if (fMemento != null) {
+					wc.setAttribute(attr, fMemento);
+				}
+				else {
+					// if there are no tabs, make sure that we remove the
+					// old memento, if any, from the launch configuration
+					wc.removeAttribute(attr);
+				}
+				
+				wc.doSave();
+			}
+			catch (CoreException e) {
+			}
+		}
+	}		
+	
+	/**
+	 * @param launches the launches removed
+	 */
+	public void launchesRemoved(ILaunch[] launches) {
+		// do nothing.  don't care about removed launches
+	}
+	
+	/**
+	 * Set the launching flag to true so that the memory tabs are restored
+	 * the next time the debug context changes.
+	 * 
+	 * @param launches the launches added
+	 */
+	public void launchesAdded(ILaunch[] launches) {
+		fLaunching = true;
+	}
+	
+	/**
+	 * @param launches the launches that changed
+	 */
+	public void launchesChanged(ILaunch[] launches) {
+		// do nothing.  don't care about launches that changed
+	}
+	
+	/**
+	 * When a launch is terminated, save the memory tab data to the launch
+	 * configuration so that we can re-create the tabs the next time the
+	 * configuration is re-launched.
+	 * 
+	 * @param launches the launches terminated
+	 */
+	public void launchesTerminated(ILaunch[] launches) {
+		// do nothing.  don't care about launches that terminated
+	}
+	
+	/**
+	 * Creates the memory tabs from the memento.
+	 * 
+	 * @param memento a string containing serialized memory tab data
+	 * @param context context in which memory tab will be created
+	 * @throws Exception if fails to create memory tabs
+	 */
+	protected void createMemoryTabsFromMemento(String memento, final Object context) throws Exception {
+		// parse the memento and validate its type
+		Element root = DebugPlugin.parseDocument(memento);
+		if (!root.getNodeName().equalsIgnoreCase(MEMORY_TABS_LIST)) {
+			IStatus status = new Status(IStatus.ERROR, MemoryBrowserPlugin.PLUGIN_ID, DebugPlugin.INTERNAL_ERROR,
+					"Memory tabs initialization: invalid memento", null);//$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		
+		NodeList memoryTabsList = root.getChildNodes();
+		int length = memoryTabsList.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = memoryTabsList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element entry = (Element) node;
+				if (entry.getNodeName().equalsIgnoreCase(MEMORY_TAB)) {
+					String memorySpace = entry.getAttribute(ATTR_MEMORY_SPACE);
+					if (memorySpace != null && memorySpace.length() == 0) {
+						memorySpace = null;
+					}
+					final String finalMemorySpace = memorySpace;
+					final String address = entry.getAttribute(ATTR_ADDRESS);
+					final String renderingTypeId = entry.getAttribute(ATTR_RENDERING);                    
+					
+					// create the memory tab					
+					runOnUIThread(new Callable<Object>(){
+						public Object call() throws Exception {
+							// set the default rendering to the desired rendering
+							String oldRenderingTypeId = getDefaultRenderingTypeId();
+							setDefaultRenderingTypeId(renderingTypeId);
+							
+							fGotoAddressBar.addExpressionToHistory(context, address, finalMemorySpace);
+							performGo(true, address, finalMemorySpace);
+							
+							// restore the default rendering
+							setDefaultRenderingTypeId(oldRenderingTypeId);							
+							return null;
+						}
+					});
+				}
+			}
+		}
+	}	
 }

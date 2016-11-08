@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_ca684ceb",
+        "filename": "debug/org.eclipse.cdt.debug.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T19:32:57Z",
+      "side": 1,
+      "message": "Should also add  \norg.eclipse.cdt.debug.internal.core.launch;x-internal:\u003dtrue,",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_caf68cca",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/launch/CoreBuildLocalRunLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T19:32:57Z",
+      "side": 1,
+      "message": "I don\u0027t see this used anywhere.  Is it still needed?",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2a15406f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T19:32:57Z",
+      "side": 1,
+      "message": "Can you put the string in plugin.properties",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4a551c25",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T19:32:57Z",
+      "side": 1,
+      "message": "Could you rename this launchConfigType?  I don\u0027t believe this name has been released\nyet and I find org.eclipse.cdt.debug.core.localLaunchConfigurationType very generic.\nHow about  org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigurationType?",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ea650810",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/launching/CoreBuildLocalDebugLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-08T19:32:57Z",
+      "side": 1,
+      "message": "We should export this new package in MANIFEST.MF and mark internal:\r\n org.eclipse.cdt.dsf.gdb.internal.launching;x-internal:\u003dtrue,",
+      "revId": "281209ce32ba731d5949d6150b7012aa156ff29f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

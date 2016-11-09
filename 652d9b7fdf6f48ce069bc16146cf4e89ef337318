@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_40f97b8d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-09T13:40:01Z",
+      "side": 1,
+      "message": "AFAIK You might get different editors, but they all point to the same model. That is if they are all C Editors. In fact, what you should be doing is using IWorkbenchPage.findEditors(IEditorInput, String, int) and the first one that has an ITranslationUnit should be chosen on the next line. This should be instead of ResourceUtilas the extra feature provided by ResourceUtil is not relevant as you only need editors that are open with FileEditorInput.\n\nWhat surprises me is that there is not already an utility method to do what you need, i.e. \"get me the model\", having to implement this stuff locally to QuickFixes does not seem right at all. Let me look something up...",
+      "parentUuid": "a7c23755_c5683deb",
+      "revId": "652d9b7fdf6f48ce069bc16146cf4e89ef337318",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_8a13b4e7",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
         "patchSetId": 3
@@ -65,6 +83,24 @@
       "writtenOn": "2016-11-08T22:21:16Z",
       "side": 1,
       "message": "This can return null, for example if file is open in text editor instead of ceditor. \nThis problem affects other quickfixes and I have raised Bug 507252 for that.",
+      "revId": "652d9b7fdf6f48ce069bc16146cf4e89ef337318",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c09aeb7a",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-09T13:40:01Z",
+      "side": 1,
+      "message": "This NPE needs to be resolved here, it is more important here than the other cases because as you have diagnosed this code is run all the time, not just when applying the quick-fix. I would suggest that if CDTUITools.getEditorInputCElement() returns null, you should fall back to getTranslationUnitViaWorkspace() in this case (which can also return null).",
+      "parentUuid": "a7c23755_8a13b4e7",
       "revId": "652d9b7fdf6f48ce069bc16146cf4e89ef337318",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

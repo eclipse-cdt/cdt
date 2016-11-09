@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_003ea341",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-09T16:10:47Z",
+      "side": 1,
+      "message": "This case is a bit academic - switching thread/SF is not something that will be subject to fail often. If it does fail, we will have a de-synchronization no matter how we react. But I do find that in that case, things would fall back into sync if we did not switch the focus in the service. Will change that in an upcoming patch.",
+      "parentUuid": "a7c23755_25cc91ad",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_45d8ad66",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
         "patchSetId": 45
@@ -30,6 +48,24 @@
       "writtenOn": "2016-11-09T03:59:56Z",
       "side": 1,
       "message": "Same question as above",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_40db3b9b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-09T16:10:47Z",
+      "side": 1,
+      "message": "same as above",
+      "parentUuid": "a7c23755_45d8ad66",
       "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -98,6 +134,24 @@
       "writtenOn": "2016-11-09T03:59:56Z",
       "side": 1,
       "message": "We always put such methods in DSF-GDB and not in DSF.\nI\u0027ve moded it to a new IGDBStack",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_60e03743",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IStack.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-09T16:10:47Z",
+      "side": 1,
+      "message": "cool, thanks.",
+      "parentUuid": "a7c23755_c5c4bd8a",
       "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_801ab373",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 38406
+      },
+      "writtenOn": "2016-11-09T13:50:46Z",
+      "side": 1,
+      "message": "The editors point to different TranslationUnits (according to the testing I did before contributing the patch) and I was assuming that the TUs are the models of the CDT editors.",
+      "parentUuid": "a7c23755_40f97b8d",
+      "revId": "652d9b7fdf6f48ce069bc16146cf4e89ef337318",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_8a13b4e7",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
         "patchSetId": 3

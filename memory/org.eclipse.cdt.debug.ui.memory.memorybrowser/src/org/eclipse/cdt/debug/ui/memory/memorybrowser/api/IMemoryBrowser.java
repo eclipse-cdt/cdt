@@ -67,4 +67,11 @@ public interface IMemoryBrowser {
 	 * @return the active memory retrieval object, or null if none is active
 	 */
 	public IMemoryBlockRetrieval getActiveRetrieval();
+	
+	/**
+	 * Changes the rendering type for the active memory tab.
+	 * 
+	 * @param renderingTypeId the new rendering type
+	 */
+	public void selectRendering(String renderingTypeId);	
 }

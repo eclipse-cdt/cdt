@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_4a4c3c1d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGDBDebuggerConsole.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:11Z",
+      "side": 1,
+      "message": "I\u0027ve asked around and this seems to be a good trick.  Nice suggestion\nfrom Alvaro!",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_715f2f46",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
         "patchSetId": 44
@@ -48,6 +65,23 @@
       "side": 1,
       "message": "missing MI notifications for that case, when switching inferior in the gdb console, so it would only be synchronized in one direction?",
       "parentUuid": "a7c23755_715f2f46",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ea56e854",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:11Z",
+      "side": 1,
+      "message": "Ok, let\u0027s wait until we have the MI notif and handle both directions",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -89,6 +123,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_45b18d2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:11Z",
+      "side": 1,
+      "message": "You had just removed the null check.  I went ahead and removed extracting the IMIExecDMContext since we didn\u0027t need it.",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_1be37c12",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
         "patchSetId": 44
@@ -100,6 +151,23 @@
       "writtenOn": "2016-11-08T02:45:14Z",
       "side": 1,
       "message": "This does not seem like a very valuable interface.  Why\nnot use its inheriting class GdbDebugContextSyncManager directly?",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2a51c05a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/IDebugSelectionSyncManager.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:11Z",
+      "side": 1,
+      "message": "I\u0027ve removed this interface and updated GdbDebugContextSyncManager",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -695,6 +763,23 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "a7c23755_318e973e",
+      "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ca5f6cba",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/datamodel/AbstractDMVMNode.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:11Z",
+      "side": 1,
+      "message": "I\u0027ve merged the method into the calling code, as it avoided calling the executor an extra time.",
       "revId": "fb479c4a0ba0470edc07f58b2d24fd2901614710",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

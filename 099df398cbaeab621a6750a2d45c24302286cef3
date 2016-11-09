@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_25cc91ad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "Why do we update it in case of failure?  If GDB does not set the focus,\nshouldn\u0027t the service keep its old focus?",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_45d8ad66",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "Same question as above",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a5d7c132",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "I\u0027ve inlined the above.",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c5ebddeb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "I\u0027ve inlined the above because the caller was checking for null already",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e5e8d9f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBSynchronizer.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "I\u0027ve added a check for null, in case some extender has replaced our MIStack service\nand does not yet implement IGDBStack",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c5c4bd8a",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IStack.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-09T03:59:56Z",
+      "side": 1,
+      "message": "We always put such methods in DSF-GDB and not in DSF.\nI\u0027ve moded it to a new IGDBStack",
+      "revId": "099df398cbaeab621a6750a2d45c24302286cef3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

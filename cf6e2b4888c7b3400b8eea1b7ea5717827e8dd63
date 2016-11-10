@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_e9819308",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/sync/GdbDebugContextSyncManager.java",
+        "patchSetId": 51
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-10T04:23:51Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking about why we can\u0027t accept a process context here.\nLooking at GDB 7.12, when switching inferior from the console, a \u003dthread-selected event\nis emitted, so we already synchronize the DV. \nOn the other side, if we select\njust a process node in the DV, we would need to tell the GDBFocusSynchronizer\nto set the focus to that inferior.  When I tried it, I had to send the CLI \u0027inferior\u0027\ncommand since it does not have an MI equivalent.  This caused GDB to emit a\n\u003dthread-selected event, which would cause us to move the selection of the DV down\nto the thread or frame, which was not right.  We really need an MI command instead\nto avoid getting the \u003dthread-selected event.  I think that is why we chose not to\nhandle the process case.\nBut then I realized that when setting an inferior in GDB, it would automatically\nset its first thread.  So, instead of using \u0027inferior\u0027 we could actually\nuse -thread-select, which is an MI command and therefore won\u0027t cause a\n\u003dthread-selected event to be sent.\nI\u0027ll code that up as a new commit to see what you think.",
+      "revId": "cf6e2b4888c7b3400b8eea1b7ea5717827e8dd63",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

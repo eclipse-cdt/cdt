@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -70,7 +71,7 @@ import org.osgi.framework.BundleContext;
 public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocusSynchronizer, IEventListener
 {	
 	/** This service's opinion of what is the current GDB focus - it can be 
-	 * a thread or stack frame context */
+	 * a process, thread or stack frame context */
 	private IDMContext fCurrentGDBFocus;
 	
 	private IStack fStackService;
@@ -170,6 +171,10 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 				}
 			});
 		}
+		// new selection is a process?
+		else if (elem instanceof IMIContainerDMContext) {
+			setProcessFocus((IMIContainerDMContext)elem, rm);
+		}
 		else {
 			assert false;
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
@@ -177,7 +182,59 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 			return;
 		}
 	}
-	
+
+	protected void setProcessFocus(IMIContainerDMContext newProc, RequestMonitor rm) {
+		if (newProc == null) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					INVALID_HANDLE, "GdbFocusSynchronizer unable to resolve process context for the selected element", null)); //$NON-NLS-1$
+			return;
+		}
+		// There is no MI command to set the inferior.  We could use the CLI 'inferior' command, but it would then
+		// generate a =thread-selected event, which would cause us to change the selection in the Debug view and
+		// select the stack frame of the first thread, or the first thread itself if it is running.
+		// That would prevent the user from being able to leave the selection to a process node.
+		// What we can do instead, is tell GDB to select the first thread of that inferior, which is what
+		// GDB would do anyway, but since we have an MI -thread-select command it will prevent GDB from
+		// issuing a =thread-selected event.
+		fProcesses.getProcessesBeingDebugged(newProc, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+			@Override
+			protected void handleSuccess() {
+				if (getData().length > 0) {
+					IDMContext finalThread = getData()[0];
+					if (finalThread instanceof IMIExecutionDMContext) {
+						setThreadFocus((IMIExecutionDMContext)(finalThread), new ImmediateRequestMonitor(rm) {
+							@Override
+							protected void handleSuccess() {
+								// update the current focus, to match new GDB focus
+								fCurrentGDBFocus = finalThread;
+								rm.done();
+							}
+						});
+						return;
+					}
+					rm.done();
+				} else {
+					// If there are no threads, it probably implies the inferior is not running
+					// e.g., an exited process.  In this case, we cannot set the thread, but it
+					// then becomes safe to set the inferior using the CLI command since
+					// there is no thread for that inferior and therefore no =thread-selected event
+					String miInferiorId = newProc.getGroupId();
+					// Remove the 'i' prefix
+					String cliInferiorId = miInferiorId.substring(1, miInferiorId.length());
+					ICommand<MIInfo> command = fCommandFactory.createCLIInferior(fGdbcontrol.getContext(), cliInferiorId);
+					fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm) {
+						@Override
+						protected void handleSuccess() {
+							// update the current focus, to match new GDB focus
+							fCurrentGDBFocus = newProc;
+							rm.done();
+						}						
+					});
+				}
+			}
+		});
+	}
+
 	protected void setThreadFocus(IMIExecutionDMContext newThread, RequestMonitor rm) {
 		if (newThread == null) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,

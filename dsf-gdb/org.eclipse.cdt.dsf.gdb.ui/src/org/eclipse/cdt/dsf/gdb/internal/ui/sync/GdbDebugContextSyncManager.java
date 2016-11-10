@@ -12,6 +12,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.service.IGDBFocusSynchronizer;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -46,8 +47,10 @@ public class GdbDebugContextSyncManager implements IDebugContextListener {
 		if (context != null) {
 			final IDMContext dmc = context.getAdapter(IDMContext.class);
 
-			if (dmc instanceof IMIExecutionDMContext || dmc instanceof IFrameDMContext) {
-				// A thread or stack frame was selected. In either case, have GDB switch to the new
+			if (dmc instanceof IMIContainerDMContext ||
+					dmc instanceof IMIExecutionDMContext || 
+					dmc instanceof IFrameDMContext) {
+				// A process, thread or stack frame was selected. In each case, have GDB switch to the new
 				// corresponding thread, if required.
 
 				// Resolve the debug session

@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_3a802798",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.test/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "same comment on copyright holder as main test class",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ba743744",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.test/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "Needs update or removal (so default includes is applied)",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1a836ba7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.test/src/org/eclipse/cdt/codan/checkers/ui/Activator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "same comment on copyright holder as main test class",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7a6a9f65",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.test/src/org/eclipse/cdt/codan/checkers/ui/quickfix/QuickFixCreateNewClassTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "Normally it is your company that has the copyright, so I would expect this line to be \n\n     * Copyright (c) 2016 COSEDA Technologies GmbH",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_da781339",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.test/src/org/eclipse/cdt/codan/checkers/ui/quickfix/QuickFixCreateNewClassTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "I think this test is invalid because I think the original code is wrong. The quick-fix only applies to C++ because the fix makes a new C++ class. I don\u0027t think that this part of the logic should be changed in the class, however I don\u0027t want a test to come and \"solidify\" something that is incorrect. \n\ne.g. should this Quick-fix apply to Objective C, Fortran, QT, etc? At the moment that may not be an issue because the Codan error may only be created on C or CPP linkages in the first place.",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5a65e392",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "Small niggle, ToDo spelt this way is not picked up as marker by default in eclipse and doesn\u0027t match TODO markers elsewhere in the code.",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3a25875d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCreateNewClass.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-10T22:42:40Z",
+      "side": 1,
+      "message": "Nice. Great use of Java 8 features to deal with all the possible nulls.",
+      "revId": "4cc32a8f624e7f82441394fd37d898f2545276bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

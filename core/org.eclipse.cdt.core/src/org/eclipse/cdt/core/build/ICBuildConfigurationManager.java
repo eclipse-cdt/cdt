@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -58,6 +60,23 @@ public interface ICBuildConfigurationManager {
 	 */
 	ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
 			IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Create a new build configuration for a given project using a toolchain
+	 * with the given properties and that builds for a given launch mode.
+	 * 
+	 * @param project
+	 *            project for the config
+	 * @param properties
+	 *            properties for the toolchain to be selected
+	 * @param launchMode
+	 *            launch mode the buld config will build for
+	 * @return new build configuration
+	 * @throws CoreException
+	 * @since 6.2
+	 */
+	ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties,
+			String launchMode, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Called by providers to add new build configurations as they are created.

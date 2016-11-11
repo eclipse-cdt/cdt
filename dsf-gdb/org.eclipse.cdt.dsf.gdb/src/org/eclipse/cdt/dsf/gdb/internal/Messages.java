@@ -16,6 +16,10 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
+	public static String CoreBuildLocalDebugLaunchDelegate_FailureLaunching;
+
+	public static String CoreBuildLocalDebugLaunchDelegate_FailureStart;
+
 	public static String CustomTimeoutsMap_Error_initializing_custom_timeouts;
 
 	public static String CustomTimeoutsMap_Invalid_custom_timeout_data;

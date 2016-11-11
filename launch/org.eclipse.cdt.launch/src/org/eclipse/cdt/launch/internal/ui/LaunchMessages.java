@@ -46,6 +46,8 @@ public class LaunchMessages extends NLS {
 	public static String LocalAttachLaunchDelegate_Platform_cannot_list_processes;
 	public static String LocalAttachLaunchDelegate_Select_Process_to_attach_debugger_to;
 	public static String LocalAttachLaunchDelegate_CDT_Launch_Error;
+	public static String CoreBuildTab_Build;
+	public static String CoreBuildTab_NoOptions;
 	public static String CoreFileLaunchDelegate_Launching_postmortem_debugger;
 	public static String CoreFileLaunchDelegate_No_Corefile_selected;
 	public static String CoreFileLaunchDelegate_No_Shell_available_in_Launch;

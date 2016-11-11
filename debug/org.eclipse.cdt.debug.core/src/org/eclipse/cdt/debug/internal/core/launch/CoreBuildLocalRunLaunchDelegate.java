@@ -13,7 +13,8 @@ import java.nio.file.Paths;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.launch.CoreBuildLocalLaunchConfigDelegate;
+import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
+import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +26,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
-public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLocalLaunchConfigDelegate {
+public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelegate {
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
@@ -42,7 +43,7 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLocalLaunchConfigD
 			Process process = builder.start();
 			DebugPlugin.newProcess(launch, process, exeFile.getPath().lastSegment());
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, "Error launching", e));
+			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, InternalDebugCoreMessages.CoreBuildLocalRunLaunchDelegate_ErrorLaunching, e));
 		}
 	}
 

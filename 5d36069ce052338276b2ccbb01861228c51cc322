@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_600910bc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-11T18:24:19Z",
+      "side": 1,
+      "message": "There used to be a call here, that got removed: \"fActiveConsole.consoleSelected();\"\n\nWithout this call, the gdb focus synchronizer will not be notified that the console has changed, and so will not change the selection in the DV. I think we need to add it back.",
+      "revId": "5d36069ce052338276b2ccbb01861228c51cc322",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

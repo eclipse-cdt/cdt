@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_e04360c6",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-11T18:44:13Z",
+      "side": 1,
+      "message": "Note: there is a small selection glitch, in the case where the ticky policy does not apply(no stack frame selected) and a new session starts: we see that the new launch is selected, then the previous selection is restored for a moment, and finally the new inferior has its first thread/frame selected.\n\nNot ideal, but it\u0027s in sync with the selected console, so I think it\u0027s acceptable.",
+      "revId": "90f2435ee26c032a660228e5c2ca70328f1a51b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.build;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,43 +110,6 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 		for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
 			if (qtInstallManager.supports(qtInstall, toolChain)) {
 				return qtInstall;
-			}
-		}
-
-		return null;
-	}
-
-	// TODO this goes when the launch delegate goes
-	public IQtBuildConfiguration getConfiguration(IProject project, Map<String, String> properties, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		Collection<IToolChain> toolChains = toolChainManager.getToolChainsMatching(properties);
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-			if (cconfig != null) {
-				IQtBuildConfiguration qtConfig = cconfig.getAdapter(IQtBuildConfiguration.class);
-				if (qtConfig != null && launchMode.equals(qtConfig.getLaunchMode())) {
-					for (IToolChain toolChain : toolChains) {
-						if (qtConfig.getToolChain().equals(toolChain)) {
-							return qtConfig;
-						}
-					}
-				}
-			}
-		}
-
-		// Not found, create one
-		for (IToolChain toolChain : toolChains) {
-			for (IQtInstall qtInstall : qtInstallManager.getInstalls()) {
-				if (qtInstallManager.supports(qtInstall, toolChain)) {
-					// TODO what if multiple matches, this returns first match
-					String configName = "qt." + qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$ //$NON-NLS-2$
-					IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
-							monitor);
-					QtBuildConfiguration qtConfig = new QtBuildConfiguration(config, configName, toolChain, qtInstall,
-							launchMode);
-					configManager.addBuildConfiguration(config, qtConfig);
-					return qtConfig;
-				}
 			}
 		}
 

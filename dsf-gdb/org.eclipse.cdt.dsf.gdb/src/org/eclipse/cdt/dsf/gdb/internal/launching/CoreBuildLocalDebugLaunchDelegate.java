@@ -16,13 +16,14 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.debug.core.launch.CoreBuildLocalLaunchConfigDelegate;
+import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.Messages;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.ServicesLaunchSequence;
@@ -40,7 +41,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
-public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLocalLaunchConfigDelegate {
+public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDelegate {
 
 	@Override
 	public ITargetedLaunch getLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target)
@@ -76,7 +77,8 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLocalLaunchConfi
 		gdbLaunch.setInitialEnvironment(envProps);
 
 		IToolChain toolChain = buildConfig.getToolChain();
-		gdbLaunch.setGDBPath(toolChain.getCommandPath(Paths.get("gdb")).toString()); //$NON-NLS-1$
+		Path gdbPath = toolChain.getCommandPath(Paths.get("gdb")); //$NON-NLS-1$
+		gdbLaunch.setGDBPath(gdbPath != null ? gdbPath.toString() : "gdb"); //$NON-NLS-1$
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
 		Path exeFile = Paths.get(getBinary(buildConfig).getLocationURI());
@@ -89,7 +91,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLocalLaunchConfi
 		try {
 			servicesLaunchSequence.get();
 		} catch (InterruptedException | ExecutionException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Failure launching with gdb", e));
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureLaunching, e));
 		}
 
 		gdbLaunch.initializeControl();
@@ -123,7 +125,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLocalLaunchConfi
 		try {
 			ready.get();
 		} catch (ExecutionException | InterruptedException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Failure to start debug session", e));
+			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureStart, e));
 		}
 	}
 

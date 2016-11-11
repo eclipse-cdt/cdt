@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui.corebuild;
 
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -26,6 +27,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * Launch configuration tab for adjusting Core Build settings. Contents of tab depends on the nature
+ * of the project which determines what build system is being used.
+ * 
+ * @since 9.1
+ */
 public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 
 	private Composite container;
@@ -84,7 +91,7 @@ public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public String getName() {
-		return "Build";
+		return LaunchMessages.CoreBuildTab_Build;
 	}
 
 	private IProject getProject(ILaunchConfiguration configuration) {
@@ -111,7 +118,7 @@ public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(new GridLayout());
 
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("No build options required.");
+		label.setText(LaunchMessages.CoreBuildTab_NoOptions);
 
 		activeTab = null;
 	}

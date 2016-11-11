@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.internal.qt.core.Messages;
+import org.eclipse.cdt.internal.qt.core.QtInstallManager;
 import org.eclipse.cdt.qt.core.IQtBuildConfiguration;
 import org.eclipse.cdt.qt.core.IQtInstall;
 import org.eclipse.cdt.qt.core.IQtInstallListener;
@@ -53,13 +55,18 @@ import org.osgi.service.prefs.Preferences;
 public class QtBuildConfiguration extends CBuildConfiguration
 		implements ICBuildConfiguration, IQtBuildConfiguration, IQtInstallListener {
 
+	public static final String QMAKE_COMMAND = "cdt.qt.qmake.command"; //$NON-NLS-1$
+	public static final String QMAKE_ARGS = "cdt.qt.qmake.args"; //$NON-NLS-1$
+	public static final String BUILD_COMMAND = "cdt.qt.buildCommand"; //$NON-NLS-1$
+
 	private static final String QTINSTALL_NAME = "cdt.qt.install.name"; //$NON-NLS-1$
 	private static final String QTINSTALL_SPEC = "cdt.qt.install.spec"; //$NON-NLS-1$
 	private static final String LAUNCH_MODE = "cdt.qt.launchMode"; //$NON-NLS-1$
 
 	private final String qtInstallSpec;
 	private IQtInstall qtInstall;
-	private Map<String, String> properties;
+	private Map<String, String> qtProperties;
+	private boolean doFullBuild;
 	
 	private IEnvironmentVariable pathVar = new IEnvironmentVariable() {
 		@Override
@@ -74,7 +81,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		
 		@Override
 		public String getName() {
-			return "PATH";
+			return "PATH"; //$NON-NLS-1$
 		}
 		
 		@Override
@@ -107,7 +114,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 		if (getQtInstall() == null) {
 			throw new CoreException(
-					Activator.error(String.format("Qt Install for build configuration %s not found.", name)));
+					Activator.error(String.format(Messages.QtBuildConfiguration_ConfigNotFound, name)));
 		}
 
 		String oldLaunchMode = settings.get(LAUNCH_MODE, null);
@@ -144,6 +151,17 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.equals(IQtBuildConfiguration.class)) {
+			return (T) this;
+		} else {
+			return super.getAdapter(adapter);
+		}
+	}
+
+	@Override
 	public IQtInstall getQtInstall() {
 		if (qtInstall == null && !qtInstallSpec.isEmpty()) {
 			// find one that matches the spec
@@ -171,6 +189,11 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 	@Override
 	public String[] getQmakeConfig() {
+		String qmakeArgs = getProperties().get(QMAKE_ARGS);
+		if (qmakeArgs != null) {
+			return qmakeArgs.split(" "); //$NON-NLS-1$
+		}
+
 		String launchMode = getLaunchMode();
 		if (launchMode != null) {
 			switch (launchMode) {
@@ -217,8 +240,8 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
-	public String getProperty(String key) {
-		if (properties == null) {
+	public String getQtProperty(String key) {
+		if (qtProperties == null) {
 			List<String> cmd = new ArrayList<>();
 			cmd.add(getQmakeCommand().toString());
 			cmd.add("-E"); //$NON-NLS-1$
@@ -238,13 +261,13 @@ public class QtBuildConfiguration extends CBuildConfiguration
 				setBuildEnvironment(processBuilder.environment());
 				Process proc = processBuilder.start();
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-					properties = new HashMap<>();
+					qtProperties = new HashMap<>();
 					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 						int i = line.indexOf('=');
 						if (i >= 0) {
 							String k = line.substring(0, i);
 							String v = line.substring(i + 1);
-							properties.put(k.trim(), v.trim());
+							qtProperties.put(k.trim(), v.trim());
 						}
 					}
 				}
@@ -253,12 +276,12 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			}
 		}
 
-		return properties != null ? properties.get(key) : null;
+		return qtProperties != null ? qtProperties.get(key) : null;
 	}
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		if ("PATH".equals(name)) {
+		if ("PATH".equals(name)) { //$NON-NLS-1$
 			return pathVar;
 		} else {
 			return null;
@@ -274,7 +297,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IQtInstall qtInstall = getQtInstall();
 
-		String cxx = getProperty("QMAKE_CXX"); //$NON-NLS-1$
+		String cxx = getQtProperty("QMAKE_CXX"); //$NON-NLS-1$
 		if (cxx == null) {
 			Activator.log("No QMAKE_CXX for " + qtInstall.getSpec()); //$NON-NLS-1$
 			return null;
@@ -286,7 +309,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		for (int i = 1; i < cxxSplit.length; ++i) {
 			args.add(cxxSplit[i]);
 		}
-		args.addAll(Arrays.asList(getProperty("QMAKE_CXXFLAGS").split(" "))); //$NON-NLS-1$ //$NON-NLS-2$
+		args.addAll(Arrays.asList(getQtProperty("QMAKE_CXXFLAGS").split(" "))); //$NON-NLS-1$ //$NON-NLS-2$
 		args.add("-o"); //$NON-NLS-1$
 		args.add("-"); //$NON-NLS-1$
 
@@ -300,7 +323,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			srcFile = "scannerInfo.cpp"; //$NON-NLS-1$
 		}
 
-		String[] includePaths = getProperty("INCLUDEPATH").split(" "); //$NON-NLS-1$ //$NON-NLS-2$
+		String[] includePaths = getQtProperty("INCLUDEPATH").split(" "); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < includePaths.length; ++i) {
 			Path path = Paths.get(includePaths[i]);
 			if (!path.isAbsolute()) {
@@ -330,15 +353,15 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			ConsoleOutputStream errStream = console.getErrorStream();
 			ConsoleOutputStream outStream = console.getOutputStream();
 
-			Path makeCommand = getMakeCommand();
+			String[] makeCommand = getMakeCommand();
 			if (makeCommand == null) {
-				errStream.write("'make' not found.\n");
+				errStream.write(Messages.QtBuildConfiguration_MakeNotFound);
 				return null;
 			}
 
 			Path buildDir = getBuildDirectory();
 
-			if (!buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
+			if (doFullBuild || !buildDir.resolve("Makefile").toFile().exists()) { //$NON-NLS-1$
 				// Need to run qmake
 				List<String> command = new ArrayList<>();
 				command.add(getQmakeCommand().toString());
@@ -366,16 +389,18 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 				// TODO qmake error parser
 				watchProcess(process, new IConsoleParser[0], console);
+				doFullBuild = false;
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				// run make
-				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "all") //$NON-NLS-1$
-						.directory(buildDir.toFile());
+				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
+				command.add("all"); //$NON-NLS-1$
+				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
-				outStream.write(makeCommand.toString() + '\n');
+				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				watchProcess(process, new IConsoleParser[] { epm }, console);
 			}
 
@@ -395,9 +420,9 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			ConsoleOutputStream errStream = console.getErrorStream();
 			ConsoleOutputStream outStream = console.getOutputStream();
 
-			Path makeCommand = getMakeCommand();
+			String[] makeCommand = getMakeCommand();
 			if (makeCommand == null) {
-				errStream.write("'make' not found.\n");
+				errStream.write(Messages.QtBuildConfiguration_MakeNotFound);
 				return;
 			}
 
@@ -406,11 +431,12 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				// run make
-				ProcessBuilder processBuilder = new ProcessBuilder(makeCommand.toString(), "clean") //$NON-NLS-1$
-						.directory(buildDir.toFile());
+				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
+				command.add("clean"); //$NON-NLS-1$
+				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
-				outStream.write(makeCommand.toString() + "clean\n"); //$NON-NLS-1$
+				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				watchProcess(process, new IConsoleParser[] { epm }, console);
 			}
 
@@ -420,12 +446,85 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 	}
 
-	public Path getMakeCommand() {
-		Path makeCommand = findCommand("make"); //$NON-NLS-1$
-		if (makeCommand == null) {
-			makeCommand = findCommand("mingw32-make"); //$NON-NLS-1$
+	public String[] getMakeCommand() {
+		String buildCommandStr = getProperties().get(BUILD_COMMAND);
+		if (buildCommandStr != null) {
+			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$ 
+			Path command = findCommand(buildCommand[0]);
+			if (command == null) {
+				command = findCommand("make"); //$NON-NLS-1$
+				if (command == null) {
+					command = findCommand("mingw32-make"); //$NON-NLS-1$
+				}
+			}
+
+			if (command != null) {
+				buildCommand[0] = command.toString();
+			}
+			return buildCommand;
+		} else {
+			return null;
 		}
-		return makeCommand;
+
+	}
+
+	@Override
+	public Map<String, String> getDefaultProperties() {
+		Map<String, String> defaults = super.getDefaultProperties();
+
+		String qmakeCommand = qtInstall.getQmakePath().toString();
+		defaults.put(QMAKE_COMMAND, qmakeCommand);
+
+		String qmakeArgs;
+		String launchMode = getLaunchMode();
+		if (launchMode != null) {
+			switch (launchMode) {
+			case "run": //$NON-NLS-1$
+				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=release"; //$NON-NLS-1$
+				break;
+			case "debug": //$NON-NLS-1$
+				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=debug"; //$NON-NLS-1$
+				break;
+			default:
+				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=launch_mode_" + launchMode; //$NON-NLS-1$
+			}
+		} else {
+			qmakeArgs = "CONFIG+=debug_and_release CONFIG+=launch_modeall"; //$NON-NLS-1$
+		}
+		defaults.put(QMAKE_ARGS, qmakeArgs);
+
+		String buildCommand = "make"; //$NON-NLS-1$
+		if (findCommand(buildCommand) == null) {
+			buildCommand = "mingw32-make"; //$NON-NLS-1$
+			if (findCommand(buildCommand) == null) {
+				// Neither was found, default to make
+				buildCommand = "make"; //$NON-NLS-1$
+			}
+		}
+		defaults.put(BUILD_COMMAND, buildCommand);
+
+		return defaults;
+	}
+
+	@Override
+	public boolean setProperties(Map<String, String> properties) {
+		if (super.setProperties(properties)) {
+			String qmakeCommand = properties.get(QMAKE_COMMAND);
+			if (qmakeCommand != null && !qmakeCommand.equals(qtInstall.getQmakePath().toString())) {
+				// TODO change the qtInstall
+				QtInstallManager installManager = Activator.getService(QtInstallManager.class);
+				IQtInstall newInstall = installManager.getInstall(Paths.get(qmakeCommand));
+				if (newInstall != null) {
+					qtInstall = newInstall;
+				}
+			}
+
+			// Do a full build to take in new properties
+			doFullBuild = true;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

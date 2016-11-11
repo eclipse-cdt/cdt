@@ -34,7 +34,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * CDT doesn't like that the Platform default config name is an empty string.
 	 * It needs a real name for the name of the build directory, for example.
 	 */
-	public static String DEFAULT_NAME = "default";
+	public static String DEFAULT_NAME = "default"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the resources build configuration that this CDT build
@@ -134,9 +134,11 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * 
 	 * @param properties
 	 *            build properties
+	 * @return whether the properties have changed
 	 * @since 6.2
 	 */
-	default void setProperties(Map<String, String> properties) {
+	default boolean setProperties(Map<String, String> properties) {
+		return false;
 	}
 
 	/**
@@ -146,6 +148,15 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @since 6.2
 	 */
 	default Map<String, String> getProperties() {
+		return getDefaultProperties();
+	}
+
+	/**
+	 * Returns the default values for the properties.
+	 * 
+	 * @since 6.2
+	 */
+	default Map<String, String> getDefaultProperties() {
 		return new HashMap<>();
 	}
 

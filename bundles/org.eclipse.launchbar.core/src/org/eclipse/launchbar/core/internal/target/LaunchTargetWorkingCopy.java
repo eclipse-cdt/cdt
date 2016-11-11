@@ -62,6 +62,13 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 	}
 
 	@Override
+	public Map<String, String> getAttributes() {
+		Map<String, String> attrs = original.getAttributes();
+		attrs.putAll(changes);
+		return attrs;
+	}
+
+	@Override
 	public void setAttribute(String key, String value) {
 		changes.put(key, value);
 	}

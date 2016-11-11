@@ -7,7 +7,10 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.target;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.launchbar.core.internal.Messages;
 import org.eclipse.launchbar.core.internal.target.LaunchTarget;
 
 /**
@@ -29,7 +32,7 @@ public interface ILaunchTarget extends IAdaptable {
 	public static final ILaunchTarget NULL_TARGET = new LaunchTarget("null", "---") { //$NON-NLS-1$ //$NON-NLS-2$
 		@Override
 		public ILaunchTargetWorkingCopy getWorkingCopy() {
-			throw new UnsupportedOperationException("getWorkingCopy is not supported for NULL_TARGET");
+			throw new UnsupportedOperationException(Messages.ILaunchTarget_notSupported);
 		};
 	};
 
@@ -68,6 +71,14 @@ public interface ILaunchTarget extends IAdaptable {
 	 * @return value of attribute
 	 */
 	String getAttribute(String key, String defValue);
+
+	/**
+	 * Returns a read-only map of the attributes.
+	 * 
+	 * @return the attributes for this target
+	 * @since 2.1
+	 */
+	Map<String, String> getAttributes();
 
 	/**
 	 * Create a working copy of this launch target to allow setting of attributes. It also allows

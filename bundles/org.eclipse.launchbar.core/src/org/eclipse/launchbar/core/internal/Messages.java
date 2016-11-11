@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.launchbar.core.internal.messages"; //$NON-NLS-1$
+	public static String ILaunchTarget_notSupported;
 	public static String LaunchBarManager_0;
 	public static String LaunchBarManager_1;
 	public static String LaunchBarManager_2;

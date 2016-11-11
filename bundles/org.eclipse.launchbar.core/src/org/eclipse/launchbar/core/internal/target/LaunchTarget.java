@@ -7,9 +7,14 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.internal.target;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class LaunchTarget extends PlatformObject implements ILaunchTarget {
@@ -57,6 +62,22 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 		} else {
 			return defValue;
 		}
+	}
+
+	@Override
+	public Map<String, String> getAttributes() {
+		Map<String, String> attrs = new HashMap<>();
+		try {
+			for (String key : attributes.keys()) {
+				String value = attributes.get(key, null);
+				if (value != null) {
+					attrs.put(key, value);
+				}
+			}
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+		return attrs;
 	}
 
 	@Override

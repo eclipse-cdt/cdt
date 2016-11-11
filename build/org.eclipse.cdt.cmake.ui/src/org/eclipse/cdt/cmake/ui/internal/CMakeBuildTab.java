@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration;
+import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -33,13 +34,13 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Generator");
+		label.setText(Messages.CMakeBuildTab_Generator);
 
 		Composite genComp = new Composite(comp, SWT.BORDER);
 		genComp.setLayout(new GridLayout(2, true));
 
 		unixGenButton = new Button(genComp, SWT.RADIO);
-		unixGenButton.setText("Unix Makefiles");
+		unixGenButton.setText(Messages.CMakeBuildTab_UnixMakefiles);
 		unixGenButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -48,7 +49,7 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 		});
 
 		ninjaGenButton = new Button(genComp, SWT.RADIO);
-		ninjaGenButton.setText("Ninja");
+		ninjaGenButton.setText(Messages.CMakeBuildTab_Ninja);
 		ninjaGenButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -57,21 +58,21 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 		});
 
 		label = new Label(comp, SWT.NONE);
-		label.setText("Additional CMake arguments:");
+		label.setText(Messages.CMakeBuildTab_CMakeArgs);
 
 		cmakeArgsText = new Text(comp, SWT.BORDER);
 		cmakeArgsText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		cmakeArgsText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		label = new Label(comp, SWT.NONE);
-		label.setText("Build command");
+		label.setText(Messages.CMakeBuildTab_BuildCommand);
 
 		buildCommandText = new Text(comp, SWT.BORDER);
 		buildCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		buildCommandText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		label = new Label(comp, SWT.NONE);
-		label.setText("Clean command");
+		label.setText(Messages.CMakeBuildTab_CleanCommand);
 
 		cleanCommandText = new Text(comp, SWT.BORDER);
 		cleanCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -151,17 +152,18 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 			properties.put(CMakeBuildConfiguration.CLEAN_COMMAND, cleanCommand);
 		}
 
-		String mode = getLaunchConfigurationDialog().getMode();
+		String buildAttribute = CoreBuildLaunchConfigDelegate
+				.getBuildAttributeName(getLaunchConfigurationDialog().getMode());
 		if (!properties.isEmpty()) {
-			configuration.setAttribute("COREBUILD_" + mode, properties); //$NON-NLS-1$
+			configuration.setAttribute(buildAttribute, properties);
 		} else {
-			configuration.removeAttribute("COREBUILD_" + mode); //$NON-NLS-1$
+			configuration.removeAttribute(buildAttribute);
 		}
 	}
 
 	@Override
 	public String getName() {
-		return "CMake";
+		return Messages.CMakeBuildTab_Cmake;
 	}
 
 }

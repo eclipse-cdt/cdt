@@ -12,6 +12,11 @@ import java.nio.file.Path;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Qt specific build configuration settings.
+ * 
+ * @noimplement
+ */
 public interface IQtBuildConfiguration extends ICBuildConfiguration {
 
 	Path getBuildDirectory() throws CoreException;
@@ -27,5 +32,7 @@ public interface IQtBuildConfiguration extends ICBuildConfiguration {
 	Path getProgramPath() throws CoreException;
 
 	String getLaunchMode();
+
+	IQtInstall getQtInstall();
 
 }

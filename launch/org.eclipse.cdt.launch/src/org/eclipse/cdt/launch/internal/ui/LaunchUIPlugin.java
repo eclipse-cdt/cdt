@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 {
 
@@ -226,4 +227,11 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
             }
         }
     }
+
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = fgPlugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 }

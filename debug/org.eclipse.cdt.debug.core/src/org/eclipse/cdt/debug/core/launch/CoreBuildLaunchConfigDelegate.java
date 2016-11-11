@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.utils.Platform;
+import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -33,13 +33,13 @@ import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDeleg
  * 
  * @since 8.1
  */
-public abstract class CoreBuildLocalLaunchConfigDelegate extends LaunchConfigurationTargetedDelegate {
+public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationTargetedDelegate {
 
 	protected ICBuildConfigurationManager configManager = CDebugCorePlugin
 			.getService(ICBuildConfigurationManager.class);
 	protected IToolChainManager toolChainManager = CDebugCorePlugin.getService(IToolChainManager.class);
 
-	protected IProject getProject(ILaunchConfiguration configuration) throws CoreException {
+	public static IProject getProject(ILaunchConfiguration configuration) throws CoreException {
 		// TODO - make sure this is really the correct project
 		return configuration.getMappedResources()[0].getProject();
 	}
@@ -48,8 +48,7 @@ public abstract class CoreBuildLocalLaunchConfigDelegate extends LaunchConfigura
 			IProgressMonitor monitor) throws CoreException {
 		// Pick build config based on toolchain for target
 		Map<String, String> properties = new HashMap<>();
-		properties.put(IToolChain.ATTR_OS, Platform.getOS());
-		properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
+		properties.putAll(target.getAttributes());
 		Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 		if (!tcs.isEmpty()) {
 			IToolChain toolChain = tcs.iterator().next();
@@ -69,7 +68,7 @@ public abstract class CoreBuildLocalLaunchConfigDelegate extends LaunchConfigura
 			}
 		}
 		if (exeFile == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, "No binaries"));
+			throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.PLUGIN_ID, InternalDebugCoreMessages.CoreBuildLaunchConfigDelegate_noBinaries));
 		}
 		return exeFile;
 	}
@@ -82,6 +81,10 @@ public abstract class CoreBuildLocalLaunchConfigDelegate extends LaunchConfigura
 		return new IProject[] { project };
 	}
 
+	public static String getBuildAttributeName(String mode) {
+		return "COREBUILD_" + mode; //$NON-NLS-1$
+	}
+
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
@@ -92,10 +95,9 @@ public abstract class CoreBuildLocalLaunchConfigDelegate extends LaunchConfigura
 			desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 			project.setDescription(desc, monitor);
 
-			Map<String, String> buildProps = configuration.getAttribute("COREBUILD_" + mode, new HashMap<>()); //$NON-NLS-1$
-			if (!buildProps.isEmpty()) {
-				buildConfig.setProperties(buildProps);
-			}
+			Map<String, String> buildProps = configuration.getAttribute(getBuildAttributeName(mode),
+					buildConfig.getDefaultProperties());
+			buildConfig.setProperties(buildProps);
 		}
 
 		// proceed with the build

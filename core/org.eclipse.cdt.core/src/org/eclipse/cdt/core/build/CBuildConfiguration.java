@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ParserSettings2;
@@ -127,7 +129,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 				tc = tcs.iterator().next();
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-						String.format("Toolchain missing for config: %s", config.getName())));
+						String.format(Messages.CBuildConfigurationtoolchainMissing, config.getName())));
 			}
 		}
 		toolChain = tc;
@@ -720,8 +722,13 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * @since 6.2
 	 */
 	@Override
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
+	public boolean setProperties(Map<String, String> properties) {
+		if (this.properties == null || !this.properties.equals(properties)) {
+			this.properties = properties;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -729,7 +736,18 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 */
 	@Override
 	public Map<String, String> getProperties() {
-		return properties != null ? properties : new HashMap<>();
+		if (properties == null) {
+			properties = getDefaultProperties();
+		}
+		return Collections.unmodifiableMap(properties);
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	@Override
+	public Map<String, String> getDefaultProperties() {
+		return new HashMap<>();
 	}
 
 }

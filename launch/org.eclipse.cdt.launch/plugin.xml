@@ -147,7 +147,7 @@
       <launchConfigurationTabGroup
             class="org.eclipse.cdt.launch.internal.corebuild.LocalLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.launchConfigurationTabGroup.local"
-            type="org.eclipse.cdt.debug.core.localLaunchConfigurationType">
+            type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
       </launchConfigurationTabGroup>
    </extension>
 </plugin>

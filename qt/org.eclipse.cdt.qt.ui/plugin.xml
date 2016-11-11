@@ -149,4 +149,11 @@
              id="org.eclipse.cdt.qt.core.launchConfigurationType.image">
        </launchConfigurationTypeImage>
     </extension>
+    <extension
+          point="org.eclipse.cdt.launch.coreBuildTab">
+       <provider
+             nature="org.eclipse.cdt.qt.core.qtNature"
+             tabClass="org.eclipse.cdt.internal.qt.ui.launch.QtBuildTab">
+       </provider>
+    </extension>
 </plugin>

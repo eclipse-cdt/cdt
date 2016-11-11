@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -227,6 +229,19 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties,
+			String launchMode, IProgressMonitor monitor) throws CoreException {
+		IToolChainManager tcManager = CCorePlugin.getService(IToolChainManager.class);
+		Collection<IToolChain> toolchains = tcManager.getToolChainsMatching(properties);
+		if (toolchains.isEmpty()) {
+			return null;
+		}
+
+		IToolChain toolChain = toolchains.iterator().next();
+		return getBuildConfiguration(project, toolChain, launchMode, monitor);
 	}
 
 	@Override

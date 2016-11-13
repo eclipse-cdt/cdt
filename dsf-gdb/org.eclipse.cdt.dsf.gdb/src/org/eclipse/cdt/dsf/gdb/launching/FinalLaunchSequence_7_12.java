@@ -55,6 +55,12 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_7") + 1, //$NON-NLS-1$
 					"stepInitializeFinalLaunchSequence_7_12"); //$NON-NLS-1$
 
+			orderList.add(orderList.indexOf("stepSourceGDBInitFile") + 1, //$NON-NLS-1$
+					"stepSetSetTargetAsync"); //$NON-NLS-1$
+			
+			orderList.add(orderList.indexOf("stepSetSetTargetAsync") + 1, //$NON-NLS-1$
+					"stepSetRecordFullStopAtLimitOff"); //$NON-NLS-1$
+
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
@@ -84,35 +90,13 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 
 	}
 
-	@Override
 	@Execute
-	public void stepSetNonStop(final RequestMonitor requestMonitor) {
-		boolean isNonStop = CDebugUtils.getAttribute(fAttributes,
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				LaunchUtils.getIsNonStopModeDefault());
-
+	public void stepSetSetTargetAsync(RequestMonitor requestMonitor) {
 		// Use target async when interfacing with GDB 7.12 or higher
 		// this will allow us to use the new enhanced GDB Full CLI console
 		fCommandControl.queueCommand(
 				fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), true),
 				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-					@Override
-					protected void handleSuccess() {
-						if (isNonStop) {
-							// GDBs that don't support non-stop don't allow you to set it to false.
-							// We really should set it to false when GDB supports it though.
-							// Something to fix later.
-							fCommandControl.queueCommand(
-									fCommandFactory.createMIGDBSetNonStop(fCommandControl.getContext(), true),
-									new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-
-							// Note: No need to set Pagination to off, this is already set by the
-							// GDBBackend_7.12
-						} else {
-							super.handleSuccess();
-						}
-					}
-
 					@Override
 					protected void handleError() {
 						// We should only be calling this for GDB >= 7.0,
@@ -120,5 +104,35 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 						requestMonitor.done();
 					}
 				});
+	}
+	
+	/**
+	 * Set reverse debugging record full stop-at-limit to off, so GDB does not halt waiting for user input
+	 * @param requestMonitor
+	 */
+	@Execute
+	public void stepSetRecordFullStopAtLimitOff(RequestMonitor requestMonitor) {
+		fCommandControl.queueCommand(
+				fCommandFactory.createMIGDBRecordFullStopAtLimit(fCommandControl.getContext(), false),
+				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+	}
+
+	@Override
+	@Execute
+	public void stepSetNonStop(final RequestMonitor requestMonitor) {
+		boolean isNonStop = CDebugUtils.getAttribute(fAttributes,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+				LaunchUtils.getIsNonStopModeDefault());
+
+		if (isNonStop) {
+			// GDBs that don't support non-stop don't allow you to set it to false.
+			// We really should set it to false when GDB supports it though.
+			// Something to fix later.
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIGDBSetNonStop(fCommandControl.getContext(), true),
+					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+		} else {
+			requestMonitor.done();
+		}
 	}
 }

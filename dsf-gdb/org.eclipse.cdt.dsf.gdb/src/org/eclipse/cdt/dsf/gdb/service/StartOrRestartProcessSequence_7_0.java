@@ -84,6 +84,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	// on the main() method.
 	private boolean fUserBreakpointIsOnMain;
 	
+	private MIBreakpoint fBreakPointForReverse;
 	private boolean fReverseEnabled;
 	private final Map<String, Object> fAttributes;
 	
@@ -104,11 +105,18 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	protected MIBreakpoint getUserBreakpoint() {
 		return fUserBreakpoint;
 	}
-	
+
+	/**
+	 * @since 5.2
+	 */
+	protected MIBreakpoint getBreakPointForReverse() {
+		return fBreakPointForReverse;
+	}
+
 	protected boolean getUserBreakpointIsOnMain() {
 		return fUserBreakpointIsOnMain;
 	}
-	    
+
 	/** @since 5.0 */
 	protected boolean getReverseEnabled() {
 		return fReverseEnabled;
@@ -247,8 +255,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						public void handleSuccess() {
 							if (getData() != null) {
 								MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
-								if (breakpoints.length > 0 && fUserBreakpoint != null) {
-									fUserBreakpointIsOnMain = breakpoints[0].getAddress().equals(fUserBreakpoint.getAddress());
+								if (breakpoints.length > 0) {
+									fBreakPointForReverse = breakpoints[0];
+									if (fUserBreakpoint != null) {
+										fUserBreakpointIsOnMain = breakpoints[0].getAddress().equals(fUserBreakpoint.getAddress());
+									}									
 								}
 							}
 							rm.done();

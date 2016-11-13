@@ -111,7 +111,13 @@ public class StartOrRestartProcessSequence_7_10 extends StartOrRestartProcessSeq
             }
         });
     }
-
+    
+    /**
+	 * @since 5.2
+	 */
+    protected ReverseDebugMethod getReverseMode() {
+    	return fReverseMode;
+    }
 
     /**
      * Here we set the reverse debug mode

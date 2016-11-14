@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import java.util.ArrayList;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.utils.CommandLineUtil;
 
 /**
  *      -gdb-set args ARGS
@@ -34,45 +35,15 @@ public class MIGDBSetArgs extends MIGDBSet {
 		super(dmc, null);
 		fParameters = new ArrayList<Adjustable>();
 		fParameters.add(new MIStandardParameterAdjustable("args")); //$NON-NLS-1$
-		for (int i = 0; i < arguments.length; i++) {
-			fParameters.add(new MIArgumentAdjustable(arguments[i]));
-		}
-	}
-
-	private static class MIArgumentAdjustable extends MICommandAdjustable {
-
-		public MIArgumentAdjustable(String value) {
-			super(value);
-		}
-
-		@Override
-		public String getAdjustedValue() {
-			// Replace and concatenate all occurrences of:
-			// ' with "'"
-			//   (as ' is used to surround everything else
-			//    it has to be quoted or escaped)
-			// newline character with $'\n'
-			//   (\n is treated literally within quotes or
-			//    as just 'n' otherwise, whilst supplying
-			//    the newline character literally ends the command)
-			// Anything in between and around these occurrences
-			// is surrounded by single quotes.
-			//   (to prevent bash from carrying out substitutions
-			//    or running arbitrary code with backticks or $())
-			StringBuilder builder = new StringBuilder();
-			builder.append('\'');
-			for (int j = 0; j < value.length(); j++) {
-				char c = value.charAt(j);
-				if (c == '\'') {
-					builder.append("'\"'\"'"); //$NON-NLS-1$
-				} else if (c == '\n') {
-					builder.append("'$'\\n''"); //$NON-NLS-1$
-				} else {
-					builder.append(c);
-				}
-			}
-			builder.append('\'');
-			return builder.toString();
-		}
+		/*
+		 * GDB-MI terminates the -gdb-set on the newline, so we have to encode
+		 * newlines or we get an MI error. Some platforms (e.g. Bash on
+		 * non-windows) can encode newline into something that is received as a
+		 * newline to the program, other platforms (windows) cannot encode the
+		 * newline in anyway that is recived as a newline, so it is encoded as
+		 * whitepsace.
+		 */
+		String args = CommandLineUtil.argumentsToString(arguments, true);
+		fParameters.add(new MINoChangeAdjustable(args));
 	}
 }

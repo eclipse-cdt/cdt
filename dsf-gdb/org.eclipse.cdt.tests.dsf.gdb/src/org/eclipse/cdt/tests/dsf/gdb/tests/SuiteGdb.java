@@ -59,6 +59,7 @@ import org.junit.runners.Suite;
 		PostMortemCoreTest.class,
 		CommandTimeoutTest.class,
 		ThreadStackFrameSyncTest.class,
+		CommandLineArgsTest.class,
 		/* Add your test class here */
 })
 public class SuiteGdb {

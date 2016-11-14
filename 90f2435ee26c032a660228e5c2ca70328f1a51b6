@@ -16,6 +16,23 @@
       "revId": "90f2435ee26c032a660228e5c2ca70328f1a51b6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b041b364",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-14T03:07:04Z",
+      "side": 1,
+      "message": "I hadn\u0027t noticed.  I agree it\u0027s not great, but I think it\u0027s the best we can do.",
+      "revId": "90f2435ee26c032a660228e5c2ca70328f1a51b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

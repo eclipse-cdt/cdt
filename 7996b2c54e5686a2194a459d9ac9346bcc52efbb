@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_833c73f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBFocusSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-14T14:37:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_a32fafc3",
+      "revId": "7996b2c54e5686a2194a459d9ac9346bcc52efbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_40d6d46c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_a3416f64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-14T14:37:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_40d6d46c",
+      "revId": "7996b2c54e5686a2194a459d9ac9346bcc52efbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_80070c8f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIInferior.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2016-11-14T14:36:48Z",
       "side": 1,
       "message": "For the parameter, use \"inferiorId\" instead of \"inferiorCliId\"?",
+      "revId": "7996b2c54e5686a2194a459d9ac9346bcc52efbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c3366b0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIInferior.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-14T14:37:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_80070c8f",
       "revId": "7996b2c54e5686a2194a459d9ac9346bcc52efbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

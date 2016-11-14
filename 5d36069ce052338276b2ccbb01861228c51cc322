@@ -34,6 +34,24 @@
       "revId": "5d36069ce052338276b2ccbb01861228c51cc322",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7070fbca",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-14T02:36:16Z",
+      "side": 1,
+      "message": "This original patch was done before the synchronization patch which explains the missing line.  Good catch, so that we don\u0027t forget to add it.",
+      "parentUuid": "a7c23755_60303072",
+      "revId": "5d36069ce052338276b2ccbb01861228c51cc322",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

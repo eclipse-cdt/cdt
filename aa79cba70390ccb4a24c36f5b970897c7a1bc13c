@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6341170c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "Done, I missed synchronization of this Set altogether, thanks !",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_036943ec",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 8
@@ -30,6 +47,23 @@
       "writtenOn": "2016-11-14T14:39:00Z",
       "side": 1,
       "message": "I wonder if we shouldn\u0027t finish the writing of the history before we add the new\nterminalControl to fTerminalPageControls?  Couldn\u0027t we get new output written\nto the page by OutputReadJob before WriteHistoryJob is finished?",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a3c6cf11",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "Done, this order could have cause a writing from two threads, so I have removed an exta \nsynchronized as you suggested below",
       "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_c3cbcb19",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_50177f50",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 8
@@ -64,6 +115,23 @@
       "writtenOn": "2016-11-14T14:39:00Z",
       "side": 1,
       "message": "We should check for null as soon as we fetch terminalOutputStream.\nThere is not need to do all this copying around if we aren\u0027t going\nto write anything.",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e3d0c7c4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "Done, very true, it has now been moved to the top",
       "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_23d2bfc9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "It was possible to write from two jobs as we were inserting new terminals to fTerminalPageControls\nbefore writing the history, since we now write the history before inserting new terminals.\nI have now removed the synchronized.",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_70147b4b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
         "patchSetId": 8
@@ -98,6 +183,23 @@
       "writtenOn": "2016-11-14T14:39:00Z",
       "side": 1,
       "message": "Could sb.toString() be \u0027expensive\u0027?  Maybe we shouldn\u0027t call it twice.\nLet\u0027s store sb.toString().getBytes() in a variable first?",
+      "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_23f9df41",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-14T16:37:22Z",
+      "side": 1,
+      "message": "Done, Nice !",
       "revId": "aa79cba70390ccb4a24c36f5b970897c7a1bc13c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

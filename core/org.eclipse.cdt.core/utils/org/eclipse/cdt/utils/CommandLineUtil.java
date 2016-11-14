@@ -17,12 +17,13 @@ import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Utilities to work with command line, parse arguments, etc.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 5.1
  */
 public class CommandLineUtil {
-		
+
 	public static String[] argumentsToArray(String line) {
 		boolean osWin;
 		try {
@@ -36,16 +37,18 @@ public class CommandLineUtil {
 			return argumentsToArrayUnixStyle(line);
 		}
 	}
+
 	/**
-	 * Parsing arguments in a shell style.
-	 * i.e.
-	 * <code>
+	 * Parsing arguments in a shell style. i.e.
+	 * 
+	 * <pre>
 	 * ["a b c" d] -> [[a b c],[d]]
 	 * [a   d] -> [[a],[d]]
 	 * ['"quoted"'] -> [["quoted"]]
 	 * [\\ \" \a] -> [[\],["],[a]]
 	 * ["str\\str\a"] -> [[str\str\a]]
-	 * </code>
+	 * </pre>
+	 * 
 	 * @param line
 	 * @return array of arguments, or empty array if line is null or empty
 	 */
@@ -69,97 +72,99 @@ public class CommandLineUtil {
 			char c = array[i];
 
 			switch (state) {
-				case IN_ARG:
-					// fall through
-				case INITIAL:
-					if (Character.isWhitespace(c)) {
-						if (state == INITIAL) break; // ignore extra spaces
-						// add argument
-						state = INITIAL;
-						String arg = buffer.toString();
-						buffer = new StringBuilder();
-						aList.add(arg);
-					} else {
-						switch (c) {
-							case '\\':
-								state = ESCAPED;
-								break;
-							case '\'':
-								state = IN_SINGLE_QUOTES;
-								break;
-							case '\"':
-								state = IN_DOUBLE_QUOTES;
-								break;
-							default:
-								state = IN_ARG;
-								buffer.append(c);
-								break;
-						}
-					}
-					break;
-				case IN_DOUBLE_QUOTES:
+			case IN_ARG:
+				// fall through
+			case INITIAL:
+				if (Character.isWhitespace(c)) {
+					if (state == INITIAL)
+						break; // ignore extra spaces
+					// add argument
+					state = INITIAL;
+					String arg = buffer.toString();
+					buffer = new StringBuilder();
+					aList.add(arg);
+				} else {
 					switch (c) {
-						case '\\':
-							state = IN_DOUBLE_QUOTES_ESCAPED;
-							break;
-						case '\"':
-							state = IN_ARG;
-							break;
-						default:
-							buffer.append(c);
-							break;
+					case '\\':
+						state = ESCAPED;
+						break;
+					case '\'':
+						state = IN_SINGLE_QUOTES;
+						break;
+					case '\"':
+						state = IN_DOUBLE_QUOTES;
+						break;
+					default:
+						state = IN_ARG;
+						buffer.append(c);
+						break;
 					}
+				}
+				break;
+			case IN_DOUBLE_QUOTES:
+				switch (c) {
+				case '\\':
+					state = IN_DOUBLE_QUOTES_ESCAPED;
 					break;
-				case IN_SINGLE_QUOTES:
-					switch (c) {
-						case '\'':
-							state = IN_ARG;
-							break;
-						default:
-							buffer.append(c);
-							break;
-					}
-					break;
-				case IN_DOUBLE_QUOTES_ESCAPED:
-					switch (c) {
-						case '\"':
-						case '\\':
-							buffer.append(c);
-							break;
-						case 'n':
-							buffer.append("\n"); //$NON-NLS-1$
-							break;
-						default:
-							buffer.append('\\');
-							buffer.append(c);
-							break;
-					}
-					state = IN_DOUBLE_QUOTES;
-					break;
-				case ESCAPED:
-					buffer.append(c);
+				case '\"':
 					state = IN_ARG;
 					break;
+				default:
+					buffer.append(c);
+					break;
+				}
+				break;
+			case IN_SINGLE_QUOTES:
+				switch (c) {
+				case '\'':
+					state = IN_ARG;
+					break;
+				default:
+					buffer.append(c);
+					break;
+				}
+				break;
+			case IN_DOUBLE_QUOTES_ESCAPED:
+				switch (c) {
+				case '\"':
+				case '\\':
+					buffer.append(c);
+					break;
+				case 'n':
+					buffer.append("\n"); //$NON-NLS-1$
+					break;
+				default:
+					buffer.append('\\');
+					buffer.append(c);
+					break;
+				}
+				state = IN_DOUBLE_QUOTES;
+				break;
+			case ESCAPED:
+				buffer.append(c);
+				state = IN_ARG;
+				break;
 			}
 		}
 
-		if (state != INITIAL) { // this allow to process empty string as an argument
+		if (state != INITIAL) { // this allow to process empty string as an
+								// argument
 			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);
 	}
-	
-	
+
 	/**
-	 * Parsing arguments in a cmd style.
-	 * i.e.
-	 * <code>
+	 * Parsing arguments in a cmd style. i.e.
+	 * 
+	 * <pre>
 	 * ["a b c" d] -> [[a b c],[d]]
 	 * [a   d] -> [[a],[d]]
 	 * ['"quoted"'] -> [['quoted']]
 	 * [\\ \" \a] -> [[\\],["],[\a]]
 	 * ["str\\str\a"] -> [[str\\str\a]]
-	 * </code>
+	 * </pre>
+	 * 
 	 * @param line
 	 * @return array of arguments, or empty array if line is null or empty
 	 */
@@ -182,73 +187,75 @@ public class CommandLineUtil {
 			char c = array[i];
 
 			switch (state) {
-				case IN_ARG:
-					// fall through
-				case INITIAL:
-					if (Character.isWhitespace(c)) {
-						if (state == INITIAL) break; // ignore extra spaces
-						// add argument
-						state = INITIAL;
-						String arg = buffer.toString();
-						buffer = new StringBuilder();
-						aList.add(arg);
-					} else {
-						switch (c) {
-							case '\\':
-								state = ESCAPED;
-								break;
-							case '\"':
-								state = IN_DOUBLE_QUOTES;
-								break;
-							default:
-								state = IN_ARG;
-								buffer.append(c);
-								break;
-						}
-					}
-					break;
-				case IN_DOUBLE_QUOTES:
+			case IN_ARG:
+				// fall through
+			case INITIAL:
+				if (Character.isWhitespace(c)) {
+					if (state == INITIAL)
+						break; // ignore extra spaces
+					// add argument
+					state = INITIAL;
+					String arg = buffer.toString();
+					buffer = new StringBuilder();
+					aList.add(arg);
+				} else {
 					switch (c) {
-						case '\\':
-							state = IN_DOUBLE_QUOTES_ESCAPED;
-							break;
-						case '\"':
-							state = IN_ARG;
-							break;
-						default:
-							buffer.append(c);
-							break;
-					}
-					break;
-				case IN_DOUBLE_QUOTES_ESCAPED:
-					switch (c) {
-						case '\"':
-							buffer.append(c);
-							break;
-						default:
-							buffer.append('\\');
-							buffer.append(c);
-							break;
-					}
-					state = IN_DOUBLE_QUOTES;
-					break;
-				case ESCAPED:
-					state = IN_ARG;
-					switch (c) {
-					case ' ':
+					case '\\':
+						state = ESCAPED;
+						break;
 					case '\"':
-						buffer.append(c);
+						state = IN_DOUBLE_QUOTES;
 						break;
 					default:
-						buffer.append('\\');
+						state = IN_ARG;
 						buffer.append(c);
 						break;
 					}
+				}
+				break;
+			case IN_DOUBLE_QUOTES:
+				switch (c) {
+				case '\\':
+					state = IN_DOUBLE_QUOTES_ESCAPED;
 					break;
+				case '\"':
+					state = IN_ARG;
+					break;
+				default:
+					buffer.append(c);
+					break;
+				}
+				break;
+			case IN_DOUBLE_QUOTES_ESCAPED:
+				switch (c) {
+				case '\"':
+					buffer.append(c);
+					break;
+				default:
+					buffer.append('\\');
+					buffer.append(c);
+					break;
+				}
+				state = IN_DOUBLE_QUOTES;
+				break;
+			case ESCAPED:
+				state = IN_ARG;
+				switch (c) {
+				case ' ':
+				case '\"':
+					buffer.append(c);
+					break;
+				default:
+					buffer.append('\\');
+					buffer.append(c);
+					break;
+				}
+				break;
 			}
 		}
 
-		if (state != INITIAL) { // this allow to process empty string as an argument
+		if (state != INITIAL) { // this allow to process empty string as an
+								// argument
 			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);

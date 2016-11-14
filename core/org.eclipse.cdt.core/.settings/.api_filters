@@ -4,6 +4,12 @@
         <filter comment="We allow to add default methods to interfaces" id="404000815">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.build.ICBuildConfiguration"/>
+                <message_argument value="getDefaultProperties()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="We allow to add default methods to interfaces" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.build.ICBuildConfiguration"/>
                 <message_argument value="getProperties()"/>
             </message_arguments>
         </filter>

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Implementation of type template arguments, used by AST and index.
  */
-public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
+public final class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	private final IType fType;
 	private final IType fOriginalType;
 

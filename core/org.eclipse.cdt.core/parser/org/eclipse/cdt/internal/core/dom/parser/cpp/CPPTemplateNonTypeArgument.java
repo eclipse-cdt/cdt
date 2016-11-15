@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Implementation of non-type template argument, used by AST and index.
  */
-public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
+public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	private final ICPPEvaluation fEvaluation;
 
 	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation, IASTNode point) {

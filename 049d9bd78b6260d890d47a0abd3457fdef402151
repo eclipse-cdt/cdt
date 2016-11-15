@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_17f97941",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBFocusSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T19:21:13Z",
+      "side": 1,
+      "message": "I think it should be the client that decides what to do with an error.\nSilencing it in the service prevents clients from having the control\nto do what they want.  I suggest putting the overridden handleFailure\nin GdbDebugContextSyncManager.",
+      "revId": "049d9bd78b6260d890d47a0abd3457fdef402151",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

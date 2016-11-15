@@ -223,6 +223,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_7c03744c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-15T13:54:37Z",
+      "side": 1,
+      "message": "Good question, I will look into it as a separate change as you suggested, \nThanks!",
+      "parentUuid": "a7c23755_e38367df",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_03986349",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_7_12.java",
         "patchSetId": 8
@@ -240,6 +258,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_3ce65c23",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-15T13:54:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_03986349",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_e3f1a78b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 8
@@ -251,6 +287,24 @@
       "writtenOn": "2016-11-15T04:34:07Z",
       "side": 1,
       "message": "When discussed a while back, the CDT project decided not to use *\nfor imports.  This change was done automatically for you, so to\nprevent that, you should change the preference found at\t\n  Preferrences-\u003eJava-\u003eCode Style-\u003eOrganize Imports-\u003eNumber of imports needed for .*\nand set it to a high number.",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e18eff81",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-15T13:54:37Z",
+      "side": 1,
+      "message": "I have updated my preferences, \nThanks !",
+      "parentUuid": "a7c23755_e3f1a78b",
       "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

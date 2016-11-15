@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_23ae3f6d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "I wouldn\u0027t put \u0027Off\u0027 in the name, as it limits the situation if later on\nwe want to set it back to on, say in a future GDB version.",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_838473ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "I have learned (the hard-way) that it is better to accept errors for non-essential setup\ncommands, it is more future-proof.  For example, if GDB were to change the name\nof the command (without realizing they could break front-ends).",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_436dfba5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "We should set pagination off before doing \u0027show version\u0027 as \u0027show version\u0027\ncan trigger pagination and lock the console.\nNote that I\u0027ve been able to trigger such a lock from the command-line with GDB\nbut not with our current implementation in Eclipse.  But still, I think it\nwould be safer to set pagination first.",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a36a4f62",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_0.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "Might as well use the clearer fBreakPointForReverse name instead of the obscure breakpoints[0]",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_23763f4a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "Remove line above",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_03ab030e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "I think we should accept an error here, in case extenders didn\u0027t implement the\nnew method.  I think it is better to fail to set reverse than to fail the entire session",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e38367df",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "Do we need a corresponding GDBJtagControl_7_7?  Can be done in a future patch",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_03986349",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "GDBControl_HEAD should inherit from this new version",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e3f1a78b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "When discussed a while back, the CDT project decided not to use *\nfor imports.  This change was done automatically for you, so to\nprevent that, you should change the preference found at\t\n  Preferrences-\u003eJava-\u003eCode Style-\u003eOrganize Imports-\u003eNumber of imports needed for .*\nand set it to a high number.",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_03e6a3d4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "All the methods in this class are ordered alphabetically.\nWithin an IDE it is not that useful, but since we have it\nmight as well keep it.",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_43e09bb5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBRecordFullStopAtLimit.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:34:07Z",
+      "side": 1,
+      "message": "Should be named MIGDBSetRecordFullStopAtLimit",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

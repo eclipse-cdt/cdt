@@ -30,6 +30,8 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -185,9 +187,16 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 			return;
 		}
 		
-		// Create a mi-thread-select and send the command
-		ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(fGdbcontrol.getContext(), newThread.getThreadId());
-		fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm));
+		// in non-stop mode, we can always ask GDB to change thread focus
+		// in all-stop mode, we can only ask GDB to switch thread when interrupted
+		if (!isSessionInAllStopMode() || isThreadSuspended(newThread) ) {
+			// Create a mi-thread-select and send the command
+			ICommand<MIInfo> command = fCommandFactory.createMIThreadSelect(fGdbcontrol.getContext(), newThread.getThreadId());
+			fGdbcontrol.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo> (rm));
+		}
+		else {
+			rm.done();
+		}
 	}
 
 	protected void setFrameFocus(IFrameDMContext newFrame, RequestMonitor rm) {
@@ -214,6 +223,16 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 		if (runControl != null) {
 			return runControl.isSuspended(ctx);
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private boolean isSessionInAllStopMode() {
+		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+		if (runControl != null) {
+			return runControl.getRunMode() == MIRunMode.ALL_STOP;
 		}
 		else {
 			return false;

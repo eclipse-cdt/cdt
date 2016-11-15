@@ -16,6 +16,24 @@
       "revId": "abe590527c950b4b12c9a0981fbb30d5d658ccf6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5c8f9802",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2016-11-15T15:14:06Z",
+      "side": 1,
+      "message": "Patch set 10, implements Marc K, proposal which shall stop the read job while the history buffer is been written.",
+      "parentUuid": "a7c23755_21f477c0",
+      "revId": "abe590527c950b4b12c9a0981fbb30d5d658ccf6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

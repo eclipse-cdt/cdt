@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_46a269f7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/CommandLineUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-15T01:56:18Z",
+      "side": 1,
+      "message": "need xref filling in",
+      "revId": "88a64b3b75fd1b42c4c2d645acd200c04a427433",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

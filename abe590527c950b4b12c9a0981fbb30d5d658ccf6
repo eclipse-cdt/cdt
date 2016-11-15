@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_21f477c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbTerminalConnector.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T03:32:23Z",
+      "side": 1,
+      "message": "Will this new order really help?\nThe WriteHistoryJob is not finished when the schedule() call returns, it has just\nbeen asked to run at some point.  In all likelyhood, before WriteHistoryJob will\nfinish, we will add the new terminalControl to fTerminalPageControls.\nThen the OutputReadJob could start writing to it before the WriteHistoryJob\nis finished.\nI think we need to make sure WriteHistoryJob is finished before OutputReadJob\ncan write to the same terminalControl.\nBut even if we do that, what will happen if OutputReadJob adds something to\nthe history buffer, while WriteHistoryJob is running?  I think that output\nwill not be written to the console in such a case.\nThe simplest thing would be to prevent OutputReadJob from running until\nWriteHistoryJob is finished.  I\u0027m worried that WriteHistoryJob could be long\nthough, and if GDB is sending a lot of output, it will block if OutputReadJob\nis not reading.\nWe need to think about this a bit.",
+      "revId": "abe590527c950b4b12c9a0981fbb30d5d658ccf6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

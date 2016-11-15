@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_97d029f6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1043,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-11-15T18:22:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_7a07ff8f",
+      "revId": "c19f7a08faf3e2f6a4a4947c7cb7cdb39686ce92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_1af0cb02",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
         "patchSetId": 2
@@ -90,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_77cb8d4d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1114,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-11-15T18:22:45Z",
+      "side": 1,
+      "message": "The only other change is ATTR_DEBUGGER_PATH because we call determineDebuggerPath() before modifyBreakpoint() is called. It is an internal change and doesn\u0027t affect the \"real\" attributes.",
+      "parentUuid": "a7c23755_26664d1c",
+      "revId": "c19f7a08faf3e2f6a4a4947c7cb7cdb39686ce92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_9afcdbe6",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
         "patchSetId": 2
@@ -101,6 +137,24 @@
       "writtenOn": "2016-11-11T04:30:04Z",
       "side": 1,
       "message": "Same comment about getStatus() being from the successful ImmediateRM above.",
+      "revId": "c19f7a08faf3e2f6a4a4947c7cb7cdb39686ce92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b7d525e6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1120,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2016-11-15T18:22:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_9afcdbe6",
       "revId": "c19f7a08faf3e2f6a4a4947c7cb7cdb39686ce92",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

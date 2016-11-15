@@ -168,6 +168,12 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 					fCurrentGDBFocus = finalThreadCtx;
 					rm.done();
 				}
+				@Override
+				protected void handleFailure() {
+					// do not set error - it's normal in some cases to fail to switch thread
+					// for example while target is running, in all-stop mode
+					rm.done();
+				}
 			});
 		}
 		else {

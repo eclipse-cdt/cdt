@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_b7036519",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/service/GDBFocusSynchronizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T18:04:23Z",
+      "side": 1,
+      "message": "Actually, it is only for Remote sessions that it seems to fail.  Can we add that extra check?",
+      "revId": "93e741fa3c36e9d13b06931bd163e4d47665ecc7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

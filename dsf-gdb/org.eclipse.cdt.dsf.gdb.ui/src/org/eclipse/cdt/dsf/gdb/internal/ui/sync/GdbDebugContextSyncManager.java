@@ -71,7 +71,13 @@ public class GdbDebugContextSyncManager implements IDebugContextListener {
 						tracker.dispose();
 						
 						if (gdbSync != null) {
-							gdbSync.setFocus(new IDMContext[] {dmc}, new ImmediateRequestMonitor() {});
+							gdbSync.setFocus(new IDMContext[] {dmc}, new ImmediateRequestMonitor() {
+								@Override
+								protected void handleFailure() {
+									// do not set error - it's normal in some cases to fail to switch thread
+									// for example in a remote session with the inferior running and in all-stop mode
+								}
+							});
 						}
 					}
 				});

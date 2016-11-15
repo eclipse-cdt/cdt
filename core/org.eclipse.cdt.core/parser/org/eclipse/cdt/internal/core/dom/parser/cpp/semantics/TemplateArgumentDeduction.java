@@ -836,7 +836,10 @@ public class TemplateArgumentDeduction {
 			return tval.equals(sval);
 		}
 
-		return fromType(p.getTypeValue(), a.getOriginalTypeValue(), false, point);
+		// Try to deduce from the original argument type, but if it fails, fall back to the simplified
+		// argument type.
+		return fromType(p.getTypeValue(), a.getOriginalTypeValue(), false, point)
+				|| fromType(p.getTypeValue(), a.getTypeValue(), false, point);
 	}
 
 	private boolean fromType(IType p, IType a, boolean allowCVQConversion, IASTNode point) throws DOMException {

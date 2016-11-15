@@ -1182,6 +1182,45 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("int", ASTTypeUtil.getType(type));
     }
 
+	//	template <typename T>
+	//	struct D;
+	//
+	//	template <typename C, typename U>
+	//	struct D<void (C::*)(U)> {
+	//	  typedef U type;
+	//	};
+	//
+	//	template <typename T>
+	//	using E = typename D<decltype(&T::operator())>::type;
+	//
+	//	template <typename T>
+	//	struct G {
+	//	  typedef E<T> type;
+	//	};
+	//
+	//	template <typename T>
+	//	using F = typename G<T>::type;
+	//
+	//	template <typename T, typename U>
+	//	struct B {};
+	//
+	//	template <typename T>
+	//	B<F<T>, int>* f(T t);
+	//
+	//	template <typename U>
+	//	void waldo(B<double, U>* e);
+
+	//	struct A {
+	//	  void operator()(double x);
+	//	};
+	//
+	//	void test() {
+	//	  waldo(f(A()));
+	//	}
+	public void testTemplateArgumentDeduction_507511() throws Exception {
+		checkBindings();
+	}
+
 	//	class A {}; class B {}; class X {};
 	//	template<typename T>
 	//	class C {

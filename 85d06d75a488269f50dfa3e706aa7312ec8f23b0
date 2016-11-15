@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_c1b103fd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_838473ed",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
         "patchSetId": 8
@@ -30,6 +47,23 @@
       "writtenOn": "2016-11-15T04:34:07Z",
       "side": 1,
       "message": "I have learned (the hard-way) that it is better to accept errors for non-essential setup\ncommands, it is more future-proof.  For example, if GDB were to change the name\nof the command (without realizing they could break front-ends).",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e1b6fff2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
       "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_019bfb7f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_a36a4f62",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_0.java",
         "patchSetId": 8
@@ -64,6 +115,23 @@
       "writtenOn": "2016-11-15T04:34:07Z",
       "side": 1,
       "message": "Might as well use the clearer fBreakPointForReverse name instead of the obscure breakpoints[0]",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_41a5f3b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_0.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
       "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_61a2efae",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_03ab030e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_12.java",
         "patchSetId": 8
@@ -98,6 +183,23 @@
       "writtenOn": "2016-11-15T04:34:07Z",
       "side": 1,
       "message": "I think we should accept an error here, in case extenders didn\u0027t implement the\nnew method.  I think it is better to fail to set reverse than to fail the entire session",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_818e2b3c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_12.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
       "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -172,6 +274,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_a1ac07a9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_43e09bb5",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBRecordFullStopAtLimit.java",
         "patchSetId": 8
@@ -183,6 +302,23 @@
       "writtenOn": "2016-11-15T04:34:07Z",
       "side": 1,
       "message": "Should be named MIGDBSetRecordFullStopAtLimit",
+      "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2198f780",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBRecordFullStopAtLimit.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-15T04:37:51Z",
+      "side": 1,
+      "message": "Done",
       "revId": "85d06d75a488269f50dfa3e706aa7312ec8f23b0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

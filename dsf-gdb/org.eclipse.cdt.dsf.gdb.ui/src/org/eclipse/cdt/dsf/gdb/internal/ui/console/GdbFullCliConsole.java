@@ -74,13 +74,18 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
 		private final Process fProcess;
 		private final Job fOutputStreamJob;
 		private final Job fErrorStreamJob;
+		private boolean fStreamReadersStarted;
 		
 		public GdbTerminalConnector(Process process) {
 			fProcess = process;
-			
 			fOutputStreamJob = new OutputReadJob(process.getInputStream());
-			fOutputStreamJob.schedule();
 			fErrorStreamJob = new OutputReadJob(process.getErrorStream());
+			// Wait until the first pageTerminalControl is added before starting the stream readers.
+			// If we don't, we will loose the early output from GDB.
+		}
+		
+		private void startStreamReaders() {
+			fOutputStreamJob.schedule();
 			fErrorStreamJob.schedule();
 		}
 
@@ -92,6 +97,12 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
 		@Override
 		public void addPageTerminalControl(ITerminalControl terminalControl) {
 			fTerminalPageControls.add(terminalControl);
+			if (!fStreamReadersStarted) {
+				// Once the very first page control is registered, 
+				// we can start reading the streams
+				fStreamReadersStarted = true;
+				startStreamReaders();
+			}
 		}
 
 		@Override

@@ -95,11 +95,11 @@
       <category name="extra"/>
    <feature url="features/org.eclipse.cdt.debug.standalone.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone.source" version="0.0.0">
    </feature>
-      <category name="extra"/>
    <feature id="org.eclipse.cdt.arduino">
-   </feature>
       <category name="extra"/>
+   </feature>
    <feature id="org.eclipse.cdt.cmake">
+      <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.llvm.dsf.lldb_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb" version="0.0.0">
       <category name="extra"/>

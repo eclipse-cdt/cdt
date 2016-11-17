@@ -79,9 +79,10 @@ function echo_header() {
 # $1: version number
 function check_supported() {
   local supported_pattern="@(${default_versions// /|})"
+  local version="$1"
 
   shopt -s extglob
-  case "$version" in 
+  case "$version" in
     ${supported_pattern})
       # Supported, do nothing.
       ;;

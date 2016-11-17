@@ -42,6 +42,13 @@ public interface IRemoteProcessBuilder {
 	public static int FORWARD_X11 = 0x02;
 
 	/**
+	 * Flag to request that the supplied environment be apended to the remote environment; otherwise
+	 * it is replaced.
+	 * @since 3.0
+	 */
+	public static int APPEND_ENVIRONMENT = 0x03;
+	
+	/**
 	 * Returns this process builder's operating system program and arguments.
 	 * 
 	 * @return a list containing the program and arguments

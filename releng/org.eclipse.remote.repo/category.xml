@@ -24,4 +24,10 @@
    <feature url="features/org.eclipse.remote.telnet.source_0.0.0.jar" id="org.eclipse.remote.telnet.source" version="0.0.0">
       <category name="Telnet Protocol Support SDK"/>
    </feature>
+   <feature url="features/org.eclipse.remote.proxy_0.0.0.jar" id="org.eclipse.remote.proxy" version="0.0.0">
+      <category name="Remote Proxy Agent"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.proxy.source_0.0.0.jar" id="org.eclipse.remote.proxy.source" version="0.0.0">
+      <category name="Remote Proxy Agent SDK"/>
+   </feature>
 </site>

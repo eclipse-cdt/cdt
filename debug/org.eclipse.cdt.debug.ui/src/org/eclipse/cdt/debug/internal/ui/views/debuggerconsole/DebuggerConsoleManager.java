@@ -146,7 +146,7 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	                IWorkbenchPage page = window.getActivePage();
 	                if (page != null) {
 						IViewPart view = page.findView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID);
-						if (view == null) {
+						if (view == null || !page.isPartVisible(view)) {
 							try {
 								page.showView(DebuggerConsoleView.DEBUGGER_CONSOLE_VIEW_ID, 
 										      null,

@@ -20,13 +20,11 @@
         <version>${tycho-extras-version}</version>
         <configuration>
            <outputDirectory>${basedir}/html/reference/api</outputDirectory>
-           <!-- TODO: bump tycho-extras version. Excludes option requires >= 0.23
            <javadocOptions>
                <excludes>
                    <exclude>org.eclipse.remote.internal.*</exclude>
                </excludes>
            </javadocOptions>
-           -->
         </configuration>
         <executions>
             <execution>

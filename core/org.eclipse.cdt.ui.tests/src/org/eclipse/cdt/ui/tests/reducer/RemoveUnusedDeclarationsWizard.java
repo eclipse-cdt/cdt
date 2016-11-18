@@ -17,7 +17,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 public class RemoveUnusedDeclarationsWizard extends RefactoringWizard {
 	public RemoveUnusedDeclarationsWizard(RemoveUnusedDeclarationsRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
-		setDefaultPageTitle(Messages.RemoveFunctionBodiesRefactoring_RemoveFunctionBodies);
+		setDefaultPageTitle(Messages.RemoveUnusedDeclarationsRefactoring_RemoveUnusedDeclarations);
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 	}
 

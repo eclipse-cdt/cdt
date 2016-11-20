@@ -20,9 +20,20 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.internal.console.IOConsolePage;
 
+/**
+ * Page used for a basic GDB console.  Each Debug session which uses the basic GDB console will
+ * use its own instance of this page.  The basic console is used for older GDB versions.
+ * 
+ * Contributions to this page's context menu can be done using id "GdbBasicCliConsole.#ContextMenu".
+ * For example, using the extension point:<br>
+ * <code>
+ *       menuContribution locationURI="popup:GdbBasicCliConsole.#ContextMenu?after=additions"
+ * </code>
+ */
 @SuppressWarnings("restriction")
 public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugContextListener {
 
@@ -67,6 +78,10 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(new Separator());
+		
+		// Other plug-ins can contribute there actions here
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
 		menuManager.add(fShowPreferencePageAction);
 	}
 	

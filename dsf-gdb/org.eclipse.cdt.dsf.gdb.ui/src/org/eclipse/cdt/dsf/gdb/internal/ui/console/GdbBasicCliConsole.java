@@ -69,7 +69,7 @@ public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole
 	};
 
 	public GdbBasicCliConsole(ILaunch launch, String label, Process process) {
-		super("", null, null, false); //$NON-NLS-1$
+		super("", "GdbBasicCliConsole", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 		fLaunch = launch;
         fLabel = label;
         fProcess = process;

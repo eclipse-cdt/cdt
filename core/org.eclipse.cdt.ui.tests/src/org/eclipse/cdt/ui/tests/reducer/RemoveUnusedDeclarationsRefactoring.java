@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -336,6 +337,11 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 
 			for (IASTName name : names) {
 				if (name != declName) {
+					if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME
+							&& name.getParent().getPropertyInParent() == IASTParameterDeclaration.DECLARATOR) {
+						continue; // Ignore parameter names.
+					}
+
 					char[] nameChars = name.getSimpleID();
 
 					int offset = nameChars.length != 0 && nameChars[0] == '~' ? 1 : 0;

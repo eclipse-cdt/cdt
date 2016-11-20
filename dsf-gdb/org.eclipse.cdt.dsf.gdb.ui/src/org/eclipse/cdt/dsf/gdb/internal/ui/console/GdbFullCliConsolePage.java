@@ -46,6 +46,7 @@ import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
 
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
@@ -177,7 +178,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	}
 
 	protected void createContextMenu() {
-		fMenuManager = new MenuManager();
+		String id = "GdbFullCliConsole#ContextMenu"; //$NON-NLS-1$
+		fMenuManager = new MenuManager(id, id);
 		fMenuManager.setRemoveAllWhenShown(true);
 		fMenuManager.addMenuListener((menuManager) -> { contextMenuAboutToShow(menuManager); });
 		Menu menu = fMenuManager.createContextMenu(fTerminalControl.getControl());
@@ -185,7 +187,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 		createActions();
 
-		getSite().registerContextMenu(null, fMenuManager, getSite().getSelectionProvider());
+		getSite().registerContextMenu(id, fMenuManager, getSite().getSelectionProvider());
 	}
 
 	protected void createActions() {
@@ -220,6 +222,9 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fAutoTerminateAction);
 		menuManager.add(new Separator());
+				
+		// Other plug-ins can contribute there actions here
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		menuManager.add(fShowPreferencePageAction);
 	}

@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.internal.console.IOConsolePage;
 
@@ -67,6 +68,10 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(new Separator());
+		
+		// Other plug-ins can contribute there actions here
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
 		menuManager.add(fShowPreferencePageAction);
 	}
 	

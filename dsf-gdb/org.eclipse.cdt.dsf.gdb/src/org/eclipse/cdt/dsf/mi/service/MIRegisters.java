@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -353,9 +354,13 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
                         MIRegisterValue[] regValue = getData().getMIRegisterValues();
     
                         // If the list is empty just return empty handed.
+                        // The only known case this happens is caused by a bug in GDB's Python
+                        // scripts. See https://sourceware.org/bugzilla/show_bug.cgi?id=19637
+                        // In this case, we know the register name anyway, we just guess that
+                        // it is not floating point. The matching code in getRegisterDataValue()
+                        // displays the error with link to a workaround
                         if (regValue.length == 0) {
-                            assert false : "Backend protocol error"; //$NON-NLS-1$
-                            //done.setStatus(new Status(IStatus.ERROR, IDsfStatusConstants.INTERNAL_ERROR ,));
+                            rm.setData(new RegisterData(frameDmc, miRegDmc.getName(), BLANK_STRING, false));
                             rm.done();
                             return;
                         }
@@ -411,9 +416,14 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
                     MIRegisterValue[] regValue = getData().getMIRegisterValues();
 
                     // If the list is empty just return empty handed.
+                    // The only known case this happens is caused by a bug in GDB's Python
+                    // scripts. See https://sourceware.org/bugzilla/show_bug.cgi?id=19637
+                    // In the display data, we show link to Eclipse Bugzilla entry which has
+                    // a comment on how to fix this manually.
                     if (regValue.length == 0) {
-                        assert false : "Backend protocol error"; //$NON-NLS-1$
-                        //done.setStatus(new Status(IStatus.ERROR, IDsfStatusConstants.INTERNAL_ERROR ,));
+                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+                                IDsfStatusConstants.REQUEST_FAILED,
+                                "Encountered a GDB Error See http://eclip.se/506382#c7 for workarounds", null)); //$NON-NLS-1$
                         rm.done();
                         return;
                     }

@@ -180,6 +180,48 @@
          </command>
       </menuContribution>
 
+      <!-- Contribute Show GDB Version to the popup menu of the GdbFullCliConsole View -->
+      <menuContribution
+          locationURI="popup:GdbFullCliConsole#ContextMenu?after=additions">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <with variable="org.eclipse.core.runtime.Platform">
+                  <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>     
+      
+      <!-- Contribute Show GDB Version to the popup menu of the GdbBasicCliConsole View -->
+      <menuContribution
+          locationURI="popup:GdbBasicCliConsole.#ContextMenu?after=additions">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <with variable="org.eclipse.core.runtime.Platform">
+                  <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
    </extension>
 
    <!-- Connect the Show GDB Version command ID to its handler -->

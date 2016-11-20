@@ -46,8 +46,19 @@ import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
 
+/**
+ * Page used for a full GDB console.  Each Debug session which uses the full GDB console will
+ * use its own instance of this page.  GDB 7.12 is required to use the full GDB console.
+ * 
+ * Contributions to this page's context menu can be done using id "GdbFullCliConsole.#ContextMenu".
+ * For example, using the extension point:<br>
+ * <code>
+ *       menuContribution locationURI="popup:GdbFullCliConsole.#ContextMenu?after=additions"
+ * </code>
+ */
 public class GdbFullCliConsolePage extends Page implements IDebugContextListener {
 
 	private final ILaunch fLaunch;
@@ -177,7 +188,10 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	}
 
 	protected void createContextMenu() {
-		fMenuManager = new MenuManager();
+		// Choose the id to be similar in format to what 
+		// the GdbBasicCliConsole has as id, for consistency
+		String id = "GdbFullCliConsole.#ContextMenu"; //$NON-NLS-1$
+		fMenuManager = new MenuManager(id, id);
 		fMenuManager.setRemoveAllWhenShown(true);
 		fMenuManager.addMenuListener((menuManager) -> { contextMenuAboutToShow(menuManager); });
 		Menu menu = fMenuManager.createContextMenu(fTerminalControl.getControl());
@@ -185,7 +199,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 		createActions();
 
-		getSite().registerContextMenu(null, fMenuManager, getSite().getSelectionProvider());
+		getSite().registerContextMenu(id, fMenuManager, getSite().getSelectionProvider());
 	}
 
 	protected void createActions() {
@@ -220,6 +234,9 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fAutoTerminateAction);
 		menuManager.add(new Separator());
+				
+		// Other plug-ins can contribute their actions here
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		menuManager.add(fShowPreferencePageAction);
 	}

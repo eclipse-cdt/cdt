@@ -79,7 +79,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(new Separator());
 		
-		// Other plug-ins can contribute there actions here
+		// Other plug-ins can contribute their actions here
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		menuManager.add(fShowPreferencePageAction);

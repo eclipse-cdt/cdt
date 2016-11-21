@@ -100,7 +100,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format("Building in: %s\n", buildDir.toString()));
+			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 
 			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
 				List<String> command = new ArrayList<>();
@@ -168,7 +168,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			return new IProject[] { project };
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format("Building %s", project.getName()), e));
+			throw new CoreException(Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_Building, project.getName()), e));
 		}
 	}
 
@@ -186,13 +186,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Path buildDir = getBuildDirectory();
 
 			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
-				outStream.write("CMakeFiles not found. Assuming clean.");
+				outStream.write(Messages.CMakeBuildConfiguration_NotFound);
 				return;
 			}
 
 			String cleanCommand = properties.get(CLEAN_COMMAND);
 			if (cleanCommand == null) {
-				if (generator.equals("Ninja")) { //$NON-NLS-1$
+				if (generator != null && generator.equals("Ninja")) { //$NON-NLS-1$
 					cleanCommand = "ninja clean"; //$NON-NLS-1$
 				} else {
 					cleanCommand = "make clean"; //$NON-NLS-1$
@@ -212,7 +212,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus(String.format("Cleaning %s", project.getName()), e));
+			throw new CoreException(Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_Cleaning, project.getName()), e));
 		}
 	}
 
@@ -220,7 +220,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
 		if (Files.exists(commandsFile)) {
-			monitor.setTaskName("Processing compile_commands.json");
+			monitor.setTaskName(Messages.CMakeBuildConfiguration_ProcCompJson);
 			try (FileReader reader = new FileReader(commandsFile.toFile())) {
 				Gson gson = new Gson();
 				CompileCommand[] commands = gson.fromJson(reader, CompileCommand[].class);
@@ -230,7 +230,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				shutdown();
 			} catch (IOException e) {
 				throw new CoreException(
-						Activator.errorStatus(String.format("Processing compile commands %s", project.getName()), e));
+						Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_ProcCompCmds, project.getName()), e));
 			}
 		}
 	}

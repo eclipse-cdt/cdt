@@ -97,21 +97,13 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector.setInput(manager);
 
 		boolean supportsTargets;
-		if (store.getBoolean(Activator.PREF_ALWAYS_TARGETSELECTOR)) {
+		try {
+			supportsTargets = supportsTargets(manager.getActiveLaunchDescriptor());
+		} catch (CoreException e) {
+			Activator.log(e);
 			supportsTargets = true;
-		} else {
-			try {
-				ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
-				if (desc != null) {
-					supportsTargets = desc.getType().supportsTargets();
-				} else {
-					supportsTargets = true;
-				}
-			} catch (CoreException e) {
-				Activator.log(e);
-				supportsTargets = true;
-			}
 		}
+
 		if (supportsTargets) {
 			createTargetSelector();
 		}
@@ -191,20 +183,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 				configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
 			}
 
-			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-			boolean supportsTargets;
-			if (store.getBoolean(Activator.PREF_ALWAYS_TARGETSELECTOR)) {
-				supportsTargets = true;
-			} else {
-				try {
-					supportsTargets = descriptor.getType().supportsTargets();
-				} catch (CoreException e) {
-					supportsTargets = true;
-					Activator.log(e);
-				}
-			}
-
-			if (supportsTargets) {
+			if (supportsTargets(descriptor)) {
 				if (targetSelector == null || targetSelector.isDisposed()) {
 					createTargetSelector();
 					syncSelectors();
@@ -218,6 +197,24 @@ public class LaunchBarControl implements ILaunchBarListener {
 				}
 			}
 		});
+	}
+
+	private boolean supportsTargets(ILaunchDescriptor descriptor) {
+		if (descriptor == null) {
+			return true;
+		}
+
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		if (store.getBoolean(Activator.PREF_ALWAYS_TARGETSELECTOR)) {
+			return true;
+		}
+
+		try {
+			return descriptor.getType().supportsTargets();
+		} catch (CoreException e) {
+			Activator.log(e);
+			return true;
+		}
 	}
 
 	@Override

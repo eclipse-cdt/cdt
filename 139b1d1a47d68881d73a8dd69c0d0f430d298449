@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_0e095839",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbFullCliConsolePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2016-11-21T15:59:40Z",
+      "side": 1,
+      "message": "typo: there -\u003e their",
+      "revId": "139b1d1a47d68881d73a8dd69c0d0f430d298449",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

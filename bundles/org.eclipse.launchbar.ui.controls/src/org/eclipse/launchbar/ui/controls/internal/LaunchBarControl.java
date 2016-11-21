@@ -96,10 +96,9 @@ public class LaunchBarControl implements ILaunchBarListener {
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
 
-		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
 		boolean supportsTargets;
-		if (!enabled) {
-			supportsTargets = false;
+		if (store.getBoolean(Activator.PREF_ALWAYS_TARGETSELECTOR)) {
+			supportsTargets = true;
 		} else {
 			try {
 				ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
@@ -192,11 +191,17 @@ public class LaunchBarControl implements ILaunchBarListener {
 				configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
 			}
 
-			boolean supportsTargets = true;
-			try {
-				supportsTargets = descriptor.getType().supportsTargets();
-			} catch (CoreException e) {
-				Activator.log(e);
+			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+			boolean supportsTargets;
+			if (store.getBoolean(Activator.PREF_ALWAYS_TARGETSELECTOR)) {
+				supportsTargets = true;
+			} else {
+				try {
+					supportsTargets = descriptor.getType().supportsTargets();
+				} catch (CoreException e) {
+					supportsTargets = true;
+					Activator.log(e);
+				}
 			}
 
 			if (supportsTargets) {

@@ -33,8 +33,10 @@ public class LaunchBarPreferencePage extends FieldEditorPreferencePage implement
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, Messages.LaunchBarPreferencePage_1, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_TARGETSELECTOR, Messages.LaunchBarPreferencePage_EnableTargetSelector, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_BUILDBUTTON, Messages.LaunchBarPreferencePage_EnableBuildButton, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_BUILDBUTTON,
+				Messages.LaunchBarPreferencePage_EnableBuildButton, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ALWAYS_TARGETSELECTOR,
+				Messages.LaunchBarPreferencePage_AlwaysTargetSelector, getFieldEditorParent()));
 	}
 
 }

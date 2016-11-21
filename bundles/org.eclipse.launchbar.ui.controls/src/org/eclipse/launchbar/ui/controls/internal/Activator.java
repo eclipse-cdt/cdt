@@ -33,7 +33,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// Preference ids
 	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar"; //$NON-NLS-1$
-	public static final String PREF_ENABLE_TARGETSELECTOR = "enableTargetSelector"; //$NON-NLS-1$
+	public static final String PREF_ALWAYS_TARGETSELECTOR = "alwaysTargetSelector"; //$NON-NLS-1$
 	public static final String PREF_ENABLE_BUILDBUTTON = "enableBuildButton"; //$NON-NLS-1$
 	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize"; //$NON-NLS-1$
 

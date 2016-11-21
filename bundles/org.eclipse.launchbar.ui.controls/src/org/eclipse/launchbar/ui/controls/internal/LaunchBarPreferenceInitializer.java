@@ -22,7 +22,7 @@ public class LaunchBarPreferenceInitializer extends AbstractPreferenceInitialize
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(Activator.PREF_ENABLE_LAUNCHBAR, true);
 		store.setDefault(Activator.PREF_ENABLE_BUILDBUTTON, true);
-		store.setDefault(Activator.PREF_ENABLE_TARGETSELECTOR, true);
+		store.setDefault(Activator.PREF_ALWAYS_TARGETSELECTOR, false);
 		store.setDefault(Activator.PREF_LAUNCH_HISTORY_SIZE, 3);
 	}
 

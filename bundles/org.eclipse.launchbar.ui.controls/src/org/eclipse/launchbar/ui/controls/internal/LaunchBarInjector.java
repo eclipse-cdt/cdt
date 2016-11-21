@@ -72,7 +72,8 @@ public class LaunchBarInjector {
 					boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
 					injectIntoAll(enabled);
 				}
-				if (event.getProperty().equals(Activator.PREF_ENABLE_TARGETSELECTOR)|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
+				if (event.getProperty().equals(Activator.PREF_ALWAYS_TARGETSELECTOR)
+						|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
 					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 					boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
 					if (enabled){

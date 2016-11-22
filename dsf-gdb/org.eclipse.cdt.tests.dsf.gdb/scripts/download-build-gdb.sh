@@ -282,6 +282,8 @@ while true; do
   esac
 done
 
+abs_base_dir=$(readlink -f "${base_dir}")
+
 # Where we download the tarballs
 download_dir="${base_dir}/download"
 
@@ -289,7 +291,7 @@ download_dir="${base_dir}/download"
 build_dir="${base_dir}/build"
 
 # Where we make install to
-install_dir="${base_dir}/install"
+install_dir="${abs_base_dir}/install"
 
 # Where we will create symlinks to all gdb versions (in the form gdb.x.y)
 # (Hint: this is so you can add this directory to your PATH and have all

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015,2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,11 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
+import java.util.List;
+
+import org.eclipse.remote.core.IRemoteCommandShellService;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,6 +20,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 @SuppressWarnings("restriction")
 public class RemoteSettingsPage extends AbstractSettingsPage {
@@ -69,7 +77,13 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(gridData);
 
-		fRemoteConnectionWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0);
+		BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+		ServiceReference<IRemoteServicesManager> ref = context.getServiceReference(IRemoteServicesManager.class);
+		IRemoteServicesManager manager = context.getService(ref);
+		@SuppressWarnings("unchecked")
+		List<IRemoteConnectionType> types = manager.getConnectionTypesSupporting(IRemoteCommandShellService.class);
+
+		fRemoteConnectionWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0, types);
 		fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

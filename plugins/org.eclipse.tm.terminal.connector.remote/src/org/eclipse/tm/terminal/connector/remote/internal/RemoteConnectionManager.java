@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015,2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,8 +169,8 @@ public class RemoteConnectionManager extends Job {
 	private void readData(InputStream in) throws IOException {
 		byte[] buf = new byte[32 * 1024];
 		int n;
-		while ((n = in.read(buf, 0, buf.length)) > 0) {
-			if (parser == null || parser.parse(buf)) {
+		while ((n = in.read(buf, 0, buf.length)) >= 0) {
+			if (n != 0 && (parser == null || parser.parse(buf))) {
 				control.getRemoteToTerminalOutputStream().write(buf, 0, n);
 			}
 		}

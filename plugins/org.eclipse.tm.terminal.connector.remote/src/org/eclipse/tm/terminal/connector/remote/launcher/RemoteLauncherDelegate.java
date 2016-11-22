@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2015,2016 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -65,6 +65,18 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
 		Assert.isNotNull(properties);
+
+		// Set the terminal tab title
+		String terminalTitle = getTerminalTitle(properties);
+		if (terminalTitle != null) {
+			properties.put(ITerminalsConnectorConstants.PROP_TITLE, terminalTitle);
+		}
+
+		// Force a new terminal tab each time it is launched, if not set otherwise from outside
+		// TODO need a command shell service routing to get this
+		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW)) {
+			properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, Boolean.TRUE);
+		}
 
 		// Get the terminal service
 		ITerminalService terminal = TerminalServiceFactory.getService();
@@ -143,18 +155,6 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 			connector.setDefaultSettings();
 			// And load the real settings
 			connector.load(store);
-		}
-
-		// Set the terminal tab title
-		String terminalTitle = getTerminalTitle(properties);
-		if (terminalTitle != null) {
-			properties.put(ITerminalsConnectorConstants.PROP_TITLE, terminalTitle);
-		}
-
-		// For Telnet terminals, force a new terminal tab each time it is launched,
-		// if not set otherwise from outside
-		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW)) {
-			properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, Boolean.TRUE);
 		}
 
 		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_ENCODING)) {

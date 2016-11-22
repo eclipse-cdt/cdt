@@ -11,6 +11,8 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -268,13 +270,15 @@ public class SyncVariableDataAccess {
              * Return value is irrelevant, any error would come through with an
              * exception.
              */
-            query.get();
+            query.get(3000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             assert false;
         } catch (ExecutionException e) {
             /*
              * View must be shutting down, no need to show error dialog.
              */
+        } catch (TimeoutException e) {
+            assert false;
         }
     }
 

@@ -41,6 +41,14 @@ public class Messages extends NLS {
 	public static String CannotEditLaunchConfiguration;
 	public static String NoLaunchModeSelected;
 	public static String NoLaunchGroupSelected;
+	public static String LaunchBarLaunchConfigDialog_Edit1;
+
+	public static String LaunchBarLaunchConfigDialog_Edit2;
+
+	public static String LaunchBarLaunchConfigDialog_EditConfiguration;
+
+	public static String LaunchBarLaunchConfigDialog_SetParameters;
+
 	public static String LaunchConfigurationNotFound;
 	public static String LaunchConfigurationNotFoundDesc;
 	public static String NoLaunchTabsDefined;

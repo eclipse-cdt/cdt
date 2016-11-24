@@ -12,10 +12,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.ILaunchBarLaunchConfigDialog;
+import org.eclipse.launchbar.ui.ILaunchBarUIManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -70,19 +72,28 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 
-		getShell().setText("Edit Configuration");
+		getShell().setText(Messages.LaunchBarLaunchConfigDialog_EditConfiguration);
 		boolean supportsTargets = true;
 		try {
 			supportsTargets = descriptor.getType().supportsTargets();
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
-		if (supportsTargets) {
-			setTitle(String.format("Edit %s for %s on %s", descriptor.getName(), mode.getLabel(), target.getId()));
-		} else {
-			setTitle(String.format("Edit %s for %s", descriptor.getName(), mode.getLabel()));
+
+		try {
+			ILaunchBarUIManager uiManager = Activator.getService(ILaunchBarUIManager.class);
+			ILabelProvider labelProvider = uiManager.getLabelProvider(descriptor);
+			String descName = labelProvider != null ? labelProvider.getText(descriptor) : descriptor.getName();
+			if (supportsTargets) {
+				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit2, descName, mode.getLabel(), target.getId()));
+			} else {
+				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit1, descName, mode.getLabel()));
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
 		}
-		setMessage("Set parameters for the configuration.");
+
+		setMessage(Messages.LaunchBarLaunchConfigDialog_SetParameters);
 
 		tabFolder = new CTabFolder(composite, SWT.NONE);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

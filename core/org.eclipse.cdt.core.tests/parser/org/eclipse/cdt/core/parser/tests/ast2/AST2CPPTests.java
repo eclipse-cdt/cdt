@@ -12051,6 +12051,17 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+
+	//	enum E { A = 2 };
+	//	constexpr int operator+(E, E) {
+	//	    return 5;
+	//	}
+	//	constexpr int waldo = A + A;
+	public void testOverloadedOperatorWithEnumArgument_506672() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 5);
+	}
+	
 	//	class S {
 	//	    static S waldo;
 	//	};

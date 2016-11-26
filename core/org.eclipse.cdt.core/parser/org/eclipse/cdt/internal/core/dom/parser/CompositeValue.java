@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -106,7 +107,7 @@ public final class CompositeValue implements IValue {
 	 * Creates a value representing an instance of the given array type initialized with
 	 * the elements of the given initializer list.
 	 */
-	public static IValue create(EvalInitList initList, IArrayType type) {
+	public static IValue create(EvalInitList initList, IArrayType type, IASTNode point) {
 		Number arraySize = type.getSize().numberValue();
 		if (arraySize == null) {
 			// Array size is dependent. TODO: Handle this?
@@ -116,8 +117,8 @@ public final class CompositeValue implements IValue {
 		ICPPEvaluation[] values = new ICPPEvaluation[arraySize.intValue()];
 		for (int i = 0; i < initList.getClauses().length; i++) {
 			ICPPEvaluation eval = initList.getClauses()[i];
-			IValue value = getValue(elementType, eval);
-			values[i] = new EvalFixed(elementType, eval.getValueCategory(null), value);
+			IValue value = getValue(elementType, eval, point);
+			values[i] = new EvalFixed(elementType, eval.getValueCategory(point), value);
 		}
 		return new CompositeValue(initList, values);
 	}
@@ -125,12 +126,12 @@ public final class CompositeValue implements IValue {
 	/**
 	 * Gets the value of an evaluation, interpreted as a value of the given type.
 	 */
-	private static IValue getValue(IType type, ICPPEvaluation eval) {
+	private static IValue getValue(IType type, ICPPEvaluation eval, IASTNode point) {
 		IValue value;
 		if (type instanceof IArrayType && eval instanceof EvalInitList) {
-			value = CompositeValue.create((EvalInitList) eval, (IArrayType) type);
+			value = CompositeValue.create((EvalInitList) eval, (IArrayType) type, point);
 		} else if (type instanceof ICompositeType && eval instanceof EvalInitList) {
-			value = CompositeValue.create((EvalInitList) eval, (ICompositeType) type);
+			value = CompositeValue.create((EvalInitList) eval, (ICompositeType) type, point);
 		} else if (eval instanceof EvalInitList) {
 			value = IntegralValue.UNKNOWN;
 		} else {
@@ -143,15 +144,20 @@ public final class CompositeValue implements IValue {
 	 * Creates a value representing an instance of the given composite type initialized with
 	 * the elements of the given initializer list.
 	 */
-	public static IValue create(EvalInitList initList, ICompositeType type) {
-		IField[] fields = type.getFields();
+	public static IValue create(EvalInitList initList, ICompositeType type, IASTNode point) {
+		IField[] fields;
+		if (type instanceof ICPPClassType) {
+			fields = ClassTypeHelper.getFields((ICPPClassType) type, point);
+		} else {
+			fields = type.getFields();
+		}
 		ICPPEvaluation[] values = new ICPPEvaluation[fields.length];
 		ICPPEvaluation[] clauses = initList.getClauses();
 		for (int i = 0; i < fields.length; i++) {
 			IField field = fields[i];
 			ICPPEvaluation eval = clauses[i];
 			IType fieldType = field.getType();
-			IValue value = getValue(fieldType, eval);
+			IValue value = getValue(fieldType, eval, point);
 			values[i] = new EvalFixed(fieldType, eval.getValueCategory(null), value);
 		}
 		return new CompositeValue(initList, values);

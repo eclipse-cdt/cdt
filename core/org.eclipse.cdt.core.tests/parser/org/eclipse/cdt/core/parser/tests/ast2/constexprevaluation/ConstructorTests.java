@@ -23,6 +23,9 @@ public class ConstructorTests extends TestBase {
 		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
 	
+	public ConstructorTests() {setStrategy(new NonIndexingTestStrategy()); }
+	public static TestSuite suite() {return suite(NonIndexing.class);}
+	
 	//	struct S {
 	//		int x;
 	//		constexpr S(int i) : x{i*i} {}

@@ -242,6 +242,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 						return dsfSession.getExecutor().submit(callable).get();
 					} catch (InterruptedException e) {
 					} catch (ExecutionException e) {
+						// TODO log or rethrow possible swallowed exceptions
 					}
 				}
 			}

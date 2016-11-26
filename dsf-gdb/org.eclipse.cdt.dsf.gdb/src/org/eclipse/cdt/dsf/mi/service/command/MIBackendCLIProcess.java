@@ -147,6 +147,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
         } catch (RejectedExecutionException e) {
         } catch (InterruptedException e) {
         } catch (ExecutionException e) {
+            // TODO rethrow Errors too 
             if (e.getCause() instanceof RuntimeException) {
                 throw (RuntimeException)e.getCause();
             }

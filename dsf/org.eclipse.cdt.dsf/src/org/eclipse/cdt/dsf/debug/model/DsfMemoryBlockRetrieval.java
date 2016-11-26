@@ -529,6 +529,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 					"Error evaluating memory address (InterruptedException).", e)); //$NON-NLS-1$
 
 		} catch (ExecutionException e) {
+            // TODO remove this comment: Proper handling of ExecutionException
 			throw new DebugException(new Status(IStatus.ERROR,
 					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error evaluating memory address (ExecutionException).", e)); //$NON-NLS-1$

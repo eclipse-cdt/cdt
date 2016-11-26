@@ -39,6 +39,7 @@ public class DisassemblyUtils {
 	}
 
 	public static void internalError(Throwable e) {
+	    // TODO: Why only logged when debug is on?
 		if (DEBUG) {
 			System.err.println("Disassembly: Internal error"); //$NON-NLS-1$
 			CDebugUIPlugin.log(e);

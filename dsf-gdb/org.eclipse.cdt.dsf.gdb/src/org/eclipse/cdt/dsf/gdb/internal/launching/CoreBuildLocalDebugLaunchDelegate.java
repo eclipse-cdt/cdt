@@ -91,6 +91,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		try {
 			servicesLaunchSequence.get();
 		} catch (InterruptedException | ExecutionException e) {
+		    // TODO remove this comment: Proper handling of ExecutionException
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureLaunching, e));
 		}
 
@@ -125,6 +126,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		try {
 			ready.get();
 		} catch (ExecutionException | InterruptedException e) {
+            // TODO remove this comment: Proper handling of ExecutionException
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, Messages.CoreBuildLocalDebugLaunchDelegate_FailureStart, e));
 		}
 	}

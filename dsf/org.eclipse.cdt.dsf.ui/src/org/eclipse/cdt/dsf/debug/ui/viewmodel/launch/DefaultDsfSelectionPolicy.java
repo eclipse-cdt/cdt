@@ -126,6 +126,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 						} catch (InterruptedException exc) {
 							Thread.currentThread().interrupt();
 						} catch (ExecutionException exc) {
+			                // TODO remove this comment: Proper handling of ExecutionException
 							DsfUIPlugin.log(exc);
 						}
 					}
@@ -237,6 +238,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
             } catch (InterruptedException exc) {
                 Thread.currentThread().interrupt();
             } catch (ExecutionException exc) {
+                // TODO remove this comment: Proper handling of ExecutionException
                 DsfUIPlugin.log(exc);
             }
         }

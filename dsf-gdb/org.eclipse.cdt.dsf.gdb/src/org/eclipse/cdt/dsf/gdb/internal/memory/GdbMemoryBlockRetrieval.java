@@ -386,6 +386,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 						"Error evaluating memory space expression (InterruptedException).", e)); //$NON-NLS-1$
 
 			} catch (ExecutionException e) {
+	            // TODO remove this comment: Proper handling of ExecutionException
 				throw new DebugException(new Status(IStatus.ERROR,
 						GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 						"Error evaluating memory space expression (ExecutionException).", e)); //$NON-NLS-1$

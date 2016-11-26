@@ -116,6 +116,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
             } catch (InterruptedException e) {
                 exception = e;
             } catch (ExecutionException e) {
+                // TODO remove this comment: Proper handling of ExecutionException
                 exception = e;
             }
             if (exception != null) {
@@ -188,6 +189,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
             } catch (InterruptedException e) {
                 exception = e;
             } catch (ExecutionException e) {
+                // TODO remove this comment: Proper handling of ExecutionException
                 exception = e;
             }
             if (exception != null) {

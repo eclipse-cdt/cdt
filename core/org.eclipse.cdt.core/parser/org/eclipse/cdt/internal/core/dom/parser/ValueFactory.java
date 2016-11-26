@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -55,7 +54,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
@@ -264,6 +266,15 @@ public class ValueFactory {
 	 * Computes the canonical representation of the value of the expression.
 	 */
 	private static IValue evaluate(IASTExpression exp) {
+		// Some C++ expression types can involve evaluating functions.
+		// For these, the value will be computed based on the evaluation.
+		if (exp instanceof ICPPASTFunctionCallExpression ||
+			exp instanceof ICPPASTSimpleTypeConstructorExpression ||
+			exp instanceof ICPPASTUnaryExpression || 
+			exp instanceof ICPPASTBinaryExpression) {
+			return null;
+		}
+		
 		if (exp == null)
 			return IntegralValue.UNKNOWN;
 
@@ -344,9 +355,6 @@ public class ValueFactory {
 			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
 				return null;
 			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2, exp);
-		}
-		if (exp instanceof IASTFunctionCallExpression || exp instanceof ICPPASTSimpleTypeConstructorExpression) {
-			return null;  // The value will be obtained from the evaluation.
 		}
 		return IntegralValue.UNKNOWN;
 	}

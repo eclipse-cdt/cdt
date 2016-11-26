@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_eabd081f",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1040,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T09:51:26Z",
+      "side": 1,
+      "message": "Can you format the (new) code with eclipse standard formatting: https://wiki.eclipse.org/CDT/policy#Code_Formatting \n\n(the part that stood out was the lack of spaces around the operators)",
+      "revId": "a280d1f0e3dd9a7c8324d91aa3a6104c9e2c40f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_8ab73440",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1049,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T09:51:26Z",
+      "side": 1,
+      "message": "If the exception is being ignored on purpose, please comment as to why, and no need to set e to null, it is going out of scope.",
+      "revId": "a280d1f0e3dd9a7c8324d91aa3a6104c9e2c40f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

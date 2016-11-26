@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_d6660348",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T13:48:22Z",
+      "side": 1,
+      "message": "Replace 2015 with 2016 rather than add the year. Full reference for header formats is here: https://www.eclipse.org/legal/copyrightandlicensenotice.php",
+      "revId": "98bfd85e5c798310cff7668398281b14f0daa18b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_16615b2d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T13:48:22Z",
+      "side": 1,
+      "message": "This code seems to be part of change 84701.",
+      "revId": "98bfd85e5c798310cff7668398281b14f0daa18b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f66bff0d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1244,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T13:48:22Z",
+      "side": 1,
+      "message": "Document or log this exception.",
+      "revId": "98bfd85e5c798310cff7668398281b14f0daa18b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_36665746",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1629,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T13:48:22Z",
+      "side": 1,
+      "message": "This seems part of Change 84694.",
+      "revId": "98bfd85e5c798310cff7668398281b14f0daa18b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_098fafb5",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/api/IMemoryBrowser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T13:48:22Z",
+      "side": 1,
+      "message": "Need @since",
+      "revId": "98bfd85e5c798310cff7668398281b14f0daa18b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

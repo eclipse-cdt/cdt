@@ -153,8 +153,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
 				return CompositeValue.create(classType);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
-				// TODO(nathanridge): Support aggregate initialization.
-				return IntegralValue.UNKNOWN;
+				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), classType);
 			} else if (ctor != null) {
 				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor,
 						fArguments, getTemplateDefinition());

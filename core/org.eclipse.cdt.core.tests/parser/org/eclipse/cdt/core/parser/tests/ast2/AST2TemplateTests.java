@@ -9796,10 +9796,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testBraceInitialization_490475b() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable waldo = helper.assertNonProblem("waldo");
-		// TODO(nathanridge):
-		//   Actually test that we get the correct value.
-		//   For this, we need to add support for aggregate initialization in EvalTypeId.
-		//	 For now, just test that attempting to evaluate doesn't throw an exception.
-		waldo.getInitialValue();
+		helper.assertVariableValue("waldo", -13);
 	}
 }

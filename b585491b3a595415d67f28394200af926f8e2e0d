@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_fc968154",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-11-26T20:20:39Z",
+      "side": 1,
+      "message": "Sadly, we can\u0027t change the signature of a public function. If needed, we can add a new function and deprecate this one. The new function can throw the exception and the deprecated one can continue to swallow the exception.",
+      "revId": "b585491b3a595415d67f28394200af926f8e2e0d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -162,6 +162,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 			} catch (InterruptedException e) {
 				exception = e;
 			} catch (ExecutionException e) {
+                // TODO remove this comment: Proper handling of ExecutionException
 				exception = e;
 			}
 

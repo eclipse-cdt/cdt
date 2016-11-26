@@ -173,6 +173,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
+            // TODO remove this comment: Proper handling of ExecutionException
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         } catch (CancellationException e1) {
         	// Launch aborted, so exit cleanly
@@ -230,6 +231,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
+            // TODO remove this comment: Proper handling of ExecutionException
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
         } catch (CancellationException e1) {
         	// Launch aborted, so exit cleanly
@@ -275,6 +277,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             } catch (InterruptedException e) { 
                 throw new DebugException( new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "InterruptedException while shutting down debugger launch " + launch, e)); //$NON-NLS-1$ 
             } catch (ExecutionException e) {
+                // TODO remove this comment: Proper handling of ExecutionException
                 throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in shutting down debugger launch " + launch, e)); //$NON-NLS-1$
             }
 		}

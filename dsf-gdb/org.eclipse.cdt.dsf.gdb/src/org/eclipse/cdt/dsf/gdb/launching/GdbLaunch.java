@@ -164,6 +164,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
 					"Error initializing launch", e)); //$NON-NLS-1$
 		} catch (ExecutionException e) {
+            // TODO remove this comment: Proper handling of ExecutionException
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
 					"Error initializing launch", e)); //$NON-NLS-1$
 		}
@@ -188,6 +189,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,
 					"Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
 		} catch (ExecutionException e) {
+			// TODO possible ClassCastException
 			throw (CoreException) e.getCause();
 		} catch (RejectedExecutionException e) {
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,
@@ -226,6 +228,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,
 					"Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
 		} catch (ExecutionException e) {
+			// TODO can cause ClassCastException
 			throw (CoreException) e.getCause();
 		} catch (RejectedExecutionException e) {
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0,

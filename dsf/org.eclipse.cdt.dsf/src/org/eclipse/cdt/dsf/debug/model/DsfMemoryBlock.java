@@ -649,6 +649,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         } catch (InterruptedException e) {
     		throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Error reading memory block (InterruptedException)", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
+            // TODO remove this comment: Proper handling of ExecutionException
     		throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Error reading memory block (ExecutionException)", e)); //$NON-NLS-1$
         }
     }
@@ -701,6 +702,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     				DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
     				"Error writing memory block (InterruptedException)", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
+            // TODO remove this comment: Proper handling of ExecutionException
     		throw new DebugException(new Status(IStatus.ERROR,
     				DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
     				"Error writing memory block (ExecutionException)", e)); //$NON-NLS-1$

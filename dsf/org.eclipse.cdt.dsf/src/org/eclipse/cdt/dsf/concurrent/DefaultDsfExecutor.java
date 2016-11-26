@@ -131,12 +131,15 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     protected static boolean DEBUG_EXECUTOR = false;
     protected static String DEBUG_EXECUTOR_NAME = ""; //$NON-NLS-1$
     protected static boolean ASSERTIONS_ENABLED = false;
+    protected static boolean LOG_UNHANDLED_EXCEPTIONS = true;
+    protected static boolean CREATE_WRAPPERS = true;
     static {
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && Boolean.parseBoolean(
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
         DEBUG_EXECUTOR_NAME = DsfPlugin.DEBUG 
             ? Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executorName") : ""; //$NON-NLS-1$ //$NON-NLS-2$
         assert (ASSERTIONS_ENABLED = true) == true;
+        CREATE_WRAPPERS = LOG_UNHANDLED_EXCEPTIONS || ASSERTIONS_ENABLED || DEBUG_EXECUTOR;
     }  
 
     /** 
@@ -158,7 +161,17 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      */
     int fSequenceCounter;
 
-    /** 
+
+    /**
+     * The names of the executor submitter methods we support, ordered by
+     * popularity so as to optimize the tracing logic. (For the curious,
+     * 'execute' is by far the most commonly called--ten times more often
+     * than 'submit', in fact).
+     */
+    private static final String[] SUBMITTER_METHOD_NAMES = {
+        "execute", "submit", "schedule", "scheduleAtFixedRate", "scheduleWithFixedDelay" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+
+   /**
      * Wrapper for runnables/callables, is used to store tracing information 
      * <br>Note: Only used when tracing. 
      */
@@ -172,20 +185,17 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         
         /** Reference to the runnable/callable that submitted this runnable/callable to the executor */
         TracingWrapper fSubmittedBy = null;
-
-		/**
-		 * The names of the executor submitter methods we support, ordered by
-		 * popularity so as to optimize the tracing logic. (For the curious,
-		 * 'execute' is by far the most commonly called--ten times more often
-		 * than 'submit', in fact).
-		 */
-        private final String[] SUBMITTER_METHOD_NAMES = {
-        	"execute", "submit", "schedule", "scheduleAtFixedRate", "scheduleWithFixedDelay" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        
 		/**
 		 */
         TracingWrapper() {
-        	
+            if (!DEBUG_EXECUTOR && !ASSERTIONS_ENABLED) {
+                /*
+                 * We are creating wrappers only for logging unhandled
+                 * exceptions, so don't set up full trace info
+                 */
+                return;
+            }
+
 			// Get the this thread's stack trace and then search for the call
 			// into the executor's submitter method. We'll want to ignore
 			// everything up to and including that call.
@@ -222,6 +232,14 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
         
         void traceExecution() {
+            if (!DEBUG_EXECUTOR && !ASSERTIONS_ENABLED) {
+                /*
+                 * We are creating wrappers only for logging unhandled
+                 * exceptions, so don't do full trace
+                 */
+                return;
+            }
+
             fSequenceNumber = fSequenceCounter++;
             fDepth = fSubmittedBy == null ? 0 : fSubmittedBy.fDepth + 1;
             fCurrentlyExecuting = this;
@@ -372,13 +390,10 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             // Finally invoke the runnable code.
             try {
                 fRunnable.run();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | Error e) {
                 // If an exception was thrown in the Runnable, trace it.  
                 // Because there is no one else to catch it, it is a 
                 // programming error.
-                logException(e);
-                throw e;
-            } catch (Error e) {
                 logException(e);
                 throw e;
             }
@@ -421,7 +436,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             if ( !(callable instanceof TracingWrapper) ) {
                 callable = new TracingWrapperCallable<V>(callable);
             }
@@ -430,7 +445,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }
      @Override
      public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+         if(CREATE_WRAPPERS) {
              if ( !(command instanceof TracingWrapper) ) {
                  command = new TracingWrapperRunnable(command);
              }
@@ -440,7 +455,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             command = new TracingWrapperRunnable(command);
         }
         return super.scheduleAtFixedRate(command, initialDelay, period, unit);
@@ -448,7 +463,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             command = new TracingWrapperRunnable(command);
         }
         return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
@@ -456,7 +471,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public void execute(Runnable command) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             command = new TracingWrapperRunnable(command);
         }
         super.execute(command);
@@ -464,7 +479,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public Future<?> submit(Runnable command) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             command = new TracingWrapperRunnable(command);
         }
         return super.submit(command);
@@ -472,7 +487,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public <T> Future<T> submit(Callable<T> callable) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             callable = new TracingWrapperCallable<T>(callable);
         }
         return super.submit(callable);
@@ -480,7 +495,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public <T> Future<T> submit(Runnable command, T result) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(CREATE_WRAPPERS) {
             command = new TracingWrapperRunnable(command);
         }
         return super.submit(command, result);

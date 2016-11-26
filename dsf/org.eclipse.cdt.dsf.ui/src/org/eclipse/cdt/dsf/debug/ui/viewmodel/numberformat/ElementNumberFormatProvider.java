@@ -219,6 +219,7 @@ public class ElementNumberFormatProvider implements IElementFormatProvider
 							@Override
 							protected void handleSuccess() {
 								rm.done(getData().getName());
+								throw new RuntimeException();
 							}
 						});
 					}

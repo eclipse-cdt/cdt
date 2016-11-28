@@ -1,0 +1,356 @@
+/*******************************************************************************
+ * Copyright (c) 2016, 2017 Kichwa Coders Ltd (https://kichwacoders.com/) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+grammar org.eclipse.cdt.linkerscript.LinkerScript hidden(WS, ML_COMMENT)
+
+import 'http://www.eclipse.org/emf/2002/Ecore' as ecore
+generate linkerScript 'http://www.eclipse.org/cdt/linkerscript/LinkerScript'
+
+/*
+ * TODO list for all outstanding items
+ * Semantic highlight of keywords used as ID: https://blogs.itemis.com/en/xtext-hint-identifiers-conflicting-with-keywords
+ * INCLUDE does not actually parse nested INPUT, but ctrl-click on INCLUDE file would be nice
+ * AS_NEEDED has issues: INPUT(file AS_NEEDED(file2)) is not parsed properly
+ * WildID still has some issues (e.g. 1file.o and *.o are valid files that need quoting for xtext, but not in general)
+ * INPUT_SECTION_FLAGS does not support inverted (!) flags
+ * VERSION blocks are completely unsupported
+ * Numerous functions are missing
+ *
+ * Multi-page editor things:
+ *
+ * - Need test for changing the file outside of the editor while
+ *   editor is open and separate test for when dirty
+ * - Check selecting multiple rows UX
+ * - Sections tree:
+ *   - up + down buttons
+ *   - creating second level items
+ * - Wire up sorts for InputSection
+ * - Memory Table, re-enable up/down by adding proper URI resolver
+ * - There is "Open Generated File" in context menu
+ *
+ * Serializer:
+ *
+ * - The serializer can omit whitespace sometimes. For example you can get:
+ *    MEMORY { RAM : ORIGIN = 0, LENGTH = 0ROM : ORIGIN 1, LENGTH = 1 }
+ *   in the output
+ */
+LinkerScript:
+	statements+=LinkerScriptStatement*;
+
+	/**
+	 * There is some legacy stuff that GNU ld supports in the language, but actually
+	 * ignores, sometimes silently, sometimes with a warning. We simply don't
+	 * support those statements. (e.g. HLL, SYSLIB, FLOAT, NOFLOAT)
+	 */
+LinkerScriptStatement:
+	MemoryCommand
+	| SectionsCommand
+	| PhdrsCommand
+	| StatementCommand;
+
+StatementCommand returns Statement:
+	{StatementAssignment} assignment=AssignmentRule (';' | ',')
+	| {StatementStartup} 'STARTUP' '(' name=WildID ')'
+	| {StatementEntry} 'ENTRY' '(' name=ValidID ')'
+	| {StatementAssert} 'ASSERT' '(' exp=LExpression ',' message=ValidID ')'
+	| {StatementTarget} 'TARGET' '(' name=ValidID ')'
+	| {StatementSearchDir} 'SEARCH_DIR' '(' name=ValidID ')'
+	| {StatementOutput} 'OUTPUT' '(' name=ValidID ')'
+	| {StatementOutputFormat} 'OUTPUT_FORMAT' '(' name=ValidID (',' big=ValidID ',' little=ValidID)? ')'
+	| {StatementOutputArch} 'OUTPUT_ARCH' '(' name=ValidID ')'
+	| {StatementForceCommonAllocation} 'FORCE_COMMON_ALLOCATION'
+	| {StatementInhibitCommonAllocation} 'INHIBIT_COMMON_ALLOCATION'
+	| {StatementInput} 'INPUT' '(' list=FileList ')'
+	| {StatementGroup} 'GROUP' '(' files+=FileListName (','? files+=FileListName)* ')'
+	| {StatementMap} 'MAP' '(' name=ValidID ')'
+	| {StatementNoCrossRefs} 'NOCROSSREFS' '(' sections+=ValidID* ')'
+	| {StatementNoCrossRefsTo} 'NOCROSSREFS_TO' '(' sections+=ValidID* ')'
+	| {StatementExtern} 'EXTERN' '(' sections+=ValidID* ')'
+	| {StatementInclude} 'INCLUDE' name=ValidID
+	| {StatementNop} ';';
+
+FileList:
+	files+=FileListName (','? files+=FileListName)*
+	| asNeeded?='AS_NEEDED' '(' list=FileList ')';
+
+FileListName hidden():
+	(library?='-l')? name=ValidID;
+
+PhdrsCommand:
+	{PhdrsCommand} 'PHDRS' '{' phdrs+=Phdr* '}';
+
+	/*
+	 * This relies on AtCall being an LExpression
+	 */
+Phdr:
+	name=ValidID opts+=LExpression* ';';
+
+SectionsCommand:
+	'SECTIONS' '{'
+	{SectionsCommand} (sectionCommands+=OutputSectionCommand)*
+	'}';
+
+OutputSectionCommand:
+	OutputSection
+	| StatementAnywhere;
+
+OutputSection:
+	name=ValidID address=LExpression? ('(' type=OutputSectionType ')')? ':'
+	('AT' '(' at=LExpression ')')?
+	align=OutputSectionAlign?
+	('SUBALIGN' '(' subAlign=LExpression ')')?
+	constraint=OutputSectionConstraint?
+	'{'
+	statements+=Statement*
+	'}'
+	('>' memory=ValidID)?
+	('AT' '>' atMemory=ValidID)?
+	(':' phdrs+=ValidID)*
+	('=' fill=LExpression)?
+	','?;
+
+OutputSectionAlign:
+	{OutputSectionAlignExpression} 'ALIGN' '(' exp=LExpression ')'
+	| {OutputSectionAlignWithInput} 'ALIGN_WITH_INPUT';
+
+OutputSectionConstraint:
+	{OutputSectionConstraintOnlyIfRO} 'ONLY_IF_RO'
+	| {OutputSectionConstraintOnlyIfRW} 'ONLY_IF_RW'
+	| {OutputSectionConstraintSpecial} 'SPECIAL';
+
+OutputSectionType:
+	{OutputSectionTypeNoLoad} 'NOLOAD'
+	| {OutputSectionTypeDSect} 'DSECT'
+	| {OutputSectionTypeCopy} 'COPY'
+	| {OutputSectionTypeInfo} 'INFO'
+	| {OutputSectionTypeOverlay} 'OVERLAY';
+
+Statement returns Statement:
+	{StatementAssignment} assignment=AssignmentRule (';' | ',')
+	| {StatementCreateObjectSymbols} 'CREATE_OBJECT_SYMBOLS'
+	| {StatementConstructors} 'CONSTRUCTORS'
+	| {StatementConstructorsSorted} 'SORT_BY_NAME' '(' 'CONSTRUCTORS' ')'
+	| {StatementData} size=StatementDataSize '(' data=LExpression ')'
+	| {StatementFill} 'FILL' '(' fill=LExpression ')'
+	| {StatementAssert} 'ASSERT' '(' exp=LExpression ',' message=ValidID ')'
+	| {StatementInclude} 'INCLUDE' filename=WildID
+	| {StatementInputSection} spec=InputSection
+	| {StatementNop} ';';
+
+StatementAnywhere returns Statement:
+	{StatementAssignment} assignment=AssignmentRule (';' | ',')
+	| {StatementEntry} 'ENTRY' '(' name=ValidID ')'
+	| {StatementAssert} 'ASSERT' '(' exp=LExpression ',' message=ValidID ')'
+	| {StatementNop} ';';
+
+StatementDataSize:
+	'BYTE' | 'SHORT' | 'LONG' | 'QUAD' | 'SQUAD';
+
+Assignment:
+	name=WildID feature=OpAssign exp=LExpression;
+
+AssignmentRule returns Assignment:
+	{Assignment} name=WildID feature=OpAssign exp=LExpression
+	| {AssignmentHidden} 'HIDDEN' '(' name=WildID feature='=' exp=LExpression ')'
+	| {AssignmentProvide} 'PROVIDE' '(' name=WildID feature='=' exp=LExpression ')'
+	| {AssignmentProvideHidden} 'PROVIDE_HIDDEN' '(' name=WildID feature='=' exp=LExpression ')';
+
+OpAssign:
+	'=' | '+=' | '-=' | '*=' | '/=' | '<' '<' '=' | '>' '>=' | '&=' | '|=';
+
+InputSection:
+	{InputSectionFile} ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? file=WildID
+	| {InputSectionWild} ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? wildFile=Wildcard '('
+	sections+=Wildcard (','? sections+=Wildcard)* ')'
+	| {InputSectionFile} keep?='KEEP' '(' ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? file=WildID
+	')'
+	| {InputSectionWild} keep?='KEEP' '(' ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')?
+	wildFile=Wildcard '(' sections+=Wildcard (','? sections+=Wildcard)* ')' ')';
+
+Wildcard:
+	{Wildcard} name=WildID
+	| {Wildcard} 'EXCLUDE_FILE' '(' excludes+=WildID+ ')' name=WildID
+	| {Wildcard} primarySort=WildcardSort '(' name=WildID ')'
+	| {Wildcard} primarySort=WildcardSort '(' secondarySort=WildcardSort '(' name=WildID ')' ')'
+	| {Wildcard} primarySort=WildcardSort '(' 'EXCLUDE_FILE' '(' excludes+=WildID+ ')' name=WildID ')';
+
+enum WildcardSort:
+	SORT_NONE | SORT | SORT_BY_NAME | SORT_BY_ALIGNMENT | SORT_BY_INIT_PRIORITY;
+
+MemoryCommand:
+	'MEMORY' '{' {MemoryCommand} (memories+=Memory)* '}';
+
+Memory:
+	name=MemoryName attr=MemoryAttribute? ':' ('ORIGIN' | 'org' | 'o') '=' origin=LExpression ',' ('LENGTH' | 'len' | 'l')
+	'=' length=LExpression;
+
+MemoryName:
+	ValidID;
+
+MemoryAttribute returns ecore::EString:
+	'(' ('!'? WildID)+ ')';
+
+	/*
+	 * GNU LD Operator precedence: https://sourceware.org/binutils/docs/ld/Operators.html#Operators
+	 * Note that grammar rules from LExpression start at lowest precedence and end at highest
+	 */
+LExpression returns LExpression:
+	LTernary;
+
+LTernary returns LExpression:
+	LOrExpression (=> ({LTernaryOperation.condition=current} '?' ifPart=LOrExpression ':') thenPart=LOrExpression)?;
+
+LOrExpression returns LExpression:
+	LAndExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpOr) rightOperand=LAndExpression)*;
+
+OpOr:
+	'||';
+
+LAndExpression returns LExpression:
+	LBitwiseOrExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpAnd) rightOperand=LBitwiseOrExpression)*;
+
+OpAnd:
+	'&&';
+
+LBitwiseOrExpression returns LExpression:
+	LBitwiseAndExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpBitwiseOr)
+	rightOperand=LBitwiseAndExpression)*;
+
+OpBitwiseOr:
+	'|';
+
+LBitwiseAndExpression returns LExpression:
+	LEqualityExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpBitwiseAnd)
+	rightOperand=LEqualityExpression)*;
+
+OpBitwiseAnd:
+	'&';
+
+LEqualityExpression returns LExpression:
+	LRelationalExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpEquality)
+	rightOperand=LRelationalExpression)*;
+
+OpEquality:
+	'==' | '!=';
+
+LRelationalExpression returns LExpression:
+	LOtherOperatorExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpCompare)
+	rightOperand=LOtherOperatorExpression)*;
+
+OpCompare:
+	'>=' | '<' '=' | '>' | '<';
+
+LOtherOperatorExpression returns LExpression:
+	LAdditiveExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpOther) rightOperand=LAdditiveExpression)*;
+
+OpOther:
+	'>' (=> '>') | '<' (=> '<');
+
+LAdditiveExpression returns LExpression:
+	LMultiplicativeExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpAdd)
+	rightOperand=LMultiplicativeExpression)*;
+
+OpAdd:
+	'+' | '-';
+
+LMultiplicativeExpression returns LExpression:
+	LUnaryOperation (=> ({LBinaryOperation.leftOperand=current} feature=OpMulti) rightOperand=LUnaryOperation)*;
+
+OpMulti:
+	'*' | '/' | '%';
+
+LUnaryOperation returns LExpression:
+	{LUnaryOperation} feature=OpUnary operand=LUnaryOperation | LPrimaryExpression;
+
+OpUnary:
+	'!' | '-' | '+' | '~';
+
+LPrimaryExpression returns LExpression:
+	LengthCall | OriginCall | AlignCall | SizeofCall | AtCall | LNumberLiteral | LParenthesizedExpression | LVariable;
+
+LVariable returns LExpression:
+	{LVariable} feature=ValidID;
+
+LParenthesizedExpression returns LExpression:
+	{LParenthesizedExpression} '(' exp=LExpression ')';
+
+LengthCall returns LExpression:
+	{LengthCall} 'LENGTH' '(' memory=ValidID ')';
+
+OriginCall returns LExpression:
+	{OriginCall} 'ORIGIN' '(' memory=ValidID ')';
+
+AlignCall returns LExpression:
+	{AlignCall} 'ALIGN' '(' expOrAlign=LExpression (',' align=LExpression)? ')';
+
+SizeofCall returns LExpression:
+	{SizeofCall} 'SIZEOF' '(' name=ValidID ')';
+
+	/*
+	 * This exists to make grammar simpler, there is no general AT function,
+	 * this rule exists as a LPrimaryExpression to make Phdr simpler.
+	 */
+AtCall returns LExpression:
+	{AtCall} 'AT' '(' exp=LExpression ')';
+
+LFeatureCall returns LExpression:
+	{LFeatureCall} feature=ValidFunc (=> explicitOperationCall?='(' (featureCallArguments+=LExpression (','
+	featureCallArguments+=LExpression)*)? ')')?;
+
+LNumberLiteral returns LExpression:
+	{LNumberLiteral} value=Number;
+
+ValidID hidden():
+	ID | 'MEMORY' | 'o' | 'org' | 'l' | 'len';
+
+WildID hidden():
+	'*'
+	| ValidID;
+
+ValidFunc:
+	'LENGTH' | 'ALIGN';
+
+	/*
+	 * GNU ld does not warn/error on overflow, illegal chars in numbers,
+	 * etc. The value converter for this rule does however.
+	 */
+Number returns ecore::ELongObject hidden():
+	DEC | HEX;
+
+	/* DEC handles binary and octal inputs as well as k and m multipliers
+ */
+terminal DEC returns ecore::ELongObject:
+	('0'..'9')+ ('d' | 'D' | 'o' | 'O' | 'b' | 'B' | 'm' | 'M' | 'k' | 'K')?;
+
+	/* HEX handles prefix and postfix hex markers as well as k and m multipliers.
+	 * NOTE: a valid HEX token is, for example, abcdx which looks more like an
+	 * identifier. If a user wants to use such value as identifier, they need to
+	 * surround in double-quotes
+	 */
+terminal HEX returns ecore::ELongObject:
+	(('$' | '0x' | '0X') ('0'..'9' | 'a'..'f' | 'A'..'F')+ ('m' | 'M' | 'k' | 'K')?)
+	| (('0'..'9' | 'a'..'f' | 'A'..'F')+ ('d' | 'D' | 'o' | 'O' | 'b' | 'B' | 'x' | 'X' | 'h' | 'H'));
+
+	/* IDs are any number of characters that can represent a file name, so fairly unrestricted.
+	 * However, some file names need to be quoted.
+	 */
+terminal ID:
+	('a'..'z' | 'A'..'Z' | '.' | '/' | '\\' | '$' | '_' | '~' | '?' | '^' | '!')
+	('a'..'z' | 'A'..'Z' | '.' | '/' | '\\' | '$' | '_' | '~' | '*' | '?' | '^' | '!' | '0'..'9' | '-' | '+' | ':' | '[' |
+	']')*
+	| '*'
+	| '"'->'"';
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;
+

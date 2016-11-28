@@ -1,0 +1,44 @@
+target "linkerscript"
+
+with source requirements
+
+// In addition to the below, while com.itemis.xtext.testing is a dependency that we
+// are still modifying, it needs to be checked out too from
+// https://github.com/jonahkichwacoders/xtext-testing/tree/linkerscript
+// these changes are being PRed back, so hopefully we'll be off the fork
+// soon enough.
+
+location "http://download.eclipse.org/releases/neon/201606221000/" neon {
+	org.eclipse.emf.sdk.feature.group lazy
+	org.eclipse.emf.ecp.feature.feature.group lazy
+	org.eclipse.emf.ecp.view.group.feature.feature.group lazy
+	org.eclipse.emf.ecp.view.model.provider.xmi lazy
+	org.eclipse.emf.ecp.view.model.provider.generator lazy
+	org.eclipse.emf.compare.feature.group lazy
+	org.eclipse.xtext.ui.feature.group lazy
+	org.eclipse.xtext.runtime.feature.group lazy
+	org.eclipse.xtext.junit4 lazy
+	org.eclipse.xtext.sdk.feature.group lazy
+	org.eclipse.xtext.xbase.feature.group lazy
+
+	org.eclipse.sdk.feature.group lazy
+	org.eclipse.pde.feature.group lazy
+	org.eclipse.jdt.feature.group lazy
+
+	org.eclipse.emf.ecore.xcore.feature.group lazy
+	org.eclipse.emf.ecore.xcore.lib.feature.group lazy
+}
+
+location "http://download.eclipse.org/eclipse/updates/milestones" milestones {
+	org.eclipse.swt.tools  lazy
+}
+
+location "http://download.eclipse.org/tools/orbit/downloads/drops/S20161205183421/repository" eclipse-orbit-oxygen-m3 {
+
+	org.apache.commons.io  lazy
+	org.junit lazy
+	org.mockito lazy
+	org.hamcrest lazy
+}
+
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Sample Multi-page Editor"
+            extensions="ld"
+            icon="icons/sample.gif"
+            contributorClass="examplemultipageeditor.editors.MultiPageEditorContributor"
+            class="examplemultipageeditor.editors.MultiPageEditor"
+            id="examplemultipageeditor.editors.MultiPageEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Sample Wizards"
+            id="example-multipage-editor">
+      </category>
+      <wizard
+            name="Multi-page Editor file"
+            icon="icons/sample.gif"
+            category="example-multipage-editor"
+            class="examplemultipageeditor.wizards.SampleNewWizard"
+            id="examplemultipageeditor.wizards.SampleNewWizard">
+      </wizard>
+   </extension>
+
+</plugin>

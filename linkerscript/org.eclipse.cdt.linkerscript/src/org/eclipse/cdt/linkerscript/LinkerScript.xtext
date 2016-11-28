@@ -1,0 +1,293 @@
+//grammar org.eclipse.cdt.linkerscript.LinkerScript with org.eclipse.xtext.xbase.Xbase
+grammar org.eclipse.cdt.linkerscript.LinkerScript hidden(WS, ML_COMMENT)
+
+import 'http://www.eclipse.org/emf/2002/Ecore' as ecore
+generate linkerScript 'http://www.eclipse.org/cdt/linkerscript/LinkerScript'
+
+/*
+ * Big TOOD list:
+ * Terenary operator: ? :
+ * Bitwise and/or: & |
+ * Semantic highlight of keywords useds as ID: https://blogs.itemis.com/en/xtext-hint-identifiers-conflicting-with-keywords
+ * INCLUDE keyword support
+ */
+
+// TODO this rule is very wrong, but sufficient for 'normal' linker scripts
+LinkerScript:
+	{LinkerScript} memories=MemoryCommand? sections=SectionsCommand?;
+
+SectionsCommand:
+	'SECTIONS' '{'
+	{SectionsCommand} (sections+=OutputSection)*
+	'}';
+
+OutputSection:
+	name=ValidID address=LExpression? ('(' type=OutputSectionType ')')? ':'
+	('AT' '(' at=LExpression ')')?
+	align=OutputSectionAlign?
+	('SUBALIGN' '(' subAlign=LExpression ')')?
+	constraint=OutputSectionConstraint?
+	'{'
+	statements+=Statement*
+	'}'
+	('>' memory=ValidID)?
+	('AT' '>' atMemory=ValidID)?
+	(':' phdrs+=ValidID)*
+	('=' fill=LExpression)?
+	','?;
+
+OutputSectionAlign:
+	{OutputSectionAlignExpression} 'ALIGN' '(' exp=LExpression ')'
+	| {OutputSectionAlignWithInput} 'ALIGN_WITH_INPUT';
+
+OutputSectionConstraint:
+	{OutputSectionConstraintOnlyIfRO} 'ONLY_IF_RO'
+	| {OutputSectionConstraintOnlyIfRW} 'ONLY_IF_RW'
+	| {OutputSectionConstraintSpecial} 'SPECIAL';
+
+OutputSectionType:
+	{OutputSectionTypeNoLoad} 'NOLOAD'
+	| {OutputSectionTypeDSect} 'DSECT'
+	| {OutputSectionTypeCopy} 'COPY'
+	| {OutputSectionTypeInfo} 'INFO'
+	| {OutputSectionTypeOverlay} 'OVERLAY';
+
+Statement:
+	{StatementAssignment} assignment=AssignmentRule (',' | ';')
+	| {StatementCreateObjectSymbols} 'CREATE_OBJECT_SYMBOLS'
+	| {StatementConstructors} 'CONSTRUCTORS'
+	| {StatementConstructorsSorted} 'SORT_BY_NAME' '(' 'CONSTRUCTORS' ')'
+	| {StatementData} size=StatementDataSize '(' data=LExpression ')'
+	| {StatementFill} 'FILL' '(' fill=LExpression ')'
+	| {StatementAssert} 'ASSERT' '(' exp=LExpression ',' message=ValidID ')'
+	| {StatementInclude} 'INCLUDE' filename=WildID
+	| {StatementInputSection} spec=InputSection
+	| {StatementNop} ';' // TODO don't create object for lone ;
+;
+
+StatementDataSize:
+	'BYTE' | 'SHORT' | 'LONG' | 'QUAD' | 'SQUAD';
+
+Assignment:
+	name=WildID feature=OpAssign exp=LExpression;
+
+AssignmentRule returns Assignment:
+	{Assignment} name=WildID feature=OpAssign exp=LExpression
+	| {AssignmentHidden} 'HIDDEN' '(' name=WildID feature='=' exp=LExpression ')'
+	| {AssignmentProvide} 'PROVIDE' '(' name=WildID feature='=' exp=LExpression ')'
+	| {AssignmentProvideHidden} 'PROVIDE_HIDDEN' '(' name=WildID feature='=' exp=LExpression ')';
+
+OpAssign:
+	'=' | '+=' | '-=' | '*=' | '/=' | '<' '<' '=' | '>' '>=' | '&=' | '|=';
+
+InputSection:
+	{InputSectionFile} ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? file=WildID
+	| {InputSectionWild} ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? wildFile=WildcardRule '('
+	sections+=WildcardRule (','? sections+=WildcardRule)* ')'
+	| {InputSectionFile} keep?='KEEP' '(' ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')? file=WildID ')'
+	| {InputSectionWild} keep?='KEEP' '(' ('INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')')?
+	wildFile=WildcardRule '('
+	sections+=WildcardRule (','? sections+=WildcardRule)* ')' ')';
+
+	// TODO: Need to handle inverted flags ('!')
+InputSectionFlags:
+	'INPUT_SECTION_FLAGS' '(' flags+=WildID ('&' flags+=WildID)* ')';
+
+	// This is a dummy rule that serves solely to define the model element
+Wildcard:
+	{Wildcard} name=ValidID excludes+=ValidID;
+
+WildcardRule returns Wildcard:
+	{WildcardSortNone} name=WildID
+	| {WildcardSortNone} 'EXCLUDE_FILE' '(' excludes+=WildID+ ')' name=WildID
+	| {WildcardSortName} SORT_BY_NAME '(' name=WildID ')'
+	| {WildcardSortAlign} 'SORT_BY_ALIGNMENT' '(' name=WildID ')'
+	| {WildcardSortNone} 'SORT_NONE' '(' name=WildID ')'
+	| {WildcardSortNameAlign} SORT_BY_NAME '(' 'SORT_BY_ALIGNMENT' '(' name=WildID ')' ')'
+	| {WildcardSortName} SORT_BY_NAME '(' SORT_BY_NAME '(' name=WildID ')' ')'
+	| {WildcardSortAlignName} 'SORT_BY_ALIGNMENT' '(' SORT_BY_NAME '(' name=WildID ')' ')'
+	| {WildcardSortAlign} 'SORT_BY_ALIGNMENT' '(' 'SORT_BY_ALIGNMENT' '(' name=WildID ')' ')'
+	| {WildcardSortName} SORT_BY_NAME '(' 'EXCLUDE_FILE' '(' excludes+=WildID+ ')' name=WildID ')'
+	| {WildcardSortInitPriority} 'SORT_BY_INIT_PRIORITY' '(' name=WildID ')';
+
+SORT_BY_NAME:
+	'SORT' | 'SORT_BY_NAME';
+
+	//
+//ExcludeNameList:
+//	{SectionNameList} names+=WildID (','? names+=WildID)*;
+MemoryCommand:
+	'MEMORY' '{' {MemoryCommand} (memories+=Memory)* '}';
+
+Memory:
+	name=MemoryName attr=MemoryAttribute? ':' ('ORIGIN' | 'org' | 'o') '=' origin=LExpression ',' ('LENGTH' | 'len' | 'l')
+	'=' length=LExpression;
+
+MemoryName:
+	ValidID;
+
+MemoryAttribute returns ecore::EString:
+	'(' ('!'? WildID)+ ')';
+
+LExpression returns LExpression:
+	LAssignment;
+
+	// TODO: get rid of this:
+LAssignment returns LExpression:
+	LOrExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpMultiAssign) rightOperand=LAssignment)?;
+
+OpSingleAssign:
+	'=';
+
+OpMultiAssign:
+	'+=' | '-=' | '*=' | '/=' | '<' '<' '=' | '>' '>=' | '&=' | '|=';
+
+LOrExpression returns LExpression:
+	LAndExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpOr) rightOperand=LAndExpression)*;
+
+OpOr:
+	'||';
+
+LAndExpression returns LExpression:
+	LBitwiseOrExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpAnd) rightOperand=LBitwiseOrExpression)*;
+
+OpAnd:
+	'&&';
+
+LBitwiseOrExpression returns LExpression:
+	LBitwiseAndExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpBitwiseOr) rightOperand=LBitwiseAndExpression)*;
+
+OpBitwiseOr:
+	'|';
+
+LBitwiseAndExpression returns LExpression:
+	LEqualityExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpBitwiseAnd) rightOperand=LEqualityExpression)*;
+
+OpBitwiseAnd:
+	'&';
+
+LEqualityExpression returns LExpression:
+	LRelationalExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpEquality)
+	rightOperand=LRelationalExpression)*;
+
+OpEquality:
+	'==' | '!=';
+
+LRelationalExpression returns LExpression:
+	LOtherOperatorExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpCompare)
+	rightOperand=LOtherOperatorExpression)*;
+
+OpCompare:
+	'>=' | '<' '=' | '>' | '<';
+
+LOtherOperatorExpression returns LExpression:
+	LAdditiveExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpOther) rightOperand=LAdditiveExpression)*;
+
+OpOther:
+	'>' (=> '>') | '<' (=> '<');
+
+LAdditiveExpression returns LExpression:
+	LMultiplicativeExpression (=> ({LBinaryOperation.leftOperand=current} feature=OpAdd)
+	rightOperand=LMultiplicativeExpression)*;
+
+OpAdd:
+	'+' | '-';
+
+LMultiplicativeExpression returns LExpression:
+	LUnaryOperation (=> ({LBinaryOperation.leftOperand=current} feature=OpMulti) rightOperand=LUnaryOperation)*;
+
+OpMulti:
+	'*' | '/' | '%';
+
+LUnaryOperation returns LExpression:
+	{LUnaryOperation} feature=OpUnary operand=LUnaryOperation | LPostfixOperation;
+
+OpUnary:
+	'!' | '-' | '+' | '~';
+
+LPostfixOperation returns LExpression:
+	LPrimaryExpression => ({LPostfixOperation.operand=current} feature=OpPostfix)?;
+
+	// TODO is this supported?
+OpPostfix:
+	'++' | '--';
+
+LPrimaryExpression returns LExpression:
+	LengthCall | AlignCall | LNumberLiteral | LParenthesizedExpression | LVariable;
+
+LVariable returns LExpression:
+	{LVariable} feature=ValidID
+;
+
+LParenthesizedExpression returns LExpression:
+	'(' LExpression ')';
+
+LengthCall returns LExpression:
+	{LengthCall} 'LENGTH' '(' memory=ValidID ')';
+
+AlignCall returns LExpression:
+	{AlignCall} 'ALIGN' '(' expOrAlign=LExpression (',' align=LExpression)? ')';
+
+LFeatureCall returns LExpression:
+	{LFeatureCall} feature=ValidFunc (=> explicitOperationCall?='(' (featureCallArguments+=LExpression (','
+	featureCallArguments+=LExpression)*)? ')')?;
+
+LNumberLiteral returns LExpression:
+	{LNumberLiteral} value=Number;
+
+	// TODO: what is full set of ValidIDs? Probably everything that is an ID but not a ValidFunc
+// TODO: Rename this to ExpressionID
+ValidID hidden():
+	ID | 'MEMORY' | 'o' | 'org' | 'l' | 'len';
+
+	// TODO: This is still horribly wrong, WildID can start with digits for example
+// TODO: Rename this to FilenameID
+WildID hidden():
+	'*'
+	| ValidID;
+
+ValidFunc:
+	'LENGTH' | 'ALIGN';
+
+	/*
+ * XXX: GNU ld does not warn/error on overflow, illegal chars in numbers, etc. The value converter for this rule does however.
+ */
+Number returns ecore::ELongObject hidden():
+	DEC | HEX;
+
+	/* DEC handles binary and octal inputs as well as k and m multipliers
+ */
+terminal DEC returns ecore::ELongObject:
+	('0'..'9')+ ('d' | 'D' | 'o' | 'O' | 'b' | 'B' | 'm' | 'M' | 'k' | 'K')?;
+
+	/* HEX handles prefix and postfix hex markers as well as k and m multipliers.
+ * NOTE: a valid HEX token is, for example, abcdx which looks more like an
+ * identifier. If a user wants to use such value as identifier, they need to
+ * surround in double-quotes
+ */
+terminal HEX returns ecore::ELongObject:
+	(('$' | '0x' | '0X') ('0'..'9' | 'a'..'f' | 'A'..'F')+ ('m' | 'M' | 'k' | 'K')?)
+	| (('0'..'9' | 'a'..'f' | 'A'..'F')+ ('d' | 'D' | 'o' | 'O' | 'b' | 'B' | 'x' | 'X' | 'h' | 'H'));
+
+	/* IDs are any number of characters that can represent a file name, so fairly unrestricted.
+ * However, some file names need to be quoted.
+ * TODO: verify: AFAICT there is no way to have a name that itself has a " in it
+ * TODO: Remove " quoted IDs
+ */
+terminal ID:
+	('a'..'z' | 'A'..'Z' | '.' | '/' | '\\' | '$' | '_' | '~' | '?' | '^' | '!')
+	('a'..'z' | 'A'..'Z' | '.' | '/' | '\\' | '$' | '_' | '~' | '*' | '?' | '^' | '!' | '0'..'9' | '-' | '+' | ':' | '[' |
+	']')*
+	| '*'
+	| '"'->'"';
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;
+
+	

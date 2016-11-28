@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package 
+			uri = "http://www.eclipse.org/cdt/linkerscript/LinkerScript"
+			class = "org.eclipse.cdt.linkerscript.linkerScript.LinkerScriptPackage"
+			genModel = "model/generated/LinkerScript.genmodel" />
+	</extension>
+</plugin>

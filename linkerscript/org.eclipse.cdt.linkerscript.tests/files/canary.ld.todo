@@ -1,0 +1,6 @@
+/* This file is expected to fail, in place to ensure illegal files are not passed through */
+BROKEN SECTIONS {
+	.all : {
+		*(*)
+	}
+}

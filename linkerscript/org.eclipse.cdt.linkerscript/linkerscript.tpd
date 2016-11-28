@@ -1,0 +1,26 @@
+target "linkerscript"
+
+with source requirements
+
+location "http://download.eclipse.org/releases/neon/" neon {
+	org.eclipse.emf.sdk.feature.group lazy
+	org.eclipse.emf.ecp.feature.feature.group lazy
+	org.eclipse.emf.ecp.view.group.feature.feature.group lazy
+	org.eclipse.emf.ecp.view.model.provider.xmi lazy
+	org.eclipse.emf.ecp.view.model.provider.generator lazy
+	org.eclipse.xtext.ui.feature.group lazy
+	org.eclipse.xtext.runtime.feature.group lazy
+	org.eclipse.xtext.junit4 lazy
+	org.eclipse.xtext.sdk.feature.group lazy
+	org.eclipse.xtext.xbase.feature.group lazy
+	
+	org.eclipse.sdk.feature.group lazy
+} 	
+
+location "http://download.eclipse.org/tools/orbit/downloads/drops/S20161021172207/repository" eclipse-orbit-oxygen-m3 {
+
+	org.apache.commons.io  lazy
+	org.junit lazy
+	org.mockito lazy
+	org.hamcrest lazy
+}

@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.cdt.linkerscript
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.eclipse.cdt.linkerscript; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common,
+ org.eclipse.xtext.common.types,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.cdt.linkerscript,
+ org.eclipse.cdt.linkerscript.linkerScript,
+ org.eclipse.cdt.linkerscript.linkerScript.impl,
+ org.eclipse.cdt.linkerscript.parser.antlr.internal,
+ org.eclipse.cdt.linkerscript.scoping,
+ org.eclipse.cdt.linkerscript.serializer,
+ org.eclipse.cdt.linkerscript.parser.antlr,
+ org.eclipse.cdt.linkerscript.validation,
+ org.eclipse.cdt.linkerscript.linkerScript.util,
+ org.eclipse.cdt.linkerscript.services,
+ org.eclipse.cdt.linkerscript.generator,
+ org.eclipse.cdt.linkerscript.jvmmodel
+Import-Package: org.apache.log4j

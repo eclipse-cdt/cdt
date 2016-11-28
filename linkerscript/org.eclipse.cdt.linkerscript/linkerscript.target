@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde?>
+<!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
+<target name="linkerscript" sequenceNumber="1480325554">
+  <locations>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecp.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecp.view.group.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecp.view.model.provider.xmi" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecp.view.model.provider.generator" version="0.0.0"/>
+      <unit id="org.eclipse.xtext.ui.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.xtext.runtime.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.xtext.junit4" version="0.0.0"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.xtext.xbase.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+      <repository id="neon" location="http://download.eclipse.org/releases/neon/"/>
+    </location>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.apache.commons.io" version="0.0.0"/>
+      <unit id="org.junit" version="0.0.0"/>
+      <unit id="org.mockito" version="0.0.0"/>
+      <unit id="org.hamcrest" version="0.0.0"/>
+      <repository id="eclipse-orbit-oxygen-m3" location="http://download.eclipse.org/tools/orbit/downloads/drops/S20161021172207/repository"/>
+    </location>
+  </locations>
+</target>

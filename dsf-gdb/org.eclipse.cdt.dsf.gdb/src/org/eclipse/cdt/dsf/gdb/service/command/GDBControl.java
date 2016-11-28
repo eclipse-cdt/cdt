@@ -67,6 +67,7 @@ import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
+import org.eclipse.cdt.dsf.mi.service.command.MIAsyncErrorProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
@@ -193,6 +194,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
     private IEventProcessor fControlEventProcessor;
+    private IEventProcessor fMIAsyncErrorProcessor;
     private Process fBackendProcess;
 
     private GdbCommandTimeoutManager fCommandTimeoutManager;
@@ -571,6 +573,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, getContext());
         fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, getContext());
         fControlEventProcessor = createControlEventProcessor();
+        fMIAsyncErrorProcessor = createMIAsyncErrorProcessor(GDBControl.this);
 
         requestMonitor.done();
 	}
@@ -580,6 +583,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		fControlEventProcessor.dispose();
     	fCLICommandProcessor.dispose();
         fMIEventProcessor.dispose();
+        fMIAsyncErrorProcessor.dispose();
         if (fBackendProcess instanceof AbstractCLIProcess) {
         	((AbstractCLIProcess)fBackendProcess).dispose();
         }
@@ -728,6 +732,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/** @since 4.3 */
 	protected IEventProcessor createControlEventProcessor() {
 		return new ControlEventProcessor();
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	protected IEventProcessor createMIAsyncErrorProcessor(AbstractMIControl connection) {
+		return new MIAsyncErrorProcessor(connection);
 	}
 
 	/** @since 5.2 */

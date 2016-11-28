@@ -52,11 +52,13 @@ public class MIErrorEvent extends MIStoppedEvent {
         return log;
     }
 
+    /**
+	 * @since 5.2
+	 */
     public static MIErrorEvent parse(
-        IContainerDMContext containerDmc, int token, MIResult[] results, MIOOBRecord[] oobs) 
-    { 
+        IExecutionDMContext execDmc, int token, MIResult[] results, MIOOBRecord[] oobs) {
         String msg = "", log = ""; //$NON-NLS-1$ //$NON-NLS-2$
-            
+        
         if (results != null) {
             for (int i = 0; i < results.length; i++) {
                 String var = results[i].getVariable();
@@ -81,7 +83,12 @@ public class MIErrorEvent extends MIStoppedEvent {
             }
             log = sb.toString();
         }
-        return new MIErrorEvent(containerDmc, token, results, oobs, msg, log);
+        return new MIErrorEvent(execDmc, token, results, oobs, msg, log);
+    }
+
+    public static MIErrorEvent parse(
+        IContainerDMContext containerDmc, int token, MIResult[] results, MIOOBRecord[] oobs) { 
+    	return MIErrorEvent.parse((IExecutionDMContext)containerDmc, token, results, oobs);
     }
     
     @Override

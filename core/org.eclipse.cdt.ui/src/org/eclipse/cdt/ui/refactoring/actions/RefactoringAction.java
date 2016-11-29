@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
 import org.eclipse.jface.action.Action;
@@ -43,7 +43,7 @@ public abstract class RefactoringAction extends Action {
 	/**
 	 * Sets behavior with respect to saving dirty editors.
 	 * @param saveRequired if <code>true</code>, dirty editors will be saved before refactoring.
-	 * 
+	 *
 	 * @deprecated saving of editors should be controlled by refactoring runner, not by the action.
 	 * @since 5.3
 	 */
@@ -65,7 +65,7 @@ public abstract class RefactoringAction extends Action {
         fEditor= null;
         fSite= site;
 	}
-	
+
     @Override
 	public final void run() {
     	if (saveRequired) {
@@ -84,11 +84,9 @@ public abstract class RefactoringAction extends Action {
             			run(fEditor.getSite(), wc, (ITextSelection) s);
                 }
             }
-        } else if (fSite != null) {
-            if (fElement != null) {
-            	run(fSite, fElement);
-            }                        
-        }            
+        } else if (fSite != null && fElement != null) {
+            run(fSite, fElement);
+        }
     }
 
 	public void updateSelection(ICElement elem) {

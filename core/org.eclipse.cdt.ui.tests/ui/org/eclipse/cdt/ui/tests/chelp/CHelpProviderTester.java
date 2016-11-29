@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.chelp;
@@ -13,105 +13,107 @@ package org.eclipse.cdt.ui.tests.chelp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IHelpResource;
+import org.junit.Assert;
 
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IHelpResource;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 
 /**
- * 
+ *
  */
-public class CHelpProviderTester{
+public class CHelpProviderTester {
 	private static final String KEY_PROVIDER_ID = "providerID";
 	private static final String KEY_REQUESTED_NAME = "requestedName";
 	private static final String KEY_BOOK_TITLE = "bookTitle";
 	private static final String KEY_BOOK_TYPE = "bookType";
-	
+
 	private Properties fProperties;
-	private static CHelpProviderTester fDefaultInstance = null;
-	
-	private CHelpProviderTester(){
+	private static CHelpProviderTester fDefaultInstance;
+
+	private CHelpProviderTester() {
 	}
-	
-	public static CHelpProviderTester getDefault(){
-		if(fDefaultInstance == null)
+
+	public static CHelpProviderTester getDefault() {
+		if (fDefaultInstance == null)
 			fDefaultInstance = new CHelpProviderTester();
 		return fDefaultInstance;
 	}
-	
-	private class CHelpBook implements ICHelpBook{
+
+	private class CHelpBook implements ICHelpBook {
 		private int fCHelpType;
 		private String fTitle;
-		
-		public CHelpBook(String providerID, int type){
+
+		public CHelpBook(String providerID, int type) {
 			fCHelpType = type;
-			fTitle = generateBookTitle(providerID,type);
+			fTitle = generateBookTitle(providerID, type);
 		}
-			
+
 		@Override
-		public String getTitle(){
+		public String getTitle() {
 			return fTitle;
 		}
-			
+
 		@Override
-		public int getCHelpType(){
+		public int getCHelpType() {
 			return fCHelpType;
 		}
 	}
-	
-	private class CHelpResourceDescriptor implements ICHelpResourceDescriptor{
+
+	private class CHelpResourceDescriptor implements ICHelpResourceDescriptor {
 		ICHelpBook fBook;
 		String fString;
 		String fLabel;
 		String fHref;
 		IHelpResource fResources[];
-		
-		public CHelpResourceDescriptor(ICHelpBook helpBook, String string, String providerID){
+
+		public CHelpResourceDescriptor(ICHelpBook helpBook, String string, String providerID) {
 			fBook = helpBook;
 			fString = string;
 			fHref = string + helpBook.getTitle() + ".html";
 			fLabel = generateHelpString(helpBook, string, providerID);
 			fResources = new IHelpResource[1];
-			fResources[0] = new IHelpResource(){
+			fResources[0] = new IHelpResource() {
 				@Override
-				public String getHref(){
+				public String getHref() {
 					return fHref;
 				}
-				
+
 				@Override
-				public String getLabel(){
+				public String getLabel() {
 					return fLabel;
-				}				
+				}
 			};
 		}
-	
+
 		@Override
-		public ICHelpBook getCHelpBook(){
+		public ICHelpBook getCHelpBook() {
 			return fBook;
 		}
-		
+
 		@Override
-		public IHelpResource[] getHelpResources(){
+		public IHelpResource[] getHelpResources() {
 			return fResources;
 		}
 	}
 
 	private class FunctionSummary implements IFunctionSummary {
-
         private String fName = "Name";
         private String fReturnType = "ReturnType";
         private String fPrototype = "Prototype";
@@ -120,231 +122,239 @@ public class CHelpProviderTester{
         private IRequiredInclude[] incs = new IRequiredInclude[] { new RequiredInclude("dummy.h")};
         private class RequiredInclude implements IRequiredInclude {
         	private String include;
-        	
+
         	public RequiredInclude (String file) {
         		include = file;
         	}
-        	
+
         	@Override
 			public String getIncludeName() {
         		return include;
         	}
-        	
+
         	@Override
 			public boolean isStandard() {
         		return true;
         	}
         }
-        
-        public FunctionSummary(ICHelpBook helpBook, String string, String providerID){
+
+        public FunctionSummary(ICHelpBook helpBook, String string, String providerID) {
         	fName = string;
         	fSummary = generateHelpString(helpBook, string, providerID);
         }
 
         public class FunctionPrototypeSummary implements IFunctionPrototypeSummary {
             @Override
-			public String getName()             { return fName; }
+			public String getName() {
+            	return fName;
+            }
             @Override
-			public String getReturnType()       { return fReturnType; }
+			public String getReturnType() {
+            	return fReturnType;
+            }
             @Override
-			public String getArguments()        { return fPrototype; }
+			public String getArguments() {
+            	return fPrototype;
+            }
             @Override
 			public String getPrototypeString(boolean namefirst) {
                 if (true == namefirst) {
                     return fName + " (" + fPrototype + ") " + fReturnType;
-                }
-                else {
+                } else {
                     return fReturnType + " " + fName + " (" + fPrototype + ")";
                 }
             }
         }
 
         @Override
-		public String getName()                         { return fName; }
+		public String getName() {
+        	return fName;
+        }
         @Override
-		public String getNamespace()                    { return "dummy namespace"; }
+		public String getNamespace() {
+        	return "dummy namespace";
+        }
         @Override
-		public String getDescription()                  { return fSummary; }
+		public String getDescription() {
+        	return fSummary;
+        }
         @Override
-		public IFunctionPrototypeSummary getPrototype() { return new FunctionPrototypeSummary(); }
-        
+		public IFunctionPrototypeSummary getPrototype() {
+        	return new FunctionPrototypeSummary();
+        }
+
         @Override
 		public IRequiredInclude[] getIncludes() {
-        	return incs; 
+        	return incs;
         }
-        
     }
 
-	private static String generateHelpString(ICHelpBook helpBook, String name, String providerID){
+	private static String generateHelpString(ICHelpBook helpBook, String name, String providerID) {
 		Properties props = new Properties();
 		props.setProperty(KEY_PROVIDER_ID, providerID);
 		props.setProperty(KEY_REQUESTED_NAME, name);
 		props.setProperty(KEY_BOOK_TITLE, helpBook.getTitle());
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		try{
-			props.store(outputStream,null);
-		}
-		catch(Exception e){
+		try {
+			props.store(outputStream, null);
+		} catch (IOException e) {
+			fail(e);
 		}
 		return outputStream.toString();
 	}
-	
-	private static String generateBookTitle(String providerID, int bookType){
+
+	private static String generateBookTitle(String providerID, int bookType) {
 		Properties props = new Properties();
 		props.setProperty(KEY_PROVIDER_ID, providerID);
 		props.setProperty(KEY_BOOK_TYPE, String.valueOf(bookType));
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		try{
-			props.store(outputStream,null);
-		}
-		catch(Exception e){
+		try {
+			props.store(outputStream, null);
+		} catch (IOException e) {
+			fail(e);
 		}
 		return outputStream.toString();
 	}
 
-	private CHelpProviderTester(String string) throws IOException{
+	private CHelpProviderTester(String string) {
 		fProperties = new Properties();
 		ByteArrayInputStream stream = new ByteArrayInputStream(string.getBytes());
-		
-		try{
+		try {
 			fProperties.load(stream);
-		}catch(IOException e){
-			//TODO: handle
-			throw e;
+		} catch (IOException e) {
+			fail(e);
 		}
 	}
-	
-	private String getValueByKey(String key){
+
+	private String getValueByKey(String key) {
 		String val = fProperties.getProperty(key);
-		if(val == null)
+		if (val == null)
 			val = ""; //$NON-NLS-1$
 		return val;
 	}
-	
-	private String getHelpProviderID(){
+
+	private String getHelpProviderID() {
 		return getValueByKey(KEY_PROVIDER_ID);
 	}
 
-	private String getRequestedName(){
+	private String getRequestedName() {
 		return getValueByKey(KEY_REQUESTED_NAME);
 	}
 
-	private String getBookTitle(){
+	private String getBookTitle() {
 		return getValueByKey(KEY_BOOK_TITLE);
 	}
-	
-	public boolean onlyTestInfoProvidersAvailable(){
-		IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, CHelpSettings.CONTRIBUTION_EXTENSION);
+
+	public boolean onlyTestInfoProvidersAvailable() {
+		IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				CUIPlugin.PLUGIN_ID, CHelpSettings.CONTRIBUTION_EXTENSION);
 		int numExts = 0;
-		for(int i = 0; i < configElements.length; i++){
+		for (int i = 0; i < configElements.length; i++) {
 			String id = configElements[i].getAttribute("id");
-			if(!id.startsWith(CHelpTest.TEST_EXTENSION_ID_PREFIX))
+			if (!id.startsWith(CHelpTest.TEST_EXTENSION_ID_PREFIX))
 				return false;
 		}
 		return true;
 	}
 
-	public ICHelpResourceDescriptor[] generateHelpResources(ICHelpBook[] helpBooks, String name, String providerID){
+	public ICHelpResourceDescriptor[] generateHelpResources(ICHelpBook[] helpBooks, String name, String providerID) {
 		ICHelpResourceDescriptor des[] = new ICHelpResourceDescriptor[helpBooks.length];
-		for(int i = 0; i < helpBooks.length; i++){
-			des[i] = new CHelpResourceDescriptor(helpBooks[i],name,providerID);
+		for (int i = 0; i < helpBooks.length; i++) {
+			des[i] = new CHelpResourceDescriptor(helpBooks[i], name, providerID);
 		}
 		return des;
 	}
-	
-	public IFunctionSummary generateFunctionInfo(ICHelpBook[] helpBooks, String name, String providerID){
-		if(helpBooks.length == 0)
+
+	public IFunctionSummary generateFunctionInfo(ICHelpBook[] helpBooks, String name, String providerID) {
+		if (helpBooks.length == 0)
 			return null;
-		return new FunctionSummary(helpBooks[0],name,providerID);
+		return new FunctionSummary(helpBooks[0], name, providerID);
 	}
-	
-	public IFunctionSummary[] generateMatchingFunctions(ICHelpBook[] helpBooks, String prefix, String providerID){
+
+	public IFunctionSummary[] generateMatchingFunctions(ICHelpBook[] helpBooks, String prefix, String providerID) {
 		IFunctionSummary sum[] = new IFunctionSummary[helpBooks.length];
-		for(int i = 0; i < helpBooks.length; i++){
-			sum[i] = new FunctionSummary(helpBooks[i],prefix,providerID);
+		for (int i = 0; i < helpBooks.length; i++) {
+			sum[i] = new FunctionSummary(helpBooks[i], prefix, providerID);
 		}
 		return sum;
 	}
-	
-	public ICHelpBook[] generateCHelpBooks(final String providerID){
+
+	public ICHelpBook[] generateCHelpBooks(final String providerID) {
 		ICHelpBook books[] = new ICHelpBook[3];
-		books[0] = new CHelpBook(providerID,ICHelpBook.HELP_TYPE_C);
-		books[1] = new CHelpBook(providerID,ICHelpBook.HELP_TYPE_CPP);
-		books[2] = new CHelpBook(providerID,ICHelpBook.HELP_TYPE_ASM);
+		books[0] = new CHelpBook(providerID, ICHelpBook.HELP_TYPE_C);
+		books[1] = new CHelpBook(providerID, ICHelpBook.HELP_TYPE_CPP);
+		books[2] = new CHelpBook(providerID, ICHelpBook.HELP_TYPE_ASM);
 		return books;
 	}
-	
-	private void checkResponse(CHelpProviderTester data[], ICHelpInvocationContext context, String name, boolean allBooksResponded){
+
+	private void checkResponse(CHelpProviderTester data[], ICHelpInvocationContext context, String name, boolean allBooksResponded) {
 		CHelpBookDescriptor bookDes[] = CHelpProviderManager.getDefault().getCHelpBookDescriptors(context);
-		for(int i = 0; i < data.length; i++){
+		for (int i = 0; i < data.length; i++) {
 			CHelpProviderTester tester = data[i];
-			Assert.assertTrue("the name passed to CHelpProvider (" + tester.getRequestedName() + ") differs prom tha name passed to manager (" + name + ")",name.equals(tester.getRequestedName()));
+			Assert.assertTrue("the name passed to CHelpProvider (" + tester.getRequestedName()
+					+ ") differs prom tha name passed to manager (" + name + ")", name.equals(tester.getRequestedName()));
 			String bookTitle = tester.getBookTitle();
 			int j = 0;
-			for(; j < bookDes.length; j++){
-				if(bookTitle.equals(bookDes[j].getCHelpBook().getTitle())){
-					Assert.assertTrue("provider was requested for help in disabled book",bookDes[j].isEnabled());
+			for (; j < bookDes.length; j++) {
+				if (bookTitle.equals(bookDes[j].getCHelpBook().getTitle())) {
+					Assert.assertTrue("provider was requested for help in disabled book", bookDes[j].isEnabled());
 					break;
 				}
 			}
-			Assert.assertFalse("provider was requested for help in non-existent book",j == bookDes.length);
+			Assert.assertFalse("provider was requested for help in non-existent book", j == bookDes.length);
 		}
-		
-		if(allBooksResponded){
-			for(int i = 0; i < bookDes.length; i++){
-				if(bookDes[i].isEnabled()){
+
+		if (allBooksResponded) {
+			for (int i = 0; i < bookDes.length; i++) {
+				if (bookDes[i].isEnabled()) {
 					String bookTitle = bookDes[i].getCHelpBook().getTitle();
 					int j = 0;
-					for(; j < data.length; j++){
-						if(bookTitle.equals(data[j].getBookTitle()))
+					for (; j < data.length; j++) {
+						if (bookTitle.equals(data[j].getBookTitle()))
 							break;
 					}
-					Assert.assertFalse("provider was not requested for help in enabled book",j == bookDes.length);
+					Assert.assertFalse("provider was not requested for help in enabled book", j == bookDes.length);
 				}
 			}
 		}
 	}
 
-	public void checkHelpResources(ICHelpResourceDescriptor helpDescriptors[], ICHelpInvocationContext context, String name){
-		if(helpDescriptors == null || helpDescriptors.length == 0)
+	public void checkHelpResources(ICHelpResourceDescriptor helpDescriptors[], ICHelpInvocationContext context,
+			String name) {
+		if (helpDescriptors == null || helpDescriptors.length == 0)
 			return;
-		List dataList = new ArrayList(helpDescriptors.length);
-		for(int i = 0; i < helpDescriptors.length; i++){
-			try{
-				dataList.add(new CHelpProviderTester(helpDescriptors[i].getHelpResources()[0].getLabel()));
-			}catch(IOException e){
-				Assert.fail("checkHelpResources failed to instantiate CHelpProviderTester, IOException occured: " + e.getMessage());
-			}
+		List<CHelpProviderTester> dataList = new ArrayList<>(helpDescriptors.length);
+		for (int i = 0; i < helpDescriptors.length; i++) {
+			dataList.add(new CHelpProviderTester(helpDescriptors[i].getHelpResources()[0].getLabel()));
 		}
-		if(dataList.size() > 0)
-			checkResponse((CHelpProviderTester[])dataList.toArray(new CHelpProviderTester[dataList.size()]), context, name, true);
+		if (!dataList.isEmpty())
+			checkResponse(dataList.toArray(new CHelpProviderTester[dataList.size()]), context, name, true);
 	}
 
-	public void checkMatchingFunctions(IFunctionSummary summaries[], ICHelpInvocationContext context, String name){
-		if(summaries == null || summaries.length == 0)
+	public void checkMatchingFunctions(IFunctionSummary summaries[], ICHelpInvocationContext context, String name) {
+		if (summaries == null || summaries.length == 0)
 			return;
-		List dataList = new ArrayList(summaries.length);
-		for(int i = 0; i < summaries.length; i++){
-			try{
-				dataList.add(new CHelpProviderTester(summaries[i].getDescription()));
-			}catch(IOException e){
-				Assert.fail("checkMatchingFunctions failed to instantiate CHelpProviderTester, IOException occured: " + e.getMessage());
-			}
+		List<CHelpProviderTester> dataList = new ArrayList<>(summaries.length);
+		for (int i = 0; i < summaries.length; i++) {
+			dataList.add(new CHelpProviderTester(summaries[i].getDescription()));
 		}
-		if(dataList.size() > 0)
-			checkResponse((CHelpProviderTester[])dataList.toArray(new CHelpProviderTester[dataList.size()]), context, name, true);
+		if (!dataList.isEmpty())
+			checkResponse(dataList.toArray(new CHelpProviderTester[dataList.size()]), context, name, true);
 	}
-	
-	public void checkFunctionInfo(IFunctionSummary summary, ICHelpInvocationContext context, String name){
-		if(summary == null)
+
+	public void checkFunctionInfo(IFunctionSummary summary, ICHelpInvocationContext context, String name) {
+		if (summary == null)
 			return;
 		CHelpProviderTester data[] = new CHelpProviderTester[1];
-		try{
-			data[0] = new CHelpProviderTester(summary.getDescription());
-			checkResponse(data, context, name, false);
-		}catch(IOException e){
-			Assert.fail("checkFunctionInfo failed to instantiate CHelpProviderTester, IOException occured: " + e.getMessage());
-		}
-		
+		data[0] = new CHelpProviderTester(summary.getDescription());
+		checkResponse(data, context, name, false);
+	}
+
+	private static void fail(Throwable t) {
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		printWriter.println(t);
+		t.printStackTrace(printWriter);
+		Assert.fail(stringWriter.toString());
 	}
 }

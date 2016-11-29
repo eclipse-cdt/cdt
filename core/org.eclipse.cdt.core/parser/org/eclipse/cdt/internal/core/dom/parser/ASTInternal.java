@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileSet;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -262,5 +263,16 @@ public class ASTInternal {
 			return false;
 		}
 		return binding != null;
+	}
+
+	public static boolean hasNonFriendDeclaration(ICPPInternalBinding binding) {
+		if (binding.getDefinition() != null)
+			return true;
+		for (IASTNode node : binding.getDeclarations()) {
+			if (!CPPVisitor.isNameOfFriendDeclaration(node))
+				return true; 
+		}
+
+		return false;
 	}
 }

@@ -18,51 +18,54 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner, IASTDeclarationListOwner {
 	/**
-	 * <code>TYPE_NAME</code> represents the relationship between an
-	 * <code>IASTCompositeTypeSpecifier</code> and its <code>IASTName</code>.
+	 * {@code k_struct} represents 'struct' in C and C++.
+	 */
+	public static final int k_struct = 1;
+
+	/**
+	 * {@code k_union} represents 'union' in C and C++.
+	 */
+	public static final int k_union = 2;
+
+	/**
+	 * {@code k_last} allows for subinterfaces to continue enumerating keys.
+	 */
+	public static final int k_last = k_union;
+
+	/**
+	 * {@code TYPE_NAME} represents the relationship between an
+	 * {@code IASTCompositeTypeSpecifier} and its {@code IASTName}.
 	 */
 	public static final ASTNodeProperty TYPE_NAME = new ASTNodeProperty(
 			"IASTCompositeTypeSpecifier.TYPE_NAME - IASTName for IASTCompositeTypeSpecifier"); //$NON-NLS-1$
 
 	/**
-	 * <code>MEMBER_DECLARATION</code> represents the relationship between an
-	 * <code>IASTCompositeTypeSpecifier</code> and its nested<code>IASTDeclaration</code>s.
+	 * {@code MEMBER_DECLARATION} represents the relationship between an
+	 * {@code IASTCompositeTypeSpecifier} and its nested{@code IASTDeclaration}s.
 	 */
 	public static final ASTNodeProperty MEMBER_DECLARATION = new ASTNodeProperty(
 			"IASTCompositeTypeSpecifier.MEMBER_DECLARATION - Nested IASTDeclaration for IASTCompositeTypeSpecifier"); //$NON-NLS-1$
 
 	/**
-	 * Get the type (key) of this composite specifier.
+	 * Returns the type (key) of this composite specifier.
 	 * 
 	 * @return key for this type
+	 * @see #k_struct
+	 * @see #k_union
 	 */
 	public int getKey();
 
 	/**
-	 * <code>k_struct</code> represents 'struct' in C & C++
-	 */
-	public static final int k_struct = 1;
-
-	/**
-	 * <code>k_union</code> represents 'union' in C & C++
-	 */
-	public static final int k_union = 2;
-
-	/**
-	 * <code>k_last</code> allows for subinterfaces to continue enumerating
-	 * keys
-	 */
-	public static final int k_last = k_union;
-
-	/**
-	 * Set the type (key) of this composite specifier.
+	 * Sets the type (key) of this composite specifier.
 	 * 
 	 * @param key
+	 * @see #k_struct
+	 * @see #k_union
 	 */
 	public void setKey(int key);
 
 	/**
-	 * Return the name for this composite type. If this is an anonymous type,
+	 * Returns the name for this composite type. If this is an anonymous type,
 	 * this will return an empty name.
 	 * 
 	 * @return the name of the type
@@ -70,7 +73,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 	public IASTName getName();
 
 	/**
-	 * Set the name for this composite type.
+	 * Sets the name for this composite type.
 	 * 
 	 * @param name
 	 */
@@ -84,15 +87,14 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 	public IASTDeclaration[] getMembers();
 
 	/**
-	 * Add a member declaration.
+	 * Adds a member declaration.
 	 * 
 	 * @param declaration
 	 */
 	public void addMemberDeclaration(IASTDeclaration declaration);
 
 	/**
-	 * Get the scope that this interface eludes to in the logical tree.
-	 * 
+	 * Returns the scope that this interface eludes to in the logical tree.
 	 */
 	public IScope getScope();
 	

@@ -163,4 +163,40 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testExplicitSpecialization_494359() throws Exception {
 		checkBindings();
 	}
+
+	// test1.h
+	//	namespace ns {
+	//
+	//	struct C {
+	//	  friend class B;
+	//	};
+	//
+	//	}
+
+	// test2.h
+	//	class B {};
+	//
+	//	namespace ns {
+	//
+	//	struct A {
+	//	  operator B();
+	//	};
+	//
+	//	}
+	//
+	//	void waldo(B);
+
+	// confuser.cpp
+	//	#include "test1.h"
+
+	// test.cpp *
+	//	#include "test1.h"
+	//	#include "test2.h"
+	//
+	//	void test(ns::A a) {
+	//	  waldo(a);
+	//	}
+	public void testFriendClassDeclaration_508338() throws Exception {
+		checkBindings();
+	}
 }

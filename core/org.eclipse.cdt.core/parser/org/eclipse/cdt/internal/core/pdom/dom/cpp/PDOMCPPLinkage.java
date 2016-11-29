@@ -109,6 +109,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -702,7 +703,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPClassTemplate) {
 			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
-			pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+			if (!(binding instanceof ICPPInternalBinding)
+					|| ASTInternal.hasNonFriendDeclaration((ICPPInternalBinding) binding)) {
+				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+			}
 		} else if (binding instanceof ICPPVariableTemplate) {
 			pdomBinding = new PDOMCPPVariableTemplate(this, parent, (ICPPVariableTemplate) binding);
 		} else if (binding instanceof ICPPVariable) {

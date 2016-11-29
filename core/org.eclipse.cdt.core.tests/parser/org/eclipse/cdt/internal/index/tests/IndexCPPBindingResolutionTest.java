@@ -2320,4 +2320,14 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		ICPPMethod[] pureVirtuals = SemanticQueries.getPureVirtualMethods((ICPPClassType) type, null);
 		assertEquals(0, pureVirtuals.length);
 	}
+
+
+	//	class A {
+	//	  friend class B;
+	//	};
+
+	//	B* b;
+	public void testFriendClassDeclaration_508338() throws Exception {
+		getProblemFromFirstIdentifier("B*");
+	}
 }

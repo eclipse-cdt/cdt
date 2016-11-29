@@ -543,10 +543,11 @@ public class CPPVisitor extends ASTQueries {
 
         	// Create a binding
         	if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
-        		if (templateDecl != null)
+        		if (templateDecl != null) {
         			binding = new CPPClassTemplate(name);
-        		else
+        		} else {
         			binding = new CPPClassType(name, binding);
+        		}
         		// name may live in a different scope, so make sure to add it to the owner scope, as well.
         		ASTInternal.addName(scope,  elabType.getName());
     		}

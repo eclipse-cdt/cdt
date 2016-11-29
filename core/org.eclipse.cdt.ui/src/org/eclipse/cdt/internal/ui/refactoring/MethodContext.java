@@ -165,7 +165,7 @@ public class MethodContext {
 			if (node instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier type = (ICPPASTCompositeTypeSpecifier) node;
 				IASTName classname = type.getName();
-				return (ICPPInternalBinding)classname.resolveBinding();
+				return (ICPPInternalBinding) classname.resolveBinding();
 			}
 			node = node.getParent();
 		}

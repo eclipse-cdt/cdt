@@ -463,10 +463,11 @@ public class CPPVisitor extends ASTQueries {
 	        name = name.getLastName();
 	    }
 	    if (parent instanceof IASTSimpleDeclaration) {
-	        IASTDeclarator[] dtors = ((IASTSimpleDeclaration) parent).getDeclarators();
-	        ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+	        IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) parent;
+	        ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
+			IASTDeclarator[] dtors = simpleDeclaration.getDeclarators();
 	        isFriend = declSpec.isFriend() && dtors.length == 0;
-	        if (dtors.length > 0 || isFriend) {
+	        if (dtors.length != 0 || isFriend) {
 	        	binding = CPPSemantics.resolveBinding(name);
 	        	mustBeSimple = !isFriend;
 	        } else {
@@ -558,6 +559,29 @@ public class CPPVisitor extends ASTQueries {
 		return binding;
 	}
 
+	/**
+	 * Checks if the given name is the name of a friend declaration.
+	 *
+	 * @param name the name to check
+	 * @return {@code true} if {@code name} is the name of a friend declaration
+	 */
+	public static boolean isNameOfFriendDeclaration(IASTNode name) {
+		if (name.getPropertyInParent() == ICPPASTQualifiedName.SEGMENT_NAME) {
+			ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name.getParent();
+			if (name != qName.getLastName())
+				return false;
+			name = qName;
+		}
+		if (name.getPropertyInParent() != ICPPASTElaboratedTypeSpecifier.TYPE_NAME)
+			return false;
+		ICPPASTElaboratedTypeSpecifier typeSpec = (ICPPASTElaboratedTypeSpecifier) name.getParent();
+		if (typeSpec.getPropertyInParent() != IASTSimpleDeclaration.DECL_SPECIFIER)
+			return false;
+		IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) typeSpec.getParent();
+		ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) declaration.getDeclSpecifier();
+        return declSpec.isFriend() && declaration.getDeclarators().length == 0;
+	}
+	
 	public static void markRedeclaration(final ICPPInternalBinding ib) {
 		// Mark the other declarations as problem and create the binding
 		final IASTNode[] decls = ib.getDeclarations();

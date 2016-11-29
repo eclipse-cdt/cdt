@@ -109,6 +109,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -699,10 +700,21 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					}
 				}
 			}
-		} else if (binding instanceof ICPPClassTemplate) {
-			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
-			pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+			// 11.3-11 [class.friend]
+			// For a friend class declaration, if there is no prior declaration, the class that is specified
+			// belongs to the innermost enclosing non-class scope, but if it is subsequently referenced, its
+			// name is not found by name lookup until a matching declaration is provided in the innermost
+			// enclosing nonclass scope.
+			// See http://bugs.eclipse.org/508338
+			if (!(binding instanceof ICPPInternalBinding)
+					|| ASTInternal.hasNonFriendDeclaration((ICPPInternalBinding) binding)) {
+				if (binding instanceof ICPPClassTemplate) {
+					pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
+				} else {
+					pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+				}
+			}
 		} else if (binding instanceof ICPPVariableTemplate) {
 			pdomBinding = new PDOMCPPVariableTemplate(this, parent, (ICPPVariableTemplate) binding);
 		} else if (binding instanceof ICPPVariable) {

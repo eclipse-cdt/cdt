@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * Interface for all composite types: classes, structs or unions.
+ * Interface for all composite types: classes, structs and unions.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

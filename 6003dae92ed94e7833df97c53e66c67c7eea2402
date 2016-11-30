@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_bc1ebe1f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-30T13:16:35Z",
+      "side": 1,
+      "message": "Can you explain the reason for this patch?\nWhich exceptions are not being caught?\nEnabliung the wrappers all the time to at least log them, etc",
+      "revId": "6003dae92ed94e7833df97c53e66c67c7eea2402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_bceddeb4",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DefaultDsfExecutor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-30T13:16:35Z",
+      "side": 1,
+      "message": "This is not changed anywhere so does not seem very useful.\nIs the idea that someone should be able to easily change it in the code?  Can you put a comment to explain",
+      "revId": "6003dae92ed94e7833df97c53e66c67c7eea2402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9c174205",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DefaultDsfExecutor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-11-30T13:16:35Z",
+      "side": 1,
+      "message": "No need to move this?",
+      "revId": "6003dae92ed94e7833df97c53e66c67c7eea2402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

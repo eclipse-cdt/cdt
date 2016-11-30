@@ -3457,6 +3457,29 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), CPP);
 		ICPPTemplateTypeParameter t= ba.assertNonProblem("T)", 1, ICPPTemplateTypeParameter.class);
 	}
+	
+	//	template <typename T>
+	//	constexpr T id(T a) {
+	//	    return a;
+	//	}
+	//
+	//	template <int N>
+	//	struct ratio {
+	//	    static const int num = N;
+	//	};
+	//
+	//	template <typename factor>
+	//	struct ratioRoundUp : ratio<id(factor::num)> {};
+	//
+	//	typedef ratioRoundUp<ratio<42>> rounded;
+	//
+	//	template <int> struct Waldo;
+	//	template <> struct Waldo<42> { typedef int type; };
+	//
+	//	Waldo<rounded::num>::type foo();  // ERROR
+	public void testDependentIdExprNamingStaticMember_508254() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<class T1, T1 v1>
 	//	struct integral_constant {

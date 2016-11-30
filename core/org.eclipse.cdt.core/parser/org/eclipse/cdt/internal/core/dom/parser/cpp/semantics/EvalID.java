@@ -439,6 +439,10 @@ public class EvalID extends CPPDependentEvaluation {
 				return new EvalBinding(binding, null, getTemplateDefinition());
 			}
 			if (binding instanceof ICPPMember) {
+				if (((ICPPMember) binding).isStatic()) {
+					// Don't use EvalMemberAccess to represent accesses of static members.
+					return new EvalBinding(binding, null, getTemplateDefinition());
+				}
 				if (ownerEval != null) {
 					return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(point), binding, ownerEval, false, point);
 				} else {

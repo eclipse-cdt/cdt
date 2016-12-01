@@ -9821,4 +9821,41 @@ public class AST2TemplateTests extends AST2TestBase {
 		IVariable waldo = helper.assertNonProblem("waldo");
 		helper.assertVariableValue("waldo", -13);
 	}
+	
+	//	template<int P, int Q>
+	//	struct gcd : gcd<Q, P % Q> {};
+	//
+	//	template<int P>
+	//	struct gcd<P, 0> {
+	//	    static constexpr int value = P;
+	//	};
+	//
+	//	template<int Q>
+	//	struct gcd<0, Q> {
+	//	    static constexpr int value = Q;
+	//	};
+	//
+	//	template<int N, int D = 1>
+	//	struct ratio {
+	//	    static constexpr int den = D / gcd<N, D>::value;
+	//	};
+	//
+	//	constexpr int foo(int) {
+	//	    return 42;
+	//	}
+	//
+	//	struct S : public ratio<foo("")> {};
+	//
+	//	template<typename R1, typename R2>
+	//	struct ratio_multiply {
+	//	    static constexpr int div = gcd<1, R1::den>::value;  
+	//	    typedef ratio<1, R1::den / div> type;
+	//	};
+	//
+	//	typedef ratio_multiply<S, ratio<1>>::type waldo;
+	public void testOOM_508254() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		// Just check that resolution does not throw an exception.
+		helper.findName("waldo", 5).resolveBinding();
+	}
 }

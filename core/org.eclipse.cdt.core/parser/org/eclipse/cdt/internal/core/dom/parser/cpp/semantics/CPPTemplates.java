@@ -2633,7 +2633,7 @@ public class CPPTemplates {
 
 	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateDefinition template,
 			ICPPTemplateParameter param, ICPPTemplateArgument arg, CPPTemplateParameterMap map, IASTNode point) {
-		if (arg == null || !SemanticUtil.isValidType(arg.getTypeValue())) {
+		if (!isValidArgument(arg)) {
 			return null;
 		}
 		if (param instanceof ICPPTemplateTypeParameter) {

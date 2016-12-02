@@ -92,12 +92,10 @@ public class EvalInitList extends CPPDependentEvaluation {
 		if (isValueDependent()) {
 			return DependentValue.create(this);
 		}
-		if (getClauses().length > 1) {
+		if (getClauses().length >= 1) {
 			return CompositeValue.create(this);
 		}
-		else if (getClauses().length == 1) {
-			return DependentValue.create(getClauses()[0]);
-		} else {
+		else {
 			return IntegralValue.UNKNOWN;
 		}
 
@@ -139,9 +137,6 @@ public class EvalInitList extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		ICPPEvaluation[] clauses = fClauses;
-		if (fClauses.length == 1) {
-			return fClauses[0].computeForFunctionCall(record, context.recordStep());
-		}
 		for (int i = 0; i < fClauses.length; i++) {
 			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(record, context.recordStep());
 			if (clause != fClauses[i]) {

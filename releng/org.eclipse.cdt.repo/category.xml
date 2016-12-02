@@ -26,6 +26,9 @@
    <feature url="features/org.eclipse.cdt.debug.gdbjtag_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.gdbjtag" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.debug.gdbjtag.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.gdbjtag.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.xlc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.feature" version="0.0.0">
       <category name="extra"/>
    </feature>
@@ -59,7 +62,13 @@
    <feature url="features/org.eclipse.cdt.visualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.visualizer" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.visualizer.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.visualizer.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.autotools_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools" version="0.0.0">

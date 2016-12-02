@@ -20,10 +20,6 @@
    </license>
 
    <includes
-         id="org.eclipse.cdt.xlc.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.cdt.xlc.feature"
          version="0.0.0"/>
 

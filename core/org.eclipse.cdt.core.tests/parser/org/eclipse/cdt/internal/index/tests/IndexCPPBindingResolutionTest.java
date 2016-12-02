@@ -62,7 +62,7 @@ import junit.framework.TestSuite;
  * additionally check that the binding obtained has characteristics as
  * expected (type,name,etc..)
  */
-public abstract class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
+public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCPPBindingResolutionTest {
 		public SingleProject() { setStrategy(new SinglePDOMTestStrategy(true)); }
@@ -78,6 +78,11 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
+	
+	public IndexCPPBindingResolutionTest() {
+		setStrategy(new SinglePDOMTestStrategy(true));
+	}
+	public static TestSuite suite() { return suite(SingleProject.class); }
 
 	/* Assertion helpers */
 	/* ##################################################################### */
@@ -1925,6 +1930,18 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	//	char TableValue[sizeof TableValue];
 	public void testNameLookupFromArrayModifier_435075() {
+		checkBindings();
+	}
+	
+	//	struct S {
+	//	    int* a;
+	//	    int* b;
+	//	};
+	//	
+	//	constexpr S waldo = { nullptr, waldo.a };
+	
+	//  // empty file
+	public void testVariableInitializerThatReferencesVariable_508254() throws Exception {
 		checkBindings();
 	}
 

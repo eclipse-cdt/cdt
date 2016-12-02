@@ -33,7 +33,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = FIELD_POSITION_OFFSET + 2;
 	
-	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
+	public PDOMCPPField(PDOMCPPLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
 			throws CoreException {
 		super(linkage, parent, field, setTypeAndValue);
 		setFieldPosition(field);

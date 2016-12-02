@@ -224,6 +224,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	// Binding types
+	class ConfigureVariable implements Runnable {
+		private final PDOMCPPVariable fVariable;
+		private final IValue fInitialValue;
+		
+		public ConfigureVariable(ICPPVariable original, PDOMCPPVariable variable) {
+			fVariable = variable;
+			fInitialValue = original.getInitialValue();
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fVariable.initData(fInitialValue);
+		}
+	}
+	
 	class ConfigureTemplateParameters implements Runnable {
 		private final IPDOMCPPTemplateParameter[] fPersisted;
 		private final ICPPTemplateParameter[] fOriginal;

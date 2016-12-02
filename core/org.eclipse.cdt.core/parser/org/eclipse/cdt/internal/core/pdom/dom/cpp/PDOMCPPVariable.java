@@ -40,7 +40,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 
-	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, ICPPVariable variable, boolean setTypeAndValue)
+	public PDOMCPPVariable(PDOMCPPLinkage linkage, PDOMNode parent, ICPPVariable variable, boolean setTypeAndValue)
 			throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
@@ -49,7 +49,15 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(variable));
 		if (setTypeAndValue) {
 			setType(parent.getLinkage(), variable.getType());
-			setValue(variable.getInitialValue());
+			linkage.new ConfigureVariable(variable, this);
+		}
+	}
+	
+	public void initData(IValue initialValue) {
+		try {
+			setValue(initialValue);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 	}
 

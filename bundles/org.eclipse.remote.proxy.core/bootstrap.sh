@@ -29,9 +29,13 @@ parent_is_not_orphan () {
 
 do_check() {
 	java_vers=`java -version 2>&1`
-	vers=`expr "$java_vers" : "java version \"\([0-9]*\.[0-9]*\).*\""`
-	if test "%$vers" != "%1.8"; then
-		echo fail:invalid java version $vers
+	major=`expr "$java_vers" : "java version \"\([0-9]*\)\.[0-9]*.*\""`
+	minor=`expr "$java_vers" : "java version \"[0-9]*\.\([0-9]*\).*\""`
+	if test "$major" -ge 2 -o "$minor" -ge 8; then
+		:
+	else
+		echo "fail:invalid java version $major.$minor; must be >= 1.8"
+		return
 	fi
 	case "`uname`" in
 	Linux) 
@@ -45,7 +49,8 @@ do_check() {
 		proxydir=$installdir/Proxy.app;
 		plugins=$proxydir/Contents/Eclipse/plugins;;
 	*)
-		echo fail:system not supported;;
+		echo fail:system not supported;
+		return;;
 	esac
 	proxy=no
 	if test -d $proxydir; then

@@ -65,7 +65,7 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 		isCompleted = false;
 		exitValue = 0;
 		
-		cmdThread = new Thread("process " + builder.command().get(0) + " result reader") {
+		cmdThread = new Thread("process " + builder.command().get(0) + " result reader") { //$NON-NLS-1$ //$NON-NLS-2$
 			@Override
 			public void run() {
 				try {
@@ -203,5 +203,6 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 
 	@Override
 	public void setTerminalSize(int cols, int rows, int pwidth, int pheight) {
+		// Nothing?
 	}
 }

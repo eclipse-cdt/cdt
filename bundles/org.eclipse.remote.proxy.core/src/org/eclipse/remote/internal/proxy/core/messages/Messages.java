@@ -56,6 +56,48 @@ public class Messages extends NLS {
 	public static String JschFileStore_A_file_of_name_already_exists;
 	public static String JschFileStore_The_parent_of_directory_does_not_exist;
 
+	public static String ProxyConnection_0;
+
+	public static String ProxyConnection_2;
+
+	public static String ProxyConnectionBootstrap_0;
+
+	public static String ProxyConnectionBootstrap_1;
+
+	public static String ProxyConnectionBootstrap_2;
+
+	public static String ProxyConnectionBootstrap_3;
+
+	public static String ProxyConnectionBootstrap_4;
+
+	public static String ProxyConnectionBootstrap_5;
+
+	public static String ProxyConnectionBootstrap_6;
+
+	public static String ProxyConnectionBootstrap_7;
+
+	public static String ProxyConnectionBootstrap_8;
+
+	public static String ProxyConnectionBootstrap_9;
+
+	public static String ProxyFileStore_0;
+
+	public static String ProxyFileStore_1;
+
+	public static String ProxyFileStore_2;
+
+	public static String ProxyFileStore_3;
+
+	public static String ProxyFileStore_4;
+
+	public static String ProxyFileStore_5;
+
+	public static String ProxyFileStore_6;
+
+	public static String ProxyFileStore_7;
+
+	public static String ProxyProcessBuilder_0;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_ID, Messages.class);

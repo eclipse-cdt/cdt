@@ -25,12 +25,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionHostService;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IUserAuthenticatorService;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchUserInfo;
+import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.osgi.framework.Bundle;
 
@@ -48,6 +50,7 @@ public class ProxyConnectionBootstrap {
 		private State state;
 		private String osName;
 		private String osArch;
+		private String errorMessage;
 		
 		private final SubMonitor monitor;
 		private final BufferedReader reader;
@@ -87,6 +90,14 @@ public class ProxyConnectionBootstrap {
 	    void setOSArch(String osArch) {
 	    	this.osArch = osArch;
 	    }
+	    
+	    void setErrorMessage(String message) {
+	    	this.errorMessage = message;
+	    }
+	    
+	    String getErrorMessage() {
+	    	return errorMessage;
+	    }
 	}
 	
 	private interface State {
@@ -100,10 +111,10 @@ public class ProxyConnectionBootstrap {
 		INIT {
 			@Override
 			public boolean process(Context context) throws IOException {
-				context.getMonitor().subTask("Initializing");
+				context.getMonitor().subTask(Messages.ProxyConnectionBootstrap_0);
 				String line = context.reader.readLine();
 				context.getMonitor().worked(1);
-				if (line.equals("running")) {
+				if (line.equals("running")) { //$NON-NLS-1$
 					context.setState(States.CHECK);
 					return true;
 				}
@@ -113,33 +124,34 @@ public class ProxyConnectionBootstrap {
 		CHECK {
 			@Override
 			public boolean process(Context context) throws IOException {
-				context.getMonitor().subTask("Validating environment");
-				String bundleName = "org.eclipse.remote.proxy.server.core";
+				context.getMonitor().subTask(Messages.ProxyConnectionBootstrap_1);
+				String bundleName = "org.eclipse.remote.proxy.server.core"; //$NON-NLS-1$
 				Bundle serverBundle = Platform.getBundle(bundleName);
 				if (serverBundle == null) {
-					throw new IOException("Unable to locate server bundle " + bundleName);
+					throw new IOException(NLS.bind(Messages.ProxyConnectionBootstrap_2, bundleName));
 				}
-				context.writer.write("check " + serverBundle.getVersion() + "\n");
+				context.writer.write("check " + serverBundle.getVersion() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				context.writer.flush();
 				String line = context.reader.readLine();
 				while (line != null) {
 					context.getMonitor().worked(2);
-					String[] parts = line.split(":");
+					String[] parts = line.split(":"); //$NON-NLS-1$
 					switch (parts[0]) {
-					case "ok":
-						String[] status = parts[1].split("/");
+					case "ok": //$NON-NLS-1$
+						String[] status = parts[1].split("/"); //$NON-NLS-1$
 						context.setOSName(status[1]);
 						context.setOSArch(status[2]);
-						context.setState(status[0].equals("proxy") ? States.START : States.DOWNLOAD);
+						context.setState(status[0].equals("proxy") ? States.START : States.DOWNLOAD); //$NON-NLS-1$
 						return true;
-					case "fail":
-						System.out.println("fail:"+parts[1]);
+					case "fail": //$NON-NLS-1$
+						context.setErrorMessage(parts[1]);
+						System.out.println("fail:"+parts[1]); //$NON-NLS-1$
 						return false;
-					case "debug":
+					case "debug": //$NON-NLS-1$
 						System.err.println(line);
 						break;
 					default:
-						System.err.println("Invalid response from bootstrap script: " + line);
+						System.err.println("Invalid response from bootstrap script: " + line); //$NON-NLS-1$
 						return false;
 					}
 					line = context.reader.readLine();
@@ -150,37 +162,38 @@ public class ProxyConnectionBootstrap {
 		DOWNLOAD {
 			@Override
 			public boolean process(Context context) throws IOException {
-				context.getMonitor().subTask("Updating server proxy");
-				String bundleName = "org.eclipse.remote.proxy.server." + context.getOSName() + "." + context.getOSArch();
+				context.getMonitor().subTask(Messages.ProxyConnectionBootstrap_3);
+				String bundleName = "org.eclipse.remote.proxy.server." + context.getOSName() + "." + context.getOSArch(); //$NON-NLS-1$ //$NON-NLS-2$
 				Bundle serverBundle = Platform.getBundle(bundleName);
 				if (serverBundle == null) {
-					throw new IOException("Unable to locate server bundle " + bundleName);
+					throw new IOException(NLS.bind(Messages.ProxyConnectionBootstrap_2, bundleName));
 				}
-				URL fileURL = FileLocator.find(serverBundle, new Path("proxy.server.tar.gz"), null);
+				URL fileURL = FileLocator.find(serverBundle, new Path("proxy.server.tar.gz"), null); //$NON-NLS-1$
 				if (fileURL == null) {
 					return false;
 				}
 				File file = new File(FileLocator.toFileURL(fileURL).getFile());
 				long count = file.length() / 510;
-				context.writer.write("download " + count + "\n");
+				context.writer.write("download " + count + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				context.writer.flush();
 				context.getMonitor().worked(2);
 				if (downloadFile(file, context.writer, context.getMonitor().newChild(5))) {
 					String line = context.reader.readLine();
 					while (line != null) {
-						String[] parts = line.split(":");
+						String[] parts = line.split(":"); //$NON-NLS-1$
 						switch (parts[0]) {
-						case "ok":
+						case "ok": //$NON-NLS-1$
 							context.setState(States.START);
 							return true;
-						case "fail":
-							System.out.println("fail:"+parts[1]);
+						case "fail": //$NON-NLS-1$
+							context.setErrorMessage(parts[1]);
+							System.out.println("fail:"+parts[1]); //$NON-NLS-1$
 							return false;
-						case "debug":
+						case "debug": //$NON-NLS-1$
 							System.err.println(line);
 							break;
 						default:
-							System.err.println("Invalid response from bootstrap script: " + line);
+							System.err.println("Invalid response from bootstrap script: " + line); //$NON-NLS-1$
 							return false;
 						}
 						line = context.reader.readLine();
@@ -215,8 +228,8 @@ public class ProxyConnectionBootstrap {
 		START {
 			@Override
 			public boolean process(Context context) throws IOException {
-				context.getMonitor().subTask("Starting server");
-				context.writer.write("start\n");
+				context.getMonitor().subTask(Messages.ProxyConnectionBootstrap_4);
+				context.writer.write("start\n"); //$NON-NLS-1$
 				context.writer.flush();
 				return false; // Finished
 			}
@@ -233,17 +246,17 @@ public class ProxyConnectionBootstrap {
 			final Channel chan = openChannel(connection, subMon.newChild(10));
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(chan.getOutputStream()));
 			BufferedReader reader = new BufferedReader(new InputStreamReader(chan.getInputStream()));
-			subMon.beginTask("Checking server installation", 10);
-			subMon.subTask("Loading bootstrap shell");
-			URL fileURL = FileLocator.find(Activator.getDefault().getBundle(), new Path("bootstrap.sh"), null);
+			subMon.beginTask(Messages.ProxyConnectionBootstrap_5, 10);
+			subMon.subTask(Messages.ProxyConnectionBootstrap_9);
+			URL fileURL = FileLocator.find(Activator.getDefault().getBundle(), new Path("bootstrap.sh"), null); //$NON-NLS-1$
 			if (fileURL == null) {
-				throw new RemoteConnectionException("Unable to locate bootstrap shell");
+				throw new RemoteConnectionException(Messages.ProxyConnectionBootstrap_6);
 			}
 			File file = new File(FileLocator.toFileURL(fileURL).getFile());
 			BufferedReader scriptReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String line;
 			while ((line = scriptReader.readLine()) != null) {
-				writer.write(line + "\n");
+				writer.write(line + "\n"); //$NON-NLS-1$
 			}
 			scriptReader.close();
 			writer.flush();
@@ -253,18 +266,18 @@ public class ProxyConnectionBootstrap {
 				// do state machine
 			}
 			if (context.getState() != States.START) {
-				context.writer.write("exit\n");
+				context.writer.write("exit\n"); //$NON-NLS-1$
 				context.writer.flush();
-				throw new RemoteConnectionException("Unable to start server");
+				throw new RemoteConnectionException(NLS.bind(Messages.ProxyConnectionBootstrap_7, context.getErrorMessage()));
 			}
-			new Thread("server error stream") {
+			new Thread("server error stream") { //$NON-NLS-1$
 				@Override
 				public void run() {
 					try {
 						BufferedReader reader = new BufferedReader(new InputStreamReader(chan.getExtInputStream()));
 						String line;
 						while ((line = reader.readLine()) != null) {
-							System.err.println("server: "+ line);
+							System.err.println("server: "+ line); //$NON-NLS-1$
 						}
 					} catch (IOException e) {
 						// Ignore and terminate thread
@@ -295,10 +308,10 @@ public class ProxyConnectionBootstrap {
 			}
 			jSchService.connect(session, hostService.getTimeout() * 1000, monitor);
 			if (monitor.isCanceled()) {
-				throw new RemoteConnectionException("User canceled connection open");
+				throw new RemoteConnectionException(Messages.ProxyConnectionBootstrap_8);
 			}
 			exec = (ChannelExec) session.openChannel("exec"); //$NON-NLS-1$
-			exec.setCommand("/bin/sh -l");
+			exec.setCommand("/bin/sh -l"); //$NON-NLS-1$
 			exec.connect();
 			return exec;
 		} catch (JSchException e) {

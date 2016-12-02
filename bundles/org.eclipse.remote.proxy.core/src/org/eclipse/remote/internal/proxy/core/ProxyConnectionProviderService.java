@@ -32,6 +32,7 @@ public class ProxyConnectionProviderService implements IRemoteConnectionProvider
 
 	@Override
 	public void init() {
+		// Nothing
 	}
 
 	@Override

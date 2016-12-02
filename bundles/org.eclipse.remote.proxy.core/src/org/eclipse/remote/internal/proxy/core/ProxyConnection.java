@@ -36,6 +36,7 @@ import org.eclipse.remote.internal.proxy.core.commands.ExecCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetCwdCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetEnvCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetPropertiesCommand;
+import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
@@ -171,11 +172,11 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
-		SubMonitor subMon = SubMonitor.convert(monitor, "Opening connection...", 20);
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.ProxyConnection_0, 20);
 		if (!isOpen) {
 			ProxyConnectionBootstrap bootstrap = new ProxyConnectionBootstrap();
 			channelMux = bootstrap.run(getRemoteConnection(), subMon.newChild(10));
-			new Thread(channelMux, "multiplexer").start();
+			new Thread(channelMux, "multiplexer").start(); //$NON-NLS-1$
 			try {
 				commandChannel = channelMux.openChannel();
 				initialize(subMon.newChild(10));
@@ -198,15 +199,15 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		fWorkingDir = getCwd(subMon.newChild(10));
 		if (subMon.isCanceled()) {
-			throw new RemoteConnectionException("User canceled opening connection");
+			throw new RemoteConnectionException(Messages.ProxyConnection_2);
 		}
 		fEnv.putAll(loadEnv(subMon.newChild(10)));
 		if (subMon.isCanceled()) {
-			throw new RemoteConnectionException("User canceled opening connection");
+			throw new RemoteConnectionException(Messages.ProxyConnection_2);
 		}
 		fProperties.putAll(loadProperties(subMon.newChild(10)));
 		if (subMon.isCanceled()) {
-			throw new RemoteConnectionException("User canceled opening connection");
+			throw new RemoteConnectionException(Messages.ProxyConnection_2);
 		}
 	}
 
@@ -252,6 +253,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 	private StringBuffer stdout = new StringBuffer();
 	private StringBuffer stderr = new StringBuffer();
 	
+	@SuppressWarnings("unused")
 	private String executeSshCommand(ChannelShell shell, String command) throws RemoteConnectionException {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -276,7 +278,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			final StreamChannel chanA = channelMux.openChannel();
 			final StreamChannel chanB = channelMux.openChannel();
 			final StreamChannel chanC = channelMux.openChannel();
-			new Thread("cmd stdin reader") {
+			new Thread("cmd stdin reader") { //$NON-NLS-1$
 				@Override
 				public void run() {
 					byte[] buf = new byte[1024];
@@ -290,7 +292,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 					}
 				}
 			}.start();
-			new Thread("cmd stderr reader") {
+			new Thread("cmd stderr reader") { //$NON-NLS-1$
 				@Override
 				public void run() {
 					byte[] buf = new byte[1024];
@@ -346,10 +348,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 
 	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {
-		if (!proxyRunning) {
-
-		}
-		return null;
+		throw new IOException("Not implemented yet");
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.internal.proxy.core.commands.ExecCommand;
+import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
@@ -90,14 +91,14 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 		
 		final ProxyConnection conn = getRemoteConnection().getService(ProxyConnection.class);
 		if (conn == null) {
-			throw new IOException("Unable to located connection for this process");
+			throw new IOException(Messages.ProxyProcessBuilder_0);
 		}
 		
 		final StreamChannel chanStdIO = conn.openChannel();
 		final StreamChannel chanStdErr = conn.openChannel();
 		final StreamChannel chanControl = conn.openChannel();
 		
-		Job job = new Job("process executor") {
+		Job job = new Job("process executor") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				ExecCommand cmd = new ExecCommand(conn, cmdArgs, env, directory().toURI().getPath(), redirectErrorStream(), append, 

@@ -36,6 +36,7 @@ import org.eclipse.remote.internal.proxy.core.commands.GetInputStreamCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetOutputStreamCommand;
 import org.eclipse.remote.internal.proxy.core.commands.MkdirCommand;
 import org.eclipse.remote.internal.proxy.core.commands.PutInfoCommand;
+import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 public class ProxyFileStore extends FileStore {
@@ -71,18 +72,18 @@ public class ProxyFileStore extends FileStore {
 		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 		IRemoteConnectionType connectionType = manager.getConnectionType(fURI);
 		if (connectionType == null) {
-			throw new RemoteConnectionException(NLS.bind("No remote services found for URI {0}", fURI));
+			throw new RemoteConnectionException(NLS.bind(Messages.ProxyFileStore_0, fURI));
 		}
 
 		try {
 			IRemoteConnection connection = connectionType.getConnection(fURI);
 			if (connection == null) {
-				throw new RemoteConnectionException(NLS.bind("Invalid connection for URI {0}", fURI));
+				throw new RemoteConnectionException(NLS.bind(Messages.ProxyFileStore_1, fURI));
 			}
 			if (!connection.isOpen()) {
 				connection.open(monitor);
 				if (!connection.isOpen()) {
-					throw new RemoteConnectionException("Connection is not open");
+					throw new RemoteConnectionException(Messages.ProxyFileStore_2);
 				}
 			}
 			return connection.getService(ProxyConnection.class);
@@ -234,7 +235,7 @@ public class ProxyFileStore extends FileStore {
 			IFileStore parent = getParent();
 			if (parent != null && !parent.fetchInfo(EFS.NONE, subMon.newChild(5)).exists()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
-						NLS.bind("The parent of directory {0} does not exist", fRemotePath.toString()), null));
+						NLS.bind(Messages.ProxyFileStore_3, fRemotePath.toString()), null));
 			}
 			if (subMon.isCanceled()) {
 				return this;
@@ -256,11 +257,11 @@ public class ProxyFileStore extends FileStore {
 			if (!subMon.isCanceled()) {
 				if (!info.exists()) {
 					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
-							NLS.bind("The directory {0} could not be created", fRemotePath.toString()), null));
+							NLS.bind(Messages.ProxyFileStore_4, fRemotePath.toString()), null));
 				}
 				if (!info.isDirectory()) {
 					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
-							NLS.bind("A file of name {0} already exists", fRemotePath.toString()), null));
+							NLS.bind(Messages.ProxyFileStore_5, fRemotePath.toString()), null));
 				}
 			}
 		}
@@ -282,11 +283,11 @@ public class ProxyFileStore extends FileStore {
 		if (!subMon.isCanceled()) {
 			if (!info.exists()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_READ,
-						NLS.bind("File {0} does not exist", fRemotePath.toString()), null));
+						NLS.bind(Messages.ProxyFileStore_6, fRemotePath.toString()), null));
 			}
 			if (info.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
-						NLS.bind("{0} is a directory", fRemotePath.toString()), null));
+						NLS.bind(Messages.ProxyFileStore_7, fRemotePath.toString()), null));
 			}
 			GetInputStreamCommand command = new GetInputStreamCommand(connection, options, fRemotePath.toString());
 			try {
@@ -312,7 +313,7 @@ public class ProxyFileStore extends FileStore {
 		if (!subMon.isCanceled()) {
 			if (info.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
-						NLS.bind("{0} is a directory", fRemotePath.toString()), null));
+						NLS.bind(Messages.ProxyFileStore_7, fRemotePath.toString()), null));
 			}
 			GetOutputStreamCommand command = new GetOutputStreamCommand(connection, options, fRemotePath.toString());
 			try {

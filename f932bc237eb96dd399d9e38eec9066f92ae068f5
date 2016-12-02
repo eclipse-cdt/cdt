@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_e201683e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-02T08:56:37Z",
+      "side": 1,
+      "message": "Remove this line of code, it does not do anything anymore.",
+      "revId": "f932bc237eb96dd399d9e38eec9066f92ae068f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_02fd84a3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolSettingUI.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-02T08:56:37Z",
+      "side": 1,
+      "message": "Having this created outside the loop seems like an unproven optimisation that makes this code harder to read.",
+      "revId": "f932bc237eb96dd399d9e38eec9066f92ae068f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_222b60ba",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolSettingUI.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-02T08:56:37Z",
+      "side": 1,
+      "message": "Other half of optimisation.",
+      "revId": "f932bc237eb96dd399d9e38eec9066f92ae068f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1517,6 +1517,35 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
     	IFunction f2= getBindingFromASTName("f(b)", 1, IFunction.class);
     	assertFalse(f1.equals(f2));
 	}
+	
+	//	struct Params {
+	//	    constexpr Params(int, int) {}
+	//	};
+	//	struct Desc {
+	//	    Desc(const Params*, int = 0);
+	//	};
+	//	struct Descs {
+	//	    Desc a;
+	//	    Desc b[2];
+	//	};
+	//	struct S {
+	//	    static Descs waldo;
+	//	};
+	//	constexpr Params params[1] = {
+	//	    { 0, 0 },
+	//	};
+	//	struct Descs S::waldo = {
+	//	    {nullptr},
+	//	    {
+	//	        {params, 0},
+	//	        {params, 0},
+	//	    },
+	//	};
+	
+	//	// empty file
+	public void testArrayWithOneElement_508254() throws Exception {
+		checkBindings();
+	}
 
 	//	class A {
 	//	  class B;

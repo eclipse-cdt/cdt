@@ -13,6 +13,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -62,26 +63,45 @@ public final class ExecDeclarator implements ICPPExecution {
 		return declaredBinding;
 	}
 
+	private static ICPPEvaluation maybeUnwrapInitList(ICPPEvaluation eval, IType targetType, IASTNode point) {
+		// Only 1-element initializer lists are eligible for unwrapping.
+		if (!(eval instanceof EvalInitList)) {
+			return eval;
+		}
+		EvalInitList initList = (EvalInitList) eval;
+		if (initList.getClauses().length != 1) {
+			return eval;
+		}
+		
+		// Never unwrap initializers for array types.
+		if (isArrayType(targetType)) {
+			return eval;
+		}
+
+		// Only unwrap initializers for class types if the type of the initializer
+		// element matches the class type, indicating that we're calling the
+		// implicit copy constructor (as opposed to doing memberwise initialization).
+		if (isClassType(targetType)) {
+			if (!initList.getClauses()[0].getType(point).isSameType(targetType)) {
+				return eval;
+			}
+		}
+		
+		// Otherwise unwrap.
+		return initList.getClauses()[0];
+	}
+	
 	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record, ConstexprEvaluationContext context) {
 		if (initializerEval == null) {
 			return createDefaultInitializedCompositeValue(type);
 		}
 
+		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+
 		ICPPEvaluation computedInitializerEval = initializerEval.computeForFunctionCall(record, context.recordStep());
 
-		// If a composite value with only one member is initialized with an initializer list,
-		// it evaluates to a EvalFixed with a Value instead of a CompositeValue because the initializer list
-		// doesn't know that it is initializing a composite.
-		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-		if (isClassType(nestedType) && computedInitializerEval instanceof EvalFixed) {
-			EvalFixed evalFixed = (EvalFixed) computedInitializerEval;
-			IValue val = evalFixed.getValue();
-			if (!(val instanceof CompositeValue)) {
-				CompositeValue compVal = new CompositeValue(initializerEval, new ICPPEvaluation[]{evalFixed});
-				computedInitializerEval =
-						new EvalFixed(type, computedInitializerEval.getValueCategory(context.getPoint()), compVal);
-			}
-		}
+		// In some contexts, unwrap 1-element initializer lists.
+		computedInitializerEval = maybeUnwrapInitList(computedInitializerEval, nestedType, context.getPoint());
 
 		if (isReferenceType(type)) {
 			return createReferenceValue(record, context, computedInitializerEval);
@@ -120,7 +140,10 @@ public final class ExecDeclarator implements ICPPExecution {
 	private ICPPEvaluation createReferenceValue(ActivationRecord record, ConstexprEvaluationContext context,
 			ICPPEvaluation computedInitializerEval) {
 		ICPPEvaluation initValue = initializerEval;
-		if (!(initValue instanceof EvalBinding)) {
+		if (initValue instanceof EvalInitList) {
+			initValue = ((EvalInitList) initValue).getClauses()[0];
+		}
+		else if (!(initValue instanceof EvalBinding)) {
 			initValue = initializerEval.getValue(context.getPoint()).getSubValue(0);
 		}
 

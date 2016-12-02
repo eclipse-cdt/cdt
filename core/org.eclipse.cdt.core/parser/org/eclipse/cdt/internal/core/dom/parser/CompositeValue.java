@@ -113,6 +113,10 @@ public final class CompositeValue implements IValue {
 			// Array size is dependent. TODO: Handle this?
 			return IntegralValue.UNKNOWN;
 		}
+		// More initializers than array members
+		if (arraySize.intValue() < initList.getClauses().length) {
+			return IntegralValue.ERROR;
+		}
 		IType elementType = type.getType();
 		ICPPEvaluation[] values = new ICPPEvaluation[arraySize.intValue()];
 		for (int i = 0; i < initList.getClauses().length; i++) {

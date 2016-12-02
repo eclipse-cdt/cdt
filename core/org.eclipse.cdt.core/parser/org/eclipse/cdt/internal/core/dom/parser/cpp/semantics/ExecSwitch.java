@@ -59,13 +59,14 @@ public class ExecSwitch implements ICPPExecution {
 		return bodyStmtExecutions.length;
 	}
 
-	private boolean isSatisfiedCaseStatement(ICPPExecution stmtExec, IValue controllerValue, ActivationRecord record, ConstexprEvaluationContext context) {
+	private boolean isSatisfiedCaseStatement(ICPPExecution stmtExec, IValue controllerValue, 
+			ActivationRecord record, ConstexprEvaluationContext context) {
 		if (stmtExec instanceof ExecCase) {
 			ExecCase caseStmtExec = (ExecCase) stmtExec;
 			caseStmtExec = (ExecCase) caseStmtExec.executeForFunctionCall(record, context);
-			Number caseVal = caseStmtExec.getCaseExpressionEvaluation().getValue(null).numberValue();
+			Number caseVal = caseStmtExec.getCaseExpressionEvaluation().getValue(context.getPoint()).numberValue();
 			Number controllerVal = controllerValue.numberValue();
-			return caseVal.equals(controllerVal);
+			return caseVal != null && controllerVal != null && caseVal.equals(controllerVal);
 		}
 		return stmtExec instanceof ExecDefault;
 	}

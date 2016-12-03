@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -25,7 +26,6 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
@@ -388,34 +388,20 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService,
 				expressionDMC, IFormattedValues.DECIMAL_FORMAT);
-		// Create the DataRequestMonitor which will store the operation result in the wait object
-		final DataRequestMonitor<FormattedValueDMData> drm = new DataRequestMonitor<FormattedValueDMData>(
-				fSession.getExecutor(), null) {
+
+		Query<FormattedValueDMData> query = new Query<IFormattedValues.FormattedValueDMData>() {
+			
 			@Override
-			protected void handleCompleted() {
-				if (isSuccess()) {
-					fWait.setReturnInfo(getData());
-				}
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
+				fExpressionService.getFormattedExpressionValue(formattedValueDMC, rm);
 			}
 		};
-		// Evaluate the expression (asynchronously)
-		fWait.waitReset();
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		String result = "";
-		Object returnInfo = fWait.getReturnInfo();
-		if (returnInfo instanceof FormattedValueDMData)
-			result = ((FormattedValueDMData) returnInfo).getFormattedValue();
-		return new BigInteger(result);
+
+		fExpressionService.getExecutor().submit(query);
+
+		FormattedValueDMData result = query.get();
+
+		return new BigInteger(result.getFormattedValue());
 	}
 
 	/* ------------------------------------------------------------------------
@@ -430,30 +416,17 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context)
-			throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext[]> drm = new DataRequestMonitor<IBreakpointDMContext[]>(
-				fBreakpointService.getExecutor(), null) {
+			throws InterruptedException, ExecutionException {
+		Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMContext[]> rm) {
+				fBreakpointService.getBreakpoints(context, rm);
 			}
 		};
-		// Issue the breakpoint request
-		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpoints(context, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get();
 	}
 
 	/* ------------------------------------------------------------------------
@@ -468,30 +441,18 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * @param breakpoint    the breakpoint to retrieve
 	 * ------------------------------------------------------------------------
 	 */
-	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMData> drm = new DataRequestMonitor<IBreakpointDMData>(
-				fBreakpointService.getExecutor(), null) {
+	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint)
+			throws InterruptedException, ExecutionException {
+		Query<IBreakpointDMData> query = new Query<IBreakpoints.IBreakpointDMData>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMData> rm) {
+				fBreakpointService.getBreakpointDMData(breakpoint, rm);
 			}
 		};
-		// Issue the breakpoint request
-		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpointDMData(breakpoint, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get();
 	}
 
 	/**
@@ -539,27 +500,17 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
-			final Map<String, Object> attributes) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<IBreakpointDMContext>(
-				fBreakpointService.getExecutor(), null) {
+			final Map<String, Object> attributes) throws InterruptedException, ExecutionException {
+		Query<IBreakpointDMContext> query = new Query<IBreakpoints.IBreakpointDMContext>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMContext> rm) {
+				fBreakpointService.insertBreakpoint(context, attributes, rm);
 			}
 		};
-		// Issue the remove insertion request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.insertBreakpoint(context, attributes, drm);
-			}
-		});
-		// Wait for the result and return the breakpoint id
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get();
 	}
 
 	/* ------------------------------------------------------------------------
@@ -575,25 +526,18 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * @param breakpoint the breakpoint to remove
 	 * ------------------------------------------------------------------------
 	 */
-	private void removeBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final RequestMonitor rm = new RequestMonitor(fBreakpointService.getExecutor(), null) {
+	private void removeBreakpoint(final IBreakpointDMContext breakpoint)
+			throws InterruptedException, ExecutionException {
+		Query<Void> query = new Query<Void>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
-			}
-		};
-		// Issue the add breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.removeBreakpoint(breakpoint, rm);
 			}
-		});
-		// Wait for the result
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+		};
+
+		fBreakpointService.getExecutor().submit(query);
+
+		query.get();
 	}
 
 	/* ------------------------------------------------------------------------
@@ -610,26 +554,20 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	private void updateBreakpoint(final IBreakpointDMContext breakpoint,
-			final Map<String, Object> delta) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final RequestMonitor rm = new RequestMonitor(fBreakpointService.getExecutor(), null) {
+			final Map<String, Object> delta) throws InterruptedException, ExecutionException {
+		
+		Query<Void> query = new Query<Void>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
-			}
-		};
-		// Issue the update breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
 			}
-		});
-		// Wait for the result
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+		};
+
+		fBreakpointService.getExecutor().submit(query);
+
+		query.get();
 	}
+
 	// ========================================================================
 	// Test Cases
 	// ------------------------------------------------------------------------

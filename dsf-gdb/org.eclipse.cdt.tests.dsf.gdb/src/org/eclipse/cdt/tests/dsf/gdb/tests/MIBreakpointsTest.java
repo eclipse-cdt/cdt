@@ -11,13 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -25,7 +27,6 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
@@ -57,7 +58,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -93,8 +93,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	public static final String SOURCE_FOLDER = "src";
 	public static final String SOURCE_NAME = "BreakpointTestApp.cc"; //$NON-NLS-1$
 	public static final String EXEC_NAME = "BreakpointTestApp.exe"; //$NON-NLS-1$
-	// Asynchronous Completion
-	protected final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
+
 	// Services references
 	protected DsfSession fSession;
 	protected IBreakpointsTargetDMContext fBreakpointsDmc;
@@ -388,34 +387,19 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService,
 				expressionDMC, IFormattedValues.DECIMAL_FORMAT);
-		// Create the DataRequestMonitor which will store the operation result in the wait object
-		final DataRequestMonitor<FormattedValueDMData> drm = new DataRequestMonitor<FormattedValueDMData>(
-				fSession.getExecutor(), null) {
+
+		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
 			@Override
-			protected void handleCompleted() {
-				if (isSuccess()) {
-					fWait.setReturnInfo(getData());
-				}
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
+				fExpressionService.getFormattedExpressionValue(formattedValueDMC, rm);
 			}
 		};
-		// Evaluate the expression (asynchronously)
-		fWait.waitReset();
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		String result = "";
-		Object returnInfo = fWait.getReturnInfo();
-		if (returnInfo instanceof FormattedValueDMData)
-			result = ((FormattedValueDMData) returnInfo).getFormattedValue();
-		return new BigInteger(result);
+
+		fExpressionService.getExecutor().submit(query);
+
+		FormattedValueDMData result = query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+
+		return new BigInteger(result.getFormattedValue());
 	}
 
 	/* ------------------------------------------------------------------------
@@ -430,30 +414,17 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context)
-			throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext[]> drm = new DataRequestMonitor<IBreakpointDMContext[]>(
-				fBreakpointService.getExecutor(), null) {
+			throws InterruptedException, ExecutionException, TimeoutException {
+		Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMContext[]> rm) {
+				fBreakpointService.getBreakpoints(context, rm);
 			}
 		};
-		// Issue the breakpoint request
-		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpoints(context, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
 
 	/* ------------------------------------------------------------------------
@@ -468,30 +439,18 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * @param breakpoint    the breakpoint to retrieve
 	 * ------------------------------------------------------------------------
 	 */
-	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMData> drm = new DataRequestMonitor<IBreakpointDMData>(
-				fBreakpointService.getExecutor(), null) {
+	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		Query<IBreakpointDMData> query = new Query<IBreakpoints.IBreakpointDMData>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMData> rm) {
+				fBreakpointService.getBreakpointDMData(breakpoint, rm);
 			}
 		};
-		// Issue the breakpoint request
-		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpointDMData(breakpoint, drm);
-			}
-		});
-		// Wait for completion
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		assertTrue(fWait.getMessage(), fWait.isOK());
-		// Return the string formatted by the back-end
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -511,7 +470,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, lineNumber);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -539,27 +498,47 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
-			final Map<String, Object> attributes) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<IBreakpointDMContext>(
-				fBreakpointService.getExecutor(), null) {
+			final Map<String, Object> attributes)
+					throws InterruptedException, ExecutionException, TimeoutException {
+		Query<IBreakpointDMContext> query = new Query<IBreakpointDMContext>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<IBreakpointDMContext> rm) {
+				fBreakpointService.insertBreakpoint(context, attributes, rm);
 			}
 		};
-		// Issue the remove insertion request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.insertBreakpoint(context, attributes, drm);
-			}
-		});
-		// Wait for the result and return the breakpoint id
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-		return drm.getData();
+
+		fBreakpointService.getExecutor().submit(query);
+
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * Try to insert a breakpoint in an invalid way, expecting an
+	 * {@link ExecutionException}. Fail the test if no such exception was
+	 * caught.
+	 *
+	 * @param context
+	 *            the breakpoint context
+	 * @param context
+	 *            the breakpoint attributes
+	 * @param expectedMessage
+	 *            a string expected to be found in the exception message
+	 * @throws TimeoutException When the query to the service times out.
+	 */
+	private void insertInvalidBreakpoint(
+			final IBreakpointsTargetDMContext context,
+			final Map<String, Object> attributes, String expectedMessage)
+			throws InterruptedException, TimeoutException {
+		boolean exceptionThrown = false;
+
+		try {
+			insertBreakpoint(context, attributes);
+		} catch (ExecutionException e) {
+			exceptionThrown = true;
+			assertThat(e.getMessage(), containsString(expectedMessage));
+		} finally {
+			assertThat("exception is thrown", exceptionThrown);
+		}
 	}
 
 	/* ------------------------------------------------------------------------
@@ -567,33 +546,45 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 * Issues a remove breakpoint request.
 	 * ------------------------------------------------------------------------
-	 * Typical usage:
-	 *    IBreakpointDMContext breakpoint = ...;
-	 *    removeBreakpoint(context, breakpoint);
-	 *    assertTrue(fWait.getMessage(), fWait.isOK());
-	 * ------------------------------------------------------------------------
 	 * @param breakpoint the breakpoint to remove
 	 * ------------------------------------------------------------------------
 	 */
-	private void removeBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final RequestMonitor rm = new RequestMonitor(fBreakpointService.getExecutor(), null) {
+	private void removeBreakpoint(final IBreakpointDMContext breakpoint)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		Query<Void> query = new Query<Void>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
-			}
-		};
-		// Issue the add breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.removeBreakpoint(breakpoint, rm);
 			}
-		});
-		// Wait for the result
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+		};
+
+		fBreakpointService.getExecutor().submit(query);
+
+		query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * Try to remove a breakpoint, expecting an {@link ExecutionException} to be
+	 * thrown. Fail the test if no such exception was caught.
+	 *
+	 * @param breakpoint
+	 *            the breakpoint reference
+	 * @param expectedMessage
+	 *            a string expected to be found in the exception message
+	 * @throws TimeoutException When the query to the service times out.
+	 */
+	private void removeInvalidBreakpoint(final IBreakpointDMContext breakpoint, String expectedMessage)
+			throws InterruptedException, TimeoutException {
+		boolean exceptionThrown = false;
+
+		try {
+			removeBreakpoint(breakpoint);
+		} catch (ExecutionException e) {
+			exceptionThrown = true;
+			assertThat(e.getMessage(), containsString(expectedMessage));
+		} finally {
+			assertThat("exception is thrown", exceptionThrown);
+		}
 	}
 
 	/* ------------------------------------------------------------------------
@@ -610,26 +601,47 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	 * ------------------------------------------------------------------------
 	 */
 	private void updateBreakpoint(final IBreakpointDMContext breakpoint,
-			final Map<String, Object> delta) throws InterruptedException {
-		// Clear the completion waiter
-		fWait.waitReset();
-		// Set the Request Monitor
-		final RequestMonitor rm = new RequestMonitor(fBreakpointService.getExecutor(), null) {
+			final Map<String, Object> delta) throws InterruptedException, ExecutionException, TimeoutException {
+		Query<Void> query = new Query<Void>() {
 			@Override
-			protected void handleCompleted() {
-				fWait.waitFinished(getStatus());
-			}
-		};
-		// Issue the update breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
 			}
-		});
-		// Wait for the result
-		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+		};
+
+		fBreakpointService.getExecutor().submit(query);
+
+		query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
+
+	/**
+	 * Try to update a breakpoint in an invalid way, expecting an
+	 * {@link ExecutionException}. Fail the test if no such exception was
+	 * caught.
+	 *
+	 * @param breakpoint
+	 *            the breakpoint reference
+	 * @param delta
+	 *            breakpoint attributes to modify
+	 * @param expectedMessage
+	 *            a string expected to be found in the exception message
+	 * @throws TimeoutException When the query to the service times out.
+	 */
+	private void updateInvalidBreakpoint(final IBreakpointDMContext breakpoint,
+			final Map<String, Object> delta, String expectedMessage)
+			throws InterruptedException, TimeoutException {
+		boolean exceptionThrown = false;
+
+		try {
+			updateBreakpoint(breakpoint, delta);
+		} catch (ExecutionException e) {
+			exceptionThrown = true;
+			assertThat(e.getMessage(), containsString(expectedMessage));
+		} finally {
+			assertThat("exception is thrown", exceptionThrown);
+		}
+	}
+
 	// ========================================================================
 	// Test Cases
 	// ------------------------------------------------------------------------
@@ -667,12 +679,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+
 		// Perform the test
-		String expected = UNKNOWN_EXECUTION_CONTEXT;
-		insertBreakpoint(null, breakpoint);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		insertInvalidBreakpoint(null, breakpoint, UNKNOWN_EXECUTION_CONTEXT);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -689,12 +699,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME + "_bad");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+
 		// Perform the test
-		String expected = BREAKPOINT_INSERTION_FAILURE;
-		insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		insertInvalidBreakpoint(fBreakpointsDmc, breakpoint, BREAKPOINT_INSERTION_FAILURE);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -711,12 +719,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, 0);
+
 		// Perform the test
-		String expected = BREAKPOINT_INSERTION_FAILURE;
-		insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		insertInvalidBreakpoint(fBreakpointsDmc, breakpoint, BREAKPOINT_INSERTION_FAILURE);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -733,12 +739,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, "invalid-function-name");
+
 		// Perform the test
-		String expected = BREAKPOINT_INSERTION_FAILURE;
-		insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		insertInvalidBreakpoint(fBreakpointsDmc, breakpoint, BREAKPOINT_INSERTION_FAILURE);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -753,12 +757,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(ADDRESS_TAG, "0x0z");
+
 		// Perform the test
-		String expected = BREAKPOINT_INSERTION_FAILURE;
-		insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		insertInvalidBreakpoint(fBreakpointsDmc, breakpoint, BREAKPOINT_INSERTION_FAILURE);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -820,7 +822,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -866,7 +868,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IS_ENABLED_TAG, false);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -911,7 +913,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -955,7 +957,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -999,7 +1001,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1042,7 +1044,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1069,7 +1071,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
 		// Perform the test
 		ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1122,7 +1124,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1144,7 +1146,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 				!breakpoint1.isPending());
 		// Create a second line breakpoint, same attributes...
 		ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1208,7 +1210,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		// ...we install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -1258,7 +1260,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		// ...we install the bad breakpoint and check that it failed
 		insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), !fWait.isOK());
+
 		// Now install a proper breakpoint an see that it hits without having to resume
 		// the target.  This will show that the target was still properly running.
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
@@ -1300,7 +1302,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1343,7 +1345,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(READ_TAG, true);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1387,7 +1389,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1441,7 +1443,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		// Install watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -1495,7 +1497,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1505,7 +1507,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		clearEventCounters();
 		// Remove the installed breakpoint
 		removeBreakpoint(ref);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1528,12 +1530,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Create an invalid breakpoint reference
 		IBreakpointDMContext invalid_ref = new MIBreakpointDMContext((MIBreakpoints) fBreakpointService,
 				new IDMContext[] { fBreakpointsDmc }, "0.0");
+
 		// Remove the invalid breakpoint
-		String expected = UNKNOWN_BREAKPOINT;
-		removeBreakpoint(invalid_ref);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		removeInvalidBreakpoint(invalid_ref, UNKNOWN_BREAKPOINT);
+
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -1545,7 +1545,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
 		IBreakpointDMContext saved_ref = ref;
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1559,7 +1559,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 				+ breakpoints.length, breakpoints.length == 1);
 		// Remove the installed breakpoint
 		removeBreakpoint(ref);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1571,11 +1571,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 0 + " breakpoint(s), received "
 				+ breakpoints.length, breakpoints.length == 0);
+
 		// Remove the un-installed breakpoint
-		removeBreakpoint(saved_ref);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		removeInvalidBreakpoint(saved_ref, UNKNOWN_BREAKPOINT);
+
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -1585,7 +1584,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 				+ breakpoints.length, breakpoints.length == 0);
 		// Re-install the breakpoint
 		ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -1594,11 +1592,10 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Remove an un-installed breakpoint (again)
-		removeBreakpoint(saved_ref);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+		removeInvalidBreakpoint(saved_ref, UNKNOWN_BREAKPOINT);
+
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -1625,7 +1622,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 			breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 			breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1 + i);
 			insertBreakpoint(fBreakpointsDmc, breakpoint);
-			assertTrue(fWait.getMessage(), fWait.isOK());
+
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
 			waitForBreakpointEvent(expected);
@@ -1646,8 +1643,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 			// Remove the selected breakpoint
 			IBreakpointDMContext index = breakpoints[indices[i]];
 			removeBreakpoint(index);
-			fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-			assertTrue(fWait.getMessage(), fWait.isOK());
+
 			breakpoints_left--;
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
@@ -1691,17 +1687,17 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Install a second breakpoint
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
 		// Install the breakpoint
 		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Run the program
 		SyncUtil.resume();
 		// Remove the first breakpoint
 		removeBreakpoint(ref);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(4);
@@ -1731,15 +1727,13 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		IBreakpointDMContext invalid_ref = new MIBreakpointDMContext((MIBreakpoints) fBreakpointService,
 				new IDMContext[] { fBreakpointsDmc }, "0.0");
 		// Update the invalid breakpoint
-		String expected = UNKNOWN_BREAKPOINT;
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		properties.put(FILE_NAME_TAG, SOURCE_NAME);
 		properties.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
-		updateBreakpoint(invalid_ref, properties);
-		assertFalse(fWait.getMessage(), fWait.isOK());
-		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-				fWait.getMessage().contains(expected));
+
+		updateInvalidBreakpoint(invalid_ref, properties, UNKNOWN_BREAKPOINT);
+
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 0);
@@ -1759,7 +1753,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1771,7 +1765,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1800,7 +1794,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1812,7 +1806,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, null);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1841,7 +1835,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1853,7 +1847,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1891,7 +1885,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(CONDITION_TAG, CONDITION_4);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1906,7 +1900,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		//Update the condition
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -1944,7 +1938,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1956,7 +1950,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1987,7 +1981,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(CONDITION_TAG, CONDITION_1);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -1999,7 +1993,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, null);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2030,7 +2024,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(CONDITION_TAG, CONDITION_1);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT events, received "
@@ -2042,7 +2036,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2070,7 +2064,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2082,7 +2076,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2111,7 +2105,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2123,7 +2117,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IGNORE_COUNT_TAG, null);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2152,7 +2146,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2164,7 +2158,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2202,7 +2196,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2217,7 +2211,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		//Update the count
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -2253,7 +2247,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Create a second line breakpoint
 		breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
@@ -2261,7 +2255,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
 		// Install the breakpoint
 		IBreakpointDMContext ref2 = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -2278,7 +2272,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IS_ENABLED_TAG, false);
 		updateBreakpoint(ref1, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2327,11 +2321,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Install a second breakpoint
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
 		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -2346,7 +2340,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		// Disable the breakpoint
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -2376,7 +2370,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Create a second line breakpoint
 		breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
@@ -2384,7 +2378,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
 		// Install the breakpoint
 		IBreakpointDMContext ref2 = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -2401,7 +2395,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IS_ENABLED_TAG, false);
 		updateBreakpoint(ref1, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2429,7 +2423,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		delta = new HashMap<String, Object>();
 		delta.put(IS_ENABLED_TAG, true);
 		updateBreakpoint(ref1, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2479,7 +2473,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IS_ENABLED_TAG, false);
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2494,7 +2488,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		SyncUtil.resume();
 		// Enable the breakpoint
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
@@ -2635,7 +2629,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2672,7 +2666,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2712,7 +2706,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2755,7 +2749,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2767,7 +2761,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2811,7 +2805,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2854,7 +2848,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2866,7 +2860,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2908,7 +2902,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2950,7 +2944,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(READ_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -2993,7 +2987,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3037,7 +3031,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3049,7 +3043,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3097,7 +3091,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(WRITE_TAG, true);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3109,7 +3103,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		Map<String, Object> delta = new HashMap<String, Object>();
 		delta.put(CONDITION_TAG, CONDITION_3);
 		updateBreakpoint(ref, delta);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3158,7 +3152,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		watchpoint.put(IGNORE_COUNT_TAG, 1000);
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3206,7 +3200,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
@@ -3233,7 +3226,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -3284,7 +3276,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -3344,7 +3335,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 
 		// ...we install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		waitForBreakpointEvent(1);
     	// Ensure the correct BreakpointEvent was received

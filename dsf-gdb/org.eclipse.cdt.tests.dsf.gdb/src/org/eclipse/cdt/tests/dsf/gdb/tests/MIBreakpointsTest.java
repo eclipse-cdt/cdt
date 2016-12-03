@@ -12,6 +12,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -642,6 +643,96 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		}
 	}
 
+	/**
+	 * Validate attributes of a breakpoint.
+	 *
+	 * @param breakpoint The breakpoint object.
+	 * @param filename The filename in which the breakpoint is placed.
+	 * @param lineNumber The line number at which the breakpoint is placed.
+	 * @param condition The condition associated to the breakpoint (pass an
+	 *   empty string to denote "no condition").
+	 * @param ignoreCount The ignore hit count of this breakpoint.
+	 * @param enabled Whether this breakpoint is enabled.
+	 * @param pending Whether this breakpoint is pending.
+	 */
+	private void validateBreakpoint(MIBreakpointDMData breakpoint,
+			String filename, int lineNumber, String condition, int ignoreCount,
+			boolean enabled, boolean pending) {
+		assertThat("filename", breakpoint.getFileName(), equalTo(filename));
+		assertThat("line number", breakpoint.getLineNumber(), equalTo(lineNumber));
+		assertThat("condition", breakpoint.getCondition(), equalTo(condition));
+		assertThat("ignore count", breakpoint.getIgnoreCount(), equalTo(ignoreCount));
+		assertThat("enabled", breakpoint.isEnabled(), equalTo(enabled));
+		assertThat("pending", breakpoint.isPending(), equalTo(pending));
+	}
+
+	/**
+	 * Validate attributes of a breakpoint.
+	 *
+	 * @param breakpoint The breakpoint object.
+	 * @param filename The filename in which the breakpoint is placed.
+	 * @param functionName The name of the function in which the breakpoint is placed.
+	 * @param condition The condition associated to the breakpoint (pass an
+	 *   empty string to denote "no condition").
+	 * @param ignoreCount The ignore hit count of this breakpoint.
+	 * @param enabled Whether this breakpoint is enabled.
+	 * @param pending Whether this breakpoint is pending.
+	 */
+	private void validateBreakpoint(MIBreakpointDMData breakpoint,
+			String filename, String functionName, String condition,
+			int ignoreCount, boolean enabled, boolean pending) {
+		assertThat("filename", breakpoint.getFileName(), equalTo(filename));
+		assertThat("functionName", breakpoint.getFunctionName(), equalTo(functionName));
+		assertThat("condition", breakpoint.getCondition(), equalTo(condition));
+		assertThat("ignore count", breakpoint.getIgnoreCount(), equalTo(ignoreCount));
+		assertThat("enabled", breakpoint.isEnabled(), equalTo(enabled));
+		assertThat("pending", breakpoint.isPending(), equalTo(pending));
+	}
+
+	/**
+	 * Validate attributes of a breakpoint.
+	 *
+	 * @param breakpoint The breakpoint object.
+	 * @param address The address at which the breakpoint is placed.
+	 * @param condition The condition associated to the breakpoint (pass an
+	 *   empty string to denote "no condition").
+	 * @param ignoreCount The ignore hit count of this breakpoint.
+	 * @param enabled Whether this breakpoint is enabled.
+	 * @param pending Whether this breakpoint is pending.
+	 */
+	private void validateBreakpoint(MIBreakpointDMData breakpoint,
+			BigInteger address, String condition, int ignoreCount,
+			boolean enabled, boolean pending) {
+		assertThat("address", breakpoint.getAddresses()[0].getValue(), equalTo(address));
+		assertThat("condition", breakpoint.getCondition(), equalTo(condition));
+		assertThat("ignore count", breakpoint.getIgnoreCount(), equalTo(ignoreCount));
+		assertThat("enabled", breakpoint.isEnabled(), equalTo(enabled));
+		assertThat("pending", breakpoint.isPending(), equalTo(pending));
+	}
+
+	/**
+	 * Validate attributes of a watchpoint.
+	 *
+	 * @param watchpoint The watchpoint object.
+	 * @param expression The expression being watched.
+	 * @param read Whether this watchpoint is a read watchpoint.
+	 * @param write Whether this watchpoint is a write watchpoint.
+	 * @param access Whether this watchpoint is an access watchpoint.
+	 * @param enabled Whether this watchpoint is enabled.
+	 * @param pending Whether this watchpoint is pending.
+	 */
+	private void validateWatchpoint(MIBreakpointDMData watchpoint,
+			String expression, boolean read, boolean write, boolean access,
+			boolean enabled, boolean pending) {
+		assertThat("expression", watchpoint.getExpression(), equalTo(expression));
+		assertThat("read state", watchpoint.isReadWatchpoint(), equalTo(read));
+		assertThat("write state", watchpoint.isWriteWatchpoint(), equalTo(write));
+		assertThat("access state", watchpoint.isAccessWatchpoint(), equalTo(access));
+		assertThat("enabled", watchpoint.isEnabled(), equalTo(enabled));
+		assertThat("pending", watchpoint.isPending(), equalTo(pending));
+	}
+
+
 	// ========================================================================
 	// Test Cases
 	// ------------------------------------------------------------------------
@@ -787,18 +878,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertEquals("BreakpointService problem: breakpoint mismatch (wrong address)",
-				ADDRESS, breakpoint1.getAddresses()[0].getValue());
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
-				breakpoint1.isEnabled());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, ADDRESS, NO_CONDITION, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -830,20 +914,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
-				breakpoint1.isEnabled());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -876,20 +951,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
-				!breakpoint1.isEnabled());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, false, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -921,18 +987,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong function)",
-				breakpoint1.getFunctionName().equals(SIGNED_FUNCTION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, SIGNED_FUNCTION, NO_CONDITION, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -965,18 +1024,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(CONDITION_1));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, CONDITION_1, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -1009,18 +1061,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == IGNORE_COUNT_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, IGNORE_COUNT_1, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " breakpoint(s), received "
@@ -1052,18 +1097,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, false);
+
 		// Create a function breakpoint
 		breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
@@ -1079,18 +1117,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint2.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong function)",
-				breakpoint2.getFunctionName().equals(SIGNED_FUNCTION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint2.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint2.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint2.isPending());
+		validateBreakpoint(breakpoint2, SOURCE_NAME, SIGNED_FUNCTION, NO_CONDITION, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received "
@@ -1132,18 +1163,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, false);
+
 		// Create a second line breakpoint, same attributes...
 		ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
 
@@ -1154,18 +1178,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint2.getFileName().equals(SOURCE_NAME));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint2.getLineNumber() == LINE_NUMBER_1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint2.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint2.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint2.isPending());
+		validateBreakpoint(breakpoint2, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, false);
+
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 2 + " breakpoint(s), received "
@@ -1214,16 +1231,18 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
+
 		// Ensure the correct BreakpointEvent was received
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_5, NO_CONDITION, 0, true, false);
+
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef.equals(breakpoint1.getNumber()));
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+
 		clearEventCounters();
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
 				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
@@ -1268,16 +1287,18 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred
 		MIStoppedEvent event = SyncUtil.waitForStop(3000);
 		waitForBreakpointEvent(2);
+
 		// Ensure the correct BreakpointEvent was received
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_5, NO_CONDITION, 0, true, false);
+
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef.equals(breakpoint1.getNumber()));
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!breakpoint1.isPending());
+
 		clearEventCounters();
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
 				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
@@ -1310,18 +1331,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the watchpoint was correctly installed
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong expression)",
-				watchpoint1.getExpression().equals(EXPRESSION_1));
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong read state)",
-				!watchpoint1.isReadWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong write state)",
-				watchpoint1.isWriteWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
-				!watchpoint1.isAccessWatchpoint());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!watchpoint1.isPending());
+		validateWatchpoint(watchpoint1, EXPRESSION_1, false, true, false, true, false);
+
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
@@ -1353,18 +1367,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the watchpoint was correctly installed
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong expression)",
-				watchpoint1.getExpression().equals(EXPRESSION_1));
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong read state)",
-				watchpoint1.isReadWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong write state)",
-				!watchpoint1.isWriteWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
-				!watchpoint1.isAccessWatchpoint());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!watchpoint1.isPending());
+		validateWatchpoint(watchpoint1, EXPRESSION_1, true, false, false, true, false);
+
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
@@ -1397,18 +1404,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
+
 		// Ensure that the watchpoint was correctly installed
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong expression)",
-				watchpoint1.getExpression().equals(EXPRESSION_1));
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong read state)",
-				!watchpoint1.isReadWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong write state)",
-				!watchpoint1.isWriteWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
-				watchpoint1.isAccessWatchpoint());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!watchpoint1.isPending());
+		validateWatchpoint(watchpoint1, EXPRESSION_1, false, false, true, true, false);
+
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
@@ -1455,18 +1455,11 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		clearEventCounters();
+
 		// Ensure that the watchpoint was correctly installed
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong expression)",
-				watchpoint1.getExpression().equals(EXPRESSION_1));
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong read state)",
-				!watchpoint1.isReadWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong write state)",
-				watchpoint1.isWriteWatchpoint());
-		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
-				!watchpoint1.isAccessWatchpoint());
-		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
-				!watchpoint1.isPending());
+		validateWatchpoint(watchpoint1, EXPRESSION_1, false, true, false, true, false);
+
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
 		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_b8215c5e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-03T22:38:30Z",
+      "side": 1,
+      "message": "Unless there is a reason to change the fail message can you restore the messages in the new functions to match what was there and the other messages, e.g.\n\n    BreakpointService problem: breakpoint mismatch (wrong file name)\n\nIf there is a compelling reason to change perhaps we should change all of them, but make that the subject of another patch.\n\nPS I really appreciate changing from an assertTrue/False to an assertThat as the latter has much more useful error messages.",
+      "revId": "0d13b9172482e035d285b9a6f8ccdf2ad54f0d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

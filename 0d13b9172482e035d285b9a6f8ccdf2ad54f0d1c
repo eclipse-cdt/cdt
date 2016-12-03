@@ -50,6 +50,24 @@
       "revId": "0d13b9172482e035d285b9a6f8ccdf2ad54f0d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_d860d879",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-03T23:05:44Z",
+      "side": 1,
+      "message": "I agree with you about the style of message in these tests. I would welcome such a cleanup, as well as one that removes all the assertTrue/Falses when that loses information. But I appreciate for now keeping the consistency and doing it one stage at a time.",
+      "parentUuid": "a7c23755_38246c60",
+      "revId": "0d13b9172482e035d285b9a6f8ccdf2ad54f0d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

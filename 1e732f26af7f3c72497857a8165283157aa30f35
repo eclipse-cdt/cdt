@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_98cca034",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_987ae05f",
+      "range": {
+        "startLine": 391,
+        "startChar": 48,
+        "endLine": 391,
+        "endChar": 65
+      },
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_5885a8e6",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
         "patchSetId": 4
@@ -36,6 +60,24 @@
       "writtenOn": "2016-12-03T22:14:24Z",
       "side": 1,
       "message": "The timeout has been lost here, that means that a failing test can hang the build (at least for a while - there are global timeouts too but seeing the timeout as close to here as possible makes identifying the problem later easier to do, also the global timeout - defined in BaseTestCase.timeout - is 5 minutes instead of the massaged 2 seconds that was here before)",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_78c50406",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Should I simply use the .get() version with a timeout?  Such as:\n\n  query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);\n\nIf the timeout expires, .get() throws an exception, which will abort the test.  I think it\u0027s fine.",
+      "parentUuid": "a7c23755_5885a8e6",
       "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_d8d538b3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_7888a4ff",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_987f4059",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
         "patchSetId": 4
@@ -70,6 +130,24 @@
       "writtenOn": "2016-12-03T22:14:24Z",
       "side": 1,
       "message": "Same comment here about timeouts.",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f8d034c2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_987f4059",
       "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -99,6 +177,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_18e0908c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_d86378ba",
+      "range": {
+        "startLine": 502,
+        "startChar": 48,
+        "endLine": 502,
+        "endChar": 61
+      },
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_b8823cdb",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
         "patchSetId": 4
@@ -110,6 +212,24 @@
       "writtenOn": "2016-12-03T22:14:24Z",
       "side": 1,
       "message": "Same comment here about timeouts.",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_38db8ce5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 511,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_b8823cdb",
       "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -133,6 +253,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_58e92877",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 561,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_388e2c07",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_58704881",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
         "patchSetId": 4
@@ -144,6 +282,24 @@
       "writtenOn": "2016-12-03T22:14:24Z",
       "side": 1,
       "message": "Same comment here about timeouts.",
+      "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_78ec2488",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2016-12-03T22:29:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_58704881",
       "revId": "1e732f26af7f3c72497857a8165283157aa30f35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -223,5 +224,14 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
+	}
+
+	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,
+			ICPPClassTemplatePartialSpecialization astSpec) {
+		fScopeMapper.recordPartialSpecialization(indexSpec, astSpec);
+	}
+	
+	public ICPPClassTemplatePartialSpecialization mapToAST(ICPPClassTemplatePartialSpecialization indexSpec) {
+		return fScopeMapper.mapToAST(indexSpec);
 	}
 }

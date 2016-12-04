@@ -199,4 +199,28 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testFriendClassDeclaration_508338() throws Exception {
 		checkBindings();
 	}
+	
+	// test.h
+	//	template <typename T>
+	//	struct atomic;
+	//
+	//	template <typename T>
+	//	struct atomic<T*>;
+	
+	// test1.cpp
+	//	#include "test.h"
+	
+	// test2.cpp *
+	//	#include "test.h"
+	//
+	//	template <typename T>
+	//	struct atomic {};
+	//
+	//	template <typename T>
+	//	struct atomic<T*> {
+	//		void fetch_sub();
+	//	};
+	public void testClassTemplatePartialSpecialization_470726() throws Exception {
+		checkBindings();
+	}
 }

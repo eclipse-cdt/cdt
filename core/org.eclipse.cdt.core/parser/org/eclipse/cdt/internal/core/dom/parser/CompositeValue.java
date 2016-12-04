@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 public final class CompositeValue implements IValue {
 	private final ICPPEvaluation evaluation;
@@ -232,7 +234,12 @@ public final class CompositeValue implements IValue {
 
 	@Override
 	public void setSubValue(int position, ICPPEvaluation newValue) {
-		values[position] = newValue == null ? EvalFixed.INCOMPLETE : newValue;
+		if (position >= 0 && position < values.length) {
+			values[position] = newValue == null ? EvalFixed.INCOMPLETE : newValue;
+		} else {
+			CCorePlugin.log(IStatus.WARNING, "Out-of-bounds access to composite value: " + position + //$NON-NLS-1$ 
+					" (length is " + values.length + ")");  //$NON-NLS-1$//$NON-NLS-2$
+		}
 	}
 
 	@Override

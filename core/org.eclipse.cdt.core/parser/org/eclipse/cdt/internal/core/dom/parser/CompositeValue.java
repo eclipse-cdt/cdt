@@ -152,6 +152,8 @@ public final class CompositeValue implements IValue {
 		ICPPEvaluation[] values = new ICPPEvaluation[fields.length];
 		ICPPEvaluation[] clauses = initList.getClauses();
 		for (int i = 0; i < fields.length; i++) {
+			if (i == clauses.length)
+				break;
 			IField field = fields[i];
 			ICPPEvaluation eval = clauses[i];
 			IType fieldType = field.getType();

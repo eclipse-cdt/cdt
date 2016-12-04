@@ -16,13 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall.ParameterPackType;
@@ -85,9 +86,9 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 		} else if (type instanceof InitializerListType) {
 			InitializerListType initListType = (InitializerListType) type;
 			return initListType.getEvaluation().getClauses()[elementId].getType(point);
-		} else if (type instanceof ICompositeType) {
-			ICompositeType compositeType = (ICompositeType) type;
-			return compositeType.getFields()[elementId].getType();
+		} else if (type instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType) type;
+			return ClassTypeHelper.getFields(classType, point)[elementId].getType();
 		} else if (type instanceof ParameterPackType) {
 			ParameterPackType parameterPackType = (ParameterPackType) type;
 			return parameterPackType.getTypes()[elementId];

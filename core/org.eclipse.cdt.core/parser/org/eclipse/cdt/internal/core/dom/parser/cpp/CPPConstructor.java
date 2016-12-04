@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecConstructorChain;
 
@@ -46,13 +48,16 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 		if (initializer instanceof ICPPEvaluationOwner) {
 			return ((ICPPEvaluationOwner) initializer).getEvaluation();
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
-			ICPPConstructor constructor = (ICPPConstructor) CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
+			IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
 			if (constructor == null) {
 				boolean usesBracedInitList = (initializer instanceof ICPPASTInitializerList);
 				return new EvalTypeId(member.getType(), point, usesBracedInitList,
 						EvalConstructor.extractArguments(initializer));
+			} else if (constructor instanceof IProblemBinding) {
+				return EvalFixed.INCOMPLETE;
 			}
-			return new EvalConstructor(member.getType(), constructor, EvalConstructor.extractArguments(initializer), point);
+			return new EvalConstructor(member.getType(), (ICPPConstructor) constructor, 
+					EvalConstructor.extractArguments(initializer), point);
 		}
 		return null;
 	}

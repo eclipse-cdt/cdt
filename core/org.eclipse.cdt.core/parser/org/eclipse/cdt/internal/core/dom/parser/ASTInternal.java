@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -51,6 +52,8 @@ public class ASTInternal {
 		if (binding instanceof ICInternalBinding) {
 			return ((ICInternalBinding) binding).getDefinition();
 		}
+		CCorePlugin.log("ASTInternal.getDefinitionOfBinding() called for binding of type " +  //$NON-NLS-1$ 
+				binding.getClass().getName());
 		assert false;
 		return null;
 	}

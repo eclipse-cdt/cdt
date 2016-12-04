@@ -25,9 +25,8 @@ int envTest() {
 int main (int argc, char *argv[])
 {
     envTest(); // FIRST_LINE_IN_MAIN
-    reverseTest();
-    stopAtOther();
-
+    reverseTest(); // tests assume that every line between first and last
+    stopAtOther(); // is steppable, so no blank lines allowed.
     return 36; // LAST_LINE_IN_MAIN
     // Return special value to allow
     // testing exit code feature

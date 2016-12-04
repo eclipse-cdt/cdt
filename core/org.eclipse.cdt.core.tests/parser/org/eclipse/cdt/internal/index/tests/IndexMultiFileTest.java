@@ -163,4 +163,28 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testExplicitSpecialization_494359() throws Exception {
 		checkBindings();
 	}
+	
+	// test.h
+	//	template <typename T>
+	//	struct atomic;
+	//
+	//	template <typename T>
+	//	struct atomic<T*>;
+	
+	// test1.cpp
+	//	#include "test.h"
+	
+	// test2.cpp *
+	//	#include "test.h"
+	//
+	//	template <typename T>
+	//	struct atomic {};
+	//
+	//	template <typename T>
+	//	struct atomic<T*> {
+	//		void fetch_sub();
+	//	};
+	public void testWaldo_470726() throws Exception {
+		checkBindings();
+	}
 }

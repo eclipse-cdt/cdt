@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -278,6 +279,9 @@ public class CPPScopeMapper {
 	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<>();
 	private final CPPASTTranslationUnit fTu;
 	protected CharArrayMap<IASTName[]> fClasses;
+	
+	private final Map<ICPPClassTemplatePartialSpecialization, ICPPClassTemplatePartialSpecialization> 
+			fPartialSpecs = new HashMap<>();
 
 	public CPPScopeMapper(CPPASTTranslationUnit tu) {
 		fTu= tu;
@@ -428,5 +432,18 @@ public class CPPScopeMapper {
 			}
 		}
 		return type;
+	}
+
+	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,
+			ICPPClassTemplatePartialSpecialization astSpec) {
+		fPartialSpecs.put(indexSpec, astSpec);
+	}
+	
+	public ICPPClassTemplatePartialSpecialization mapToAST(ICPPClassTemplatePartialSpecialization indexSpec) {
+		ICPPClassTemplatePartialSpecialization astSpec = fPartialSpecs.get(indexSpec);
+		if (astSpec != null) {
+			return astSpec;
+		}
+		return indexSpec;
 	}
 }

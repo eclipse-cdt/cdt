@@ -338,6 +338,20 @@ public class BaseTestCase {
 	}
 
 	/**
+	 * Clear our knowledge of line tags.
+	 *
+	 * This method is set up to run before each test run. This may not seem
+	 * necessary, since the fTagLocations field is not static and a new instance
+	 * of the test class is created for each test. However, when a test marked
+	 * as {@link Intermittent} fails, the class instance is re-used, so the
+	 * content of the failed try leaks in the new try.
+	 */
+	@Before
+	public void clearLineTags() {
+		fTagLocations.clear();
+	}
+
+	/**
 	 * Given a set of tags (strings) to find in sourceFile, populate the
 	 * fTagLocations map with the line numbers where they are found.
 	 *

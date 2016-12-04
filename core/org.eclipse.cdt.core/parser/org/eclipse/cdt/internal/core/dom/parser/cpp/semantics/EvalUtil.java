@@ -12,6 +12,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -29,6 +32,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecutionOwner;
 
 public class EvalUtil {
+	/**
+	 * The set of ICPPVariable objects for which initial value computation is in progress on each thread.
+	 * This is used to guard against recursion during initial value computation.
+	 */
+	private static final ThreadLocal<Set<ICPPVariable>> fInitialValueInProgress = new ThreadLocal<Set<ICPPVariable>>() {
+		@Override
+		protected Set<ICPPVariable> initialValue() {
+			return new HashSet<>();
+		}
+	};
+
 	public static IValue getConditionExprValue(ICPPEvaluation conditionExprEval, ActivationRecord record, ConstexprEvaluationContext context) {
 		return conditionExprEval.computeForFunctionCall(record, context.recordStep()).getValue(context.getPoint());
 	}
@@ -137,31 +151,39 @@ public class EvalUtil {
 	 * the given activation record.
 	 */
 	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record) {
-		IType type = variable.getType();
-		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-		IValue initialValue = variable.getInitialValue();
-		ICPPEvaluation valueEval = null;
-
-		if ((initialValue != null && initialValue.getEvaluation() != null) ||
-				(initialValue == null && nestedType instanceof ICPPClassType)) {
-			final ICPPEvaluation initializerEval = initialValue == null ? null : initialValue.getEvaluation();
-			if (initializerEval == EvalFixed.INCOMPLETE) {
+		Set<ICPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
+		if (!recursionProtectionSet.add(variable)) {
+			return EvalFixed.INCOMPLETE;
+		}
+		try {
+			IType type = variable.getType();
+			IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+			IValue initialValue = variable.getInitialValue();
+			ICPPEvaluation valueEval = null;
+	
+			if ((initialValue != null && initialValue.getEvaluation() != null) ||
+					(initialValue == null && nestedType instanceof ICPPClassType)) {
+				final ICPPEvaluation initializerEval = initialValue == null ? null : initialValue.getEvaluation();
+				if (initializerEval == EvalFixed.INCOMPLETE) {
+					return null;
+				}
+				ExecDeclarator declaratorExec = new ExecDeclarator(variable, initializerEval);
+	
+				ConstexprEvaluationContext context = new ConstexprEvaluationContext(null);
+				if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
+					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
+				}
+			} else if (initialValue != null) {
+				valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
+			}
+	
+			if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
+					valueEval.getValue(null) == IntegralValue.UNKNOWN)) {
 				return null;
 			}
-			ExecDeclarator declaratorExec = new ExecDeclarator(variable, initializerEval);
-
-			ConstexprEvaluationContext context = new ConstexprEvaluationContext(null);
-			if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
-				valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
-			}
-		} else if (initialValue != null) {
-			valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
+			return valueEval;
+		} finally {
+			recursionProtectionSet.remove(variable);
 		}
-
-		if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
-				valueEval.getValue(null) == IntegralValue.UNKNOWN)) {
-			return null;
-		}
-		return valueEval;
 	}
 }

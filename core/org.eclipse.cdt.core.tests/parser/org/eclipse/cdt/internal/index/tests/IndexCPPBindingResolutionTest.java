@@ -1970,7 +1970,27 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	constexpr S waldo = { nullptr, waldo.a };
 	
 	//  // empty file
-	public void testVariableInitializerThatReferencesVariable_508254() throws Exception {
+	public void testVariableInitializerThatReferencesVariable_508254a() throws Exception {
+		checkBindings();
+	}
+	
+	//	struct S {
+	//	    int* a;
+	//	    int* b;
+	//	};
+	//
+	//	constexpr S waldo = { nullptr, waldo.a };
+	//
+	//	struct T {
+	//	    int *pBlock;
+	//	};
+	//
+	//	static const constexpr T greebo[] = {
+	//		{ waldo.a },
+	//	};
+	
+	//	// empty file
+	public void testVariableInitializerThatReferencesVariable_508254b() throws Exception {
 		checkBindings();
 	}
 

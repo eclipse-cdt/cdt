@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class EvalInitList extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fClauses;
+	private boolean fCheckedIsValueDependent;
+	private boolean fIsValueDependent;
 	private boolean fCheckedIsConstantExpression;
 	private boolean fIsConstantExpression;
 
@@ -66,7 +68,11 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		return containsDependentValue(fClauses);
+		if (!fCheckedIsValueDependent) {
+			fCheckedIsValueDependent = true;
+			fIsValueDependent = containsDependentValue(fClauses);
+		}
+		return fIsValueDependent;
 	}
 
 	@Override
@@ -147,8 +153,10 @@ public class EvalInitList extends CPPDependentEvaluation {
 				clauses[i] = clause;
 			}
 		}
-		EvalInitList evalInit = new EvalInitList(clauses, this.getTemplateDefinition());
-		return evalInit;
+		if (clauses == fClauses) {
+			return this;
+		}
+		return new EvalInitList(clauses, this.getTemplateDefinition());
 	}
 
 	@Override

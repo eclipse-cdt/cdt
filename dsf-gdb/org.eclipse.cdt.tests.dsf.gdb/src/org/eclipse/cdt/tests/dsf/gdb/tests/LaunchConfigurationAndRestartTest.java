@@ -104,6 +104,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		// parameters.  The individual tests will be responsible for starting the launch.
 
 		// Looks up line tags in source file(s).
+		clearLineTags();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
 		FIRST_LINE_IN_MAIN = getLineForTag("FIRST_LINE_IN_MAIN");

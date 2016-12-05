@@ -35,54 +35,24 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
-import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.search.CSearchPatternQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.CSearchViewPage;
 
-public class BasicSearchTest extends BaseUITestCase {
-	ICProject fCProject;
-	CharSequence[] testData;
+public class BasicSearchTest extends SearchTestBase {
 
 	public static TestSuite suite() {
 		return suite(BasicSearchTest.class);
-	}
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
-		Bundle b = CTestPlugin.getDefault().getBundle();
-		testData = TestSourceReader.getContentsForTest(b, "ui", this.getClass(), getName(), 2);
-		assertEquals("Incomplete test data", 2, testData.length);
-
-		IFile file = TestSourceReader.createFile(fCProject.getProject(), new Path("header.h"), testData[0].toString());
-		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
-		waitForIndexer(fCProject);
-
-		IFile cppfile= TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"), testData[1].toString());
-		waitForIndexer(fCProject);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		if (fCProject != null) {
-			fCProject.getProject().delete(true, npm());
-		}
-		super.tearDown();
 	}
 
 	// // empty
@@ -305,12 +275,6 @@ public class BasicSearchTest extends BaseUITestCase {
 	private CSearchQuery makeProjectQuery(String pattern) {
 		String scope1= "Human Readable Description";
 		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
-	}
-	
-	private void assertOccurrences(CSearchQuery query, int expected) {
-		query.run(npm());
-		CSearchResult result= (CSearchResult) query.getSearchResult();
-		assertEquals(expected, result.getMatchCount());
 	}
 	
 	// void foo() {}

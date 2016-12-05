@@ -22,5 +22,6 @@ public class SearchTestSuite extends TestSuite {
         addTest(BasicSearchTest.suite());
         addTest(LinkedNamesFinderTest.suite());
         addTest(SearchReferencesAcrossLanguagesTest.suite());
+        addTest(FindReferencesTest.suite());
     }
 }

@@ -76,6 +76,21 @@ public class TemplateTable implements Listener {
 		}
 	}
 
+	public void selectTemplate(Template template) {
+		if (template == null) {
+			return;
+		}
+
+		int i = 0;
+		for (TableItem item : table.getItems()) {
+			if (template.equals(item.getData())) {
+				table.select(i);
+				break;
+			}
+			i++;
+		}
+	}
+
 	@Override
 	public void handleEvent(Event event) {
 		switch (event.type) {

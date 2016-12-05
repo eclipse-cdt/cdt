@@ -73,7 +73,11 @@ public class TemplateSelectionPage extends WizardPage {
 					}
 				}
 
+				Template selected = templateTable.getSelectedTemplate();
 				templateTable.setTemplates(selectedTemplates);
+				templateTable.selectTemplate(selected);
+
+				updateButtons();
 			}
 		});
 
@@ -81,8 +85,7 @@ public class TemplateSelectionPage extends WizardPage {
 		templateTable.getTable().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setPageComplete(templateTable.getSelectedTemplate() != null);
-				getContainer().updateButtons();
+				updateButtons();
 			}
 
 			@Override
@@ -102,6 +105,11 @@ public class TemplateSelectionPage extends WizardPage {
 		tagList.getList().select(0); // All
 		
 		form.setWeights(new int[] { 20, 80 });
+	}
+
+	private void updateButtons() {
+		setPageComplete(templateTable.getSelectedTemplate() != null);
+		getContainer().updateButtons();
 	}
 
 	@Override

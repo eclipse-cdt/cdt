@@ -11,28 +11,46 @@
    <feature url="features/org.eclipse.cdt.core.lrparser.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.feature" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.core.lrparser.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.feature.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.core.lrparser.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.sdk" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.core.parser.upc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature" version="0.0.0">
       <category name="extra"/>
    </feature>
-   <feature url="features/org.eclipse.cdt.core.parser.upc.sdk.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.sdk" version="0.0.0">
+   <feature url="features/org.eclipse.cdt.core.parser.upc.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.core.parser.upc.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.sdk" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.bupc_0.0.0.qualifier.jar" id="org.eclipse.cdt.bupc" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.bupc.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.bupc.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.debug.gdbjtag_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.gdbjtag" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.debug.gdbjtag.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.gdbjtag.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.xlc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.feature" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.xlc.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.feature.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.xlc.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.sdk" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.util_0.0.0.qualifier.jar" id="org.eclipse.cdt.util" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.util.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.util.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.debug.ui.memory_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory" version="0.0.0">
@@ -44,6 +62,9 @@
    <feature url="features/org.eclipse.cdt.build.crossgcc_0.0.0.qualifier.jar" id="org.eclipse.cdt.build.crossgcc" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.build.crossgcc.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.build.crossgcc.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.launch.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote" version="0.0.0">
       <category name="extra"/>
    </feature>
@@ -53,13 +74,25 @@
    <feature url="features/org.eclipse.cdt.msw_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.msw.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.examples.dsf.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.examples.dsf.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.examples.dsf_0.0.0.qualifier.jar" id="org.eclipse.cdt.examples.dsf" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.visualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.visualizer" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.visualizer.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.visualizer.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.autotools_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools" version="0.0.0">
@@ -77,28 +110,43 @@
    <feature url="features/org.eclipse.cdt.testsrunner.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.feature" version="0.0.0">
       <category name="extra"/>
    </feature>
-   <feature url="features/org.eclipse.cdt.testsrunner.source.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.source.feature" version="0.0.0">
+   <feature url="features/org.eclipse.cdt.testsrunner.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.feature.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.managedbuilder.llvm_0.0.0.qualifier.jar" id="org.eclipse.cdt.managedbuilder.llvm" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.managedbuilder.llvm.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.managedbuilder.llvm.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.qt_0.0.0.qualifier.jar" id="org.eclipse.cdt.qt" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+     <feature url="features/org.eclipse.cdt.qt.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.qt.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.remote" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.remote.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.remote.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.debug.standalone_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone" version="0.0.0">
       <category name="extra"/>
    </feature>
-      <category name="extra"/>
    <feature url="features/org.eclipse.cdt.debug.standalone.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone.source" version="0.0.0">
-   </feature>
-   <feature id="org.eclipse.cdt.arduino">
       <category name="extra"/>
    </feature>
-   <feature id="org.eclipse.cdt.cmake">
+   <feature url="features/org.eclipse.cdt.arduino_0.0.0.qualifier.jar" id="org.eclipse.cdt.arduino" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.arduino.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.arduino.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.cmake_0.0.0.qualifier.jar" id="org.eclipse.cdt.cmake" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.cmake.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.cmake.source" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.llvm.dsf.lldb_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb" version="0.0.0">

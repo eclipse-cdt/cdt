@@ -55,6 +55,8 @@ import org.eclipse.cdt.internal.ui.search.CSearchViewPage;
 
 public class BasicSearchTest extends BaseUITestCase {
 	ICProject fCProject;
+	String fHeaderContents;
+	IFile fHeaderFile;
 	CharSequence[] testData;
 
 	public static TestSuite suite() {
@@ -69,7 +71,8 @@ public class BasicSearchTest extends BaseUITestCase {
 		testData = TestSourceReader.getContentsForTest(b, "ui", this.getClass(), getName(), 2);
 		assertEquals("Incomplete test data", 2, testData.length);
 
-		IFile file = TestSourceReader.createFile(fCProject.getProject(), new Path("header.h"), testData[0].toString());
+		fHeaderContents = testData[0].toString();
+		fHeaderFile = TestSourceReader.createFile(fCProject.getProject(), new Path("header.h"), fHeaderContents);
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
 
@@ -307,7 +310,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
 	}
 	
-	private void assertOccurrences(CSearchQuery query, int expected) {
+	protected void assertOccurrences(CSearchQuery query, int expected) {
 		query.run(npm());
 		CSearchResult result= (CSearchResult) query.getSearchResult();
 		assertEquals(expected, result.getMatchCount());

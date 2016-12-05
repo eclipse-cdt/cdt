@@ -57,7 +57,6 @@
 		<module>core/org.eclipse.cdt.core.aix</module>
 		<module>native/org.eclipse.cdt.native.serial</module>
 		<module>releng/org.eclipse.cdt.native-feature</module>
-		<module>releng/org.eclipse.cdt.native.source-feature</module>
 
 		<module>releng/org.eclipse.cdt</module>
 		<module>core/org.eclipse.cdt.core</module>
@@ -78,26 +77,21 @@
 		<module>dsf/org.eclipse.cdt.dsf</module>
 		<module>dsf/org.eclipse.cdt.dsf.ui</module>
 		<module>releng/org.eclipse.cdt.platform-feature</module>
-		<module>releng/org.eclipse.cdt.platform.source-feature</module>
 
 		<module>build/org.eclipse.cdt.build.gcc.core</module>
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>
-		<module>build/org.eclipse.cdt.gnu.build.source-feature</module>
 
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>
 		<module>debug/org.eclipse.cdt.gdb-feature</module>
-		<module>debug/org.eclipse.cdt.gdb.source-feature</module>
 
 		<module>launch/org.eclipse.cdt.launch</module>
 		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
-		<module>debug/org.eclipse.cdt.gnu.debug.source-feature</module>
 
 		<module>debug/org.eclipse.cdt.debug.application</module>
 		<module>debug/org.eclipse.cdt.debug.application.doc</module>
 		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
-		<module>debug/org.eclipse.cdt.debug.standalone.source-feature</module>
 <!-- 	
 		TODO:  Investigate/Fix hanging before re-enable re-enabling
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
@@ -106,24 +100,18 @@
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf-feature</module>
-		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf.source-feature</module>
 		<module>dsf-gdb/org.eclipse.cdt.gnu.multicorevisualizer-feature</module>
 
 		<module>releng/org.eclipse.cdt-feature</module>
 
 		<module>doc/org.eclipse.cdt.doc.isv</module>
 		<module>releng/org.eclipse.cdt.sdk</module>
-		<module>releng/org.eclipse.cdt.sdk-feature</module>
 
 		<module>lrparser/org.eclipse.cdt.core.lrparser</module>
 		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
-		<module>lrparser/org.eclipse.cdt.core.lrparser.source.feature</module>
-		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
 
 		<module>upc/org.eclipse.cdt.core.parser.upc</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.feature</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.source.feature</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.feature</module>
 
 		<module>upc/org.eclipse.cdt.managedbuilder.bupc.ui</module>
 		<module>upc/org.eclipse.cdt.bupc-feature</module>
@@ -140,8 +128,6 @@
 		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.ui</module>
 		<module>xlc/org.eclipse.cdt.managedbuilder.xlupc.ui</module>
 		<module>xlc/org.eclipse.cdt.xlc.feature</module>
-		<module>xlc/org.eclipse.cdt.xlc.source.feature</module>
-		<module>xlc/org.eclipse.cdt.xlc.sdk-feature</module>
 
 		<module>util/org.eclipse.cdt.util</module>
 		<module>util/org.eclipse.cdt.util-feature</module>
@@ -152,7 +138,6 @@
 		<module>memory/org.eclipse.cdt.debug.ui.memory.traditional</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory-feature</module>
-		<module>memory/org.eclipse.cdt.debug.ui.memory.source-feature</module>
 
 		<module>cross/org.eclipse.cdt.build.crossgcc</module>
 		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>
@@ -191,11 +176,9 @@
 		<module>build/org.eclipse.cdt.autotools.ui</module>
 		<module>build/org.eclipse.cdt.autotools.ui.tests</module>
 		<module>build/org.eclipse.cdt.autotools-feature</module>
-		<module>build/org.eclipse.cdt.autotools.source-feature</module>
 
 		<module>launch/org.eclipse.cdt.docker.launcher</module>
 		<module>launch/org.eclipse.cdt.docker.launcher-feature</module>
-		<module>launch/org.eclipse.cdt.docker.launcher.source-feature</module>
 
 		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
@@ -204,7 +187,6 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.test</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
-		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>
 
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>		
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
@@ -506,6 +488,53 @@
 						<id>attach-source</id>
 						<goals>
 							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<includeBinaryFeature>false</includeBinaryFeature>
+				</configuration>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<plugin id="org.eclipse.cdt.autotools.docs"/>
+								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
+								<plugin id="org.eclipse.cdt.core.linux.ppc64"/>
+								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
+								<plugin id="org.eclipse.cdt.core.linux.x86"/>
+								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
+								<plugin id="org.eclipse.cdt.core.win32.x86"/>
+								<plugin id="org.eclipse.cdt.debug.application.doc"/>
+								<plugin id="org.eclipse.cdt.doc.user"/>
+								<plugin id="org.eclipse.cdt.debug.gdbjtag"/>
+								<plugin id="org.eclipse.cdt"/>
+								<plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attached-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
 						</goals>
 					</execution>
 				</executions>

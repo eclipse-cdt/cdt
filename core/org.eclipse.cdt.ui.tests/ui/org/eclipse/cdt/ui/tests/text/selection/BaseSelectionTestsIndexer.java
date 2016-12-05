@@ -217,8 +217,10 @@ public class BaseSelectionTestsIndexer extends BaseSelectionTests {
         
         return null;
     }
-            
-    protected void testSimple_Ctrl_G_Selection(IFile file, int offset, int length, int numOccurrences) throws ParserException {
+
+    // Helper function for testSimpleFindDeclarationsSelection() and testSimpleFindReferencesSelection().
+    private void testSimpleSelectionSearchAction(IFile file, int offset, int length, int numOccurrences,
+    		String searchActionId) throws ParserException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		
@@ -230,10 +232,12 @@ public class BaseSelectionTestsIndexer extends BaseSelectionTests {
             assertFalse(true);
         }
         
+        runEventQueue(50);
+
         if (part instanceof AbstractTextEditor) {
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final IAction action = ((AbstractTextEditor)part).getAction(ICEditorActionDefinitionIds.FIND_DECL);
+            final IAction action = ((AbstractTextEditor)part).getAction(searchActionId);
             
             action.run();
             
@@ -256,5 +260,17 @@ public class BaseSelectionTestsIndexer extends BaseSelectionTests {
 			}
             assertEquals(numOccurrences, occurs);
         }
+    }
+    
+    // Test the FindDeclarationsAction.
+    protected void testSimpleFindDeclarationsSelection(IFile file, int offset, int length, int numOccurrences) 
+    		throws ParserException {
+    	testSimpleSelectionSearchAction(file, offset, length, numOccurrences, ICEditorActionDefinitionIds.FIND_DECL);
+    }
+
+    // Test FindReferencesAction.
+    protected void testSimpleFindReferencesSelection(IFile file, int offset, int length, int numOccurrences) 
+    		throws ParserException {
+    	testSimpleSelectionSearchAction(file, offset, length, numOccurrences, ICEditorActionDefinitionIds.FIND_REFS);
     }
 }

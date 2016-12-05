@@ -95,7 +95,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 		setMessage(Messages.LaunchBarLaunchConfigDialog_SetParameters);
 
-		tabFolder = new CTabFolder(composite, SWT.NONE);
+		tabFolder = new CTabFolder(composite, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tabFolder.addFocusListener(new FocusAdapter() {
 			@Override

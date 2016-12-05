@@ -76,7 +76,6 @@
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
 			<topic label="Breakpoint Actions" href="reference/cdt_u_dbg_brkpt_actions.htm"/>
 			<topic label="Source Lookup Path" href="reference/cdt_u_dbg_src.htm"/>
-			<topic label="GDB MI" href="reference/cdt_u_gdb_mi.htm"/>
 			<topic label="GDB" href="reference/cdt_u_dsfgdb.htm"/>
 		</topic>
 		

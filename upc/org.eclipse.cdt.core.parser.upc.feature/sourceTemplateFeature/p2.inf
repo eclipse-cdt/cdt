@@ -1,0 +1,1 @@
+update.matchExp=providedCapabilities.exists(pc | pc.namespace == 'org.eclipse.equinox.p2.iu' && (pc.name == 'org.eclipse.cdt.core.parser.upc.source.feature.group' || pc.name == 'org.eclipse.cdt.core.parser.upc.feature.source.feature.group'))

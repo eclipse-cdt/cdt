@@ -21,15 +21,11 @@
    </license>
 
    <includes
-         id="org.eclipse.cdt.core.parser.upc.source"
+         id="org.eclipse.cdt.core.parser.upc.feature.source"
          version="0.0.0"/>
 
    <includes
          id="org.eclipse.cdt.core.parser.upc.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.cdt.core.lrparser.sdk"
          version="0.0.0"/>
 
 </feature>

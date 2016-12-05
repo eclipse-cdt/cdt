@@ -130,6 +130,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 				CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
 				tabItem.setData(configTab);
 				tabItem.setText(configTab.getName());
+				tabItem.setImage(configTab.getImage());
 
 				Composite tabComp = new Composite(tabFolder, SWT.NONE);
 				tabComp.setLayout(new GridLayout());

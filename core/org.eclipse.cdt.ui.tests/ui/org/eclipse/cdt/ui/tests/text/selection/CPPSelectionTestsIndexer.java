@@ -733,7 +733,30 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
         decl = testF3(file, offset1);
         assertNode("g", offset0, decl);        
         
-        testSimple_Ctrl_G_Selection(file, offset1, 1, 1);
+        testSimpleFindDeclarationsSelection(file, offset1, 1, 1);
+	}
+	
+	//	struct A {
+	//	    virtual void waldo();
+	//	};
+	//
+	//	struct B : public A {
+	//	    virtual void waldo() override;
+	//	};
+	//
+	//	int main() {
+	//	    A* a = new B();
+	//	    a->waldo();
+	//	}
+	public void testFindReferences_OnlyPolymorphicMatches_Bug491343() throws Exception {
+        StringBuilder[] buffers= getContents(1);
+        String code= buffers[0].toString();
+        IFile file = importFile("testBug491343.cpp", code); 
+        waitUntilFileIsIndexed(index, file);
+
+        int offset = code.indexOf("waldo() override");
+
+        testSimpleFindReferencesSelection(file, offset, 5, 1);
 	}
 
     // typedef int TestTypeOne;

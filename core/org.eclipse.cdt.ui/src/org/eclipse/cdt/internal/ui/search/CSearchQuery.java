@@ -392,7 +392,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 			}
 		}
 
-		if (!names.isEmpty()) {
+		if (!(names.isEmpty() && (polymorphicNames == null || polymorphicNames.isEmpty()))) {
 			collectNames(index, names, polymorphicNames);
 		}
 	}

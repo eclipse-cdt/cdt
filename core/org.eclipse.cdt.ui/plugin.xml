@@ -3318,9 +3318,9 @@
             showInNextPrevDropdownToolbarActionKey="isIndexResultInNextPrevDropdownToolbarAction"
             showInNextPrevDropdownToolbarAction="true"
             isGoToNextNavigationTargetKey="isIndexResultGoToNextNavigationTarget"
-	        isGoToNextNavigationTarget="false"
+	        isGoToNextNavigationTarget="true"
             isGoToPreviousNavigationTargetKey="isIndexResultGoToPreviousNavigationTarget"
-	        isGoToPreviousNavigationTarget="false">
+	        isGoToPreviousNavigationTarget="true">
       </specification>
 	  <specification
             annotationType="org.eclipse.cdt.ui.occurrences"

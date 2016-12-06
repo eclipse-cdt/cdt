@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -171,6 +172,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		try {
 			ICElement element = SelectionConverter.getElementAtOffset(fTranslationUnit, fTextSelection);
 			if (element instanceof IInclude) {
+				// If the cursor is over an include, open the referenced file.
 				IInclude include = (IInclude) element;
 				IPath fileToOpen = CElementIncludeResolver.resolveInclude(include);
 				if (fileToOpen != null) {
@@ -179,6 +181,50 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				}
 				fAction.reportIncludeLookupFailure(include.getFullFileName());
 				return Status.OK_STATUS;
+			} else {
+				// Otherwise, lookup the selected word in the index.
+				// Without a semantic model for the assembly code, this is the best we can do.
+				if (fSelectedText != null && fSelectedText.length() > 0) {
+					final ICProject project = fTranslationUnit.getCProject();
+					final char[] name = fSelectedText.toCharArray();
+					List<ICElement> elems= new ArrayList<>();
+		
+					// Search for an element in the assembly file.
+					// Some things in assembly files like macro definitions are 
+					// modelled in the C model, so those will be found here.
+					fTranslationUnit.accept(new ICElementVisitor() {
+						@Override
+						public boolean visit(ICElement element) throws CoreException {
+							if (element.getElementName().equals(fSelectedText)) {
+								elems.add(element);
+							}
+							return true;
+						}});
+					
+					// Search for a binding in the index.
+					final IndexFilter filter = IndexFilter.ALL;
+					final IIndexBinding[] bindings = fIndex.findBindings(name, false, filter, fMonitor);
+					for (IIndexBinding binding : bindings) {
+						// Convert bindings to CElements.
+						IName[] declNames = fIndex.findNames(binding, IIndex.FIND_DECLARATIONS | 
+								IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+						convertToCElements(project, fIndex, declNames, elems);
+					}
+
+					// Search for a macro in the index.
+					IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
+					for (IIndexMacro macro : macros) {
+						ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
+						if (elem != null) {
+							elems.add(elem);
+						}
+					}
+
+					if (!navigateCElements(elems)) {
+						fAction.reportSymbolLookupFailure(fSelectedText);
+					}
+					return Status.OK_STATUS;
+				}
 			}
 		} catch (CModelException e) {
 		} catch (CoreException e) {

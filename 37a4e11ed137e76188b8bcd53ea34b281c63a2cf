@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_e956a1a2",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-06T22:53:32Z",
+      "side": 1,
+      "message": "This should probably be changed to newer version. The version there is Oxygen M2, the M4 build was declared today: S20161205183421",
+      "revId": "37a4e11ed137e76188b8bcd53ea34b281c63a2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_49c315d2",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-06T22:53:32Z",
+      "side": 1,
+      "message": "While I am looking at target files, though not strictly related to Neon -\u003e Oxygen.\n\nWhy does the target file pull bits from the last successful build of itself? I can see the target file for the 9.2 branch has this same location (i.e. 9.2 build is dependent on master branch).",
+      "revId": "37a4e11ed137e76188b8bcd53ea34b281c63a2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

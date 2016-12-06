@@ -22,6 +22,30 @@
       "revId": "eb783c6d9076a76f4636b274ba5e2cf7b0e73121",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a93029ed",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2016-12-06T21:14:36Z",
+      "side": 1,
+      "message": "Sorry, it should be removed.",
+      "parentUuid": "a7c23755_c6cc72d1",
+      "range": {
+        "startLine": 841,
+        "startChar": 42,
+        "endLine": 841,
+        "endChar": 89
+      },
+      "revId": "eb783c6d9076a76f4636b274ba5e2cf7b0e73121",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

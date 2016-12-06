@@ -35,6 +35,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -1278,5 +1279,22 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertInstance(target, IASTName.class);
 		IBinding targetBinding = ((IASTName) target).resolveBinding();
 		assertInstance(targetBinding, ICPPConstructor.class);
+	}
+	
+	//	template <typename = short>
+	//	struct waldo;
+	//
+	//	template <typename>
+	//	struct waldo {};
+	public void testNavigationToTemplateForwardDecl_483048() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug483048.cpp", code);
+
+		int offset = code.indexOf("waldo {}");
+		IASTNode target = testF3(file, offset);
+		
+		// Check that the result of the navigation is the forward declaration,
+		// not the definition.
+		assertInstance(target.getParent(), IASTElaboratedTypeSpecifier.class);
 	}
 }

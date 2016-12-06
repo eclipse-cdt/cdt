@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -267,9 +268,12 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (candidateBindings.length != 0) {
 					bindings = candidateBindings;
 				}
-			} else if (kind == NameKind.DEFINITION && b instanceof IType) {
+			} else if (kind == NameKind.DEFINITION && b instanceof IType && !(b instanceof ICPPClassTemplate)) {
 				// Don't navigate away from a type definition.
 				// Select the name at the current location instead.
+				// However, for a class template, it's useful to navigate to
+				// a forward declaration, as it may contain definitions of
+				// default arguments, while the definition may not.
 				navigateToName(sourceName);
 				return Status.OK_STATUS;
 			}

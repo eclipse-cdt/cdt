@@ -54,6 +54,10 @@ public class ASMEditorActionContributor extends TextEditorActionContributor {
 			textEditor= (ITextEditor) part;
 		
 		fTogglePresentation.setEditor(textEditor);
+		
+		if (part instanceof AsmTextEditor) {
+			((AsmTextEditor) part).fillActionBars(getActionBars());
+		}
 	}
 	
 	/*

@@ -53,7 +53,7 @@ public abstract class FindAction extends SelectionParseAction {
 	 			searchJob = createQuery((ISourceReference) object);
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection selNode = (ITextSelection) selection;
-			ICElement element = fEditor.getInputCElement();
+			ICElement element = fEditor.getTranslationUnit();
 			while (element != null && !(element instanceof ITranslationUnit))
 				element = element.getParent();
 			if (element != null) {

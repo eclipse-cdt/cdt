@@ -195,6 +195,7 @@ import org.eclipse.cdt.core.model.ITranslationUnitHolder;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICEditor;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.GenerateActionGroup;
@@ -249,7 +250,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 /**
  * C/C++ source editor.
  */
-public class CEditor extends TextEditor implements ICEditor, ISelectionChangedListener, ICReconcilingListener, ITranslationUnitHolder {
+public class CEditor extends TextEditor implements ICEditor, ISelectionChangedListener, ICReconcilingListener, 
+		ICModelBasedEditor {
 	/** Marker used for synchronization from Problems View to the editor on double-click. */
 	private IMarker fSyncProblemsViewMarker;
 

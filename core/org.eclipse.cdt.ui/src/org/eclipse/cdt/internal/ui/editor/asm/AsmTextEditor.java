@@ -37,10 +37,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -55,7 +57,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
@@ -69,7 +73,7 @@ import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
 /**
  * Assembly text editor.
  */
-public class AsmTextEditor extends TextEditor implements ISelectionChangedListener {	
+public class AsmTextEditor extends TextEditor implements ISelectionChangedListener, ICModelBasedEditor {	
 
 	/**
 	 * Updates the outline page selection and this editor's range indicator.
@@ -86,6 +90,9 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	
 	private AbstractCModelOutlinePage fOutlinePage;
 	private EditorSelectionChangedListener fEditorSelectionChangedListener;
+
+	// Search actions
+	private ActionGroup fOpenInViewGroup;
 
 	/**
 	 * Creates a new assembly text editor.
@@ -163,6 +170,10 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener = null;
 		}
+		if (fOpenInViewGroup != null) {
+			fOpenInViewGroup.dispose();
+			fOpenInViewGroup = null;
+		}
 		super.dispose();
 	}
 
@@ -202,7 +213,15 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		menu.add(new Separator(IContextMenuConstants.GROUP_DEBUG));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_DEBUG+".end")); //$NON-NLS-1$
 
+		// The base implementation creates GROUP_OPEN, so actions added
+		// to GROUP_OPEN need to come after this.
 		super.editorContextMenuAboutToShow(menu);
+
+		boolean hasCElement = getInputCElement() != null;
+		if (hasCElement) {
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
+			fOpenInViewGroup.fillContextMenu(menu);
+		}
 	}
 
 	/**
@@ -358,7 +377,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * @return the most narrow element which includes the given offset
 	 */
 	protected ICElement getElementAt(int offset, boolean reconcile) {
-		ITranslationUnit unit= (ITranslationUnit)getInputCElement();
+		ITranslationUnit unit= getInputCElement();
 
 		if (unit != null) {
 			try {
@@ -384,7 +403,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 *
 	 * @return the C element wrapped by this editors input.
 	 */
-	public ICElement getInputCElement () {
+	public IWorkingCopy getInputCElement () {
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
 	}
 
@@ -553,4 +572,24 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		}
 	}
 
+	@Override
+	public ITranslationUnit getTranslationUnit() {
+		return getInputCElement();
+	}
+
+	@Override
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.asmEditorScope" }); //$NON-NLS-1$
+	}
+	
+	@Override
+	protected void createActions() {
+		super.createActions();
+		
+		fOpenInViewGroup = new OpenViewActionGroup(this);
+	}
+
+	public void fillActionBars(IActionBars actionBars) {
+		fOpenInViewGroup.fillActionBars(actionBars);
+	}
 }

@@ -29,6 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
@@ -128,8 +129,8 @@ public class OpenViewActionGroup extends ActionGroup {
         fOpenIncludeBrowser.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_INCLUDE_BROWSER);
         part.setAction("OpenIncludeBrowser", fOpenIncludeBrowser); //$NON-NLS-1$
         
-        if (part instanceof CEditor) {
-        	fOpenDeclaration= new OpenDeclarationsAction((CEditor) part);
+        if (part instanceof ICModelBasedEditor) {
+        	fOpenDeclaration= new OpenDeclarationsAction((ICModelBasedEditor) part);
         	fOpenDeclaration.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
         	part.setAction("OpenDeclarations", fOpenDeclaration); //$NON-NLS-1$
         }

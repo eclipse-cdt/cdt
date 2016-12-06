@@ -26,8 +26,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
@@ -39,13 +39,13 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 public class SelectionParseAction extends Action {
         
 	protected IWorkbenchSite fSite;
-	protected CEditor fEditor;
+	protected ICModelBasedEditor fEditor;
 
 	public SelectionParseAction() {
 		super();
 	}
 	
-	public SelectionParseAction(CEditor editor) {
+	public SelectionParseAction(ICModelBasedEditor editor) {
 		super();
 		fEditor= editor;
 		fSite= editor.getSite();
@@ -88,7 +88,7 @@ public class SelectionParseAction extends Action {
 	protected void open(IPath path, int currentOffset, int currentLength) throws CoreException {
 		clearStatusLine();
 
-		IEditorPart editor = EditorUtility.openInEditor(path, fEditor.getInputCElement());
+		IEditorPart editor = EditorUtility.openInEditor(path, fEditor.getTranslationUnit());
 		ITextEditor textEditor = EditorUtility.getTextEditor(editor);
 		if (textEditor != null) {
 			textEditor.selectAndReveal(currentOffset, currentLength);

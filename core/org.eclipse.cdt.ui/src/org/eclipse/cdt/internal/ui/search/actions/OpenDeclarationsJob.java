@@ -76,8 +76,10 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -102,8 +104,10 @@ import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.editor.CElementIncludeResolver;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITargetDisambiguator;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
@@ -161,10 +165,32 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		}
 	}
 
+	// Navigation without an AST. Used for assembly files which do not have an AST.
+	// TODO(nathanridge): Can we avoid using ASTProvider altogether in this case?
+	private IStatus navigateWithoutAst() {
+		try {
+			ICElement element = SelectionConverter.getElementAtOffset(fTranslationUnit, fTextSelection);
+			if (element instanceof IInclude) {
+				IInclude include = (IInclude) element;
+				IPath fileToOpen = CElementIncludeResolver.resolveInclude(include);
+				if (fileToOpen != null) {
+					openInclude(fileToOpen);
+					return Status.OK_STATUS;
+				}
+				fAction.reportIncludeLookupFailure(include.getFullFileName());
+				return Status.OK_STATUS;
+			}
+		} catch (CModelException e) {
+		} catch (CoreException e) {
+		}
+		fAction.reportSelectionMatchFailure();
+		return Status.OK_STATUS;
+	}
+	
 	@Override
 	public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 		if (ast == null) {
-			return Status.OK_STATUS;
+			return navigateWithoutAst();
 		}
 		int selectionStart = fTextSelection.getOffset();
 		int selectionLength = fTextSelection.getLength();
@@ -685,6 +711,19 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		}
 	}
 
+	private void openInclude(IPath path) {
+		runInUIThread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					fAction.open(path, 0, 0);
+				} catch (CoreException e) {
+					CUIPlugin.log(e);
+				}
+			}
+		});
+	}
+	
 	private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
 		String name = null;
 		if (incStmt.isResolved())
@@ -692,16 +731,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 		if (name != null) {
 			final IPath path = new Path(name);
-			runInUIThread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						fAction.open(path, 0, 0);
-					} catch (CoreException e) {
-						CUIPlugin.log(e);
-					}
-				}
-			});
+			openInclude(path);
 		} else {
 			fAction.reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
 		}

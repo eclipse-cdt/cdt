@@ -51,7 +51,7 @@ public class FindRefsProjectAction extends FindAction {
 	protected ICElement[] getScope() {
 		ICProject project = null;
 		if (fEditor != null) {
-			project = fEditor.getInputCElement().getCProject();			 
+			project = fEditor.getTranslationUnit().getCProject();			 
 		} else if (fSite != null){
 			ISelection selection = getSelection();
 			if (selection instanceof IStructuredSelection) {

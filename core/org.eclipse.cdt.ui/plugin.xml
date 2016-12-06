@@ -2243,6 +2243,12 @@
             description="%cEditor.description"
             id="org.eclipse.cdt.ui.cEditorScope">
        </context>
+       <context
+            name="%scope.asmEditor.name"
+            parentId="org.eclipse.ui.textEditorScope"
+            description="%asmEditor.description"
+            id="org.eclipse.cdt.ui.asmEditorScope">
+       </context>
       <context 
             name="%cViewScope.name" 
             description="%cViewScope.description" 
@@ -2454,6 +2460,11 @@
      <key
             sequence="F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.opendecl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="F3"
+            contextId="org.eclipse.cdt.ui.asmEditorScope"
             commandId="org.eclipse.cdt.ui.edit.opendecl"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key

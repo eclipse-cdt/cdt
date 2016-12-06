@@ -24,9 +24,9 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
@@ -42,7 +42,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	/**
 	 * Creates a new action with the given editor
 	 */
-	public OpenDeclarationsAction(CEditor editor) {
+	public OpenDeclarationsAction(ICModelBasedEditor editor) {
 		super(editor);
 		setText(CEditorMessages.OpenDeclarations_label); 
 		setToolTipText(CEditorMessages.OpenDeclarations_tooltip); 
@@ -73,7 +73,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	private OpenDeclarationsJob createJob(ITargetDisambiguator targetDisambiguator) {
 		String text= computeSelectedWord();
 		OpenDeclarationsJob job= null;
-		ICElement elem= fEditor.getInputCElement();
+		ICElement elem= fEditor.getTranslationUnit();
 		if (elem instanceof ITranslationUnit && fTextSelection != null) {
 			job= new OpenDeclarationsJob(this, (ITranslationUnit) elem, fTextSelection, text, 
 					targetDisambiguator);

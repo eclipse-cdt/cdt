@@ -775,8 +775,23 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (incStmt.isResolved())
 			name = incStmt.getPath();
 
+		IPath path = null;
 		if (name != null) {
-			final IPath path = new Path(name);
+			path = new Path(name);
+		} else if (!incStmt.isActive()) {
+			// Includes inside inactive preprocessor branches will not be resolved in the AST.
+			// For these, attempt resolving the include via the C model as a fallback.
+			try {
+				ICElement element = SelectionConverter.getElementAtOffset(fTranslationUnit, fTextSelection);
+				if (element instanceof IInclude) {
+					path = CElementIncludeResolver.resolveInclude((IInclude) element);
+				}
+			} catch (CModelException e) {
+			} catch (CoreException e) {
+			}
+		}
+		
+		if (path != null) {
 			openInclude(path);
 		} else {
 			fAction.reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));

@@ -30,9 +30,9 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>neon.target</file>
+									<file>oxygen.target</file>
 									<type>target</type>
-									<classifier>neon</classifier>
+									<classifier>remote-oxygen</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>

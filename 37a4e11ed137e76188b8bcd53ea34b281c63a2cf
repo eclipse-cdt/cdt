@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_ba194507",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-07T16:11:47Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "37a4e11ed137e76188b8bcd53ea34b281c63a2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_49c315d2",
         "filename": "releng/org.eclipse.cdt.target/cdt.target",
         "patchSetId": 1
@@ -30,6 +47,23 @@
       "writtenOn": "2016-12-06T22:53:32Z",
       "side": 1,
       "message": "While I am looking at target files, though not strictly related to Neon -\u003e Oxygen.\n\nWhy does the target file pull bits from the last successful build of itself? I can see the target file for the 9.2 branch has this same location (i.e. 9.2 build is dependent on master branch).",
+      "revId": "37a4e11ed137e76188b8bcd53ea34b281c63a2cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_15da0a5f",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-07T16:11:47Z",
+      "side": 1,
+      "message": "This was done based on apparent requirements from remote: https://dev.eclipse.org/mhonarc/lists/cdt-dev/msg29183.html\nHowever, I don\u0027t see why this needs to be in our target file.  CDT does not need to depend on native, since it builds native.\nI\u0027ve tried to build without this dependency and it works on my machine.  I\u0027ll try on Hudson but in a different commit.\nDoug, did I miss something?",
       "revId": "37a4e11ed137e76188b8bcd53ea34b281c63a2cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

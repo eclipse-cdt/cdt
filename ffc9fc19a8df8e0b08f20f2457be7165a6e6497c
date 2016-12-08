@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_fd59f461",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMFile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 481,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-08T10:13:09Z",
+      "side": 1,
+      "message": "name[1] is null for all the entries in names that are macro references, so the nameCache.get(null) is returning null.",
+      "revId": "ffc9fc19a8df8e0b08f20f2457be7165a6e6497c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5d1f4893",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMFile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-08T10:13:09Z",
+      "side": 1,
+      "message": "caller is null here",
+      "revId": "ffc9fc19a8df8e0b08f20f2457be7165a6e6497c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7d1a44a3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMMacroReferenceName.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-08T10:13:09Z",
+      "side": 1,
+      "message": "namerec is 0 here",
+      "revId": "ffc9fc19a8df8e0b08f20f2457be7165a6e6497c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -17,6 +17,10 @@ public class Messages extends NLS {
 	public static String DynamicPrintf_Invalid_string;
 	public static String DynamicPrintf_Printf_must_start_with_quote;
 	public static String DynamicPrintf_Printf_missing_closing_quote;
+	/**
+	 * @since 5.2
+	 */
+	public static String DynamicPrintf_Printf_not_expecting_a_closing_parenthesis;
 	public static String DynamicPrintf_Missing_comma;
 	public static String DynamicPrintf_Empty_arg;
 	public static String DynamicPrintf_Extra_arg;

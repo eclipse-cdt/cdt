@@ -13,16 +13,12 @@
 package org.eclipse.cdt.debug.ui.memory.floatingpoint;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class FPRenderingPreferenceAction extends ActionDelegate implements IViewActionDelegate
 {
@@ -51,20 +47,12 @@ public class FPRenderingPreferenceAction extends ActionDelegate implements IView
 
     protected void showPreferencePage(String id, IPreferencePage page)
     {
-        final IPreferenceNode targetNode = new PreferenceNode(id, page);
-
-        PreferenceManager manager = new PreferenceManager();
-        manager.addToRoot(targetNode);
-        final PreferenceDialog dialog = new PreferenceDialog(FPRenderingPlugin.getShell(), manager);
-        final boolean[] result = new boolean[] { false };
         BusyIndicator.showWhile(FPRenderingPlugin.getStandardDisplay(), new Runnable()
         {
             @Override
             public void run()
             {
-                dialog.create();
-                dialog.setMessage(targetNode.getLabelText());
-                result[0] = (dialog.open() == Window.OK);
+        		PreferencesUtil.createPreferenceDialogOn(FPRenderingPlugin.getShell(), id, new String[] { id }, null).open();
             }
         });
     }

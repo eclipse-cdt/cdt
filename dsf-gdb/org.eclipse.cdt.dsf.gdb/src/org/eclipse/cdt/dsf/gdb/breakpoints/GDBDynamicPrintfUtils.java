@@ -49,6 +49,11 @@ public class GDBDynamicPrintfUtils {
 				return;
 			}
 
+			if (str.charAt(str.length() - 1) == ')') {
+				fErrorMessage = Messages.DynamicPrintf_Printf_not_expecting_a_closing_parenthesis;
+				return;
+			}
+
 			// Now go through the string and look for two things:
 			//   1- count the number of % (but ignore any %%)
 			//   2- find the closing double-quote (but ignore any \")

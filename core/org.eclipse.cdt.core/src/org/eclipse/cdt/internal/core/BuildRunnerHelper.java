@@ -458,7 +458,7 @@ public class BuildRunnerHelper implements Closeable {
 		String msg = isCancelled ? CCorePlugin.getFormattedString("BuildRunnerHelper.buildCancelled", duration) //$NON-NLS-1$
 				: CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", duration); //$NON-NLS-1$
 		String goodbye = '\n' + timestamp(endTime) + msg + '\n';
-
+		System.out.println(goodbye);
 		try {
 			toConsole(goodbye);
 		} finally {

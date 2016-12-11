@@ -98,6 +98,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	private URI cachedWorkingDirectory = null;
 	private IFile cachedFile = null;
 
+	private boolean deferDeDuplication = false;
+
 	private static boolean isCygwin = true;
 
 	/**
@@ -374,6 +376,7 @@ outer:
 				}
 			}
 		}
+		marker = null;
 		outputLine(line, marker);
 
 		return false;
@@ -592,6 +595,7 @@ outer:
 		if ( ! ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo) )
 			return;
 		fErrors.add(problemMarkerInfo);
+		problemMarkerInfo.deferDeDuplication = deferDeDuplication;
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
 			hasErrors = true;
@@ -889,5 +893,14 @@ outer:
 				}
 			}
 		}
+	}
+
+	public void deferDeDuplication() {
+		deferDeDuplication = true;
+	}
+
+	public void deDuplicate() {
+		deferDeDuplication = false;
+		fMarkerGenerator.deDuplicate();
 	}
 }

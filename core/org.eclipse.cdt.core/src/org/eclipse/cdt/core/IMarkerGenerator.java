@@ -30,4 +30,10 @@ public interface IMarkerGenerator {
 	@Deprecated
 	void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar);
 	void addMarker(ProblemMarkerInfo problemMarkerInfo);
+	default void deDuplicate() {
+		/*
+		 * for implementation that don't implement deDuplicate, they should not
+		 * pay attention to ProblemMarkerInfo.deferDeDuplication
+		 */
+	}
 }

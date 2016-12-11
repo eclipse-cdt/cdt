@@ -49,6 +49,7 @@ public  class ProblemMarkerInfo {
 		public IPath externalPath ;
 		private Map<String, String> attributes;
 		private String type;
+		public boolean deferDeDuplication;
 
 		/**
 		 * Create a new {@link ProblemMarkerInfo} object.

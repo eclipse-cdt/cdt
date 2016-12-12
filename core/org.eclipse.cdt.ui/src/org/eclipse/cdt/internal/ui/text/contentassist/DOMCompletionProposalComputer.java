@@ -901,7 +901,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private Image getImage(IBinding binding) {
 		ImageDescriptor imageDescriptor = null;
 
-		if (binding instanceof ITypedef) {
+		if (binding instanceof ITypedef || binding instanceof ICPPAliasTemplate) {
 			imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
 		} else if (binding instanceof ICompositeType) {
 			if (((ICompositeType)binding).getKey() == ICPPClassType.k_class || binding instanceof ICPPClassTemplate)

@@ -2396,4 +2396,17 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testFriendClassDeclaration_508338() throws Exception {
 		getProblemFromFirstIdentifier("B*");
 	}
+	
+	//	class waldo {
+	//	    static waldo instance;
+	//
+	//	    constexpr waldo() {}
+	//	};
+	//
+	//	waldo waldo::instance;
+	
+	//	// empty file
+	public void testStaticFieldOfEnclosingType_508254() throws Exception {
+		checkBindings();
+	}
 }

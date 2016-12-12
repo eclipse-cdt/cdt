@@ -95,4 +95,16 @@ public class FindReferencesTest extends SearchTestBase {
 		assertEquals(1, matches.length);
 		assertNotNull(matches[0].getEnclosingElement());
 	}
+	
+	//	namespace N {
+	//		void foo();
+	//	}
+	//	using N::foo;
+	
+	//	// empty file
+	public void testUsingDeclaration_399147() throws Exception {
+		int offset = fHeaderContents.indexOf("void foo") + 5;
+		CSearchQuery query = makeProjectQuery(offset, 3);
+		assertOccurrences(query, 1);
+	}
 }

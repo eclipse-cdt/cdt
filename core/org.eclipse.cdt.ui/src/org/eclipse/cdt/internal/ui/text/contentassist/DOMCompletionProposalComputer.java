@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -81,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
@@ -354,6 +356,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			final int baseRelevance= computeBaseRelevance(prefix, name);
 			if (binding instanceof ICPPClassType) {
 				handleClass((ICPPClassType) binding, astContext, cContext, baseRelevance, proposals);
+			} else if (binding instanceof ICPPAliasTemplate) {
+				handleAliasTemplate((ICPPAliasTemplate) binding, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IFunction) {
 				handleFunction((IFunction) binding, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IVariable) {
@@ -382,10 +386,15 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		char[] name= binding.getNameCharArray();
 		return name.length == 0 || name[0] == '{';
 	}
-
+	
 	private void addProposalForClassTemplate(ICPPClassTemplate templateType,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		int relevance = getClassTypeRelevance(templateType);
+		addProposalForTemplateDefinition(templateType, context, baseRelevance + relevance, proposals);
+	}
+	
+	private void addProposalForTemplateDefinition(ICPPTemplateDefinition templateType,
+			CContentAssistInvocationContext context, int relevance, List<ICompletionProposal> proposals) {
 		StringBuilder representation = new StringBuilder(templateType.getName());
 		boolean inUsingDeclaration = context.isInUsingDirective();
 		String templateParameterRepresentation = ""; //$NON-NLS-1$
@@ -398,7 +407,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		String representationString = MessageFormat.format(representation.toString(), ""); //$NON-NLS-1$
 		String displayString = MessageFormat.format(representation.toString(), templateParameterRepresentation);
 		CCompletionProposal proposal = createProposal(representationString, displayString, getImage(templateType),
-				baseRelevance + relevance, context);
+				relevance, context);
 
 		if (!inUsingDeclaration) {
 			CProposalContextInformation info = new CProposalContextInformation(
@@ -412,7 +421,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		proposals.add(proposal);
 	}
 
-	private String buildTemplateParameters(ICPPClassTemplate templateType, CContentAssistInvocationContext context) {
+	private String buildTemplateParameters(ICPPTemplateDefinition templateType, CContentAssistInvocationContext context) {
 		ICPPTemplateParameter[] parameters = templateType.getTemplateParameters();
 		StringBuilder representation = new StringBuilder();
 
@@ -479,6 +488,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType),
 					baseRelevance + RelevanceConstants.CLASS_TYPE_RELEVANCE, context));
 		}
+	}
+	
+	private void handleAliasTemplate(ICPPAliasTemplate aliasTemplate,
+			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
+		addProposalForTemplateDefinition(aliasTemplate, context, 
+				baseRelevance + RelevanceConstants.TYPEDEF_TYPE_RELEVANCE, proposals);
 	}
 
 	private void addProposalsForConstructors(ICPPClassType classType,

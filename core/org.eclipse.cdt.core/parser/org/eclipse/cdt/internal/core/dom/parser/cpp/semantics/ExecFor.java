@@ -8,7 +8,6 @@
 *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -98,12 +97,12 @@ public class ExecFor implements ICPPExecution {
 		buffer.marshalExecution(bodyExec, includeValue);
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPExecution initializerExec = (ICPPExecution) buffer.unmarshalExecution();
-		ICPPEvaluation conditionExprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ICPPExecution initializerExec = buffer.unmarshalExecution();
+		ICPPEvaluation conditionExprEval = buffer.unmarshalEvaluation();
 		ExecSimpleDeclaration conditionDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
-		ICPPEvaluation iterationEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
-		ICPPExecution bodyExec = (ICPPExecution) buffer.unmarshalExecution();
+		ICPPEvaluation iterationEval = buffer.unmarshalEvaluation();
+		ICPPExecution bodyExec = buffer.unmarshalExecution();
 		return new ExecFor(initializerExec, conditionExprEval, conditionDeclExec, iterationEval, bodyExec);
 	}
 }

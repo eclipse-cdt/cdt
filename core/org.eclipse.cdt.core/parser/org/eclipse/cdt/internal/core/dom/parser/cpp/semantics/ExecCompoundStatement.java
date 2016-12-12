@@ -9,7 +9,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -71,11 +70,11 @@ public class ExecCompoundStatement implements ICPPExecution {
 		}
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len = buffer.getInt();
 		ICPPExecution[] executions = new ICPPExecution[len];
 		for (int i = 0; i < executions.length; i++) {
-			executions[i] = (ICPPExecution) buffer.unmarshalExecution();
+			executions[i] = buffer.unmarshalExecution();
 		}
 		return new ExecCompoundStatement(executions);
 	}

@@ -9,7 +9,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -103,13 +102,13 @@ public class ExecSwitch implements ICPPExecution {
 		}
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation controllerExprEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ICPPEvaluation controllerExprEval = buffer.unmarshalEvaluation();
 		ExecSimpleDeclaration controllerDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
 		int len = buffer.getInt();
 		ICPPExecution[] bodyStmtExecutions = new ICPPExecution[len];
 		for (int i = 0; i < bodyStmtExecutions.length; i++) {
-			bodyStmtExecutions[i] = (ICPPExecution) buffer.unmarshalExecution();
+			bodyStmtExecutions[i] = buffer.unmarshalExecution();
 		}
 		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);
 	}

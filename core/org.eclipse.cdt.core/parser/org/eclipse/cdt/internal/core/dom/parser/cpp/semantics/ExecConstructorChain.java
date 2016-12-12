@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -54,12 +53,12 @@ public class ExecConstructorChain implements ICPPExecution {
 		}
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		int len = buffer.getInt();
 		Map<IBinding, ICPPEvaluation> ccInitializers = new HashMap<>();
 		for (int i = 0; i < len; i++) {
 			IBinding member = buffer.unmarshalBinding();
-			ICPPEvaluation memberEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+			ICPPEvaluation memberEval = buffer.unmarshalEvaluation();
 			ccInitializers.put(member, memberEval);
 		}
 		return new ExecConstructorChain(ccInitializers);

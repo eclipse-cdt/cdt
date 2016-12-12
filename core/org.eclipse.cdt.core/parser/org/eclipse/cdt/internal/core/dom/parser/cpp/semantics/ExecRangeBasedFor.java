@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -186,12 +185,12 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		buffer.marshalExecution(bodyExec, includeValue);
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
-		ICPPEvaluation initClauseEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation initClauseEval = buffer.unmarshalEvaluation();
 		ICPPFunction begin = (ICPPFunction) buffer.unmarshalBinding();
 		ICPPFunction end = (ICPPFunction) buffer.unmarshalBinding();
-		ICPPExecution bodyExec = (ICPPExecution) buffer.unmarshalExecution();
+		ICPPExecution bodyExec = buffer.unmarshalExecution();
 		return new ExecRangeBasedFor(declarationExec, initClauseEval, begin, end, bodyExec);
 	}
 }

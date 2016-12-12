@@ -86,7 +86,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
@@ -1619,7 +1618,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	@Override
-	public ISerializableExecution unmarshalExecution(ITypeMarshalBuffer buffer) throws CoreException {
+	public ICPPExecution unmarshalExecution(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = buffer.getShort();
 		if(firstBytes == TypeMarshalBuffer.NULL_TYPE)
 			return null;

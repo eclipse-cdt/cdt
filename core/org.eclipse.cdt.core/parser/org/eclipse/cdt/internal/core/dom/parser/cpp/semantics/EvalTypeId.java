@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
@@ -351,14 +350,14 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
 			throws CoreException {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;
 		int len= buffer.getInt();
 		args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
-			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
+			args[i]= buffer.unmarshalEvaluation();
 		}
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		boolean forNewExpression = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;

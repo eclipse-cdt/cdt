@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -214,7 +213,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean qualified= (firstBytes & FLAG_QUALIFIED) != 0;
 		final boolean addressOf= (firstBytes & FLAG_ADDRESS_OF) != 0;
 		if ((firstBytes & FLAG_HAS_FUNCTION_SET) != 0) {

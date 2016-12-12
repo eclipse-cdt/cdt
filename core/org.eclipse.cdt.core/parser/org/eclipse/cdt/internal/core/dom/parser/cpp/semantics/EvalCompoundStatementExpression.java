@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -96,8 +95,8 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ICPPEvaluation arg= buffer.unmarshalEvaluation();
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalCompoundStatementExpression(arg, templateDefinition);
 	}

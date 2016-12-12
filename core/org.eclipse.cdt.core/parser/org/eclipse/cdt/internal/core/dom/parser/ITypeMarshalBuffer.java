@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -116,7 +117,7 @@ public interface ITypeMarshalBuffer {
 	IType unmarshalType() throws CoreException;
 	IValue unmarshalValue() throws CoreException;
 	IBinding unmarshalBinding() throws CoreException;
-	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
+	ICPPEvaluation unmarshalEvaluation() throws CoreException;
 	ISerializableExecution unmarshalExecution() throws CoreException;
 	ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException;
 	int getByte() throws CoreException;
@@ -142,7 +143,7 @@ public interface ITypeMarshalBuffer {
 	void marshalType(IType type) throws CoreException;
 	void marshalValue(IValue value) throws CoreException;
 	void marshalBinding(IBinding binding) throws CoreException;
-	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
+	void marshalEvaluation(ICPPEvaluation eval, boolean includeValue) throws CoreException;
 	void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException;
 	void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException;
 	void putByte(byte data);

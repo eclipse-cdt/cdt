@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
@@ -193,11 +192,11 @@ public class EvalID extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean addressOf= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		final boolean qualified= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
 		final boolean isPointerDeref= (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
-		ICPPEvaluation fieldOwner= (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation fieldOwner= buffer.unmarshalEvaluation();
 		char[] name= buffer.getCharArray();
 		IBinding nameOwner= buffer.unmarshalBinding();
 		ICPPTemplateArgument[] args= null;

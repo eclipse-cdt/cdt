@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -186,14 +185,14 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
 			throws CoreException {
 		int len = buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
-			args[i] = (ICPPEvaluation) buffer.unmarshalEvaluation();
+			args[i] = buffer.unmarshalEvaluation();
 		}
-		ICPPEvaluation implicitThis = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation implicitThis = buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalFunctionCall(args, implicitThis, templateDefinition);
 	}

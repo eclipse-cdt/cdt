@@ -503,8 +503,13 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			}
 		};
 		ast.accept(visitor);
-
+		
 		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
+			
+			// Get a tree of definitions built by IndexerASTVisitor during its traversal.
+			// This is used to find enclosing definitions for macro references. 
+			IndexerASTVisitor.Definition definitionTree = visitor.getDefinitionTree();
+
 			LocationMap lm= ast.getAdapter(LocationMap.class);
 			if (lm != null) {
 				IASTName[] refs= lm.getMacroReferences();
@@ -512,7 +517,9 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
 						IASTPreprocessorIncludeStatement owner= nameLoc.getContextInclusionStatement();
-						symbols.add(owner, name, null);
+						IASTName enclosingDefinition = definitionTree.search(nameLoc.getNodeOffset(), 
+								nameLoc.getNodeLength());
+						symbols.add(owner, name, enclosingDefinition);
 					}
 				}
 			}

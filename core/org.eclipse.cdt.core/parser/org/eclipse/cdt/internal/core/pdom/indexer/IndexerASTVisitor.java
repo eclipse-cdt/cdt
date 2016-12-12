@@ -35,17 +35,54 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 abstract public class IndexerASTVisitor extends ASTVisitor {
-	private static class Definition {
+	/**
+	 * Represents a definition of a class or function.
+	 * IndexerASTVisitor builds a tree of these definitions, used for tracking enclosing
+	 * definitions of names.
+	 */
+	public static class Definition {
 		Definition(IASTName name, IASTNode node) {
 			fName= name;
 			fNode= node;
 		}
-		IASTName fName;
-		IASTNode fNode;
+		IASTName fName;  // The name of the entity being defined.
+		IASTNode fNode;  // The AST node for the entire definition.
+		List<Definition> fChildren;  // Definitions contained within this one.
+		
+		/**
+		 * Search the subtree of definitions rooted at this one for the nearest
+		 * definition that encloses the range defined by 'offset' and 'length'.
+		 * The name of the resulting definition is returned.
+		 * This function assumes that 'this.matches(offset, length)' is true.
+		 */
+		public IASTName search(int offset, int length) {
+			if (fChildren != null) {
+				for (Definition child : fChildren) {
+					if (child.matches(offset, length)) {
+						return child.search(offset, length);
+					}
+				}
+			}
+			return fName;
+		}
+		
+		/**
+		 * Check whether this definition encloses the range defined by 'offset' and 'length'.
+		 */
+		boolean matches(int offset, int length) {
+			if (!(fNode instanceof ASTNode)) {
+				return false;
+			}
+			ASTNode node = (ASTNode) fNode;
+			int nodeOffset = node.getOffset();
+			int nodeLength = node.getLength();
+			return nodeOffset <= offset && (nodeOffset + nodeLength) >= (offset + length);
+		}
 	}
 	
 	private IASTName fDefinitionName;
@@ -61,6 +98,9 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		shouldVisitDeclSpecifiers= true;
 		shouldVisitProblems= true;
 		shouldVisitExpressions= true;
+		
+		// Root node representing the entire file
+		fStack.add(new Definition(null, null));
 	}
 	
 	public List<IASTProblem> getProblems() {
@@ -80,9 +120,14 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	}
 
 	private void push(IASTName name, IASTNode node) {
-		if (fDefinitionName != null) {
-			fStack.add(new Definition(fDefinitionName, fDefinitionNode));
+		assert !fStack.isEmpty();
+		Definition def = new Definition(name, node);
+		Definition parent = fStack.get(fStack.size() - 1);
+		if (parent.fChildren == null) {
+			parent.fChildren = new ArrayList<>();
 		}
+		parent.fChildren.add(def);
+		fStack.add(def);
 		name = getLastInQualified(name);
 		fDefinitionName= name;
 		fDefinitionNode= node;
@@ -94,12 +139,14 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	private void pop(IASTNode node) {
 		if (node == fDefinitionNode) {
+			assert !fStack.isEmpty();
+			fStack.remove(fStack.size() - 1);
 			if (fStack.isEmpty()) {
 				fDefinitionName= null;
 				fDefinitionNode= null;
 			}
 			else {
-				Definition old= fStack.remove(fStack.size()-1);
+				Definition old= fStack.get(fStack.size()-1);
 				fDefinitionName= old.fName;
 				fDefinitionNode= old.fNode;
 			}
@@ -199,7 +246,12 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		}
 		return PROCESS_CONTINUE;
 	}
-
+	
+	public Definition getDefinitionTree() {
+		assert !fStack.isEmpty();
+		return fStack.get(0);
+	}
+	
 	private int visit(final ICPPASTLambdaExpression lambdaExpr) {
 		// Captures 
 		for (ICPPASTCapture cap : lambdaExpr.getCaptures()) {

@@ -56,9 +56,13 @@ public abstract class SearchTestBase extends BaseUITestCase {
 		super.tearDown();
 	}
 
-	protected void assertOccurrences(CSearchQuery query, int expected) {
+	protected CSearchResult getSearchResult(CSearchQuery query) {
 		query.run(npm());
-		CSearchResult result= (CSearchResult) query.getSearchResult();
+		return (CSearchResult) query.getSearchResult();
+	}
+	
+	protected void assertOccurrences(CSearchQuery query, int expected) {
+		CSearchResult result= getSearchResult(query);
 		assertEquals(expected, result.getMatchCount());
 	}
 }

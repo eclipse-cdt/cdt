@@ -42,11 +42,12 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 	private static final int CONTAINER_NEXT_OFFSET = 16;
 	private static final int NODE_OFFSET_OFFSET  = 20; 
 	private static final int NODE_LENGTH_OFFSET  = 24; 
+	private static final int CALLER_REC_OFFSET = 26;
 
-	private static final int RECORD_SIZE = 26;	
+	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)	
 
 	public PDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMFile file,
-			PDOMMacroContainer container) throws CoreException {
+			PDOMMacroContainer container, PDOMName caller) throws CoreException {
 		this.linkage = linkage;
 		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -59,6 +60,10 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
 		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
 		container.addReference(this);
+		
+		if (caller != null) {
+			db.putRecPtr(record + CALLER_REC_OFFSET, caller.getRecord());
+		}
 	}
 
 	public PDOMMacroReferenceName(PDOMLinkage linkage, long nameRecord) {
@@ -296,6 +301,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	@Override
 	public IIndexName getEnclosingDefinition() throws CoreException {
-		return null;
+		long namerec = linkage.getDB().getRecPtr(record + CALLER_REC_OFFSET);
+		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
 	}
 }

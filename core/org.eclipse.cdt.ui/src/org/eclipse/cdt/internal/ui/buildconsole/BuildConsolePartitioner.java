@@ -271,8 +271,8 @@ public class BuildConsolePartitioner
 	 * A queue of stream entries written to standard out and standard err.
 	 * Entries appended to the end of the queue and removed from the front.
 	 */
-	private final Deque<StreamEntry> fQueue =
-			new SynchronizedDeque<StreamEntry>(new ArrayDeque<StreamEntry>());
+	private final Deque<StreamEntry> fQueue = new SynchronizedDeque<StreamEntry>(
+			new ArrayDeque<StreamEntry>());
 
 	private URI fLogURI;
 	private OutputStream fLogStream;
@@ -300,9 +300,11 @@ public class BuildConsolePartitioner
 		}
 
 		/**
-		 * This constructor is used for special events such as clear console or close log.
+		 * This constructor is used for special events such as clear console or
+		 * close log.
 		 *
-		 * @param event - kind of event.
+		 * @param event
+		 *            - kind of event.
 		 */
 		public StreamEntry(int event) {
 			fText = null;
@@ -369,8 +371,8 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Sets the indicator that stream was opened so logging can be started. Should be called
-	 * when opening the output stream.
+	 * Sets the indicator that stream was opened so logging can be started.
+	 * Should be called when opening the output stream.
 	 */
 	public void setStreamOpened() {
 		fQueue.add(new StreamEntry(StreamEntry.EVENT_OPEN_LOG));
@@ -378,9 +380,9 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Open the stream for appending. Must be called after a call to setStreamOpened().
-	 * Can be used to reopen a stream for writing after it has been closed, without
-	 * emptying the log file.
+	 * Open the stream for appending. Must be called after a call to
+	 * setStreamOpened(). Can be used to reopen a stream for writing after it
+	 * has been closed, without emptying the log file.
 	 */
 	public void setStreamAppend() {
 		fQueue.add(new StreamEntry(StreamEntry.EVENT_OPEN_APPEND_LOG));
@@ -388,9 +390,10 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Sets the indicator that stream was closed so logging should be stopped. Should be called when
-	 * build process has finished. Note that there could still be unprocessed console
-	 * stream entries in the queue being worked on in the background.
+	 * Sets the indicator that stream was closed so logging should be stopped.
+	 * Should be called when build process has finished. Note that there could
+	 * still be unprocessed console stream entries in the queue being worked on
+	 * in the background.
 	 */
 	public void setStreamClosed() {
 		fQueue.add(new StreamEntry(StreamEntry.EVENT_CLOSE_LOG));
@@ -400,20 +403,25 @@ public class BuildConsolePartitioner
 	/**
 	 * Adds the new text to the document.
 	 *
-	 * @param text - the text to append.
-	 * @param stream - the stream to append to.
+	 * @param text
+	 *            - the text to append.
+	 * @param stream
+	 *            - the stream to append to.
 	 */
 	public void appendToDocument(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		boolean addToQueue = true;
 		synchronized (fQueue) {
 			StreamEntry entry = fQueue.peekLast();
 			if (entry != null) {
-				// If last stream is the same and the size of the queued entry has not exceeded
-				// the batch size, avoid creating a new entry and append the new text to the last
-				// entry in the queue. The batch size is adaptive and grows with the length of
+				// If last stream is the same and the size of the queued entry
+				// has not exceeded
+				// the batch size, avoid creating a new entry and append the new
+				// text to the last
+				// entry in the queue. The batch size is adaptive and grows with
+				// the length of
 				// the queue.
-				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND &&
-						entry.getMarker() == marker && entry.size() < 2000 * fQueue.size()) {
+				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND
+						&& entry.getMarker() == marker && entry.size() < 2000 * fQueue.size()) {
 					entry.appendText(text);
 					addToQueue = false;
 				}
@@ -428,9 +436,9 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Asynchronous processing of stream entries to append to console.
-	 * Note that all these are processed by the same thread - the user-interface thread
-	 * as of {@link Display#asyncExec(Runnable)}.
+	 * Asynchronous processing of stream entries to append to console. Note that
+	 * all these are processed by the same thread - the user-interface thread as
+	 * of {@link Display#asyncExec(Runnable)}.
 	 */
 	private void asyncProcessQueue() {
 		Runnable r = new Runnable() {
@@ -466,8 +474,10 @@ public class BuildConsolePartitioner
 							boolean allowSlack = false;
 							entry = fQueue.peekFirst();
 							if (entry != null && entry.getEventType() == StreamEntry.EVENT_APPEND) {
-								// Buffer truncation is an expensive operation. Allow some slack
-								// if more data is coming and we will be truncating the buffer
+								// Buffer truncation is an expensive operation.
+								// Allow some slack
+								// if more data is coming and we will be
+								// truncating the buffer
 								// again soon.
 								allowSlack = true;
 							}
@@ -488,7 +498,10 @@ public class BuildConsolePartitioner
 
 			/**
 			 * Open the log
-			 * @param append Set to true if the log should be opened for appending, false for overwriting.
+			 *
+			 * @param append
+			 *            Set to true if the log should be opened for appending,
+			 *            false for overwriting.
 			 */
 			private void logOpen(boolean append) {
 				fLogURI = fManager.getLogURI(fProject);
@@ -548,10 +561,8 @@ public class BuildConsolePartitioner
 		ProblemMarkerInfo marker = entry.getMarker();
 		if (marker == null) {
 			// It is plain unmarkered console output
-			addPartition(new BuildConsolePartition(fLastStream,
-					fDocument.getLength(),
-					entry.getText().length(),
-					BuildConsolePartition.CONSOLE_PARTITION_TYPE));
+			addPartition(new BuildConsolePartition(fLastStream, fDocument.getLength(),
+					entry.getText().length(), BuildConsolePartition.CONSOLE_PARTITION_TYPE));
 		} else {
 			// this text line in entry is markered with ProblemMarkerInfo,
 			// create special partition for it.
@@ -563,10 +574,8 @@ public class BuildConsolePartitioner
 			} else {
 				errorPartitionType = BuildConsolePartition.ERROR_PARTITION_TYPE;
 			}
-			addPartition(new BuildConsolePartition(fLastStream,
-					fDocument.getLength(),
-					entry.getText().length(),
-					errorPartitionType, marker));
+			addPartition(new BuildConsolePartition(fLastStream, fDocument.getLength(),
+					entry.getText().length(), errorPartitionType, marker));
 		}
 		fDocument.replace(fDocument.getLength(), 0, entry.getText());
 	}
@@ -613,7 +622,7 @@ public class BuildConsolePartitioner
 	 */
 	@Override
 	public String[] getLegalContentTypes() {
-		return new String[]{BuildConsolePartition.CONSOLE_PARTITION_TYPE};
+		return new String[] { BuildConsolePartition.CONSOLE_PARTITION_TYPE };
 	}
 
 	/**
@@ -643,8 +652,8 @@ public class BuildConsolePartitioner
 			ITypedRegion partition = fPartitions.get(i);
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength();
-			if ((offset >= partitionStart && offset <= partitionEnd) ||
-					(offset < partitionStart && end >= partitionStart)) {
+			if ((offset >= partitionStart && offset <= partitionEnd)
+					|| (offset < partitionStart && end >= partitionStart)) {
 				list.add(partition);
 			}
 		}
@@ -722,7 +731,8 @@ public class BuildConsolePartitioner
 					int endOffset = offset + region.getLength();
 					if (endOffset < overflow || BuildConsolePartition.isProblemPartitionType(type)) {
 						// Remove partition,
-						// partitions with problem markers can't be split - remove them too.
+						// partitions with problem markers can't be split -
+						// remove them too.
 					} else {
 						// Split partition
 						int length = endOffset - overflow;
@@ -731,7 +741,8 @@ public class BuildConsolePartitioner
 				} else {
 					// Modify partition offset
 					offset = messageConsolePartition.getOffset() - overflow;
-					newPartition = messageConsolePartition.createNewPartition(offset, messageConsolePartition.getLength(), type);
+					newPartition = messageConsolePartition.createNewPartition(offset,
+							messageConsolePartition.getLength(), type);
 				}
 				if (newPartition != null) {
 					newParitions.add(newPartition);
@@ -793,7 +804,6 @@ public class BuildConsolePartitioner
 			});
 		}
 
-
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {
 			appendToDocument("", null, null); //$NON-NLS-1$
 		}
@@ -801,17 +811,20 @@ public class BuildConsolePartitioner
 
 	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
+		return new BuildOutputStream(this,
+				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
 	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
-		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
+		return new BuildOutputStream(this,
+				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
 	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
+		return new BuildOutputStream(this,
+				fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
 
 	/** This method is useful for future debugging and bug-fixing */

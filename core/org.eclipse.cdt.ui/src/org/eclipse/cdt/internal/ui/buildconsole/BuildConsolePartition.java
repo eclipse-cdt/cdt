@@ -19,24 +19,25 @@ public class BuildConsolePartition extends TypedRegion {
 
 	/** Associated stream */
 	private BuildConsoleStreamDecorator fStream;
-	
+
 	/** Marker associated with this partition if any */
-	private ProblemMarkerInfo fMarker; 
+	private ProblemMarkerInfo fMarker;
 
 	/** Partition type */
-	public static final String CONSOLE_PARTITION_TYPE = CUIPlugin.getPluginId() + ".CONSOLE_PARTITION_TYPE"; //$NON-NLS-1$	
-	
+	public static final String CONSOLE_PARTITION_TYPE = CUIPlugin.getPluginId() + ".CONSOLE_PARTITION_TYPE"; //$NON-NLS-1$
+
 	/** Partition types to report build problems in the console */
-	public static final String ERROR_PARTITION_TYPE = CUIPlugin.getPluginId() + ".ERROR_PARTITION_TYPE"; //$NON-NLS-1$  
-	public static final String INFO_PARTITION_TYPE = CUIPlugin.getPluginId() + ".INFO_PARTITION_TYPE"; //$NON-NLS-1$  
-	public static final String WARNING_PARTITION_TYPE = CUIPlugin.getPluginId() + ".WARNING_PARTITION_TYPE"; //$NON-NLS-1$  
-	
+	public static final String ERROR_PARTITION_TYPE = CUIPlugin.getPluginId() + ".ERROR_PARTITION_TYPE"; //$NON-NLS-1$
+	public static final String INFO_PARTITION_TYPE = CUIPlugin.getPluginId() + ".INFO_PARTITION_TYPE"; //$NON-NLS-1$
+	public static final String WARNING_PARTITION_TYPE = CUIPlugin.getPluginId() + ".WARNING_PARTITION_TYPE"; //$NON-NLS-1$
+
 	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type) {
 		super(offset, length, type);
 		fStream = stream;
 	}
 
-	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type, ProblemMarkerInfo marker) {
+	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type,
+			ProblemMarkerInfo marker) {
 		super(offset, length, type);
 		fStream = stream;
 		fMarker = marker;
@@ -63,7 +64,7 @@ public class BuildConsolePartition extends TypedRegion {
 
 	/**
 	 * Returns this partition's stream
-	 * 
+	 *
 	 * @return this partition's stream
 	 */
 	public BuildConsoleStreamDecorator getStream() {
@@ -73,7 +74,7 @@ public class BuildConsolePartition extends TypedRegion {
 	/**
 	 * Returns whether this partition is allowed to be combined with the given
 	 * partition.
-	 * 
+	 *
 	 * @param partition
 	 * @return boolean
 	 */
@@ -81,21 +82,23 @@ public class BuildConsolePartition extends TypedRegion {
 		// Error partitions never can be combined together
 		String type = getType();
 		if (isProblemPartitionType(type)) {
-			return false; 
+			return false;
 		}
 
 		int start = getOffset();
 		int end = start + getLength();
 		int otherStart = partition.getOffset();
 		int otherEnd = otherStart + partition.getLength();
-		boolean overlap = (otherStart >= start && otherStart <= end) || (start >= otherStart && start <= otherEnd);
-		return getStream() != null && overlap && type.equals(partition.getType()) && getStream().equals(partition.getStream());
+		boolean overlap = (otherStart >= start && otherStart <= end)
+				|| (start >= otherStart && start <= otherEnd);
+		return getStream() != null && overlap && type.equals(partition.getType())
+				&& getStream().equals(partition.getStream());
 	}
 
 	/**
 	 * Returns a new partition representing this and the given parition
 	 * combined.
-	 * 
+	 *
 	 * @param partition
 	 * @return partition
 	 */
@@ -111,6 +114,7 @@ public class BuildConsolePartition extends TypedRegion {
 
 	/**
 	 * Creates a new partition of this type with the given offset, and length.
+	 *
 	 * @param offset
 	 * @param length
 	 * @return a new partition with the given range
@@ -124,10 +128,9 @@ public class BuildConsolePartition extends TypedRegion {
 	}
 
 	public static boolean isProblemPartitionType(String type) {
-		return type==BuildConsolePartition.ERROR_PARTITION_TYPE
-			|| type==BuildConsolePartition.WARNING_PARTITION_TYPE
-			|| type==BuildConsolePartition.INFO_PARTITION_TYPE;
+		return type == BuildConsolePartition.ERROR_PARTITION_TYPE
+				|| type == BuildConsolePartition.WARNING_PARTITION_TYPE
+				|| type == BuildConsolePartition.INFO_PARTITION_TYPE;
 	}
-	
 
 }

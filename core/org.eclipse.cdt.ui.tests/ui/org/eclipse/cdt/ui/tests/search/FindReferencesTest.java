@@ -20,7 +20,10 @@ import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 
 import junit.framework.TestSuite;
 
@@ -69,5 +72,27 @@ public class FindReferencesTest extends SearchTestBase {
 		int offset = fHeaderContents.indexOf("waldo() override");
 		CSearchQuery query = makeProjectQuery(offset, 5);
 		assertOccurrences(query, 1);
+	}
+	
+
+	//	#define waldo()
+	//
+	//	struct S {
+	//		void foo() {
+	//			waldo();
+	//		}
+	//	};
+	
+	//	// empty file
+	public void testEnclosingDefinitionOfMacroReference_508216() throws Exception {
+		int offset = fHeaderContents.indexOf("define waldo") + 7;
+		CSearchQuery query = makeProjectQuery(offset, 5);
+		CSearchResult result = getSearchResult(query);
+		Object[] elements = result.getElements();
+		assertEquals(1, elements.length);
+		assertInstance(elements[0], LineSearchElement.class);
+		Match[] matches = ((LineSearchElement) elements[0]).getMatches();
+		assertEquals(1, matches.length);
+		assertNotNull(matches[0].getEnclosingElement());
 	}
 }

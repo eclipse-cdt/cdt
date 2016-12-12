@@ -510,7 +510,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		try {
 			if (binding instanceof IMacroBinding
 					|| (binding == null && name.getPropertyInParent() == IASTPreprocessorStatement.MACRO_NAME)) {
-				return createPDOMMacroReferenceName(linkage, name);
+				return createPDOMMacroReferenceName(linkage, name, caller);
 			}
 			PDOMBinding pdomBinding = linkage.addBinding(name);
 			if (pdomBinding != null) {
@@ -529,9 +529,10 @@ public class PDOMFile implements IIndexFragmentFile {
 		return null;
 	}
 
-	private IIndexFragmentName createPDOMMacroReferenceName(PDOMLinkage linkage, IASTName name) throws CoreException {
+	private IIndexFragmentName createPDOMMacroReferenceName(PDOMLinkage linkage, IASTName name,
+			PDOMName caller) throws CoreException {
 		PDOMMacroContainer cont= linkage.getMacroContainer(name.getSimpleID());
-		return new PDOMMacroReferenceName(fLinkage, name, this, cont);
+		return new PDOMMacroReferenceName(fLinkage, name, this, cont, caller);
 	}
 
 	public void clear() throws CoreException {

@@ -76,6 +76,8 @@ import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
+import org.eclipse.cdt.internal.core.util.TextUtil;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -727,6 +729,13 @@ public class CHViewPart extends ViewPart {
             	message= Messages.format(format, label, scope);
             }
         }
+        
+        // Escape '&' characters in the message, otherwise SWT interprets them
+        // as mnemonics. '&' characters can appear in the label of a CElement
+        // if the CElement represents a function with arguments of C++ 
+        // reference type.
+        message = TextUtil.escape(message, '&');
+        
         setContentDescription(message);
     }
     

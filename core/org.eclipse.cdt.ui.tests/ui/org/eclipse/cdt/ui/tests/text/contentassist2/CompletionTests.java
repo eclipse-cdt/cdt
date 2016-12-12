@@ -728,9 +728,19 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	// class BaseTest : Alias/*cursor*/
 	public void testBaseClassIsTemplateAlias_434446() throws Exception {
-		// TODO Bug 455797, proposals are currently not presented as templates.
-		final String[] expected = { "AliasForSpecialization",
-				"AliasForTemplateAlias" };
+		final String[] expected = { 
+			"AliasForSpecialization<typename T1, typename T2>",
+			"AliasForTemplateAlias<typename T1, typename T2>" 
+		};
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+	
+	//	struct S {};
+	//	template <typename T>
+	//	using waldo = S;
+	//	class B : wald/*cursor*/
+	public void testAliasTemplate_455797() throws Exception {
+		final String[] expected = { "waldo<typename T>" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -309,39 +310,32 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 
-		if (fQualifierPos >= 0) {
-			IBinding binding = fQualifier[fQualifierPos].resolveBinding();
-
-			while (binding instanceof ITypedef) {
-				ITypedef typedef = (ITypedef) binding;
-				IType type = typedef.getType();
-				if (type instanceof IBinding) {
-					binding = (IBinding) type;
-				} else {
-					binding = null;
-				}
-			}
-
-			if (binding instanceof ICPPClassType) {
-				ICPPClassType classType = (ICPPClassType) binding;
-				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
-				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
-				if (isDeclaration && nameMatches(classType.getNameCharArray(),
-						n.getLookupKey(), isPrefix)) {
-					ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, n);
-					for (int i = 0; i < constructors.length; i++) {
-						if (!constructors[i].isImplicit()) {
-							filtered.add(constructors[i]);
-						}
+		ICPPClassType classQualifier = getClassQualifier();
+		if (classQualifier != null) {
+			final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
+			List<IBinding> filtered = filterClassScopeBindings(classQualifier, bindings, isDeclaration);
+			if (isDeclaration && nameMatches(classQualifier.getNameCharArray(),
+					n.getLookupKey(), isPrefix)) {
+				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classQualifier, n);
+				for (int i = 0; i < constructors.length; i++) {
+					if (!constructors[i].isImplicit()) {
+						filtered.add(constructors[i]);
 					}
 				}
-				return filtered.toArray(new IBinding[filtered.size()]);
 			}
+			return filtered.toArray(new IBinding[filtered.size()]);
 		}
 
 		return bindings;
 	}
 
+	// Are we taking the address of a qualified name?
+	private boolean isAddressOf() {
+		return getParent() instanceof IASTIdExpression
+			&& getParent().getParent() instanceof IASTUnaryExpression
+			&& ((IASTUnaryExpression) getParent().getParent()).getOperator() == IASTUnaryExpression.op_amper;
+	}
+	
 	private boolean canBeFieldAccess(ICPPClassType baseClass) {
 		IASTNode parent= getParent();
 		if (parent instanceof IASTFieldReference) {
@@ -364,18 +358,46 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		}
 		return false;
 	}
+	
+	private ICPPClassType getClassQualifier() {
+		if (fQualifierPos < 0) {
+			return null;
+		}
+		
+		IBinding binding = fQualifier[fQualifierPos].resolveBinding();
+
+		while (binding instanceof ITypedef) {
+			ITypedef typedef = (ITypedef) binding;
+			IType type = typedef.getType();
+			if (type instanceof IBinding) {
+				binding = (IBinding) type;
+			} else {
+				binding = null;
+			}
+		}
+		
+		return binding instanceof ICPPClassType ? (ICPPClassType) binding : null;
+	}
+	
+	public static boolean canBeFieldAccess(CPPASTQualifiedName qname) {
+		ICPPClassType classQualifier = qname.getClassQualifier();
+		if (classQualifier == null) {
+			return true;
+		}
+		return qname.canBeFieldAccess(classQualifier);
+	}
 
 	private List<IBinding> filterClassScopeBindings(ICPPClassType classType, IBinding[] bindings,
 			final boolean isDeclaration) {
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		final boolean canBeFieldAccess = canBeFieldAccess(classType);
+		final boolean allowNonstatic = canBeFieldAccess(classType) || isAddressOf();
 		final IBinding templateDefinition = (classType instanceof ICPPTemplateInstance)
 				? ((ICPPTemplateInstance) classType).getTemplateDefinition() : null;
 
 		for (final IBinding binding : bindings) {
 			if (binding instanceof IField) {
 				IField field = (IField) binding;
-				if (!canBeFieldAccess && !field.isStatic())
+				if (!allowNonstatic && !field.isStatic())
 					continue;
 			} else if (binding instanceof ICPPMethod) {
 				ICPPMethod method = (ICPPMethod) binding;
@@ -383,7 +405,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 					continue;
 				if (!isDeclaration) {
 					if (method.isDestructor() || method instanceof ICPPConstructor
-							|| (!canBeFieldAccess && !method.isStatic()))
+							|| (!allowNonstatic && !method.isStatic()))
 						continue;
 				}
 			} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {

@@ -8,7 +8,6 @@
 *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -51,8 +50,8 @@ public class ExecReturn implements ICPPExecution {
 		buffer.marshalEvaluation(retVal, includeValue);
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPEvaluation retVal = (ICPPEvaluation) buffer.unmarshalEvaluation();
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ICPPEvaluation retVal = buffer.unmarshalEvaluation();
 		return new ExecReturn(retVal);
 	}
 }

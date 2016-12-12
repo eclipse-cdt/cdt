@@ -39,10 +39,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -430,7 +430,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract ICPPEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
-	public abstract ISerializableExecution unmarshalExecution(ITypeMarshalBuffer typeMarhsalBuffer) throws CoreException;
+	public abstract ICPPExecution unmarshalExecution(ITypeMarshalBuffer typeMarhsalBuffer) throws CoreException;
 
 	public void storeType(long offset, IType type) throws CoreException {
 		final Database db= getDB();
@@ -694,13 +694,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return buffer.unmarshalEvaluation();
 	}
 
-	public void storeExecution(long offset, ISerializableExecution exec) throws CoreException {
+	public void storeExecution(long offset, ICPPExecution exec) throws CoreException {
 		final Database db = getDB();
 		deleteExecution(db, offset);
 		storeExecution(db, offset, exec);
 	}
 
-	private void storeExecution(Database db, long offset, ISerializableExecution exec) throws CoreException {
+	private void storeExecution(Database db, long offset, ICPPExecution exec) throws CoreException {
 		if (exec != null) {
 			TypeMarshalBuffer bc = new TypeMarshalBuffer(this);
 			bc.marshalExecution(exec, true);
@@ -712,7 +712,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		deleteSerializedData(db, offset, Database.EXECUTION_SIZE);
 	}
 
-	public ISerializableExecution loadExecution(long offset) throws CoreException {
+	public ICPPExecution loadExecution(long offset) throws CoreException {
 		TypeMarshalBuffer buffer = loadBuffer(offset, Database.EXECUTION_SIZE);
 		if (buffer == null)
 			return null;

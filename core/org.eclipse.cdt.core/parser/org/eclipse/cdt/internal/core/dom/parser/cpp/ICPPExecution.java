@@ -8,14 +8,15 @@
 *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ActivationRecord;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Assists in executing statements for constexpr evaluation
  */
-public interface ICPPExecution extends ISerializableExecution {
+public interface ICPPExecution {
 	/**
 	 * Instantiates the execution with the provided template parameter map and pack offset.
 	 * The context is used to replace templates with their specialization, where appropriate.
@@ -32,4 +33,12 @@ public interface ICPPExecution extends ISerializableExecution {
 	 * @return the computed execution
 	 */
 	ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context);
+
+	/**
+	 * Marshals an ICPPExecution object for storage in the index.
+	 *
+	 * @param  buffer The buffer that will hold the marshalled ICPPExecution object.
+	 * @param  includeValue Specifies whether nested IValue objects should be marshalled as well.
+	 * */
+	void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException;
 }

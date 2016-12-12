@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -32,6 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -168,7 +168,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 	
 	@Override
-	public void marshalExecution(ISerializableExecution exec, boolean includeValue) throws CoreException {
+	public void marshalExecution(ICPPExecution exec, boolean includeValue) throws CoreException {
 		if (exec == null) {
 			putShort(NULL_TYPE);
 		} else {
@@ -182,7 +182,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 	
 	@Override
-	public ISerializableExecution unmarshalExecution() throws CoreException {
+	public ICPPExecution unmarshalExecution() throws CoreException {
 		return fLinkage.unmarshalExecution(this);
 	}
 

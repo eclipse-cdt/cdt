@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
@@ -35,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
@@ -387,7 +387,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 	
 	@Override
-	public ISerializableExecution unmarshalExecution(ITypeMarshalBuffer buffer)
+	public ICPPExecution unmarshalExecution(ITypeMarshalBuffer buffer)
 			throws CoreException {
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an execution, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}

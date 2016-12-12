@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -249,9 +248,9 @@ public final class ExecDeclarator implements ICPPExecution {
 		buffer.marshalEvaluation(initializerEval, includeValue);
 	}
 
-	public static ISerializableExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPBinding declaredBinding = (ICPPBinding) buffer.unmarshalBinding();
-		ICPPEvaluation initializerEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation initializerEval = buffer.unmarshalEvaluation();
 		return new ExecDeclarator(declaredBinding, initializerEval);
 	}
 }

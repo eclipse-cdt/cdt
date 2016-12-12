@@ -903,6 +903,22 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "Printer::" };
 		assertMinimumCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
+	
+	//	struct S {
+	//		void method();
+	//		int datamem;
+	//	};
+	//
+	//	template <typename F>
+	//	void f(F);
+	//
+	//	int main() {
+	//		f(&S::/*cursor*/);
+	//	}
+	public void testAddressOfClassQualifiedNonstaticMember_395562() throws Exception {
+		final String[] expected = { "method", "datamem" };
+		assertMinimumCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
 
 	// typedef struct {
     //    int sx;

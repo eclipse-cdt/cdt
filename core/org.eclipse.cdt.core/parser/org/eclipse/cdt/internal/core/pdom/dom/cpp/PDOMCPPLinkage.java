@@ -355,7 +355,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		@Override
 		public void run() {
-			fConstructor.initData(fConstructorChain);
+			fConstructor.initConstructorData(fConstructorChain);
 		}
 	}
 
@@ -388,7 +388,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		@Override
 		public void run() {
-			fConstructor.initData(fConstructorChain);
+			fConstructor.initConstructorData(fConstructorChain);
 		}
 	}
 
@@ -454,7 +454,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		@Override
 		public void run() {
-			fConstructor.initData(fConstructorChain);
+			fConstructor.initConstructorData(fConstructorChain);
 		}
 	}
 

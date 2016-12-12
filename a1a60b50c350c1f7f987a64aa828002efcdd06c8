@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_21741e42",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-12T15:23:59Z",
+      "side": 1,
+      "message": "For the below map, why not reverse the types?  Make the key the Integer (the command token)\nand the value the IExecDmc.  That way, you can just search for the dmc using the token\ninstead of looping over all entries.",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_21397e8b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-12T15:23:59Z",
+      "side": 1,
+      "message": "You can use the \u003c\u003e operator and use new HashMap\u003c\u003e();",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6175363c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-12T15:23:59Z",
+      "side": 1,
+      "message": "Wouldn\u0027t need to loop if the key was the token instead of the dmc",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_01480205",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-12T15:23:59Z",
+      "side": 1,
+      "message": "No need to call session.dispatchEvent() on the executor since it is @ThreadSafe. \nIt will make its own call to the executor.",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

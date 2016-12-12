@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -160,7 +159,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public void marshalEvaluation(ISerializableEvaluation eval, boolean includeValues) throws CoreException {
+	public void marshalEvaluation(ICPPEvaluation eval, boolean includeValues) throws CoreException {
 		if (eval == null) {
 			putShort(NULL_TYPE);
 		} else {
@@ -178,7 +177,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
+	public ICPPEvaluation unmarshalEvaluation() throws CoreException {
 		return fLinkage.unmarshalEvaluation(this);
 	}
 	
@@ -238,7 +237,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		int oldPos = fPos;
 		short firstBytes = getShort();
 		if (firstBytes == VALUE) {
-			return new CPPTemplateNonTypeArgument((ICPPEvaluation) unmarshalEvaluation(), null);
+			return new CPPTemplateNonTypeArgument(unmarshalEvaluation(), null);
 		} else {
 			fPos = oldPos;
 			IType type = unmarshalType();

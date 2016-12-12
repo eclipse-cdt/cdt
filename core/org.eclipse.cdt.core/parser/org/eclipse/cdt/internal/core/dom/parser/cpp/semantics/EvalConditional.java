@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -341,12 +340,12 @@ public class EvalConditional extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		boolean pth= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		boolean nth= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
-		ICPPEvaluation cond= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		ICPPEvaluation pos= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		ICPPEvaluation neg= (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation cond= buffer.unmarshalEvaluation();
+		ICPPEvaluation pos= buffer.unmarshalEvaluation();
+		ICPPEvaluation neg= buffer.unmarshalEvaluation();
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalConditional(cond, pos, neg, pth, nth, templateDefinition);
 	}

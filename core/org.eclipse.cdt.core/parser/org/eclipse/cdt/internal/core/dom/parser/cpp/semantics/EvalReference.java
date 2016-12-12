@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -159,7 +158,7 @@ public class EvalReference extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		boolean subValue = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		if (subValue) {
 			EvalCompositeAccess referredSubValue = (EvalCompositeAccess) buffer.unmarshalEvaluation();
@@ -167,7 +166,7 @@ public class EvalReference extends CPPDependentEvaluation {
 			return new EvalReference(new ActivationRecord(), referredSubValue, templateDefinition);
 		} else {
 			IBinding referredBinding = buffer.unmarshalBinding();
-			ICPPEvaluation value = (ICPPEvaluation) buffer.unmarshalEvaluation();
+			ICPPEvaluation value = buffer.unmarshalEvaluation();
 			ActivationRecord record = new ActivationRecord();
 			record.update(referredBinding, value);
 			IBinding templateDefinition = buffer.unmarshalBinding();

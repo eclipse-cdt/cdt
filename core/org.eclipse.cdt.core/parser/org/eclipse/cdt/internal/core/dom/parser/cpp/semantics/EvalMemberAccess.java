@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -366,7 +365,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
 			throws CoreException {
 		boolean isDeref = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		ValueCategory ownerValueCat;
@@ -380,7 +379,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 
 		IType ownerType = buffer.unmarshalType();
 		IBinding member = buffer.unmarshalBinding();
-		ICPPEvaluation ownerEval = (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation ownerEval = buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalMemberAccess(ownerType, ownerValueCat, member, ownerEval, isDeref, templateDefinition);
 	}

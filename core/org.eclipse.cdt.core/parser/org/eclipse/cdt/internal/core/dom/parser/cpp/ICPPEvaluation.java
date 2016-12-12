@@ -18,13 +18,14 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ActivationRecord;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Assists in evaluating expressions.
  */
-public interface ICPPEvaluation extends ISerializableEvaluation {
+public interface ICPPEvaluation {
 	public static final ICPPEvaluation[] EMPTY_ARRAY = {};
 
 	boolean isInitializerList();
@@ -167,4 +168,12 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * Otherwise returns {@code null}.
 	 */
 	IBinding getTemplateDefinition();
+	
+	/**
+	 * Marshals an ICPPEvaluation object for storage in the index.
+	 *
+	 * @param  buffer The buffer that will hold the marshalled ICPPEvaluation object.
+	 * @param  includeValue Specifies whether nested IValue objects should be marshalled as well.
+	 * */
+	void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException;
 }

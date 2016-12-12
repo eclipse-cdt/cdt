@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -67,9 +66,9 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ISerializableEvaluation eval= buffer.unmarshalEvaluation();
-		if (eval instanceof ICPPEvaluation)
-			return new TypeOfDependentExpression((ICPPEvaluation) eval);
+		ICPPEvaluation eval= buffer.unmarshalEvaluation();
+		if (eval != null)
+			return new TypeOfDependentExpression(eval);
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 

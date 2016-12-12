@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -367,10 +366,10 @@ public class EvalUnary extends CPPDependentEvaluation {
 		marshalTemplateDefinition(buffer);
 	}
 
-	public static ISerializableEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
+	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer)
 			throws CoreException {
 		int op= buffer.getByte();
-		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
+		ICPPEvaluation arg= buffer.unmarshalEvaluation();
 		IBinding binding= buffer.unmarshalBinding();
 		IBinding templateDefinition= buffer.unmarshalBinding();
 		return new EvalUnary(op, arg, binding, templateDefinition);

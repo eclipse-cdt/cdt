@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 class SignatureBuilder implements ITypeMarshalBuffer {
@@ -83,7 +83,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public void marshalEvaluation(ISerializableEvaluation eval, boolean includeValues) throws CoreException {
+	public void marshalEvaluation(ICPPEvaluation eval, boolean includeValues) throws CoreException {
 		if (eval == null) {
 			putShort(NULL_TYPE);
 		} else {
@@ -173,7 +173,7 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
+	public ICPPEvaluation unmarshalEvaluation() throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 

@@ -30,7 +30,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 
 	private static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
 
-	private static final Pattern gccPattern = Pattern.compile("(.*-)?(gcc|g\\+\\+|clang|clang\\+\\+)"); //$NON-NLS-1$
+	private static final Pattern gppPattern = Pattern.compile("(.*-)?(g\\+\\+|clang\\+\\+)"); //$NON-NLS-1$
+	private static final Pattern gccPattern = Pattern.compile("(.*-)?(gcc|clang)"); //$NON-NLS-1$
 	private static final Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$
 	private static final Pattern targetPattern = Pattern.compile("Target: (.*)"); //$NON-NLS-1$
 
@@ -48,9 +49,28 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 			File dir = new File(dirStr);
 			if (dir.isDirectory()) {
 				for (String file : dir.list()) {
+					String prefix = null;
+					boolean hasAltCmd = false;
+					
 					Matcher matcher = gccPattern.matcher(file);
 					if (matcher.matches()) {
-						String prefix = matcher.group(1);
+						prefix = matcher.group(1);
+						String cmd = matcher.group(2);
+						String altFile = prefix + (cmd.startsWith("g") ? "g++" : "clang++");
+						File altCmd = new File(dir, altFile);
+						hasAltCmd = altCmd.exists() && altCmd.canExecute();
+					}
+					else {
+						matcher = gppPattern.matcher(file);
+						if (matcher.matches()) {
+							prefix = matcher.group(1);
+							String cmd = matcher.group(2);
+							String altFile = prefix + (cmd.startsWith("g") ? "gcc" : "clang");
+							File altCmd = new File(dir, altFile);
+							hasAltCmd = altCmd.exists() && altCmd.canExecute();
+						}
+					}
+					if (prefix != null && hasAltCmd) {
 						String command = dirStr + File.separatorChar + file;
 						try {
 							Process proc = new ProcessBuilder(new String[] { command, "-v" }).redirectErrorStream(true) //$NON-NLS-1$

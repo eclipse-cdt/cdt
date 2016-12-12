@@ -110,4 +110,21 @@ public class TextUtil {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Returns an escaped version of the string 'input' where instances of the
+	 * character 'specialChar' are escaped by replacing them with a two instances
+	 * of 'specialChar'.
+	 */
+	public static String escape(String input, char specialChar) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < input.length(); i++) {
+			char ch = input.charAt(i);
+			if (ch == specialChar) {
+				builder.append(specialChar);
+			}
+			builder.append(ch);
+		}
+		return builder.toString();
+	}
 }

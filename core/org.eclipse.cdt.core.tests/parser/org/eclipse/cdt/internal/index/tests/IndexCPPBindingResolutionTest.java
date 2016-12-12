@@ -2386,4 +2386,17 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		ICPPMethod[] pureVirtuals = SemanticQueries.getPureVirtualMethods((ICPPClassType) type, null);
 		assertEquals(0, pureVirtuals.length);
 	}
+	
+	//	class waldo {
+	//	    static waldo instance;
+	//
+	//	    constexpr waldo() {}
+	//	};
+	//
+	//	waldo waldo::instance;
+	
+	//	// empty file
+	public void testStaticFieldOfEnclosingType_508254() throws Exception {
+		checkBindings();
+	}
 }

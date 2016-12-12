@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -77,6 +79,17 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			break;
 		case IS_DECLARATION:
 			binding.addDeclaration(this);
+			
+			// The name of a using-declaration is, in addition to the declaration of
+			// the using-declaration binding, a reference to its delegate bindings.
+			if (binding instanceof ICPPUsingDeclaration) {
+				for (IBinding delegate : ((ICPPUsingDeclaration) binding).getDelegates()) {
+					if (delegate instanceof PDOMBinding) {
+						((PDOMBinding) delegate).addReference(this);
+					}
+				}
+			}
+			
 			break;
 		case IS_REFERENCE:
 			binding.addReference(this);

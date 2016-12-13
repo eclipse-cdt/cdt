@@ -15,17 +15,28 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleView;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -42,7 +53,7 @@ import org.eclipse.ui.part.PageSwitcher;
  * @see {@link IDebuggerConsoleManager}
  */
 public class DebuggerConsoleView extends PageBookView 
-implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener {
+		implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener, IPartListener2 {
 
 	public static final String DEBUGGER_CONSOLE_VIEW_ID = "org.eclipse.cdt.debug.ui.debuggerConsoleView"; //$NON-NLS-1$
 	public static final String DROP_DOWN_ACTION_ID = DEBUGGER_CONSOLE_VIEW_ID  + ".DebuggerConsoleDropDownAction"; //$NON-NLS-1$
@@ -59,6 +70,20 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 
 	private DebuggerConsoleDropDownAction fDisplayConsoleAction;
 
+	// Code for page participants borrowed from
+	// org.eclipse.ui.internal.console.ConsoleView
+	private ListenerList<IConsolePageParticipant> fConsolePageparticipants = new ListenerList<>();
+	
+	/**
+	 * Whether this view is active
+	 */
+	private boolean fActive = false;
+	
+	/**
+	 * 'In Console View' context
+	 */
+	private IContextActivation fActivatedContext;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -85,6 +110,27 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
 
+		// initialize page participants
+		IConsolePageParticipant[] consoleParticipants = ((DebuggerConsoleManager)getConsoleManager()).getPageParticipants(console);
+		for (int i = 0; i < consoleParticipants.length; i++) {
+			fConsolePageparticipants.add(consoleParticipants[i]);
+		}
+
+		for (IConsolePageParticipant iConsolePageParticipant : fConsolePageparticipants) {
+			final IConsolePageParticipant participant = iConsolePageParticipant;
+            SafeRunner.run(new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					participant.init(page, console);
+				}
+				@Override
+				public void handleException(Throwable exception) {
+					CDebugUIPlugin.log(exception);
+					fConsolePageparticipants.remove(participant);
+				}
+			});
+        }
+		
 		return new PageRec(dummyPart, page);
 	}
 
@@ -141,9 +187,39 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 		super.showPageRec(pageRec);
 		fActiveConsole = recConsole;
 
+		activateParticipants(fActiveConsole);
+		
 		updateTitle();
 	}
 
+	/**
+	 * Activates the participants for the given console, if any.
+	 *
+	 * @param console the console
+	 */
+	private void activateParticipants(IConsole console) {
+		// activate
+		if (console != null && fActive) {
+			final ListenerList<IConsolePageParticipant> listeners = fConsolePageparticipants;
+			if (listeners != null) {
+				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+					final IConsolePageParticipant participant = iConsolePageParticipant;
+			    	SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void run() throws Exception {
+							participant.activated();
+						}
+						@Override
+						public void handleException(Throwable exception) {
+							CDebugUIPlugin.log(exception);
+							listeners.remove(participant);
+						}
+					});
+			    }
+			}
+		}
+	}
+	
 	/**
 	 * Returns a set of consoles known by the view.
 	 */
@@ -386,5 +462,115 @@ implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChange
 	@Override
 	public boolean getWordWrap() {
 		return false;
+	}
+
+	@Override
+	public void partActivated(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef)) {
+			fActive = true;
+			IContextService contextService = getSite().getService(IContextService.class);
+			if (contextService != null) {
+				fActivatedContext = contextService.activateContext(IConsoleConstants.ID_CONSOLE_VIEW);
+				activateParticipants(fActiveConsole);
+			}
+		}
+	}
+
+	@Override
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		// Do nothing
+	}
+
+	@Override
+	public void partClosed(IWorkbenchPartReference partRef) {
+		// Do nothing
+	}
+
+	@Override
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef)) {
+			fActive = false;
+			IContextService contextService = getSite().getService(IContextService.class);
+			if (contextService != null) {
+				contextService.deactivateContext(fActivatedContext);
+				deactivateParticipants(fActiveConsole);
+			}
+		}
+	}
+
+	/**
+	 * Returns if the specified part reference is to this view part (if the part
+	 * reference is the console view or not)
+	 *
+	 * @param partRef
+	 *            the workbench part reference
+	 * @return true if the specified part reference is the console view
+	 */
+	protected boolean isThisPart(IWorkbenchPartReference partRef) {
+		if (partRef instanceof IViewReference) {
+			IViewReference viewRef = (IViewReference) partRef;
+			if (getViewSite() != null && viewRef.getId().equals(getViewSite().getId())) {
+				String secId = viewRef.getSecondaryId();
+				String mySec = null;
+				if (getSite() instanceof IViewSite) {
+					mySec = ((IViewSite) getSite()).getSecondaryId();
+				}
+				if (mySec == null) {
+					return secId == null;
+				}
+				return mySec.equals(secId);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Deactivates participants for the given console, if any.
+	 *
+	 * @param console
+	 *            console to deactivate
+	 */
+	private void deactivateParticipants(IConsole console) {
+		// deactivate
+		if (console != null) {
+			final ListenerList<IConsolePageParticipant> listeners = fConsolePageparticipants;
+			if (listeners != null) {
+				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+					final IConsolePageParticipant participant = iConsolePageParticipant;
+					SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void run() throws Exception {
+							participant.deactivated();
+						}
+
+						@Override
+						public void handleException(Throwable exception) {
+							CDebugUIPlugin.log(exception);
+							listeners.remove(participant);
+						}
+					});
+				}
+			}
+		}
+	}
+
+	@Override
+	public void partOpened(IWorkbenchPartReference partRef) {
+		// Do nothing
+	}
+
+	@Override
+	public void partHidden(IWorkbenchPartReference partRef) {
+		// Do nothing
+	}
+
+	@Override
+	public void partVisible(IWorkbenchPartReference partRef) {
+		// Do nothing
+	}
+
+	@Override
+	public void partInputChanged(IWorkbenchPartReference partRef) {
+		// Do nothing
 	}
 }

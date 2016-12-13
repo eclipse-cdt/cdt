@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_12e76ba2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-13T17:58:10Z",
+      "side": 1,
+      "message": "This file got changed from LF to CRLF in this commit.",
+      "revId": "81dcff88995dcfdb071bb16c1835fb67fc6c08c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

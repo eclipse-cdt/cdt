@@ -11,13 +11,19 @@
 package org.eclipse.cdt.debug.internal.ui.views.debuggerconsole;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IViewPart;
@@ -25,8 +31,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsolePageParticipant;
+import org.eclipse.ui.internal.console.ConsolePageParticipantExtension;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -41,6 +51,9 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	/** A list of listeners registered for notifications of changes to consoles */
 	private ListenerList<IConsoleListener> fConsoleListeners = new ListenerList<>();
 	
+	/** A list of registered console page participants */
+	private List<ConsolePageParticipantExtension> fPageParticipants;
+
 	private OpenDebuggerConsoleViewJob fOpenDebuggerConsoleViewJob = new OpenDebuggerConsoleViewJob();
 	private ShowDebuggerConsoleViewJob fShowDebuggerConsoleViewJob = new ShowDebuggerConsoleViewJob();
 	
@@ -89,6 +102,34 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 	@Override
 	public void openConsoleView() {
 		fOpenDebuggerConsoleViewJob.schedule(100);
+	}
+
+	// Code for page participants borrowed from
+	// org.eclipse.ui.internal.console.ConsoleManager
+	public IConsolePageParticipant[] getPageParticipants(IDebuggerConsole console) {
+		if (fPageParticipants == null) {
+			fPageParticipants = new ArrayList<>();
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+					ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement config = elements[i];
+				ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
+				fPageParticipants.add(extension);
+			}
+		}
+		ArrayList<IConsolePageParticipant> list = new ArrayList<>();
+		for (Iterator<ConsolePageParticipantExtension> i = fPageParticipants.iterator(); i.hasNext();) {
+			ConsolePageParticipantExtension extension = i.next();
+			try {
+				if (extension.isEnabledFor(console)) {
+					list.add(extension.createDelegate());
+				}
+			} catch (CoreException e) {
+				CDebugUIPlugin.log(e);
+			}
+		}
+		return list.toArray(new IConsolePageParticipant[0]);
 	}
 
 	private class ShowDebuggerConsoleViewJob extends WorkbenchJob {

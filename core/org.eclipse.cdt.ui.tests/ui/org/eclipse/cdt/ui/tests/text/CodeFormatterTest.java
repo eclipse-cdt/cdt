@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3128,6 +3128,72 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//				 // line 2 of comment
 	//}
 	public void testLineCommentAsBlocks8() throws Exception {
+		assertFormatterResult();
+	}
+
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int>>>tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int>>>>tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>>tpl6_int { };
+	
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int>>> tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int>>>> tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>> tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>> tpl6_int { };
+	public void testNestedTemplates_509150() throws Exception {
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS,
+				CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int>>>tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int>>>>tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>>>>>tpl6_int { };
+	
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int > > > tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int > > > > tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int > > > > > tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int > > > > > > tpl6_int { };
+	public void testNestedTemplatesWithSpaces_509150() throws Exception {
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS,
+				CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int>> > tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int>>> >tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int>> >> >tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>> >> >tpl6_int { };
+	
+	//template<typename T>
+	//struct Tpl {
+	//};
+	//Tpl<Tpl<Tpl<int>> > tpl3_int { };
+	//Tpl<Tpl<Tpl<Tpl<int>>> > tpl4_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<int>> >> > tpl5_int { };
+	//Tpl<Tpl<Tpl<Tpl<Tpl<Tpl<int>>> >> > tpl6_int { };
+	public void testNestedTemplatesMixedSpacingUnchanged_509150() throws Exception {
+		fOptions.put(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS,
+				CCorePlugin.DO_NOT_INSERT);
 		assertFormatterResult();
 	}
 }

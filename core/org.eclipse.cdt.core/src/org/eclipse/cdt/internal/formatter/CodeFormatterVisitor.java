@@ -401,7 +401,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private boolean fExpectSemicolonAfterDeclaration= true;
 
 	private MultiStatus fStatus;
-	private int fOpenAngleBrackets;
 	private IASTTranslationUnit ast;
 
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, int offset, int length) {
@@ -3470,7 +3469,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
 			scribe.space();
 		}
-		int angleBrackets = fOpenAngleBrackets++;
 		final IASTNode[] templateArguments= node.getTemplateArguments();
 		if (templateArguments.length > 0) {
 			final ListOptions options= new ListOptions(Alignment.M_COMPACT_SPLIT);
@@ -3480,20 +3478,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			formatList(Arrays.asList(templateArguments), options, false, false, null);
 		}
 		if (peekNextToken() == Token.tSHIFTR) {
-			if (fOpenAngleBrackets == angleBrackets + 2) {
-				fOpenAngleBrackets -= 2;
-				scribe.printNextToken(Token.tSHIFTR, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
-			} else {
-				scribe.printComment();
-				if (preferences.insert_space_before_closing_angle_bracket_in_template_arguments) {
-					scribe.space();
-				}
-				return PROCESS_SKIP;
+			scribe.printComment();
+			if (preferences.insert_space_before_closing_angle_bracket_in_template_arguments) {
+				scribe.space();
 			}
-		} else {
-			--fOpenAngleBrackets;
-			scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+			return PROCESS_SKIP;
 		}
+
+		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+
 		int nextToken= peekNextToken();
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
 			if (nextToken == Token.tLPAREN) {

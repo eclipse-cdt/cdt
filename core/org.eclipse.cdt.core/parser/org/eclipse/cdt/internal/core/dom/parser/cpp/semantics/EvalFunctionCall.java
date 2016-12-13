@@ -59,7 +59,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	public EvalFunctionCall(ICPPEvaluation[] args, ICPPEvaluation owner, IBinding templateDefinition) {
 		super(templateDefinition);
 		fArguments = args;
-		fImplicitThis = owner;
+		fImplicitThis = getImplicitThis() == owner ? null : owner;
 	}
 
 	public EvalFunctionCall(ICPPEvaluation[] args, ICPPEvaluation owner, IASTNode pointOfDefinition) {
@@ -72,6 +72,19 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	 */
 	public ICPPEvaluation[] getArguments() {
 		return fArguments;
+	}
+	
+	private ICPPEvaluation getImplicitThis() {
+		if (fImplicitThis != null)
+			return fImplicitThis;
+		
+		if (fArguments.length > 0) {
+			if (fArguments[0] instanceof EvalMemberAccess) {
+				return ((EvalMemberAccess) fArguments[0]).getOwnerEval();
+			}
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -245,17 +258,18 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			args[i] = arg;
 		}
 
+		ICPPEvaluation implicitThis = getImplicitThis();
 		ICPPEvaluation owner = null;
 		if (functionBinding instanceof ICPPMethod) {
-			if (fImplicitThis instanceof EvalBinding) {
-				IBinding ownerBinding = ((EvalBinding) fImplicitThis).getBinding();
+			if (implicitThis instanceof EvalBinding) {
+				IBinding ownerBinding = ((EvalBinding) implicitThis).getBinding();
 				if (record.getVariable(ownerBinding) != null) {
-					owner = new EvalReference(record, ownerBinding, fImplicitThis.getTemplateDefinition());
+					owner = new EvalReference(record, ownerBinding, implicitThis.getTemplateDefinition());
 				} else {
-					owner = fImplicitThis;
+					owner = implicitThis;
 				}
-			} else if (fImplicitThis != null) {
-				owner = fImplicitThis.computeForFunctionCall(record, context);
+			} else if (implicitThis != null) {
+				owner = implicitThis.computeForFunctionCall(record, context);
 			} else {
 				owner = record.getImplicitThis();
 			}
@@ -281,7 +295,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (!function.isConstexpr())
 			return EvalFixed.INCOMPLETE;
 
-		ActivationRecord record = createActivationRecord(function.getParameters(), fArguments, fImplicitThis, context.getPoint());
+		ActivationRecord record = createActivationRecord(function.getParameters(), fArguments, 
+				getImplicitThis(), context.getPoint());
 		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, context.getPoint());
 		if (bodyExec == null) {
 			if (!(function instanceof ICPPTemplateInstance)

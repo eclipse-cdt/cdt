@@ -391,7 +391,7 @@ outer:
 			return;
 		}
 		try {
-			if ( marker != null && outputStream instanceof IErrorMarkeredOutputStream ) {
+			if ( outputStream instanceof IErrorMarkeredOutputStream ) {
 				IErrorMarkeredOutputStream s = (IErrorMarkeredOutputStream) outputStream;
 				s.write(l, marker);
 			} else {

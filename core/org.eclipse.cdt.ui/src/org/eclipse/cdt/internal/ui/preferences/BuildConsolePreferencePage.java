@@ -81,6 +81,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 
 		IntegerFieldEditor buildCount = new IntegerFieldEditor(PREF_BUILDCONSOLE_LINES,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.label"), parent); //$NON-NLS-1$
+		buildCount.getLabelControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
+		buildCount.getTextControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
 		buildCount.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.errorMessage")); //$NON-NLS-1$
 		buildCount.setValidRange(10, Integer.MAX_VALUE);
 		addField(buildCount);

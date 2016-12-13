@@ -51,6 +51,12 @@ public  class ProblemMarkerInfo {
 		private String type;
 
 		/**
+		 * Flag marker for potential deferred de-duplication. See
+		 * {@link ACBuilder#deDuplicate()}
+		 */
+		public boolean deferDeDuplication;
+
+		/**
 		 * Create a new {@link ProblemMarkerInfo} object.
 		 * 
 		 * @param file - the file where the problem has occurred.

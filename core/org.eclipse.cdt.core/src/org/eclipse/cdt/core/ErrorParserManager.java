@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,6 +100,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	private String cachedFileName = null;
 	private URI cachedWorkingDirectory = null;
 	private IFile cachedFile = null;
+
+	private boolean deferDeDuplication = false;
 
 	private static boolean isCygwin = true;
 
@@ -599,6 +601,7 @@ outer:
 		if ( ! ProblemMarkerFilterManager.getInstance().acceptMarker(problemMarkerInfo) )
 			return;
 		fErrors.add(problemMarkerInfo);
+		problemMarkerInfo.setDeferDeDuplication(deferDeDuplication);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
 			hasErrors = true;
@@ -895,6 +898,31 @@ outer:
 					((IErrorParser3) parser).shutdown();
 				}
 			}
+		}
+	}
+
+	/**
+	 * Flag the marker generator to defer the de-duplication of error markers
+	 * until {@link #deDuplicate()} is called
+	 * 
+	 * @since 6.3
+	 */
+	public void deferDeDuplication() {
+		if (fMarkerGenerator instanceof ACBuilder) {
+			deferDeDuplication = true;
+		}
+	}
+
+	/**
+	 * De-duplicate error markers on resource that have had error markers added
+	 * since {@link #deferDeDuplication()} was called.
+	 * 
+	 * @since 6.3
+	 */
+	public void deDuplicate() {
+		if (deferDeDuplication) {
+			deferDeDuplication = false;
+			((ACBuilder) fMarkerGenerator).deDuplicate();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Siemens AG and others.
+ * Copyright (c) 2006, 2017 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,12 @@ public  class ProblemMarkerInfo {
 		public IPath externalPath ;
 		private Map<String, String> attributes;
 		private String type;
+
+		/**
+		 * Flag marker for potential deferred de-duplication. See
+		 * {@link ACBuilder#deDuplicate()}
+		 */
+		private boolean deferDeDuplication;
 
 		/**
 		 * Create a new {@link ProblemMarkerInfo} object.
@@ -160,5 +166,27 @@ public  class ProblemMarkerInfo {
 		 */
 		public void setType(String type){
 			this.type = type;
+		}
+
+		/**
+		 * Flag marker for potential deferred de-duplication. See
+		 * {@link ACBuilder#deDuplicate()}
+		 * 
+		 * @return the deferDeDuplication
+		 * @since 6.3
+		 */
+		public boolean isDeferDeDuplication() {
+			return deferDeDuplication;
+		}
+
+		/**
+		 * Flag marker for potential deferred de-duplication. See
+		 * {@link ACBuilder#deDuplicate()}
+		 * 
+		 * @param deferDeDuplication the deferDeDuplication to set
+		 * @since 6.3
+		 */
+		public void setDeferDeDuplication(boolean deferDeDuplication) {
+			this.deferDeDuplication = deferDeDuplication;
 		}
 }

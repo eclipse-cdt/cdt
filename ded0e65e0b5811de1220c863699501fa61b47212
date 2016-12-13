@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_4f5f80f2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-12-13T15:04:31Z",
+      "side": 1,
+      "message": "What is the performance impact of getting attributes by name here? Just wondering if it is worth trying to avoid a call to MarkerAttributeMap.get(Object), or if the potential saving is not worth the effort.",
+      "range": {
+        "startLine": 95,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 54
+      },
+      "revId": "ded0e65e0b5811de1220c863699501fa61b47212",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af701482",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-12-13T15:04:31Z",
+      "side": 1,
+      "message": "I assume this code path is unlikely to ever be used, so not worth putting any optimizations in?",
+      "range": {
+        "startLine": 176,
+        "startChar": 5,
+        "endLine": 176,
+        "endChar": 52
+      },
+      "revId": "ded0e65e0b5811de1220c863699501fa61b47212",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

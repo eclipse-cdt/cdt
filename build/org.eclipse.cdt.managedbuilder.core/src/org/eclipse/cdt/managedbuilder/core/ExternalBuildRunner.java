@@ -125,7 +125,14 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				buildRunnerHelper.greeting(kind, cfgName, toolchainName, isSupported);
-				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				
+				int state;
+				epm.deferDeDuplication();
+				try {
+					state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				} finally {
+					epm.deDuplicate();
+				}
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 

@@ -14,8 +14,13 @@ package org.eclipse.cdt.core.resources;
 
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -44,6 +49,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	protected static final boolean DEBUG_EVENTS = false;
 
 	private IProject currentProject;
+	private Set<IResource> resourcesToDeduplicate = new HashSet<>();
 
 	/**
 	 * Constructor for ACBuilder
@@ -54,7 +60,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	/**
 	 * Set the current project that this builder is running.
-	 * 
+	 *
 	 * @since 5.11
 	 */
 	protected void setCurrentProject(IProject project) {
@@ -63,7 +69,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	/**
 	 * Returns the current project that this builder is running.
-	 * 
+	 *
 	 * @return the project
 	 * @since 5.11
 	 */
@@ -78,6 +84,72 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
 		addMarker(problemMarkerInfo);
+	}
+
+	private static class MarkerWithInfo {
+		private static final String[] ATTRIBUTE_NAMES = new String[] { IMarker.LINE_NUMBER, IMarker.SEVERITY,
+				IMarker.MESSAGE, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, IMarker.SOURCE_ID };
+		private Object[] attributes;
+
+		MarkerWithInfo(IMarker marker) throws CoreException {
+			attributes = marker.getAttributes(ATTRIBUTE_NAMES);
+		}
+
+		@Override
+		public int hashCode() {
+			return Arrays.hashCode(attributes);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			MarkerWithInfo otherInfo = (MarkerWithInfo)obj;
+			return Arrays.equals(attributes, otherInfo.attributes);
+		}
+	}
+
+	/**
+	 * Remove duplicate error markers that may have been created by
+	 * {@link ACBuilder#addMarker(ProblemMarkerInfo)} with the
+	 * {@link ProblemMarkerInfo#deferDeDuplication} flag set.
+	 */
+	public void deDuplicate() {
+		/*
+		 * In practice it is actually faster to create all the markers and then
+		 * remove duplicates than try to search on each marker creation if the
+		 * marker already exists. The reason is that the algorithm used in addMarker
+		 * on each marker addition in O(n^2) where n is the number of markers per IResource,
+		 * but by deferring the deduplication, this algorithm is O(n).
+		 */
+		for (IResource resource : resourcesToDeduplicate) {
+			try {
+				IMarker[] markers = resource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
+						IResource.DEPTH_ZERO);
+				List<IMarker> dups = new ArrayList<>(markers.length);
+				Set<MarkerWithInfo> unique = new HashSet<>(markers.length);
+				for (IMarker marker : markers) {
+					MarkerWithInfo info = new MarkerWithInfo(marker);
+					if (!unique.add(info)) {
+						dups.add(marker);
+					}
+				}
+				for (IMarker marker : dups) {
+					marker.delete();
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e.getStatus());
+			}
+		}
+
+		resourcesToDeduplicate = new HashSet<>();
 	}
 
 	/**
@@ -96,24 +168,28 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				externalLocation = problemMarkerInfo.externalPath.toOSString();
 			}
 
-			// Try to find matching markers and don't put in duplicates
-			IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
-			for (IMarker m : markers) {
-				int line = m.getAttribute(IMarker.LINE_NUMBER, -1);
-				int sev = m.getAttribute(IMarker.SEVERITY, -1);
-				String msg = (String) m.getAttribute(IMarker.MESSAGE);
-				if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && msg.equals(problemMarkerInfo.description)) {
-					String extloc = (String) m.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
-					if (extloc == externalLocation || (extloc != null && extloc.equals(externalLocation))) {
-						if (project == null || project.equals(markerResource.getProject())) {
-							return;
-						}
-						String source = (String) m.getAttribute(IMarker.SOURCE_ID);
-						if (project.getName().equals(source)) {
-							return;
+			if (!problemMarkerInfo.deferDeDuplication) {
+				// Try to find matching markers and don't put in duplicates
+				IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
+				for (IMarker m : markers) {
+					int line = m.getAttribute(IMarker.LINE_NUMBER, -1);
+					int sev = m.getAttribute(IMarker.SEVERITY, -1);
+					String msg = (String) m.getAttribute(IMarker.MESSAGE);
+					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && msg.equals(problemMarkerInfo.description)) {
+						String extloc = (String) m.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
+						if (extloc == externalLocation || (extloc != null && extloc.equals(externalLocation))) {
+							if (project == null || project.equals(markerResource.getProject())) {
+								return;
+							}
+							String source = (String) m.getAttribute(IMarker.SOURCE_ID);
+							if (project.getName().equals(source)) {
+								return;
+							}
 						}
 					}
 				}
+			} else {
+				resourcesToDeduplicate.add(markerResource);
 			}
 
 			String type = problemMarkerInfo.getType();

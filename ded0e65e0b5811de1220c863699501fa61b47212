@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_edd3f445",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-13T20:45:47Z",
+      "side": 1,
+      "message": "I think it is worth considering whether there is a better/faster way of doing this. Each getAttributes(String[]) does mean having to go back to the element tree to get the data. It is much faster than fetching each attribute with its own call. Using getAttributes() returns a Map\u003c\u003e, but that map is a MarkerAttributeMap which does not implement equals (also I don\u0027t want equals to do all keys). Therefore to be able to comparison below I would still have to get the individual keys, or iterate (which itself creates a HashMap out of the MarkerAttributeMap which is slow).\n\nWhat would be great is if IResource had a method to get the markers + attributes out in one call, that would mean only a single read of the element tree.",
+      "parentUuid": "a7c23755_4f5f80f2",
+      "range": {
+        "startLine": 95,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 54
+      },
+      "revId": "ded0e65e0b5811de1220c863699501fa61b47212",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_af701482",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-12-13T15:04:31Z",
       "side": 1,
       "message": "I assume this code path is unlikely to ever be used, so not worth putting any optimizations in?",
+      "range": {
+        "startLine": 176,
+        "startChar": 5,
+        "endLine": 176,
+        "endChar": 52
+      },
+      "revId": "ded0e65e0b5811de1220c863699501fa61b47212",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2dedec00",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-13T20:45:47Z",
+      "side": 1,
+      "message": "Yes, ideally it would be removed, but the nature of it is the public API. \n\nIf any optimizations went in it would be to use the MarkerWithInfo + it\u0027s equals to check. That would speed things up a little, but it would still be very slow.\n\nWhat I would ideally like is a way, without changing API, to defer the de-duplication all the time. But the ACBuilder/ErrorParserManager on their own don\u0027t seem to know when the build is done? If they did then I could do it with no API changes and ditch this code altogether.",
+      "parentUuid": "a7c23755_af701482",
       "range": {
         "startLine": 176,
         "startChar": 5,

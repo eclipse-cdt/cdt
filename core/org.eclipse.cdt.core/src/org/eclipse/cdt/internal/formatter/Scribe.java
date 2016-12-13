@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
@@ -1642,6 +1643,9 @@ public class Scribe {
 						expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$
 			}
 			print(currentToken.getLength(), considerSpaceIfAny);
+			if (currentToken.getType() == IToken.tSHIFTR && considerSpaceIfAny) {
+				addInsertEdit(scanner.getCurrentTokenStartPosition() + 1, SPACE);
+			}
 		} finally {
 			formatBrace = false;
 		}

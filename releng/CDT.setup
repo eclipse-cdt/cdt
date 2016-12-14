@@ -196,6 +196,29 @@
           <repository
               url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
         </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/S20161205183421/repository"/>
+          <repository
+              url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
+          <repository
+              url="http://download.eclipse.org/tm/updates/4.0/"/>
+          <repository
+              url="http://download.eclipse.org/eclipse/updates/4.7milestones/"/>
+          <repository
+              url="http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+          <repository
+              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+          <repository
+              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+          <repository
+              url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+        </repositoryList>
       </targlet>
     </setupTask>
     <setupTask

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -113,6 +114,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -12173,5 +12175,41 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testSizeofDouble_506170() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("waldo", 8);
+	}
+
+	//	struct BooleanConvertible {
+	//		constexpr explicit operator bool() const { return true; }
+	//	};
+	//	void explicitBooleanContexts() {
+	//		BooleanConvertible bc{};
+	//		bc && bc;
+	//		bc || bc;
+	//		!bc;
+	//	}
+	public void testContextualBooleanConversion_506972() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		IASTDeclaration explicitBooleanContextsFunction = tu.getDeclarations()[1];
+		IASTNode functionBody = explicitBooleanContextsFunction.getChildren()[2];
+
+		IASTNode logicalAndExpressionStatement = functionBody.getChildren()[1];
+		ICPPASTBinaryExpression logicalAndExpression = (ICPPASTBinaryExpression)logicalAndExpressionStatement.getChildren()[0];
+		ICPPFunction logicalAndOverload = logicalAndExpression.getOverload();
+		assertNotNull(logicalAndOverload);
+		ICPPFunctionType logicalAndType = logicalAndOverload.getType();
+		isTypeEqual(logicalAndType, "bool (bool, bool)");
+
+		IASTNode logicalOrExpressionStatement = functionBody.getChildren()[2];
+		ICPPASTBinaryExpression logicalOrExpression = (ICPPASTBinaryExpression)logicalOrExpressionStatement.getChildren()[0];
+		ICPPFunction logicalOrOverload = logicalOrExpression.getOverload();
+		assertNotNull(logicalOrOverload);
+		ICPPFunctionType logicalOrType = logicalOrOverload.getType();
+		isTypeEqual(logicalOrType, "bool (bool, bool)");
+
+		IASTNode logicalNotExpressionStatement = functionBody.getChildren()[3];
+		ICPPASTUnaryExpression logicalNotExpression = (ICPPASTUnaryExpression)logicalNotExpressionStatement.getChildren()[0];
+		ICPPFunction logicalNotOverload = logicalNotExpression.getOverload();
+		assertNotNull(logicalNotOverload);
+		ICPPFunctionType logicalNotType = logicalNotOverload.getType();
+		isTypeEqual(logicalNotType, "bool (bool)");
 	}
 }

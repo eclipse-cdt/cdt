@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,7 +300,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 			if (parameterTypes.length == 0)
 				return IntegralValue.ERROR;
 			IType targetType = parameterTypes[0];
-			arg = maybeApplyConversion(arg, targetType, point);
+			arg = maybeApplyConversion(arg, targetType, point, fOperator == op_not);
 
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016, 2017 Institute for Software, HSR Hochschule fuer Technik 
 * Rapperswil, University of applied sciences and others
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
@@ -51,5 +51,29 @@ public class BinaryExpressionTests extends TestBase {
 	// constexpr int x = addTwice(2, 5);
 	public void testBinaryExpressionSequence() throws Exception {
 		assertEvaluationEquals(12);
+	}
+
+	//	struct BooleanConvertible {
+	//		constexpr explicit operator bool() const {
+	//			return true;
+	//		}
+	//	};
+	//	constexpr BooleanConvertible TRUE{};
+
+	//	constexpr bool actual = TRUE && TRUE;
+	public void testContextualConversionInAnd_506972() throws Exception {
+		assertEvaluationEquals(true);
+	}
+
+	//	struct BooleanConvertible {
+	//		constexpr explicit operator bool() const {
+	//			return true;
+	//		}
+	//	};
+	//	constexpr BooleanConvertible TRUE{};
+
+	//	constexpr bool actual = TRUE || TRUE;
+	public void testContextualConversionInOr_506972() throws Exception {
+		assertEvaluationEquals(true);
 	}
 }

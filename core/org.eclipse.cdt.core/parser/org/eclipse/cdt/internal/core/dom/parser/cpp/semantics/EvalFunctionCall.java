@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -390,7 +390,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				break;
 			} else {
 				if (j < arguments.length) {
-					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), point);
+					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), point, false);
 					record.update(param, argument);
 				} else if (param.hasDefaultValue()) {
 					IValue value = param.getDefaultValue();

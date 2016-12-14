@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_28087ae3",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2016-12-14T11:50:05Z",
+      "side": 1,
+      "message": "I was initially wondering if getting the entry set from the MarkerAttributeMap would be faster, but you\u0027re right the HashMap step could well remove any benefit.",
+      "parentUuid": "a7c23755_edd3f445",
+      "range": {
+        "startLine": 95,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 54
+      },
+      "revId": "ded0e65e0b5811de1220c863699501fa61b47212",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_af701482",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/resources/ACBuilder.java",
         "patchSetId": 3

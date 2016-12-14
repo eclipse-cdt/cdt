@@ -52,4 +52,30 @@ public class BinaryExpressionTests extends TestBase {
 	public void testBinaryExpressionSequence() throws Exception {
 		assertEvaluationEquals(12);
 	}
+
+	//	struct BooleanConvertible {
+	//		bool value;
+	//		constexpr explicit operator bool() const {
+	//			return value;
+	//		}
+	//	};
+	//	constexpr BooleanConvertible variable{true};
+
+	//	constexpr bool actual = variable && variable;
+	public void testContextualConversionInAnd_506972() throws Exception {
+		assertEvaluationEquals(true);
+	}
+
+	//	struct BooleanConvertible {
+	//		bool value;
+	//		constexpr explicit operator bool() const {
+	//			return value;
+	//		}
+	//	};
+	//	constexpr BooleanConvertible variable{true};
+
+	//	constexpr bool actual = variable || variable;
+	public void testContextualConversionInOr_506972() throws Exception {
+		assertEvaluationEquals(true);
+	}
 }

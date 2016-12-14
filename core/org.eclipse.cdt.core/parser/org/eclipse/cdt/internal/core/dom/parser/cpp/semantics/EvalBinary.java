@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,6 +166,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 		return operatorCall;
 	}
 
+	private boolean operatorAllowsContextualConversion() {
+		return fOperator == op_logicalAnd || fOperator == op_logicalOr;
+	}
+
 	@Override
 	public IValue getValue(IASTNode point) {
 		ICPPEvaluation arg1 = fArg1;
@@ -174,8 +178,9 @@ public class EvalBinary extends CPPDependentEvaluation {
 		if (overload != null) {
 			IType[] parameterTypes = SemanticUtil.getParameterTypesIncludingImplicitThis(overload);
 			if (parameterTypes.length >= 2) {
-				arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point);
-				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], point);
+				boolean allowContextualConversion = operatorAllowsContextualConversion();
+				arg1 = maybeApplyConversion(fArg1, parameterTypes[0], point, allowContextualConversion);
+				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], point, allowContextualConversion);
 			} else {
 				CCorePlugin.log(IStatus.ERROR, "Unexpected overload for binary operator " + fOperator //$NON-NLS-1$
 						+ ": '" + overload.getName() + "'");  //$NON-NLS-1$//$NON-NLS-2$

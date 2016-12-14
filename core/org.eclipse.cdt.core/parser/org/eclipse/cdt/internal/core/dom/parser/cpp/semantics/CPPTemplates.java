@@ -2804,7 +2804,7 @@ public class CPPTemplates {
 				Context.ORDINARY, point);
 		if (cost == null || !cost.converts()) {
 			ICPPEvaluation eval = arg.getNonTypeEvaluation();
-			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, point);
+			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, point, false);
 			if (newEval == EvalFixed.INCOMPLETE && newEval != eval)
 				return null;
 			return new CPPTemplateNonTypeArgument(newEval, point);

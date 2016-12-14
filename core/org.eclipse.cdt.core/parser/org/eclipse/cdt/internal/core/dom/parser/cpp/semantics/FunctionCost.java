@@ -17,6 +17,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -30,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
 
@@ -106,7 +109,7 @@ class FunctionCost {
 			case INIT_BY_CONVERSION:
 				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false, point);
+						(ICPPClassType) uqSource, cost.target, false, point, allowsContextualBooleanConversion());
 				break;
 			case LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(),
@@ -126,6 +129,13 @@ class FunctionCost {
 			udcCost.setReferenceBinding(cost.getReferenceBinding());
 		}
 		return true;
+	}
+
+	private boolean allowsContextualBooleanConversion() {
+		char[] functionName = fFunction.getNameCharArray();
+		return Arrays.equals(functionName, OverloadableOperator.AND.toCharArray()) ||
+				Arrays.equals(functionName, OverloadableOperator.OR.toCharArray()) || 
+				Arrays.equals(functionName, OverloadableOperator.NOT.toCharArray());
 	}
 
 	/**

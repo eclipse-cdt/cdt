@@ -130,4 +130,17 @@ public class UnaryExpressionTests extends TestBase {
     public void testPrefixIncrementReturnsLvalue() throws Exception {
       assertEvaluationEquals(4);
     }
+
+	//	struct BooleanConvertible {
+	//		bool value;
+	//		constexpr explicit operator bool() const {
+	//			return value;
+	//		}
+	//	};
+	//	constexpr BooleanConvertible variable{true};
+
+	//	constexpr bool actual = !variable;
+	public void testContextualConversionInNot_506972() throws Exception {
+		assertEvaluationEquals(false);
+	}
 }

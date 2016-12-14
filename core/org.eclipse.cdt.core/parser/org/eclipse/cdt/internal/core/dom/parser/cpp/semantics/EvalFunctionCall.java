@@ -390,7 +390,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				break;
 			} else {
 				if (j < arguments.length) {
-					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), point);
+					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), point, false);
 					record.update(param, argument);
 				} else if (param.hasDefaultValue()) {
 					IValue value = param.getDefaultValue();

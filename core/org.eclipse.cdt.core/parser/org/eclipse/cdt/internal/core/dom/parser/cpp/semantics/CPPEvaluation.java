@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
@@ -148,16 +152,18 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * @param argument the evaluation to convert
 	 * @param targetType the type to convert to
 	 * @param point point of instantiation for name lookups
+	 * @param allowContextualConversion enable/disable explicit contextual conversion
 	 */
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
-			IASTNode point) {
+			IASTNode point, boolean allowContextualConversion) {
 		IType type = argument.getType(point);
+		IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		ValueCategory valueCategory = argument.getValueCategory(point);
 		ICPPFunction conversion = null;
-		if (type instanceof ICPPClassType) {
+		if (uqType instanceof ICPPClassType) {
 			try {
-				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type,
-						targetType, false, point);
+				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) uqType,
+						targetType, false, point, allowContextualConversion);
 				conversion = cost.getUserDefinedConversion();
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
@@ -167,8 +173,8 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			if (!conversion.isConstexpr()) {
 				return EvalFixed.INCOMPLETE;
 			}
-			ICPPEvaluation eval = new EvalBinding(conversion, null, (IBinding) null);
-			argument = new EvalFunctionCall(new ICPPEvaluation[] {eval, argument}, null, (IBinding) null);
+			ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false, point);
+			argument = new EvalFunctionCall(new ICPPEvaluation[] { eval }, null, (IBinding) null);
 		}
 		return argument;
 	}

@@ -300,7 +300,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 			if (parameterTypes.length == 0)
 				return IntegralValue.ERROR;
 			IType targetType = parameterTypes[0];
-			arg = maybeApplyConversion(arg, targetType, point);
+			arg = maybeApplyConversion(arg, targetType, point, fOperator == op_not);
 
 			if (!(overload instanceof CPPImplicitFunction)) {
 				if (!overload.isConstexpr())

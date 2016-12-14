@@ -1,0 +1,409 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_6328d30e",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "extraneous \"etab\"",
+      "range": {
+        "startLine": 2,
+        "startChar": 70,
+        "endLine": 2,
+        "endChar": 74
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_231edbef",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "this should read: Copyright (c) 2009, 2016",
+      "range": {
+        "startLine": 2,
+        "startChar": 3,
+        "endLine": 2,
+        "endChar": 33
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c3b1a74d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Rather than implement this in the class, use an inner class. Doing this as an implements means that all the methods of that interface also become API.",
+      "range": {
+        "startLine": 142,
+        "startChar": 136,
+        "endLine": 142,
+        "endChar": 158
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a3ae6bef",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "This being public introduces API (causes \"Missing @since tag on TargetState\" API error)",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3e7ef08a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "This should be a local variable, other than setting to null it is never accessed outside of saveMemento() where the first thing that happens is it is written",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_bedcc05a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "don\u0027t swallow exceptions please.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7ecb0896",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "public API can\u0027t get the exceptions thrown :-(",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3e943014",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "AFAICT nothing in this change takes advantage of this new throw, only the new empty catch on line 606",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7e8ea807",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "set? or save?",
+      "range": {
+        "startLine": 824,
+        "startChar": 49,
+        "endLine": 824,
+        "endChar": 52
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ded6dcef",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1089,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Since only DSF is available today in CDT, I can\u0027t test or see the purpose for all the target state checks.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a3dcab93",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1096,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Rather than disabling checkstyle warning, how about just have STATE_RESUME in switch with the ignored + why comment",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5ee1ecb7",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1125,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "memorySpaces is never assigned (except here)",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_be884000",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1148,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "I think this goes with the comment below about empty catch in exception, but I think it should be made more clear that fLaunching implies restoring the saved settings. That could be best acheived by extracting a method here, which would also have the advantage of making this code block more readable.",
+      "range": {
+        "startLine": 1148,
+        "startChar": 0,
+        "endLine": 1148,
+        "endChar": 29
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0301df77",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "As you are catching all exceptions (including runtime exceptions) please at a minimum log the error. Better still would be to catch only what you know to be handling and throw everything else.\n\nReason is, it is quite reasonable that an NPE may happen, and without the logging there is no indication at all of the underlying fault.\n\nI am working on trying to resolve the swallowed exceptions in DSF, see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d507855",
+      "range": {
+        "startLine": 1150,
+        "startChar": 30,
+        "endLine": 1155,
+        "endChar": 46
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1ee774d1",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1161,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "memorySpaces is always new String[0] here.",
+      "range": {
+        "startLine": 1161,
+        "startChar": 34,
+        "endLine": 1161,
+        "endChar": 46
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_fef0f887",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1161,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Is it correct that this updateTab is called before the request above is complete? If so, can the call be moved to above.\n\nActually on second thought is there a missing } else { here?",
+      "range": {
+        "startLine": 1161,
+        "startChar": 4,
+        "endLine": 1161,
+        "endChar": 13
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3ee8b0ee",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1607,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "See comment on call to this method",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9e8f0439",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1657,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "I think you should be saving EXPRESSION if available here? What you have here means that before the memento is saved the tab shows the expression address, dash, expression. But after restore the expression (and dash :-) are not present because they are not restored.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1e64d4c2",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1728,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Because you don\u0027t record / tie up which launch has been launched you are restoring tabs when an unrelated launch is added. Try running additional (even unrelated launches / non CDT) while one debug session is running and you will observe new tabs are being created.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7ee2280e",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1781,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "There is already a runOnUIThread in this class that takes a Runnable. As this callable does not do anything with the result I would recommend changing it and getting rid of the then unused runOnUIThread(Callable)",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9e046455",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1793,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-14T19:25:15Z",
+      "side": 1,
+      "message": "Don\u0027t need dummy return if this is a Runnable.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

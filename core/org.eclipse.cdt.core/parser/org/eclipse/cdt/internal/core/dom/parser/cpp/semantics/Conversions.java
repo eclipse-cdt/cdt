@@ -323,7 +323,7 @@ public class Conversions {
 			if (udc == UDCMode.FORBIDDEN)
 				return Cost.NO_CONVERSION;
 
-			return initializationByConversion(valueCat, source, (ICPPClassType) uqSource, target, udc == UDCMode.DEFER, point);
+			return initializationByConversion(valueCat, source, (ICPPClassType) uqSource, target, udc == UDCMode.DEFER, point, false);
 		}
 
 		return checkStandardConversionSequence(uqSource, target, point);
@@ -839,7 +839,7 @@ public class Conversions {
 	/**
 	 * 13.3.1.5 Initialization by conversion function [over.match.conv]
 	 */
-	static Cost initializationByConversion(ValueCategory valueCat, IType source, ICPPClassType uqSource, IType target, boolean deferUDC, IASTNode point) throws DOMException {
+	static Cost initializationByConversion(ValueCategory valueCat, IType source, ICPPClassType uqSource, IType target, boolean deferUDC, IASTNode point, boolean allowExplicitConversion) throws DOMException {
 		if (deferUDC) {
 			Cost c= new Cost(source, target, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(DeferredUDC.INIT_BY_CONVERSION);
@@ -852,7 +852,7 @@ public class Conversions {
 		for (final ICPPFunction f : ops) {
 			if (f instanceof ICPPMethod && !(f instanceof IProblemBinding)) {
 				ICPPMethod op= (ICPPMethod) f;
-				final boolean isExplicitConversion= op.isExplicit();
+				final boolean isExplicitConversion= op.isExplicit() && !allowExplicitConversion;
 				if (isExplicitConversion /** && !direct **/)
 					continue;
 

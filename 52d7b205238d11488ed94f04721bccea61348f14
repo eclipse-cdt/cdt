@@ -33,6 +33,24 @@
       "revId": "52d7b205238d11488ed94f04721bccea61348f14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7e130863",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2016-12-14T18:58:58Z",
+      "side": 1,
+      "message": "Sounds good!",
+      "parentUuid": "a7c23755_befda07b",
+      "revId": "52d7b205238d11488ed94f04721bccea61348f14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

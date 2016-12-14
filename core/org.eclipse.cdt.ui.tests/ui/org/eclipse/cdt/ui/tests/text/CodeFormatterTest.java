@@ -3130,4 +3130,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testLineCommentAsBlocks8() throws Exception {
 		assertFormatterResult();
 	}
+
+	//template<typename ...ARGS>
+	//int count(ARGS ... args) {
+	//	return sizeof...(ARGS);
+	//}
+
+	//template<typename ...ARGS>
+	//int count(ARGS ... args) {
+	//	return sizeof...(ARGS);
+	//}
+	public void testSizeofParameterPackFormat_487991() throws Exception {
+		assertFormatterResult();
+	}
 }

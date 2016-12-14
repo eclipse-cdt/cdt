@@ -2417,6 +2417,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return PROCESS_SKIP;
 		}
 		scribe.printNextToken(peekNextToken());
+		if (peekNextToken() == IToken.tELLIPSIS) {
+			scribe.printNextToken(IToken.tELLIPSIS);
+		}
 		scribe.printNextToken(Token.tLPAREN);
 		node.getTypeId().accept(this);
 		if (peekNextToken() == Token.tCOMMA) {

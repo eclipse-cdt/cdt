@@ -16,6 +16,23 @@
       "revId": "52d7b205238d11488ed94f04721bccea61348f14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_befda07b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2016-12-14T18:55:00Z",
+      "side": 1,
+      "message": "Nice, I wasn\u0027t aware of this.  I\u0027ll turn the warning on in a separate commit, for the Debug plugins.",
+      "revId": "52d7b205238d11488ed94f04721bccea61348f14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

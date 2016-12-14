@@ -157,7 +157,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		if (type instanceof ICPPClassType) {
 			try {
 				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) type,
-						targetType, false, point);
+						targetType, false, point, false);
 				conversion = cost.getUserDefinedConversion();
 			} catch (DOMException e) {
 				CCorePlugin.log(e);

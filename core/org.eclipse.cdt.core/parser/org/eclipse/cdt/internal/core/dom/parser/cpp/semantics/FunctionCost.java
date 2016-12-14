@@ -106,7 +106,7 @@ class FunctionCost {
 			case INIT_BY_CONVERSION:
 				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false, point);
+						(ICPPClassType) uqSource, cost.target, false, point, allowsContextualBooleanConversion());
 				break;
 			case LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(),
@@ -126,6 +126,12 @@ class FunctionCost {
 			udcCost.setReferenceBinding(cost.getReferenceBinding());
 		}
 		return true;
+	}
+
+	private boolean allowsContextualBooleanConversion() {
+		String functionName = fFunction.getName();
+		return functionName.equals("operator &&") || functionName.equals("operator ||") //$NON-NLS-1$ //$NON-NLS-2$
+				|| functionName.equals("operator !"); //$NON-NLS-1$
 	}
 
 	/**

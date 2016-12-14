@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.model.ITranslationUnitHolder;
 /**
  * A text editor whose contents are represented by the C model.
  * Implementations include CEditor and AsmTextEditor.
- * @since 6.1
+ * @since 6.2
  */
 public interface ICModelBasedEditor extends ITextEditor, ITranslationUnitHolder {
 }

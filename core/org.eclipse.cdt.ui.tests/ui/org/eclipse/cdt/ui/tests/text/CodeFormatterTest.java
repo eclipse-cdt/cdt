@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3194,6 +3194,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TEMPLATE_ARGUMENTS,
 				CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//template<typename ...ARGS>
+	//int count(ARGS ... args) {
+	//	return sizeof...(ARGS);
+	//}
+
+	//template<typename ...ARGS>
+	//int count(ARGS ... args) {
+	//	return sizeof...(ARGS);
+	//}
+	public void testSizeofParameterPackFormat_464498() throws Exception {
 		assertFormatterResult();
 	}
 }

@@ -294,8 +294,6 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			if (!(specialized instanceof ICPPFunction))
 				return this;
 			bodyExec = CPPFunction.getFunctionBodyExecution((ICPPFunction) specialized, context.getPoint());
-			// TODO(nathanridge): Instead of instantiating the execution below in instantiateFunctionBody(),
-			//                    have getFunctionBodyExecution() return the instantiated execution already.
 		}
 		if (bodyExec != null) {
 			bodyExec = bodyExec.executeForFunctionCall(record, context.recordStep());

@@ -2399,4 +2399,13 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testStaticFieldOfEnclosingType_508254() throws Exception {
 		checkBindings();
 	}
+	
+	//	namespace {
+	//	    struct {} waldo;
+	//	}
+	
+	//	// empty file
+	public void testAnonymousStructInAnonymousNamespace_508254() throws Exception {
+		checkBindings();
+	}
 }

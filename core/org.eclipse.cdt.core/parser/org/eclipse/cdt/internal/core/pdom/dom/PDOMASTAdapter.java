@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
 public class PDOMASTAdapter {
 	private static class AnonymousASTName implements IASTName {
@@ -430,7 +431,7 @@ public class PDOMASTAdapter {
 		}
 	}
 
-	private static class AnonymousCPPBinding implements ICPPBinding {
+	private static class AnonymousCPPBinding implements ICPPInternalBinding {
 		protected ICPPBinding fDelegate;
 		private char[] fName;
 
@@ -497,6 +498,36 @@ public class PDOMASTAdapter {
 		@Override
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
+		}
+
+		@Override
+		public IASTNode getDefinition() {
+			if (fDelegate instanceof ICPPInternalBinding) {
+				return ((ICPPInternalBinding) fDelegate).getDefinition();
+			}
+			return null;
+		}
+
+		@Override
+		public IASTNode[] getDeclarations() {
+			if (fDelegate instanceof ICPPInternalBinding) {
+				return ((ICPPInternalBinding) fDelegate).getDeclarations();
+			}
+			return null;
+		}
+
+		@Override
+		public void addDefinition(IASTNode node) {
+			if (fDelegate instanceof ICPPInternalBinding) {
+				((ICPPInternalBinding) fDelegate).addDefinition(node);
+			}
+		}
+
+		@Override
+		public void addDeclaration(IASTNode node) {
+			if (fDelegate instanceof ICPPInternalBinding) {
+				((ICPPInternalBinding) fDelegate).addDeclaration(node);
+			}
 		}
 	}
 

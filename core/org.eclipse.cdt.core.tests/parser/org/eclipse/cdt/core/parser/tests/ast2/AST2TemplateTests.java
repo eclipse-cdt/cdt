@@ -2631,6 +2631,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		}
 	}
 
+	//	template<typename T>
+	//	struct A { typedef T type; };
+	//
+	//	template <typename T, typename U = void>
+	//	struct B { typedef int type; };
+	//
+	//	template <typename T>
+	//	struct B<T, typename A<T>::type> {};
+	//
+	//	template <typename T>
+	//	typename B<T>::type waldo(T t);
+	//
+	//	void test() {
+	//	  waldo(1);
+	//	}
+	public void testSpecializationSelection_509255() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	// template<typename _Tp>
 	// class A {
 	// public:
@@ -9856,6 +9875,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testOOM_508254() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		// Just check that resolution does not throw an exception.
-		helper.findName("waldo", 5).resolveBinding();
+		helper.findName("waldo").resolveBinding();
 	}
 }

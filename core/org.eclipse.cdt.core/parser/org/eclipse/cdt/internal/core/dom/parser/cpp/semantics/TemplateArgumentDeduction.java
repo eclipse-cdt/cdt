@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -979,7 +980,16 @@ public class TemplateArgumentDeduction {
 					return false;
 				return fromTemplateInstance((ICPPTemplateInstance) p, (ICPPTemplateInstance) a, point);
 			} else if (p instanceof ICPPUnknownBinding) {
-				return true;  // An unknown type may match anything.
+				InstantiationContext context = new InstantiationContext(fDeducedArgs, point);
+				IBinding binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) p, context);
+				if (binding == p || binding instanceof IProblemBinding)
+					return true;  // An unknown type may match anything.
+					
+				if (binding instanceof IType) {
+					p = (IType) binding;
+				} else {
+					return false;  // Mismatch between type argument and non-type parameter.
+				}
 			} else {
 				return p.isSameType(a);
 			}

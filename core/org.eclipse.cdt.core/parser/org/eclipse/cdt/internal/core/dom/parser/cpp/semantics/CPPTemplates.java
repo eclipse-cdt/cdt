@@ -2270,7 +2270,8 @@ public class CPPTemplates {
 
 		CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.size());
 		try {
-			ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, argCats, map, point);
+			ICPPTemplateArgument[] args=
+					TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, argCats, map, point);
 			if (args != null) {
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
@@ -2538,8 +2539,8 @@ public class CPPTemplates {
 		for (ICPPPartialSpecialization specialization : specializations) {
 			final CPPTemplateParameterMap map = new CPPTemplateParameterMap(args.length);
 			ICPPTemplateArgument[] specializationArguments = specialization.getTemplateArguments();
-			if (TemplateArgumentDeduction.fromTemplateArguments(specialization.getTemplateParameters(),
-					specializationArguments, args, map, point) &&
+			if (TemplateArgumentDeduction.fromTemplateArguments(
+					specialization.getTemplateParameters(), specializationArguments, args, map, point) &&
 					checkInstantiationOfArguments(specializationArguments, map, point)) {
 				int compare = orderSpecializations(bestMatch, specialization, point);
 				if (compare == 0) {

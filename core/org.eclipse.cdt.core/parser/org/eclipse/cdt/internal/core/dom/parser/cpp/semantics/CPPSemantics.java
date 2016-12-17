@@ -3555,10 +3555,12 @@ public class CPPSemantics {
 		data.qualified = true;
 		data.foundItems = ClassTypeHelper.getConstructors(classType, typeId);
 		try {
-			return resolveAmbiguities(data);
+			IBinding ctor = resolveAmbiguities(data);
+			if (ctor instanceof ICPPConstructor)
+				return ctor;
 		} catch (DOMException e) {
-			return null;
 		}
+		return null;
 	}
 
     public static ICPPFunction findImplicitlyCalledDestructor(ICPPASTDeleteExpression expr) {

@@ -57,23 +57,23 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 	private boolean fAllResolved;
 
 	public CPPVariable(IASTName name) {
-	    boolean isDef = name != null && name.isDefinition();
-	    if (name instanceof ICPPASTQualifiedName) {
-	    	name = name.getLastName();
-	    }
+		boolean isDef = name != null && name.isDefinition();
+		if (name instanceof ICPPASTQualifiedName) {
+			name = name.getLastName();
+		}
 
-	    if (isDef) {
-	        fDefinition = name;
-	    } else {
-	        fDeclarations = new IASTName[] { name };
-	    }
+		if (isDef) {
+			fDefinition = name;
+		} else {
+			fDeclarations = new IASTName[] { name };
+		}
 
-	    // Built-in variables supply a null.
-	    if (name != null) {
-	    	name.setBinding(this);
-	    } else {
-	    	assert this instanceof CPPBuiltinVariable;
-	    }
+		// Built-in variables supply a null.
+		if (name != null) {
+			name.setBinding(this);
+		} else {
+			assert this instanceof CPPBuiltinVariable;
+		}
 	}
 
 	@Override
@@ -100,15 +100,15 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 		}
 	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return fDeclarations;
-    }
+		return fDeclarations;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return fDefinition;
-    }
+		return fDefinition;
+	}
 
 	@Override
 	public IType getType() {
@@ -130,10 +130,10 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 
 	@Override
 	public char[] getNameCharArray() {
-	    if (fDeclarations != null) {
-	        return fDeclarations[0].getSimpleID();
-	    }
-	    return fDefinition.getSimpleID();
+		if (fDeclarations != null) {
+			return fDeclarations[0].getSimpleID();
+		}
+		return fDefinition.getSimpleID();
 	}
 
 	@Override
@@ -141,26 +141,26 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 		return CPPVisitor.getContainingScope(fDefinition != null ? fDefinition : fDeclarations[0]);
 	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {
@@ -168,17 +168,17 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 	}
 
 	public boolean hasStorageClass(int storage) {
-	    IASTName name = (IASTName) getDefinition();
-        IASTNode[] ns = getDeclarations();
+		IASTName name = (IASTName) getDefinition();
+		IASTNode[] ns = getDeclarations();
 
-        return VariableHelpers.hasStorageClass(name, ns, storage);
+		return VariableHelpers.hasStorageClass(name, ns, storage);
 	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        // 7.1.1-8 the mutable specifier can only be applied to names of class data members.
-        return false;
-    }
+		// 7.1.1-8 the mutable specifier can only be applied to names of class data members.
+		return false;
+	}
 
 	@Override
 	public boolean isConstexpr() {
@@ -190,25 +190,25 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        return hasStorageClass(IASTDeclSpecifier.sc_extern);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_extern);
+	}
 
-    @Override
+	@Override
 	public boolean isExternC() {
-	    return CPPVisitor.isExternC(getDefinition(), getDeclarations());
-    }
+		return CPPVisitor.isExternC(getDefinition(), getDeclarations());
+	}
 
-    @Override
+	@Override
 	public boolean isAuto() {
-        return hasStorageClass(IASTDeclSpecifier.sc_auto);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_auto);
+	}
 
-    @Override
+	@Override
 	public boolean isRegister() {
-        return hasStorageClass(IASTDeclSpecifier.sc_register);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_register);
+	}
 
 	@Override
 	public ILinkage getLinkage() {

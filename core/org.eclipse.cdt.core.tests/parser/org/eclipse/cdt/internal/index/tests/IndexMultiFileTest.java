@@ -187,4 +187,27 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testClassTemplatePartialSpecialization_470726() throws Exception {
 		checkBindings();
 	}
+	
+	// test.h
+	//	template <bool = false>
+	//	struct base {};
+	//
+	//	template <bool B = false>
+	//	struct derived : private base<B> {
+	//	    constexpr derived() : base<B>() {}
+	//	};
+	
+	// test1.cpp
+	//	#include "test.h"
+	
+	// test2.cpp *
+	//	template <typename = void>
+	//	struct base {};
+	//
+	//	static derived<> waldo;
+	public void testProblemBindingInMemInitList_508254() throws Exception {
+		// This code is invalid, so we don't checkBindings().
+		// If the test gets this far (doesn't throw in setup() during indexing), it passes.
+	}
+
 }

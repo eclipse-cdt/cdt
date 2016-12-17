@@ -3450,7 +3450,8 @@ public class CPPSemantics {
 
     /**
      * Returns constructor called by a class member initializer in a constructor initializer chain.
-     * Returns {@code null} if no constructor is called.
+     * Returns {@code null} if no constructor is called. Returns a {@link IProblemBinding} if the called
+     * constructor cannot be resolved.
      */
     public static IBinding findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
     	return findImplicitlyCalledConstructor(initializer.getMemberInitializerId(), initializer.getInitializer());
@@ -3474,7 +3475,11 @@ public class CPPSemantics {
 
     	return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
     }
-
+    
+    /**
+     * Returns the constructor implicitly called by the given expression, or {@code null} if there is
+     * no constructor call, or a {@link IProblemBinding} if the called constructor cannot be resolved.
+     */
 	public static IBinding findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
 		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
 		if (!(type instanceof IPointerType))

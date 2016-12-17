@@ -3421,60 +3421,65 @@ public class CPPSemantics {
     		return getNestedType(((IPointerType) type).getType(), TDEF | REF | CVTYPE);
     	}
 		return null;
-    }
+	}
 
-    /**
-     * Returns constructor called by a declarator, or {@code null} if no constructor is called.
-     */
-    public static IBinding findImplicitlyCalledConstructor(final ICPPASTDeclarator declarator) {
-    	if (declarator.getNestedDeclarator() != null)
-    		return null;
-    	IASTDeclarator dtor= ASTQueries.findOutermostDeclarator(declarator);
-    	IASTNode parent = dtor.getParent();
-    	if (parent instanceof IASTSimpleDeclaration) {
-    		final IASTInitializer initializer = dtor.getInitializer();
+	/**
+	 * Returns constructor called by a declarator, or {@code null} if no constructor is called.
+	 */
+	public static IBinding findImplicitlyCalledConstructor(final ICPPASTDeclarator declarator) {
+		if (declarator.getNestedDeclarator() != null)
+			return null;
+		IASTDeclarator dtor= ASTQueries.findOutermostDeclarator(declarator);
+		IASTNode parent = dtor.getParent();
+		if (parent instanceof IASTSimpleDeclaration) {
+			final IASTInitializer initializer = dtor.getInitializer();
 			if (initializer == null) {
-    			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-    			parent = parent.getParent();
-    			if (parent instanceof IASTCompositeTypeSpecifier ||
-    					declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
-    				// No initialization is performed for class members and extern declarations
-    				// without an initializer.
-    				return null;
-    			}
+				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+				parent = parent.getParent();
+				if (parent instanceof IASTCompositeTypeSpecifier ||
+						declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
+					// No initialization is performed for class members and extern declarations
+					// without an initializer.
+					return null;
+				}
 			}
-	    	return findImplicitlyCalledConstructor(declarator.getName(), initializer);
+			return findImplicitlyCalledConstructor(declarator.getName(), initializer);
 		}
-    	return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns constructor called by a class member initializer in a constructor initializer chain.
-     * Returns {@code null} if no constructor is called.
-     */
-    public static IBinding findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
-    	return findImplicitlyCalledConstructor(initializer.getMemberInitializerId(), initializer.getInitializer());
-    }
+	/**
+	 * Returns constructor called by a class member initializer in a constructor initializer chain.
+	 * Returns {@code null} if no constructor is called. Returns a {@link IProblemBinding} if the called
+	 * constructor cannot be uniquely resolved.
+	 */
+	public static IBinding findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
+		return findImplicitlyCalledConstructor(initializer.getMemberInitializerId(), initializer.getInitializer());
+	}
 
-    /**
-     * Returns constructor called by a variable declarator or an initializer in a constructor
-     * initializer chain. Returns {@code null} if no constructor is called.
-     */
-    private static IBinding findImplicitlyCalledConstructor(IASTName name, IASTInitializer initializer) {
-    	IBinding binding = name.resolveBinding();
-    	if (!(binding instanceof ICPPVariable))
-    		return null;
+	/**
+	 * Returns constructor called by a variable declarator or an initializer in a constructor
+	 * initializer chain. Returns {@code null} if no constructor is called.
+	 */
+	private static IBinding findImplicitlyCalledConstructor(IASTName name, IASTInitializer initializer) {
+		IBinding binding = name.resolveBinding();
+		if (!(binding instanceof ICPPVariable))
+			return null;
 
-    	IType type = ((ICPPVariable) binding).getType();
+		IType type = ((ICPPVariable) binding).getType();
 		type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
-    	if (!(type instanceof ICPPClassType))
-    		return null;
-    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
-    		return null;
+		if (!(type instanceof ICPPClassType))
+			return null;
+		if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
+			return null;
 
-    	return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
-    }
+		return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
+	}
 
+	/**
+	 * Returns the constructor implicitly called by the given expression, or {@code null} if there is no
+	 * constructor call, or a {@link IProblemBinding} if the called constructor cannot be uniquely resolved.
+	 */
 	public static IBinding findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
 		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
 		if (!(type instanceof IPointerType))

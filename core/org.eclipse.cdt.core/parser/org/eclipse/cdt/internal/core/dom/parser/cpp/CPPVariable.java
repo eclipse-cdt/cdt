@@ -265,9 +265,9 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 	}
 
 	/**
-	 * Return an evaluation representing the variable's initialization.
+	 * Returns an evaluation representing the variable's initialization.
 	 *
-	 * If the variable has no initializer, null is returned.
+	 * If the variable has no initializer, {@code null} is returned.
 	 */
 	public ICPPEvaluation getInitializerEvaluation() {
 		ICPPASTDeclarator declarator = (ICPPASTDeclarator) findDeclarator();
@@ -297,7 +297,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 
 	private static ICPPConstructor getImplicitlyCalledCtor(ICPPASTDeclarator declarator) {
 		IBinding ctor = CPPSemantics.findImplicitlyCalledConstructor(declarator);
-		if (ctor != null && !EvalUtil.isCompilerGeneratedCtor(ctor)) {
+		if (ctor instanceof ICPPConstructor && !EvalUtil.isCompilerGeneratedCtor(ctor)) {
 			return (ICPPConstructor) ctor;
 		}
 		return null;

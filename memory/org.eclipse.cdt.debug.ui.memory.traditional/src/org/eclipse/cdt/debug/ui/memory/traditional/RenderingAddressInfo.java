@@ -63,6 +63,13 @@ public class RenderingAddressInfo extends Rendering
     
     private final AddressInfoTypeMap fAddressInfoTypeStatusMap = new AddressInfoTypeMap();
 
+    /**
+     * Maps any address within a memory information range to a corresponding list of information items
+     * sharing that address. 
+     * This is useful to e.g. produce a tooltip while hovering over any memory location of a memory information range
+     */
+    private final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapAddrToInfoItems = Collections
+            .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
 
     public RenderingAddressInfo(Composite parent, TraditionalRendering renderingParent) {
         super(parent, renderingParent);
@@ -132,7 +139,9 @@ public class RenderingAddressInfo extends Rendering
 
         fSelectedContext = null;
         fMapStartAddrToInfoItems.clear();
+        fMapAddrToInfoItems.clear();
         fAddressInfoTypeStatusMap.clear();
+        fMapAddrToInfoItems.clear();
         fAddressInfoItems = null;
 
         IWorkbenchPartSite site = fParent.getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
@@ -261,6 +270,7 @@ public class RenderingAddressInfo extends Rendering
                                                 // The selection has changed, so our Address information may no longer be valid
                                                 fAddressInfoItems = addressInfoItems;
                                                 fMapStartAddrToInfoItems.clear();
+                                                fMapAddrToInfoItems.clear();
 
                                                 if (fBinaryPane.isVisible()) {
                                                     redrawPanes();
@@ -334,6 +344,7 @@ public class RenderingAddressInfo extends Rendering
         IMemoryBlockAddressInfoItem[] items = fAddressInfoItems;
         if (items == null || !fParent.isShowCrossRefInfoGlobalPref()) {
             fMapStartAddrToInfoItems.clear();
+            fMapAddrToInfoItems.clear();
             return fMapStartAddrToInfoItems;
         }
 
@@ -343,6 +354,7 @@ public class RenderingAddressInfo extends Rendering
             // unless the cell size matches the addressable size of the target system
             if (fParent.getAddressableSize() != getBytesPerColumn()) {
                 fMapStartAddrToInfoItems.clear();
+                fMapAddrToInfoItems.clear();
                 return fMapStartAddrToInfoItems;
             }
         }
@@ -357,6 +369,7 @@ public class RenderingAddressInfo extends Rendering
         synchronized (fMapStartAddrToInfoItems) {
             // Refreshing the Address to InfoItem data map
             fMapStartAddrToInfoItems.clear();
+            fMapAddrToInfoItems.clear();
             BigInteger startAddress = getViewportStartAddress();
             // Get the endAddress considering a page that uses single height,
             // Note: The UI may some times present rows with double height even if the user does not see items
@@ -395,6 +408,29 @@ public class RenderingAddressInfo extends Rendering
                 if (itemStartIsInRange || itemEndIsInRange || itemSpansOverVisibleRange) {
                     fMapStartAddrToInfoItems.put(item.getAddress(), allValuesMap.get(item.getAddress()));
                     filteredValuesMap.put(item.getAddress(), allValuesMap.get(item.getAddress()));
+                    // Add information items for each address within the range
+                    // But establish the limits to only add information to visible items (i.e. limiting the processing)
+                    BigInteger firstItemVisibleAddress = itemStartIsInRange ? item.getAddress() : startAddress;
+                    BigInteger lastItemVisibleAddress = itemEndIsInRange ? item.getAddress().add(item.getRangeInAddressableUnits().subtract(BigInteger.ONE)) : endAddress;
+
+                    for (BigInteger candidateAddress=firstItemVisibleAddress; candidateAddress.compareTo(lastItemVisibleAddress) <=0; candidateAddress = candidateAddress.add(BigInteger.ONE)) {
+                        List<IMemoryBlockAddressInfoItem> allItemsAtBase = allValuesMap.get(item.getAddress());
+                        List<IMemoryBlockAddressInfoItem> newInfoItems = filterToItemsValidForAddress(allItemsAtBase, item.getAddress(), candidateAddress);
+
+                        // Add new valid items to the map, associating it to candidate address
+                        List<IMemoryBlockAddressInfoItem> existingItems = fMapAddrToInfoItems.get(candidateAddress);
+                        if (existingItems == null) {
+                            // Brand new list of items
+                            fMapAddrToInfoItems.put(candidateAddress, newInfoItems);
+                        } else {
+                            // Appending new items to the existing list
+                            for (IMemoryBlockAddressInfoItem newItem : newInfoItems) {
+                                if (!existingItems.contains(newItem)) {
+                                    existingItems.add(newItem);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -402,10 +438,56 @@ public class RenderingAddressInfo extends Rendering
         return filteredValuesMap;
     }
 
+    /**
+     * @param allBaseItems - Set of items sharing the same starting address
+     * @param baseAddress  - The starting address 
+     * @param candidateAddress - An address higher than base address
+     * @return - The set of items that are still overlapping at the incremented address
+     */
+    private List<IMemoryBlockAddressInfoItem> filterToItemsValidForAddress(List<IMemoryBlockAddressInfoItem> allBaseItems,
+            BigInteger baseAddress, BigInteger candidateAddress) {
+
+    	List<IMemoryBlockAddressInfoItem> items = new  ArrayList<>();
+    	
+        // Keep info items applicable for the given address
+        BigInteger range = candidateAddress.subtract(baseAddress);
+        
+        // sanity check - should not happen 
+        if (range.compareTo(BigInteger.ZERO) < 0) {
+        	// return empty list
+        	return items;
+        }
+        else if (range.compareTo(BigInteger.ZERO) == 0) {
+            // Since all items share the same start address, 
+            // all items must be valid for a single address span
+            return allBaseItems;
+        }
+        
+        // Aggregate elements having a length equal or higher than the span between base address and current address 
+        for (IMemoryBlockAddressInfoItem item : allBaseItems) {
+            if (item.getRangeInAddressableUnits().compareTo(range) >=0 ) {
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
+
     @Override
     String buildAddressInfoString(BigInteger cellAddress, String separator, boolean addTypeHeaders) {
-        List<IMemoryBlockAddressInfoItem> infoItems = fMapStartAddrToInfoItems.get(cellAddress);
+        List<IMemoryBlockAddressInfoItem> infoItems;
+        if (addTypeHeaders) {
+            // Tooltip information
+            infoItems = fMapAddrToInfoItems.get(cellAddress);
+        } else {
+            // element information
+            infoItems = fMapStartAddrToInfoItems.get(cellAddress);
+        }
 
+        return buildAddressInfoString(cellAddress, separator, addTypeHeaders, infoItems);
+    }
+
+    private String buildAddressInfoString(BigInteger cellAddress, String separator, boolean addTypeHeaders, List<IMemoryBlockAddressInfoItem> infoItems) {
         if (infoItems == null || infoItems.size() < 1) {
             // No information to display
             return "";
@@ -455,7 +537,7 @@ public class RenderingAddressInfo extends Rendering
 
     @Override
     boolean hasAddressInfo(BigInteger cellAddress) {
-        return fMapStartAddrToInfoItems.keySet().contains(cellAddress);
+        return fMapAddrToInfoItems.keySet().contains(cellAddress);
     }
 
     /**

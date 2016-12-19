@@ -163,6 +163,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     /**
      * Maintains the subset of items visible in the current view address range.
      * This information is refreshed when the associated Panes are about to be redrawn
+     * Note: Only the start address of each entry is included i.e. one entry per information item
      * @since 1.4
      */
     protected final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapStartAddrToInfoItems = Collections

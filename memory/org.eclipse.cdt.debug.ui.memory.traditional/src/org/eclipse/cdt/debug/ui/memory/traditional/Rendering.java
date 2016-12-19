@@ -163,9 +163,20 @@ public class Rendering extends Composite implements IDebugEventSetListener
     /**
      * Maintains the subset of items visible in the current view address range.
      * This information is refreshed when the associated Panes are about to be redrawn
+     * Note: Only the start address of each entry is included i.e. one entry per information item
      * @since 1.4
      */
     protected final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapStartAddrToInfoItems = Collections
+            .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
+
+    /**
+     * Maps any address within a memory information range to a corresponding list of information items
+     * sharing that address. 
+     * This is useful to e.g. produce a tooltip while hovering over any memory location of a memory information range
+     *
+     * @since 1.5
+     */
+    protected final Map<BigInteger, List<IMemoryBlockAddressInfoItem>> fMapAddrToInfoItems = Collections
             .synchronizedMap(new HashMap<BigInteger, List<IMemoryBlockAddressInfoItem>>());
 
     public Rendering(Composite parent, TraditionalRendering renderingParent)
@@ -1198,6 +1209,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
 
         fMapStartAddrToInfoItems.clear();
+        fMapAddrToInfoItems.clear();
         super.dispose();
     }
 

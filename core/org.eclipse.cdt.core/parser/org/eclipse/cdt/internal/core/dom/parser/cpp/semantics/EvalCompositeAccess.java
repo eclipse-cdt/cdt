@@ -16,6 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -23,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -85,10 +88,20 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 			return arrayType.getType();
 		} else if (type instanceof InitializerListType) {
 			InitializerListType initListType = (InitializerListType) type;
-			return initListType.getEvaluation().getClauses()[elementId].getType(point);
+			ICPPEvaluation[] clauses = initListType.getEvaluation().getClauses();
+			if (elementId >= 0 && elementId < clauses.length) {
+				return clauses[elementId].getType(point);
+			} else {
+				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+			}
 		} else if (type instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) type;
-			return ClassTypeHelper.getFields(classType, point)[elementId].getType();
+			IField[] fields = ClassTypeHelper.getFields(classType, point);
+			if (elementId >= 0 && elementId < fields.length) {
+				return fields[elementId].getType();
+			} else {
+				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+			}
 		} else if (type instanceof ParameterPackType) {
 			ParameterPackType parameterPackType = (ParameterPackType) type;
 			return parameterPackType.getTypes()[elementId];

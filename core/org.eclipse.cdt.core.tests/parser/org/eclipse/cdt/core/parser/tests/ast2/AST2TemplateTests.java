@@ -2631,6 +2631,107 @@ public class AST2TemplateTests extends AST2TestBase {
 		}
 	}
 
+	//	template<typename T>
+	//	struct A { typedef char type; };
+	//
+	//	template <typename T, typename U>
+	//	struct B { typedef int type; };
+	//
+	//	template <typename T>
+	//	struct B<T, typename A<T>::type> {};
+	//
+	//	typename B<A<int>, int>::type a;
+	public void testSpecializationSelection_509255a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct A {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	void waldo(T t, typename T::type u);
+	//
+	//	void test() {
+	//	  A<char> a;
+	//	  waldo(a, 1);
+	//	}
+	public void testSpecializationSelection_509255b() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct true_type {
+	//	  static constexpr bool v = true;
+	//	};
+	//
+	//	struct false_type {
+	//	  static constexpr bool v = false;
+	//	};
+	//
+	//	template<typename T>
+	//	T d();
+	//
+	//	template<typename T, typename U>
+	//	struct E : public true_type {};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	struct D {
+	//	  template <typename F>
+	//	  struct S;
+	//
+	//	  template <typename R, typename U>
+	//	  struct S<R(U::*)()> {
+	//	    using type = R();
+	//	  };
+	//
+	//	  using type = typename S<decltype(&T::m)>::type;
+	//	};
+	//
+	//	template <typename F, typename S, typename T = void>
+	//	struct C : false_type {};
+	//
+	//	template <typename F, typename R, typename... U>
+	//	struct C<
+	//	    F, R(U...),
+	//	    typename enable_if<E<decltype(d<F>()(d<U>()...)), R>::v>::type>
+	//	    : true_type {};
+	//
+	//	template <typename F, typename S>
+	//	constexpr bool g() { return C<F, S>::v; }
+	//
+	//	template <typename F>
+	//	struct B {
+	//	  template <
+	//	  typename T,
+	//	  typename = typename enable_if<g<F, typename D<T>::type>()>::type>
+	//	  operator T*();
+	//	};
+	//
+	//	template <typename F>
+	//	B<F> f(F p);
+	//
+	//	struct A {
+	//	  void m();
+	//	};
+	//
+	//	void waldo(A* a);
+	//
+	//	void test() {
+	//	  waldo(f([]() {}));
+	//	}
+	public void testSpecializationSelection_509255c() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	// template<typename _Tp>
 	// class A {
 	// public:
@@ -9856,6 +9957,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testOOM_508254() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		// Just check that resolution does not throw an exception.
-		helper.findName("waldo", 5).resolveBinding();
+		helper.findName("waldo").resolveBinding();
 	}
 }

@@ -391,7 +391,6 @@ public class EvalUnary extends CPPDependentEvaluation {
 		return new EvalUnary(fOperator, argument, binding, getTemplateDefinition());
 	}
 
-
 	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, IASTNode point, ICPPEvaluation arg) {
 		if (overload instanceof ICPPMethod) {
 			EvalMemberAccess opAccess = new EvalMemberAccess(arg.getType(point), ValueCategory.LVALUE, overload, arg, false, point);
@@ -475,7 +474,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 	}
 
 	private boolean isStarOperatorOnArrayName(ConstexprEvaluationContext context) {
-		return fOperator==op_star && fArgument.getType(context.getPoint()) instanceof IArrayType;
+		return fOperator == op_star && fArgument.getType(context.getPoint()) instanceof IArrayType;
 	}
 
 	private void applyPointerArithmetics(EvalPointer poiner) {

@@ -166,8 +166,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		final ICPPASTInitializerClause[] clauses = getClauses();
 		ICPPEvaluation[] evals= new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < evals.length; i++) {
-			ICPPEvaluationOwner clause = (ICPPEvaluationOwner) clauses[i];
-			evals[i]= clause.getEvaluation();
+			evals[i]= clauses[i].getEvaluation();
 		}
 		return new EvalInitList(evals, this);
 	}

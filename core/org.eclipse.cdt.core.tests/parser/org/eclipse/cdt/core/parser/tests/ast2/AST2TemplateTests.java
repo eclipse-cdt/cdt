@@ -5963,6 +5963,24 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct A {
+	//	  template <typename U>
+	//	  char* m(U t);
+	//	};
+	//
+	//	template <typename T>
+	//	void waldo(T t);
+	//
+	//	template <typename T>
+	//	decltype(&T::m) waldo(T t);
+	//
+	//	void test() {
+	//	  waldo(A());
+	//	}
+	public void testAddressOfMethodTemplate_509396() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename Arg> struct Callback {
 	//	    Callback(void (*function)(Arg arg)) {}
 	//	};
@@ -9856,6 +9874,6 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testOOM_508254() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		// Just check that resolution does not throw an exception.
-		helper.findName("waldo", 5).resolveBinding();
+		helper.findName("waldo").resolveBinding();
 	}
 }

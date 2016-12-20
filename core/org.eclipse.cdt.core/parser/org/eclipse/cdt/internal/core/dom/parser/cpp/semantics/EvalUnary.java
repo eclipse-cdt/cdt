@@ -47,10 +47,12 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -382,6 +384,13 @@ public class EvalUnary extends CPPDependentEvaluation {
 		if (binding instanceof ICPPUnknownBinding) {
 			try {
 				binding= CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, context);
+				if (fOperator == ICPPASTUnaryExpression.op_amper && binding instanceof CPPFunctionSet) {
+					CPPFunctionSet functionSet = (CPPFunctionSet) binding;
+					for (ICPPFunction function : functionSet.getBindings()) {
+						if (function instanceof ICPPTemplateDefinition)
+							return EvalFixed.INCOMPLETE;
+					}
+				}
 			} catch (DOMException e) {
 			}
 		}

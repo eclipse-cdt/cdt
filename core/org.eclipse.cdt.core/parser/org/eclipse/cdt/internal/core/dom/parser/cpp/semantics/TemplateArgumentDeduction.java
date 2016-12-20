@@ -205,8 +205,7 @@ public class TemplateArgumentDeduction {
 						IType type1 = ((ICPPTemplateNonTypeParameter) tpar).getType();
 						type1= CPPTemplates.instantiateType(type1, new InstantiationContext(map, point));
 						IType type2= arg.getTypeOfNonTypeValue();
-						// Template-argument deduced from an array bound may be of any integral
-						// type.
+						// Template-argument deduced from an array bound may be of any integral type.
 						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegralType(type1)) {
 							IValue value = isBooleanType(type1) ? IntegralValue.create(true) : arg.getNonTypeValue();
 							arg = new CPPTemplateNonTypeArgument(value, type1);
@@ -310,7 +309,7 @@ public class TemplateArgumentDeduction {
 			}
 		}
 
-		return deduct.fromType(par, arg, true, point);
+		return deduct.fromType(par, arg, true, false, point);
 	}
 
 	/**
@@ -337,7 +336,7 @@ public class TemplateArgumentDeduction {
 			TemplateArgumentDeduction deduct=
 					new TemplateArgumentDeduction(tmplParams, map, new CPPTemplateParameterMap(tmplParams.length), 0);
 			par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF);
-			if (arg != null && !deduct.fromType(par, arg, false, point))
+			if (arg != null && !deduct.fromType(par, arg, false, false, point))
 				return null;
 			if (!map.addDeducedArgs(deduct.fDeducedArgs))
 				return null;
@@ -370,7 +369,7 @@ public class TemplateArgumentDeduction {
 		p= getArgumentTypeForDeduction(p, a instanceof ICPPReferenceType);
 		a= SemanticUtil.getNestedType(a, SemanticUtil.REF | SemanticUtil.TDEF);
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplParams, null, map, 0);
-		if (!deduct.fromType(p, a, true, point)) {
+		if (!deduct.fromType(p, a, true, false, point)) {
 			return null;
 		}
 
@@ -410,7 +409,7 @@ public class TemplateArgumentDeduction {
 
 		TemplateArgumentDeduction deduct=
 				new TemplateArgumentDeduction(tmplParams, map, new CPPTemplateParameterMap(tmplParams.length), 0);
-		if (!deduct.fromType(p, a, false, point)) {
+		if (!deduct.fromType(p, a, false, false, point)) {
 			return null;
 		}
 
@@ -562,7 +561,7 @@ public class TemplateArgumentDeduction {
 		par= getNestedType(par, TDEF | REF | ALLCVQ);
 		arg= getNestedType(arg, TDEF | REF | ALLCVQ);
 
-		if (!deduct.fromType(par, arg, false, point))
+		if (!deduct.fromType(par, arg, false, false, point))
 			return -1;
 
 		return isMoreCVQualified ? 1 : 0;
@@ -838,12 +837,13 @@ public class TemplateArgumentDeduction {
 
 		// Try to deduce from the original argument type, but if it fails, fall back to the simplified
 		// argument type.
-		return fromType(p.getTypeValue(), a.getOriginalTypeValue(), false, point)
+		return fromType(p.getTypeValue(), a.getOriginalTypeValue(), false, true, point)
 				|| (a.getTypeValue() != a.getOriginalTypeValue()
-						&& fromType(p.getTypeValue(), a.getTypeValue(), false, point));
+						&& fromType(p.getTypeValue(), a.getTypeValue(), false, true, point));
 	}
 
-	private boolean fromType(IType p, IType a, boolean allowCVQConversion, IASTNode point) throws DOMException {
+	private boolean fromType(IType p, IType a, boolean allowCVQConversion, boolean verifyNonDeduced,
+			IASTNode point) throws DOMException {
 		IType originalArgType = a;
 		a = SemanticUtil.getSimplifiedType(a);
 		while (p != null) {
@@ -860,7 +860,7 @@ public class TemplateArgumentDeduction {
 				final ICPPPointerToMemberType ptrA = (ICPPPointerToMemberType) a;
 				if (!allowCVQConversion && (ptrP.isConst() != ptrA.isConst() || ptrP.isVolatile() != ptrA.isVolatile()))
 					return false;
-				if (!fromType(ptrP.getMemberOfClass(), ptrA.getMemberOfClass(), false, point)) {
+				if (!fromType(ptrP.getMemberOfClass(), ptrA.getMemberOfClass(), false, false, point)) {
 					return false;
 				}
 				p = ptrP.getType();
@@ -980,7 +980,16 @@ public class TemplateArgumentDeduction {
 					return false;
 				return fromTemplateInstance((ICPPTemplateInstance) p, (ICPPTemplateInstance) a, point);
 			} else if (p instanceof ICPPUnknownBinding) {
-				return true;  // An unknown type may match anything.
+				if (!verifyNonDeduced)
+					return true;  // An unknown type may match anything.
+
+				// Verify that the resolved binding matches the argument type. 
+				InstantiationContext context = new InstantiationContext(fDeducedArgs, point);
+				IBinding binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) p, context);
+				if (binding == p)
+					return true;  // An unknown type may match anything.
+
+				return binding instanceof IType && ((IType) binding).isSameType(a);
 			} else {
 				return p.isSameType(a);
 			}
@@ -1065,7 +1074,7 @@ public class TemplateArgumentDeduction {
 			return false;
 		}
 
-		if (!fromType(ftp.getReturnType(), fta.getReturnType(), false, point))
+		if (!fromType(ftp.getReturnType(), fta.getReturnType(), false, false, point))
 			return false;
 
 		IType[] pParams = ftp.getParameterTypes();
@@ -1103,7 +1112,7 @@ public class TemplateArgumentDeduction {
 						return false;
 				}
 			}
-			if (!deduct.fromType(p, aParams[i], false, point))
+			if (!deduct.fromType(p, aParams[i], false, true, point))
 				return false;
 		}
 		return true;

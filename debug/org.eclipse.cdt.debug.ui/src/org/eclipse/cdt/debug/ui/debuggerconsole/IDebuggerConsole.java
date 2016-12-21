@@ -40,5 +40,5 @@ public interface IDebuggerConsole extends IConsole {
 	 * This console has become selected, the implementation shall use this 
 	 * notification to e.g. keep other views in sync with the context of the console
 	 */
-	public void consoleSelected();
+	void consoleSelected();
 }

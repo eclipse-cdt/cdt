@@ -14,13 +14,15 @@ package org.eclipse.cdt.ui.tests.text;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -33,17 +35,20 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingStructureProvider.CProjectionAnnotation;
 
 /**
  * Code folding tests.
  */
-public class FoldingTest extends TestCase {
+public class FoldingTest extends BaseUITestCase {
 
 	private static class ProjectionPosition extends Position implements IProjectionPosition, IRegion {
 		private int fCaptionOffset;
@@ -67,9 +72,9 @@ public class FoldingTest extends TestCase {
 	private ICProject fCProject;
 	private final String fTestFilename= "/FoldingTest/src/FoldingTest.cpp";
 	
-	private static CEditor fEditor;
+	private CEditor fEditor;
 	
-	private static SourceViewer fSourceViewer;
+	private SourceViewer fSourceViewer;
 
 	public static Test suite() {
 		return new TestSuite(FoldingTest.class);
@@ -81,8 +86,20 @@ public class FoldingTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
+		
+		StringBuilder[] contents = getContentsForTest(1);
+		assert contents.length == 1;
+		String code = contents[0].toString();
+		String filename;
+		if (code.trim().isEmpty()) {
+			filename = fTestFilename;
+		} else {
+			TestSourceReader.createFile(fCProject.getProject(), new Path("FoldingTest.cpp"), code);
+			filename = "/FoldingTest/FoldingTest.cpp";
+		}
 
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
@@ -91,7 +108,7 @@ public class FoldingTest extends TestCase {
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_HEADERS, false);
 
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
+		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 300));
 	}
@@ -198,6 +215,7 @@ public class FoldingTest extends TestCase {
 		return positions.toArray(new Position[positions.size()]);
 	}
 
+	//
 	public void testInitialFolding() throws BadLocationException {
 		Position[] actual= getFoldingPositions();
 		Position[] expected= new Position[] {
@@ -244,6 +262,7 @@ public class FoldingTest extends TestCase {
 		assertEqualPositions(expected, actual);
 	}
 	
+	//
 	public void testToggleFolding_Bug186729() throws BadLocationException {
 		fEditor.getAction("FoldingToggle").run();
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
@@ -283,6 +302,7 @@ public class FoldingTest extends TestCase {
 		assertEqualPositions(expected, actual);
 	}
 
+	//
 	public void testToggleFoldingNoASTRequired() throws BadLocationException {
 		fEditor.getAction("FoldingToggle").run();
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
@@ -311,4 +331,44 @@ public class FoldingTest extends TestCase {
 		assertEqualPositions(expected, actual);
 	}
 
+	private void assertNoKeyCollisions() {
+		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		assertNotNull(model);
+		int annotations = 0;
+		Set<Object> keys = new HashSet<>();
+		for (Iterator<Annotation> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
+			Annotation ann= iter.next();
+			if (ann instanceof CProjectionAnnotation) {
+				++annotations;
+				System.out.println("key is: " + ((CProjectionAnnotation) ann).getElement());
+				keys.add(((CProjectionAnnotation) ann).getElement());
+				System.out.println("  after adding key, set has size " + keys.size());
+			}
+		}
+		assertEquals(annotations, keys.size());
+	}
+	
+	//	int func(const char*);
+	//
+	//	void foo() {
+	//	    if (func("a looooooooooooooooooooooooooong string") == 1) {
+	//	    }
+	//	    if (func("a looooooooooooooooooooooooooong string") == 2) {
+	//	    }
+	//	}
+	public void testStatementsSharingFirst32Chars_507138() throws BadLocationException {
+		assertNoKeyCollisions();
+	}
+	
+	//	bool func();
+	//
+	//	void foo() {
+	//		if (func()) {
+	//		}
+	//		if (func()) {
+	//		}
+	//	}
+	public void testIdenticalStatements_507138() throws BadLocationException {
+		assertNoKeyCollisions();
+	}
 }

@@ -514,7 +514,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 	
 
-	private static class CProjectionAnnotation extends ProjectionAnnotation {
+	public static class CProjectionAnnotation extends ProjectionAnnotation {
 
 		public final static int CMODEL= 0;
 		public final static int COMMENT= 1;
@@ -1085,11 +1085,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 							existingPosition.setOffset(newPosition.getOffset());
 							existingPosition.setLength(newPosition.getLength());
 							if (collapseChanged) {
-								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation " + newAnnotation); //$NON-NLS-1$
+								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation due to collapse state change " + newAnnotation); //$NON-NLS-1$
 								if (newAnnotation.isCollapsed())
 									existingAnnotation.markCollapsed();
 								else
 									existingAnnotation.markExpanded();
+							} else {
+								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation due to position change " + newAnnotation); //$NON-NLS-1$
 							}
 							updates.add(existingAnnotation);
 						}
@@ -1278,7 +1280,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		return map;
 	}
 	
-
 	private void computeFoldingStructure(final FoldingStructureComputationContext ctx) {
 		if (fCommentFoldingEnabled) {
 			// compute comment positions from partitioning
@@ -1491,8 +1492,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private Object computeKey(Position pos, FoldingStructureComputationContext ctx) {
 		try {
 			final IDocument document= ctx.getDocument();
-			IRegion line= document.getLineInformationOfOffset(pos.offset);
-			return document.get(pos.offset, Math.min(32, line.getOffset() + line.getLength() - pos.offset));
+			return document.getLineOfOffset(pos.offset);
 		} catch (BadLocationException exc) {
 			return exc;
 		}

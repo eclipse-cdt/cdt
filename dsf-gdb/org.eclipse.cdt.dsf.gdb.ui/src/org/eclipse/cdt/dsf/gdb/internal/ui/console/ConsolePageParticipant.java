@@ -35,7 +35,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console page participant for DSF-GDB.
- * It adds a save button to both the gdb tracing console and the gdb CLI console.
+ * It adds a save button to the gdb tracing console.
  * It also brings to the front the proper inferior console when a container is selected.
  * 
  * @since 2.1
@@ -52,13 +52,13 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         fConsole = console;
         fView = (IConsoleView)fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
 
-        if (isConsoleInferior(console) || isConsoleGdbCli(console)) {
+        if (isConsoleInferior(console)) {
         	// This console participant will affect all consoles, even those not for DSF-GDB.
-        	// Only consoles for GDBProcess or InferiorRuntimeProcess are what we care about for DSF-GDB 
+        	// Only consoles for InferiorRuntimeProcess are what we care about for DSF-GDB 
         	DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
         }
 
-		if(console instanceof TracingConsole || isConsoleGdbCli(console)) {
+		if (console instanceof TracingConsole) {
 			TextConsole textConsole = (TextConsole) console;
 
 			// Add the save console action
@@ -71,29 +71,13 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	}
 
 	/**
-	 * Checks if the the console is the gdb CLI. We don't rely on the attached 
-	 * process name. Instead we check if the process is an instance of GDBProcess
-     * This gdb CLI console will only be used if the full GDB console is not available.
-	 * 
-	 * @param console The console to check
-	 * @return true if the the console is the gdb CLI
-	 */
-	private boolean isConsoleGdbCli(IConsole console) {
-		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
-			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
-			return (debugConsole.getProcess() instanceof GDBProcess);
-		}
-		return false;
-	}
-
-	/**
 	 * Checks if the the console is for an inferior.
 	 * 
 	 * @param console The console to check
 	 * @return true if the the console is for an inferior
 	 */
 	private boolean isConsoleInferior(IConsole console) {
-		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
+		if (console instanceof org.eclipse.debug.ui.console.IConsole) {
 			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
 			return (debugConsole.getProcess() instanceof InferiorRuntimeProcess);
 		}
@@ -107,7 +91,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	
     @Override
 	public void dispose() {
-        if (isConsoleInferior(fConsole) || isConsoleGdbCli(fConsole)) {
+        if (isConsoleInferior(fConsole)) {
 			DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		}
 		fConsole = null;

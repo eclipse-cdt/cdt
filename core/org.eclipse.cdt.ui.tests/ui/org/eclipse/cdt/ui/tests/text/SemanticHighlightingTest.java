@@ -626,4 +626,12 @@ public class SemanticHighlightingTest extends TestCase {
     public void testVariablePassedByNonconstRef_487764b() throws Exception {
     	makeAssertions();
     }
+    
+    //	void foo(int* const &);                          //$functionDeclaration
+    //	void bar(int* waldo) {                           //$functionDeclaration,parameterVariable
+    //		foo(waldo);                                  //$function,parameterVariable
+    //	}
+    public void testReferenceToConstPointer_509619() throws Exception {
+    	makeAssertions();
+    }
 }

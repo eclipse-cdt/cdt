@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -1711,8 +1712,12 @@ public class SemanticHighlightings {
 				if (referredType instanceof IArrayType) {
 					referredType = ((IArrayType) referredType).getType();
 				}
-				boolean isConstRef = (referredType instanceof IQualifierType) &&
-						             ((IQualifierType) referredType).isConst();
+				boolean isConstRef = false;
+				if (referredType instanceof IQualifierType) {
+		            isConstRef = ((IQualifierType) referredType).isConst();
+				} else if (referredType instanceof IPointerType) {
+					isConstRef = ((IPointerType) referredType).isConst();
+				}
 				return !isConstRef;
 			}
 			return false;

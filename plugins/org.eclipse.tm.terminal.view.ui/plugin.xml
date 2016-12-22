@@ -152,7 +152,7 @@
                label="%toolbar.terminal.label">
 	         <command
 	               commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
-	               icon="platform:/plugin/org.eclipse.ui.console/icons/full/eview16/console_view.gif"
+	               icon="icons/eview16/console_view.png"
 	               id="org.eclipse.tm.terminal.view.ui.commands.launchToolbar"
 	               label="%command.launch.label"
 	               style="push"
@@ -163,7 +163,7 @@
       <menuContribution locationURI="toolbar:org.eclipse.tm.terminal.view.ui.TerminalsView">
          <command
                commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
-               icon="platform:/plugin/org.eclipse.ui.console/icons/full/eview16/console_view.gif"
+               icon="icons/eview16/console_view.png"
                id="org.eclipse.tm.terminal.view.ui.commands.launchToolbarTerminalsView"
                label="%command.launch.label"
                style="push"

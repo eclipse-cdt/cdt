@@ -14,7 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.custom.CTabFolder;
@@ -211,21 +210,18 @@ public class UIPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
-		Bundle bundle = Platform.getBundle("org.eclipse.ui.console"); //$NON-NLS-1$
-		if (bundle != null) {
-			URL url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_EVIEW + "console_view.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.VIEW_Terminals, ImageDescriptor.createFromURL(url));
+		Bundle bundle = getBundle();
+		URL url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_EVIEW + "console_view.png"); //$NON-NLS-1$
+		registry.put(ImageConsts.VIEW_Terminals, ImageDescriptor.createFromURL(url));
 
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_CLCL + "lock_co.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_ScrollLock_Hover, ImageDescriptor.createFromURL(url));
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_ELCL + "lock_co.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_ScrollLock_Enabled, ImageDescriptor.createFromURL(url));
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_DLCL + "lock_co.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_ScrollLock_Disabled, ImageDescriptor.createFromURL(url));
-		}
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_CLCL + "lock_co.png"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_ScrollLock_Hover, ImageDescriptor.createFromURL(url));
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_ELCL + "lock_co.png"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_ScrollLock_Enabled, ImageDescriptor.createFromURL(url));
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_DLCL + "lock_co.png"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_ScrollLock_Disabled, ImageDescriptor.createFromURL(url));
 
-		bundle = getBundle();
-		URL url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_CLCL + "command_input_field.gif"); //$NON-NLS-1$
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_CLCL + "command_input_field.gif"); //$NON-NLS-1$
 		registry.put(ImageConsts.ACTION_ToggleCommandField_Hover, ImageDescriptor.createFromURL(url));
 		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_ELCL + "command_input_field.gif"); //$NON-NLS-1$
 		registry.put(ImageConsts.ACTION_ToggleCommandField_Enabled, ImageDescriptor.createFromURL(url));

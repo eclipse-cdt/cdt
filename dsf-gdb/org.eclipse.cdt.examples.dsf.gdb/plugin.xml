@@ -239,4 +239,27 @@
          </enabledWhen>
       </handler>
    </extension>
+      
+   <!-- Add a console page participant to the debugger console pages -->
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.examples.dsf.gdb.ui.console.GdbExtendedConsolePageParticipant"
+            id="org.eclipse.cdt.examples.dsf.gdb.debuggerConsolePageParticipant">
+         <enablement>
+         <and>
+            <instanceof value="org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole"/>
+            <!-- The below check only works with the Debugger Console view and not the
+                 standard console view.  But that is ok since this contribution is
+                 for the Debugger Console views only. -->
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+               </test>
+            </with>
+         </and>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 </plugin>

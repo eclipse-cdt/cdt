@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -32,6 +33,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
@@ -141,6 +143,9 @@ public class DebuggerConsoleView extends PageBookView
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.add(new Separator(IConsoleConstants.LAUNCH_GROUP));
+		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
+		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fDisplayConsoleAction);
 	}
 

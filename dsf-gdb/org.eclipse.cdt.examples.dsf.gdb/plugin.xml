@@ -239,4 +239,16 @@
          </enabledWhen>
       </handler>
    </extension>
+   
+   <!-- Add a console page participant to the debugger console pages -->
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.examples.dsf.gdb.ui.console.GdbExtendedConsolePageParticipant"
+            id="org.eclipse.cdt.examples.dsf.gdb.debuggerConsolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 </plugin>

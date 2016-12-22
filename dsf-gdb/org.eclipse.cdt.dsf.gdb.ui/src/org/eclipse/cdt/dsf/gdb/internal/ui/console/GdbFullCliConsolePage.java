@@ -287,4 +287,8 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 			fTerminalControl.setBufferLineLimit(bufferLines);
 		}
 	}
+	
+	public ITerminalViewControl getTerminalViewControl() {
+		return fTerminalControl;
+	}
 }

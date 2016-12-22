@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -139,6 +140,9 @@ public class DebuggerConsoleView extends PageBookView
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.add(new Separator(IConsoleConstants.LAUNCH_GROUP));
+		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
+		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fDisplayConsoleAction);
 	}
 

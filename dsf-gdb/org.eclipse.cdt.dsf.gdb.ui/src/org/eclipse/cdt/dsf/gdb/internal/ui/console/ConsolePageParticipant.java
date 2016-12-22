@@ -35,8 +35,9 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console page participant for DSF-GDB.
- * It adds a save button to both the gdb tracing console and the gdb CLI console.
- * It also brings to the front the proper inferior console when a container is selected.
+ * It adds a save button to the gdb tracing console.
+ * It also brings to the front the proper inferior console when an element of the
+ * debug view is selected.
  * 
  * @since 2.1
  */
@@ -52,13 +53,13 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         fConsole = console;
         fView = (IConsoleView)fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
 
-        if (isConsoleInferior(console) || isConsoleGdbCli(console)) {
+        if (isConsoleInferior(console)) {
         	// This console participant will affect all consoles, even those not for DSF-GDB.
-        	// Only consoles for GDBProcess or InferiorRuntimeProcess are what we care about for DSF-GDB 
+        	// Only consoles for InferiorRuntimeProcess are what we care about for DSF-GDB 
         	DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
         }
 
-		if(console instanceof TracingConsole || isConsoleGdbCli(console)) {
+		if (console instanceof TracingConsole) {
 			TextConsole textConsole = (TextConsole) console;
 
 			// Add the save console action
@@ -71,29 +72,13 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	}
 
 	/**
-	 * Checks if the the console is the gdb CLI. We don't rely on the attached 
-	 * process name. Instead we check if the process is an instance of GDBProcess
-     * This gdb CLI console will only be used if the full GDB console is not available.
-	 * 
-	 * @param console The console to check
-	 * @return true if the the console is the gdb CLI
-	 */
-	private boolean isConsoleGdbCli(IConsole console) {
-		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
-			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
-			return (debugConsole.getProcess() instanceof GDBProcess);
-		}
-		return false;
-	}
-
-	/**
 	 * Checks if the the console is for an inferior.
 	 * 
 	 * @param console The console to check
 	 * @return true if the the console is for an inferior
 	 */
 	private boolean isConsoleInferior(IConsole console) {
-		if(console instanceof org.eclipse.debug.ui.console.IConsole) {
+		if (console instanceof org.eclipse.debug.ui.console.IConsole) {
 			org.eclipse.debug.ui.console.IConsole debugConsole  = (org.eclipse.debug.ui.console.IConsole)console;
 			return (debugConsole.getProcess() instanceof InferiorRuntimeProcess);
 		}
@@ -107,7 +92,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	
     @Override
 	public void dispose() {
-        if (isConsoleInferior(fConsole) || isConsoleGdbCli(fConsole)) {
+        if (isConsoleInferior(fConsole)) {
 			DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		}
 		fConsole = null;
@@ -132,32 +117,41 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		IAdaptable context = DebugUITools.getDebugContext();
 		
 		// If the launch is selected, we should choose the first inferior being debugged
-        if (context instanceof ILaunch) {
-        	ILaunch launch = (ILaunch)context;
+		// If the GDB process is selected, and since the GDB console is not in the standard
+		// console view, we should show a console that is part of the same launch as the
+		// GDB process, so we can treat it the same as the launch selection case
+        if (context instanceof ILaunch || context instanceof GDBProcess) {
+        	ILaunch launch;
+        	if (context instanceof ILaunch) {
+        		launch = (ILaunch)context;
+        	} else {
+        		launch = ((GDBProcess)context).getLaunch();
+        	}
         	
+        	// Note that ProcessConsolePageParticipant also handles the case
+        	// of ILaunch being selected.  Usually, that class gets called
+        	// after our current class, so the console it chooses wins in the
+        	// case of ILaunch.
+        	// So, for consistency, when GDBProcess is selected, we choose the
+        	// same inferior chosen by ProcessConsolePageParticipant when 
+        	// ILaunch is selected, which is the last (not the first) inferior
+        	// process.
+        	// Note that we could ignore the ILaunch case in this class
+        	// since it is already handled by ProcessConsolePageParticipant,
+        	// but just to be safe and future-proof, we also handle it.
         	IProcess[] processes = launch.getProcesses();
         	if (processes != null && processes.length > 0) {
-        		for (IProcess process : processes) {
+        		for (int i = processes.length-1; i >= 0; i--) {
+        			IProcess process = processes[i];
         			if (process instanceof InferiorRuntimeProcess) {
         				return process;
         			}
-        		}
-
-        		// No inferior?  return the gdb process
-        		// We have to check that the process is actually from a DSF-GDB session,
-        		// since the current context could be for any debug session
-        		if (processes[0] instanceof GDBProcess) {
-        			return processes[0];
         		}
         	}
         	
         	return null;
         }
 
-        if (context instanceof GDBProcess) {
-            return (GDBProcess)context;
-        }
-        
 		if (context != null) {
 			// Look for the process that this context refers to, so we can select its console
 			IDMContext dmc = context.getAdapter(IDMContext.class);

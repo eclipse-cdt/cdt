@@ -17,6 +17,9 @@ import java.util.List;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole;
 import org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsoleManager;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -26,6 +29,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -114,7 +118,26 @@ public class DebuggerConsoleManager implements IDebuggerConsoleManager {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement config = elements[i];
-				ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
+				ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config) {
+					@Override
+					public boolean isEnabledFor(IConsole console) throws CoreException {
+						// Override to provide more information to the evaluation context
+						// than what the base class provides.  This allows richer enablement
+						// conditions to be used.  For example, org.eclipse.cdt.examples.dsf.gdb
+						// limits the enablement of its GdbExtendedConsolePageParticipant to
+						// when the plugin has been activated.
+						// Without this richer EvaluationContext, the information about
+						// plugin activation is not available and all that can be checked is
+						// the type of console.
+				        IEvaluationContext context = DebugUIPlugin.createEvaluationContext(console);
+				        Expression expression = getEnablementExpression();
+				        if (expression != null){
+				        	EvaluationResult evaluationResult = expression.evaluate(context);
+				            return evaluationResult == EvaluationResult.TRUE;
+				        }
+				        return true;
+					}					
+				};
 				fPageParticipants.add(extension);
 			}
 		}

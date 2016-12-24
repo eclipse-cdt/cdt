@@ -160,43 +160,22 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	}
 
 	protected String[] getTargets(int kind, IBuilder builder) {
-		String targetsArray[] = null;
-
-		if(kind != IncrementalProjectBuilder.CLEAN_BUILD && !builder.isCustomBuilder() && builder.isManagedBuildOn()){
-			IConfiguration cfg = builder.getParent().getParent();
-			String preBuildStep = cfg.getPrebuildStep();
-			try {
-				preBuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-						preBuildStep,
-						"", //$NON-NLS-1$
-						" ", //$NON-NLS-1$
-						IBuildMacroProvider.CONTEXT_CONFIGURATION,
-						cfg);
-			} catch (BuildMacroException e) {
-			}
-
-			if(preBuildStep != null && preBuildStep.length() != 0){
-				targetsArray = new String[]{"pre-build", "main-build"}; //$NON-NLS-1$ //$NON-NLS-2$
-			}
+		String targets = ""; //$NON-NLS-1$
+		switch (kind) {
+		case IncrementalProjectBuilder.AUTO_BUILD :
+			targets = builder.getAutoBuildTarget();
+			break;
+		case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
+		case IncrementalProjectBuilder.FULL_BUILD :
+			targets = builder.getIncrementalBuildTarget();
+			break;
+		case IncrementalProjectBuilder.CLEAN_BUILD :
+			targets = builder.getCleanBuildTarget();
+			break;
 		}
 
-		if(targetsArray == null){
-			String targets = ""; //$NON-NLS-1$
-			switch (kind) {
-				case IncrementalProjectBuilder.AUTO_BUILD :
-					targets = builder.getAutoBuildTarget();
-					break;
-				case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
-				case IncrementalProjectBuilder.FULL_BUILD :
-					targets = builder.getIncrementalBuildTarget();
-					break;
-				case IncrementalProjectBuilder.CLEAN_BUILD :
-					targets = builder.getCleanBuildTarget();
-					break;
-			}
+		String targetsArray[] = CommandLineUtil.argumentsToArray(targets);
 
-			targetsArray = CommandLineUtil.argumentsToArray(targets);
-		}
 
 		return targetsArray;
 	}

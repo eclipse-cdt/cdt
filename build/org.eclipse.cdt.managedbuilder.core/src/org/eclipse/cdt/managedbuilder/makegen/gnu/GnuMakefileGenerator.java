@@ -1348,8 +1348,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			// and neither conditions apply if we are building for it ....
 		}
 */
-        // If a prebuild step exists, redefine the all target to be
-		// all: {pre-build} main-build
+		// If a prebuild step exists, redefine the all target to be
+		// all: 
+		//     $(MAKE) pre-build
+		//     $(MAKE) main-build
 		// and then reset the "traditional" all target to main-build
 		// This will allow something meaningful to happen if the generated
 		// makefile is
@@ -1361,17 +1363,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			// Add the comment for the "All" target
 			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET)).append(NEWLINE);
 
-			buffer.append(defaultTarget).append(WHITESPACE);
-			buffer.append(PREBUILD).append(WHITESPACE);
-
-			// Reset defaultTarget for now and for subsequent use, below
-			defaultTarget = MAINBUILD;
-			buffer.append(defaultTarget);
+			// Invoke make multiple times to ensure pre-build is executed before main-build
+			buffer.append(defaultTarget).append(NEWLINE);
+			buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE).append(PREBUILD).append(NEWLINE);
+			buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE).append(MAINBUILD).append(NEWLINE);
+			buffer.append(NEWLINE);
 
 			// Update the defaultTarget, main-build, by adding a colon, which is
 			// needed below
-			defaultTarget = defaultTarget.concat(COLON);
-			buffer.append(NEWLINE).append(NEWLINE);
+			defaultTarget = MAINBUILD.concat(COLON);
 
 			// Add the comment for the "main-build" target
 			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MAINBUILD_TARGET)).append(NEWLINE);

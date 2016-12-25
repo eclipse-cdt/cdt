@@ -34,7 +34,9 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: pre-build main-build
+all:
+	$(MAKE) pre-build
+	$(MAKE) main-build
 
 # Main-build Target
 main-build: preAndPostBuildSteps

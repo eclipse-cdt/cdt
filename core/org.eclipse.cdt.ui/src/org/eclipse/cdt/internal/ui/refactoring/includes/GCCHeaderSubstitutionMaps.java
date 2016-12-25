@@ -117,6 +117,7 @@ public class GCCHeaderSubstitutionMaps {
 			"std::char_traits", "<string>",
 			"std::char_traits", "<ostream>",
 			"std::char_traits", "<istream>",
+			"std::swap", "<bits/move.h>",
 			"suseconds_t", "<sys/types.h>",
 			"suseconds_t", "<sys/time.h>",
 			"suseconds_t", "<sys/select.h>",

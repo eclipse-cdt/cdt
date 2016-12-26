@@ -102,4 +102,11 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 	 * @since 5.5
 	 */
 	ICPPClassType[] getNestedClasses(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getUsingDeclarations()} but accepts a starting point
+	 * for template instantiation.
+	 * @since 6.2
+	 */
+	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);	
 }

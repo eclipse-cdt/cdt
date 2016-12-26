@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
@@ -261,6 +262,22 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses(point);
 		}
 		ICPPClassType[] result = ClassTypeHelper.getNestedClasses((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getUsingDeclarations(null);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getUsingDeclarations(point);
+		}
+		ICPPUsingDeclaration[] result = ClassTypeHelper.getUsingDeclarations((ICPPClassType) rbinding, point);
 		return wrapBindings(result);
 	}
 }

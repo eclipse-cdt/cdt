@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope;
@@ -151,5 +152,11 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		createDelegate();
 		return fDelegate.getNestedClasses(point);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+		createDelegate();
+		return fDelegate.getUsingDeclarations(point);
 	}
 }

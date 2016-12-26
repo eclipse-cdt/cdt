@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -371,6 +372,18 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPClassType.EMPTY_CLASS_ARRAY;
+		}
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		try {
+			PDOMClassUtil.UsingDeclarationCollector visitor = new PDOMClassUtil.UsingDeclarationCollector();
+			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
+			return visitor.getUsingDeclarations();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
 		}
 	}
 

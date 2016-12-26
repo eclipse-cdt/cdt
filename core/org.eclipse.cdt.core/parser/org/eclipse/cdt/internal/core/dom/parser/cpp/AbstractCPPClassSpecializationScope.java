@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -315,6 +316,12 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	@Override
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		ICPPClassType[] bindings = ClassTypeHelper.getNestedClasses(specialClass.getSpecializedBinding(), point);
+		return specializeMembers(bindings, point);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+		ICPPUsingDeclaration[] bindings = ClassTypeHelper.getUsingDeclarations(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(bindings, point);
 	}
 

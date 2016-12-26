@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -635,6 +636,11 @@ public class PDOMASTAdapter {
 		@Override
 		public ICPPClassType[] getNestedClasses() {
 			return ((ICPPClassType) fDelegate).getNestedClasses();
+		}
+		
+		@Override
+		public ICPPUsingDeclaration[] getUsingDeclarations() {
+			return ((ICPPClassType) fDelegate).getUsingDeclarations();
 		}
 
 		@Override

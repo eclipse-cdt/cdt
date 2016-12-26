@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.core.runtime.CoreException;
@@ -134,6 +135,26 @@ class PDOMClassUtil {
 
 		public ICPPClassType[] getNestedClasses() {
 			return nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
+		}
+	}
+	
+	static class UsingDeclarationCollector implements IPDOMVisitor {
+		private final List<ICPPUsingDeclaration> usingDeclarations = new ArrayList<>();
+		
+		@Override
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPUsingDeclaration) {
+				usingDeclarations.add((ICPPUsingDeclaration) node);
+			}
+			return false;
+		}
+
+		@Override
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		
+		public ICPPUsingDeclaration[] getUsingDeclarations() {
+			return usingDeclarations.toArray(new ICPPUsingDeclaration[usingDeclarations.size()]);
 		}
 	}
 }

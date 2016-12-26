@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -202,6 +203,11 @@ public class HeuristicResolver {
 
 		@Override
 		public ICPPClassType[] getNestedClasses(IASTNode point) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 
 /**
  * Composite scope of a class specialization. Supports creating instances for bindings found
@@ -75,4 +76,9 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	 * Computes the nested classes via the original class.
 	 */
 	ICPPClassType[] getNestedClasses(IASTNode point);
+
+	/**
+	 * Computes the using declarations via the original class.
+	 */
+	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);
 }

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -284,6 +285,12 @@ public class ClassTypeHelper {
 		if (classType instanceof ICPPClassSpecialization)
 			return ((ICPPClassSpecialization) classType).getNestedClasses(point);
 		return classType.getNestedClasses();
+	}
+	
+	public static ICPPUsingDeclaration[] getUsingDeclarations(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getUsingDeclarations(point);
+		return classType.getUsingDeclarations();
 	}
 
 	/**
@@ -612,6 +619,32 @@ public class ClassTypeHelper {
 			}
 		}
 		return ArrayUtil.trim(result);
+	}
+	
+	public static ICPPUsingDeclaration[] getUsingDeclarations(ICPPInternalClassTypeMixinHost host) {
+		if (host.getDefinition() == null) {
+			host.checkForDefinition();
+			if (host.getDefinition() == null) {
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getUsingDeclarations();
+
+				return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
+			}
+		}
+		ICPPUsingDeclaration[] result = ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
+
+		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
+		for (IASTDeclaration decl : decls) {
+			if (decl instanceof ICPPASTUsingDeclaration) {
+				IBinding binding = ((ICPPASTUsingDeclaration) decl).getName().resolveBinding();
+				if (binding instanceof ICPPUsingDeclaration) {
+					result = ArrayUtil.append(result, (ICPPUsingDeclaration) binding);
+				}
+			}
+		}
+		return ArrayUtil.trim(result);
+
 	}
 
 	public static IField[] getFields(ICPPClassType ct, IASTNode point) {

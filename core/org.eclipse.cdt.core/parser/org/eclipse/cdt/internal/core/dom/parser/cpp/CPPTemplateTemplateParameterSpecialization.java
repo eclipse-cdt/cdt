@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 
 /**
  * A specialization of a template template parameter. This is needed when a nested template
@@ -107,6 +108,11 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
 	}
 
 	@Override

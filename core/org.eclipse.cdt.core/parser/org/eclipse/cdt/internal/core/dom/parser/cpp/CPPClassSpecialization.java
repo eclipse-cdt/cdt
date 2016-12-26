@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
@@ -314,6 +315,21 @@ public class CPPClassSpecialization extends CPPSpecialization
 			return ClassTypeHelper.getNestedClasses(this);
 
 		return scope.getNestedClasses(point);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getUsingDeclarations(null);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+		ICPPClassSpecializationScope scope = getSpecializationScope();
+		if (scope == null)
+			return ClassTypeHelper.getUsingDeclarations(this);
+		
+		return scope.getUsingDeclarations(point);
 	}
 
 	@Override

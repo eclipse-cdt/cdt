@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -200,6 +201,16 @@ public class AccessContext {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 
+		ICPPUsingDeclaration[] usingDecls = ClassTypeHelper.getUsingDeclarations(derivedClass, name);
+		for (ICPPUsingDeclaration decl : usingDecls) {
+			for (IBinding delegate : decl.getDelegates()) {
+				if (delegate.equals(binding)) {
+					derivedClass.getVisibility(decl);
+					return isAccessible(derivedClass.getVisibility(decl), accessLevel);
+				}
+			}
+		}
+		
 		ICPPBase[] bases = ClassTypeHelper.getBases(derivedClass, name);
 		if (bases != null) {
 			for (ICPPBase base : bases) {

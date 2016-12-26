@@ -107,6 +107,11 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
+	
+	/**
+	 * Returns an array of using declarations in this class.
+	 */
+	public ICPPUsingDeclaration[] getUsingDeclarations();
 
 	/**
 	 * Returns whether this type is declared final.

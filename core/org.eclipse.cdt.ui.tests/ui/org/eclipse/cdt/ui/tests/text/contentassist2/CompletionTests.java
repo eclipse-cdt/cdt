@@ -1880,4 +1880,36 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, ID);
 		assertDotReplacedWithArrow();
 	}
+	
+	//	struct A {
+	//		int waldo;
+	//	};
+	//	class B : private A {
+	//	public:
+	//		using A::waldo;  // allows public access despire private inheritance
+	//	};
+	//	void test() {
+	//		B obj;
+	//		obj./*cursor*/
+	//	}
+	public void testMemberExposedViaUsingDecl_bug292236a() throws Exception {
+		final String[] expected = { "B", "A", "waldo" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+	
+	//	struct A {
+	//		int waldo;
+	//	};
+	//	class B : private A {
+	//	public:
+	//		A::waldo;  // allows public access despire private inheritance
+	//	};
+	//	void test() {
+	//		B obj;
+	//		obj./*cursor*/
+	//	}
+	public void testMemberExposedViaUsingDecl_bug292236b() throws Exception {
+		final String[] expected = { "B", "A", "waldo" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
 }

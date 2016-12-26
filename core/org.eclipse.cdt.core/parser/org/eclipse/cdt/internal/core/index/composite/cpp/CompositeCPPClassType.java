@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -171,6 +172,12 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
+		return wrapBindings(result);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		ICPPUsingDeclaration[] result = ((ICPPClassType) rbinding).getUsingDeclarations();
 		return wrapBindings(result);
 	}
 

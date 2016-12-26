@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -108,6 +109,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		@Override
 		public ICPPClassType[] getNestedClasses() {
 			return ICPPClassType.EMPTY_CLASS_ARRAY;
+		}
+		@Override
+		public ICPPUsingDeclaration[] getUsingDeclarations() {
+			return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
 		}
 		@Override
 		public boolean isFinal() {
@@ -367,6 +372,11 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
+	}
+	
+	@Override
+	public ICPPUsingDeclaration[] getUsingDeclarations() {
+		return ClassTypeHelper.getUsingDeclarations(this);
 	}
 
 	@Override

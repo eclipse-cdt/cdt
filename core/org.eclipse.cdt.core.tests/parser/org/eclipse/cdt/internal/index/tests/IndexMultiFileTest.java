@@ -165,6 +165,29 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	}
 
 	// test.h
+	//	friend int operator*(double, C) { return 0; }
+	
+	// test.cpp *
+	//	namespace N {
+	//
+	//	    struct unrelated {};
+	//
+	//	    struct B {
+	//	        friend int operator*(unrelated, unrelated) { return 0; }
+	//	    };
+	//	}
+	//	    
+	//	template <typename = int>
+	//	struct C : public N::B {
+	//	    #include "test.h"
+	//	};
+	//	template <typename> struct Waldo;
+	//	Waldo<decltype(0.5 * C<>{})> w;
+	public void testFriendFunctionInHeaderIncludedAtClassScope_509662() throws Exception {
+		checkBindings();
+	}
+
+	// test.h
 	//	template <typename T>
 	//	struct atomic;
 	//
@@ -209,5 +232,4 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 		// This code is invalid, so we don't checkBindings().
 		// If the test gets this far (doesn't throw in setup() during indexing), it passes.
 	}
-
 }

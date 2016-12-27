@@ -153,6 +153,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -3719,7 +3720,7 @@ public class CPPSemantics {
 							Object item = items[i];
 							items[i]= null;
 							if (item instanceof IIndexBinding) {
-								if (!fileSet.containsDeclaration((IIndexBinding) item)) {
+								if (!indexBindingIsReachable(fileSet, (IIndexBinding) item)) {
 									continue;
 								}
 							}
@@ -3829,6 +3830,27 @@ public class CPPSemantics {
 		}
 
 		return null;
+	}
+
+	private static boolean indexBindingIsReachable(IIndexFileSet fileSet, IIndexBinding item) {
+		if (fileSet.containsDeclaration(item)) {
+			return true;
+		}
+
+		// Specializations of friend functions are sometimes created in the context
+		// of the file for which the AST is created, and which is thus not in the index
+		// file set. In some cases, an AST binding cannot be created for such 
+		// specializations. To support these cases, consider the binding reachable if
+		// the friend function being specialized is reachable.
+		// This situation only arises in the presence of #includes that are not at
+		// global scope. Once bug 315964 is fixed, this workaround can be removed.
+		if (item instanceof ICPPFunctionSpecialization && !(item instanceof ICPPFunctionInstance)) {
+			IBinding specialized = ((ICPPFunctionSpecialization) item).getSpecializedBinding();
+			return !(specialized instanceof IIndexBinding) 
+				|| fileSet.containsDeclaration((IIndexBinding) specialized);
+		}
+		
+		return false;
 	}
 
 	private static IBinding createSurrogateCallFunction(IScope scope, IType returnType, IType rt, IType[] parameterTypes) {

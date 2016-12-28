@@ -919,7 +919,7 @@ public class SemanticUtil {
 
 	public static IType[] getParameterTypesIncludingImplicitThis(ICPPFunction function) {
 		IType[] result = function.getType().getParameterTypes();
-		if (function instanceof ICPPMethod) {
+		if (function instanceof ICPPMethod && !function.isStatic()) {
 			result = addImplicitParameterType(result, (ICPPMethod) function);
 		}
 		return result;

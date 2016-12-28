@@ -82,6 +82,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 				fTemplateArguments = PDOMCPPArgumentList.getArguments(this, rec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+				fTemplateArguments = ICPPTemplateArgument.EMPTY_ARGUMENTS;
 			}
 		}
 		return fTemplateArguments;

@@ -911,7 +911,7 @@ public class SemanticUtil {
 	}
 
 	static IType[] concatTypes(final IType t, IType[] types) {
-		IType[] result= new IType[types.length+1];
+		IType[] result= new IType[types.length + 1];
 		result[0]= t;
 		System.arraycopy(types, 0, result, 1, types.length);
 		return result;

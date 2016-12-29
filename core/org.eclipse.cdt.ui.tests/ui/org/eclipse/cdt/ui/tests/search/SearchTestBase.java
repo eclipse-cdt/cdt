@@ -26,10 +26,12 @@ import org.eclipse.cdt.internal.ui.search.CSearchResult;
  * Base class for tests that test functionality based on CSearchQuery.
  */
 public abstract class SearchTestBase extends BaseUITestCase {
-	ICProject fCProject;
-	String fHeaderContents;
-	IFile fHeaderFile;
-	CharSequence[] testData;
+	protected ICProject fCProject;
+	protected String fHeaderContents;
+	protected IFile fHeaderFile;
+	protected String fSourceContents;
+	protected IFile fSourceFile;
+	protected CharSequence[] testData;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -44,7 +46,8 @@ public abstract class SearchTestBase extends BaseUITestCase {
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCProject);
 
-		IFile cppfile= TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"), testData[1].toString());
+		fSourceContents = testData[1].toString();
+		fSourceFile = TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"), fSourceContents);
 		waitForIndexer(fCProject);
 	}
 

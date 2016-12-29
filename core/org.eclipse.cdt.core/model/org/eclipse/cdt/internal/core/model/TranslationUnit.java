@@ -864,9 +864,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if ((style & AST_PARSE_INACTIVE_CODE) != 0) {
 			options |= ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		}
-		if (isSourceUnit()) {
-			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
-		}
 		final IParserLogService log;
 		if (monitor instanceof ICanceler) {
 			log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler) monitor);

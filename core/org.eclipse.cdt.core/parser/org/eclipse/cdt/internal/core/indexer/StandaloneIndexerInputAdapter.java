@@ -166,18 +166,17 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		String stu = tu.toString();
 		String fileEncoding = getFileEncoding(stu);
 
-		return FileContent.createForExternalFileLocation(stu, fileEncoding);
+		return FileContent.createForExternalFileLocation(stu, isSource(stu), fileEncoding);
 	}
 
 	public String getFileEncoding(String stu) {
 		String fileEncoding = null;
-		// query file's encoding, if we find it and use it to create CodeReader
+		// Query file's encoding, if we find it and use it to create CodeReader
 		FileEncodingRegistry fileEncodingRegistry = fIndexer.getFileEncodingRegistry();
-		if(fileEncodingRegistry != null){
+		if (fileEncodingRegistry != null)
 			fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
-		}
 		if (fileEncoding == null)
-			return InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
+			fileEncoding = InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
 		
 		return fileEncoding;
 	}

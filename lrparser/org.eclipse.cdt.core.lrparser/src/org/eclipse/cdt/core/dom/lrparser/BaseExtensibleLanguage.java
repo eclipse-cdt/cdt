@@ -17,10 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lpg.lpgjavaruntime.IToken;
-import lpg.lpgjavaruntime.PrsStream;
-import lpg.lpgjavaruntime.Token;
-
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -50,6 +46,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
+
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.PrsStream;
 
 
 /**
@@ -268,9 +267,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 				log.traceLog("^^^^^^ core parser parses " + reader.getFileLocation() + " in " + (coreFinishTime - lpr_fail_time)/1000 + " seconds");
 			}
-		}
-		if(tu!=null){
-			tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0); // the TU is marked as either a source file or a header file
 		}
 		
 		if(DEBUG_PRINT_AST) {

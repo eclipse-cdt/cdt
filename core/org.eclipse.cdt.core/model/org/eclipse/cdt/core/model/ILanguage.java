@@ -41,7 +41,7 @@ public interface ILanguage extends IAdaptable {
 	public final static int OPTION_SKIP_FUNCTION_BODIES= 0x1;
 
 	/**
-	 * @deprecated, has no effect.
+	 * @deprecated, Has no effect.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
@@ -55,10 +55,9 @@ public interface ILanguage extends IAdaptable {
 	public final static int OPTION_NO_IMAGE_LOCATIONS= 0x4;
 
 	/**
-	 * Option for {@link #getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
-	 * Marks the ast as being based on a source-file rather than a header-file. This makes a difference
-	 * when bindings from the AST are used for searching the index, e.g. for static variables. 
+	 * @deprecated, Has no effect.
 	 */
+	@Deprecated
 	public final static int OPTION_IS_SOURCE_UNIT= 0x8;
 
 	/**
@@ -97,22 +96,20 @@ public interface ILanguage extends IAdaptable {
 	public int getLinkageID();
 	
 	/**
-	 * @return the human readable name corresponding to this language, suitable for display.
+	 * Returns the human readable name corresponding to this language, suitable for display.
 	 * @since 4.0
 	 */
 	public String getName();
 	
 	/**
-	 * Construct an AST for the source code provided by <code>reader</code>.
-	 * As an option you can supply 
+	 * Constructs an AST for the source code provided by <code>reader</code>.
+	 * 
 	 * @param content source code to be parsed.
 	 * @param scanInfo provides include paths and defined symbols.
 	 * @param fileCreator factory that provides file content for files included
-	 * @param index (optional) index to use to lookup symbols external to the tu.
-	 * @param options A combination of 
-	 * {@link #OPTION_SKIP_FUNCTION_BODIES},
-	 * {@link #OPTION_NO_IMAGE_LOCATIONS}, {@link #OPTION_IS_SOURCE_UNIT},
-	 *  or <code>0</code>.
+	 * @param index (optional) index to use to lookup symbols external to the translation unit.
+	 * @param options A combination of {@link #OPTION_SKIP_FUNCTION_BODIES},
+	 *     {@link #OPTION_NO_IMAGE_LOCATIONS}, or <code>0</code>.
 	 * @param log logger
 	 * @return an AST for the source code provided by reader.
 	 * @throws CoreException

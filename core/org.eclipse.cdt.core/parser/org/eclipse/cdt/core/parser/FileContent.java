@@ -77,6 +77,7 @@ public abstract class FileContent {
 
 	/**
 	 * Creates a file content object for a fixed buffer.
+	 *
 	 * @param filePath the path of the file as it will appear in {@link IASTFileLocation#getFileName()}
 	 * @param contents the actual content.
 	 */
@@ -85,22 +86,44 @@ public abstract class FileContent {
 	}
 
 	/**
+	 * Creates a file content object for a fixed buffer.
+	 *
+	 * @param filePath the path of the file as it will appear in {@link IASTFileLocation#getFileName()}
+	 * @param contents the actual content.
+	 * @since 6.3
+	 */
+	public static FileContent create(String filePath, boolean isSource, char[] contents) {
+		InternalFileContent fileContent = new InternalFileContent(filePath, new CharArray(contents));
+		fileContent.setIsSource(isSource);
+		return fileContent;
+	}
+
+	/**
 	 * Creates a file content object for a translation-unit, which may be a working copy.
 	 */
 	public static FileContent create(ITranslationUnit tu) {
+		InternalFileContent fileContent;
+
 		IPath location= tu.getLocation();
-		if (location == null)
-			return create(tu.getElementName(), tu.getContents());
-		
-		if (tu.isWorkingCopy()) {
-			return create(location.toOSString(), tu.getContents());
+		if (location == null) {
+			fileContent = new InternalFileContent(tu.getElementName(), new CharArray(tu.getContents()));
+		} else if (tu.isWorkingCopy()) {
+			fileContent = new InternalFileContent(location.toOSString(), new CharArray(tu.getContents()));
+		} else {
+			IResource res= tu.getResource();
+			if (res instanceof IFile) {
+				fileContent = InternalParserUtil.createWorkspaceFileContent((IFile) res);
+			} else {
+				fileContent = InternalParserUtil.createExternalFileContent(location.toOSString(),
+						InternalParserUtil.SYSTEM_DEFAULT_ENCODING);
+			}
 		}
-		
-		IResource res= tu.getResource();
-		if (res instanceof IFile) {
-			return create((IFile) res);
+
+		if (fileContent != null) {
+			fileContent.setTranslationUnit(tu);
+			fileContent.setIsSource(tu.isSourceUnit());
 		}
-		return createForExternalFileLocation(location.toOSString());
+		return fileContent;
 	}
 	
 	/**
@@ -111,22 +134,37 @@ public abstract class FileContent {
 	}
 
 	/**
-	 * Creates a file content for a workspace file
+	 * Creates a file content for a workspace header file.
 	 */
 	public static FileContent create(IFile file) {
 		return InternalParserUtil.createWorkspaceFileContent(file);
 	}
 
+	/**
+	 * Creates a file content object for a header file that is not part of the workspace.
+	 */
 	public static FileContent createForExternalFileLocation(String fileLocation) {
 		return createForExternalFileLocation(fileLocation, InternalParserUtil.SYSTEM_DEFAULT_ENCODING);
 	}
 
 	/**
-	 * Creates a file content object for a file location that is not part of the workspace
+	 * Creates a file content object for a header file that is not part of the workspace.
 	 * @since 5.3
 	 */
 	public static FileContent createForExternalFileLocation(String fileLocation, String encoding) {
-		return InternalParserUtil.createExternalFileContent(fileLocation, encoding);
+		return createForExternalFileLocation(fileLocation, false, encoding);
+	}
+
+	/**
+	 * Creates a file content object for a header or a source file that is not part of the workspace.
+	 * @since 6.3
+	 */
+	public static FileContent createForExternalFileLocation(String fileLocation, boolean isSource,
+			String encoding) {
+		InternalFileContent fileContent = InternalParserUtil.createExternalFileContent(fileLocation, encoding);
+		if (fileContent != null)
+			fileContent.setIsSource(isSource);
+		return fileContent;
 	}
 
 	/**

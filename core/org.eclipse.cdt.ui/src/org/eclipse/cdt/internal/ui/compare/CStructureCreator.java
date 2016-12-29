@@ -106,16 +106,15 @@ public class CStructureCreator extends StructureCreator {
 		// empty scanner info
 		IScannerInfo scanInfo= new ScannerInfo();
 		
-		FileContent content = FileContent.create("<text>", document.get().toCharArray()); //$NON-NLS-1$
-		
 		// determine the language
 		boolean isSource[]= {false};
 		ILanguage language= determineLanguage(element, isSource);
 		
+		FileContent content = FileContent.create("<text>", isSource[0], document.get().toCharArray()); //$NON-NLS-1$
+		
 		try {
-			IASTTranslationUnit ast;
-			int options= isSource[0] ? ILanguage.OPTION_IS_SOURCE_UNIT : 0;
-			ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, options, ParserUtil.getParserLogService());
+			IASTTranslationUnit ast = language.getASTTranslationUnit(content, scanInfo, contentProvider, null,
+					0, ParserUtil.getParserLogService());
 			CStructureCreatorVisitor structureCreator= new CStructureCreatorVisitor(root);
 			// build structure
 			ast.accept(structureCreator);

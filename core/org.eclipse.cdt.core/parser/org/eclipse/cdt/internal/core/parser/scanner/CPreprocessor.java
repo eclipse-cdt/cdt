@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -262,7 +263,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private final ScannerContext fRootContext;
 	protected ScannerContext fCurrentContext;
 
-    private boolean isCancelled= false;
+    private boolean isCancelled;
 	private boolean fIsFirstFetchToken= true;
 
 	private Token fPrefetchedTokens;
@@ -273,8 +274,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	// Detection of include guards used around an include directive
 	private char[] fExternIncludeGuard;
-	private Set<String> fTracedGuards; 
-
+	private Set<String> fTracedGuards;
 
     public CPreprocessor(FileContent fileContent, IScannerInfo info, ParserLanguage language,
     		IParserLogService log, IScannerExtensionConfiguration configuration,
@@ -386,8 +386,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		fRootContext.setParseInactiveCode(val);
 	}
 
-	@Override
-	public void setScanComments(boolean val) {
+	public ITranslationUnit getTranslationUnit() {
+		return fRootContent.getTranslationUnit();
+	}
+
+	public boolean isSource() {
+		return fRootContent.isSource();
 	}
 
 	@Override

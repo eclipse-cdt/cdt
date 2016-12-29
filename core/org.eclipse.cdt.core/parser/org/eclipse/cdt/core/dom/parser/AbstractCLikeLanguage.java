@@ -164,9 +164,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		try {
 			// Parse
-			IASTTranslationUnit ast= parser.parse();
-			ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
-			return ast;
+			return parser.parse();
 		} catch (ParseError e) {
 			// Only the TOO_MANY_TOKENS error can be handled here.
 			if (e.getErrorKind() != ParseErrorKind.TOO_MANY_TOKENS)

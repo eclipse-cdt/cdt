@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,11 +39,11 @@ public class FindReferencesTest extends SearchTestBase {
 		return suite(FindReferencesTest.class);
 	}
 
-	private CSearchQuery makeProjectQuery(int offset, int length) {
+	private CSearchQuery makeSearchQuery(IFile file, TextSelection selection) {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart part = null;
 		try {
-			part = page.openEditor(new FileEditorInput(fHeaderFile), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+			part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
 		} catch (PartInitException e) {
 			assertFalse(true);
 		}
@@ -50,27 +51,41 @@ public class FindReferencesTest extends SearchTestBase {
 		CEditor editor = (CEditor) part;
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
 		ITranslationUnit tu = editor.getInputCElement();
-		return new CSearchTextSelectionQuery(new ICElement[] { fCProject }, tu, new TextSelection(offset, length),
-				CSearchQuery.FIND_REFERENCES);
+		return new CSearchTextSelectionQuery(new ICElement[] { fCProject }, tu, selection, CSearchQuery.FIND_REFERENCES);
+	}
+
+	private TextSelection selectSection(String section, String context, String code) {
+		int contextOffset;
+		if (context == null) {
+			context = code;
+			contextOffset = 0;
+		} else {
+			contextOffset = code.indexOf(context);
+			if (contextOffset < 0)
+				fail("Didn't find \"" + context + "\" in \"" + code + "\"");
+		}
+		int offset = context.indexOf(section);
+		if (offset < 0)
+			fail("Didn't find \"" + section + "\" in \"" + context + "\"");
+		return new TextSelection(contextOffset + offset, section.length());
 	}
 
 	//	struct A {
-	//		virtual void waldo();
+	//	  virtual void waldo();
 	//	};
 	//
 	//	struct B : public A {
-	//		virtual void waldo() override;
+	//	  virtual void waldo() override;
 	//	};
 	//
 	//	int main() {
-	//		A* a = new B();
-	//		a->waldo();
+	//	  A* a = new B();
+	//	  a->waldo();
 	//	}
 
 	// // empty file
 	public void testOnlyPolymorphicMatches_bug491343() throws Exception {
-		int offset = fHeaderContents.indexOf("waldo() override");
-		CSearchQuery query = makeProjectQuery(offset, 5);
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("waldo", "waldo() override", fHeaderContents));
 		assertOccurrences(query, 1);
 	}
 	
@@ -78,15 +93,14 @@ public class FindReferencesTest extends SearchTestBase {
 	//	#define waldo()
 	//
 	//	struct S {
-	//		void foo() {
-	//			waldo();
-	//		}
+	//	  void foo() {
+	//	    waldo();
+	//	  }
 	//	};
 	
 	//	// empty file
 	public void testEnclosingDefinitionOfMacroReference_508216() throws Exception {
-		int offset = fHeaderContents.indexOf("define waldo") + 7;
-		CSearchQuery query = makeProjectQuery(offset, 5);
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("waldo", "#define waldo", fHeaderContents));
 		CSearchResult result = getSearchResult(query);
 		Object[] elements = result.getElements();
 		assertEquals(1, elements.length);
@@ -97,14 +111,30 @@ public class FindReferencesTest extends SearchTestBase {
 	}
 	
 	//	namespace N {
-	//		void foo();
+	//	  void foo();
 	//	}
 	//	using N::foo;
 	
 	//	// empty file
 	public void testUsingDeclaration_399147() throws Exception {
-		int offset = fHeaderContents.indexOf("void foo") + 5;
-		CSearchQuery query = makeProjectQuery(offset, 3);
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("foo", "void foo", fHeaderContents));
+		assertOccurrences(query, 1);
+	}
+
+	//	// empty file
+
+	//	namespace { struct A {}; }
+	//
+	//	template <typename T>
+	//	class B {};
+	//
+	//	void findMe(B<A> b) {}
+	//
+	//	void test(B<A> b) {
+	//	  findMe(b);
+	//	}
+	public void testAnonymousNamespace_509749() throws Exception {
+		CSearchQuery query = makeSearchQuery(fSourceFile, selectSection("findMe", "findMe(b)", fSourceContents));
 		assertOccurrences(query, 1);
 	}
 }

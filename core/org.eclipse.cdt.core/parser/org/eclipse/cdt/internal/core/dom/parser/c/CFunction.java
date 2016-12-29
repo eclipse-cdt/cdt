@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -505,5 +506,15 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         	}
         }
         return null;
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append(getName());
+		IFunctionType t = getType();
+		result.append(t != null ? ASTTypeUtil.getParameterTypeStringAndQualifiers(t) : "()"); //$NON-NLS-1$
+		return result.toString();
 	}
 }

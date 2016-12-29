@@ -447,7 +447,10 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		if (scanner != null) {
 			tu.setLocationResolver(scanner.getLocationResolver());
 			if (scanner instanceof CPreprocessor) {
-				tu.setIsForContentAssist(((CPreprocessor) scanner).isContentAssistMode());
+				CPreprocessor cPreprocessor = (CPreprocessor) scanner;
+				tu.setIsForContentAssist(cPreprocessor.isContentAssistMode());
+				tu.setOriginatingTranslationUnit(cPreprocessor.getTranslationUnit());
+				tu.setIsHeaderUnit(!cPreprocessor.isSource());
 			}
 		}
 		tu.setASTNodeFactory(this);

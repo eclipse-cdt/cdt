@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 
@@ -56,6 +57,7 @@ public class InternalFileContent extends FileContent {
 	private final List<FileVersion> fNonPragmaOnceFiles;
 	private boolean fHeuristic;
 	private boolean fIsSource;
+	private ITranslationUnit fTranslationUnit;
 	private List<IIndexFile> fFiles;
 	private IncludeSearchPathElement fFoundOnPath;
 	private final long fTimestamp;
@@ -244,6 +246,14 @@ public class InternalFileContent extends FileContent {
 
 	public void setIsSource(boolean isSource) {
 		fIsSource= isSource;
+	}
+
+	public ITranslationUnit getTranslationUnit() {
+		return fTranslationUnit;
+	}
+
+	public void setTranslationUnit(ITranslationUnit tu) {
+		fTranslationUnit = tu;
 	}
 
 	public IncludeSearchPathElement getFoundOnPath() {

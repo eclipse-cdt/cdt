@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.index.IPDOMASTProcessor;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -63,7 +62,6 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
-import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -1088,19 +1086,15 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			progress.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));
 			FileContent codeReader= fResolver.getCodeReader(tu);
-			final boolean isSource = fResolver.isSourceUnit(tu);
 
 			long start= System.currentTimeMillis();
 			ASTTypeUtil.startTranslationUnit();
 			IASTTranslationUnit ast=
-					createAST(lang, codeReader, scanInfo, isSource, fASTOptions, ctx, progress.split(10));
+					createAST(lang, codeReader, scanInfo, fASTOptions, ctx, progress.split(10));
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast == null) {
 				++fStatistics.fTooManyTokensCount;
 			} else {
-				// Give the new AST a chance to recognize its translation unit before it is written
-				// to the index.
-				((ASTTranslationUnit) ast).setOriginatingTranslationUnit((ITranslationUnit) tu);
 				writeToIndex(lang.getLinkageID(), ast, codeReader, ctx, progress.split(10));
 				resultCacheCleared = true;  // The cache was cleared while writing to the index.
 			}
@@ -1204,13 +1198,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private final IASTTranslationUnit createAST(AbstractLanguage language, FileContent codeReader,
-			IScannerInfo scanInfo, boolean isSource, int options,
-			FileContext ctx, IProgressMonitor monitor) throws CoreException {
+			IScannerInfo scanInfo, int options, FileContext ctx, IProgressMonitor monitor)
+			throws CoreException {
 		if (codeReader == null) {
 			return null;
-		}
-		if (isSource) {
-			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 		}
 		if (fTranslationUnitSizeLimit > 0 && fResolver.getFileSize(codeReader.getFileLocation()) > fTranslationUnitSizeLimit) {
 			if (fShowActivity) {

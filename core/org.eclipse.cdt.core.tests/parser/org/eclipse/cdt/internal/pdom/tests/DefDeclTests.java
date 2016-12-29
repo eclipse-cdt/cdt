@@ -14,9 +14,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -38,16 +35,16 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+
 /**
- * Test that PDOM correctly track declarations, definitions and references of
- * objects
+ * Test that PDOM correctly track declarations, definitions and references of objects.
  * 
  * @author ELaskavaia@qnx.com
- * 
  */
 public class DefDeclTests extends PDOMTestBase {
 	private String projectName = null;
@@ -72,36 +69,31 @@ public class DefDeclTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, null);
 		}
 	}
 
 	private IBinding findSingleBinding(String elName) throws CoreException {
-		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,
-				IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,	IndexFilter.ALL, null);
 		assertEquals(1, binds.length);
 		assertEquals(elName, binds[0].getName());
 		IBinding element = binds[0];
 		return element;
 	}
 
-	private void checkReference(IBinding element, String mark, int checkCount)
-			throws Exception {
+	private void checkReference(IBinding element, String mark, int checkCount) throws Exception {
 		checkUsage(element, mark, checkCount, IIndex.FIND_REFERENCES);
 	}
 
-	private void checkDeclaration(IBinding element, String mark, int num)
-			throws Exception {
+	private void checkDeclaration(IBinding element, String mark, int num) throws Exception {
 		checkUsage(element, mark, num, IIndex.FIND_DECLARATIONS);
 	}
 
-	private void checkDefinition(IBinding element, String mark, int countNum)
-			throws Exception {
+	private void checkDefinition(IBinding element, String mark, int countNum) throws Exception {
 		checkUsage(element, mark, countNum, IIndex.FIND_DEFINITIONS);
 	}
 
-	private void checkUsage(IBinding element, String mark, int countNum,
-			int flags) throws Exception {
+	private void checkUsage(IBinding element, String mark, int countNum, int flags) throws Exception {
 		if (mark == null || countNum == 0) {
 			getFirstUsage(element, 0, flags);
 		} else {
@@ -123,8 +115,7 @@ public class DefDeclTests extends PDOMTestBase {
 				}
 				int nodeLine = getLineNumber(loc.getNodeOffset(), fileName);
 				if (markLine != nodeLine) {
-					fail = "Marker at line " + markLine + ", actual at line "
-							+ nodeLine;
+					fail = "Marker at line " + markLine + ", actual at line " + nodeLine;
 				} else {
 					found = true;
 				}
@@ -143,8 +134,7 @@ public class DefDeclTests extends PDOMTestBase {
 	 * @return first references or null of non
 	 * @throws CoreException
 	 */
-	private IName getFirstUsage(IBinding binding, int k, int flags)
-			throws CoreException {
+	private IName getFirstUsage(IBinding binding, int k, int flags)	throws CoreException {
 		IName[] decls = pdom.findNames(binding, flags);
 		if (k >= 0)
 			assertEquals(k, decls.length);
@@ -156,28 +146,24 @@ public class DefDeclTests extends PDOMTestBase {
 		}
 	}
 
-	protected void assertAtMark(IASTFileLocation loc, String mark)
-			throws Exception {
+	protected void assertAtMark(IASTFileLocation loc, String mark) throws Exception {
 		String fileName = new File(loc.getFileName()).getName();
 		int markLine = getMarkLine(mark, fileName);
 		int nodeLine = getLineNumber(loc.getNodeOffset(), fileName);
 		assertEquals(markLine, nodeLine);
 	}
 
-	private int getMarkLine(String mark, String fileName) throws Exception,
-			BadLocationException {
+	private int getMarkLine(String mark, String fileName) throws Exception,	BadLocationException {
 		int markLine = getLineNumber(offset(fileName, mark), fileName);
 		return markLine;
 	}
 
-	protected int getLineNumber(int position, String projectRelativePath)
-			throws Exception {
+	protected int getLineNumber(int position, String projectRelativePath) throws Exception {
 		Path fullPath = new Path(projectName + "/" + projectRelativePath);
 		return TestSourceReader.getLineNumber(position, fullPath);
 	}
 
-	public void assertDefDeclRef(String name, String testNum, int def,
-			int decl, int ref) throws Exception {
+	public void assertDefDeclRef(String name, String testNum, int def, int decl, int ref) throws Exception {
 		String elName = name + testNum;
 		IBinding binding = findSingleBinding(elName);
 		checkDefinition(binding, "def" + testNum, def);
@@ -190,6 +176,7 @@ public class DefDeclTests extends PDOMTestBase {
 		assertEquals(1, files.length);
 		return files[0];
 	}
+
 	/* ------------------ Tests Started Here ------------------------ */
 	public void testInit() {
 		// will fail if setUp fails, maybe timelimit is too small for warm-up
@@ -221,7 +208,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 	public void testWrongMatchedStaticDefinition() throws Exception {
 		String elName = "foo" + "07";
-		IIndexBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,	IndexFilter.ALL, new NullProgressMonitor());
+		IIndexBinding[] binds = pdom.findBindings(Pattern.compile(elName), true, IndexFilter.ALL, null);
 		assertEquals(2, binds.length);
 		assertTrue(binds[0].isFileLocal() != binds[1].isFileLocal());
 		if (binds[0].isFileLocal()) {
@@ -249,7 +236,7 @@ public class DefDeclTests extends PDOMTestBase {
 		IIndexName[] names= file.findNames(offset, 5);
 		assertEquals(1, names.length);
 		
-		IBinding element = pdom.findBinding((IIndexFragmentName)names[0]);
+		IBinding element = pdom.findBinding((IIndexFragmentName) names[0]);
 		assertEquals(elName, element.getName());
 		checkDefinition(element, "def" + "08", 1);
 		checkReference(element, "ref" + "08", 1);
@@ -288,8 +275,7 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	public void testDefDeclUse_v14() throws Exception {
-		// Hmm. This test seems to work, but Find Declaration in the UI does not
-		// work
+		// Hmm. This test seems to work, but Find Declaration in the UI does not work.
 		assertDefDeclRef("var", "_v14", 1, 1, 1);
 	}
 
@@ -309,7 +295,7 @@ public class DefDeclTests extends PDOMTestBase {
 		String num = "_t04";
 		String elName = "type" + num;
 		
-		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, IndexFilter.ALL, null);
 		assertEquals(2,bindings.length);
 		
 		IBinding typedef = bindings[0] instanceof ITypedef ? bindings[0] : bindings[1];

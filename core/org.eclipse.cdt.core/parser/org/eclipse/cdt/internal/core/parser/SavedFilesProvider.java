@@ -25,8 +25,7 @@ public class SavedFilesProvider extends InternalFileContentProvider {
 	}
 	
 	@Override
-	public InternalFileContent getContentForInclusion(String path,
-			IMacroDictionary macroDictionary) {
+	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

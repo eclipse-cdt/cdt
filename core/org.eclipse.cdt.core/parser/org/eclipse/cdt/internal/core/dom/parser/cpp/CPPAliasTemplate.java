@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -30,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPAliasTemplate extends PlatformObject
-		implements ICPPAliasTemplate, ICPPTemplateParameterOwner {
+		implements ICPPAliasTemplate, ICPPTemplateParameterOwner, ICPPInternalBinding {
 	private final IASTName aliasName;
 	private final IType aliasedType;
 	private ICPPTemplateParameter[] templateParameters;
@@ -127,11 +128,6 @@ public class CPPAliasTemplate extends PlatformObject
 	}
 
 	@Override
-	public String toString() {
-		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
-	}
-
-	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		int pos= templateParameter.getParameterPosition();
 
@@ -141,5 +137,31 @@ public class CPPAliasTemplate extends PlatformObject
 			return oName.resolvePreBinding();
 		}
     	return templateParameter;
+	}
+
+	@Override
+	public IASTNode getDefinition() {
+		return aliasName;
+	}
+
+	@Override
+	public IASTNode[] getDeclarations() {
+		return null;
+	}
+
+	@Override
+	public void addDefinition(IASTNode node) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addDeclaration(IASTNode node) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
 	}
 }

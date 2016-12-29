@@ -15,12 +15,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPAliasTemplateInstance extends PlatformObject
-		implements ICPPAliasTemplateInstance, ITypeContainer {
+		implements ICPPAliasTemplateInstance, ITypeContainer, ICPPInternalBinding {
 	private final char[] name;
 	private final ICPPAliasTemplate aliasTemplate;
 	private IType aliasedType;
@@ -108,11 +108,6 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	}
 
 	@Override
-	public String toString() {
-		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
-	}
-
-	@Override
 	public String[] getQualifiedName() {
 		return CPPVisitor.getQualifiedName(this);
 	}
@@ -124,6 +119,35 @@ public class CPPAliasTemplateInstance extends PlatformObject
 
 	@Override
 	public boolean isGloballyQualified() throws DOMException {
-		return ((ICPPBinding) aliasTemplate).isGloballyQualified();
+		return aliasTemplate.isGloballyQualified();
+	}
+
+	@Override
+	public IASTNode getDefinition() {
+		if (aliasTemplate instanceof ICPPInternalBinding) {
+			return ((ICPPInternalBinding) aliasTemplate).getDefinition();
+		}
+		return null;
+	}
+
+	@Override
+	public IASTNode[] getDeclarations() {
+		return null;
+	}
+
+	@Override
+	public void addDefinition(IASTNode node) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addDeclaration(IASTNode node) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** For debugging only. */
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
 	}
 }

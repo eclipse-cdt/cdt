@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_b67bebdf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-30T23:38:37Z",
+      "side": 1,
+      "message": "Please format commit messages (wrap long lines, limit subject line of commit to ~50 chars and if possible reword subject to say what was done rather than what was broken, e.g. Bug 340300: Fix parallel make when using pre-build steps)",
+      "revId": "1f2355f07a60140d3885094e5fc9c6a03afc7981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_365fdb6e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1368,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-30T23:38:37Z",
+      "side": 1,
+      "message": "remove NLS tag once above is done.",
+      "range": {
+        "startLine": 1368,
+        "startChar": 74,
+        "endLine": 1368,
+        "endChar": 88
+      },
+      "revId": "1f2355f07a60140d3885094e5fc9c6a03afc7981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_765cf376",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1368,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-30T23:38:37Z",
+      "side": 1,
+      "message": "I think NO_PRINT_DIR should be added here too, the directory being entered/exited is the current directory, so printing it here is superfluous. This would also match how post-build is invoked.",
+      "range": {
+        "startLine": 1368,
+        "startChar": 40,
+        "endLine": 1368,
+        "endChar": 47
+      },
+      "revId": "1f2355f07a60140d3885094e5fc9c6a03afc7981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f6680316",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1368,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2016-12-30T23:38:37Z",
+      "side": 1,
+      "message": "Please use MAKE (defined in interface IManagedBuilderMakefileGenerator)",
+      "range": {
+        "startLine": 1368,
+        "startChar": 29,
+        "endLine": 1368,
+        "endChar": 39
+      },
+      "revId": "1f2355f07a60140d3885094e5fc9c6a03afc7981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

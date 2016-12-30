@@ -17,7 +17,9 @@ package org.eclipse.cdt.core.dom.ast;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -103,6 +105,13 @@ public class ASTTypeUtil {
 	}
 
 	private static final ThreadLocal<ResultCache> resultCache = new ThreadLocal<>();
+	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress=
+			new ThreadLocal<Set<IBinding>>() {
+		@Override
+		protected Set<IBinding> initialValue() {
+			return new HashSet<>();
+		}
+	};
 
 	private ASTTypeUtil() {}
 
@@ -852,13 +861,24 @@ public class ASTTypeUtil {
 								CCorePlugin.log(e);
 							}
 						} else {
-							IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(binding);
-							if (node != null) {
-								IPath filePath = new Path(node.getTranslationUnit().getFilePath());
-								URI uri = UNCPathConverter.getInstance().toURI(filePath);
-								result.append('{');
-								result.append(uri.toString());
-								result.append('}');
+							// The ASTInternal.getDeclaredInSourceFileOnly method may call this method
+							// recursively for the same binding. Since a nested call is done to check if
+							// the binding has a declaration outside of the source file, inside the nested
+							// call we assume that the binding is not local to the source file.
+							// See http://bugs.eclipse.org/509774
+							if (fSourceFileOnlyCheckInProgress.get().add(binding)) {
+								try {
+									IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(binding);
+									if (node != null) {
+										IPath filePath = new Path(node.getTranslationUnit().getFilePath());
+										URI uri = UNCPathConverter.getInstance().toURI(filePath);
+										result.append('{');
+										result.append(uri.toString());
+										result.append('}');
+									}
+								} finally {
+									fSourceFileOnlyCheckInProgress.get().remove(binding);
+								}
 							}
 						}
 					}

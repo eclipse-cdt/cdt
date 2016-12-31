@@ -28,8 +28,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IInclude;
@@ -110,7 +108,6 @@ public class CElementIncludeResolver {
 		IPath fileToOpen;
 		int nElementsFound= filesFound.size();
 		if (nElementsFound == 0) {
-			noElementsFound();
 			fileToOpen= null;
 		} else if (nElementsFound == 1) {
 			fileToOpen= filesFound.get(0);
@@ -120,13 +117,6 @@ public class CElementIncludeResolver {
 		return fileToOpen;
 	}
 
-	private static void noElementsFound() {
-		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
-		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
-		errorMsg.open();
-	}
-	
 	private static void findFile(String[] includePaths, String name, ArrayList<IPath> list)
 			throws CoreException {
 		// in case it is an absolute path

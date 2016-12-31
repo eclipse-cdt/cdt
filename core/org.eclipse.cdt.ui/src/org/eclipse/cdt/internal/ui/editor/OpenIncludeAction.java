@@ -23,6 +23,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -61,10 +63,19 @@ public class OpenIncludeAction extends Action {
 			IPath fileToOpen = CElementIncludeResolver.resolveInclude(include);
 			if (fileToOpen != null) {
 				EditorUtility.openInEditor(fileToOpen, include);
-			} 
+			} else {
+				noElementsFound();
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e.getStatus());
 		}
+	}
+	
+	private static void noElementsFound() {
+		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
+		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
+		errorMsg.open();
 	}
 
 	private static IInclude getIncludeStatement(ISelection sel) {

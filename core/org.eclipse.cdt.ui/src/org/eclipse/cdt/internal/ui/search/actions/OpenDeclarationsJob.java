@@ -180,7 +180,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					openInclude(fileToOpen);
 					return Status.OK_STATUS;
 				}
-				fAction.reportIncludeLookupFailure(include.getFullFileName());
+				fAction.reportIncludeLookupFailure(include.getIncludeName());
 				return Status.OK_STATUS;
 			} else {
 				// Otherwise, lookup the selected word in the index.

@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
@@ -54,7 +55,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 	@Override
 	public IHyperlink[] detectHyperlinks(final ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor textEditor= getAdapter(ITextEditor.class);
-		if (region == null || !(textEditor instanceof CEditor))
+		if (region == null || !(textEditor instanceof ICModelBasedEditor))
 			return null;
 
 		final IAction openAction= textEditor.getAction("OpenDeclarations"); //$NON-NLS-1$

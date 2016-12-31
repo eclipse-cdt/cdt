@@ -23,12 +23,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 
@@ -36,8 +39,8 @@ public class OpenIncludeAction extends Action {
 
 	private static final String PREFIX= "OpenIncludeAction."; //$NON-NLS-1$
 	
-	static final String DIALOG_TITLE= PREFIX + "dialog.title"; //$NON-NLS-1$
-	static final String DIALOG_MESSAGE= PREFIX + "dialog.message"; //$NON-NLS-1$
+	private static final String DIALOG_TITLE= PREFIX + "dialog.title"; //$NON-NLS-1$
+	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message"; //$NON-NLS-1$
 	
 	private ISelectionProvider fSelectionProvider;
 
@@ -58,15 +61,39 @@ public class OpenIncludeAction extends Action {
 			return;
 		}
 		try {
-			IPath fileToOpen = CElementIncludeResolver.resolveInclude(include);
+			List<IPath> filesFound = CElementIncludeResolver.resolveInclude(include);
+			int nElementsFound= filesFound.size();
+			if (nElementsFound == 0) {
+				noElementsFound();
+				return;
+			}
+			
+			IPath fileToOpen;
+			if (nElementsFound == 1) {
+				fileToOpen= filesFound.get(0);
+			} else {
+				fileToOpen= chooseFile(filesFound);
+			}
 			if (fileToOpen != null) {
 				EditorUtility.openInEditor(fileToOpen, include);
-			} 
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e.getStatus());
 		}
 	}
-
+	
+	private static void noElementsFound() {
+		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
+		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
+		errorMsg.open();
+	}
+	
+	private static IPath chooseFile(List<IPath> filesFound) {
+		return OpenActionUtil.selectPath(filesFound, CUIPlugin.getResourceString(DIALOG_TITLE), 
+				CUIPlugin.getResourceString(DIALOG_MESSAGE));
+	}
+	
 	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List<?> list= ((IStructuredSelection)sel).toList();

@@ -15,13 +15,14 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
@@ -103,12 +105,12 @@ public class OpenActionUtil {
 		ILabelProvider labelProvider;
 		if (textFlags == 0 && imageFlags == 0) {
 			labelProvider= new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT | CElementLabelProvider.SHOW_QUALIFIED);
-		}
-		else {
+		} else {
 			labelProvider= new CUILabelProvider(textFlags, imageFlags);
 		}
 						
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, labelProvider) {
+		// TODO: Use CDT's ElementListSelectionDialog as in selectPath().
+		org.eclipse.ui.dialogs.ElementListSelectionDialog dialog= new org.eclipse.ui.dialogs.ElementListSelectionDialog(shell, labelProvider) {
 			@Override
 			protected IDialogSettings getDialogBoundsSettings() {
 				IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
@@ -135,5 +137,35 @@ public class OpenActionUtil {
 			}
 		}		
 		return null;
-	}	
+	}
+	
+	/**
+	 * Shows a dialog for resolving an ambiguous path.
+	 * @param paths an array of ambiguous paths
+	 * @param title title of the dialog
+	 * @param message message to be shown in the dialog
+	 * @return the selected path or <code>null</code>
+	 */
+	public static IPath selectPath(List<IPath> paths, String title, String message) {
+		ILabelProvider renderer= new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IPath) {
+					IPath file= (IPath)element;
+					return file.lastSegment() + " - "  + file.toString(); //$NON-NLS-1$
+				}
+				return super.getText(element);
+			}
+		};
+		
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
+		dialog.setTitle(title);
+		dialog.setMessage(message);
+		dialog.setElements(paths);
+		
+		if (dialog.open() == Window.OK) {
+			return (IPath) dialog.getSelectedElement();
+		}
+		return null;
+	}
 }

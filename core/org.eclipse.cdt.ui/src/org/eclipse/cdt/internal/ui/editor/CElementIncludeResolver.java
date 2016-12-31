@@ -10,6 +10,7 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -25,11 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IInclude;
@@ -37,19 +33,16 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.UNCPathConverter;
 
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
-
 /**
  * Handles resolution of an include represented as a CElement (IInclude).
  */
 public class CElementIncludeResolver {
-	public static IPath resolveInclude(IInclude include) throws CoreException {
+	public static List<IPath> resolveInclude(IInclude include) throws CoreException {
 		IResource res = include.getUnderlyingResource();
 		ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
 		String fullFileName= include.getFullFileName();
@@ -107,26 +100,9 @@ public class CElementIncludeResolver {
 				}
 			}
 		}
-		IPath fileToOpen;
-		int nElementsFound= filesFound.size();
-		if (nElementsFound == 0) {
-			noElementsFound();
-			fileToOpen= null;
-		} else if (nElementsFound == 1) {
-			fileToOpen= filesFound.get(0);
-		} else {
-			fileToOpen= chooseFile(filesFound);
-		}
-		return fileToOpen;
+		return filesFound;
 	}
 
-	private static void noElementsFound() {
-		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
-		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
-		errorMsg.open();
-	}
-	
 	private static void findFile(String[] includePaths, String name, ArrayList<IPath> list)
 			throws CoreException {
 		// in case it is an absolute path
@@ -184,29 +160,6 @@ public class CElementIncludeResolver {
 		}, 0);
 	}
 
-	private static IPath chooseFile(ArrayList<IPath> filesFound) {
-		ILabelProvider renderer= new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof IPath) {
-					IPath file= (IPath)element;
-					return file.lastSegment() + " - "  + file.toString(); //$NON-NLS-1$
-				}
-				return super.getText(element);
-			}
-		};
-		
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
-		dialog.setTitle(CUIPlugin.getResourceString(OpenIncludeAction.DIALOG_TITLE));
-		dialog.setMessage(CUIPlugin.getResourceString(OpenIncludeAction.DIALOG_MESSAGE));
-		dialog.setElements(filesFound);
-		
-		if (dialog.open() == Window.OK) {
-			return (IPath) dialog.getSelectedElement();
-		}
-		return null;
-	}
-	
 	/**
 	 * Returns the path as is, if it points to a workspace resource. If the path
 	 * does not point to a workspace resource, but there are linked workspace

@@ -12,8 +12,11 @@
 package org.eclipse.cdt.ui.text;
 
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
@@ -377,6 +380,11 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			}
 		};
 	}
+	
+	@Override
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map<String, IAdaptable> targets= super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
+		return targets;
+	}
 }
-
-

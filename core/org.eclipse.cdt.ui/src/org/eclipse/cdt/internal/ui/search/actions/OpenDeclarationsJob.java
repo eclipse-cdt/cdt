@@ -106,6 +106,7 @@ import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
@@ -175,12 +176,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			if (element instanceof IInclude) {
 				// If the cursor is over an include, open the referenced file.
 				IInclude include = (IInclude) element;
-				IPath fileToOpen = CElementIncludeResolver.resolveInclude(include);
-				if (fileToOpen != null) {
-					openInclude(fileToOpen);
-					return Status.OK_STATUS;
-				}
-				fAction.reportIncludeLookupFailure(include.getFullFileName());
+				List<IPath> paths = CElementIncludeResolver.resolveInclude(include);
+				openInclude(paths, include.getIncludeName());
 				return Status.OK_STATUS;
 			} else {
 				// Otherwise, lookup the selected word in the index.
@@ -779,26 +776,43 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (incStmt.isResolved())
 			name = incStmt.getPath();
 
-		IPath path = null;
+		List<IPath> paths = null;
 		if (name != null) {
-			path = new Path(name);
+			paths = new ArrayList<>();
+			paths.add(new Path(name));
 		} else if (!incStmt.isActive()) {
 			// Includes inside inactive preprocessor branches will not be resolved in the AST.
 			// For these, attempt resolving the include via the C model as a fallback.
 			try {
 				ICElement element = SelectionConverter.getElementAtOffset(fTranslationUnit, fTextSelection);
 				if (element instanceof IInclude) {
-					path = CElementIncludeResolver.resolveInclude((IInclude) element);
+					paths = CElementIncludeResolver.resolveInclude((IInclude) element);
 				}
 			} catch (CModelException e) {
 			} catch (CoreException e) {
 			}
 		}
-		
-		if (path != null) {
-			openInclude(path);
+
+		openInclude(paths, new String(incStmt.getName().toCharArray()));
+	}
+	
+	private void openInclude(List<IPath> paths, String includeName) {
+		if (paths == null || paths.isEmpty()) {
+			fAction.reportIncludeLookupFailure(includeName);
+		} else if (paths.size() == 1) {
+			openInclude(paths.get(0));
 		} else {
-			fAction.reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+			runInUIThread(new Runnable() {
+				@Override
+				public void run() {
+					IPath selected = OpenActionUtil.selectPath(paths, 
+							CEditorMessages.OpenDeclarationsAction_dialog_title, 
+							CEditorMessages.OpenDeclarationsAction_selectMessage);
+					if (selected != null) {
+						openInclude(selected);
+					}
+				}
+			});
 		}
 	}
 

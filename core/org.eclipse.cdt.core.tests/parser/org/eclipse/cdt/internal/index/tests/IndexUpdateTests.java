@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -47,6 +49,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
@@ -56,6 +59,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 
 import junit.framework.TestSuite;
 
@@ -1493,6 +1497,50 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals("Base", bases[0].getBaseClass().getName());
 		} finally {
 			fIndex.releaseReadLock();
+		}
+	}
+
+
+	// int dummy;
+
+	//#include "A.h"
+	//void foo() {
+	//  bar();
+	//}
+	public void testDependentProjectGetsUpdated_Bug310837() throws Exception {
+		CharSequence[] contents = getContentsForTest(2);
+		List<ICProject> projects = new ArrayList<ICProject>();
+
+		try {
+			ProjectBuilder projectABuilder = new ProjectBuilder("projA_" + getName(), true);
+			projectABuilder.addFile("A.h", contents[0]);
+			ICProject projectA = projectABuilder.create();
+			projects.add(projectA);
+
+			ProjectBuilder projectBBuilder = new ProjectBuilder("projB_" + getName(), true);
+			projectBBuilder.addFile("B.h", contents[1]).addDependency(projectA.getProject());
+			ICProject projectB = projectBBuilder.create();
+			projects.add(projectB);
+
+			IIndex aIndex = CCorePlugin.getIndexManager().getIndex(projectA);
+			IIndex bIndex = CCorePlugin.getIndexManager().getIndex(projectB);
+			bIndex.acquireReadLock();
+			IIndexBinding[] barBinding = bIndex.findBindings("bar".toCharArray(), IndexFilter.ALL, null);
+			assertEquals(0, barBinding.length);
+			bIndex.releaseReadLock();
+
+			IFile fileAh = (IFile) ((ITranslationUnit)projectA.findElement(Path.fromOSString("A.h"))).getResource();
+			fileAh = TestSourceReader.createFile(projectA.getSourceRoots()[0].getResource(), Path.fromOSString("A.h"), "void bar(){}\n");
+			TestSourceReader.waitUntilFileIsIndexed(aIndex, fileAh, INDEXER_TIMEOUT_SEC * 1000);
+			TestSourceReader.waitUntilFileIsIndexed(bIndex, fileAh, INDEXER_TIMEOUT_SEC * 1000);
+			bIndex.acquireReadLock();
+			IIndexBinding[] barBinding2 = bIndex.findBindings("bar".toCharArray(), IndexFilter.ALL, null);
+			assertEquals(1, barBinding2.length);
+			bIndex.releaseReadLock();
+		} finally {
+			for (ICProject project : projects) {
+				CProjectHelper.delete(project);
+			}
 		}
 	}
 }

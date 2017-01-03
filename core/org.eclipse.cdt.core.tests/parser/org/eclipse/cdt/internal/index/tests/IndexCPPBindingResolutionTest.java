@@ -2418,4 +2418,24 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testAnonymousStructInAnonymousNamespace_508254() throws Exception {
 		checkBindings();
 	}
+	
+	//	struct base {
+	//	    int* ptr;
+	//	};
+	//
+	//	struct shared_ptr : public base {
+	//	    constexpr shared_ptr() {}
+	//	    constexpr shared_ptr(int) : shared_ptr() {}
+	//	};
+	//
+	//	struct Foo {
+	//	    shared_ptr m_variable = 0;
+	//	};
+	
+	//	int main() {
+	//	    Foo a;  // Error: Type 'Foo' could not be resolved
+	//	}
+	public void testDelegatingConstructorCallInConstexprConstructor_509871() throws Exception {
+		checkBindings();
+	}
 }

@@ -806,7 +806,8 @@ public class ClassTypeHelper {
 	/**
 	 * Returns all methods found in the index, that override the given {@code method}.
 	 */
-	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws CoreException {
+	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method, IASTNode point) 
+			throws CoreException {
 		if (!isVirtual(method))
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
@@ -815,18 +816,18 @@ public class ClassTypeHelper {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 		ICPPClassType[] subclasses= getSubClasses(index, mcl);
-		return findOverriders(subclasses, method);
+		return findOverriders(subclasses, method, null);
 	}
 
 	/**
 	 * Returns all methods belonging to the given set of classes that override the given {@code method}.
 	 */
-	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method) {
+	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method, IASTNode point) {
 		final char[] mname= method.getNameCharArray();
 		final ICPPFunctionType mft= method.getType();
 		final ArrayList<ICPPMethod> result= new ArrayList<>();
 		for (ICPPClassType subClass : subclasses) {
-			ICPPMethod[] methods= subClass.getDeclaredMethods();
+			ICPPMethod[] methods= ClassTypeHelper.getDeclaredMethods(subClass, point);
 			for (ICPPMethod candidate : methods) {
 				if (CharArrayUtils.equals(mname, candidate.getNameCharArray()) &&
 						functionTypesAllowOverride(mft, candidate.getType())) {

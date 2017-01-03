@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QNX Software Systems and others.
+ * Copyright (c) 2005, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -782,22 +783,52 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	void changeProject(ICProject project, ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
-		assert !Thread.holdsLock(fProjectToPDOM);
+	private void updateProject(ICProject project, ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
+
 		IPDOMIndexer indexer = getIndexer(project);
 		if (indexer != null && indexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
 			return;
 		}
 
+		synchronized (fUpdatePolicies) {
+			IndexUpdatePolicy policy = createPolicy(project);
+			IPDOMIndexerTask task = policy.handleDelta(added, changed, removed);
+			if (task != null) {
+				enqueue(task);
+			}
+		}
+	}
+
+	void changeProject(ICProject project, ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
+		assert !Thread.holdsLock(fProjectToPDOM);
 		if (added.length > 0 || changed.length > 0 || removed.length > 0) {
-			synchronized (fUpdatePolicies) {
-				IndexUpdatePolicy policy= createPolicy(project);
-				IPDOMIndexerTask task= policy.handleDelta(added, changed, removed);
-				if (task != null) {
-					enqueue(task);
+			updateProject(project, added, changed, removed);
+			if (shouldUpdateReferencingProjects(added, changed, removed)) {
+				ITranslationUnit[] addedHeaders = filterHeaderTU(added);
+				ITranslationUnit[] changedHeaders = filterHeaderTU(changed);
+				ITranslationUnit[] removedHeaders = filterHeaderTU(removed);
+				IProject[] referencingProjects = project.getProject().getReferencingProjects();
+				for (IProject referencingProject : referencingProjects) {
+					ICProject projectToIndex = CoreModel.getDefault().create(referencingProject);
+					updateProject(projectToIndex, addedHeaders, changedHeaders, removedHeaders);
 				}
 			}
 		}
+	}
+
+	private ITranslationUnit[] filterHeaderTU(ITranslationUnit[] units) {
+		return Arrays.stream(units).filter(ITranslationUnit::isHeaderUnit).toArray(ITranslationUnit[]::new);
+	}
+
+	private boolean shouldUpdateReferencingProjects(ITranslationUnit[] added, ITranslationUnit[] changed,
+			ITranslationUnit[] removed) {
+		return hasHeaderTU(added) || hasHeaderTU(changed) || hasHeaderTU(removed);
+	}
+
+	private boolean hasHeaderTU(ITranslationUnit[] units) {
+		return Arrays.stream(units).anyMatch(ITranslationUnit::isHeaderUnit);
 	}
 
 	private IndexUpdatePolicy createPolicy(final ICProject project) {

@@ -158,7 +158,7 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 					ICPPEvaluation memberValue =  memberEval.computeForFunctionCall(localRecord, context.recordStep());
 					ICPPEvaluation[] baseClassValues = memberValue.getValue(context.getPoint()).getAllSubValues();
 
-					ICPPField[] baseFields = (ICPPField[]) ClassTypeHelper.getFields(baseClassType, context.getPoint());
+					ICPPField[] baseFields = ClassTypeHelper.getFields(baseClassType, context.getPoint());
 					for (ICPPField baseField : baseFields) {
 						// TODO: This has the same problem with multiple inheritance as
 						//       CompositeValue.create(ICPPClassType).

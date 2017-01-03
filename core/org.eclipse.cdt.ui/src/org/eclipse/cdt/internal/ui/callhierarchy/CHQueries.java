@@ -177,7 +177,7 @@ public class CHQueries {
 	 * if there are none.
 	 */
 	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
-		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
+		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding, null);
 		if (virtualOverriders.length > 0) {
 			ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
 			list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));

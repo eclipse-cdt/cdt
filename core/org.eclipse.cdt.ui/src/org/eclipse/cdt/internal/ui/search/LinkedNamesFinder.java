@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
@@ -58,7 +59,7 @@ public class LinkedNamesFinder {
 		if (target == null) {
 			return EMPTY_LOCATIONS_ARRAY;
 		}
-		BindingFinder bindingFinder = new BindingFinder(root);
+		BindingFinder bindingFinder = new BindingFinder(root, name);
 		bindingFinder.find(target);
 		return bindingFinder.getLocations();
 	}
@@ -66,9 +67,11 @@ public class LinkedNamesFinder {
 	private static class BindingFinder {
 		private final IASTTranslationUnit root;
 		private final List<IRegion> locations;
+		private final IASTNode point;
 
-		public BindingFinder(IASTTranslationUnit root) {
+		public BindingFinder(IASTTranslationUnit root, IASTNode point) {
 			this.root = root;
+			this.point = point;
 			locations = new ArrayList<IRegion>();
 		}
 
@@ -122,7 +125,7 @@ public class LinkedNamesFinder {
 
 			SubclassFinder subclassFinder = new SubclassFinder(ownerClass);
 			root.accept(subclassFinder);
-			return ClassTypeHelper.findOverriders(subclassFinder.getSubclasses(), method);
+			return ClassTypeHelper.findOverriders(subclassFinder.getSubclasses(), method, point);
 		}
 
 		public IRegion[] getLocations() {

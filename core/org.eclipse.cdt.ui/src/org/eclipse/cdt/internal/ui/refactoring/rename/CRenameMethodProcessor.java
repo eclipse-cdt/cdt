@@ -100,6 +100,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
     	
         CRefactoringArgument argument= getArgument();
         IBinding binding= argument.getBinding();
+        IASTNode node= ASTInternal.getPhysicalNodeOfScope(argument.getScope());
         ArrayList<IBinding> bindings= new ArrayList<>();
         if (binding != null) {
         	recordRename(binding);
@@ -110,7 +111,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         	try {
         		IBinding[] bs= ClassTypeHelper.findOverridden(m, argument.getTranslationUnit());
         		bindings.addAll(Arrays.asList(bs));
-        		bs= ClassTypeHelper.findOverriders(getIndex(), m);
+        		bs= ClassTypeHelper.findOverriders(getIndex(), m, node);
         		bindings.addAll(Arrays.asList(bs));
             } catch (CoreException e) {
             	status.addError(e.getMessage());

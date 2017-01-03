@@ -90,7 +90,7 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 	IBinding[] getFriends(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getFriends()} but a accepts a starting point
+	 * Similar to {@link ICPPClassType#getFields()} but a accepts a starting point
 	 * for template instantiation.
 	 * @since 5.5
 	 */

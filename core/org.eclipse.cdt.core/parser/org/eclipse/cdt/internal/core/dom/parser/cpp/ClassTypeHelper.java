@@ -614,13 +614,13 @@ public class ClassTypeHelper {
 		return ArrayUtil.trim(result);
 	}
 
-	public static IField[] getFields(ICPPClassType ct, IASTNode point) {
-		IField[] fields = getDeclaredFields(ct, point);
+	public static ICPPField[] getFields(ICPPClassType ct, IASTNode point) {
+		ICPPField[] fields = getDeclaredFields(ct, point);
 		ICPPClassType[] bases = getAllBases(ct, point);
 		for (ICPPClassType base : bases) {
-			fields = ArrayUtil.addAll(IField.class, fields, getDeclaredFields(base, point));
+			fields = ArrayUtil.addAll(ICPPField.class, fields, getDeclaredFields(base, point));
 		}
-		return ArrayUtil.trim(IField.class, fields);
+		return ArrayUtil.trim(ICPPField.class, fields);
 	}
 
 	public static IField findField(ICPPClassType ct, String name) {

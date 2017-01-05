@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPUsingDeclaration extends ICPPBinding {	
-	/** @since 6.2 */
+	/** @since 6.3 */
 	public static final ICPPUsingDeclaration[] EMPTY_USING_DECL_ARRAY = {};
     /**
      * Return an array of bindings that were declared by this using declaration.

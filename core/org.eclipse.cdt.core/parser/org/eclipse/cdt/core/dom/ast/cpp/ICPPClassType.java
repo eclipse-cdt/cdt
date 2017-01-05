@@ -110,6 +110,8 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	
 	/**
 	 * Returns an array of using declarations in this class.
+	 *
+	 * @since 6.3
 	 */
 	public ICPPUsingDeclaration[] getUsingDeclarations();
 

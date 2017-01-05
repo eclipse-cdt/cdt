@@ -106,7 +106,7 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 	/**
 	 * Similar to {@link ICPPClassType#getUsingDeclarations()} but accepts a starting point
 	 * for template instantiation.
-	 * @since 6.2
+	 * @since 6.3
 	 */
-	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);	
+	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);
 }

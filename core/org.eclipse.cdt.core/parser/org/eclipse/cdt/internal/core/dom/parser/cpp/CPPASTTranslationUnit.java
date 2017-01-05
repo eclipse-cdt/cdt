@@ -32,6 +32,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -48,13 +51,15 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPASTTranslationUnit, IASTAmbiguityParent {
     private CPPNamespaceScope fScope;
     private ICPPNamespace fBinding;
-	private final CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
+	private final CPPScopeMapper fScopeMapper;
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
 
 	// Caches
-	private Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
+	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
+	private final Map<IBinding, Boolean> fBindingReachabilityCache = new HashMap<>();
 
 	public CPPASTTranslationUnit() {
+		fScopeMapper= new CPPScopeMapper(this);
 	}
 
 	@Override
@@ -233,5 +238,44 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	
 	public ICPPClassTemplatePartialSpecialization mapToAST(ICPPClassTemplatePartialSpecialization indexSpec) {
 		return fScopeMapper.mapToAST(indexSpec);
+	}
+
+	/**
+	 * Checks if a binding is an AST binding, or is reachable from the AST through includes.
+	 * The binding is assumed to belong to the AST, if it is not an IIndexBinding and not
+	 * a specialization of an IIndexBinding.
+	 *
+	 * @param binding
+	 * @return {@code true} if the {@code binding} is reachable from the AST.
+	 */
+	public boolean isReachableFromAst(IBinding binding) {
+		Boolean cachedValue = fBindingReachabilityCache.get(binding);
+		if (cachedValue != null)
+			return cachedValue;
+
+		IIndexBinding indexBinding = null;
+		if (binding instanceof IIndexBinding) {
+			indexBinding = (IIndexBinding) binding;
+		}
+		if (binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			if (binding instanceof IIndexBinding) {
+				indexBinding = (IIndexBinding) binding;
+			}
+		}
+		boolean reachable;
+		if (indexBinding == null) {
+			// We don't check if the binding really belongs to this AST assuming that
+			// the caller doesn't deal with two ASTs at a time.
+			reachable = true;
+		} else {
+			IIndexFileSet indexFileSet = getIndexFileSet();
+			IIndexFileSet astFileSet = getASTFileSet();
+			reachable = indexFileSet != null &&
+					(indexFileSet.containsDeclaration(indexBinding) ||
+					 astFileSet.containsDeclaration(indexBinding));
+		}
+		fBindingReachabilityCache.put(binding, reachable);
+		return reachable;
 	}
 }

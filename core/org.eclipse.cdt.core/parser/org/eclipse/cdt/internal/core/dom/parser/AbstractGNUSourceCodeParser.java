@@ -102,7 +102,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * Base class for the c- and c++ parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
-	// see TemplateIdStrategy for an explanation of what this does
+	// See TemplateIdStrategy for an explanation of what this does.
 	public interface ITemplateIdStrategy {
 		boolean shallParseAsTemplateID(IASTName name);
 	}
@@ -150,6 +150,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		{
 			shouldVisitAmbiguousNodes= true;
 		}
+
 		@Override
 		protected int genericVisit(IASTNode node) {
 			((ASTNode) node).setInactive();
@@ -237,7 +238,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
 	/**
-	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
+	 * Instructs the parser not to create AST nodes for expressions within aggregate initializers
 	 * when they do not contain names beyond the given limit.
 	 */
 	public void setMaximumTrivialExpressionsInAggregateInitializers(int limit) {
@@ -253,7 +254,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final void throwBacktrack(int offset, int length) throws BacktrackException {
         ++backtrackCount;
-        backtrack.initialize(offset, (length < 0) ? 0 : length);
+        backtrack.initialize(offset, length < 0 ? 0 : length);
         throw backtrack;
     }
 
@@ -672,7 +673,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$
         IASTTranslationUnit result = getTranslationUnit();
         nullifyTranslationUnit();
-        result.freeze(); // make the AST immutable
+        result.freeze(); // Make the AST immutable.
         return result;
     }
 
@@ -828,10 +829,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return buildProblemExpression(problem);
     }
 
-    /**
-     * @return TODO
-     * @throws BacktrackException
-     */
     protected IASTCompoundStatement compoundStatement() throws EndOfFileException, BacktrackException {
         IASTCompoundStatement result = nodeFactory.newCompoundStatement();
         if (LT(1) == IToken.tEOC)
@@ -846,7 +843,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	if (next == null) {
         		((ASTNode) result).setOffsetAndLength(offset, endOffset-offset);
         		throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, endOffset, 0), result);
-        		return null; // hint for java-compiler
+        		return null; // To make Java compiler happy.
         	}
             try {
             	if (next.getType() == IToken.tEOC)
@@ -859,7 +856,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
             	final int nextOffset = next.getOffset();
         		declarationMark= next;
-        		next= null; // don't hold on to the token while parsing namespaces, class bodies, etc.
+        		next= null; // Don't hold on to the token while parsing namespaces, class bodies, etc.
 
         		IASTStatement stmt;
         		if (stmtOffset == nextOffset) {
@@ -892,7 +889,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             	declarationMark= null;
             }
         }
-        ((ASTNode) result).setOffsetAndLength(offset, endOffset-offset);
+        ((ASTNode) result).setOffsetAndLength(offset, endOffset - offset);
         return result;
     }
 

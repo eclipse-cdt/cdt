@@ -35,7 +35,6 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 	private final DsfExecutor fExecutor;
 	private final DsfServicesTracker fServiceTracker;
 	private final ICommandControlDMContext fContext;
-	private ICommandControlService fCommandControl;
 
 	/**
 	 * @param executor
@@ -46,7 +45,6 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 		fExecutor = executor;
 		fServiceTracker = serviceTracker;
 		fContext = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
-		fCommandControl = fServiceTracker.getService(ICommandControlService.class);
 		assert fContext != null;
 	}
 
@@ -80,7 +78,10 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 			@Override
 			public void run() {
 				// TODO: for print command would be nice to redirect to gdb console
-				fCommandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<>());
+				ICommandControlService commandControl = fServiceTracker.getService(ICommandControlService.class);
+				if (commandControl != null) {
+					commandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<>());
+				}
 			}
 		});
 	}

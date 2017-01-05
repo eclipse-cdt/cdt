@@ -16,14 +16,13 @@ import java.net.URL;
  * Helper class to launch a test
  */
 public class TestPluginLauncher {
-	
 	public static final String APP_NAME= "org.eclipse.jdt.ui.tests.app"; //$NON-NLS-1$
 	
-	public static void run(String location, Class testCase, String[] args) {
+	public static void run(String location, Class<?> testCase, String[] args) {
 		run(APP_NAME, location, testCase, args);
 	}
 	
-	public static void run(String application, String location, Class testCase, String[] args) {
+	public static void run(String application, String location, Class<?> testCase, String[] args) {
 		try {
 			String bootLocation= getBootLocation();
 			int nArgs= args.length;

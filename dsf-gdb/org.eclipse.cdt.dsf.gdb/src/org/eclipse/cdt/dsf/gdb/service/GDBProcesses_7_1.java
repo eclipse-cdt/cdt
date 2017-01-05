@@ -57,7 +57,14 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		final String[] fCores;
 
 		public MIThreadDMData_7_1(String name, String id, String[] cores) {
-			super(name, id);
+			this(name, id, cores, null);
+		}
+		
+		/**
+		 * @since 5.3
+		 */
+		public MIThreadDMData_7_1(String name, String id, String[] cores, String perInferiorId) {
+			super(name, id, perInferiorId);
 			fCores = cores;
 		}
 
@@ -224,7 +231,11 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 		String name = thread.getName();
 		String core = thread.getCore();
-		return new MIThreadDMData_7_1(name == null ? "" : name, id, core == null ? null : new String[] { core }); //$NON-NLS-1$
+		String perInferiorId = thread.getPerInferiorThreadId();
+		return new MIThreadDMData_7_1(name == null ? "" : name,  //$NON-NLS-1$
+				id, 
+				core == null ? null : new String[] { core },
+				perInferiorId);
 	}
 	
 	@DsfServiceEventHandler

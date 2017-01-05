@@ -420,10 +420,19 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     protected static class MIThreadDMData implements IThreadDMData {
     	final String fName;
     	final String fId;
+    	final String fPerInferiorId;
     	
     	public MIThreadDMData(String name, String id) {
+    		this(name, id, null);
+    	}
+    	
+    	/**
+		 * @since 5.3
+		 */
+    	public MIThreadDMData(String name, String id, String perInferiorId ) {
     		fName = name;
     		fId = id;
+    		fPerInferiorId = perInferiorId;
     	}
     	
     	@Override
@@ -436,6 +445,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		public boolean isDebuggerAttached() {
 			return true;
 		}
+    	
+    	/**
+		 * @since 5.3
+		 */
+    	@Override 
+    	public String getPerInferiorId() {
+    		return fPerInferiorId;
+    	}
     }
     
     /**

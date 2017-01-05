@@ -34,6 +34,7 @@ public class MIThread {
 	public final static String MI_THREAD_STATE_STOPPED = "stopped"; //$NON-NLS-1$
 	
 	final private String       fThreadId;
+	final private String       fPerInferiorThreadId;
 	final private String       fTargetId;
 	final private String       fOsId;
 	final private String       fParentId;
@@ -53,6 +54,13 @@ public class MIThread {
 	protected MIThread(String threadId, String targetId, String osId, String parentId,
 					   MIFrame topFrame, String details, String state, String core,
 					   String name) {
+		this(threadId, targetId, osId, parentId, topFrame, details, state, core, null, null, null);
+	}
+	
+	/** @since 5.3*/
+	protected MIThread(String threadId, String targetId, String osId, String parentId,
+			MIFrame topFrame, String details, String state, String core,
+			String name, String groupId, String idInGroup) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;
 		fOsId      = osId;
@@ -62,9 +70,23 @@ public class MIThread {
 		fState     = state;
 		fCore      = core;
 		fName      = name;
+		if (groupId != null && idInGroup != null) {
+			// build the qualified thread id
+			fPerInferiorThreadId = groupId + "." + idInGroup; //$NON-NLS-1$
+		}
+		else {
+			fPerInferiorThreadId = null;
+		}
 	}
 
 	public String getThreadId()       { return fThreadId; }
+	/** 
+	 * @returns the per-inferior thread id, or null if unavailable
+	 * @since 5.3  
+	 */
+	public String getPerInferiorThreadId() { 
+		return fPerInferiorThreadId;
+	}
 	public String getTargetId()       { return fTargetId; }
 	public String getOsId()           { return fOsId;     }
 	public String getParentId()       { return fParentId; }
@@ -85,6 +107,8 @@ public class MIThread {
 
         String threadId = null;
         String targetId = null;
+        String groupId = null;
+        String idInGroup = null;
         String osId = null;
         String parentId = null;
         MIFrame topFrame = null;
@@ -107,6 +131,18 @@ public class MIThread {
                     targetId = ((MIConst) val).getCString().trim();
                     osId = parseOsId(targetId);
                     parentId = parseParentId(targetId);
+                }
+            }
+            else if (var.equals("group-id")) { //$NON-NLS-1$
+                MIValue val = result.getMIValue();
+                if (val instanceof MIConst) {
+                    groupId = ((MIConst) val).getCString().trim();
+                }
+            }
+            else if (var.equals("id-in-group")) { //$NON-NLS-1$
+                MIValue val = result.getMIValue();
+                if (val instanceof MIConst) {
+                    idInGroup = ((MIConst) val).getCString().trim();
                 }
             }
             else if (var.equals("frame")) { //$NON-NLS-1$
@@ -140,7 +176,7 @@ public class MIThread {
         }
 
         return new MIThread(threadId, targetId, osId, parentId, topFrame,
-                            details, state, core, name);
+                            details, state, core, name, groupId, idInGroup);
 	}
 	
 	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive. 

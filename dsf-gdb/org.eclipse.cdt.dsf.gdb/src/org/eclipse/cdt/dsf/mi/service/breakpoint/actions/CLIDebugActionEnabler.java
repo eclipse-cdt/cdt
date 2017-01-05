@@ -19,11 +19,14 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  *
@@ -35,7 +38,6 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 	private final DsfExecutor fExecutor;
 	private final DsfServicesTracker fServiceTracker;
 	private final ICommandControlDMContext fContext;
-	private ICommandControlService fCommandControl;
 
 	/**
 	 * @param executor
@@ -46,7 +48,6 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 		fExecutor = executor;
 		fServiceTracker = serviceTracker;
 		fContext = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
-		fCommandControl = fServiceTracker.getService(ICommandControlService.class);
 		assert fContext != null;
 	}
 
@@ -80,7 +81,15 @@ public class CLIDebugActionEnabler implements ICLIDebugActionEnabler {
 			@Override
 			public void run() {
 				// TODO: for print command would be nice to redirect to gdb console
-				fCommandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<>());
+				ICommandControlService commandControl = fServiceTracker.getService(ICommandControlService.class);
+				if (commandControl != null) {
+					commandControl.queueCommand(cmd, new ImmediateDataRequestMonitor<>());
+				} else {
+					// Should not happen, so log the situation but then ignore it
+					GdbPlugin.log(new Status(
+							IStatus.INFO, GdbPlugin.PLUGIN_ID, 
+							"Unable to find service to execute breakpoint command")); //$NON-NLS-1$
+				}
 			}
 		});
 	}

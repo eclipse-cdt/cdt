@@ -327,6 +327,12 @@ public class ThreadVMNode extends AbstractThreadVMNode
                             @Override
                             public void handleCompleted() {
                                 if (isSuccess()) {
+                                	// thread id: use the qualified one instead, if available 
+                                	String qualifiedTid = getData().getPerInferiorId();
+                                	if (qualifiedTid != null) {
+                                		update.setProperty(ILaunchVMConstants.PROP_ID, qualifiedTid);
+                                	}
+                                	
                                     fillThreadDataProperties(update, getData());
                                 } 
                                 update.setStatus(getStatus());

@@ -55,6 +55,8 @@ public interface IProcesses extends IDsfService {
         String getName();
         String getId();
         boolean isDebuggerAttached();
+        /*** @since 2.8 */
+        default String getPerInferiorId() { return null;}
     }
     
     /**

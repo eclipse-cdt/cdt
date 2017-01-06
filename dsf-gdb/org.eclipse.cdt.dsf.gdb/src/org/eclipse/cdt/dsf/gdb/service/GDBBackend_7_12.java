@@ -56,7 +56,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 
 	@Override
 	public boolean isFullGdbConsoleSupported() {
-		return !Platform.getOS().equals(Platform.OS_WIN32)
+		return !Platform.getOS().equals(Platform.OS_WIN32) && !Platform.getOS().equals(Platform.OS_MACOSX)
 				&& !fPtyFailure;
 	}
 	

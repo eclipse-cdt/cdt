@@ -425,10 +425,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 		db = new Database(fPath, cache, getDefaultVersion(), isPermanentlyReadOnly());
 
 		db.setLocked(lockDB);
-		if (isSupportedVersion()) {
-			readLinkages();
+		try {
+			if (isSupportedVersion()) {
+				readLinkages();
+			}
+		} catch (RuntimeException e) {
+			throw new CoreException(CCorePlugin.createStatus("Error loading index database", e)); //$NON-NLS-1$
+		} finally {
+			db.setLocked(lockCount != 0);
 		}
-		db.setLocked(lockCount != 0);
 	}
 
 	public IIndexLocationConverter getLocationConverter() {

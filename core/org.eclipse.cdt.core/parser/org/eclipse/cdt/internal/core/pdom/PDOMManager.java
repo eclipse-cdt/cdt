@@ -385,7 +385,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			try {
 				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
 			} catch (CoreException e) {
-				CCorePlugin.log("Failed to open C/C++ index " + dbFile.getAbsolutePath() //$NON-NLS-1$
+				CCorePlugin.log("Failed to open C/C++ index file " + dbFile.getAbsolutePath() //$NON-NLS-1$
 						+ " - rebuilding the index", e); //$NON-NLS-1$
 				dbFile.delete();
 				fromScratch= true;

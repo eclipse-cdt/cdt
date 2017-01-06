@@ -1431,6 +1431,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
         }
 
 		String osTIDValue = threadData.getId();
+		String perInferiorTID = threadData.getPerInferiorId();
 
 		// If we can't get the real Linux OS tid, fallback to using the gdb thread id
 		int osTid = (osTIDValue == null) ? tid : Integer.parseInt(osTIDValue);
@@ -1440,7 +1441,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// through the listener.   Checking at both places to prevent this.
 		VisualizerThread t = model.getThread(tid);
 		if (t == null) {
-			model.addThread(new VisualizerThread(core, pid, osTid, tid, state, frame));
+			model.addThread(new VisualizerThread(core, pid, osTid, tid, perInferiorTID, state, frame));
 		}
 		// if the thread is already in the model, update it's parameters.  
 		else {

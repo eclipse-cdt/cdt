@@ -364,11 +364,13 @@ public class MulticoreVisualizerEventListener {
 									// That is ok, we'll be refreshing right away at startup
 								}
 
+								String perInferiorTID = data.getPerInferiorId();
+								
 								// add thread if not already there - there is a potential race condition where a 
 								// thread can be added twice to the model: once at model creation and once more 
 								// through the listener.   Checking at both places to prevent this.
 								if (model.getThread(tid) == null ) {
-									model.addThread(new VisualizerThread(vCore, pid, osTid, tid, VisualizerExecutionState.RUNNING));
+									model.addThread(new VisualizerThread(vCore, pid, osTid, tid, perInferiorTID, VisualizerExecutionState.RUNNING, null));
 									fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();	
 								}
 							}

@@ -36,6 +36,9 @@ public class VisualizerThread
 
 	/** Thread ID as chosen by GDB. */
 	protected int m_gdbtid;
+	
+	/** Thread ID as chosen by GDB, in the per-inferior format. Might not always be available */
+	protected final String m_gdbPerInfTid;
 
 	/** Thread execution state. */
 	protected VisualizerExecutionState m_threadState;
@@ -53,10 +56,16 @@ public class VisualizerThread
 
 	/** Constructor. */
 	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, VisualizerExecutionState state, IFrameDMData frame) {
+		this(core, pid, tid, gdbtid, null, state, frame);
+	}
+	
+	/** Constructor. */
+	public VisualizerThread(VisualizerCore core, int pid, int tid, int gdbtid, String perInfTid, VisualizerExecutionState state, IFrameDMData frame) {
 		m_core = core;
 		m_pid = pid;
 		m_tid = tid;
 		m_gdbtid = gdbtid;
+		m_gdbPerInfTid = perInfTid;
 		m_threadState = state;
 		setLocationInfo(frame);
 	}
@@ -148,6 +157,11 @@ public class VisualizerThread
 	/** Gets gdb thread id. */
 	public int getGDBTID()	{
 		return m_gdbtid;
+	}
+	
+	/** Gets gdb thread id, in the per-inferior format. Might not always be available*/
+	public String getPerInfTID()	{
+		return m_gdbPerInfTid;
 	}
 
 	/** Gets thread execution state. */

@@ -344,15 +344,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * case a pdom ready to use is returned.
 	 * @throws CoreException
 	 */
-	private WritablePDOM getOrCreatePDOM(ICProject project, IProgressMonitor monitor) throws CoreException {
+	private WritablePDOM getOrCreatePDOM(ICProject cProject, IProgressMonitor monitor) throws CoreException {
 		synchronized (fProjectToPDOM) {
-			IProject rproject = project.getProject();
-			IPDOM pdomProxy= fProjectToPDOM.get(rproject);
+			IProject project = cProject.getProject();
+			IPDOM pdomProxy= fProjectToPDOM.get(project);
 			if (pdomProxy instanceof WritablePDOM) {
 				return (WritablePDOM) pdomProxy;
 			}
 
-			String dbName= rproject.getPersistentProperty(dbNameProperty);
+			String dbName= project.getPersistentProperty(dbNameProperty);
 			File dbFile= null;
 			if (dbName != null) {
 				dbFile= fileFromDatabaseName(dbName);
@@ -375,13 +375,23 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 			boolean fromScratch= false;
 			if (dbName == null) {
-				dbName = createNewDatabaseName(project);
+				dbName = createNewDatabaseName(cProject);
 				dbFile= fileFromDatabaseName(dbName);
-				storeDatabaseName(rproject, dbName);
+				storeDatabaseName(project, dbName);
 				fromScratch= true;
 			}
 
-			WritablePDOM pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), getLinkageFactories());
+			WritablePDOM pdom;
+			try {
+				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
+			} catch (CoreException e) {
+				CCorePlugin.log("Failed to open C/C++ index " + dbFile.getAbsolutePath() //$NON-NLS-1$
+						+ " - rebuilding the index", e); //$NON-NLS-1$
+				dbFile.delete();
+				fromScratch= true;
+				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(project), getLinkageFactories());
+			}
+
 			if (!pdom.isSupportedVersion() || fromScratch) {
 				try {
 					pdom.acquireWriteLock(monitor);
@@ -394,14 +404,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					pdom.clear();
 					pdom.setClearedBecauseOfVersionMismatch(true);
 				}
-				writeProjectPDOMProperties(pdom, rproject);
+				writeProjectPDOMProperties(pdom, project);
 				pdom.releaseWriteLock();
 			}
-			pdom.setASTFilePathResolver(new ProjectIndexerInputAdapter(project, false));
+			pdom.setASTFilePathResolver(new ProjectIndexerInputAdapter(cProject, false));
 			pdom.addListener(this);
 
-			fFileToProject.put(dbFile, project);
-			fProjectToPDOM.put(rproject, pdom);
+			fFileToProject.put(dbFile, cProject);
+			fProjectToPDOM.put(project, pdom);
 			if (pdomProxy instanceof PDOMProxy) {
 				((PDOMProxy) pdomProxy).setDelegate(pdom);
 			}

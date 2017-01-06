@@ -207,8 +207,13 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			}
 			
 			addConsole(console);
+			
+// No need to open the view manually as it is associated with the Debug view
+// and is handled through the automatic view management system.
+// It will be opened by the platform.
+// See http://eclip.se/509897 
 			// Make sure the Debugger Console view is visible but do not force it to the top
-			getDebuggerConsoleManager().openConsoleView();
+			// getDebuggerConsoleManager().openConsoleView();
 		}
 	}
 	

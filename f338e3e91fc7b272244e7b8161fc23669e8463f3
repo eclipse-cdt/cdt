@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_624186f1",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12189,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-06T02:44:42Z",
+      "side": 1,
+      "message": "Please reference the bug number in the test name.",
+      "range": {
+        "startLine": 12189,
+        "startChar": 13,
+        "endLine": 12189,
+        "endChar": 44
+      },
+      "revId": "f338e3e91fc7b272244e7b8161fc23669e8463f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_22b06e71",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPEvaluation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-06T02:44:42Z",
+      "side": 1,
+      "message": "This should be true when maybeApplyConversion() is called from EvalUnary.getValue() or EvalBinary.getValue(), and the unary (resp. binary) operator is ! (resp. \u0026\u0026 or ||).\n\nWe can achieve this by adding a \u0027boolean allowContextualConversion\u0027 parameter to maybeApplyConversion().",
+      "range": {
+        "startLine": 160,
+        "startChar": 32,
+        "endLine": 160,
+        "endChar": 37
+      },
+      "revId": "f338e3e91fc7b272244e7b8161fc23669e8463f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

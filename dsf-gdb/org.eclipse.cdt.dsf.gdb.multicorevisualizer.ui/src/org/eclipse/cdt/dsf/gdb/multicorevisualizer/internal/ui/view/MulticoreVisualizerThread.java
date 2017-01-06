@@ -175,8 +175,17 @@ public class MulticoreVisualizerThread extends MulticoreVisualizerGraphicObject
 			// (for now, every thread is debugged.)
 //			GUIUtils.drawText(gc, "D", x+w, y-8); //$NON-NLS-1$
 			
+			String tidToUse;
+			if (m_thread.getPerInfTID() != null) {
+				tidToUse = m_thread.getPerInfTID();
+			}
+			else {
+				tidToUse = Integer.toString(m_thread.getGDBTID());
+			}
+			
+			
 			// draw TID, in format "<gdb tid> - ( <os tid> )
-			String displayTID = m_thread.getGDBTID() + " - ( " + m_thread.getTID() + " )"; //$NON-NLS-1$ //$NON-NLS-2$
+			String displayTID = tidToUse + " - ( " + m_thread.getTID() + " )"; //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtils.drawText(gc, displayTID, x + w + 4, y + 2);
 			
 			// draw selection marker, if any

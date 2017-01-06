@@ -1031,6 +1031,9 @@
       <contextViewBinding
             contextId="org.eclipse.cdt.debug.ui.debugging"
             viewId="org.eclipse.debug.ui.ModuleView"/>
+     <contextViewBinding
+           contextId="org.eclipse.cdt.debug.ui.debugging"
+           viewId="org.eclipse.cdt.debug.ui.debuggerConsoleView"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

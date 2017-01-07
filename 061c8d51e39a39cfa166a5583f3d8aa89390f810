@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_252795bc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-01-07T01:52:07Z",
+      "side": 1,
+      "message": "And if this is null what that suppose to mean? Log something?",
+      "revId": "061c8d51e39a39cfa166a5583f3d8aa89390f810",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1045,7 +1045,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void func(U& u, const typename U::t& v) {
 	//	}
 
-	//	template <typename T> struct A {
+	//	template <typename T>
+	//	struct A {
 	//	  typedef T t;
 	//	};
 	//

@@ -1369,16 +1369,14 @@ public class AST2TemplateTests extends AST2TestBase {
 	}
 
 	// template<typename T>
-	// class A {
-	//    public:
+	// struct A {
 	//    class B {};
 	// };
 	//
 	// class C {}; class D {};
 	//
 	// template<>
-	// class A<C> {
-	//   public:
+	// struct A<C> {
 	//   class B {};
 	// };
 	//
@@ -1406,10 +1404,8 @@ public class AST2TemplateTests extends AST2TestBase {
 	// class A {};
 	//
 	// template<typename T>
-	// class X {
-	// public:
-	//    class Y {
-	//    public:
+	// struct X {
+	//    struct Y {
 	//       class Z {};
 	//    };
 	// };
@@ -1434,8 +1430,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	// class X {};
 	//
 	// template<typename T3>
-	// class X<T3, A> {
-	// public:
+	// struct X<T3, A> {
 	//     class N {};
 	// };
 	//
@@ -1667,7 +1662,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//    iterator begin();
 	//    iterator end();
 	// };
-	// class Bar { public: int foo; };
+	// struct Bar { int foo; };
 	// void f() {
 	//    list<Bar> bar;
 	//    for(list<Bar>::iterator i = bar.begin(); i != bar.end(); ++i){
@@ -1973,13 +1968,14 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(((ICPPTemplateInstance)A).getTemplateDefinition(), Aspec);
 	}
 
-	// template< class T > class A : public T {};
-	// class C { public: int c; };
-	// class B : public A<C> { };
-	// void main(){
+	//	template<class T>
+	//	class A : public T {};
+	//	class C { public: int c; };
+	//	class B : public A<C> { };
+	//	void main() {
 	//    B k;
 	//    k.c;
-	// }
+	//	}
 	public void testBug105769() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
 		NameCollector col = new NameCollector();
@@ -1989,12 +1985,13 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(c, col.getName(4).resolveBinding());
 	}
 
-	// template< class T > class C {
+	//	template<class T>
+	//	class C {
 	//    public: void * blah;
 	//    template<typename G> C(G* g) : blah(g) {}
 	//    template <> C(char * c) : blah(c) {}
 	//    template <> C(wchar_t * c) : blah(c) {}
-	// };
+	//	};
 	public void testBug162230() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
 		NameCollector col = new NameCollector();
@@ -2028,8 +2025,8 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(c2, col.getName(16).resolveBinding());
 	}
 
-	// template< class T > class C {};
-	// typedef struct C<int> CInt;
+	//	template< class T > class C {};
+	//	typedef struct C<int> CInt;
 	public void testBug169628() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
 		NameCollector col = new NameCollector();

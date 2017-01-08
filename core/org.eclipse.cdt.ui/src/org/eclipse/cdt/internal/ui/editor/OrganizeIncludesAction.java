@@ -12,8 +12,10 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -30,10 +32,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.SharedASTJob;
+
+import org.eclipse.cdt.internal.core.model.ASTCache;
 
 import org.eclipse.cdt.internal.ui.BusyCursorJobRunner;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -67,25 +69,32 @@ public class OrganizeIncludesAction extends TextEditorAction {
 		final IHeaderChooser headerChooser = new InteractiveHeaderChooser(
 				CEditorMessages.OrganizeIncludes_label, editor.getSite().getShell());
 		final MultiTextEdit[] holder = new MultiTextEdit[1];
-		SharedASTJob job = new SharedASTJob(CEditorMessages.OrganizeIncludes_action, tu) {
+		// We can't use SharedASTJob because IncludeOrganizer needs to disable promiscuous
+		// binding resolution, and you can't mix promiscuous and non-promiscuous binding
+		// resolution in the same AST.
+		Job job = new Job(CEditorMessages.OrganizeIncludes_action) {
 			@Override
-			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-				if (ast == null) {
-					return CUIPlugin.createErrorStatus(
-							NLS.bind(CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
-				}
-
-				IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
-						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
+			public IStatus run(IProgressMonitor monitor) {
 				try {
-					index.acquireReadLock();
-					IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
-					holder[0] = organizer.organizeIncludes(ast);
-					return Status.OK_STATUS;
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				} finally {
-					index.releaseReadLock();
+					IIndex index= CCorePlugin.getIndexManager().getIndex(tu.getCProject(),
+							IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
+					try {
+						index.acquireReadLock();
+						IASTTranslationUnit ast = tu.getAST(index, ASTCache.PARSE_MODE);					
+						if (ast == null) {
+							return CUIPlugin.createErrorStatus(
+									NLS.bind(CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
+						}
+						IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
+						holder[0] = organizer.organizeIncludes(ast);
+						return Status.OK_STATUS;
+					} catch (InterruptedException e) {
+						return Status.CANCEL_STATUS;
+					} finally {
+						index.releaseReadLock();
+					}
+				} catch (CoreException e) {
+					return e.getStatus();
 				}
 			}
 		};

@@ -279,6 +279,7 @@ public class BasicSearchTest extends SearchTestBase {
 	
 	// void foo() {}
 
+	//	#include "header.h"
 	// void bar() {
 	//   foo();
 	// }
@@ -297,6 +298,7 @@ public class BasicSearchTest extends SearchTestBase {
 	
 	// void foo() {}
 
+	//	#include "header.h"
 	// void bar() {foo();foo();foo();}
 	public void testNewResultsOnSearchAgainB() throws Exception {
 		CSearchQuery query= makeProjectQuery("foo");
@@ -304,7 +306,7 @@ public class BasicSearchTest extends SearchTestBase {
 		assertOccurrences(query, 4);
 		
 		// whitespace s.t. new match offset is same as older 
-		String newContent= "void bar() {      foo();      }";
+		String newContent= "#include \"header.h\"\nvoid bar() {      foo();      }";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
 		runEventQueue(1000);
@@ -314,7 +316,7 @@ public class BasicSearchTest extends SearchTestBase {
 
 		assertOccurrences(query, 2);
 		
-		String newContent2= "void bar() {foo(); foo();}";
+		String newContent2= "#include \"header.h\"\nvoid bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, npm());
 		waitForIndexer(fCProject);
 
@@ -326,6 +328,7 @@ public class BasicSearchTest extends SearchTestBase {
 	//	template<typename T> void f(T) {};
 	//	template<typename T> void f(T*) {};
 
+	//	#include "header.h"
 	//	void a() {
 	//	  CT<int>* r1;
 	//	  CT<char>* r2;

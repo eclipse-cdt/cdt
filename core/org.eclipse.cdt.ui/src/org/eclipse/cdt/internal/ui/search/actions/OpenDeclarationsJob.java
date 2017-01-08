@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -428,17 +429,31 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return null;
 	}
 
-	private boolean areOverlappingNames(IName n1, IName n2) {
+	private static boolean areOverlappingNames(IName n1, IName n2) {
 		if (n1 == n2)
 			return true;
 
-		IASTFileLocation loc1 = n1.getFileLocation();
-		IASTFileLocation loc2 = n2.getFileLocation();
+		IASTFileLocation loc1 = getFileLocation(n1);
+		IASTFileLocation loc2 = getFileLocation(n2);
 		if (loc1 == null || loc2 == null)
 			return false;
 		return loc1.getFileName().equals(loc2.getFileName()) &&
 				max(loc1.getNodeOffset(), loc2.getNodeOffset()) <
 				min(loc1.getNodeOffset() + loc1.getNodeLength(), loc2.getNodeOffset() + loc2.getNodeLength());
+	}
+	
+	private static IASTFileLocation getFileLocation(IName name) {
+		IASTFileLocation fileLocation = name.getFileLocation();
+		if (name instanceof IASTName) {
+			IASTName astName = (IASTName) name;
+			IASTImageLocation imageLocation = astName.getImageLocation();
+			if (imageLocation != null && 
+				imageLocation.getLocationKind() != IASTImageLocation.MACRO_DEFINITION &&
+				astName.getTranslationUnit().getFilePath().equals(fileLocation.getFileName())) {
+				fileLocation = imageLocation;
+			}
+		}
+		return fileLocation;
 	}
 
 	private static boolean isInSameFunction(IASTName refName, IName funcDeclName) {
@@ -517,7 +532,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (tu != null) {
 					if (tu instanceof IWorkingCopy)
 						tu = ((IWorkingCopy) tu).getOriginalElement();
-					IASTFileLocation loc= astName.getFileLocation();
+					IASTFileLocation loc= getFileLocation(astName);
 					IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
 					return CElementHandleFactory.create(tu, binding, astName.isDefinition(), region, 0);
 				}
@@ -653,7 +668,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private boolean navigateToName(IName name) {
-		return navigateToLocation(name.getFileLocation());
+		return navigateToLocation(getFileLocation(name));
 	}
 
 	private boolean navigateToLocation(IASTFileLocation fileloc) {

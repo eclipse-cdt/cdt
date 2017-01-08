@@ -1315,4 +1315,23 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
         String expansion = new String(((IMacroBinding) binding).getExpansion());
         assertTrue(expansion.contains("42"));
     }
+    
+	//    #define DEFINE_FUNC(...) void foo() { __VA_ARGS__ }
+	//    struct Waldo {
+	//        void find();
+	//    };
+	//    DEFINE_FUNC
+	//    (
+	//        Waldo waldo;
+	//        waldo.find();
+	//    )        
+    public void testDeclarationInMacroArgment_509733() throws Exception {
+        String code = getAboveComment();
+        IFile file = importFile("test.cpp", code);
+        waitUntilFileIsIndexed(index, file);
+        
+        int offset= code.indexOf("waldo.find()"); 
+        IASTNode def = testF3(file, offset + 1);
+        assertTrue(def instanceof IASTName);
+    }
 }

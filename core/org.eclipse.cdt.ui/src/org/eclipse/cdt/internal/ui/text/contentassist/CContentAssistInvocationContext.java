@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
@@ -130,8 +131,20 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			final int invocationOffset = getInvocationOffset();
 			final int parseOffset = getParseOffset();
 			final int bound = Math.max(-1, parseOffset - 1);
-			final CHeuristicScanner scanner = new CHeuristicScanner(getDocument());
-			final int parenthesisOffset = scanner.findOpeningPeer(invocationOffset, bound, '(', ')');
+			final IDocument document = getDocument();
+			final CHeuristicScanner scanner = new CHeuristicScanner(document);
+			int start = invocationOffset;
+			try {
+				// The documentation of CHeuristicScanner.findOpeningPeer() says
+				// "Note that <code>start</code> must not point to the closing peer, but to the first
+				//  character being searched."
+				// If we are completing in between two empty parentheses with no space between them,
+				// this condition won't be satisfied, so we start the search one character earlier.
+				if (document.getChar(start) == ')')
+					start -= 1;
+			} catch (BadLocationException e) {
+			}
+			final int parenthesisOffset = scanner.findOpeningPeer(start, bound, '(', ')');
 			return parenthesisOffset != CHeuristicScanner.NOT_FOUND;
 		}
 	};

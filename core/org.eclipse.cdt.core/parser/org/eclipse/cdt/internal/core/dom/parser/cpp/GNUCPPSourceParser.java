@@ -572,9 +572,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						}
 					}
 					break;
-				case IToken.tSEMI:
+					
+				// In C++11, braces can occur at the top level in a template-argument,
+				// if an object of class type is being created via uniform initialization,
+				// and that class type has a constexpr conversion operator to a type
+				// that's valid as the type of a non-type template parameter.
 				case IToken.tLBRACE:
+					if (nk == 0) {
+						nk = IToken.tLBRACE;
+						depth = 0;
+					} else if (nk == IToken.tLBRACE) {
+						depth++;
+					}
+					break;
+					
 				case IToken.tRBRACE:
+					if (nk == 0) {
+						return NO_TEMPLATE_ID;
+					}
+					else if (nk == IToken.tLBRACE) {
+						if (--depth < 0) {
+							nk = 0;
+						}
+					}
+					break;
+					
+				case IToken.tSEMI:
 					if (nk == 0) {
 						return NO_TEMPLATE_ID;
 					}

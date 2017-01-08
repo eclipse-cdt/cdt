@@ -7806,6 +7806,28 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testConstexprFunctionCallInTemplateArgument_332829() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct IntConvertible {
+	//	    constexpr operator int() const { return 42; }
+	//	};
+	//
+	//	template <int>
+	//	struct Waldo {};
+	//
+	//	Waldo<IntConvertible{}> w;  // Syntax error
+	public void testUniformInitializationInTemplateArgument_510010() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	int f() {
+	//		int i = 0;
+	//		if(i < 1){
+	//			++i;
+	//		}
+	//	}
+	public void testRegression_510010() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<bool, typename T = void>
 	//	struct C {};

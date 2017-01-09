@@ -79,7 +79,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	@Override
 	public void doContinue(Collection<String> commands) {
-		String cmd = "continue"; //$NON-NLS-1$
+		String cmd = "-exec-continue"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 

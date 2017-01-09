@@ -73,6 +73,9 @@ public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequ
         					rm.done();
         				}
         			});
+        } else {
+        	// Should not happen but accept errors in this case
+        	rm.done();
         }
 	}
 }

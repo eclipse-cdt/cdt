@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDPrintfStyle;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -74,5 +77,38 @@ public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequ
         				}
         			});
         }
+	}
+
+	@Execute
+	public void stepSourceGDBInitFile(RequestMonitor rm) {
+		super.stepSourceGDBInitFile(new RequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				// Processing this request after sourcing the gdbinit file to make sure the user
+				// cannot change this behavior
+				DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(),
+						getSession().getId());
+				IMICommandControl commandControl = tracker.getService(IMICommandControl.class);
+				IGDBBackend gdbBackEnd = tracker.getService(IGDBBackend.class);
+				tracker.dispose();
+
+				if (commandControl != null && gdbBackEnd != null) {
+					// Use target async when interfacing with the full GDB console (i.e. minimum GDB version 7.12)
+					// otherwise explicitly set it to off.
+					commandControl.queueCommand(
+							commandControl.getCommandFactory().createMIGDBSetTargetAsync(commandControl.getContext(), gdbBackEnd.isFullGdbConsoleSupported()),
+							new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+								@Override
+								protected void handleError() {
+									// Accept errors for older GDBs
+									rm.done();
+								}
+							});
+				} else {
+					// Should not happen
+					rm.done();
+				}
+			}
+		});
 	}
 }

@@ -79,7 +79,13 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	@Override
 	public void doContinue(Collection<String> commands) {
-		String cmd = "continue"; //$NON-NLS-1$
+	    // The CLI version "continue" causes GDB to block and would not be
+	    // able to respond other MI commands, this is a problem
+	    // when running in async mode as it depends on the processing 
+	    // of MI commands e.g. to suspend the program. 
+	    //   Therefore we need to use the MI command version "-exec-continue"
+	    // which does not block GDB.
+		String cmd = "-exec-continue"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 

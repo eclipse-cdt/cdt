@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -36,6 +37,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
 	private Map<String, Object> fAttributes;
+	private IGDBBackend fGdbBackEnd;
 
 	public FinalLaunchSequence_7_12(DsfSession session, Map<String, Object> attributes,
 			RequestMonitorWithProgress rm) {
@@ -76,6 +78,8 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(),
 				getSession().getId());
 		fCommandControl = tracker.getService(IGDBControl.class);
+		fGdbBackEnd = tracker.getService(IGDBBackend.class);
+
 		tracker.dispose();
 
 		if (fCommandControl == null) {
@@ -94,16 +98,18 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	public void stepSetTargetAsync(RequestMonitor requestMonitor) {
 		// Use target async when interfacing with GDB 7.12 or higher
 		// this will allow us to use the new enhanced GDB Full CLI console
-		fCommandControl.queueCommand(
-			fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), true),
-			new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-				@Override
-				protected void handleError() {
-					// We should only be calling this for GDB >= 7.12,
-					// but just in case, accept errors for older GDBs
-					requestMonitor.done();
-				}
-			});
+		if (fCommandControl != null && fGdbBackEnd != null && fGdbBackEnd.isFullGdbConsoleSupported()) {
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), true),
+					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+						@Override
+						protected void handleError() {
+							// We should only be calling this for GDB >= 7.12,
+							// but just in case, accept errors for older GDBs
+							requestMonitor.done();
+						}
+					});
+		}
 	}
 	
 	/**

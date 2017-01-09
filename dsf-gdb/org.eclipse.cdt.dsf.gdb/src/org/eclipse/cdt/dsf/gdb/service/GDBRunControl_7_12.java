@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 	private IMICommandControl fCommandControl;
 	private CommandFactory fCommandFactory;
+	private IGDBBackend fGDBBackEnd;
 	private Map<String, EnableReverseAtLocOperation> fBpIdToReverseOpMap = new HashMap<>();
 
 	public GDBRunControl_7_12(DsfSession session) {
@@ -61,6 +62,8 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	private void doInitialize(final RequestMonitor rm) {
         fCommandControl = getServicesTracker().getService(IMICommandControl.class);
+        fGDBBackEnd = getServicesTracker().getService(IGDBBackend.class);
+
         fCommandFactory = fCommandControl.getCommandFactory();
 		
 		register(new String[]{ GDBRunControl_7_12.class.getName() }, 
@@ -111,8 +114,11 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	@Override
 	public boolean isTargetAcceptingCommands() {
-		// Async mode is on when running with GDB 7.12 or higher
-		return true;
+		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
+			return true;
+		}
+
+		return super.isTargetAcceptingCommands();
 	}
 
 	/**

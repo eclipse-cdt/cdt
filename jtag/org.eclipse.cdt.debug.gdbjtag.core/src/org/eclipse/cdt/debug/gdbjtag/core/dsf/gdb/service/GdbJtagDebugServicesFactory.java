@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Ericsson and others.
+ * Copyright (c) 2011, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+			return new GDBJtagControl_7_12(session, config, new CommandFactory_6_8());
+		}
 		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBJtagControl_7_7(session, config, new CommandFactory_6_8());
 		}

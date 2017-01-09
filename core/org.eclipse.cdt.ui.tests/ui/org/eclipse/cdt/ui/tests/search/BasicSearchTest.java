@@ -55,6 +55,10 @@ public class BasicSearchTest extends SearchTestBase {
 		return suite(BasicSearchTest.class);
 	}
 
+	public BasicSearchTest() {
+		setStrategy(new SingleProjectStrategy());
+	}
+
 	// // empty
 
 	// #include "extHead.h"

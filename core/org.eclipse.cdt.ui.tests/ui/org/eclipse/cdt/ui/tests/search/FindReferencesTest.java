@@ -15,7 +15,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
@@ -35,8 +34,25 @@ import junit.framework.TestSuite;
  * CSearchTextSelectionQuery directly.
  */
 public class FindReferencesTest extends SearchTestBase {
-	public static TestSuite suite() {
-		return suite(FindReferencesTest.class);
+	public static class SingleProject extends FindReferencesTest {
+		public SingleProject() { setStrategy(new SingleProjectStrategy()); }
+		public static TestSuite suite() { return suite(SingleProject.class); }
+	}
+	
+	public static class ReferencedProject extends FindReferencesTest {
+		public ReferencedProject() { setStrategy(new ReferencedProjectStrategy()); }
+		public static TestSuite suite() { return suite(ReferencedProject.class); }
+	}
+	
+	public static void addTests(TestSuite suite) {
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ReferencedProject.suite());
+	}
+	
+	public FindReferencesTest() {
+		// For convenience, to be able to run tests via right click -> Run As -> JUnit Plugin Test.
+		// Will use the SingleProjectStrategy when run this way.
+		setStrategy(new SingleProjectStrategy());
 	}
 
 	private CSearchQuery makeSearchQuery(IFile file, TextSelection selection) {
@@ -51,7 +67,7 @@ public class FindReferencesTest extends SearchTestBase {
 		CEditor editor = (CEditor) part;
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
 		ITranslationUnit tu = editor.getInputCElement();
-		return new CSearchTextSelectionQuery(new ICElement[] { fCProject }, tu, selection, CSearchQuery.FIND_REFERENCES);
+		return new CSearchTextSelectionQuery(fStrategy.getScope(), tu, selection, CSearchQuery.FIND_REFERENCES);
 	}
 
 	private TextSelection selectSection(String section, String context, String code) {
@@ -135,6 +151,21 @@ public class FindReferencesTest extends SearchTestBase {
 	//	}
 	public void testAnonymousNamespace_509749() throws Exception {
 		CSearchQuery query = makeSearchQuery(fSourceFile, selectSection("findMe", "findMe(b)", fSourceContents));
+		assertOccurrences(query, 1);
+	}
+	
+	//	template <typename T>
+	//	class Waldo {
+	//		void find();
+	//	};
+	
+	//	#include "header.h"
+	//	void foo() {
+	//		Waldo<int> waldo;
+	//		waldo.find();
+	//	}
+	public void testMethodOfClassTemplate_509734() throws Exception {
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("find", "void find()", fHeaderContents));
 		assertOccurrences(query, 1);
 	}
 }

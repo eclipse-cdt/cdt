@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
+import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
@@ -66,17 +67,34 @@ public class CompositeInstanceCache {
 		}
 		return null;
 	}
+
+	private void addInstancesFrom(ICompositesFactory cf, ICPPInstanceCache cache) {
+		ICPPTemplateInstance[] insts= cache.getAllInstances();
+		for (ICPPTemplateInstance ti : insts) {
+			if (ti instanceof IIndexFragmentBinding) {
+				ICPPTemplateInstance comp= (ICPPTemplateInstance) cf.getCompositeBinding((IIndexFragmentBinding) ti);
+				ICPPTemplateArgument[] args= comp.getTemplateArguments();
+				addInstance(args, comp);
+			}
+		}
+	}
 	
 	private void populate(ICompositesFactory cf, IIndexFragmentBinding fb) {
 		if (fb instanceof ICPPInstanceCache) {
-			ICPPTemplateInstance[] insts= ((ICPPInstanceCache) fb).getAllInstances();
-			for (ICPPTemplateInstance ti : insts) {
-				if (ti instanceof IIndexFragmentBinding) {
-					ICPPTemplateInstance comp= (ICPPTemplateInstance) cf.getCompositeBinding((IIndexFragmentBinding) ti);
-					ICPPTemplateArgument[] args= comp.getTemplateArguments();
-					addInstance(args, comp);
+			addInstancesFrom(cf, (ICPPInstanceCache) fb);
+		}
+		
+		// Also add instanced cached in other fragments.
+		CIndex index = (CIndex) ((CPPCompositesFactory) cf).getContext();
+		try {
+			IIndexFragmentBinding[] fragmentBindings = index.findEquivalentBindings(fb);
+			for (IIndexFragmentBinding fragmentBinding : fragmentBindings) {
+				if (fragmentBinding instanceof ICPPInstanceCache) {
+					addInstancesFrom(cf, (ICPPInstanceCache) fragmentBinding);
 				}
 			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 	}
 

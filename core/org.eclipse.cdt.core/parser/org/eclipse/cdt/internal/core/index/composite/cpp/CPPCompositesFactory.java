@@ -644,9 +644,11 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				} else if (binding instanceof ICPPAliasTemplate) {
 					return new CompositeCPPAliasTemplate(this, (ICPPBinding) binding);
 				} else if (binding instanceof ICPPFieldTemplate) {
-					return new CompositeCPPFieldTemplate(this, (ICPPField) binding);
+					ICPPField def = (ICPPField) findOneBinding(binding);
+					return new CompositeCPPFieldTemplate(this, def);
 				} else if (binding instanceof ICPPVariableTemplate) {
-					return new CompositeCPPVariableTemplate(this, (ICPPVariable) binding);
+					ICPPVariable def = (ICPPVariable) findOneBinding(binding);
+					return new CompositeCPPVariableTemplate(this, def);
 				} else {
 					throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}

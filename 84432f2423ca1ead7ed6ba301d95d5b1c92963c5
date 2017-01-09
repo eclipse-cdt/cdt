@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_a8d37ccb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1942,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-01-09T00:47:03Z",
+      "side": 1,
+      "message": "It would be nice to preserve leading tabs.",
+      "range": {
+        "startLine": 1942,
+        "startChar": 0,
+        "endLine": 1942,
+        "endChar": 5
+      },
+      "revId": "84432f2423ca1ead7ed6ba301d95d5b1c92963c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_c8dc38df",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/OrganizeIncludesAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-01-09T00:47:03Z",
+      "side": 1,
+      "message": "Unnecessary trailing whitespace.",
+      "range": {
+        "startLine": 83,
+        "startChar": 70,
+        "endLine": 83,
+        "endChar": 75
+      },
+      "revId": "84432f2423ca1ead7ed6ba301d95d5b1c92963c5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

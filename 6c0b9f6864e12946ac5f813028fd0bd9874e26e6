@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_14900554",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:14:50Z",
+      "side": 1,
+      "message": "We can simplify the sequence by moving this code to the step below and not have\nany initialization for it, or global members.",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7462190a",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:14:50Z",
+      "side": 1,
+      "message": "@since 9.1",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b4675116",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:14:50Z",
+      "side": 1,
+      "message": "We should extend GDBControl_7_12 instead of GDBJtagControl_7_7 in case that service were to \nprovide some more specialization.  There is nothing in GDBJtagControl_7_7 that we need, so we can just\nignore it.  \nThe extension pattern here is not so good but of the two options, the more future-proof\nis to override the GDBControl_7_12 class.\nMaking this change will trigger an error in the API tool in GDBJtagControl_HEAD.  However, looking at the class\nhierarchy, I believe this change is safe, so we can add an API filter.",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b41cb19e",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/extensions/GDBJtagControl_HEAD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:14:50Z",
+      "side": 1,
+      "message": "You must update this to GDB_7_12_VERSION",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

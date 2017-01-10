@@ -297,8 +297,10 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 
 	private static ICPPConstructor getImplicitlyCalledCtor(ICPPASTDeclarator declarator) {
 		IBinding ctor = CPPSemantics.findImplicitlyCalledConstructor(declarator);
-		if (ctor instanceof ICPPConstructor && !EvalUtil.isCompilerGeneratedCtor(ctor)) {
-			return (ICPPConstructor) ctor;
+		if (ctor instanceof ICPPConstructor) {
+			if (!EvalUtil.isCompilerGeneratedCtor(ctor) || EvalUtil.isDefaultConstructor((ICPPConstructor) ctor)) {
+				return (ICPPConstructor) ctor;
+			}
 		}
 		return null;
 	}

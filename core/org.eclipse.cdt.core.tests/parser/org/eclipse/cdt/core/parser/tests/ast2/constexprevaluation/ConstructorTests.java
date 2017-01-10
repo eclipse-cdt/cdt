@@ -557,4 +557,34 @@ public class ConstructorTests extends TestBase {
 	public void testOrderOfFieldInitialization() throws Exception {
 		assertEvaluationEquals(10);
 	}
+
+	//	struct S {
+	//		int value = 42;
+	//	};
+	//	constexpr S waldo{23};
+	
+	//	constexpr int x = waldo.value;
+	public void testDirectInitializedVariable_510151() throws Exception {
+		assertEvaluationEquals(23);
+	}
+
+	//	struct S {
+	//		int value = 42;
+	//	};
+	//	constexpr S waldo{};
+	
+	//	constexpr int x = waldo.value;
+	public void testDirectDefaultInitializedVariable_510151() throws Exception {
+		assertEvaluationEquals(42);
+	}
+
+	//	struct S {
+	//		int value = 42;
+	//	};
+	//	constexpr S waldo;
+	
+	//	constexpr int x = waldo.value;
+	public void testDefaultInitializedVariable_510151() throws Exception {
+		assertEvaluationEquals(42);
+	}
 }

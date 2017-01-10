@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -93,7 +94,14 @@ public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole
 
 	@Override
 	protected void dispose() {
-        try {
+		stop();
+		super.dispose();
+	}
+
+	@Override
+	public void stop() {
+		// Closing the streams will trigger the termination of the associated reading jobs
+		try {
         	fOutputStream.close();
 		} catch (IOException e) {
 		}
@@ -102,11 +110,17 @@ public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole
 		} catch (IOException e) {
 		}
 
-		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
+		IOConsoleInputStream istream = getInputStream();
+		if (istream != null) {
+			try {
+				istream.close();
+			} catch (IOException e) {
+			}
+		}
 
-		super.dispose();
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 	}
-	
+
 	private void setDefaults() {
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		boolean enabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS);

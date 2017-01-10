@@ -41,4 +41,13 @@ public interface IDebuggerConsole extends IConsole {
 	 * notification to e.g. keep other views in sync with the context of the console
 	 */
 	void consoleSelected();
+
+	/**
+	 * Stop processing but don't dispose this console yet, 
+	 * i.e. It's desirable to keep the last I/O information available to the user
+	 * @since 8.2
+	 */
+	default void stop() {
+		// Nothing to do by default
+	}
 }

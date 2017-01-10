@@ -16,6 +16,23 @@
       "revId": "061c8d51e39a39cfa166a5583f3d8aa89390f810",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_3dc965be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/CLIDebugActionEnabler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:26:08Z",
+      "side": 1,
+      "message": "I don\u0027t expect it to ever be null, but maybe it could happen when the session is shutting down,\nso we usually check for null just to be safe.\nI added a log entry like you suggested.",
+      "revId": "061c8d51e39a39cfa166a5583f3d8aa89390f810",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

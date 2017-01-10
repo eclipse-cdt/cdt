@@ -520,7 +520,9 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (name instanceof IASTName) {
 			IASTName astName = (IASTName) name;
 			IASTImageLocation imageLocation = astName.getImageLocation();
-			if (imageLocation != null && astName.getTranslationUnit().getFilePath().equals(fileLocation.getFileName())) {
+			if (imageLocation != null && 
+				imageLocation.getLocationKind() != IASTImageLocation.MACRO_DEFINITION &&
+				astName.getTranslationUnit().getFilePath().equals(fileLocation.getFileName())) {
 				fileLocation = imageLocation;
 			}
 		}

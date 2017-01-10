@@ -54,4 +54,12 @@ public interface IGDBDebuggerConsole extends IDebuggerConsole {
 			}
 		});
 	}
+
+	/**
+	 * Stop processing but don't dispose this console yet, 
+	 * i.e. It's desirable to keep the last I/O information available to the user
+	 */
+	default void stop() {
+		// Nothing to do by default
+	}
 }

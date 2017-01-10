@@ -147,4 +147,16 @@ public class ClassTemplateTests extends TestBase {
 	public void testTemplateArgumentInMemberInitializerList() throws Exception {
 		assertEvaluationEquals(10);
 	}
+
+	//	struct S {
+	//		int value = 42;
+	//	};
+	//	constexpr S waldo{};
+	//	template <int> struct W;
+	//	template <> struct W<42> { typedef int type; };
+
+	//	W<waldo.value>::type w = 5;
+	public void testConstexprVariable_510151() throws Exception {
+		assertEvaluationEquals(5);
+	}
 }

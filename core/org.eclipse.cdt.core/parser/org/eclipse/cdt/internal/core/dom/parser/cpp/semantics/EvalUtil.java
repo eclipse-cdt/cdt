@@ -186,4 +186,8 @@ public class EvalUtil {
 			recursionProtectionSet.remove(variable);
 		}
 	}
+
+	public static boolean isDefaultConstructor(ICPPConstructor constructor) {
+		return constructor.getRequiredArgumentCount() == 0;
+	}
 }

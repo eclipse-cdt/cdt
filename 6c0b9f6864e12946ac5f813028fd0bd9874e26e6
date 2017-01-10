@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_dd2dd11a",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:15:40Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_7462190a",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
         "patchSetId": 2
@@ -30,6 +47,23 @@
       "writtenOn": "2017-01-10T14:14:50Z",
       "side": 1,
       "message": "@since 9.1",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7d32fd7a",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:15:40Z",
+      "side": 1,
+      "message": "Done",
       "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_9d37d968",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:15:40Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_b41cb19e",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/extensions/GDBJtagControl_HEAD.java",
         "patchSetId": 2
@@ -64,6 +115,23 @@
       "writtenOn": "2017-01-10T14:14:50Z",
       "side": 1,
       "message": "You must update this to GDB_7_12_VERSION",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_bd28150b",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/extensions/GDBJtagControl_HEAD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-10T14:15:40Z",
+      "side": 1,
+      "message": "Done",
       "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

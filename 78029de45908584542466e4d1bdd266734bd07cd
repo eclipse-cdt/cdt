@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_0e97111a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/ClassTemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-10T22:56:07Z",
+      "side": 1,
+      "message": "I don\u0027t think this test case adds any value over the testcases in ConstructorTests.\n\nThe only reason I wrote a template like this in the example on bugzilla, was to turn the value computation error into a name resolution error (which is more readily observable, since it creates a red squiggly).",
+      "range": {
+        "startLine": 158,
+        "startChar": 6,
+        "endLine": 158,
+        "endChar": 11
+      },
+      "revId": "78029de45908584542466e4d1bdd266734bd07cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cecef929",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/ConstructorTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-10T22:56:07Z",
+      "side": 1,
+      "message": "I suggest adding a testcase where the default constructor has a body that overrides the default value of a variable:\n\n  //  struct S {\n  //    constexpr S() {\n  //      value \u003d 42;\n  //    }\n  //    int value \u003d 1;\n  //  };\n  //  constexpr S waldo{};\n\n  //  constexpr int x \u003d waldo.value;\n  //  public void test... {\n  //    assertEvaluationEquals(42);\n  //  }\n\n(I checked and this does pass.)",
+      "range": {
+        "startLine": 589,
+        "startChar": 1,
+        "endLine": 589,
+        "endChar": 2
+      },
+      "revId": "78029de45908584542466e4d1bdd266734bd07cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

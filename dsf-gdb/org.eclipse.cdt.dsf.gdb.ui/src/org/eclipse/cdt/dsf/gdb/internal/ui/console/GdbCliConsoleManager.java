@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ericsson and others.
+ * Copyright (c) 2016, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -158,10 +159,11 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		            	if (backend != null && control != null) {
 		            		// Backend and Control services already available, we can start!
 		            		verifyAndCreateCliConsole();
-		            	} else {
-		            		// Backend service or Control service not available yet, let's wait for them to start.
-		            		new GdbServiceStartedListener(GdbConsoleCreator.this, fSession);
 		            	}
+
+		            	// Listen for the start and termination of the control service, either to create or delete the
+		            	// corresponding console
+		            	new GdbServiceLifeCycleListener(GdbConsoleCreator.this, fSession);
 		        	}
 		        });
 			} catch (RejectedExecutionException e) {
@@ -201,17 +203,21 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			// Make sure the Debugger Console view is visible but do not force it to the top
 			getDebuggerConsoleManager().openConsoleView();
 		}
+
+		private void deleteConsole() {
+			removeConsole(fLaunch);
+		}
 	}
 	
 	/**
-	 * Class used to listen for started events for the services we need.
+	 * Class used to listen for started and terminated events for the services we need.
 	 * This class must be public to receive the event.
 	 */
-	public class GdbServiceStartedListener {
+	public class GdbServiceLifeCycleListener {
 		private DsfSession fSession;
 		private GdbConsoleCreator fCreator;
 		
-		public GdbServiceStartedListener(GdbConsoleCreator creator, DsfSession session) {
+		public GdbServiceLifeCycleListener(GdbConsoleCreator creator, DsfSession session) {
 	 		fCreator = creator;
 			fSession = session;
 			fSession.addServiceEventListener(this, null);
@@ -222,6 +228,12 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			// With the commandControl service started, we know the backend service
 			// is also started.  So we are good to go.
 			fCreator.verifyAndCreateCliConsole();
+		}
+
+		@DsfServiceEventHandler
+		public final void eventDispatched(ICommandControlShutdownDMEvent event) {
+			// Time to terminate the CLI console
+			fCreator.deleteConsole();
 			// No longer need to receive events.
 			fSession.removeServiceEventListener(this);
 		}

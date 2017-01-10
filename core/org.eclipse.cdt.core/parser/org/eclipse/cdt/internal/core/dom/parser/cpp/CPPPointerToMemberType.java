@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Models pointer to members.
+ * Models pointer to a composite type member.
  */
 public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointerToMemberType {
 	private ICPPASTPointerToMember operator;
@@ -40,9 +40,10 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		this.operator = operator;
 	}
 
-	public CPPPointerToMemberType(IType type, IType thisType, boolean isConst, boolean isVolatile, boolean isRestrict) {
+	public CPPPointerToMemberType(IType type, IType classType, boolean isConst, boolean isVolatile,
+			boolean isRestrict) {
 		super(type, isConst, isVolatile, isRestrict);
-		this.classType = thisType;
+		this.classType = classType;
 	}
 
 	@Override
@@ -65,9 +66,6 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	    return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType#getMemberOfClass()
-	 */
 	@Override
 	public IType getMemberOfClass() {
 		if (classType == null) {
@@ -92,7 +90,8 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 			if (binding instanceof IType) {
 				classType = (IType) binding;
 			} else {
-				classType = new CPPClassType.CPPClassTypeProblem(nameSpec, IProblemBinding.SEMANTIC_INVALID_TYPE, nameSpec.toCharArray());
+				classType = new CPPClassType.CPPClassTypeProblem(nameSpec, IProblemBinding.SEMANTIC_INVALID_TYPE,
+						nameSpec.toCharArray());
 			}
 		}
 		return classType;

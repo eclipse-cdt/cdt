@@ -19,7 +19,7 @@ public interface IPointerType extends IType {
     /**
      * Returns the type that this is a pointer to.
      */
-    public IType getType();
+	public IType getType();
     
     /**
      * Returns whether the pointer is const qualified.

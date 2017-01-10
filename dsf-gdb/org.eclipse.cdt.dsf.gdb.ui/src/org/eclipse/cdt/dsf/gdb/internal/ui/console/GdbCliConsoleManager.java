@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ericsson and others.
+ * Copyright (c) 2016, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			renameConsole(launch);
+			stopConsole(launch);
 		}
 	}
 	
@@ -92,6 +93,14 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 		IDebuggerConsole console = getConsole(launch);
 		if (console != null) {
 			removeConsole(console);
+		}
+	}
+
+	protected void stopConsole(ILaunch launch) {
+		IDebuggerConsole console = getConsole(launch);
+
+		if (console != null) {
+			console.stop();
 		}
 	}
 

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_9adfdf4d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-01-10T09:31:48Z",
+      "side": 1,
+      "message": "Done - I think you already told me once. I need to get rid of that habit.",
+      "parentUuid": "a7c23755_b4faf133",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "4a35580e777486395b53fb5ada4c6524385f4ee4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_140ba5b5",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPEvaluation.java",
         "patchSetId": 3
@@ -36,6 +60,24 @@
       "writtenOn": "2017-01-10T05:42:21Z",
       "side": 1,
       "message": "There are several issues here.\n\n  - First, the UDC from initializationByConversion()\n    will always be a method, so there is no need to \n    handle the ICPPFunction case.\n\n  - You are right that the correct evaluation for\n    a method is an EvalMemberAccess, not an\n    EvalBinding.\n\n  - However, this EvalMemberAccess/EvalFunctionCall\n    combination is missing something: the incoming\n    value of \u0027argument\u0027 is not being passed in anywhere.\n    This means the value of the object is lost.\n\n    In your test cases, this isn\u0027t a problem, because\n    the return value of the conversion operator doesn\u0027t\n    depend on the value of the object.\n\n    However, if we change the test like so:\n\n      struct BooleanConvertible {\n        bool value;\n        constexpr explicit operator bool() const {\n          return value;\n        }\n      };\n      constexpr BooleanConvertible TRUE{true};\n\n    the test will start failing.\n\n    The solution is to use the version of the EvalMemberAccess\n    constructor that takes an \u0027ownerEval\u0027 parameter, and\n    pass in \u0027argument\u0027 for that parameter.\n\n  - Finally, there is a bug in the constexpr evaluation engine\n    (for which I just filed bug 510151) where it doesn\u0027t\n    recognize as constexpr variables declared like so:\n\n      constexpr Type variable{};\n\n    Until that bug is fixed, the following form can be used\n    instead:\n\n      constexpr Type variable \u003d Type{};",
+      "revId": "4a35580e777486395b53fb5ada4c6524385f4ee4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5ab627c0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPEvaluation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-01-10T09:31:48Z",
+      "side": 1,
+      "message": "Done\n\n- Obviously, the conversion has to be a member function. I should have recognized that.\n\n- I extended the test case according to your suggestion to make sure we don\u0027t ignore the state of the object.\n\n- I cannot reproduce the issue of the non-constexpr variable with the current implementation. To be more specific, it is still an issue, but the test does not fail. In EvalFunction.evaluateFunctionBody (Line 228) there is a check whether all arguments (except the first) are constexpr. I changed the EvalFunctionCall to only have the EvalMemberAccess as argument, instead of eval and argument. I expected it to be enough to pass argument through the EvalMemberFunction. I\u0027m I wrong in this? Then I guess we need a test case to show this, as any other tests were still green.",
+      "parentUuid": "a7c23755_140ba5b5",
       "revId": "4a35580e777486395b53fb5ada4c6524385f4ee4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

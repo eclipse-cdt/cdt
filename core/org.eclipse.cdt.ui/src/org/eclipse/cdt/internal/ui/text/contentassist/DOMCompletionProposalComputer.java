@@ -540,17 +540,33 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return true;
 	}
 	
+	private String getFunctionNameForReplacement(IFunction function, IASTCompletionContext astContext) {
+		// If we are completiong a destructor name ...
+		if (function instanceof ICPPMethod && ((ICPPMethod) function).isDestructor()) {
+			if (astContext instanceof IASTName) {
+				char[] simpleId = ((IASTName) astContext).getLastName().getSimpleID();
+				// .. and the invocation site already contains the '~' ...
+				if (simpleId.length > 0 && simpleId[0] == '~') {
+					// ... then do not include the '~' in the replacement string.
+					// As far as the completion proposal computer is concerned, the '~' is not part
+					// of the prefix, so including it in the replacement would mean getting a second
+					// '~' in the resulting code.
+					return function.getName().substring(1);
+				}
+			}
+		}
+		return function.getName();
+	}
+	
 	private void handleFunction(IFunction function, IASTCompletionContext astContext, 
 			CContentAssistInvocationContext cContext, int baseRelevance, List<ICompletionProposal> proposals) {
 		Image image = getImage(function);
 
 		StringBuilder repStringBuff = new StringBuilder();
-		repStringBuff.append(function.getName());
+		repStringBuff.append(getFunctionNameForReplacement(function, astContext));
 
 		boolean canBeCall = canBeCall(function, astContext, cContext);
 		
-		repStringBuff.append('(');
-
 		StringBuilder dispArgs = new StringBuilder(); // For the dispArgString
 		StringBuilder idArgs = new StringBuilder();   // For the idArgString
 		boolean hasArgs = true;
@@ -610,7 +626,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         String dispArgString = dispArgs.toString();
         String idArgString = idArgs.toString();
 		String contextDispargString = hasArgs ? dispArgString : null;
-        StringBuilder dispStringBuff = new StringBuilder(repStringBuff);
+        StringBuilder dispStringBuff = new StringBuilder(function.getName());
+        dispStringBuff.append('(');
 		dispStringBuff.append(dispArgString);
         dispStringBuff.append(')');
         if (returnTypeStr != null && !returnTypeStr.isEmpty()) {
@@ -619,25 +636,23 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuilder idStringBuff = new StringBuilder(repStringBuff);
+        StringBuilder idStringBuff = new StringBuilder(function.getName());
+        idStringBuff.append('(');
         idStringBuff.append(idArgString);
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
 
         boolean inUsingDeclaration = cContext.isInUsingDirective();
 
-        // If we can't be calling the function in this context, do not
-        // emit parentheses, since the user will just have to delete them.
-        if (!canBeCall) {
-			repStringBuff.setLength(repStringBuff.length() - 1);  // Remove opening parenthesis
-			
-			// In a using declaration, emitting a semicolon instead is useful.
-			if (inUsingDeclaration && !cContext.isFollowedBySemicolon()) {
-				repStringBuff.append(';');
-			}
-        } else {
+        if (canBeCall) {
+        	// If we might be calling the function in this context, assume we are
+        	// (since that's the most common case) and emit parentheses.
+        	repStringBuff.append('(');
         	repStringBuff.append(')');
-        }
+        } else if (inUsingDeclaration && !cContext.isFollowedBySemicolon()) {
+        	// In a using declaration, emitting a semicolon instead is useful.
+			repStringBuff.append(';');
+		}
         
         String repString = repStringBuff.toString();
 

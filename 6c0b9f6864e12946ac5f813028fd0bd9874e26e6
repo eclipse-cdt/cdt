@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_f4e702ce",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-01-11T13:46:18Z",
+      "side": 1,
+      "message": "Thanks !, \n  I wonder how this was not initially flagged by Eclipse,   it does flag it now if I change it back.",
+      "parentUuid": "a7c23755_7d32fd7a",
+      "revId": "6c0b9f6864e12946ac5f813028fd0bd9874e26e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_b4675116",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/dsf/gdb/service/GDBJtagControl_7_12.java",
         "patchSetId": 2

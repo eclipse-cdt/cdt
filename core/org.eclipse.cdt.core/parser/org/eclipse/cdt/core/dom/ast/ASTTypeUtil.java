@@ -455,7 +455,7 @@ public class ASTTypeUtil {
 				result.append(Keywords.ENUM);
 				result.append(SPACE);
 			}
-			ICPPBinding binding = ((ICPPBinding) type);
+			ICPPBinding binding = (ICPPBinding) type;
 			boolean nested = binding.getOwner() instanceof ICPPClassType;
 			boolean qualify = normalize || nested || (type instanceof ITypedef && type instanceof ICPPSpecialization);
 			appendCppName(binding, normalize, qualify, result);
@@ -985,7 +985,7 @@ public class ASTTypeUtil {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * Marks start of processing a translation unit during indexing.
 	 * Enables caching of string representations of types.

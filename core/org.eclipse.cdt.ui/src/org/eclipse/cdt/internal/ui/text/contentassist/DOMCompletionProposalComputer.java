@@ -476,7 +476,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 							getImage(classType), baseRelevance + relevance, context));
 				}
 			}
-			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType),
+			StringBuilder repStringBuff = new StringBuilder(classType.getName());
+			if (context.isInUsingDirective() && !context.isFollowedBySemicolon()) {
+				repStringBuff.append(';');
+			}
+			proposals.add(createProposal(repStringBuff.toString(), classType.getName(), getImage(classType),
 					baseRelevance + RelevanceConstants.CLASS_TYPE_RELEVANCE, context));
 		}
 	}

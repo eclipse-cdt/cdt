@@ -1444,7 +1444,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "foo;" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
-
+	
+	//	namespace N {
+	//		class waldo {};
+	//	}
+	//	using N::w/*cursor*/
+	public void testUsingDeclaration_509182() throws Exception {
+		final String[] expected = { "waldo;" };
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+	
 	//	template <typen/*cursor*/
 	public void testTemplateDeclaration_397288() throws Exception {
 		final String[] expected= { "typename" };

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_89007b0f",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/ClassTemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-01-11T07:51:32Z",
+      "side": 1,
+      "message": "Done - Yes that\u0027s right.",
+      "parentUuid": "a7c23755_0e97111a",
+      "range": {
+        "startLine": 158,
+        "startChar": 6,
+        "endLine": 158,
+        "endChar": 11
+      },
+      "revId": "78029de45908584542466e4d1bdd266734bd07cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_cecef929",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/ConstructorTests.java",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "(Actually, I guess that\u0027s orthogonal and covered by testConstexprConstructorConstructorBody, so no need to add this.)",
       "parentUuid": "a7c23755_cecef929",
+      "range": {
+        "startLine": 589,
+        "startChar": 1,
+        "endLine": 589,
+        "endChar": 2
+      },
+      "revId": "78029de45908584542466e4d1bdd266734bd07cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2915a747",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/constexprevaluation/ConstructorTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-01-11T07:51:32Z",
+      "side": 1,
+      "message": "Yes it probably is. The change mainly affects implicit default constructors.",
+      "parentUuid": "a7c23755_0efb913a",
       "range": {
         "startLine": 589,
         "startChar": 1,

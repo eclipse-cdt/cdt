@@ -355,9 +355,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			if (binding instanceof ICPPClassType) {
 				handleClass((ICPPClassType) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IFunction) {
-				handleFunction((IFunction) binding, cContext, baseRelevance, proposals);
+				handleFunction((IFunction) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IVariable) {
-				handleVariable((IVariable) binding, cContext, baseRelevance, proposals);
+				handleVariable((IVariable) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
 				if (binding instanceof ITypedef) {
 					proposals.add(createProposal(name, name, getImage(binding),
@@ -464,7 +464,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		if (context.isContextInformationStyle() && context.isAfterOpeningParenthesis()) {
-			addProposalsForConstructors(classType, context, baseRelevance, proposals);
+			addProposalsForConstructors(classType, astContext, context, baseRelevance, proposals);
 		} else if (classType instanceof ICPPClassTemplate) {
 			addProposalForClassTemplate((ICPPClassTemplate) classType, context, baseRelevance, proposals);
 		} else {
@@ -485,11 +485,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 	}
 
-	private void addProposalsForConstructors(ICPPClassType classType,
+	private void addProposalsForConstructors(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		ICPPConstructor[] constructors = classType.getConstructors();
 		for (ICPPConstructor constructor : constructors) {
-			handleFunction(constructor, context, baseRelevance, proposals);
+			handleFunction(constructor, astContext, context, baseRelevance, proposals);
 		}
 	}
 
@@ -509,14 +509,30 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return relevance;
 	}
 
-	private void handleFunction(IFunction function, CContentAssistInvocationContext context,
-			int baseRelevance, List<ICompletionProposal> proposals) {
+	private String getFunctionNameForReplacement(IFunction function, IASTCompletionContext astContext) {
+		// If we are completiong a destructor name ...
+		if (function instanceof ICPPMethod && ((ICPPMethod) function).isDestructor()) {
+			if (astContext instanceof IASTName) {
+				char[] simpleId = ((IASTName) astContext).getLastName().getSimpleID();
+				// .. and the invocation site already contains the '~' ...
+				if (simpleId.length > 0 && simpleId[0] == '~') {
+					// ... then do not include the '~' in the replacement string.
+					// As far as the completion proposal computer is concerned, the '~' is not part
+					// of the prefix, so including it in the replacement would mean getting a second
+					// '~' in the resulting code.
+					return function.getName().substring(1);
+				}
+			}
+		}
+		return function.getName();
+	}
+	
+	private void handleFunction(IFunction function, IASTCompletionContext astContext, 
+			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		Image image = getImage(function);
 
 		StringBuilder repStringBuff = new StringBuilder();
-		repStringBuff.append(function.getName());
-
-		repStringBuff.append('(');
+		repStringBuff.append(getFunctionNameForReplacement(function, astContext));
 
 		StringBuilder dispArgs = new StringBuilder(); // For the dispArgString
 		StringBuilder idArgs = new StringBuilder();   // For the idArgString
@@ -577,7 +593,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         String dispArgString = dispArgs.toString();
         String idArgString = idArgs.toString();
 		String contextDispargString = hasArgs ? dispArgString : null;
-        StringBuilder dispStringBuff = new StringBuilder(repStringBuff);
+        StringBuilder dispStringBuff = new StringBuilder(function.getName());
+        dispStringBuff.append('(');
 		dispStringBuff.append(dispArgString);
         dispStringBuff.append(')');
         if (returnTypeStr != null && !returnTypeStr.isEmpty()) {
@@ -586,7 +603,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuilder idStringBuff = new StringBuilder(repStringBuff);
+        StringBuilder idStringBuff = new StringBuilder(function.getName());
+        idStringBuff.append('(');
         idStringBuff.append(idArgString);
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
@@ -595,13 +613,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// name is useless, since the user will just have to delete them.
 		// Instead, emitting a semicolon is useful.
 		boolean inUsingDeclaration = context.isInUsingDirective();
-		if (inUsingDeclaration) {
-			repStringBuff.setLength(repStringBuff.length() - 1);  // Remove opening parenthesis
-			if (!context.isFollowedBySemicolon()) {
-				repStringBuff.append(';');
-			}
-		} else {
+		if (!inUsingDeclaration) {
+        	repStringBuff.append('(');
 			repStringBuff.append(')');
+		} else if (!context.isFollowedBySemicolon()) {
+			repStringBuff.append(';');
 		}
 
         String repString = repStringBuff.toString();
@@ -753,8 +769,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return !isDisplayDefaultedParameters() && param instanceof ICPPParameter && ((ICPPParameter)param).hasDefaultValue();
 	}
 
-	private void handleVariable(IVariable variable, CContentAssistInvocationContext context,
-			int baseRelevance, List<ICompletionProposal> proposals) {
+	private void handleVariable(IVariable variable, IASTCompletionContext astContext,
+			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
 			IType t = variable.getType();
 			t= unwindTypedefs(t);
@@ -763,7 +779,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				IASTTranslationUnit ast = context.getCompletionNode().getTranslationUnit();
 				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, ast);
 				for (ICPPConstructor constructor : constructors) {
-					handleFunction(constructor, context, baseRelevance, proposals);
+					handleFunction(constructor, astContext, context, baseRelevance, proposals);
 				}
 			}
 			return;

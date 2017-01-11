@@ -1379,6 +1379,17 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "Waldo(const Waldo &)", "Waldo(int, int)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	struct Waldo {
+	//		~Waldo();
+	//	};
+	//	Waldo::~/*cursor*/
+	public void testDestructorDefinition_456293() throws Exception {
+		final String[] expectedDisplay = { "~Waldo(void)" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		final String[] expectedReplacement = { "Waldo()" };
+		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+	}
 
 	//	template <typename T> struct vector {
 	//      typedef T value_type;

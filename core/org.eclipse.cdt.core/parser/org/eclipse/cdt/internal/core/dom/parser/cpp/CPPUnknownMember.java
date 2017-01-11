@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * Represents a binding that is unknown because it depends on template arguments.
  */
 public class CPPUnknownMember extends CPPUnknownBinding	implements ICPPUnknownMember, ISerializableType {
-    protected IType fOwner;
+    protected final IType fOwner;
 
     protected CPPUnknownMember(IType owner, char[] name) {
         super(name);

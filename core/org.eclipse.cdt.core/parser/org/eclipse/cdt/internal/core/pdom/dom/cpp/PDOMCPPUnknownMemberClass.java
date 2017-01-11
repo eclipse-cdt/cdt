@@ -65,12 +65,14 @@ public class PDOMCPPUnknownMemberClass extends CPPUnknownMemberClass implements 
 	public long getBindingID() {
 		return 0;
 	}
-	
+
 	@Override
 	public IIndexFragmentBinding getOwner() {
-		return (IIndexFragmentBinding) super.getOwner();
+		if (fOwner instanceof IIndexFragmentBinding)
+			return (IIndexFragmentBinding) fOwner;
+		return null;
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		try {

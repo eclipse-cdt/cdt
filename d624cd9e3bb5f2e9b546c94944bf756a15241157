@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_0fc0eb90",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Being an IPartListener2 makes this class compatible to receive part events;\nhowever, we need to register to actually get the events.\nCurrently, none of the methods of IPartListener2 are being called because we didn\u0027t register.\nSee below comments on where to register",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_74af72ed",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Since the new DebuggerConsoleManager.getPageParticpants() takes an IDebuggerConsole\nas a parameter, we know for sure that this Map\u0027s keys can be IDebuggerConsole instead of IConsole.\nThis change will affect a couple of private methods that have been added below.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cf37d395",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "I believe this is related to a separate change that the consolePageParticipants.\nThe platform\u0027s Console view activates a \u0027context\u0027 when it is visible, which\ncan be used to enable certain things like key bindings.\nFor example, you can look at the \u0027keys\u0027 preferences and look for EOF, which is\nmapped to Ctrl+D when \"in I/O Console\"; this \"in I/O Console\" context\nis the one that is enabled when the Console view is activated (brought to the\nfront).  Should we enable the same context when the Debugger Console view\nis activated?  Should we have a different context for the Debugger console view?\nI\u0027m not sure.  Do you have an opinion about this, especially as an\nextender?  But either way, this context handling should not be part of the\ncurrent commit.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0f2d4b47",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Here we need to register to get the IPartListener2 events by using\n\t\tgetViewSite().getPage().addPartListener((IPartListener2)this);",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1459de84",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "This extra variable seems unecessary.\nYou can change the for loop variable name to be \u0027participant\u0027 and remove the above line.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2fc927be",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Here you must unregister as a part listener",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ef7acf2d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "The Console view and the Debugger Console view can contain multiple pages, one per console.\nThere is only one showing at a time.\nLooking at the ConsoleView code, it seems to activate the participants of the console page\nthat is at the top (the active one), while disactivating the participant of the page that\nis now hidden. We should do the same.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af8c5793",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Rename for loop variable \"participant\" and remove above line.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0fa70b08",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "You can call getCurrentConsole() so that you get an IDebuggerConsole",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2fa047ec",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Please remove what is related to the context handling (3 above lines).\nNotice that the current code will activate the same context as the normal Console view.\nThis may be something we eventually want, or we may want our own context.\nI\u0027m leaning towards keeping the same, but that should be in another commit, and only\nif we care to have that context.",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_8f86bb69",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Please remove the lines related to context handling",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af87f764",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-11T18:01:54Z",
+      "side": 1,
+      "message": "Remove above line",
+      "revId": "d624cd9e3bb5f2e9b546c94944bf756a15241157",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

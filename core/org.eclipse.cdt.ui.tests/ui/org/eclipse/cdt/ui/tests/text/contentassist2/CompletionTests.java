@@ -1441,7 +1441,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//	using N::f/*cursor*/
 	public void testUsingDeclaration_379631() throws Exception {
-		final String[] expected= { "foo()" };
+		final String[] expected= { "foo;" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
@@ -1605,7 +1605,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//	using N::fo/*cursor*/;
 	public void testUsingCompletionWithFollowingSemicolon() throws Exception {
-		final String[] expected = { "foo()" };
+		final String[] expected = { "foo" };
 		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
 		final String[] expectedInformation = { "null" };
 		assertContentAssistResults(fCursorOffset, expectedInformation, true, CONTEXT);

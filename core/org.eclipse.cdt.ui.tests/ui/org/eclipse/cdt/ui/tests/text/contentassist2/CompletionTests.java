@@ -1923,4 +1923,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "B", "A", "waldo" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	void waldo();
+	//	int main() {
+	//		wal/*cursor*/();
+	//	}
+	public void testExistingParens_72391() throws Exception {
+		assertCompletionResults(new String[] { "waldo" });  // expect no parens in replacement
+	}
 }

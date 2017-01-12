@@ -132,10 +132,9 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 			}
 		} else {
 			projectName = projectName.trim();
-			if (projectName.length() == 0) {
-				return null;
+			if (!projectName.isEmpty()) {
+				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			}
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		}
 
 		HashMap<String, String> envMap = new HashMap<String, String>();

@@ -102,9 +102,21 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		Image image = CUIPlugin.getImageDescriptorRegistry().get(
 				CElementImageProvider.getFunctionImageDescriptor());
 
+		// If we are only providing context information, "prefix" is a complete
+		// function name, and we only want functions matching it exactly as
+		// proposals.
+		// TODO: It would be more efficient to expose this flag in
+		//       IContentAssistHelpInvocationContext and have the help providers
+		//       not generate prefix matches to begin with if it's set.
+		boolean requireExactMatch = cContext.isContextInformationStyle();
+
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
 		for (IFunctionSummary summary : summaries) {
+			if (requireExactMatch && !summary.getName().equals(prefix)) {
+				continue;
+			}
+			
 			String fname = summary.getName() + "()"; //$NON-NLS-1$
 			String fdesc = summary.getDescription();
 			IFunctionSummary.IFunctionPrototypeSummary fproto = summary

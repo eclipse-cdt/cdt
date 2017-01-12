@@ -120,6 +120,13 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Gets the CDT environment from the CDT project's configuration referenced
 	 * by the launch
+	 * 
+	 * This code matches what
+	 * org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.getLaunchEnvironment() and
+	 * org.eclipse.cdt.dsf.gdb.service.DebugNewProcessSequence.stepSetEnvironmentVariables(RequestMonitor)
+	 * do. In the GDB case the former is used as the environment for launching
+	 * GDB and the latter for launching the inferior. In the case of run we need
+	 * to combine the two environments as that is what the GDB inferior sees.
 	 */
 	protected String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
 		// Get the project
@@ -139,20 +146,15 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 
 		HashMap<String, String> envMap = new HashMap<String, String>();
 
-		// Add in from the config
-		String[] debugEnv = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
-		if (debugEnv != null) {
-			for (String env : debugEnv) {
-				String[] parts = env.split("=", 2); //$NON-NLS-1$
-				if (parts.length == 2) {
-					envMap.put(parts[0], parts[1]);
-				}
-			}
-		}
-
-		if (project != null && project.isAccessible()) {
+		// If the launch configuration is the only environment the inferior should see, just use that
+		boolean append = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		boolean environmentCollectedFromProject = false;
+		
+		if (append && project != null && project.isAccessible()) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 			if (projDesc != null) {
+				environmentCollectedFromProject = true;
+
 				String buildConfigID = config
 						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
 				ICConfigurationDescription cfg = null;
@@ -169,38 +171,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg,
 						true);
 				for (IEnvironmentVariable var : vars) {
-					String value;
-					switch (var.getOperation()) {
-					case IEnvironmentVariable.ENVVAR_REPLACE:
-						value = var.getValue();
-						break;
-					case IEnvironmentVariable.ENVVAR_APPEND:
-						value = envMap.get(var.getName());
-						if (value != null) {
-							value += var.getDelimiter() + var.getValue();
-						} else {
-							value = var.getValue();
-						}
-						break;
-					case IEnvironmentVariable.ENVVAR_PREPEND:
-						value = envMap.get(var.getName());
-						if (value != null) {
-							value = var.getValue() + var.getDelimiter() + value;
-						} else {
-							value = var.getValue();
-						}
-						break;
-					case IEnvironmentVariable.ENVVAR_REMOVE:
-						envMap.remove(var.getName());
-						value = null;
-						break;
-					default:
-						value = null;
-					}
-
-					if (value != null) {
-						envMap.put(var.getName(), value);
-					}
+					envMap.put(var.getName(), var.getValue());
 				}
 
 				// Add variables from build info
@@ -224,7 +195,31 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			}
 		}
-
+		
+		if (!environmentCollectedFromProject) {
+			// we haven't collected any environment variables from the project settings,
+			// therefore simply use the launch settings
+			return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);			
+		}
+		
+		// Now that we have the environment from the project, update it with 
+		// the environment settings the user has explicitly set in the launch
+		// configuration. There is no API in the launch manager to do this,
+		// so we create a temp copy with append = false to get around that.
+		ILaunchConfigurationWorkingCopy wc = config.copy(""); //$NON-NLS-1$
+		// Don't save this change, it is just temporary, and in just a
+		// copy of our launchConfig.
+		wc.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		String[] properties = DebugPlugin.getDefault().getLaunchManager().getEnvironment(wc);
+		if (properties != null) {
+			for (String env : properties) {
+				String[] parts = env.split("=", 2); //$NON-NLS-1$
+				if (parts.length == 2) {
+					envMap.put(parts[0], parts[1]);
+				}
+			}
+		}
+		
 		// Turn it into an envp format
 		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {

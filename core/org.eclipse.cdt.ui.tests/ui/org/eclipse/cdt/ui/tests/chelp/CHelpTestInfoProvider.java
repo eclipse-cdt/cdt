@@ -35,7 +35,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	 * Flag indicating whether this help provider should provide help info.
 	 * Should be set to <code>true</code> during tests only.
 	 */
-	static boolean fgEnabled= false;
+	public static boolean fgEnabled= false;
 
 	public CHelpTestInfoProvider(){
 		fProviderID = PROVIDER_ID_PREFIX + fNumProviders++;
@@ -90,9 +90,9 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 		if (!fgEnabled) {
 			return new IFunctionSummary[0];
 		}
-		Assert.assertTrue("getMatchingFunctions is called before completion contributor gets initialized",fIsInitialized);
-        return null; // TODO returning null until someone puts in a preference to control it.
-        //return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks,prefix,fProviderID);
+		Assert.assertTrue("getMatchingFunctions is called before completion contributor gets initialized", fIsInitialized);
+        //return null; // TODO returning null until someone puts in a preference to control it.
+        return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks, prefix, fProviderID);
 	}
 
 	/* (non-Javadoc)

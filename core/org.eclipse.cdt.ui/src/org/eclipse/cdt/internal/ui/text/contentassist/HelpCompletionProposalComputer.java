@@ -96,8 +96,9 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		if (summaries == null)
 			return Collections.emptyList();
 
-		int repOffset = cContext.getInvocationOffset() - prefix.length();
-		int repLength = prefix.length();
+		boolean doReplacement = !cContext.isContextInformationStyle();
+		int repLength = doReplacement ? prefix.length() : 0;
+		int repOffset = cContext.getInvocationOffset() - repLength;
 		Image image = CUIPlugin.getImageDescriptorRegistry().get(
 				CElementImageProvider.getFunctionImageDescriptor());
 
@@ -110,10 +111,12 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 					.getPrototype();
 			String fargs = fproto.getArguments();
 
+			String repString = doReplacement ? fname : "";  //$NON-NLS-1$
+			
 			int relevance = computeBaseRelevance(prefix, summary.getName()) + RelevanceConstants.HELP_TYPE_RELEVANCE;
 			CCompletionProposal proposal;
 			proposal = new CCompletionProposal(
-					fname,
+					repString,
 					repOffset,
 					repLength,
 					image,
@@ -147,5 +150,4 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 
 		return proposals;
 	}
-	
 }

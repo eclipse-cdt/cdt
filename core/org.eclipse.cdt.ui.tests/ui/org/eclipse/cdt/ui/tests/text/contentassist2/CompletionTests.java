@@ -39,7 +39,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
@@ -1911,5 +1913,28 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testMemberExposedViaUsingDecl_bug292236b() throws Exception {
 		final String[] expected = { "B", "A", "waldo" };
 		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+	
+	//	int main() {
+	//	    setvbuf(file, NULL, _IOLBF, /*cursor*/);
+	//	}
+	public void testHelpProposalClobberingTokens_391439() throws Exception {
+		boolean oldEnablement = CHelpTestInfoProvider.fgEnabled;
+		try {
+			// Enable help proposals.
+			// TODO: If we write more tests for help proposals, it may be worth splitting them
+			// out into their own test suite, and having setUp() handle the enablement.
+			CHelpTestInfoProvider.fgEnabled = true;
+			
+			Object[] results = invokeContentAssist(fCursorOffset, 0, true, false, true).results;
+			assertEquals(1, results.length);
+			assertInstance(results[0], CCompletionProposal.class);
+			CCompletionProposal proposal = ((CCompletionProposal) results[0]);
+			assertEquals(0, proposal.getReplacementLength());
+			assertEquals("", proposal.getReplacementString());
+			assertNotNull(proposal.getContextInformation());
+		} finally {
+			CHelpTestInfoProvider.fgEnabled = oldEnablement;
+		}
 	}
 }

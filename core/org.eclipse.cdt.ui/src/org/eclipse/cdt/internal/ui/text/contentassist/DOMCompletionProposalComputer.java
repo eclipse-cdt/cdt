@@ -614,8 +614,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// Instead, emitting a semicolon is useful.
 		boolean inUsingDeclaration = context.isInUsingDirective();
 		if (!inUsingDeclaration) {
-        	repStringBuff.append('(');
-			repStringBuff.append(')');
+        if (!context.isFollowedByOpeningParen()) {
+            repStringBuff.append('(');
+			      repStringBuff.append(')');
+        }
 		} else if (!context.isFollowedBySemicolon()) {
 			repStringBuff.append(';');
 		}

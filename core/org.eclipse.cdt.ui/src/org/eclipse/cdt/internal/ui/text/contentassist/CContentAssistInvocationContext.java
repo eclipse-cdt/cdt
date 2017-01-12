@@ -195,6 +195,17 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			return token == Symbols.TokenSEMICOLON;
 		}
 	};
+	
+	private final Lazy<Boolean> followedByOpeningParen = new Lazy<Boolean>() {		
+		@Override
+		protected Boolean calculateValue() {
+			final IDocument doc = getDocument();
+			final int offset = getInvocationOffset();
+			final CHeuristicScanner.TokenStream tokenStream = new CHeuristicScanner.TokenStream(doc, offset);
+			final int token = tokenStream.nextToken();
+			return token == Symbols.TokenLPAREN;
+		}
+	};
 
 	private final Lazy<String> functionParameterDelimiter = new Lazy<String>() {
 		@Override
@@ -451,6 +462,11 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	public boolean isFollowedBySemicolon() {
 		assertNotDisposed();
 		return followedBySemicolon.value();
+	}
+	
+	public boolean isFollowedByOpeningParen() {		
+		assertNotDisposed();
+		return followedByOpeningParen.value();
 	}
 
 	public String getFunctionParameterDelimiter() {

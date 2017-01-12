@@ -1676,4 +1676,12 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expected, ID);
 		assertDotReplacedWithArrow();
 	}
+
+	//	void waldo();
+	//	int main() {
+	//		wal/*cursor*/();
+	//	}
+	public void testExistingParens_72391() throws Exception {
+		assertCompletionResults(new String[] { "waldo" });  // expect no parens in replacement
+	}
 }

@@ -648,7 +648,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
         boolean inUsingDeclaration = cContext.isInUsingDirective();
 
-        if (canBeCall) {
+        if (canBeCall && !cContext.isFollowedByOpeningParen()) {
         	// If we might be calling the function in this context, assume we are
         	// (since that's the most common case) and emit parentheses.
         	repStringBuff.append('(');

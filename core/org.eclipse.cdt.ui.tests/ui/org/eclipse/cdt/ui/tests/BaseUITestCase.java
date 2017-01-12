@@ -79,14 +79,21 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	/**
+	 * Reads a section in comments form the source of the given class.
+	 */
+	protected String readTaggedComment(Class clazz, final String tag) throws IOException {
+		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", clazz, tag);
+	}
+    
+	/**
 	 * Reads a section in comments form the source of the given class. Fully
 	 * equivalent to <code>readTaggedComment(getClass(), tag)</code>
 	 * @since 4.0
 	 */
     protected String readTaggedComment(final String tag) throws IOException {
-    	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", getClass(), tag);
+    	return readTaggedComment(getClass(), tag);
     }
-
+    
     /**
      * Reads multiple sections in comments from the source of the given class.
      * @since 4.0

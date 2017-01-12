@@ -16,6 +16,24 @@
       "revId": "11de6abfaf5ff97d9060fd87daee7fc67d7d84aa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_9077b377",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-01-12T21:44:13Z",
+      "side": 0,
+      "message": "The operation applied when the project environment was being applied on top of the launch configuration. Now the project environment is calculated first.\n\nThis code has now been updated to match the code in org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.getLaunchEnvironment()",
+      "parentUuid": "a7c23755_f0e467cc",
+      "revId": "11de6abfaf5ff97d9060fd87daee7fc67d7d84aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

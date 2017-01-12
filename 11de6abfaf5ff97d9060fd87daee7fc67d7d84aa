@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_f0e467cc",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-01-12T21:03:16Z",
+      "side": 0,
+      "message": "Why did you get rid of the operation check?",
+      "revId": "11de6abfaf5ff97d9060fd87daee7fc67d7d84aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

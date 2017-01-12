@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static enum CompareType { ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION	}
 
-	private class ContentAssistResult {
+	protected class ContentAssistResult {
 		long startTime;
 		long endTime;
 		Object[] results;
@@ -124,7 +124,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	private ContentAssistResult invokeContentAssist(int offset, int length, boolean isCompletion,
+	protected ContentAssistResult invokeContentAssist(int offset, int length, boolean isCompletion,
 			boolean isTemplate, boolean filterResults) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting " + this.getClass().getName());

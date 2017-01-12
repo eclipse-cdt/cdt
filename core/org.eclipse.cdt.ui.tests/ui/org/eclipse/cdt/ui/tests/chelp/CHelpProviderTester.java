@@ -56,10 +56,15 @@ public class CHelpProviderTester{
 	private class CHelpBook implements ICHelpBook{
 		private int fCHelpType;
 		private String fTitle;
-		
-		public CHelpBook(String providerID, int type){
+		private List<IFunctionSummary> fFunctions = new ArrayList<>();
+
+		public CHelpBook(String providerID, int type) {
 			fCHelpType = type;
-			fTitle = generateBookTitle(providerID,type);
+			fTitle = generateBookTitle(providerID, type);
+			if (fCHelpType == HELP_TYPE_C) {
+				fFunctions.add(new FunctionSummary(this, "setvbuf", providerID));
+				fFunctions.add(new FunctionSummary(this, "wait", providerID));
+			}
 		}
 			
 		@Override
@@ -70,6 +75,16 @@ public class CHelpProviderTester{
 		@Override
 		public int getCHelpType(){
 			return fCHelpType;
+		}
+
+		public List<IFunctionSummary> getMatchingFunctions(String prefix) {
+			List<IFunctionSummary> result = new ArrayList<>();
+			for (IFunctionSummary function : fFunctions) {
+				if (function.getName().startsWith(prefix)) {
+					result.add(function);
+				}
+			}
+			return result;
 		}
 	}
 	
@@ -257,13 +272,15 @@ public class CHelpProviderTester{
 			return null;
 		return new FunctionSummary(helpBooks[0],name,providerID);
 	}
-	
-	public IFunctionSummary[] generateMatchingFunctions(ICHelpBook[] helpBooks, String prefix, String providerID){
-		IFunctionSummary sum[] = new IFunctionSummary[helpBooks.length];
-		for(int i = 0; i < helpBooks.length; i++){
-			sum[i] = new FunctionSummary(helpBooks[i],prefix,providerID);
+
+	public IFunctionSummary[] generateMatchingFunctions(ICHelpBook[] helpBooks, String prefix, String providerID) {
+		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
+		for (ICHelpBook helpBook : helpBooks) {
+			if (helpBook instanceof CHelpBook) {
+				lst.addAll(((CHelpBook) helpBook).getMatchingFunctions(prefix));
+			}
 		}
-		return sum;
+		return lst.toArray(new IFunctionSummary[lst.size()]);
 	}
 	
 	public ICHelpBook[] generateCHelpBooks(final String providerID){

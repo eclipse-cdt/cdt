@@ -1600,7 +1600,15 @@ public class CPPSemantics {
 			} else if (item instanceof ICPPASTNamespaceDefinition) {
 				final ICPPASTNamespaceDefinition nsDef = (ICPPASTNamespaceDefinition) item;
 				final boolean isUnnamed = nsDef.getName().getLookupKey().length == 0;
-				final boolean isInline = nsDef.isInline();
+				boolean isInline = nsDef.isInline();
+				// An inline namespace can be re-opened without repeating the inline keyword,
+				// so we need to consult the binding to check inlineness. 
+				if (!isUnnamed && !isInline) {
+					IBinding nsBinding = nsDef.getName().resolveBinding();
+					if (nsBinding instanceof ICPPNamespace) {
+						isInline = ((ICPPNamespace) nsBinding).isInline();
+					}
+				}
 				if (isUnnamed || isInline) {
 					if (scope instanceof CPPNamespaceScope) {
 						final CPPNamespaceScope nsscope = (CPPNamespaceScope) scope;

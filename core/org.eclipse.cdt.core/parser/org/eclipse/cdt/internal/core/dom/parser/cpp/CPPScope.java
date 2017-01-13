@@ -307,8 +307,8 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	@Override
 	public final void populateCache() {
 		if (!isCached) {
+			isCached= true;  // set to true before doing the work, to avoid recursion
 			CPPSemantics.populateCache(this);
-			isCached= true;
 		}
 	}
 

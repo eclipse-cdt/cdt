@@ -70,4 +70,13 @@ public class HelpProposalTests extends CompletionTestBase {
 		String[] expected = new String[] { "Waldo(const Waldo &)", "Waldo(int, int)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	void foo() {
+	//	#ifdef MYMACRO
+	//		setv/*cursor*/
+	//	#endif
+	//	}
+	public void testInactiveCodeBlock_72809() throws Exception {
+		assertCompletionResults(new String[] { "setvbuf()" });
+	}
 }

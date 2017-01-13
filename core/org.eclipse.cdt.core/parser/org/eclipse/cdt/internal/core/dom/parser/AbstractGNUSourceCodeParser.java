@@ -295,7 +295,23 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         } catch (OffsetLimitReachedException olre) {
         	if (mode != ParserMode.COMPLETION_PARSE)
 			    throw new EndOfFileException(olre.getEndOffset());
-			createCompletionNode(olre.getFinalToken());
+        	IToken completionToken = olre.getFinalToken();
+        	createCompletionNode(completionToken);
+        	if (olre.getOriginator() == OffsetLimitReachedException.ORIGIN_INACTIVE_CODE) {
+        		// If completion is invoked inside inactive code, there is no AST from which
+        		// to give the completion node a completion name, so we invent a name.
+        		// The invented name is not hooked up to the AST, but does have an offset
+        		// and length, so it can provide an accurate point of reference in
+        		// declaredBefore().
+    			IASTName completionName = nodeFactory.newInactiveCompletionName(
+    					completionToken.getCharImage(), getTranslationUnit());
+    			((ASTNode) completionName).setOffsetAndLength(completionToken.getOffset(), 
+    					completionToken.getLength());
+    			completionNode.addName(completionName);
+    			
+    			// Consume the completion token so we don't try to parse an AST fragment from it.
+    			consume();
+        	}
 			throw olre;
         }
     }

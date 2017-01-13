@@ -97,6 +97,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
@@ -162,8 +163,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			IASTName[] names = completionNode.getNames();
 
 			for (IASTName name : names) {
-				if (name.getTranslationUnit() == null) {
+				if (name.getTranslationUnit() == null && !(name instanceof IASTInactiveCompletionName)) {
 					// The node isn't properly hooked up, must have backtracked out of this node.
+					// Inactive completion names are special in that they are not hooked up
+					// (because there is no AST for the inactive code), but we still want to
+					// attempt completion for them.
 					continue;
 				}
 

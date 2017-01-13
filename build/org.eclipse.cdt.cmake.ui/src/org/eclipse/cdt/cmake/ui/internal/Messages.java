@@ -3,7 +3,7 @@ package org.eclipse.cdt.cmake.ui.internal;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.cmake.ui.properties.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.cmake.ui.internal.messages"; //$NON-NLS-1$
 	public static String CMakeBuildTab_BuildCommand;
 	public static String CMakeBuildTab_CleanCommand;
 	public static String CMakeBuildTab_Cmake;

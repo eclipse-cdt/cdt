@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 
 /**
  * Factory for creating AST nodes. This interface contains factory methods
@@ -133,6 +134,12 @@ public interface INodeFactory {
 
 	public IASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
 	
+	/**
+	 * @since 6.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public IASTInactiveCompletionName newInactiveCompletionName(char[] name, IASTTranslationUnit ast);
+
 	public IASTInitializerList newInitializerList();
 	
 	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement);
@@ -148,7 +155,7 @@ public interface INodeFactory {
 
 	/** @since 5.11 */
 	public IASTName newName(String name);
-
+	
 	public IASTNullStatement newNullStatement();
 
 	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);

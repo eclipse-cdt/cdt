@@ -29,6 +29,8 @@ import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.IContentAssistHelpInvocationContext;
 
+import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
+
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
@@ -46,8 +48,10 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 			for (int i = 0; i < names.length; ++i) {
 				IASTName name = names[i];
 				
-				// ignore if not connected
-				if (name.getTranslationUnit() == null)
+				// Ignore if not connected.
+				// See the corresponding code in DOMCompletionProposalComputer for why
+				// inactive completion names are special.
+				if (name.getTranslationUnit() == null && !(name instanceof IASTInactiveCompletionName))
 					continue;
 			
 				// ignore if this is a member access

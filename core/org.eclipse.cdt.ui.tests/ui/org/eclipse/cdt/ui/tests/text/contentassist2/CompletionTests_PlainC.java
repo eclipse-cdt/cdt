@@ -387,6 +387,16 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 	
+	//	int waldo;
+	//	void foo() {
+	//	#ifdef SOME_UNDEFINED_MACRO
+	//		wald/*cursor*/
+	//	#endif
+	//	}
+	public void testInactiveCodeBlock_72809() throws Exception {
+		assertCompletionResults(new String[] { "waldo" });
+	}
+
 	//void fooFunction()
 	//{
 	//    AStructType* c;

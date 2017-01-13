@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -326,6 +327,11 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	@Override
 	public IASTIfStatement newIfStatement(IASTExpression expr, IASTStatement thenStat, IASTStatement elseClause) {
 		return new CASTIfStatement(expr, thenStat, elseClause);
+	}
+
+	@Override
+	public IASTInactiveCompletionName newInactiveCompletionName(char[] name, IASTTranslationUnit ast) {
+		return new CASTInactiveCompletionName(name, ast);
 	}
 
 	@Override

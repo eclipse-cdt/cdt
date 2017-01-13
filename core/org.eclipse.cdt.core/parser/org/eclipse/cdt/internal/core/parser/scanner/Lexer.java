@@ -244,7 +244,7 @@ final public class Lexer implements ITokenSequence {
 			t0= t1;
 			t1= fetchToken();
 			final int tt1 = t1.getType();
-			if (tt1 == IToken.tEND_OF_INPUT)
+			if (tt1 == IToken.tEND_OF_INPUT || tt1 == IToken.tCOMPLETION)
 				break;
 			if (tt1 == IToken.tPOUND) {
 				final int tt0= t0.getType();

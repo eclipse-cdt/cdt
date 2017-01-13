@@ -483,6 +483,16 @@ public class CompletionTests extends CompletionTestBase {
 		final String[] expected= { "defined" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
+	
+	//	int waldo;
+	//	void foo() {
+	//	#ifdef SOME_UNDEFINED_MACRO
+	//		wald/*cursor*/
+	//	#endif
+	//	}
+	public void testInactiveCodeBlock_72809() throws Exception {
+		assertCompletionResults(new String[] { "waldo" });
+	}
 
 	//void gfunc(){TClass<int> t(0); t.a/*cursor*/
 	public void testTemplateClassMethod() throws Exception {

@@ -3925,7 +3925,27 @@ public class CPPSemantics {
 		}
 		return contentAssistLookup(data, nsScopes);
 	}
-
+	
+	/**
+	 * Similar to {@link CPPSemantics#findBindingsForContentAssist(IASTName, boolean, String[])},
+	 * but in lieu of a name hooked up to the AST, accepts just a string, a position in the file
+	 * (represented as an IASTNode, and used to serve as the point of reference for the lookup),
+	 * and a starting scope (which is required).
+	 */
+	public static IBinding[] findBindingsForContentAssist(char[] name, boolean prefixLookup,
+			IScope lookupScope, IASTNode point) {
+		LookupData data = new LookupData(name, null, point);
+		data.contentAssist = true;
+		data.fHeuristicBaseLookup = true;
+		data.setPrefixLookup(prefixLookup);
+		data.foundItems = new CharArrayObjectMap<>(2);
+		try {
+			CPPSemantics.lookup(data, lookupScope);
+		} catch (DOMException e) {
+		}
+		return collectContentAssistBindings(data);
+	}
+	
 	private static IScope getLookupScope(IASTNode node) {
 		if (node == null)
 			return null;
@@ -4074,6 +4094,10 @@ public class CPPSemantics {
 			}
 		} catch (DOMException e) {
 		}
+		return collectContentAssistBindings(data);
+	}
+	
+	private static IBinding[] collectContentAssistBindings(LookupData data) {
 		@SuppressWarnings("unchecked")
 		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) data.foundItems;
 		IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_4f7659fb",
+        "filename": "build/org.eclipse.cdt.cmake.ui/src/org/eclipse/cdt/cmake/ui/internal/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-14T13:09:14Z",
+      "side": 1,
+      "message": "To reduce maintenance (for example if all this code is moved to \na non-internal package), some other plugins don\u0027t define this constant\nand use Messages.class.getName() directly below, after having renamed\nthe properties file to \u0027Messages.properties\u0027.\nBut not all plugins do this, so it\u0027s just a suggestion.",
+      "revId": "c98c7ce385e84aeb554a9fcc61fa7b282e96827d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

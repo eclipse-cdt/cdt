@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_4f63b983",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/GdbCliConsoleManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-14T00:42:02Z",
+      "side": 1,
+      "message": "To simplify the change in this file, why not\nsimply call this method when launchesTerminated() is called above?",
+      "revId": "379f54ef7190ac8a8d462ecb534533fb0eaa8f71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6f5eb5bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/IGDBDebuggerConsole.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-14T00:42:02Z",
+      "side": 1,
+      "message": "This method seems like a good addition for any debugger consoles.\nWhy not added it in IDebuggerConsole?  It has nothing GDB specific.",
+      "revId": "379f54ef7190ac8a8d462ecb534533fb0eaa8f71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

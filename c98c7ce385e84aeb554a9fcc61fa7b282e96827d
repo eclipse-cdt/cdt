@@ -16,6 +16,24 @@
       "revId": "c98c7ce385e84aeb554a9fcc61fa7b282e96827d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_95279e65",
+        "filename": "build/org.eclipse.cdt.cmake.ui/src/org/eclipse/cdt/cmake/ui/internal/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-15T22:12:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_4f7659fb",
+      "revId": "c98c7ce385e84aeb554a9fcc61fa7b282e96827d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

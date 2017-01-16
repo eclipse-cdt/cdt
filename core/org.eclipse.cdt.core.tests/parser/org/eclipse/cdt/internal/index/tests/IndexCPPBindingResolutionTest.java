@@ -2428,4 +2428,12 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testDelegatingConstructorCallInConstexprConstructor_509871() throws Exception {
 		checkBindings();
 	}
+	
+	//	enum class NoneType { None };
+	//	const NoneType None = None;
+	
+	//	// empty file
+	public void testSelfReferencingVariable_510484() throws Exception {
+		checkBindings();
+	}
 }

@@ -17,6 +17,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -56,6 +59,17 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 	private IType fType;
 	private boolean fAllResolved;
 
+	/**
+	 * The set of CPPVariable objects for which initial value computation is in progress on each thread.
+	 * This is used to guard against recursion during initial value computation.
+	 */
+	private static final ThreadLocal<Set<CPPVariable>> fInitialValueInProgress = new ThreadLocal<Set<CPPVariable>>() {
+		@Override
+		protected Set<CPPVariable> initialValue() {
+			return new HashSet<>();
+		}
+	};
+	
 	public CPPVariable(IASTName name) {
 		boolean isDef = name != null && name.isDefinition();
 		if (name instanceof ICPPASTQualifiedName) {
@@ -223,19 +237,27 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 
 	@Override
 	public IValue getInitialValue() {
-		IValue initialValue = null;
-		final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
-		if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
-			ICPPEvaluation initEval = getInitializerEvaluation();
-			if (initEval == null) {
-				return null;
-			}
-			if (!initEval.isValueDependent() ) {
-				return initEval.getValue(fDefinition);
-			}
-			return DependentValue.create(initEval);
+		Set<CPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
+		if (!recursionProtectionSet.add(this)) {
+			return IntegralValue.UNKNOWN;
 		}
-		return initialValue;
+		try {
+			IValue initialValue = null;
+			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
+			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
+				ICPPEvaluation initEval = getInitializerEvaluation();
+				if (initEval == null) {
+					return null;
+				}
+				if (!initEval.isValueDependent() ) {
+					return initEval.getValue(fDefinition);
+				}
+				return DependentValue.create(initEval);
+			}
+			return initialValue;
+		} finally {
+			recursionProtectionSet.remove(this);
+		}
 	}
 
 	private IASTDeclarator findDeclarator() {

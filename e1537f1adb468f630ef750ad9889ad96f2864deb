@@ -16,6 +16,23 @@
       "revId": "e1537f1adb468f630ef750ad9889ad96f2864deb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2689427a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsole.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-01-16T22:22:30Z",
+      "side": 1,
+      "message": "I have updated the api to allow default methods in interfaces, however\nI am not getting the error to step the minor version, \nDone, in the next patch set.",
+      "revId": "e1537f1adb468f630ef750ad9889ad96f2864deb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_0609a6a2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/debuggerconsole/IDebuggerConsole.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-16T21:32:35Z",
+      "side": 1,
+      "message": "Should be 8.2 (after you update the plugin version)",
+      "revId": "e1537f1adb468f630ef750ad9889ad96f2864deb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

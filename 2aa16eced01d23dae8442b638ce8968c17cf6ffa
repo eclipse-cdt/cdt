@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6976aafb",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-17T18:49:05Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "2aa16eced01d23dae8442b638ce8968c17cf6ffa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_89cdc6dd",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
         "patchSetId": 9
@@ -36,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_89714602",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-17T18:49:05Z",
+      "side": 1,
+      "message": "Done",
+      "revId": "2aa16eced01d23dae8442b638ce8968c17cf6ffa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_c9d33e79",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
         "patchSetId": 9
@@ -47,6 +81,23 @@
       "writtenOn": "2017-01-17T18:46:41Z",
       "side": 1,
       "message": "Previous line can be removed",
+      "revId": "2aa16eced01d23dae8442b638ce8968c17cf6ffa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a97c42d9",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/debuggerconsole/DebuggerConsoleView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-17T18:49:05Z",
+      "side": 1,
+      "message": "Done",
       "revId": "2aa16eced01d23dae8442b638ce8968c17cf6ffa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

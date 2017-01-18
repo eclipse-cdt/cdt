@@ -816,7 +816,7 @@ public class ClassTypeHelper {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 		ICPPClassType[] subclasses= getSubClasses(index, mcl);
-		return findOverriders(subclasses, method, null);
+		return findOverriders(subclasses, method, point);
 	}
 
 	/**

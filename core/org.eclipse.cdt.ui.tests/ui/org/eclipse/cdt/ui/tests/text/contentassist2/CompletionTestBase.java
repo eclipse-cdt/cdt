@@ -53,9 +53,17 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	protected void assertMinimumCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, compareType);
 	}
+	
+	protected void assertOrderedCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
+		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | CHECK_ORDER, compareType);
+	}
 
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+
+	protected void assertOrderedCompletionResults(String[] expected) throws Exception {
+		assertOrderedCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	protected void assertParameterHint(String[] expected) throws Exception {

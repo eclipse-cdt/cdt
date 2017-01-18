@@ -19,7 +19,6 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType;
 
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 

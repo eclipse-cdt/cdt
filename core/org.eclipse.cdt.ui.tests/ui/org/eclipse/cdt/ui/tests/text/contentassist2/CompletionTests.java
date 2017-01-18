@@ -908,6 +908,29 @@ public class CompletionTests extends CompletionTestBase {
 			deleteDir(tempDir);
 		}
 	}
+	
+	//#include "/*cursor*/
+	public void testHeaderFileWithNoExtension_292229() throws Exception {
+		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
+		File tempDir= new File(tempRoot, "cdttest_292229");
+		tempDir.mkdir();
+		try {
+			createIncludeFiles(tempDir, new String[] {
+				"h1/bar",
+				"h1/foo.hpp"
+			});
+			// A file like h1/bar which is not known to be a header should appear
+			// in the proposal list, but below files that are known to be headers
+			// like h1/foo.hpp.
+			String[] expected = {
+				"\"foo.hpp\"",
+				"\"bar\""
+			};
+			assertOrderedCompletionResults(expected);
+		} finally {
+			deleteDir(tempDir);
+		}
+	}
 
 	public static void deleteDir(File dir) {
 		File[] files = dir.listFiles();

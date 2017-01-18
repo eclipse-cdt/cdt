@@ -237,8 +237,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, compareType);
 	}
 	
+	private void assertOrderedCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
+		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | CHECK_ORDER, compareType);
+	}
+	
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+	
+	protected void assertOrderedCompletionResults(String[] expected) throws Exception {
+		assertOrderedCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	protected void assertParameterHint(String[] expected) throws Exception {
@@ -1089,6 +1097,29 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"\"../h2/",
 			};
 			assertCompletionResults(fCursorOffset -= 2, expected, REPLACEMENT);
+		} finally {
+			deleteDir(tempDir);
+		}
+	}
+	
+	//#include "/*cursor*/
+	public void testHeaderFileWithNoExtension_292229() throws Exception {
+		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
+		File tempDir= new File(tempRoot, "cdttest_292229");
+		tempDir.mkdir();
+		try {
+			createIncludeFiles(tempDir, new String[] {
+				"h1/bar",
+				"h1/foo.hpp"
+			});
+			// A file like h1/bar which is not known to be a header should appear
+			// in the proposal list, but below files that are known to be headers
+			// like h1/foo.hpp.
+			String[] expected = {
+				"\"foo.hpp\"",
+				"\"bar\""
+			};
+			assertOrderedCompletionResults(expected);
 		} finally {
 			deleteDir(tempDir);
 		}

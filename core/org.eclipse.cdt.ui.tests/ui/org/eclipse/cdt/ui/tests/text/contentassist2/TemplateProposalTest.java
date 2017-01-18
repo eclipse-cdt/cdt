@@ -19,6 +19,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType;
 
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 
@@ -102,8 +103,11 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		CUIPlugin.getDefault().getTemplateStore().add(data);
 	}
 	
+	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION | IS_TEMPLATE;
 	
-	
+	protected void assertCompletionResults(String[] expected) throws Exception {
+		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, DEFAULT_FLAGS, CompareType.ID);
+	}
 	
 	//void func() { 
 	///*sel-start*/test foo bar/*sel-end*/
@@ -114,7 +118,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_LINE_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -127,7 +131,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_LINE_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -139,7 +143,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_WORD_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -151,7 +155,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_WORD_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -164,7 +168,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_WORD_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -175,7 +179,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_LINE_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -188,7 +192,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		final String[] expected= {
 			TEMPLATE_NAME_LINE_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -201,7 +205,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 			TEMPLATE_NAME_LINE_SELECTION_DISP,
 			TEMPLATE_NAME_WORD_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 	
 	//void func() { 
@@ -214,7 +218,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 			TEMPLATE_NAME_LINE_SELECTION_DISP,
 			TEMPLATE_NAME_WORD_SELECTION_DISP
 		};
-		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, true, true, CompareType.ID);
+		assertCompletionResults(expected);
 	}
 
 }

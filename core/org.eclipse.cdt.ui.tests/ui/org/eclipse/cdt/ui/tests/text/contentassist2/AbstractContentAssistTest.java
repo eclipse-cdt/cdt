@@ -60,7 +60,14 @@ import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static enum CompareType { ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION	}
+	
+	protected final static int IS_COMPLETION       = 0x01;
+	protected final static int IS_TEMPLATE         = 0x02;
+	protected final static int FILTER_RESULTS      = 0x04;
+	protected final static int ALLOW_EXTRA_RESULTS = 0x08;
 
+	protected final static int DEFAULT_FLAGS = FILTER_RESULTS;
+	
 	private class ContentAssistResult {
 		long startTime;
 		long endTime;
@@ -158,8 +165,13 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return new ContentAssistResult(startTime, endTime, results);
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion,
-			boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, int length, String[] expected, int flags, 
+			CompareType compareType) throws Exception {
+		boolean isCompletion = (flags & IS_COMPLETION) != 0;
+		boolean isTemplate = (flags & IS_TEMPLATE) != 0;
+		boolean filterResults = (flags & FILTER_RESULTS) != 0;
+		boolean allowExtraResults = (flags & ALLOW_EXTRA_RESULTS) != 0;
+
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 
 		String[] resultStrings= toStringArray(r.results, compareType);
@@ -196,14 +208,17 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 		if (!allFound) {
 			assertEquals("Missing results!", toString(expected), toString(resultStrings));
-		} else if (doCheckExtraResults())  {
+		} else if (!allowExtraResults)  {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
 	}
 
 	protected void assertContentAssistResults(int offset, int length, Map<String, String[][]> expected,
-			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType)
+			int flags, CompareType compareType)
 			throws Exception {
+		boolean isCompletion = (flags & IS_COMPLETION) != 0;
+		boolean isTemplate = (flags & IS_TEMPLATE) != 0;
+		boolean filterResults = (flags & FILTER_RESULTS) != 0;
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 		Map<String, String[][]> resultMap = toMap(r.results, compareType);
 
@@ -272,16 +287,11 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return resultsMap;
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion,
-			boolean isTemplate, CompareType compareType) throws Exception {
-		assertContentAssistResults(offset, length, expected, isCompletion, isTemplate, true, compareType);
+	protected void assertContentAssistResults(int offset, String[] expected,
+			int flags, CompareType compareType) throws Exception {
+		assertContentAssistResults(offset, 0, expected, flags, compareType);
 	}
-
-	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion,
-			CompareType compareType) throws Exception {
-		assertContentAssistResults(offset, 0, expected, isCompletion, false, compareType);
-	}
-
+	
 	/**
 	 * Filter out template and keyword proposals.
 	 *
@@ -378,13 +388,6 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			buf.append(string).append('\n');
 		}
 		return buf.toString();
-	}
-
-	/**
-	 * Override to relax checking of extra results
-	 */
-	protected boolean doCheckExtraResults() {
-		return true;
 	}
 
 	/**

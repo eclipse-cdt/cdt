@@ -56,11 +56,12 @@ public class CPPParameterGuessingTests extends AbstractContentAssistTest {
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
+	
+	protected static final int DEFAULT_FLAGS = IS_COMPLETION;
 
 	protected void assertParametersGuesses(Map<String, String[][]> expected)
 			throws Exception {
-		assertContentAssistResults(getBuffer().length() - 1, 0, expected, true,
-				false, false, CompareType.REPLACEMENT);
+		assertContentAssistResults(getBuffer().length() - 1, 0, expected, DEFAULT_FLAGS, CompareType.REPLACEMENT);
 	}
 
 	//	void foo(){

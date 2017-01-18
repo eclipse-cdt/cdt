@@ -185,8 +185,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		return sourceFile;
 	}
 
+	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
+	
 	protected void assertCompletionResults(String[] expected) throws Exception {
-		assertContentAssistResults(fCursorOffset, expected, true, CompareType.ID);
+		assertContentAssistResults(fCursorOffset, expected, DEFAULT_FLAGS, CompareType.ID);
 	}
 	
 	//void test() {

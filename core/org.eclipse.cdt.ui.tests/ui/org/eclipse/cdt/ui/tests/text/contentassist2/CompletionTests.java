@@ -624,7 +624,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	}
 	public void testAliasTemplate_418479() throws Exception {
 		final String[] expected = { "D", "E" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
 	//using namespace ns;void gfunc(){NSC/*cursor*/
@@ -1212,9 +1212,9 @@ public class CompletionTests extends CompletionTestBase {
 	//	Waldo::~/*cursor*/
 	public void testDestructorDefinition_456293() throws Exception {
 		final String[] expectedDisplay = { "~Waldo(void)" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 		final String[] expectedReplacement = { "Waldo" };
-		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expectedReplacement, REPLACEMENT);
 	}
 
 	//	template <typename T> struct vector {
@@ -1294,7 +1294,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	template <typen/*cursor*/
 	public void testTemplateDeclaration_397288() throws Exception {
 		final String[] expected= { "typename" };
-		assertContentAssistResults(fCursorOffset, 0, expected, true, false, false, REPLACEMENT);
+		assertContentAssistResults(fCursorOffset, expected, IS_COMPLETION, REPLACEMENT);
 	}
 
 	//	class Base {
@@ -1314,7 +1314,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	public void testShadowingBaseClassMember_407807() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
 	//	struct Cat {
@@ -1334,7 +1334,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	}
 	public void testPreprocessorProvidedMacro_412463() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
 	//	struct Cat {
@@ -1352,14 +1352,14 @@ public class CompletionTests extends CompletionTestBase {
 	//	int x = __CDT_PARSER__;
 	public void testPredefinedMacro_412463() throws Exception {
 		final String[] expected = { "Cat", "meow(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
 	//	void foo() { Spec/*cursor*/
 	public void testTemplateSpecialization() throws Exception {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);
 		final String[] expected = { "Specialization<typename T1, typename T2>" };
-		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
 	}
 
 	// struct Wrapper {
@@ -1374,7 +1374,7 @@ public class CompletionTests extends CompletionTestBase {
 	// };
 	public void testTemplateInstanceMemberAccess_459047() throws Exception {
 		final String[] expected = { "test(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
 	// template <int T>
@@ -1393,7 +1393,7 @@ public class CompletionTests extends CompletionTestBase {
 	// A<0>::AA<0>::Type<B>::/*cursor*/
 	public void testNestedTemplateSpecialization_460341() throws Exception {
 		final String[] expected = { "i" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 	
 	//	template <typename T>
@@ -1417,7 +1417,7 @@ public class CompletionTests extends CompletionTestBase {
 	public void testTemplateArgumentList() throws Exception {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);
 		final String[] expected = { "Specialization<typename T1, typename T2>" };
-		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
 	}
 
 	//	template<typename T,typename U>
@@ -1436,14 +1436,14 @@ public class CompletionTests extends CompletionTestBase {
 	//	class TestTemplateSelfReference : TestTemplate<T,U>::/*cursor*/
 	public void testTemplateSelfReference_bug456101() throws Exception {
 		final String[] expected = { "NestedClass" };
-		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
 	}
 
 	//	template<typename T>
 	//	class TestTemplateSelfReference : TClass<T>::/*cursor*/
 	public void testTemplateSelfReferencePDOM_bug456101() throws Exception {
 		final String[] expected = { "NestedClass" };
-		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
 	}
 
 	//	namespace N {
@@ -1452,9 +1452,9 @@ public class CompletionTests extends CompletionTestBase {
 	//	using N::fo/*cursor*/;
 	public void testUsingCompletionWithFollowingSemicolon() throws Exception {
 		final String[] expected = { "foo" };
-		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 		final String[] expectedInformation = { "null" };
-		assertContentAssistResults(fCursorOffset, expectedInformation, true, CONTEXT);
+		assertCompletionResults(fCursorOffset, expectedInformation, CONTEXT);
 	}
 
 	//	namespace N {
@@ -1463,7 +1463,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	using N::Tp/*cursor*/;
 	public void testUsingCompletionWithoutTemplateArguments() throws Exception {
 		final String[] expected = { "Tpl" };
-		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	//	namespace N {
@@ -1472,13 +1472,13 @@ public class CompletionTests extends CompletionTestBase {
 	//	using N::Tp/*cursor*/
 	public void testUsingCompletionWithoutTemplateArgumentsButSemicolon() throws Exception {
 		final String[] expected = { "Tpl;" };
-		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
 	//	using Alias = C/*cursor*/
 	public void testAliasDeclarationCompletion() throws Exception {
 		final String[] expectedID = { "C1", "C2", "C3" };
-		assertContentAssistResults(fCursorOffset, expectedID, true, ID);
+		assertCompletionResults(fCursorOffset, expectedID, ID);
 	}
 
 	//	void default_argument(int i = 23) {
@@ -1488,9 +1488,9 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(true);
 		setDisplayDefaultArguments(true);
 		final String[] expectedDisplay = { "default_argument(int i = 23) : void" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 		final String[] expectedReplacement = { "default_argument(i)" };
-		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expectedReplacement, REPLACEMENT);
 	}
 
 	//	void default_argument(int i = 23) {
@@ -1500,7 +1500,7 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(true);
 		setDisplayDefaultArguments(false);
 		final String[] expectedDisplay = { "default_argument(int i) : void" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
 
 	//	void default_argument(int i = 23) {
@@ -1510,7 +1510,7 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(false);
 		setDisplayDefaultArguments(false);
 		final String[] expectedDisplay = { "default_argument() : void" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
     
 	//	template<typename T = int>
@@ -1520,9 +1520,9 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(true);
 		setDisplayDefaultArguments(true);
 		final String[] expectedDisplay = { "default_argument<typename T = int>" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 		final String[] expectedReplacement = { "default_argument<>" };
-		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+		assertCompletionResults(fCursorOffset, expectedReplacement, REPLACEMENT);
 	}
 
 	//	template<typename T = int>
@@ -1532,7 +1532,7 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(true);
 		setDisplayDefaultArguments(false);
 		final String[] expectedDisplay = { "default_argument<typename T>" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
 
 	//	template<typename T = int>
@@ -1542,7 +1542,7 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(false);
 		setDisplayDefaultArguments(false);
 		final String[] expectedDisplay = { "default_argument<>" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
 
 	//	template<typename T>
@@ -1554,7 +1554,7 @@ public class CompletionTests extends CompletionTestBase {
 		setDisplayDefaultedParameters(true);
 		setDisplayDefaultArguments(true);
 		final String[] expectedDisplay = { "other_tpl<typename T1, typename T2 = tpl<T1>>" };
-		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
 	
 	//	struct A {

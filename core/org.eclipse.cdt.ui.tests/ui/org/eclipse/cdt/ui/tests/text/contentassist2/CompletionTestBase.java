@@ -22,7 +22,6 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
 	
 	protected int fCursorOffset;
-	private boolean fCheckExtraResults= true;
 	protected IProject fProject;
 	
 	public CompletionTestBase(String name) {
@@ -44,30 +43,15 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
+	
+	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
 
-	/*
-	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest#doCheckExtraResults()
-	 */
-	@Override
-	protected boolean doCheckExtraResults() {
-		return fCheckExtraResults;
-	}
-
-	private void setCheckExtraResults(boolean check) {
-		fCheckExtraResults= check;
+	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
+		assertContentAssistResults(offset, expected, DEFAULT_FLAGS, compareType);
 	}
 
 	protected void assertMinimumCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
-		setCheckExtraResults(false);
-		try {
-			assertCompletionResults(offset, expected, compareType);
-		} finally {
-			setCheckExtraResults(true);
-		}
-	}
-
-	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
-		assertContentAssistResults(offset, expected, true, compareType);
+		assertContentAssistResults(offset, expected, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, compareType);
 	}
 
 	protected void assertCompletionResults(String[] expected) throws Exception {
@@ -75,7 +59,7 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	}
 
 	protected void assertParameterHint(String[] expected) throws Exception {
-		assertContentAssistResults(fCursorOffset, expected, false, CONTEXT);
+		assertContentAssistResults(fCursorOffset, expected, AbstractContentAssistTest.DEFAULT_FLAGS, CONTEXT);
 	}
 	
 	protected void assertDotReplacedWithArrow() throws Exception {

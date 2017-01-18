@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -849,7 +848,7 @@ public class ClassTypeHelper {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 		ICPPClassType[] subclasses= getSubClasses(index, mcl);
-		return findOverriders(subclasses, method, null);
+		return findOverriders(subclasses, method, point);
 	}
 
 	/**

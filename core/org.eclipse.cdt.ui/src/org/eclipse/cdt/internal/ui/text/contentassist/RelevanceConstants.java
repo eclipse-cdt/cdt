@@ -12,6 +12,12 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 public interface RelevanceConstants {
+	/** 
+	 * For inclusion proposals only, relevance increment for matches
+	 * with a file type known to be a header file.
+	 */
+	final int FILE_TYPE_RELEVANCE = 2000;
+	
 	/** Relevance increment for same case matches */
 	final int CASE_MATCH_RELEVANCE = 1000;
 

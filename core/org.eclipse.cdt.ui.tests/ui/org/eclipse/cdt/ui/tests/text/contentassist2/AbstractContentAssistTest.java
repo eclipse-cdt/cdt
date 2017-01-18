@@ -65,6 +65,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected final static int IS_TEMPLATE         = 0x02;
 	protected final static int FILTER_RESULTS      = 0x04;
 	protected final static int ALLOW_EXTRA_RESULTS = 0x08;
+	protected final static int CHECK_ORDER         = 0x10;
 
 	protected final static int DEFAULT_FLAGS = FILTER_RESULTS;
 	
@@ -171,12 +172,15 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		boolean isTemplate = (flags & IS_TEMPLATE) != 0;
 		boolean filterResults = (flags & FILTER_RESULTS) != 0;
 		boolean allowExtraResults = (flags & ALLOW_EXTRA_RESULTS) != 0;
+		boolean checkOrder = (flags & CHECK_ORDER) != 0;
 
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 
 		String[] resultStrings= toStringArray(r.results, compareType);
-		Arrays.sort(expected);
-		Arrays.sort(resultStrings);
+		if (!checkOrder) {
+			Arrays.sort(expected);
+			Arrays.sort(resultStrings);
+		}
 
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("Time: " + (r.endTime - r.startTime) + " ms");

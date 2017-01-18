@@ -65,9 +65,11 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 				ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
 		super.tearDown();
 	}
+	
+	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
 
 	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
-		assertContentAssistResults(offset, expected, true, compareType);
+		assertContentAssistResults(offset, expected, DEFAULT_FLAGS, compareType);
 	}
 	
 	protected void assertCompletionResults(String[] expected) throws Exception {

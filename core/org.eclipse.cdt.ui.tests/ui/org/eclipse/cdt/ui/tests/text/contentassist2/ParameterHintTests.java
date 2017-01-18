@@ -62,7 +62,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 	
 	protected void assertParameterHints(String[] expected) throws Exception {
-		assertContentAssistResults(getBuffer().length() - 1, expected, false, CompareType.CONTEXT);
+		assertContentAssistResults(getBuffer().length() - 1, expected, DEFAULT_FLAGS, CompareType.CONTEXT);
 	}
 	
 	//void foo(){aFunc(

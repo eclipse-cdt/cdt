@@ -353,7 +353,7 @@ public class StreamChannelManager implements Runnable {
     private Sender sender;
     private Receiver receiver;
     
-    private boolean debug = true;
+    private boolean debug = false;
     
     public StreamChannelManager(InputStream in, OutputStream out) {
         sender = new Sender(new BufferedOutputStream(out));

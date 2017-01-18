@@ -68,7 +68,7 @@ do_download() {
 	dd of=$proxytmp ibs=680 count=$1
 	IFS= read -r last
 	echo "$last" >> $proxytmp
-	base64 --decode < $proxytmp | tar zxf - > /dev/null 2>&1
+	base64 --decode < $proxytmp | (cd $installdir && tar zxvf -) > /dev/null 2>&1
 	if test $? -eq 0; then
 		echo ok
 	else
@@ -83,7 +83,7 @@ do_download() {
 start_server() {
 	#debugoptions="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y"
 	
-	java -cp $plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar \
+	java -cp $plugins/org.eclipse.equinox.launcher_1.*.jar \ # use globbing to find launcher version
 		$debugoptions \
 		org.eclipse.equinox.launcher.Main \
 		-application org.eclipse.remote.proxy.server.core.application \

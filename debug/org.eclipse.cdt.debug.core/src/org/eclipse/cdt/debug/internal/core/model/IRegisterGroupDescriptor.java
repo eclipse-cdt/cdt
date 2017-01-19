@@ -32,4 +32,11 @@ public interface IRegisterGroupDescriptor {
 	 * @throws CoreException
 	 */
 	public IRegisterDescriptor[] getChildren() throws CoreException;
+	
+	/**
+	 * The id of the container this register group belongs to.
+	 * If null, the register group applies to the entire launch, 
+	 * otherwise it applies only to a given core, or process, within the launch. 
+	 */
+	public String getContainerId();
 }

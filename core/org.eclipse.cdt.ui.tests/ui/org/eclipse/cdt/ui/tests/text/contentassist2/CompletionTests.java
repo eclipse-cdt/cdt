@@ -1590,6 +1590,19 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
 	}
 	
+	//	void foo(int x, int y);
+	//	void caller() {
+	//		foo/*cursor*/
+	//	}
+	public void testFunctionWithNoParameterGuesses_497190() throws Exception {
+		try {
+			enableParameterGuessing(false);
+			assertCompletionResults(new String[] { "foo()" });
+		} finally {
+			enableParameterGuessing(true);
+		}
+	}
+	
 	//	struct A {
 	//	    void foo();
 	//	};

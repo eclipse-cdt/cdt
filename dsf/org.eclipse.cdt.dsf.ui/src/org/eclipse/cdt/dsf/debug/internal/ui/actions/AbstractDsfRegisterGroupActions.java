@@ -819,6 +819,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			}
 
 			@Override
+			public String getContainerId() {
+				return null; // Not used
+			}
+
+			@Override
 			public IRegisterDescriptor[] getChildren() throws CoreException {
 				return iSelectedRegisters;
 			}

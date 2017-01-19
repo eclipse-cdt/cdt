@@ -28,6 +28,35 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	private Image fImage;
 
 	/**
+	 * The information display string usually just contains a comma-separated
+	 * list of (function or template) parameters.
+	 * Optionally, it can contain a prefix before and a suffix after the
+	 * parameter list (so that e.g. it displays a function's full signature,
+	 * including name and return value).
+	 * In such a case, fHasPrefixSuffix is true, and fParamlistStartIndex
+	 * and fParamlistEndIndex denote the indices that bound the parameter list
+	 * portion of the information display string.
+	 */
+	private boolean fHasPrefixSuffix;
+	private int fParamlistStartIndex;
+	private int fParamlistEndIndex;
+	
+	public void setHasPrefixSuffix(int paramlistStartIndex, int paramlistEndIndex) {
+		fHasPrefixSuffix = true;
+		fParamlistStartIndex = paramlistStartIndex;
+		fParamlistEndIndex = paramlistEndIndex;
+	}
+	public boolean hasPrefixSuffix() {
+		return fHasPrefixSuffix;
+	}
+	public int getArglistStartIndex() {
+		return fParamlistStartIndex;
+	}
+	public int getArglistEndIndex() {
+		return fParamlistEndIndex;
+	}
+	
+	/**
 	 * Creates a new context information without an image.
 	 *
 	 * @param contextDisplayString the string to be used when presenting the context

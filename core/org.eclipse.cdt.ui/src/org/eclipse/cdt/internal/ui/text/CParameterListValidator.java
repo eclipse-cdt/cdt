@@ -26,6 +26,8 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CProposalContextInformation;
+
 /**
  * This class provides the function parameter parsing for the C/C++ Editor hover.
  * It is based heavily on the Java class JavaParameterListValidator.
@@ -192,9 +194,25 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		fCurrentParameter= currentParameter;
 		
 		// Don't presume what has been done to the string, rather use as is.
-		String s= fInformation.getInformationDisplayString();
+		String s = fInformation.getInformationDisplayString();
+		String params = s;
+
+		// Context information objects of type CProposalContextInformation can have
+		// an optional prefix before and suffix after the parameter list.
+		// In such a case, query the indices that bound the parameter list part of 
+		// the string, so we can parse the comma positions accurately. 
+		int paramlistStartIndex = 0;
+		int paramlistEndIndex = s.length();
+		if (fInformation instanceof CProposalContextInformation) {
+			CProposalContextInformation info = (CProposalContextInformation) fInformation;
+			if (info.hasPrefixSuffix()) {
+				paramlistStartIndex = info.getArglistStartIndex();
+				paramlistEndIndex = info.getArglistEndIndex();
+				params = s.substring(paramlistStartIndex, paramlistEndIndex);
+			}
+		}
 		
-		int[] commas= computeCommaPositions(s);
+		int[] commas= computeCommaPositions(params);
 		if (commas.length - 2 < fCurrentParameter) {
 			presentation.addStyleRange(new StyleRange(0, s.length(), null, null, SWT.NORMAL));
 			return true;
@@ -203,13 +221,13 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		int start= commas[fCurrentParameter] + 1;
 		int end= commas[fCurrentParameter + 1];
 		if (start > 0)
-			presentation.addStyleRange(new StyleRange(0, start, null, null, SWT.NORMAL));
+			presentation.addStyleRange(new StyleRange(paramlistStartIndex, start, null, null, SWT.NORMAL));
 
 		if (end > start)
-			presentation.addStyleRange(new StyleRange(start, end - start, null, null, SWT.BOLD));
+			presentation.addStyleRange(new StyleRange(paramlistStartIndex + start, end - start, null, null, SWT.BOLD));
 
 		if (end < s.length())
-			presentation.addStyleRange(new StyleRange(end, s.length() - end, null, null, SWT.NORMAL));
+			presentation.addStyleRange(new StyleRange(paramlistStartIndex + end, params.length() - end, null, null, SWT.NORMAL));
 
 		return true;
 	}

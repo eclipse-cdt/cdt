@@ -65,6 +65,10 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		assertContentAssistResults(getBuffer().length() - 1, expected, DEFAULT_FLAGS, CompareType.CONTEXT);
 	}
 	
+	protected void assertDisplayedParameterHints(String[] expected) throws Exception {
+		assertContentAssistResults(getBuffer().length() - 1, expected, DEFAULT_FLAGS, CompareType.INFORMATION);
+	}
+	
 	//void foo(){aFunc(
 	public void testFunction() throws Exception {
 		assertParameterHints(new String[] {
@@ -193,5 +197,68 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testFormatterConfiguredWithSpaceAfterComma() throws Exception {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);
 		assertParameterHints(new String[] { "foo(int i, int j) : void" });
+	}
+	
+	//	void foo(int x, int y);
+	//	int main() { foo(
+	public void testFunction_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"void foo(int x, int y)"
+		});
+	}
+	
+	//	struct C {
+	//		void foo(int arg);
+	//	};
+	//	void caller(C c) { c.foo(
+	public void testMethod_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"void C::foo(int arg)"
+		});
+	}
+	
+	//	struct Base {
+	//		void foo(int arg);
+	//	};
+	//	struct Derived : Base {};
+	//	void caller(Derived* d) { d->foo(
+	public void testNonOverriddenMethod_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"void Base::foo(int arg)"
+		});
+	}
+	
+	//	struct Base {
+	//		virtual void foo(int arg);
+	//	};
+	//	void caller(Base* b) { b->foo(
+	public void testVirtualMethod_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"virtual void Base::foo(int arg)"
+		});
+	}
+	
+	//	struct Base {
+	//		virtual void foo(int arg);
+	//	};
+	//	struct Derived : Base {};
+	//	void caller(Derived* d) { d->foo(
+	public void testNonOverriddenVirtualMethod_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"virtual void Base::foo(int arg)"
+		});
+	}
+	
+	//	struct Base {
+	//		virtual void foo(int arg);
+	//	};
+	//	struct Derived : Base {
+	//		void foo(int arg) override;
+	//	};
+	//	void caller(Derived* d) { d->foo(
+	public void testOverriddenVirtualMethod_461680() throws Exception {
+		assertDisplayedParameterHints(new String[] {
+				"virtual void Derived::foo(int arg)"
+		});
 	}
 }

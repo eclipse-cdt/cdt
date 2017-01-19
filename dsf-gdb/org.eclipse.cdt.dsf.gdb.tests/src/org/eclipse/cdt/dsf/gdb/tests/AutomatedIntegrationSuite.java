@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.tests;
 
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_NoContainerTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_WithAlternativeProcessIdTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_WithContainerDMContextTest;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIBreakInsertCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMICommandConstructCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIGDBSetSysroot;
@@ -30,6 +34,10 @@ import org.junit.runners.Suite.SuiteClasses;
     MIStringHandlerTests.class,
     ProcStatParserTest.class,
     FilePartsTest.class,
+    GDBRegisterTest.class,
+    GDBRegisterTest_NoContainerTest.class,
+    GDBRegisterTest_WithAlternativeProcessIdTest.class,
+    GDBRegisterTest_WithContainerDMContextTest.class,
 })	
 public class AutomatedIntegrationSuite {
 	// Often overriding BeforeClass method here

@@ -652,7 +652,6 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
         String dispArgString = dispArgs.toString();
         String idArgString = idArgs.toString();
-		String contextDispargString = hasArgs ? dispArgString : null;
         StringBuilder dispStringBuff = new StringBuilder(function.getName());
         dispStringBuff.append('(');
 		dispStringBuff.append(dispArgString);
@@ -669,7 +668,29 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
 
-        boolean inUsingDeclaration = cContext.isInUsingDirective();
+		String contextInfoString = null;
+		int paramlistStartIndex = 0, paramlistEndIndex = 0;
+		if (hasArgs) {
+			StringBuilder contextInfo = new StringBuilder();
+			if (function instanceof ICPPMethod && isVirtual((ICPPMethod) function, cContext)) {
+				contextInfo.append("virtual ");  //$NON-NLS-1$
+			}
+			contextInfo.append(returnTypeStr);
+			contextInfo.append(' ');
+			if (function instanceof ICPPMethod) {
+				contextInfo.append(function.getOwner().getName());
+				contextInfo.append("::");  //$NON-NLS-1$
+			}
+			contextInfo.append(function.getName());
+			contextInfo.append('(');
+			paramlistStartIndex = contextInfo.length();
+			contextInfo.append(dispArgString);
+			paramlistEndIndex = contextInfo.length();
+			contextInfo.append(')');
+			contextInfoString = contextInfo.toString();
+		}
+
+		boolean inUsingDeclaration = cContext.isInUsingDirective();
 
         if (wantParens && !cContext.isFollowedByOpeningParen()) {
         	// If we might be calling or defining the function in this context, assume we are
@@ -693,10 +714,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposal.setCursorPosition(cursorPosition);
 		}
 
-		if (contextDispargString != null && !inUsingDeclaration) {
+		if (contextInfoString != null && !inUsingDeclaration) {
 			CProposalContextInformation info =
-					new CProposalContextInformation(image, dispString, contextDispargString);
+					new CProposalContextInformation(image, dispString, contextInfoString);
 			info.setContextInformationPosition(cContext.getContextInformationOffset());
+			info.setHasPrefixSuffix(paramlistStartIndex, paramlistEndIndex);
 			proposal.setContextInformation(info);
 		}
 
@@ -710,6 +732,24 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		} else {
 			proposals.add(proposal);
 		}
+	}
+
+	/**
+	 * Returns true if the given method is virtual, including if it's virtual because
+	 * it overrides a virtual method.
+	 */
+	private static boolean isVirtual(ICPPMethod method, CContentAssistInvocationContext context) {
+		if (method.isVirtual()) {
+			return true;
+		}
+		ICPPMethod[] overridden = ClassTypeHelper.findOverridden(method, 
+				context.getCompletionNode().getTranslationUnit());
+		for (ICPPMethod m : overridden) {
+			if (m.isVirtual()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -644,10 +644,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// The ParameterGuessingProposal will be active if the function accepts parameters and the content
 		// assist is invoked before typing any parameters. Otherwise, the normal parameter hint proposal will
 		// be added.
-		if (!inUsingDeclaration && function.getParameters() != null && function.getParameters().length != 0
-				&& isBeforeParameters(context)) {
+		if (fGuessArguments && !inUsingDeclaration && function.getParameters() != null 
+        && function.getParameters().length != 0 && isBeforeParameters(context)) {
 			proposals.add(ParameterGuessingProposal.createProposal(context, fAvailableElements, proposal,
-					function, fPrefix, fGuessArguments));
+					function, fPrefix));
 		} else {
 			proposals.add(proposal);
 		}

@@ -98,6 +98,11 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, value);
 	}
 	
+	protected static void enableParameterGuessing(boolean value) {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(ContentAssistPreference.GUESS_ARGUMENTS, value);
+	}
+	
 	//	{CompletionTest.h}
 	//	class C1;
 	//	class C2;

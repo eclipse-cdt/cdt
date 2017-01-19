@@ -369,7 +369,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 			case CONTEXT:
 				if (result instanceof ICompletionProposal) {
-					result = ((CCompletionProposal) result).getContextInformation();
+					result = ((ICompletionProposal) result).getContextInformation();
 				}
 				if (result instanceof IContextInformation) {
 					strings[i] = ((IContextInformation) result).getContextDisplayString();
@@ -377,6 +377,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				break;
 
 			case INFORMATION:
+				if (result instanceof ICompletionProposal) {
+					result = ((ICompletionProposal) result).getContextInformation();
+				}
 				if (result instanceof IContextInformation) {
 					strings[i] = ((IContextInformation) result).getInformationDisplayString();
 				}

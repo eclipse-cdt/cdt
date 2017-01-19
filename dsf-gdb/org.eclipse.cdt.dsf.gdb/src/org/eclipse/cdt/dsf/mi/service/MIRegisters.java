@@ -85,17 +85,27 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      */
 	
     public static class MIRegisterGroupDMC extends AbstractDMContext implements IRegisterGroupDMContext {
-        private int fGroupNo;
+        private final int fGroupNo;
+		private final IContainerDMContext parent;
         private String fGroupName;
 
         public MIRegisterGroupDMC(MIRegisters service, IContainerDMContext contDmc, int groupNo, String groupName) {
             super(service.getSession().getId(), new IDMContext[] { contDmc });
+			this.parent = contDmc;
             fGroupNo = groupNo;
             fGroupName = groupName;
         }
 
         public int getGroupNo() { return fGroupNo; }
         public String getName() { return fGroupName; }
+        
+        /**
+		 * @since 5.3
+		 */
+        public IContainerDMContext getContainerParent() {
+			return parent;
+		}
+        
         /**
 		 * @since 4.6
 		 */

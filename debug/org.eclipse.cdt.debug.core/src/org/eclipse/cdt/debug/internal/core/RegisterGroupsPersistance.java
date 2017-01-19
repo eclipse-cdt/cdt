@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation in CRegisterManager.java and CRegisterGroup.java
  *     Alvaro Sanchez-Leon (Ericsson) - Integrated from files above for Bug 235747
+ *     Bruno Medeiros (Renesas) - Persistence of register groups per process (449104)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.core;
@@ -39,6 +40,7 @@ public class RegisterGroupsPersistance {
 	private static final String ELEMENT_GROUP = "group"; //$NON-NLS-1$
 	private static final String ELEMENT_REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
 	private static final String ATTR_REGISTER_GROUP_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_REGISTER_CONTAINER_ID = "parent_id"; //$NON-NLS-1$
 	private static final String ATTR_REGISTER_GROUP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	private static final String ELEMENT_REGISTER = "register"; //$NON-NLS-1$
@@ -60,12 +62,17 @@ public class RegisterGroupsPersistance {
 		private final String fMemento;
 		private final String fName;
 		private final boolean fEnabled;
+		private final String fContainerId;
 		IRegisterDescriptor[] fRegisterDescriptors = null;
 
-		public RegisterGroupDescriptor(String memento, String groupName, boolean enabled) {
+		public RegisterGroupDescriptor(String memento, String groupName, boolean enabled, String containerId) {
 			fMemento = memento;
 			fName = groupName;
 			fEnabled = enabled;
+			if (containerId != null && containerId.length() == 0) {
+				containerId = null;
+			}
+			fContainerId = containerId;
 		}
 
 		@Override
@@ -76,6 +83,11 @@ public class RegisterGroupsPersistance {
 		@Override
 		public boolean isEnabled() {
 			return fEnabled;
+		}
+		
+		@Override
+		public String getContainerId() {
+			return fContainerId;
 		}
 
 		@Override
@@ -144,11 +156,16 @@ public class RegisterGroupsPersistance {
 
 		return fLaunchConfigTargetAttribute;
 	}
-
-	public IRegisterGroupDescriptor[] parseGroups() {
+	
+	/**
+	 * Parse register groups.
+	 * If given containerId is not null, the only returned register groups are the one
+	 * whose container id matches given containerId
+	 */
+	public IRegisterGroupDescriptor[] parseGroups(String containerId) throws CoreException {
 		List<IRegisterGroupDescriptor> groups = new ArrayList<IRegisterGroupDescriptor>();
 		String memento;
-		try {
+		
 			memento = fLaunchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_REGISTER_GROUPS, BLANK_STRING);
 
 			if (memento != null && memento.length() > 0) {
@@ -168,10 +185,12 @@ public class RegisterGroupsPersistance {
 						Element child = (Element) childNode;
 						if (ELEMENT_GROUP.equals(child.getNodeName())) {
 							String groupMemento = child.getAttribute(ATTR_REGISTER_GROUP_MEMENTO);
-							//
+
 							IRegisterGroupDescriptor groupdesc = createGroupFromMemento(groupMemento);
 							if (groupdesc != null) {
-								groups.add(groupdesc);
+								if(containerId == null || containerId.equals(groupdesc.getContainerId())) {
+									groups.add(groupdesc);
+								}
 							}
 						}
 					}
@@ -179,10 +198,6 @@ public class RegisterGroupsPersistance {
 				}
 
 			}
-		} catch (CoreException e) {
-
-			e.printStackTrace();
-		}
 
 		return groups.toArray(new IRegisterGroupDescriptor[groups.size()]);
 
@@ -217,12 +232,11 @@ public class RegisterGroupsPersistance {
 		if (groupName == null || groupName.length() == 0) {
 			abort(CoreModelMessages.getString("CRegisterGroup.2"), null); //$NON-NLS-1$
 		}
+		String containerId = element.getAttribute(ATTR_REGISTER_CONTAINER_ID);
 		String e = element.getAttribute(ATTR_REGISTER_GROUP_ENABLED);
 		boolean enabled = Boolean.parseBoolean(e);
 
-		IRegisterGroupDescriptor group = new RegisterGroupDescriptor(memento, groupName, enabled);
-
-		return group;
+		return new RegisterGroupDescriptor(memento, groupName, enabled, containerId);
 	}
 
 	private String getMemento(IRegisterGroupDescriptor[] groups) throws CoreException {
@@ -243,6 +257,7 @@ public class RegisterGroupsPersistance {
 		Element element = document.createElement(ELEMENT_REGISTER_GROUP);
 		element.setAttribute(ATTR_REGISTER_GROUP_NAME, group.getName());
 		element.setAttribute(ATTR_REGISTER_GROUP_ENABLED, String.valueOf(group.isEnabled()));
+		element.setAttribute(ATTR_REGISTER_CONTAINER_ID, group.getContainerId());
 		IRegisterDescriptor[] registerDescriptors = group.getChildren();
 		for (int i = 0; i < registerDescriptors.length; ++i) {
 			Element child = document.createElement(ELEMENT_REGISTER);

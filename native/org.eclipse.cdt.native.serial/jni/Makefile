@@ -27,6 +27,10 @@ else
 ifeq ($(UNAME),Darwin)
 LIBS = \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib
+else
+LIBS = \
+	$(OS_DIR)/win32/x86/serial.dll \
+	$(OS_DIR)/win32/x86_64/serial.dll
 endif
 endif
 
@@ -39,11 +43,11 @@ rebuild: clean all
 
 $(OS_DIR)/win32/x86/serial.dll:	serial.c
 	mkdir -p $(dir $@)
-	i686-w64-mingw32-gcc -Wl,--kill-at -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32 -shared -o $@ serial.c
+	i686-w64-mingw32-gcc -Wl,--kill-at -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
 
 $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 	mkdir -p $(dir $@)
-	x86_64-w64-mingw32-gcc -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32 -shared -o $@ serial.c
+	x86_64-w64-mingw32-gcc -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
 
 $(OS_DIR)/linux/x86/libserial.so:	serial.c
 	mkdir -p $(dir $@)

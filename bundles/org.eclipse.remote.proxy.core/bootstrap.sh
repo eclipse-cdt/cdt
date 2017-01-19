@@ -81,9 +81,11 @@ do_download() {
 # has happened is to poll if ppid has changed to 1 (i.e. we no longer have a controlling terminal)
 #
 start_server() {
+	# enable debugoptions in order to attach a debugger
 	#debugoptions="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y"
 	
-	java -cp $plugins/org.eclipse.equinox.launcher_1.*.jar \ # use globbing to find launcher version
+	# use globbing to find launcher version
+	java -cp $plugins/org.eclipse.equinox.launcher_1.*.jar \
 		$debugoptions \
 		org.eclipse.equinox.launcher.Main \
 		-application org.eclipse.remote.proxy.server.core.application \

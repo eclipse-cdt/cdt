@@ -95,7 +95,7 @@ public class SerialPort {
 					return n;
 				} else {
 					n = read1(handle, b, off, len);
-					if (n < 0 && isPaused) {
+					if (n <= 0 && isPaused) {
 						synchronized (pauseMutex) {
 							while (isPaused) {
 								try {
@@ -232,9 +232,18 @@ public class SerialPort {
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
 			List<String> ports = new ArrayList<>();
 			int i = 0;
-			for (String name = getPortName(i++); name != null; name = getPortName(i++)) {
-				ports.add(name);
-			}
+			String name = null;
+			do {
+				try {
+					name = getPortName(i++);
+					if (name != null) {
+						ports.add(name);
+					}
+				} catch (IOException e) {
+					// TODO log the exception
+					e.printStackTrace();
+				}
+			} while (name != null);
 			return ports.toArray(new String[ports.size()]);
 		} else {
 			return new String[0];
@@ -265,19 +274,31 @@ public class SerialPort {
 
 	public synchronized void close() throws IOException {
 		if (isOpen) {
-			close0(handle);
 			isOpen = false;
+			close0(handle);
 			handle = 0;
+			try {
+				// Sleep for a second since some serial ports take a while to actually close
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// nothing to do 
+			}
 		}
 	}
 
 	public boolean isOpen() {
 		return isOpen;
 	}
-
+	
 	public void pause() throws IOException {
 		isPaused = true;
 		close0(handle);
+		try {
+			// Sleep for a second since some serial ports take a while to actually close
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// nothing to do 
+		}
 	}
 
 	public void resume() throws IOException {

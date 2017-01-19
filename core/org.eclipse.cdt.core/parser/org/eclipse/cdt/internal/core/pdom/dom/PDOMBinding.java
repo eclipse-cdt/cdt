@@ -175,6 +175,16 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 
+	public IRecordIterator getDeclarationRecordIterator() throws CoreException {
+		Database db = getDB();
+		return PDOMName.getNameInBindingRecordIterator(db, db.getRecPtr(record + FIRST_DECL));
+	}
+
+	public IRecordIterator getDefinitionRecordIterator() throws CoreException {
+		Database db = getDB();
+		return PDOMName.getNameInBindingRecordIterator(db, db.getRecPtr(record + FIRST_DEF));
+	}
+
 	/**
 	 * Returns an iterator over the names in other linkages that reference this binding.  Does
 	 * not return null.

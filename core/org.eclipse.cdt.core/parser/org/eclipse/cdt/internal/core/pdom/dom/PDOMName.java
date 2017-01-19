@@ -195,6 +195,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		linkage.getDB().putRecPtr(record + FILE_REC_OFFSET, file != null ? file.getRecord() : 0);
 	}
 
+	public static long getFileRecord(Database db, long record) throws CoreException {
+		return db.getRecPtr(record + FILE_REC_OFFSET);
+	}
+
 	@Override
 	public IIndexName getEnclosingDefinition() throws CoreException {
 		long namerec = getEnclosingDefinitionRecord();
@@ -419,7 +423,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	@Override
 	public IIndexName[] getEnclosedNames() throws CoreException {
-		ArrayList<PDOMName> result= new ArrayList<PDOMName>();
+		ArrayList<PDOMName> result= new ArrayList<>();
 		PDOMName name= getNextInFile();
 		while (name != null) {
 			if (name.getEnclosingDefinitionRecord() == record) {
@@ -428,5 +432,36 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			name= name.getNextInFile();
 		}
 		return result.toArray(new PDOMName[result.size()]);
+	}
+
+	/**
+	 * Returns an iterator over names in binding. This is a lighter weight alternative to
+	 * the {@link #getNextInBinding()} method. 
+	 */
+	public static IRecordIterator getNameInBindingRecordIterator(Database db, long nameRecord) {
+		if (nameRecord == 0)
+			return IRecordIterator.EMPTY;
+		return new NameInBindingRecordIterator(db, nameRecord);
+	}
+
+	/**
+	 * Iterator over PDOMName records in a binding.
+	 */
+	private static class NameInBindingRecordIterator implements IRecordIterator {
+		final Database db;
+		long nameRecord;
+
+		public NameInBindingRecordIterator(Database db, long nameRecord) {
+			this.db = db;
+			this.nameRecord = nameRecord;
+		}
+
+		@Override
+		public long next() throws CoreException {
+			long record = nameRecord;
+			if (record != 0)
+				nameRecord = db.getRecPtr(record + BINDING_NEXT_OFFSET);
+			return record;
+		}
 	}
 }

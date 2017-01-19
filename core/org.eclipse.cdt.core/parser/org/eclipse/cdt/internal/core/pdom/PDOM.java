@@ -77,9 +77,11 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
+import org.eclipse.cdt.internal.core.pdom.dom.CompoundRecordIterator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMIterator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.IRecordIterator;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerPatternCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -1268,6 +1270,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
+	}
+
+	public IRecordIterator getDeclarationsDefintitionsRecordIterator(IIndexBinding binding) throws CoreException {
+		IIndexFragmentBinding myBinding= adaptBinding(binding);
+		if (myBinding instanceof PDOMBinding) {
+			PDOMBinding pdomBinding = (PDOMBinding) myBinding;
+			return new CompoundRecordIterator(pdomBinding.getDeclarationRecordIterator(),
+					pdomBinding.getDefinitionRecordIterator());
+		}
+		return IRecordIterator.EMPTY;
 	}
 
 	protected boolean isCommitted(PDOMName name) throws CoreException {

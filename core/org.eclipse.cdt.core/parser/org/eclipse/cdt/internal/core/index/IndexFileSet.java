@@ -21,6 +21,11 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOMFileSet;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.IRecordIterator;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
@@ -45,26 +50,30 @@ public class IndexFileSet implements IIndexFileSet {
 
 	@Override
 	public void remove(IIndexFile indexFile) {
-		final IIndexFragmentFile fragFile = (IIndexFragmentFile) indexFile;
-		final IIndexFragment frag= fragFile.getIndexFragment();
-		IIndexFragmentFileSet subSet= fSubSets.get(frag);		
+		final IIndexFragmentFile fragmentFile = (IIndexFragmentFile) indexFile;
+		final IIndexFragment fragment = fragmentFile.getIndexFragment();
+		IIndexFragmentFileSet subSet = fSubSets.get(fragment);		
 		if (subSet != null) {
-			subSet.remove(fragFile);
+			subSet.remove(fragmentFile);
 		}
 	}
 
 	@Override
 	public boolean containsDeclaration(IIndexBinding binding) {
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
+			IIndexFragment fragment = entry.getKey();
+			IIndexFragmentFileSet fragmentFileSet = entry.getValue();
 			try {
-				IIndexFragmentName[] names =
-						entry.getKey().findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS);
-				for (IIndexFragmentName name : names) {
-					try {
-						if (entry.getValue().contains((IIndexFragmentFile) name.getFile())) 
+				if (!fragmentFileSet.isEmpty() && fragmentFileSet instanceof PDOMFileSet && fragment instanceof PDOM) {
+					PDOM pdom = (PDOM) fragment;
+					PDOMFileSet pdomFileSet = (PDOMFileSet) fragmentFileSet;
+					Database db = pdom.getDB();
+					IRecordIterator nameIterator = pdom.getDeclarationsDefintitionsRecordIterator(binding);
+					long nameRecord;
+					while ((nameRecord = nameIterator.next()) != 0) {
+						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
+						if (pdomFileSet.containsFile(fileRecord))
 							return true;
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
 					}
 				}
 			} catch (CoreException e) {

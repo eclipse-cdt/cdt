@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMFileSet implements IIndexFragmentFileSet {
+public final class PDOMFileSet implements IIndexFragmentFileSet {
 	private final HashSet<Long> fFileIDs= new HashSet<>();
 	
 	@Override
@@ -49,5 +49,17 @@ public class PDOMFileSet implements IIndexFragmentFileSet {
 			return fFileIDs.contains(((PDOMFile) file).getRecord());
 		}
 		return false;
+	}
+
+	/**
+	 * Returns whether the file set contains the file corresponding to the given record.
+	 */
+	public boolean containsFile(long fileRecord) {
+		return fFileIDs.contains(fileRecord);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return fFileIDs.isEmpty();
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson) - First Implementation and API (Bug 235747)
+ *     Bruno Medeiros (Renesas) - Persistence of register groups per process (449104)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -15,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +53,9 @@ import org.eclipse.osgi.util.NLS;
 /**
  * <p>An extension of MIRegisters to support management of Register Groups as per the IRegisters2 interface.</p>
  * <p>The managed registered groups are user-defined subsets of the complete list of Registers reported by GDB for a specific Target</p>
- * <p>This class also triggers the read/write (persistence) of the user-defined Register Groups during the start/shutdown process of a session respectively</p>
+ * <p>This class also triggers the read/write (persistence) of the user-defined Register Groups during the start/shutdown process of a session respectively.
+ * It optionally supports persistence of user-defined Register Groups per container/process, 
+ * see {@link #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)}.</p>
  * @since 4.6
  */
 public class GDBRegisters extends MIRegisters implements IRegisters2 {
@@ -238,6 +241,13 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		@Override
 		public boolean isEnabled() {
 			return fEnabled;
+		}
+		
+		@Override
+		public String getContainerId() {
+			IDMContext parent = fgroup.getParents()[0];
+			IMIProcessDMContext contDmc = DMContexts.getAncestorOfType(parent, IMIProcessDMContext.class);
+			return contDmc == null ? null : contDmc.getProcId();
 		}
 
 		@Override
@@ -520,9 +530,6 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			}
 		}
 
-		// must be a child of an existing container, at least the root group must be present
-		assert (fContextToGroupsMap.containsKey(contDmc));
-
 		// Make sure the name is not currently in use
 		if (fContextToGroupsMap.getGroupNameMap(contDmc).get(groupName) != null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, NLS.bind(
@@ -727,17 +734,21 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		super.shutdown(rm);
 	}
 
+    /**
+     * Save the register group settings into the underlying launch configuration.
+     */
 	public void save() {
-		IRegisterGroupDescriptor[] groups = buildDescriptors();
-		ILaunchConfiguration launchConfig = getLaunchConfig();
-		if (launchConfig != null) {
-			RegisterGroupsPersistance serializer = new RegisterGroupsPersistance(launchConfig);
-			try {
-				serializer.saveGroups(groups);
-			} catch (CoreException e1) {
-				e1.printStackTrace();
-			}
-		}
+        IRegisterGroupDescriptor[] groups = buildDescriptors();
+        ILaunchConfiguration launchConfig = getLaunchConfig();
+        if (launchConfig != null) {
+            RegisterGroupsPersistance serializer = new RegisterGroupsPersistance(launchConfig);
+            try {
+                serializer.saveGroups(groups);
+            } catch (CoreException e) {
+                GdbPlugin.log(e);
+            }
+        }
+
 	}
 
 	/**
@@ -855,7 +866,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		return config;
 	}
 
-	private IRegisterGroupDescriptor[] buildDescriptors() {
+	IRegisterGroupDescriptor[] buildDescriptors() {
 		// use a tree map to sort the entries by group number
 		TreeMap<Integer, MIRegisterGroupDMC> sortedGroups = new TreeMap<Integer, MIRegisterGroupDMC>();
 
@@ -872,9 +883,8 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		// load group descriptors sorted in ascending order to their group
 		// number into the result array
 		int i = 0;
-		for (Iterator<Entry<Integer, MIRegisterGroupDMC>> iterator = groupSet.iterator(); iterator.hasNext();) {
-			Entry<Integer, MIRegisterGroupDMC> entry = iterator.next();
-			descriptors[i] = new RegisterGroupDescriptor(entry.getValue(), true);
+		for (Entry<Integer, MIRegisterGroupDMC> groupEntry : groupSet) {
+			descriptors[i] = new RegisterGroupDescriptor(groupEntry.getValue(), true);
 			i++;
 		}
 
@@ -895,9 +905,16 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		return newArr;
 	}
 
-	private MIRegisterGroupDMC[] readGroupsFromMemento(final IContainerDMContext contDmc) {
+	MIRegisterGroupDMC[] readGroupsFromMemento(final IContainerDMContext contDmc) {
+		String containerId = getPersistenceIdForRegisterGroupContainer(contDmc);
+		
 		RegisterGroupsPersistance deserializer = new RegisterGroupsPersistance(getLaunchConfig());
-		IRegisterGroupDescriptor[] groupDescriptions = deserializer.parseGroups();
+		IRegisterGroupDescriptor[] groupDescriptions;
+		try {
+			groupDescriptions = deserializer.parseGroups(containerId);
+		} catch(CoreException e) {
+			return new MIRegisterGroupDMC[0];
+		}
 
 		List<MIRegisterGroupDMC> groups = new ArrayList<MIRegisterGroupDMC>();
 		for (IRegisterGroupDescriptor group : groupDescriptions) {
@@ -907,6 +924,39 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		}
 
 		return groups.toArray(new MIRegisterGroupDMC[groups.size()]);
+	}
+	
+	/**
+	 * @return the persistence id for the register group in the given contDmc container context, 
+	 * or null to associate the Register Groups in the given container to the launch itself (this is the default behavior). 
+	 * 
+	 * Subclasses may override. Alternatively simply use override {@link #useProcessIdAsRegisterGroupPersistanceId()} to return true to have
+	 * the process id be used as the persistence id. 
+	 * 
+	 * Note that for this to work correctly the id returned for a given container must be same across launch sessions,
+	 * otherwise persistence info will be lost. (Hence why null is the default behavior)
+	 * 
+	 * @since 5.3
+	 */
+	protected String getPersistenceIdForRegisterGroupContainer(final IContainerDMContext contDmc) {
+		if(useProcessIdAsRegisterGroupPersistanceId()) {
+			IMIProcessDMContext processDmc = DMContexts.getAncestorOfType(contDmc, IMIProcessDMContext.class);
+			return processDmc == null ? null : processDmc.getProcId();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * @return whether the process id should be used as a container id for the persistence 
+	 * of the register groups. Subclasses may override.
+	 * 
+	 * @see #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)
+	 * 
+	 * @since 5.3
+	 */
+	protected boolean useProcessIdAsRegisterGroupPersistanceId() {
+		return false;
 	}
 
 	private void getUserGroupRegisters(IDMContext ctx, final DataRequestMonitor<IRegisterDMContext[]> rm) {

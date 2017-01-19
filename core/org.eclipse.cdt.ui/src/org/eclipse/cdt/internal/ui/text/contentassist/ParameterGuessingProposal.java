@@ -77,11 +77,10 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	private char[][] fParametersNames;
 	private IType[] fParametersTypes;
 	private List<IBinding> fAssignableElements;
-	private final boolean fGuessArguments;
 
 	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
 			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
-			String prefix, boolean guessArguments) {
+			String prefix) {
 		String replacement = getParametersList(function);
 		String fullPrefix = function.getName() + "("; //$NON-NLS-1$
 		int replacementOffset = proposal.getReplacementOffset();
@@ -118,7 +117,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
 				replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(),
 				proposal.getRelevance(), context.getViewer(), function, invocationOffset, parseOffset,
-				context.getTranslationUnit(), document, guessArguments);
+				context.getTranslationUnit(), document);
 		ret.setContextInformation(proposal.getContextInformation());
 		ret.fFullPrefix = fullPrefix;
 		ret.fCEditor = getCEditor(context.getEditor());
@@ -147,10 +146,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public ParameterGuessingProposal(String replacementString, int replacementOffset, int replacementLength,
 			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
 			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu,
-			IDocument document, boolean guessArguments) {
+			IDocument document) {
 		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
 				relevance, viewer, function, invocationOffset, parseOffset, tu, document);
-		this.fGuessArguments = guessArguments;
 	}
 
 	/**
@@ -175,9 +173,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public void apply(final IDocument document, char trigger, int offset) {
 		super.apply(document, trigger, offset);
 
-		if (fGuessArguments) {
-			generateParameterGuesses();
-		}
+		generateParameterGuesses();
 		
 		int baseOffset = getReplacementOffset();
 		String replacement = getReplacementString();

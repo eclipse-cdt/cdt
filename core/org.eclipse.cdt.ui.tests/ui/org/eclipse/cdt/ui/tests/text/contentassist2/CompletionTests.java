@@ -272,6 +272,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, value);
 	}
+	
+	private static void enableParameterGuessing(boolean value) {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(ContentAssistPreference.GUESS_ARGUMENTS, value);
+	}
 
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void testLocalVariable() throws Exception {
@@ -1771,6 +1776,19 @@ public class CompletionTests extends AbstractContentAssistTest {
 		setDisplayDefaultArguments(true);
 		final String[] expectedDisplay = { "other_tpl<typename T1, typename T2 = tpl<T1>>" };
 		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
+	}
+	
+	//	void foo(int x, int y);
+	//	void caller() {
+	//		foo/*cursor*/
+	//	}
+	public void testFunctionWithNoParameterGuesses_497190() throws Exception {
+		try {
+			enableParameterGuessing(false);
+			assertCompletionResults(new String[] { "foo()" });
+		} finally {
+			enableParameterGuessing(true);
+		}
 	}
 	
 	//	struct A {

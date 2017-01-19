@@ -141,7 +141,7 @@ public class ProxyConnectionBootstrap {
 						String[] status = parts[1].split("/"); //$NON-NLS-1$
 						context.setOSName(status[1]);
 						context.setOSArch(status[2]);
-						context.setState(status[0].equals("proxy") ? States.START : States.DOWNLOAD); //$NON-NLS-1$
+						context.setState(status[0].equals("found") ? States.START : States.DOWNLOAD); //$NON-NLS-1$
 						return true;
 					case "fail": //$NON-NLS-1$
 						context.setErrorMessage(parts[1]);

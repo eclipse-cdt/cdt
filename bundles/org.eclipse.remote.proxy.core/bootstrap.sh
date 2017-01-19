@@ -52,11 +52,11 @@ do_check() {
 		echo fail:system not supported;
 		return;;
 	esac
-	proxy=no
+	proxy=not_found
 	if test -d $proxydir; then
 		bundle="org.eclipse.remote.proxy.server.core_$1.jar"
 		if test -f $plugins/$bundle; then
-			proxy=yes
+			proxy=found
 		else
 			mv $proxydir $proxydir.pre_$1
 		fi

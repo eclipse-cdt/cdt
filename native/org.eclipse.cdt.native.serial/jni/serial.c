@@ -37,7 +37,7 @@ static void throwIOException(JNIEnv *env, const char *msg)
 #ifndef __MINGW32__
 	sprintf(buff, "%s: %s", msg, strerror(errno));
 #else
-	sprintf_s(buff, sizeof(buff), "%s: %d", msg, GetLastError());
+	sprintf_s(buff, sizeof(buff), "%s (%d)", msg, GetLastError());
 #endif
 	jclass cls = (*env)->FindClass(env, "java/io/IOException");
 	(*env)->ThrowNew(env, cls, buff);
@@ -167,10 +167,13 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 		OPEN_EXISTING,
 		FILE_FLAG_OVERLAPPED,
 		NULL);
+	(*env)->ReleaseStringChars(env, portName, cportName);
 
 	if (handle == INVALID_HANDLE_VALUE) {
 		char msg[256];
-		sprintf_s(msg, sizeof(msg), "Error opening %s", cportName);
+		const char * name = (*env)->GetStringUTFChars(env, portName, NULL);
+		sprintf_s(msg, sizeof(msg), "Error opening %s", name);
+		(*env)->ReleaseStringUTFChars(env, portName, name);
 		throwIOException(env, msg);
 		return -1;
 	}
@@ -275,8 +278,7 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong jhandle, jb
 			throwIOException(env, "Error reading from port");
 			CloseHandle(olp.hEvent);
 			return -1;
-		}
-		else {
+		} else {
 			switch (WaitForSingleObject(olp.hEvent, INFINITE)) {
 			case WAIT_OBJECT_0:
 				if (!GetOverlappedResult(handle, &olp, &nread, FALSE)) {
@@ -401,7 +403,7 @@ JNIEXPORT jstring FUNC(getPortName)(JNIEnv *env, jclass cls, jint i)
 	HKEY key;
 
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DEVICEMAP\\SERIALCOMM", 0, KEY_READ, &key) != ERROR_SUCCESS) {
-		throwIOException(env, "Can not find registry key");
+		// There are none
 		return NULL;
 	}
 

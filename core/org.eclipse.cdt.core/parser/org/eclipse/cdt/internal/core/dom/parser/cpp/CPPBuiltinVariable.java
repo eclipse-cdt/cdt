@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * An example is the built-in variable __func__.
  */
 public class CPPBuiltinVariable extends CPPVariable {
-    private IType type=null;
-    private char[] name=null;
-    private IScope scope=null;
+    private IType type;
+    private char[] name;
+    private IScope scope;
 
     public CPPBuiltinVariable(IType type, char[] name, IScope scope) {
         super(null);
@@ -54,7 +54,7 @@ public class CPPBuiltinVariable extends CPPVariable {
     }
 
     /**
-     * returns null
+     * Returns null.
      */
     @Override
 	public IASTNode[] getDeclarations() {
@@ -62,7 +62,7 @@ public class CPPBuiltinVariable extends CPPVariable {
     }
 
     /**
-     * returns null
+     * Returns null.
      */
     @Override
 	public IASTNode getDefinition() {
@@ -70,7 +70,7 @@ public class CPPBuiltinVariable extends CPPVariable {
     }
 
     /**
-     * does nothing
+     * Does nothing.
      */
     @Override
 	public void addDefinition(IASTNode node) {
@@ -78,7 +78,7 @@ public class CPPBuiltinVariable extends CPPVariable {
     }
 
     /**
-     * does nothing
+     * Does nothing.
      */
     @Override
 	public void addDeclaration(IASTNode node) {
@@ -103,7 +103,7 @@ public class CPPBuiltinVariable extends CPPVariable {
     }
 
     /**
-     * returns true
+     * Returns true.
      */
     @Override
 	public boolean isGloballyQualified() {

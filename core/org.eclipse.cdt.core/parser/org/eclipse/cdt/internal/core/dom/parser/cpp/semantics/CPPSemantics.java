@@ -3186,7 +3186,8 @@ public class CPPSemantics {
 		 *
 		 */
 		int kind = exp.getKind();
-		IBinding[] bindings = findBindings(exp.getTranslationUnit().getScope(), ((CPPASTLiteralExpression) exp).getOperatorName(), false);
+		IScope lookupScope = CPPVisitor.getContainingScope(exp);
+		IBinding[] bindings = findBindings(lookupScope, ((CPPASTLiteralExpression) exp).getOperatorName(), false);
 		ICPPFunction[] funcs = new ICPPFunction[bindings.length];
 		ICPPFunctionTemplate[] tplFunctions = new ICPPFunctionTemplate[bindings.length];
 		LookupData data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), null, exp);

@@ -477,7 +477,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext cContext, int baseRelevance, List<ICompletionProposal> proposals) {
-		if (cContext.isContextInformationStyle() && cContext.isAfterOpeningParenthesis()) {
+		if (cContext.isContextInformationStyle() && cContext.isAfterOpeningParenthesisOrBrace()) {
 			addProposalsForConstructors(classType, astContext, cContext, baseRelevance, proposals);
 		} else if (classType instanceof ICPPClassTemplate) {
 			addProposalForClassTemplate((ICPPClassTemplate) classType, cContext, baseRelevance, proposals);
@@ -759,10 +759,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// Invocation offset and parse offset are the same if content assist is invoked while in the function
 		// name (i.e. before the '('). After that, the parse offset will indicate the end of the name part.
 		// If there is no difference between them, then we're still inside the function name part.
-		int relativeOffset = context.getInvocationOffset() - context.getParseOffset();
+		int parseOffset = context.getAdjustedParseOffset(); 
+		int relativeOffset = context.getInvocationOffset() - parseOffset;
 		if (relativeOffset == 0)
 			return true;
-		int startOffset = context.getParseOffset();
+		int startOffset = parseOffset;
 		String completePrefix = context.getDocument().get().substring(startOffset,
 				context.getInvocationOffset());
 		int lastChar = getLastNonWhitespaceChar(completePrefix);

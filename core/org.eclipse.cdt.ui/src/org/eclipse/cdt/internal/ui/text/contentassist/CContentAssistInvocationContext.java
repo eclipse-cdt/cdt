@@ -24,12 +24,25 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
@@ -54,6 +67,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	private final boolean fIsCompletion;
 	private final boolean fIsAutoActivated;
 	private IIndex fIndex;
+	// Whether we are doing completion (false) or just showing context information (true).
+	private boolean fIsContextInformationStyle;
+	// The parse offset is the end of the name we are doing completion on.
+	// Since this name can be adjusted by adjustCompletionNode(), the parse offset
+	// may need a corresponding adjustment, and this stores the adjusted offset.
+	private int fAdjustedParseOffset = -1;
 
 	private Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
 		@Override
@@ -67,6 +86,19 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	private final Lazy<Integer> fParseOffset = new Lazy<Integer>() {
 		@Override
 		protected Integer calculateValue() {
+			int result = doCalculate();
+			if (result != getInvocationOffset()) {
+				// If guessCompletionPosition() chose a parse offset that's different
+				// from the invocation offset, we are proposing completions for a name
+				// that's not right under the cursor, and so we just want to show 
+				// context information.
+				fIsContextInformationStyle= true;
+			}
+			fAdjustedParseOffset = result;
+			return result;
+		}
+		
+		private int doCalculate() {
 			if (fIsCompletion) {
 				return guessCompletionPosition(getInvocationOffset());
 			}
@@ -78,6 +110,93 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
+	// Helper function for adjustCompletionName().
+	private IASTName getAdjustedCompletionName(IASTName completionName) {
+		if (completionName.getSimpleID().length > 0) {
+			return null;
+		}
+		if (completionName.getParent() instanceof IASTIdExpression &&
+			completionName.getParent().getParent() instanceof IASTInitializerList) {
+			IASTNode initList = completionName.getParent().getParent();
+			if (initList.getParent() instanceof IASTDeclarator &&
+				initList.getParent().getParent() instanceof IASTSimpleDeclaration) {
+				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) completionName.getParent().getParent()
+						.getParent().getParent();
+				if (decl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
+					return ((IASTNamedTypeSpecifier) decl.getDeclSpecifier()).getName();
+				}			
+			} else if (initList.getParent() instanceof ICPPASTSimpleTypeConstructorExpression) {
+				ICPPASTSimpleTypeConstructorExpression expr = 
+						(ICPPASTSimpleTypeConstructorExpression) initList.getParent();
+				if (expr.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
+					return ((IASTNamedTypeSpecifier) expr.getDeclSpecifier()).getName();
+				}
+			} else if (initList.getParent() instanceof ICPPASTConstructorChainInitializer) {
+				ICPPASTConstructorChainInitializer ctorInit = 
+						(ICPPASTConstructorChainInitializer) initList.getParent();
+				return ctorInit.getMemberInitializerId();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Choose a better completion node based on information in the AST.
+	 * 
+	 * Currently, this makes an adjustment in one case: if the completion node is
+	 * an empty name at the top level of one of the initializers of an initializer
+	 * list that may be a constructor call, the completion name is adjusted to
+	 * instead be the name preceding the initializer list (which will either name
+	 * the type being constructed, or a variable of that type). This allows us to
+	 * offer completions for the constructors of this type.
+	 * 
+	 * Currently we handle initializer lists in three contexts:
+	 *   1) simple declaration
+	 *   2) simple type constructor expression
+	 *   3) constructor chain initializer
+	 *   
+	 * TODO: Handle the additional context of a return-expression:
+	 *         S foo() {
+	 *           return {...};  // can invoke S constructor with args inside {...}
+	 *         }	 
+	 * 
+	 * Note that for constructor calls with () rather than {} syntax, we
+	 * accomplish the same goal by different means: in getParseOffset(), we choose
+	 * a parse offset that will give us the desired completion node to begin with.
+	 * We can't do this with the {} syntax, because in getParseOffset() we don't
+	 * have an AST yet (the choice is made using CHeuristicScanner), and we cannot
+	 * distinguish other uses of {} from the desired ones. 
+	 * 
+	 * @param completionName the initial completion name, based on the parse offset
+	 *                       chosen using CHeuristicScanner
+	 * @return the adjusted completion name, if different from the initial completion
+	 *         name, or {@code null}
+	 */
+	private IASTCompletionNode adjustCompletionNode(IASTCompletionNode existing) {
+		IASTName[] names = existing.getNames();
+		// If there are multiple completion names, there is a parser ambiguity
+		// near the completion location. Just bail in this case.
+		if (names.length != 1) {
+			return null;
+		}
+		IASTName completionName = names[0];
+		IASTName newCompletionName = getAdjustedCompletionName(completionName);
+		if (newCompletionName != null) {
+			IToken newCompletionToken = null;
+			try {
+				newCompletionToken = newCompletionName.getSyntax();
+			} catch (ExpansionOverlapsBoundaryException e) {
+			}
+			if (newCompletionToken != null) {
+				ASTCompletionNode newCompletionNode = new ASTCompletionNode(newCompletionToken, 
+						existing.getTranslationUnit());
+				newCompletionNode.addName(newCompletionName);
+				return newCompletionNode;
+			}
+		}
+		return null;
+	}
+	
 	private final Lazy<IASTCompletionNode> fCN = new Lazy<IASTCompletionNode>() {
 		@Override
 		protected IASTCompletionNode calculateValue() {
@@ -106,7 +225,26 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
 				flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 
-				return fTU.value().getCompletionNode(fIndex, flags, offset);
+				IASTCompletionNode result = fTU.value().getCompletionNode(fIndex, flags, offset);
+				if (result != null) {
+					// The initial completion code is determined by the parse offset chosen
+					// in getParseOffset() using CHeuristicScanner. Now that we have an AST,
+					// we may want to use information in the AST to choose a better completion
+					// node.
+					IASTCompletionNode adjusted = adjustCompletionNode(result);
+					if (adjusted != null) {
+						// If we made an adjustment, we just want to show context information.
+						fIsContextInformationStyle = true;
+						result = adjusted;
+						if (adjusted.getNames().length > 0) {
+							// Make a corresponding adjustment to the parse offset.
+							IASTFileLocation adjustedLocation = adjusted.getNames()[0].getFileLocation();
+							fAdjustedParseOffset = adjustedLocation.getNodeOffset() + 
+									adjustedLocation.getNodeLength();
+						}
+					}
+				}
+				return result;
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
@@ -125,11 +263,11 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> afterOpeningParenthesis = new Lazy<Boolean>() {
+	private final Lazy<Boolean> afterOpeningParenthesisOrBrace = new Lazy<Boolean>() {
 		@Override
 		protected Boolean calculateValue() {
 			final int invocationOffset = getInvocationOffset();
-			final int parseOffset = getParseOffset();
+			final int parseOffset = fAdjustedParseOffset;
 			final int bound = Math.max(-1, parseOffset - 1);
 			final IDocument document = getDocument();
 			final CHeuristicScanner scanner = new CHeuristicScanner(document);
@@ -140,12 +278,19 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				//  character being searched."
 				// If we are completing in between two empty parentheses with no space between them,
 				// this condition won't be satisfied, so we start the search one character earlier.
-				if (document.getChar(start) == ')')
+				if (document.getChar(start) == ')' || document.getChar(start) == '}')
 					start -= 1;
 			} catch (BadLocationException e) {
 			}
 			final int parenthesisOffset = scanner.findOpeningPeer(start, bound, '(', ')');
-			return parenthesisOffset != CHeuristicScanner.NOT_FOUND;
+			if (parenthesisOffset != CHeuristicScanner.NOT_FOUND) {
+				return true;
+			}
+			final int braceOffset = scanner.findOpeningPeer(start, bound, '{', '}');
+			if (braceOffset != CHeuristicScanner.NOT_FOUND) {
+				return true;
+			}
+			return false;
 		}
 	};
 
@@ -239,6 +384,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		Assert.isNotNull(editor);
 		fEditor= editor;
 		fIsCompletion= isCompletion;
+		fIsContextInformationStyle= !isCompletion;
 		fIsAutoActivated= isAutoActivated;
 		fTU = new Lazy<ITranslationUnit>() {
 			@Override
@@ -263,6 +409,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		};
 		fEditor= null;
 		fIsCompletion= isCompletion;
+		fIsContextInformationStyle= !isCompletion;
 		fIsAutoActivated= false;
 	}
 	
@@ -319,6 +466,11 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	public int getParseOffset() {
 		assertNotDisposed();
 		return fParseOffset.value();
+	}
+	
+	public int getAdjustedParseOffset() {
+		assertNotDisposed();
+		return fAdjustedParseOffset;
 	}
 
 	/**
@@ -427,7 +579,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	@Override
 	public boolean isContextInformationStyle() {
 		assertNotDisposed();
-		return !fIsCompletion || (getParseOffset() != getInvocationOffset());
+		return fIsContextInformationStyle;
 	}
 	
 	public boolean isAutoActivated() {
@@ -444,9 +596,9 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		super.dispose();
 	}
 
-	public boolean isAfterOpeningParenthesis() {
+	public boolean isAfterOpeningParenthesisOrBrace() {
 		assertNotDisposed();
-		return afterOpeningParenthesis.value();
+		return afterOpeningParenthesisOrBrace.value();
 	}
 
 	public boolean isAfterOpeningAngleBracket() {

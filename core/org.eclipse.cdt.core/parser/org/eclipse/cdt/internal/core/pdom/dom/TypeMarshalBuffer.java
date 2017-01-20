@@ -136,7 +136,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
-			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			CCorePlugin.log("Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putShort(UNSTORABLE_TYPE);
 		}
 	}

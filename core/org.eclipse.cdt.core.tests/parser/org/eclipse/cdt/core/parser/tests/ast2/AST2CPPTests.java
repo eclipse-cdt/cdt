@@ -11870,6 +11870,19 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
 	}
 	
+	//	namespace N {
+	//	    class Color {};
+	//	    Color operator"" _color(const char*, unsigned long);
+	//	}
+	//	void setColor(N::Color);
+	//	int main() {
+	//	    using namespace N;
+	//	    setColor("#ffffff"_color);  // ERROR
+	//	}
+	public void testUserDefinedLiteralInNamespace_510665() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	double waldo1 = 02.968;
 	//	double waldo2 = 09.268;
 	//	double waldo3 = 02e2;

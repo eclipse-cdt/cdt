@@ -1115,9 +1115,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
-	 */
 	@Override
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (!c.doit)

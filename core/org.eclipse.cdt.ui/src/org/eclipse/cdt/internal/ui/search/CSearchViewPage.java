@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.SWT;
@@ -181,7 +180,7 @@ public class CSearchViewPage extends AbstractTextSearchViewPage {
 	 * <p>
 	 * This sorter categorizes the different kinds of ICElement matches (as well as IStatus
 	 * messages and External Files groups) to place them in groups.  The items within a
-	 * category are sorted in the default way {@link ViewerSorter#compare(Viewer, Object, Object)} works,
+	 * category are sorted in the default way {@link ViewerComparator#compare(Viewer, Object, Object)} works,
 	 * by comparing text labels.
 	 * <p>
 	 * A potential concern here is that, in sorting the elements by name, the user may 
@@ -192,8 +191,6 @@ public class CSearchViewPage extends AbstractTextSearchViewPage {
 	 * a big deal.  Furthermore, usually it would be a wildcard search that would result in 
 	 * this situation -- indicating the user doesn't know the identifier and wants to find it using
 	 * search.  In such a case, a sorted list of results in much more friendly to navigate.
-	 * @author eswartz
-	 *
 	 */
 	private class SearchViewerComparator extends ViewerComparator {
 		@Override

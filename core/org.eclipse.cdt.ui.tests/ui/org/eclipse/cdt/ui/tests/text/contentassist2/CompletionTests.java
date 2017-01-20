@@ -1228,6 +1228,46 @@ public class CompletionTests extends CompletionTestBase {
 	}
 	
 	//	struct Waldo {
+	//		Waldo(int, int);
+	//	};
+	//
+	//	int main() {
+	//		Waldo waldo{/*cursor*/}
+	//	}
+	public void testUniformInitializationInSimpleDeclaration_509185() throws Exception {
+	    final String[] expected = { "Waldo(const Waldo &)", "Waldo(int, int)" };
+	    assertCompletionResults(fCursorOffset, expected, ID);
+	    assertCompletionResults(new String[] { "", "" });  // No replacements, just context info
+	}
+	
+	//	struct Waldo {
+	//		Waldo(int, int);
+	//	};
+	//
+	//	int main() {
+	//		auto waldo = Waldo{/*cursor*/}
+	//	}
+	public void testUniformInitializationInSimpleTypeConstructorExpression_509185() throws Exception {
+	    final String[] expected = { "Waldo(const Waldo &)", "Waldo(int, int)" };
+	    assertCompletionResults(fCursorOffset, expected, ID);
+	    assertCompletionResults(new String[] { "", "" });  // No replacements, just context info
+	}
+
+	//	struct Waldo {
+	//		Waldo(int, int);
+	//	};
+	//
+	//	struct Finder {
+	//		Waldo waldo;
+	//		Finder() : waldo{/*cursor*/
+	//	};
+	public void testUniformInitializationInConstructorChainInitializer_509185() throws Exception {
+	    final String[] expected = { "Waldo(const Waldo &)", "Waldo(int, int)" };
+	    assertCompletionResults(fCursorOffset, expected, ID);
+	    assertCompletionResults(new String[] { "", "" });  // No replacements, just context info
+	}
+	
+	//	struct Waldo {
 	//	    Waldo(int, int);
 	//	};
 	//

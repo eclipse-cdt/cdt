@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_b8bd5f53",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/RenderingAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-01-20T15:00:33Z",
+      "side": 1,
+      "message": "unrelated to this specific patch, but I think I found a bug around here. For an item that ends just before the range, its computed \"itemEnd\" address will return true for the call to determine if \"itemEndIsInRange\", and so might continue to print its variable name pass its own memory location, in some cases interfering with the next element\u0027s name.\n\nAt quick look, it seems that an item\u0027s end address should be \"1\" less than the starting address of the next item, not be the same. So I think that on line ~394 we should do like what\u0027s done on line ~406 below and subtract \"1\" to get the end address: \nBigInteger itemEnd \u003d item.getAddress().add(item.getRangeInAddressableUnits()).subtract(BigInteger.ONE);\n\nSince it\u0027s older code, it should probably be handled separately from this patch. So I\u0027ll open a bug for this.",
+      "revId": "f7f71e9d1df9a1fad4f007e15b7142af307bac6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_85e59b17",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/RenderingAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-01-20T15:00:33Z",
+      "side": 1,
+      "message": "To be consistent with comment below, consider changing \"incrementedAddress\" to \"candidateAddress\"?",
+      "revId": "f7f71e9d1df9a1fad4f007e15b7142af307bac6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_45faa3af",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/RenderingAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-01-20T15:00:33Z",
+      "side": 1,
+      "message": "Rephrase for improved clarity? ex: \n\"Add new valid items to the map, associating it to candidate address\"?",
+      "revId": "f7f71e9d1df9a1fad4f007e15b7142af307bac6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f3d45830",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/RenderingAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-01-20T15:00:33Z",
+      "side": 1,
+      "message": "using \"incrementedAddress\" here seems weird. I see that it\u0027s technically true, since it\u0027s incremented in the calling code, before the call to this method.But I think we can find a better name. Maybe \"candidateAddress\"?",
+      "revId": "f7f71e9d1df9a1fad4f007e15b7142af307bac6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_130ab4dc",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/RenderingAddressInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-01-20T15:00:33Z",
+      "side": 1,
+      "message": "I am not sure about the \"lesser than\" part of this comparison. According to the method\u0027s header, \"incrementedAddress\" is always greater than \"baseAddress\". So we could check for that case first and replace the \"\u003c\u003d\" check for an equal \"\u003d\u003d\" check?",
+      "revId": "f7f71e9d1df9a1fad4f007e15b7142af307bac6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_85ce7ba5",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence_7_7.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-20T14:55:26Z",
+      "side": 1,
+      "message": "Nice trick to know if we are in 7.12.\nHowever, this will cause problems on Windows and Mac where the full console is disabled,\n(so this code won\u0027t enable target-async) but GDBRunControl_7_12 still uses -exec-interrupt.\nWhat you could do instead is verify the actual version of GDB.\nThere is an example of doing that in GdbDebugServicesFactory.validateGdbVersion().\nYou could copy that code to check if we are running GDB \u003e\u003d 7.12.",
+      "revId": "80e3ff4300eff99db65e680958ddf37d1b9a0ac0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -300,6 +300,9 @@ public class ControlFlowGraphView extends ViewPart {
 				Job job = new SharedASTJob("Building Control Flow Grath", tu) {
 					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+						if (ast == null) {
+							return Status.CANCEL_STATUS;
+						}
 						processAst(ast);
 						return Status.OK_STATUS;
 					}

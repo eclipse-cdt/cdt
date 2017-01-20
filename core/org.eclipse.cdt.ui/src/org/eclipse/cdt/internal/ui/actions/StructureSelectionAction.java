@@ -56,7 +56,10 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 
 		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-			newSourceRange = doExpand(ast,currentSourceRange);
+			if (ast == null) {
+				return Status.CANCEL_STATUS;
+			}
+			newSourceRange = doExpand(ast, currentSourceRange);
 			return Status.OK_STATUS;
 		}
 	}

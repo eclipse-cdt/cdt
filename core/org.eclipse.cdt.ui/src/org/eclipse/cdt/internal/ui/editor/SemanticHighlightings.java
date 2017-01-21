@@ -606,6 +606,20 @@ public class SemanticHighlightings {
 			return CEditorMessages.SemanticHighlighting_functionDeclaration;
 		}
 
+		private boolean isDeclaration(IASTName name) {
+			if (name.isDeclaration()) {
+				return true;
+			}
+			// The template-name in a template-id is never a declaration, it's a reference
+			// to the template. However, if the template-id itself is a declaration, we want 
+			// to color the template-name part of it as a declaration.
+			if (name.getParent() instanceof ICPPASTTemplateId &&
+				name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+				return ((IASTName) name.getParent()).isDeclaration();
+			}
+			return false;
+		}
+		
 		@Override
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
@@ -613,8 +627,12 @@ public class SemanticHighlightings {
 				return false;
 
 			if (node instanceof IASTName) {
+				// Do not color an entire template-id; color its constituent parts separately.
+				if (node instanceof ICPPASTTemplateId) {
+					return false;
+				}
 				IASTName name= (IASTName) node;
-				if (name.isDeclaration()) {
+				if (isDeclaration(name)) {
 					IBinding binding= token.getBinding();
 					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 						return true;
@@ -685,6 +703,10 @@ public class SemanticHighlightings {
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
+					return false;
+				}
+				// Do not color an entire template-id; color its constituent parts separately.
+				if (name instanceof ICPPASTTemplateId) {
 					return false;
 				}
 				IBinding binding= token.getBinding();

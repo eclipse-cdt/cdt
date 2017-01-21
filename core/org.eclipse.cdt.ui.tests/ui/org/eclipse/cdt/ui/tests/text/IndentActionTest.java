@@ -8,15 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
 import java.util.ListResourceBundle;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -30,6 +26,11 @@ import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test the IndentAction.
@@ -46,15 +47,15 @@ public class IndentActionTest extends TestCase {
 
 	protected static class IndentTestSetup extends TestSetup {
 		private ICProject fCProject;
-		
+
 		public IndentTestSetup(Test test) {
 			super(test);
 		}
-		
+
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			
+
 			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/indentation");
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		}
@@ -63,11 +64,11 @@ public class IndentActionTest extends TestCase {
 		protected void tearDown () throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
-			
+
 			super.tearDown();
 		}
 	}
-	
+
 	public static Test suite() {
 		return new IndentTestSetup(new TestSuite(IndentActionTest.class));
 	}
@@ -83,18 +84,18 @@ public class IndentActionTest extends TestCase {
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		fDocument= fSourceViewer.getDocument();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 	}
-	
-	private void assertIndentResult() throws Exception {
+
+	private void assertIndentResult(boolean isTabAction) throws Exception {
 		String afterFile= createFileName("After");
 		String expected= ResourceTestHelper.read(afterFile).toString();
-		
-		new IndentAction(new EmptyBundle(), "prefix", fEditor, false).run();
-		
+
+		new IndentAction(new EmptyBundle(), "prefix", fEditor, isTabAction).run();
+
 		assertEquals(expected, fDocument.get());
 	}
 
@@ -103,23 +104,29 @@ public class IndentActionTest extends TestCase {
 		name= name.substring(4, 5).toLowerCase() + name.substring(5);
 		return "/" + PROJECT + "/src/" + name + "/" + qualifier + ".cpp";
 	}
-	
+
 	private void selectAll() {
 		fSourceViewer.setSelectedRange(0, fDocument.getLength());
 	}
-	
+
 	public void testUnchanged() throws Exception {
 		selectAll();
-		assertIndentResult();
+		assertIndentResult(false);
 	}
-	
+
 	public void testSample() throws Exception {
 		selectAll();
-		assertIndentResult();
+		assertIndentResult(false);
 	}
 
 	public void testComplex() throws Exception {
 		selectAll();
-		assertIndentResult();
+		assertIndentResult(false);
+	}
+
+	// See http://bugs.eclipse.org/510794
+	public void testRawString() throws Exception {
+		fSourceViewer.setSelectedRange(fDocument.getLineOffset(1) + 1, 0);
+		assertIndentResult(true);
 	}
 }

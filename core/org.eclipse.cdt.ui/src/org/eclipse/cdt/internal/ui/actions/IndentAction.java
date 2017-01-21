@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
@@ -212,8 +212,27 @@ public class IndentAction extends TextEditorAction {
 			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
 				indent= computePreprocessorIndent(document, line, startingPartition);
 			} else if (startingPartition.getType().equals(ICPartitions.C_STRING) && offset > startingPartition.getOffset()) {
-				// don't indent inside (raw-)string
-				return false;
+				// Don't indent inside (raw-)string, but if the indent action was triggered by a Tab key,
+				// insert a '\t' character or spaces at the caret position.
+				if (!fIsTabAction)
+					return false;
+
+				String text = "\t"; //$NON-NLS-1$
+				if (useSpaces()) {
+					int tabSize = getTabSize();
+					if (tabSize == 0)
+						return false;
+
+					int numSpaces = tabSize - (caret - offset) % tabSize;
+					StringBuilder buf = new StringBuilder(numSpaces);
+					for (int i = 0; i < numSpaces; i++) {
+						buf.append(' ');
+					}
+					text = buf.toString();
+				}
+				document.replace(caret, 0, text);
+				fCaretOffset= caret + text.length();
+				return true;
 			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
 				if (indentInsideLineComments()) {

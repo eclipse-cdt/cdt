@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -36,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.junit.Assert;
 
 /**
  * Copied from org.eclipse.jdt.text.tests.performance.
@@ -43,7 +42,6 @@ import org.eclipse.core.runtime.Preferences;
  * @since 4.0
  */
 public class ResourceTestHelper {
-
 	public static final int FAIL_IF_EXISTS= 0;
 	
 	public static final int OVERWRITE_IF_EXISTS= 1;
@@ -55,8 +53,9 @@ public class ResourceTestHelper {
 	private static final long DELETE_RETRY_DELAY= 1000;
 
 	public static void replicate(String src, String destPrefix, String destSuffix, int n, int ifExists) throws CoreException {
-		for (int i= 0; i < n; i++)
+		for (int i= 0; i < n; i++) {
 			copy(src, destPrefix + i + destSuffix, ifExists);
+		}
 	}
 
 	public static void copy(String src, String dest) throws CoreException {
@@ -149,8 +148,8 @@ public class ResourceTestHelper {
 		getFile(dest).create(stream, true, null);
 	}
 	
-
-	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName, String destNamePrefix, int ifExists) throws IOException, CoreException {
+	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName,
+			String destNamePrefix, int ifExists) throws IOException, CoreException {
 		StringBuffer s= read(src);
 		List<Integer> positions= identifierPositions(s, srcName);
 		for (int j= 0; j < n; j++) {
@@ -163,7 +162,8 @@ public class ResourceTestHelper {
 		}
 	}
 
-	public static void copy(String src, String dest, String srcName, String destName, int ifExists) throws IOException, CoreException {
+	public static void copy(String src, String dest, String srcName, String destName, int ifExists)
+			throws IOException, CoreException {
 		if (handleExisting(dest, ifExists)) {
 			StringBuffer buf= read(src);
 			List<Integer> positions= identifierPositions(buf, srcName);
@@ -236,7 +236,8 @@ public class ResourceTestHelper {
 		return project;
 	}
 
-	public static IProject createProjectFromZip(Plugin installationPlugin, String projectZip, String projectName) throws IOException, ZipException, CoreException {
+	public static IProject createProjectFromZip(Plugin installationPlugin, String projectZip, String projectName)
+			throws IOException, ZipException, CoreException {
 		String workspacePath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + "/";
 		FileTool.unzip(new ZipFile(FileTool.getFileInPlugin(installationPlugin, new Path(projectZip))), new File(workspacePath));
 		return createExistingProject(projectName);

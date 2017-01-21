@@ -634,4 +634,13 @@ public class SemanticHighlightingTest extends TestCase {
     public void testReferenceToConstPointer_509619() throws Exception {
     	makeAssertions();
     }
+    
+	//	struct S {};                                     //$class
+	//	template <typename>
+	//	void waldo() {}                                  //$functionDeclaration
+	//	template <>
+	//	void waldo<S>() {}                               //$functionDeclaration,class
+    public void testArgumentsOfFunctionTemplateSpecialization_510788() throws Exception {
+    	makeAssertions();
+    }
 }

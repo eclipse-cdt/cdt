@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_2a9e4e6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-23T13:53:17Z",
+      "side": 1,
+      "message": "In the past, as you can see from the rest of this list, we\u0027ve only kept the latest of a particular version.  When running the script and specifying \u0027all\u0027, the current proposed change would download and build both 7.12 and 7.12.1 which seems unnecessary.  We can remove 7.12 from the list.",
+      "revId": "d26dba60f956a75b490dd034205e33786152e83b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_59bfea15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SignatureBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-23T02:40:56Z",
+      "side": 1,
+      "message": "you mentioned in the bug report that if it gets there then this is a bug. Would it be good to log something to the error log? At least, this way the parsing will continue but the error will still be visible for CDT developers.",
+      "revId": "5f097fa4ed370392b88cfc54ecc96cd03f711b7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -33,6 +33,24 @@
       "revId": "80e3ff4300eff99db65e680958ddf37d1b9a0ac0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f320ced0",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence_7_7.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-23T18:42:55Z",
+      "side": 1,
+      "message": "Except that we use target-async with the old console also (except for the HW launch which we are trying to fix). So we can\u0027t base ourselves on the console.\n\nHow about enabling target-async all the time (like now + HW debug), and modifying GDBRunControl_7_12 to use the CLI interrupt for Windows and Mac?",
+      "parentUuid": "a7c23755_1058e07f",
+      "revId": "80e3ff4300eff99db65e680958ddf37d1b9a0ac0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

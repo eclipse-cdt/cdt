@@ -16,6 +16,23 @@
       "revId": "80e3ff4300eff99db65e680958ddf37d1b9a0ac0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_1058e07f",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence_7_7.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-01-23T18:27:27Z",
+      "side": 1,
+      "message": "Good point, although checking for GDB 7.12 may not be sufficient either, \nWe have recently found out that even if we successfully enable async ON for Windows and Mac, when GDB attempts \nto apply it, the async operation fails on this platforms.\n\nSo the \"isFullGDBConsoleSupported\" tell us if we are dealing with the old console (e.g. includes Windows and Mac)\n  and if so we should therefore use the CLI to interrupt the inferior.  \n  \nI think it\u0027s best to adjust GDBRunControl_7_12 to check on this flag\n and use it to decide the way to interrupt the program i.e. CLI or MI.\n What do you think ?",
+      "revId": "80e3ff4300eff99db65e680958ddf37d1b9a0ac0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

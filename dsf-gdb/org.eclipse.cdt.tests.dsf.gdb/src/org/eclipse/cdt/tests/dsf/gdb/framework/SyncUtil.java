@@ -126,20 +126,24 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent step(int numSteps, StepType stepType) throws Throwable {
+		return step(numSteps,stepType, false);
+	}
+	
+	public static MIStoppedEvent step(int numSteps, StepType stepType, boolean reverse) throws Throwable {
 	    MIStoppedEvent retVal = null;
 		for (int i=0; i<numSteps; i++) {
-		    retVal = step(stepType, DefaultTimeouts.get(ETimeout.step));
+		    retVal = step(stepType, reverse, DefaultTimeouts.get(ETimeout.step));
 		}
 		return retVal;
 	}
 
 	public static MIStoppedEvent step(StepType stepType) throws Throwable {
-		return step(stepType, DefaultTimeouts.get(ETimeout.step));
+		return step(stepType, false, DefaultTimeouts.get(ETimeout.step));
 	}
 
-	public static MIStoppedEvent step(StepType stepType, int massagedTimeout) throws Throwable {
+	public static MIStoppedEvent step(StepType stepType, boolean reverse, int massagedTimeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return step(containerDmc, stepType, massagedTimeout);
+		return step(containerDmc, stepType, reverse, massagedTimeout);
 	}
 	
 	public static MIStoppedEvent step(IExecutionDMContext dmc, StepType stepType) throws Throwable {
@@ -147,32 +151,58 @@ public class SyncUtil {
 	}
 	
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int massagedTimeout) throws Throwable {
-		
+		return step(dmc, stepType, false, massagedTimeout);
+	}
+	
+	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse, int massagedTimeout) throws Throwable {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
 			new ServiceEventWaitor<MIStoppedEvent>(
 					fSession,
 					MIStoppedEvent.class);
 
-		fRunControl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// No need for a RequestMonitor since we will wait for the
-				// ServiceEvent telling us the program has been suspended again
-				switch(stepType) {
-				case STEP_INTO:
-					fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
-					break;
-				case STEP_OVER:
-					fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
-					break;
-				case STEP_RETURN:
-					fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
-					break;
-				default:
-					fail("Unsupported step type; " + stepType.toString());
+		if (!reverse) {
+			fRunControl.getExecutor().submit(new Runnable() {
+				@Override
+				public void run() {
+					// No need for a RequestMonitor since we will wait for the
+					// ServiceEvent telling us the program has been suspended again
+					switch(stepType) {
+					case STEP_INTO:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
+						break;
+					case STEP_OVER:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
+						break;
+					case STEP_RETURN:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
+						break;
+					default:
+						fail("Unsupported step type; " + stepType.toString());
+					}
 				}
-			}
-		});
+			});
+		} else {
+			fRunControl.getExecutor().submit(new Runnable() {
+				@Override
+				public void run() {
+					// No need for a RequestMonitor since we will wait for the
+					// ServiceEvent telling us the program has been suspended again
+					switch(stepType) {
+					case STEP_INTO:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseStep(dmc), null);
+						break;
+					case STEP_OVER:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseNext(dmc), null);
+						break;
+					case STEP_RETURN:
+						fGdbControl.queueCommand(fCommandFactory.createMIExecUncall(fStack.createFrameDMContext(dmc, 0)), null);
+						break;
+					default:
+						fail("Unsupported step type; " + stepType.toString());
+					}
+				}
+			});			
+		}
 
 		// Wait for the execution to suspend after the step
 		return eventWaitor.waitForEvent(massagedTimeout);

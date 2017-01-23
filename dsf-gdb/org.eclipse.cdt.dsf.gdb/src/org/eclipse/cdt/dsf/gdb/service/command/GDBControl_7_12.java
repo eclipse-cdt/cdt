@@ -12,7 +12,10 @@ import java.util.Map;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence_7_12;
+import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
+import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_12;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -29,4 +32,10 @@ public class GDBControl_7_12 extends GDBControl_7_7 {
 	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_12(getSession(), attributes, rm);
 	}
+    
+	@Override
+	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
+		return new MIRunControlEventProcessor_7_12(connection, controlDmc);
+	}
+
 }

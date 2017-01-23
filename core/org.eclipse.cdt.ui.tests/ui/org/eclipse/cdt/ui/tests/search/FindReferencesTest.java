@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -14,7 +15,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
@@ -31,15 +31,32 @@ import junit.framework.TestSuite;
  * CSearchTextSelectionQuery directly.
  */
 public class FindReferencesTest extends SearchTestBase {
-	public static TestSuite suite() {
-		return suite(FindReferencesTest.class);
+	public static class SingleProject extends FindReferencesTest {
+		public SingleProject() { setStrategy(new SingleProjectStrategy()); }
+		public static TestSuite suite() { return suite(SingleProject.class); }
+	}
+	
+	public static class ReferencedProject extends FindReferencesTest {
+		public ReferencedProject() { setStrategy(new ReferencedProjectStrategy()); }
+		public static TestSuite suite() { return suite(ReferencedProject.class); }
+	}
+	
+	public static void addTests(TestSuite suite) {
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ReferencedProject.suite());
+	}
+	
+	public FindReferencesTest() {
+		// For convenience, to be able to run tests via right click -> Run As -> JUnit Plugin Test.
+		// Will use the SingleProjectStrategy when run this way.
+		setStrategy(new SingleProjectStrategy());
 	}
 
-	private CSearchQuery makeProjectQuery(int offset, int length) {
+	private CSearchQuery makeSearchQuery(IFile file, TextSelection selection) {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart part = null;
 		try {
-			part = page.openEditor(new FileEditorInput(fHeaderFile), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+			part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
 		} catch (PartInitException e) {
 			assertFalse(true);
 		}
@@ -47,8 +64,23 @@ public class FindReferencesTest extends SearchTestBase {
 		CEditor editor = (CEditor) part;
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
 		ITranslationUnit tu = editor.getInputCElement();
-		return new CSearchTextSelectionQuery(new ICElement[] { fCProject }, tu, new TextSelection(offset, length),
-				CSearchQuery.FIND_REFERENCES);
+		return new CSearchTextSelectionQuery(fStrategy.getScope(), tu, selection, CSearchQuery.FIND_REFERENCES);
+	}
+
+	private TextSelection selectSection(String section, String context, String code) {
+		int contextOffset;
+		if (context == null) {
+			context = code;
+			contextOffset = 0;
+		} else {
+			contextOffset = code.indexOf(context);
+			if (contextOffset < 0)
+				fail("Didn't find \"" + context + "\" in \"" + code + "\"");
+		}
+		int offset = context.indexOf(section);
+		if (offset < 0)
+			fail("Didn't find \"" + section + "\" in \"" + context + "\"");
+		return new TextSelection(contextOffset + offset, section.length());
 	}
 
 	//	struct A {
@@ -66,8 +98,22 @@ public class FindReferencesTest extends SearchTestBase {
 
 	// // empty file
 	public void testOnlyPolymorphicMatches_bug491343() throws Exception {
-		int offset = fHeaderContents.indexOf("waldo() override");
-		CSearchQuery query = makeProjectQuery(offset, 5);
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("waldo", "waldo() override", fHeaderContents));
+		assertOccurrences(query, 1);
+	}
+
+	//	template <typename T>
+	//	class Waldo {
+	//		void find();
+	//	};
+	
+	//	#include "header.h"
+	//	void foo() {
+	//		Waldo<int> waldo;
+	//		waldo.find();
+	//	}
+	public void testMethodOfClassTemplate_509734() throws Exception {
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("find", "void find()", fHeaderContents));
 		assertOccurrences(query, 1);
 	}
 }

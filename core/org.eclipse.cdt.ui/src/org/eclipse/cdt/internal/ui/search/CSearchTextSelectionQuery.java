@@ -73,7 +73,7 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 									return Status.OK_STATUS;
 								}
 							}
-							binding = ast.getIndex().findBinding(searchName);
+							binding = index.findBinding(searchName);
 							binding= CPPTemplates.findDeclarationForSpecialization(binding);
 							if (binding != null) {
 								label= labelForBinding(index, binding, label);

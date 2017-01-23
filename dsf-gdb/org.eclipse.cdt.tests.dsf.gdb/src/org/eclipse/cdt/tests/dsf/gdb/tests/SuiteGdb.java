@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 		OperationsWhileTargetIsRunningTest.class,
 		MIRunControlTest.class,
 		MIRunControlTargetAvailableTest.class,
+		MIRunControlReverseTest.class,
 		GDBPatternMatchingExpressionsTest.class,
 		GDBMultiNonStopRunControlTest.class,
 		GDBConsoleBreakpointsTest.class,

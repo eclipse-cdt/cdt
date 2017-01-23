@@ -100,7 +100,6 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 					return null;
 				}
 				if (element instanceof ILaunchTarget) {
-					// TODO apply a status overlay
 					ILaunchTarget target = (ILaunchTarget) element;
 					ILabelProvider provider = targetUIManager.getLabelProvider(target);
 					if (provider != null) {
@@ -109,8 +108,8 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 						if (status.getCode() == Code.OK) {
 							return baseImage;
 						} else {
-							String compId = target.getTypeId()
-									+ (status.getCode() == Code.ERROR ? ".error" : ".warning"); //$NON-NLS-1$ //$NON-NLS-2$
+							String compId = String.format("%s.%s.%s", target.getTypeId(), target.getId(),
+									status.getCode());
 							Image image = Activator.getDefault().getImageRegistry().get(compId);
 							if (image == null && baseImage != null) {
 								ImageDescriptor desc = new CompositeImageDescriptor() {

@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReturn;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
+import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
@@ -328,7 +330,19 @@ public class MIRunControlEventProcessor_7_0
 						MIEvent<?> event = createEvent("signal-received", exec); //$NON-NLS-1$
 						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
 					}
+				} else if (stream.getCString().indexOf("(y or n)") != -1 && //$NON-NLS-1$
+						stream.getCString().indexOf("[answered ") == -1) {//$NON-NLS-1$
+					// We have a query on MI that was not automatically answered by GDB!.
+					// That is not something GDB should do.
+					// The user cannot answer since it is on MI, so we need to answer
+					// ourselves.  If we don't GDB will hang forever, waiting for that
+					// answer. We always answer 'yes' although
+					// we can't be sure it is the right answer, but it is better
+					// than simply hanging there forever.
+					fCommandControl.queueCommand(new RawCommand(fControlDmc, "y"), //$NON-NLS-1$
+							                     new ImmediateDataRequestMonitor<MIInfo>());
 				}
+
     		}
     	}
     }

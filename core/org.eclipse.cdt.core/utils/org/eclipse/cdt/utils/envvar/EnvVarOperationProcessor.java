@@ -48,20 +48,30 @@ public class EnvVarOperationProcessor {
 		switch(added.getOperation()){
 		case IEnvironmentVariable.ENVVAR_REMOVE:
 			return new EnvironmentVariable(name,null,IEnvironmentVariable.ENVVAR_REMOVE,null);
-		case IEnvironmentVariable.ENVVAR_APPEND:{
-				String delimiter = added.getDelimiter();
-				return new EnvironmentVariable(name,
-						performAppend(initial.getValue(),added.getValue(),delimiter),
-//						IEnvironmentVariable.ENVVAR_APPEND,
-						delimiter);
+		case IEnvironmentVariable.ENVVAR_APPEND: {
+			String delimiter = added.getDelimiter();
+			String newValue = performAppend(initial.getValue(), added.getValue(), delimiter);
+			int op;
+			if (initial.getOperation() == IEnvironmentVariable.ENVVAR_APPEND) {
+				op = IEnvironmentVariable.ENVVAR_APPEND;
+			} else {
+				// TODO should really only replace if initial is replace
+				op = IEnvironmentVariable.ENVVAR_REPLACE;
 			}
-		case IEnvironmentVariable.ENVVAR_PREPEND:{
-				String delimiter = added.getDelimiter();
-				return new EnvironmentVariable(name,
-						performPrepend(initial.getValue(),added.getValue(),delimiter),
-//						IEnvironmentVariable.ENVVAR_PREPEND,
-						delimiter);
+			return new EnvironmentVariable(name, newValue, op, delimiter);
+		}
+		case IEnvironmentVariable.ENVVAR_PREPEND: {
+			String delimiter = added.getDelimiter();
+			String newValue = performPrepend(initial.getValue(), added.getValue(), delimiter);
+			int op;
+			if (initial.getOperation() == IEnvironmentVariable.ENVVAR_PREPEND) {
+				op = IEnvironmentVariable.ENVVAR_PREPEND;
+			} else {
+				// TODO should really only replace if initial is replace
+				op = IEnvironmentVariable.ENVVAR_REPLACE;
 			}
+			return new EnvironmentVariable(name, newValue, op, delimiter);
+		}
 		case IEnvironmentVariable.ENVVAR_REPLACE:
 		default:
 			return new EnvironmentVariable(added.getName(),added.getValue(),added.getDelimiter());
@@ -155,7 +165,7 @@ public class EnvVarOperationProcessor {
 	static public List<String> convertToList(String value, String delimiter){
 		if (value == null)
 			value = ""; //$NON-NLS-1$
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 
@@ -182,7 +192,7 @@ public class EnvVarOperationProcessor {
 	 * removes duplicates
 	 */
 	static public List<String> removeDuplicates(List<String> value, List<String> duplicates){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		Iterator<String> valueIter = value.iterator();
 		while(valueIter.hasNext()){
 			String curVal = valueIter.next();

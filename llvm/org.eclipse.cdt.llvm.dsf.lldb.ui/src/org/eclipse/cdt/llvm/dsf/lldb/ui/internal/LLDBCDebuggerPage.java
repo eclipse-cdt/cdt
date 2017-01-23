@@ -72,11 +72,20 @@ public class LLDBCDebuggerPage extends AbstractCDebuggerPage {
 				String lldbCommand = fLLDBCommandText.getText().trim();
 				int lastSeparatorIndex = lldbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
-					dialog.setFilterPath(lldbCommand.substring(0, lastSeparatorIndex));
+					String cmd = lldbCommand.substring(0, lastSeparatorIndex);
+					// remove double quotes, since they interfere with
+					// "setFilterPath()" below
+					cmd = cmd.replaceAll("\\\"", "");  //$NON-NLS-1$//$NON-NLS-2$
+					dialog.setFilterPath(cmd);
 				}
 				String res = dialog.open();
 				if (res == null) {
 					return;
+				}
+				// path contains space(s)?
+				if (res.contains(" ")) { //$NON-NLS-1$
+					// surround it in double quotes
+					res = '"' + res + '"';
 				}
 				fLLDBCommandText.setText(res);
 			}

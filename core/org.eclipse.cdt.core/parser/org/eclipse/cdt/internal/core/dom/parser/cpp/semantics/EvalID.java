@@ -393,6 +393,8 @@ public class EvalID extends CPPDependentEvaluation {
 				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, fieldOwner, templateArgs, fieldOwnerClassTypeCV, context.getPoint());
 				if (eval != null)
 					return eval;
+				if (!CPPTemplates.isDependentType(fieldOwnerClassType)) 
+					return EvalFixed.INCOMPLETE;
 			}
 		}
 

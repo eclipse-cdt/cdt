@@ -719,6 +719,16 @@ public class CompletionTests extends CompletionTestBase {
 		final String[] expected = { "method", "datamem" };
 		assertMinimumCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
+	
+	//	struct Waldo {
+	//		void find();
+	//	};
+	//	void Waldo::f/*cursor*/
+	public void testRegression_395562() throws Exception {
+		// Should include parentheses in replacement string when completing
+		// out-of-line method definition.
+		assertCompletionResults(new String[] { "find()" });
+	}
 
 	// typedef struct {
     //    int sx;
@@ -1236,10 +1246,10 @@ public class CompletionTests extends CompletionTestBase {
 	public void testDestructorDefinition_456293() throws Exception {
 		final String[] expectedDisplay = { "~Waldo(void)" };
 		assertCompletionResults(fCursorOffset, expectedDisplay, DISPLAY);
-		final String[] expectedReplacement = { "Waldo" };
+		final String[] expectedReplacement = { "Waldo()" };
 		assertCompletionResults(fCursorOffset, expectedReplacement, REPLACEMENT);
 	}
-
+	
 	//	template <typename T> struct vector {
 	//      typedef T value_type;
 	//		void push_back(const value_type& value) {}

@@ -10,6 +10,7 @@ package org.eclipse.cdt.internal.qt.core.build;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
@@ -23,7 +24,9 @@ import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 public class QtBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
@@ -101,9 +104,10 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 					launchMode);
 			configManager.addBuildConfiguration(config, qtConfig);
 			return qtConfig;
+		} else {
+			throw new CoreException(
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.QtBuildConfigurationProvider_NoQtInstall));
 		}
-
-		return null;
 	}
 
 	private IQtInstall getQtInstall(IToolChain toolChain) {

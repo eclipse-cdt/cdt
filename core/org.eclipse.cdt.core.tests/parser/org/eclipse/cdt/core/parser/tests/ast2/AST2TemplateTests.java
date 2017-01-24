@@ -10001,4 +10001,39 @@ public class AST2TemplateTests extends AST2TestBase {
 		// Just check that resolution does not throw an exception.
 		helper.findName("waldo").resolveBinding();
 	}
+	
+	//	template <typename Ty> 
+	//	struct has_rbegin_impl {
+	//	    typedef char yes[1];
+	//	    typedef char no[2];
+	//	    template <typename Inner>
+	//	    static yes& test(Inner *I, decltype(I->rbegin()) * = nullptr);
+	//	    template <typename >
+	//	    static no& test(...);
+	//	    static const bool value = sizeof(test<Ty>(nullptr)) == sizeof(yes);
+	//	};
+	//
+	//	template <bool, typename _Tp = void>
+	//	struct enable_if {};
+	//
+	//	template <typename _Tp>
+	//	struct enable_if<true, _Tp> {
+	//	    typedef _Tp type;
+	//	};
+	//
+	//	template <typename Container>
+	//	void reverse(Container&& C, typename enable_if<has_rbegin_impl<Container>::value>::type * = nullptr);
+	//
+	//	template <typename Container>
+	//	void reverse(Container&& C, typename enable_if<!has_rbegin_impl<Container>::value>::type * = nullptr);
+	//
+	//	class MyContainer{};
+	//
+	//	int main() {
+	//	    MyContainer c;
+	//	    reverse(c);   // Ambiguous
+	//	}
+	public void testWaldo_510834() throws Exception {
+		parseAndCheckBindings();
+	}
 }

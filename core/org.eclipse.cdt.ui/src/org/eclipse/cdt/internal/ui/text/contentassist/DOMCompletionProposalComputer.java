@@ -529,7 +529,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return relevance;
 	}
 
-	// Returns whether a function name being completed could be a call that function.
+	// Returns whether a function name being completed could be a call to that function.
 	private boolean canBeCall(IFunction function, IASTCompletionContext astContext, 
 			CContentAssistInvocationContext cContext) {
 		// Can't have a call in a using-directive.
@@ -546,6 +546,23 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 		}
 		return true;
+	}
+	
+	// Returns whether a function name being completed could be a definition of that function.
+	private boolean canBeDefinition(IFunction function, IASTCompletionContext astContext) {
+		if (!(astContext instanceof IASTName)) {
+			return true;
+		}
+		// If content assist is invoked while completing the destructor name in an
+		// out-of-line destructor definition, the parser doesn't have enough information
+		// to recognize that this is a function definition, and so getRoleOfName() will
+		// incorrectly return r_reference. Since destructors are rarely referred to
+		// explicitly, just assume destructor name is a definition.
+		if (function instanceof ICPPMethod && ((ICPPMethod) function).isDestructor()) {
+			return true;
+		}
+		IASTName name = (IASTName) astContext;
+		return name.getRoleOfName(false) == IASTNameOwner.r_definition;
 	}
 	
 	private String getFunctionNameForReplacement(IFunction function, IASTCompletionContext astContext) {
@@ -574,6 +591,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		repStringBuff.append(getFunctionNameForReplacement(function, astContext));
 
 		boolean canBeCall = canBeCall(function, astContext, cContext);
+		boolean canBeDefinition = canBeDefinition(function, astContext);
+		boolean wantParens = canBeCall || canBeDefinition;
 		
 		StringBuilder dispArgs = new StringBuilder(); // For the dispArgString
 		StringBuilder idArgs = new StringBuilder();   // For the idArgString
@@ -652,8 +671,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
         boolean inUsingDeclaration = cContext.isInUsingDirective();
 
-        if (canBeCall && !cContext.isFollowedByOpeningParen()) {
-        	// If we might be calling the function in this context, assume we are
+        if (wantParens && !cContext.isFollowedByOpeningParen()) {
+        	// If we might be calling or defining the function in this context, assume we are
         	// (since that's the most common case) and emit parentheses.
         	repStringBuff.append('(');
         	repStringBuff.append(')');

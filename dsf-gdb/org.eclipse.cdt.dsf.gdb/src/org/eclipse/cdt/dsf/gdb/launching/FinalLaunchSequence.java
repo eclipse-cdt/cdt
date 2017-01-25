@@ -339,7 +339,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	@Execute
 	public void stepSourceGDBInitFile(final RequestMonitor requestMonitor) {
 		// let it up to the user if they want to source .gdbinit, for FLUID sessions
-		if (fGDBBackend.getSessionType() != SessionType.FLUID) {
+		if (fGDBBackend.getSessionType() != SessionType.FLUID && 
+				fGDBBackend.getSessionType() != SessionType.EXISTING ) {
 			try {
 				String gdbinitFile = fGDBBackend.getGDBInitFile();
 

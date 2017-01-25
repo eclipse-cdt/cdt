@@ -18,5 +18,10 @@ public enum SessionType {
 	 * Denotes a session of an, as of yet, unknown or potentially changing type 
 	 * @since 5.3
 	 */
-	FLUID 
+	FLUID,
+	/**
+	 * Special type of session where we intend to connect-to and use an already started debugger
+	 * @since 5.3
+	 */
+	EXISTING
 }

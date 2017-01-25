@@ -119,10 +119,20 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 	/** @since 5.0 */
 	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
-		final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-				new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
-				new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
-				new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING), };
+		final Sequence.Step[] initializeSteps;
+		
+		if (getSessionType() == SessionType.EXISTING) {
+			initializeSteps = new Sequence.Step[] {
+					new UseExistingGDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
+					//new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
+					new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING), };
+		}
+		else {
+			initializeSteps = new Sequence.Step[] {
+					new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
+					new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
+					new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING), };
+		}
 
 		return new Sequence(getExecutor(), requestMonitor) {
 			@Override
@@ -457,6 +467,25 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			undoGDBProcessStep(requestMonitor);
 		}
 	}
+	
+	/**
+	 * @since 5.3
+	 */
+	protected class UseExistingGDBProcessStep extends InitializationShutdownStep {
+		UseExistingGDBProcessStep(Direction direction) {
+			super(direction);
+		}
+
+		@Override
+		public void initialize(final RequestMonitor requestMonitor) {
+			doUseExistingGDBProcessStep(requestMonitor);
+		}
+
+		@Override
+		protected void shutdown(final RequestMonitor requestMonitor) {
+			undoUseExistingGDBProcessStep(requestMonitor);
+		}
+	}
 
 	protected class MonitorJobStep extends InitializationShutdownStep {
 		MonitorJobStep(Direction direction) {
@@ -628,6 +657,111 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			}
 		}, fGDBLaunchTimeout, TimeUnit.SECONDS);
 	}
+	
+	
+	
+	/**
+	 * @since 5.3
+	 */
+	protected void doUseExistingGDBProcessStep(final RequestMonitor requestMonitor) {
+		class GDBLaunchMonitor {
+			boolean fLaunched = false;
+			boolean fTimedOut = false;
+		}
+		final GDBLaunchMonitor fGDBLaunchMonitor = new GDBLaunchMonitor();
+
+		final RequestMonitor gdbLaunchRequestMonitor = new RequestMonitor(getExecutor(), requestMonitor) {
+			@Override
+			protected void handleCompleted() {
+				if (!fGDBLaunchMonitor.fTimedOut) {
+					fGDBLaunchMonitor.fLaunched = true;
+					if (!isSuccess()) {
+						requestMonitor.setStatus(getStatus());
+					}
+					requestMonitor.done();
+				}
+			}
+		};
+
+		final Job useExistingGdbJob = new Job("Use existing GDB Process Job") { //$NON-NLS-1$
+			{
+				setSystem(true);
+			}
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				if (gdbLaunchRequestMonitor.isCanceled()) {
+					gdbLaunchRequestMonitor.setStatus(
+							new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, -1, "Canceled using existing GDB", null)); //$NON-NLS-1$
+					gdbLaunchRequestMonitor.done();
+					return Status.OK_STATUS;
+				}
+
+				try {
+                    fProcess = connectToExistingGDBProcess();
+                    
+                    // Pause to give a chance to the user to start a new UI on their
+                    // GDB and connect it to our MI PTY
+					System.out.println("waiting for MI channel to connect to our PTY...");
+					Thread.sleep(30000);
+
+					// Need to do this on the executor for thread-safety
+					getExecutor().submit(new DsfRunnable() {
+						@Override
+						public void run() {
+							fBackendState = State.STARTED;
+						}
+					});
+					// Don't send the backendStarted event yet. We wait
+					// until we have registered this service
+					// so that other services can have access to it.
+				} 
+				catch (CoreException | InterruptedException e) {
+					gdbLaunchRequestMonitor
+							.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
+					gdbLaunchRequestMonitor.done();
+					return Status.OK_STATUS;
+				}
+				
+				// figure-out which processes GDB already knows about and create 
+				// corresponding groups in CDT
+//				DsfServicesTracker tracker = getServicesTracker();
+				
+//				IMIProcesses proc = tracker.getService(IMIProcesses.class);
+//				proc.cr
+				
+//				tracker.dispose();
+				
+
+				gdbLaunchRequestMonitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		useExistingGdbJob.schedule();
+
+		// so that the launch doesn't timeout: re-enable if wanted
+		
+//		getExecutor().schedule(new Runnable() {
+//			@Override
+//			public void run() {
+//				// Only process the event if we have not finished yet (hit
+//				// the breakpoint).
+//				if (!fGDBLaunchMonitor.fLaunched) {
+//					fGDBLaunchMonitor.fTimedOut = true;
+//					Thread jobThread = startGdbJob.getThread();
+//					if (jobThread != null) {
+//						jobThread.interrupt();
+//					}
+//					
+//					destroy();
+//					
+//					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+//							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
+//					requestMonitor.done();
+//				}
+//			}
+//		}, fGDBLaunchTimeout, TimeUnit.SECONDS);
+	}
 
 	/** @since 5.0 */
 	protected void undoGDBProcessStep(final RequestMonitor requestMonitor) {
@@ -693,6 +827,77 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				return Status.OK_STATUS;
 			}
 		}.schedule();
+	}
+	
+	
+
+	/**
+	 * @since 5.3
+	 */
+	protected void undoUseExistingGDBProcessStep(final RequestMonitor requestMonitor) {
+//		if (getState() != State.STARTED) {
+			// gdb not started yet or already killed, don't bother starting
+			// a job to kill it
+			requestMonitor.done();
+			return;
+//		}
+/*
+		new Job("Terminating GDB process.") { //$NON-NLS-1$
+			{
+				setSystem(true);
+			}
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					// Need to do this on the executor for thread-safety
+					// And we should wait for it to complete since we then
+					// check if the killing of GDB worked.
+					getExecutor().submit(new DsfRunnable() {
+						@Override
+						public void run() {
+							destroy();
+
+							if (fMonitorJob.fMonitorExited) {
+								// Now that we have destroyed the process, and
+								// that the monitoring thread was killed, we
+								// need to set our state and send the event
+								fBackendState = State.TERMINATED;
+								getSession().dispatchEvent(
+										new BackendStateChangedEvent(getSession().getId(), getId(), State.TERMINATED),
+										getProperties());
+							}
+						}
+					}).get();
+				} catch (InterruptedException e1) {
+				} catch (ExecutionException e1) {
+				}
+
+				int attempts = 0;
+				while (attempts < 10) {
+					try {
+						// Don't know if we really need the exit value...
+						// but what the heck.
+						// throws exception if process not exited
+						fGDBExitValue = fProcess.exitValue();
+
+						requestMonitor.done();
+						return Status.OK_STATUS;
+					} catch (IllegalThreadStateException ie) {
+					}
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+					}
+					attempts++;
+				}
+				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+						IDsfStatusConstants.REQUEST_FAILED, "GDB terminate failed", null)); //$NON-NLS-1$
+				requestMonitor.done();
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+*/		
 	}
 
 	/** @since 5.0 */
@@ -875,5 +1080,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			}
 			fInterruptFailedJob = null;
 		}
+	}
+
+	
+	/**
+	 * @since 5.3
+	 */
+	protected Process connectToExistingGDBProcess()  throws CoreException {
+		String message = "Can't connect to existing GDB SEssion with GDB < 7.12"; //$NON-NLS-1$ //$NON-NLS-2$
+		throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, null));
 	}
 }

@@ -145,10 +145,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part.equals(fPart)) {
-					if (fAction.isChecked()) {
-						DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
-						fAction.setChecked(false);
-					}					
+					PinDebugContextActionDelegate.this.dispose();
 				}
 			}
 			@Override
@@ -174,6 +171,10 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	public void dispose() {
 		DebugUITools.removePartDebugContextListener(fPart.getSite(), this);
 		fPart.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
+		if (fAction.isChecked()) {
+			DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
+			fAction.setChecked(false);
+		}
 	}
 	
 	protected ISelection getActiveDebugContext() {

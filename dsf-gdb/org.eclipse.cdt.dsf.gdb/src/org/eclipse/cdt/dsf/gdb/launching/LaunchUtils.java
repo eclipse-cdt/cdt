@@ -450,6 +450,8 @@ public class LaunchUtils {
     		    return true;
     	    } else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_FLUID)) {
     			return false;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_WHATEVER)) {
+    			return false;
     		}
     	} catch (CoreException e) {    		
     	}
@@ -471,6 +473,8 @@ public class LaunchUtils {
     		    return SessionType.REMOTE;
     		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_FLUID)) {
     			return SessionType.FLUID;
+    	    } else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_WHATEVER)) {
+    			return SessionType.EXISTING;
     	    } else {
     	    	assert false : "Unexpected session-type attribute in launch config: " + debugMode;  //$NON-NLS-1$
     	    }

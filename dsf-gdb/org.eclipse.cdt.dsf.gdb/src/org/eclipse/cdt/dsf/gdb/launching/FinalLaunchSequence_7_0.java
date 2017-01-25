@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -101,6 +102,11 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	@Override
 	@Execute
 	public void stepSetCharset(final RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
 		// See bug 307311 for details.
 		fCommandControl.queueCommand(

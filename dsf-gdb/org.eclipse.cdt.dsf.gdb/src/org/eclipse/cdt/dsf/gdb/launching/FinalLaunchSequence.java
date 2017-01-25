@@ -64,11 +64,13 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	private Map<String, Object> fAttributes;
 
 	private IGDBControl fCommandControl;
-	private IGDBBackend	fGDBBackend;
+	/*** @since 5.3 */
+	protected IGDBBackend fGDBBackend;
 	private IMIProcesses fProcService;
 	private CommandFactory fCommandFactory;
 
-	private DsfServicesTracker fTracker;
+	/*** @since 5.3 */
+	protected DsfServicesTracker fTracker;
 	private DsfSession fSession;
 
 	/**
@@ -190,6 +192,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepGDBVersion(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		fCommandControl.queueCommand(
 				fCommandFactory.createMIGDBVersion(fCommandControl.getContext()), 
 				new DataRequestMonitor<MIGDBVersionInfo>(getExecutor(), requestMonitor) {
@@ -207,6 +214,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetEnvironmentDirectory(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		IPath dir = null;
 		try {
 			dir = fGDBBackend.getGDBWorkingDirectory();
@@ -232,6 +244,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
      */
 	@Execute
 	public void stepSetBreakpointPending(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		if (fGDBBackend.getSessionType() != SessionType.CORE) {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIGDBSetBreakpointPending(fCommandControl.getContext(), true),
@@ -248,6 +265,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepEnablePrettyPrinting(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING,
 				false, null)) {
@@ -284,6 +306,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetPrintObject(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		// Enable or disable variables type determination based on RTTI.
 		// See bug 377536 for details.
 		boolean useRtti = Platform.getPreferencesService().getBoolean(
@@ -307,6 +334,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetCharset(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
 		// See bug 307311 for details.
 		fCommandControl.queueCommand(
@@ -338,39 +370,43 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSourceGDBInitFile(final RequestMonitor requestMonitor) {
-		// let it up to the user if they want to source .gdbinit, for FLUID sessions
-		if (fGDBBackend.getSessionType() != SessionType.FLUID) {
-			try {
-				String gdbinitFile = fGDBBackend.getGDBInitFile();
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		if (fGDBBackend.getSessionType() == SessionType.FLUID) {
+			// let it up to the user if they want to source .gdbinit, for FLUID sessions
+			requestMonitor.done();
+			return;
+		}
+		
+		try {
+			String gdbinitFile = fGDBBackend.getGDBInitFile();
 
-				if (gdbinitFile != null && !gdbinitFile.isEmpty()) {
-					String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
-					final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
+			if (gdbinitFile != null && !gdbinitFile.isEmpty()) {
+				String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
+				final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
 
-					fCommandControl.queueCommand(
-							fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 
-							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-								@Override
-								protected void handleCompleted() {
-									// If the gdbinitFile is the default, then it may not exist and we
-									// should not consider this an error.
-									// If it is not the default, then the user must have specified it and
-									// we want to warn the user if we can't find it.
-									if (!expandedGDBInitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT)) {
-										requestMonitor.setStatus(getStatus());
-									}
-									requestMonitor.done();
+				fCommandControl.queueCommand(
+						fCommandFactory.createCLISource(fCommandControl.getContext(), expandedGDBInitFile), 
+						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+							@Override
+							protected void handleCompleted() {
+								// If the gdbinitFile is the default, then it may not exist and we
+								// should not consider this an error.
+								// If it is not the default, then the user must have specified it and
+								// we want to warn the user if we can't find it.
+								if (!expandedGDBInitFile.equals(IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT)) {
+									requestMonitor.setStatus(getStatus());
 								}
-							});
-				} else {
-					requestMonitor.done();
-				}
-			} catch (CoreException e) {
-				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get gdbinit option", e)); //$NON-NLS-1$
+								requestMonitor.done();
+							}
+						});
+			} else {
 				requestMonitor.done();
 			}
-		}
-		else {
+		} catch (CoreException e) {
+			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get gdbinit option", e)); //$NON-NLS-1$
 			requestMonitor.done();
 		}
 	}
@@ -384,6 +420,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	// It could be moved to FinalLaunchSequence_7_0, otherwise.
 	@Execute
 	public void stepSetNonStop(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		boolean isNonStop = CDebugUtils.getAttribute(
 				fAttributes,
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
@@ -431,6 +472,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetAutoLoadSharedLibrarySymbols(RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		boolean autolib = CDebugUtils.getAttribute(
 				fAttributes,
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
@@ -447,6 +493,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetSharedLibraryPaths(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		try {
 			List<String> p = fGDBBackend.getSharedLibraryPaths();
 
@@ -484,6 +535,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetSourceLookupPath(RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
 		ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
 		CSourceLookupDirector locator = (CSourceLookupDirector)launch.getSourceLocator();
@@ -502,6 +558,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetSourceSubstitutePath(RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		IGDBSourceLookup sourceSubPath = fTracker.getService(IGDBSourceLookup.class);
 		ICommandControlDMContext context = fCommandControl.getContext();
 		if (sourceSubPath == null || !(context instanceof ISourceLookupDMContext)) {
@@ -519,6 +580,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepRemoteConnection(final RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		if (fGDBBackend.getSessionType() == SessionType.REMOTE && fGDBBackend.getIsAttachSession()) {
 			boolean isTcpConnection = CDebugUtils.getAttribute(
 					fAttributes,
@@ -559,6 +625,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepNewProcess(final RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		if (!fGDBBackend.getIsAttachSession()) {
 			boolean noBinarySpecified = CDebugUtils.getAttribute(
 					fAttributes,
@@ -598,6 +669,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepAttachToProcess(final RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() != SessionType.REMOTE) {
 			// Is the process id already stored in the launch?
 			int pid = CDebugUtils.getAttribute(
@@ -627,6 +703,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepDataModelInitializationComplete(final RequestMonitor requestMonitor) {
+//		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+//			requestMonitor.done();
+//			return;
+//		}
+		
 		fSession.dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
 				fCommandControl.getProperties());
 		requestMonitor.done();

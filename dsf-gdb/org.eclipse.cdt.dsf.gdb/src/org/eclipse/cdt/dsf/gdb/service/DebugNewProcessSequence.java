@@ -465,9 +465,14 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	public void stepStartExecution(final RequestMonitor rm) {
 		boolean sessionIsCore = fBackend.getSessionType().equals(SessionType.CORE);
 		boolean sessionIsFluid = fBackend.getSessionType().equals(SessionType.FLUID);
+		boolean sessionisAlreadyExisting = fBackend.getSessionType().equals(SessionType.EXISTING);
 		
-		// skip starting execution if we are in a core or fluid session
-		if (!sessionIsCore && !sessionIsFluid) {
+		// skip starting execution if we are in a core, fluid or already existing session
+		if (sessionIsCore || sessionIsFluid || sessionisAlreadyExisting) {
+			fDataRequestMonitor.setData(getContainerContext());
+			rm.done();
+		}
+		else {
 			// Overwrite the program name to use the binary name that was specified.
 			// This is important for multi-process
 			// Bug 342351
@@ -487,10 +492,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					rm.done();
 				}
 			});
-		} else {
-			fDataRequestMonitor.setData(getContainerContext());
-			rm.done();
-		}
+		} 
 	}
 	
 	/**

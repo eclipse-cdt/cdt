@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 
@@ -78,8 +79,15 @@ public class ElementNumberFormatProvider implements IElementFormatProvider
     		// Note that although each view, including cloned ones, has its own presentation context,
     		// the presentation context id returned by getPresentationContext().getId() is the
     		// same for cloned views even though the presentation context itself is different.
-    		// To get a unique id for each cloned view we can use the title of the view.
-    		provider = part.getTitle();
+    		// So we cannot use getPresentationContext().getId() as an unique id.
+    		// Using the title of the view is also problematic as that title can
+    		// be modified by a pin action (bug 511057)
+    		// To get a fixed unique id for each cloned view we can use the name of the part
+    		if (part instanceof IWorkbenchPart2) {
+    			provider = ((IWorkbenchPart2)part).getPartName();
+    		} else {    			
+    			provider = part.getTitle();
+    		}
     	} else {
     		// In some cases, we are not dealing with a part, e.g., the hover.
     		// In this case, use the presentation context id directly.

@@ -12,8 +12,11 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
@@ -27,10 +30,27 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 
+import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.AbstractPositionCollector;
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
 
@@ -267,8 +287,8 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/** The presentation reconciler */
 	protected CPresentationReconciler fPresentationReconciler;
 
-	/** The hard-coded ranges */
-	protected HighlightedRange[][] fHardcodedRanges;
+	/** Library declarations used by the previewer widget in the preferences */
+	private String fPreviewerLibraryDecls;
 
 	/**
 	 * Install the semantic highlighting on the given editor infrastructure
@@ -300,15 +320,17 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Installs the semantic highlighting on the given source viewer infrastructure.
 	 * No reconciliation will be performed.
+	 * 
+	 * This is used for highlighting the code in the previewer window in the preferences.
 	 *
 	 * @param sourceViewer the source viewer
 	 * @param colorManager the color manager
 	 * @param preferenceStore the preference store
-	 * @param hardcodedRanges the hard-coded ranges to be highlighted
+	 * @param previewerLibraryDecls library declarations required for the previewer code to be valid
 	 */
 	public void install(CSourceViewer sourceViewer, IColorManager colorManager,
-			IPreferenceStore preferenceStore, HighlightedRange[][] hardcodedRanges) {
-		fHardcodedRanges= hardcodedRanges;
+			IPreferenceStore preferenceStore, String previewerLibraryDecls) {
+		fPreviewerLibraryDecls = previewerLibraryDecls;
 		install(null, sourceViewer, colorManager, preferenceStore);
 	}
 
@@ -325,47 +347,125 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			fReconciler= new SemanticHighlightingReconciler();
 			fReconciler.install(fEditor, fSourceViewer, fPresenter, fSemanticHighlightings, fHighlightings);
 		} else {
-			fPresenter.updatePresentation(null, createHardcodedPositions(), new HighlightedPosition[0]);
+			fPresenter.updatePresentation(null, computePreviewerPositions(), new HighlightedPosition[0]);
 		}
 	}
 
 	/**
-	 * Computes the hard-coded positions from the hard-coded ranges
-	 *
-	 * @return the hard-coded positions
+	 * Computes the positions for the preview code.
 	 */
-	protected HighlightedPosition[] createHardcodedPositions() {
-		List<HighlightedPosition> positions= new ArrayList<HighlightedPosition>();
-		for (int i= 0; i < fHardcodedRanges.length; i++) {
-			HighlightedRange range= null;
-			HighlightingStyle hl= null;
-			for (int j= 0; j < fHardcodedRanges[i].length; j++ ) {
-				hl= getHighlighting(fHardcodedRanges[i][j].getKey());
-				if (hl.isEnabled()) {
-					range= fHardcodedRanges[i][j];
-					break;
-				}
+	protected HighlightedPosition[] computePreviewerPositions() {
+		// Before parsing and coloring the preview code, prepend library declarations
+		// required to make it valid.
+		CharArray previewCode = new CharArray(fPreviewerLibraryDecls + fSourceViewer.getDocument().get());
+		
+		// Parse the preview code.
+		ILanguage language = GPPLanguage.getDefault();
+		FileContent content = new InternalFileContent("<previewer>", previewCode);  //$NON-NLS-1$
+		IScannerInfo scanInfo = new ScannerInfo();
+		IncludeFileContentProvider fileCreator = IncludeFileContentProvider.getEmptyFilesProvider();
+		IParserLogService log = ParserUtil.getParserLogService();
+		IASTTranslationUnit tu = null;
+		try {
+			tu = language.getASTTranslationUnit(content, scanInfo, fileCreator, null, 0, log);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+			return new HighlightedPosition[] {};
+		}
+		
+		// Correct highlighting of external SDK references requires an index-based AST.
+		// Since we don't have an index-based AST here, we swap out the external SDK
+		// highlighting with a custom one that recognizes certain hardcoded functions
+		// that are present in the preview code.
+		List<SemanticHighlighting> highlightings = new ArrayList<>();
+		for (SemanticHighlighting highlighting : fSemanticHighlightings) {
+			if (SemanticHighlightings.isExternalSDKHighlighting(highlighting)) {
+				highlightings.add(new PreviewerExternalSDKHighlighting());
+			} else {
+				highlightings.add(highlighting);
 			}
-
-			if (range != null)
-				positions.add(fPresenter.createHighlightedPosition(range.getOffset(), range.getLength(), hl));
 		}
-		return positions.toArray(new HighlightedPosition[positions.size()]);
+		
+		// Compute the highlighted positions for the preview code.
+		PreviewerPositionCollector collector = new PreviewerPositionCollector(
+				highlightings.toArray(new SemanticHighlighting[highlightings.size()]), fHighlightings);
+		tu.accept(collector);
+		List<HighlightedPosition> positions = collector.getPositions();
+		
+		// Since the code that was parsed and colored included library declarations as
+		// a prefix, the offsets in the highlighted positions reflect offsets in the
+		// library declarations + preview code. Since what we're actually showing is
+		// the preview code without the library declarations, adjust the offsets
+		// accordingly.
+		int libraryDeclsLen = fPreviewerLibraryDecls.length();
+		List<HighlightedPosition> adjustedPositions = new ArrayList<>();
+		for (HighlightedPosition position : positions) {
+			if (position.offset >= libraryDeclsLen) {
+				position.offset -= libraryDeclsLen;
+				adjustedPositions.add(position);
+			}
+		}
+		
+		return adjustedPositions.toArray(new HighlightedPosition[adjustedPositions.size()]);
 	}
-
-	/**
-	 * Returns the highlighting corresponding to the given key.
-	 *
-	 * @param key the highlighting key as returned by {@link SemanticHighlighting#getPreferenceKey()}
-	 * @return the corresponding highlighting
-	 */
-	private HighlightingStyle getHighlighting(String key) {
-		for (int i= 0; i < fSemanticHighlightings.length; i++) {
-			SemanticHighlighting semanticHighlighting= fSemanticHighlightings[i];
-			if (key.equals(semanticHighlighting.getPreferenceKey()))
-				return fHighlightings[i];
+	
+	// A custom version of the highlighting for external SDK functions, for use 
+	// by the previewer. Just highlights names that match a hardcoded list of
+	// SDK functions that appear in the previewer code.
+	private static class PreviewerExternalSDKHighlighting extends SemanticHighlightingWithOwnPreference {
+		static private final Set<String> fHarcodedSDKFunctions;
+		static {
+			fHarcodedSDKFunctions = new HashSet<String>();
+			fHarcodedSDKFunctions.add("fprintf");  //$NON-NLS-1$
+			// add others as necessary
 		}
-		return null;
+		
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			IASTNode node = token.getNode();
+			if (!(node instanceof IASTName)) {
+				return false;
+			}
+			String name = new String(((IASTName) node).getSimpleID());
+			return fHarcodedSDKFunctions.contains(name);
+		}
+
+		// These methods aren't used by PositionCollector.
+		@Override
+		public RGB getDefaultDefaultTextColor() {
+			return null;
+		}
+		@Override
+		public String getDisplayName() {
+			return null;
+		}
+		@Override
+		public String getPreferenceKey() {
+			return null;
+		}
+		@Override
+		public boolean isEnabledByDefault() {
+			return false;
+		}
+	}
+	
+	// Simple implementation of AbstractPositionCollector for the previewer.
+	private class PreviewerPositionCollector extends AbstractPositionCollector {
+		private List<HighlightedPosition> fPositions = new ArrayList<>();
+		
+		public PreviewerPositionCollector(SemanticHighlighting[] highlightings, 
+				HighlightingStyle[] highlightingStyles) {
+			super(highlightings, highlightingStyles);
+		}
+
+		@Override
+		protected void addPosition(int offset, int length, HighlightingStyle highlightingStyle) {
+			fPositions.add(fPresenter.createHighlightedPosition(offset, length, highlightingStyle));
+		}
+		
+		public List<HighlightedPosition> getPositions() {
+			return fPositions;
+		}
 	}
 
 	/**
@@ -384,7 +484,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		fColorManager= null;
 		fConfiguration= null;
 		fPresentationReconciler= null;
-		fHardcodedRanges= null;
 	}
 
 	/**

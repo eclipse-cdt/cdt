@@ -2069,6 +2069,14 @@ public class SemanticHighlightings {
 	}
 
 	/**
+	 * Returns whether the given highlighting is the highlighting for external SDK functions.
+	 * For the previewer widget in the preferences, this is swapped out with a different implementation. 
+	 */
+	public static boolean isExternalSDKHighlighting(SemanticHighlighting highlighting) {
+		return highlighting instanceof ExternalSDKHighlighting;
+	}
+
+	/**
 	 * Do not instantiate
 	 */
 	private SemanticHighlightings() {

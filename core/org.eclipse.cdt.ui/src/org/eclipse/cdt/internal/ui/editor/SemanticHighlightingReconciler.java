@@ -64,19 +64,30 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
  */
 public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	
-	private class PositionCollectorRequirements {
-		public boolean visitImplicitNames = false;
-		public boolean visitExpressions = false;
-	}
-	
 	/**
 	 * Collects positions from the AST.
+	 * This abstract version exists so it can be reused by the previewer widget.
+	 * The concrete version used by the reconciler follows.
 	 */
-	private class PositionCollector extends ASTVisitor {
+	public static abstract class AbstractPositionCollector extends ASTVisitor {
+		private SemanticHighlighting[] fHighlightings;
+		private HighlightingStyle[] fHighlightingStyles;
+		
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
 		
-		public PositionCollector(PositionCollectorRequirements requirements) {
+		private class PositionCollectorRequirements {
+			public boolean visitImplicitNames = false;
+			public boolean visitExpressions = false;
+		}
+		
+		public AbstractPositionCollector(SemanticHighlighting[] highlightings, 
+				HighlightingStyle[] highlightingStyles) {
+			fHighlightings = highlightings;
+			fHighlightingStyles = highlightingStyles;
+			
+			PositionCollectorRequirements requirements = getRequirements();
+			
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
@@ -87,6 +98,22 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitVirtSpecifiers= true;
 			shouldVisitImplicitNames = requirements.visitImplicitNames;
 			shouldVisitImplicitNameAlternates = requirements.visitImplicitNames;
+		}
+		
+		private PositionCollectorRequirements getRequirements() {
+			PositionCollectorRequirements result = new PositionCollectorRequirements();
+			for (int i = 0; i < fHighlightings.length; i++) {
+				SemanticHighlighting sh = fHighlightings[i];
+				if (fHighlightingStyles[i].isEnabled()) {
+					if (sh.requiresImplicitNames()) {
+						result.visitImplicitNames = true;
+					}
+					if (sh.requiresExpressions()) {
+						result.visitExpressions = true;
+					}
+				}
+			}
+			return result;
 		}
 
 		@Override
@@ -193,17 +220,17 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		private boolean visitNode(IASTNode node) {
 			boolean consumed= false;
 			fToken.update(node);
-			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
-				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
+			for (int i= 0, n= fHighlightings.length; i < n; ++i) {
+				SemanticHighlighting semanticHighlighting= fHighlightings[i];
 				// If the semantic highlighting doesn't color expressions, don't bother
 				// passing it one to begin with.
 				if (node instanceof IASTExpression && !semanticHighlighting.requiresExpressions()) {
 					continue;
 				}
-				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
+				if (fHighlightingStyles[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
 					IASTNodeLocation location = getLocationToHighlight(node);
 					if (location != null) {
-						highlightLocation(location, fJobHighlightings[i]);
+						highlightLocation(location, fHighlightingStyles[i]);
 					}
 					consumed= true;
 					break;
@@ -269,9 +296,18 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * 
 		 * @param offset The range offset
 		 * @param length The range length
-		 * @param highlighting The highlighting
+		 * @param highlightingStyle The highlighting style
 		 */
-		private void addPosition(int offset, int length, HighlightingStyle highlightingStyle) {
+		protected abstract void addPosition(int offset, int length, HighlightingStyle highlightingStyle);
+	}
+	
+	private class PositionCollector extends AbstractPositionCollector {
+		public PositionCollector() {
+			super(fJobSemanticHighlightings, fJobHighlightings);
+		}
+
+		@Override
+		protected void addPosition(int offset, int length, HighlightingStyle highlightingStyle)  {
 			boolean isExisting= false;
 			// TODO: use binary search
 			for (int i= 0, n= fRemovedPositions.size(); i < n; i++) {
@@ -291,7 +327,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				fAddedPositions.add(position);
 			}
 		}
-
 	}
 
 	/** The C editor this semantic highlighting reconciler is installed on */
@@ -364,7 +399,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
 			
-			PositionCollector collector= new PositionCollector(getRequirements());
+			PositionCollector collector= new PositionCollector();
 
 			startReconcilingPositions();
 			
@@ -387,22 +422,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				fIsReconciling= false;
 			}
 		}
-	}
-
-	private PositionCollectorRequirements getRequirements() {
-		PositionCollectorRequirements result = new PositionCollectorRequirements();
-		for (int i = 0; i < fSemanticHighlightings.length; i++) {
-			SemanticHighlighting sh = fSemanticHighlightings[i];
-			if (fHighlightings[i].isEnabled()) {
-				if (sh.requiresImplicitNames()) {
-					result.visitImplicitNames = true;
-				}
-				if (sh.requiresExpressions()) {
-					result.visitExpressions = true;
-				}
-			}
-		}
-		return result;
 	}
 
 	/**

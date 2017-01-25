@@ -1,0 +1,9 @@
+namespace std {
+  class ostream {
+    ostream& operator<<(const char*);
+  };
+  ostream cout;
+}
+struct FILE {};
+FILE* stdout;
+int fprintf(FILE*, const char*, ...);

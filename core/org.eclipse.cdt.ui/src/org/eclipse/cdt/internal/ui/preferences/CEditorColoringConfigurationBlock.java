@@ -24,7 +24,6 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -71,7 +70,6 @@ import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedRange;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
@@ -362,6 +360,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * The font metrics.
 	 */
 	private FontMetrics fFontMetrics;
+	/**
+	 * Library declarations needed to make the preview code valid without actually
+	 * resolving #includes in it.
+	 */
+	private String fPreviewerLibraryDecls;
 
 	public CEditorColoringConfigurationBlock(OverlayPreferenceStore store) {
 		super(store);
@@ -822,6 +825,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		CSourcePreviewerUpdater.registerPreviewer(fPreviewViewer, configuration, store);
 		fPreviewViewer.setEditable(false);
 		
+		String libraryDecls= loadPreviewContentFromFile("ColorSettingPreviewLibraryDecls.txt"); //$NON-NLS-1$
+		fPreviewerLibraryDecls= libraryDecls;
 		String content= loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document= new Document(content);
 		CUIPlugin.getDefault().getTextTools().setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
@@ -859,7 +864,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private void installSemanticHighlighting() {
 		if (fSemanticHighlightingManager == null) {
 			fSemanticHighlightingManager= new SemanticHighlightingManager();
-			fSemanticHighlightingManager.install(fPreviewViewer, fColorManager, getPreferenceStore(), createPreviewerRanges());
+			fSemanticHighlightingManager.install(fPreviewViewer, fColorManager, getPreferenceStore(),
+					fPreviewerLibraryDecls);
 		}
 	}
 
@@ -871,73 +877,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			fSemanticHighlightingManager.uninstall();
 			fSemanticHighlightingManager= null;
 		}
-	}
-
-	/**
-	 * Create the hard coded previewer ranges. Must be sorted by ascending offset.
-	 * 
-	 * @return the hard coded previewer ranges
-	 */
-	private SemanticHighlightingManager.HighlightedRange[][] createPreviewerRanges() {
-		// TODO(nathanridge): It would be nicer to actually parse the previewed code.
-		return new SemanticHighlightingManager.HighlightedRange[][] {
-			{ createHighlightedRange( 2,  8,  5, SemanticHighlightings.MACRO_DEFINITION) },
-			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
-			{ createHighlightedRange( 5, 21,  4, SemanticHighlightings.TYPEDEF) },
-			{ createHighlightedRange( 6, 11,  6, SemanticHighlightings.FUNCTION_DECLARATION),  createHighlightedRange( 6, 11,  6, SemanticHighlightings.FUNCTION) },
-			{ createHighlightedRange( 6, 18,  4, SemanticHighlightings.TYPEDEF) },
-			{ createHighlightedRange( 6, 23,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
-			{ createHighlightedRange( 7,  6,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
-			{ createHighlightedRange( 7, 22,  7, SemanticHighlightings.EXTERNAL_SDK), createHighlightedRange( 7, 22,  7, SemanticHighlightings.FUNCTION) },
-			{ createHighlightedRange( 7, 30,  6, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8,  2,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 8,  7,  2, SemanticHighlightings.OVERLOADED_OPERATOR) },
-			{ createHighlightedRange( 9,  9,  9, SemanticHighlightings.PARAMETER_VARIABLE) },
-			{ createHighlightedRange(11,  5,  7, SemanticHighlightings.FUNCTION_DECLARATION), createHighlightedRange(11,  5,  7, SemanticHighlightings.FUNCTION) },
-			{ createHighlightedRange(12,  6,  7, SemanticHighlightings.CLASS) },
-			{ createHighlightedRange(14,  7,  6, SemanticHighlightings.ENUM) },
-			{ createHighlightedRange(14, 16,  4, SemanticHighlightings.ENUMERATOR) },
-			{ createHighlightedRange(14, 22,  3, SemanticHighlightings.ENUMERATOR) },
-			{ createHighlightedRange(14, 27,  3, SemanticHighlightings.ENUMERATOR) },
-			{ createHighlightedRange(15, 14, 11, SemanticHighlightings.STATIC_FIELD), createHighlightedRange(14, 14, 11, SemanticHighlightings.FIELD) },
-			{ createHighlightedRange(16,  6,  5, SemanticHighlightings.FIELD) },
-			{ createHighlightedRange(17, 10,  6, SemanticHighlightings.ENUM) },
-			{ createHighlightedRange(17, 17,  7, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(16, 17,  7, SemanticHighlightings.METHOD) },
-			{ createHighlightedRange(18,  7,  6, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(17,  7,  6, SemanticHighlightings.METHOD) },
-			{ createHighlightedRange(18, 14,  6, SemanticHighlightings.ENUM) },
-			{ createHighlightedRange(18, 21,  1, SemanticHighlightings.PARAMETER_VARIABLE) },
-			{ createHighlightedRange(19,  8,  5, SemanticHighlightings.LOCAL_VARIABLE_DECLARATION) },
-			{ createHighlightedRange(19, 20,  5, SemanticHighlightings.MACRO_REFERENCE) },
-			{ createHighlightedRange(20,  0,  5, SemanticHighlightings.LABEL) },
-			{ createHighlightedRange(20,  7,  6, SemanticHighlightings.FUNCTION) },
-			{ createHighlightedRange(20, 14,  5, SemanticHighlightings.LOCAL_VARIABLE) },
-			{ createHighlightedRange(21,  4,  7, SemanticHighlightings.METHOD) },
-			{ createHighlightedRange(22,  4, 12, SemanticHighlightings.STATIC_METHOD_INVOCATION), createHighlightedRange(21,  4, 12, SemanticHighlightings.METHOD) },
-			{ createHighlightedRange(23,  4,  7, SemanticHighlightings.PROBLEM) },
-			{ createHighlightedRange(24,  4,  7, SemanticHighlightings.FUNCTION) },
-			{ createHighlightedRange(24, 12,  5, SemanticHighlightings.VARIABLE_PASSED_BY_NONCONST_REF), createHighlightedRange(24, 12,  5, SemanticHighlightings.LOCAL_VARIABLE) },
-			{ createHighlightedRange(26, 14, 12, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(24, 14, 12, SemanticHighlightings.METHOD) },
-		};
-	}
-
-	/**
-	 * Create a highlighted range on the previewers document with the given line, column, length and key.
-	 * 
-	 * @param line the line
-	 * @param column the column
-	 * @param length the length
-	 * @param key the key
-	 * @return the highlighted range
-	 */
-	private HighlightedRange createHighlightedRange(int line, int column, int length, String key) {
-		try {
-			IDocument document= fPreviewViewer.getDocument();
-			int offset= document.getLineOffset(line) + column;
-			return new HighlightedRange(offset, length, key);
-		} catch (BadLocationException x) {
-			CUIPlugin.log(x);
-		}
-		return null;
 	}
 
 	/**

@@ -66,6 +66,17 @@ public interface IMIProcesses extends IProcesses
     IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId);
 
     /**
+     * Alternative way for CDT to become aware of a process being debugged. 
+	 * @since 5.3
+	 */
+    default void createProcess(String groupId, String pid, String name) {}
+    
+    /**
+	 * @since 5.3
+	 */
+    default void createThread(String threadId, String groupId) {};
+    
+    /**
      * Create a container context based on a groupId.  This implies knowledge
      * of which pid is represented by the groupId.  This method can only be used
      * if the groupId has been already created.

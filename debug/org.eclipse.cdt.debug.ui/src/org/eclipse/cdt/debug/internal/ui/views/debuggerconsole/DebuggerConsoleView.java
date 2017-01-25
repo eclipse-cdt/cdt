@@ -77,6 +77,7 @@ public class DebuggerConsoleView extends PageBookView
 	private DebuggerConsoleDropDownAction fDisplayConsoleAction;
 	
 	private LaunchBinarylessSessionAction fLaunchNewGdb;
+	private LaunchExistingGDBSessionAction fLaunchExistingGdb;
 
 	// Code for page participants borrowed from
 	// org.eclipse.ui.internal.console.ConsoleView
@@ -145,6 +146,7 @@ public class DebuggerConsoleView extends PageBookView
 	protected void createActions() {
 		fDisplayConsoleAction = new DebuggerConsoleDropDownAction(this);
 		fLaunchNewGdb = new LaunchBinarylessSessionAction(this);
+		fLaunchExistingGdb = new LaunchExistingGDBSessionAction(this);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -153,10 +155,12 @@ public class DebuggerConsoleView extends PageBookView
 		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fDisplayConsoleAction);
 		mgr.add(fLaunchNewGdb);
+		mgr.add(fLaunchExistingGdb);
 	}
 	
 	protected void configureViewMenu(IMenuManager mgr) {
 		mgr.add(fLaunchNewGdb);
+		mgr.add(fLaunchExistingGdb);
 	}
 
 	@Override
@@ -171,6 +175,10 @@ public class DebuggerConsoleView extends PageBookView
 		if (fLaunchNewGdb != null) {
 			fLaunchNewGdb.dispose();
 			fLaunchNewGdb = null;
+		}
+		if (fLaunchExistingGdb != null) {
+			fLaunchExistingGdb.dispose();
+			fLaunchExistingGdb = null;
 		}
 	}
 

@@ -37,7 +37,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,6 +60,8 @@ import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -594,7 +596,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		fListViewer= new TreeViewer(editorComposite, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new ColorListLabelProvider());
 		fListViewer.setContentProvider(new ColorListContentProvider());
-		fListViewer.setSorter(new ViewerSorter() {
+		fListViewer.setComparator(new ViewerComparator(Collator.getInstance()) {
 			@Override
 			public int category(Object element) {
 				// don't sort the top level categories

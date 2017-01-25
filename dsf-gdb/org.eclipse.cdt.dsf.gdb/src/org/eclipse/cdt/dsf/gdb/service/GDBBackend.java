@@ -15,16 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -52,7 +49,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
@@ -121,7 +117,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
 		final Sequence.Step[] initializeSteps = new Sequence.Step[] {
 				new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),
-				new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
+				//new MonitorJobStep(InitializationShutdownStep.Direction.INITIALIZING),
 				new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING), };
 
 		return new Sequence(getExecutor(), requestMonitor) {
@@ -527,6 +523,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 				try {
                     fProcess = launchGDBProcess();
+					System.out.println("waiting for MI channel to connect...");
+					Thread.sleep(30000);
 
 					// Need to do this on the executor for thread-safety
 					getExecutor().submit(new DsfRunnable() {
@@ -538,13 +536,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 					// Don't send the backendStarted event yet. We wait
 					// until we have registered this service
 					// so that other services can have access to it.
-				} catch (CoreException e) {
-					gdbLaunchRequestMonitor
-							.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
-					gdbLaunchRequestMonitor.done();
-					return Status.OK_STATUS;
+				} 
+				catch (CoreException | InterruptedException e) {
+//					gdbLaunchRequestMonitor
+//							.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
+//					gdbLaunchRequestMonitor.done();
+//					return Status.OK_STATUS;
 				}
-
+/*
 				BufferedReader inputReader = null;
 				BufferedReader errorReader = null;
 				boolean success = false;
@@ -600,33 +599,33 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 						}
 					}
 				}
-
+*/
 				gdbLaunchRequestMonitor.done();
 				return Status.OK_STATUS;
 			}
 		};
 		startGdbJob.schedule();
 
-		getExecutor().schedule(new Runnable() {
-			@Override
-			public void run() {
-				// Only process the event if we have not finished yet (hit
-				// the breakpoint).
-				if (!fGDBLaunchMonitor.fLaunched) {
-					fGDBLaunchMonitor.fTimedOut = true;
-					Thread jobThread = startGdbJob.getThread();
-					if (jobThread != null) {
-						jobThread.interrupt();
-					}
-					
-					destroy();
-					
-					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
-					requestMonitor.done();
-				}
-			}
-		}, fGDBLaunchTimeout, TimeUnit.SECONDS);
+//		getExecutor().schedule(new Runnable() {
+//			@Override
+//			public void run() {
+//				// Only process the event if we have not finished yet (hit
+//				// the breakpoint).
+//				if (!fGDBLaunchMonitor.fLaunched) {
+//					fGDBLaunchMonitor.fTimedOut = true;
+//					Thread jobThread = startGdbJob.getThread();
+//					if (jobThread != null) {
+//						jobThread.interrupt();
+//					}
+//					
+//					destroy();
+//					
+//					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+//							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
+//					requestMonitor.done();
+//				}
+//			}
+//		}, fGDBLaunchTimeout, TimeUnit.SECONDS);
 	}
 
 	/** @since 5.0 */

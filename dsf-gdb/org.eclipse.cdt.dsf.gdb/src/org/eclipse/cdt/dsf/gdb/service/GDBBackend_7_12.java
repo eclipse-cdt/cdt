@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +16,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.pty.PTY.Mode;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -67,6 +65,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 		
 		try {
 			fMIPty = new PTY();
+			System.out.println("MI PTY: " + fMIPty.getSlaveName());
 			fMIPty.validateSlaveName();
 
 			// With the PTY the stderr is redirected to the PTY's output stream.
@@ -185,12 +184,13 @@ public class GDBBackend_7_12 extends GDBBackend {
 		String[] commandLine = getDebuggerCommandLine();
 		try {
 			fCLIPty = new PTY(Mode.TERMINAL);
+			System.out.println("CLI (GDB) PTY: " + fCLIPty.getSlaveName());
 			IPath path = getGDBWorkingDirectory();
-			proc = ProcessFactory.getFactory().exec(
-					commandLine, 
-					getGDBLaunch().getLaunchEnvironment(),
-					new File(path != null ? path.toOSString() : ""), //$NON-NLS-1$
-					fCLIPty);
+//			proc = ProcessFactory.getFactory().exec(
+//					commandLine, 
+//					getGDBLaunch().getLaunchEnvironment(),
+//					new File(path != null ? path.toOSString() : ""), //$NON-NLS-1$
+//					fCLIPty);
 		} catch (IOException e) {
 			String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));

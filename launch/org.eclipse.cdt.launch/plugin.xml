@@ -11,8 +11,8 @@
             type="org.eclipse.cdt.launch.applicationLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
             modes="run"
-            name="%LocalCDTLaunch.name"
-            delegateDescription="%LocalCDTLaunch.description"
+            name="%RunCDTLaunch.name"
+            delegateDescription="%RunCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>

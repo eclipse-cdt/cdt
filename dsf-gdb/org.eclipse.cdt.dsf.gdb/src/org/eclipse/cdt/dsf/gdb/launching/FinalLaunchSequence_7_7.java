@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDPrintfStyle;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -81,6 +82,11 @@ public class FinalLaunchSequence_7_7 extends FinalLaunchSequence_7_2 {
 	 */
 	@Execute
 	public void stepSetDPrinfStyle(final RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		// We use the 'call' style which will
 		// have dprintf call the printf function in the program.
 		fControl.queueCommand(

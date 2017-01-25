@@ -67,6 +67,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 		
 		try {
 			fMIPty = new PTY();
+			System.out.println("MI PTY: " + fMIPty.getSlaveName());
 			fMIPty.validateSlaveName();
 
 			// With the PTY the stderr is redirected to the PTY's output stream.
@@ -197,6 +198,78 @@ public class GDBBackend_7_12 extends GDBBackend {
 		}
 
 		return proc;
+	}
+	
+	@Override
+	protected Process connectToExistingGDBProcess() throws CoreException {
+		if (!isFullGdbConsoleSupported()) {
+			return super.connectToExistingGDBProcess();
+		}
+		
+		// If we are launching the full console, we need to use a PTY in TERMINAL mode
+		// for the GDB CLI to properly display in its view
+		Process proc = null;
+		try {
+			fCLIPty = new PTY(Mode.TERMINAL);
+			
+			// to connect Debugger Console to external GDB
+			System.out.println("CLI (GDB) PTY: " + fCLIPty.getSlaveName()); //$NON-NLS-1$
+			proc = new fakeProc();
+				
+		} catch (IOException e) {
+			String message = "Error while connecting to GDB: "; //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
+		}
+
+		return proc;
+	}
+	
+	
+	/**
+	 * 
+	 * A class that fakes the interface of a process. Useful when we do 
+	 * not launch the debugger ourselves
+	 */
+	private class fakeProc extends Process {
+		public fakeProc() {
+			super();
+		}
+
+		@Override
+		public OutputStream getOutputStream() {
+			return getMIOutputStream();
+		}
+
+		@Override
+		public InputStream getInputStream() {
+			// TODO Auto-generated method stub
+			return getMIInputStream();
+		}
+
+		@Override
+		public InputStream getErrorStream() {
+			// TODO Auto-generated method stub
+			return getErrorStream();
+		}
+
+		@Override
+		public int waitFor() throws InterruptedException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int exitValue() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void destroy() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 	@Override

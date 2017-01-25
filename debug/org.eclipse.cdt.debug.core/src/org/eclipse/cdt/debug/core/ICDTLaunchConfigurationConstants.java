@@ -320,9 +320,17 @@ public interface ICDTLaunchConfigurationConstants {
 	 * ATTR_DEBUGGER_START_MODE. Startup debugger in no specific mode. 
 	 * later the debugger can be made to adopt any of the available
 	 * modes.
-	 * @since 8.1
+	 * @since 8.2
 	 */
 	public static String DEBUGGER_MODE_FLUID = "fluid"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute value. The key is
+	 * DEBUGGER_MODE_WHATEVER. Startup debugger may be in
+	 * any mode and has been started already outside CDT
+	 * @since 8.2
+	 */
+	public static String DEBUGGER_MODE_WHATEVER = "whatever"; //$NON-NLS-1$
 
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.

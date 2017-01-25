@@ -1503,6 +1503,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			}
 			String groupId = group.getGroupId();
 			containerDmcs.add(createContainerContextFromGroupId(controlDmc, groupId));
+//			containerDmcs.add(createContainerContext(controlDmc, groupId, group.getPid()));
 		}
 		return containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]);
 	}
@@ -2107,5 +2108,23 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     			}
     		}
     	}	
+	}
+	
+	
+	/**
+	 * @since 5.3
+	 */
+	@Override
+	public void createProcess(String groupId, String pid, String name) {
+		getGroupToPidMap().put(groupId, pid);
+		fDebuggedProcessesAndNames.put(pid, name);
+	}
+	
+	/**
+	 * @since 5.3
+	 */
+	@Override
+	public void createThread(String threadId, String groupId) {
+		getThreadToGroupMap().put(threadId, groupId);
 	}
 }

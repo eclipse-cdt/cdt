@@ -192,7 +192,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
         	IGDBControl control = tracker.getService(IGDBControl.class);
         	IGDBBackend backend = tracker.getService(IGDBBackend.class);
         	tracker.dispose();
-
+/*
         	IDebuggerConsole console;
 			if (backend != null && backend.isFullGdbConsoleSupported()) {
 				// Create a full GDB cli console
@@ -209,6 +209,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 			addConsole(console);
 			// Make sure the Debugger Console view is visible but do not force it to the top
 			getDebuggerConsoleManager().openConsoleView();
+			*/
 		}
 	}
 	

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_25bf5817",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-25T11:09:04Z",
+      "side": 1,
+      "message": "Here we need to set pagination off.\nIf the full console is off but nonStop is on, we don\u0027t currently set pagination to off\nwith 7.12, but we should.\nI think it is ok to set it to off explicitely even when the console is on,\nit won\u0027t hurt to set it even if in this case it is also set at the GDB\ncommand-line when launching GDB; it will make the code simpler.",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_25a6780b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-25T11:09:04Z",
+      "side": 1,
+      "message": "If we are not running the full console (i.e. not async) we should not interrupt like this\nbut use ^C instead.",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a59a88c3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-25T11:09:04Z",
+      "side": 1,
+      "message": "As this is getting more complicated, can you add a comment\nthat in \"all-stop, which this runControl service only handles,\nwe run async if and only if the full console is enabled\"",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

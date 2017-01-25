@@ -53,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_1a7c76d7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-01-25T19:28:33Z",
+      "side": 1,
+      "message": "Done. Good catch! The initial assumption of GDB 7.12 running always in async is no \nno longer valid.",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_a59a88c3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
         "patchSetId": 7
@@ -64,6 +81,23 @@
       "writtenOn": "2017-01-25T11:09:04Z",
       "side": 1,
       "message": "As this is getting more complicated, can you add a comment\nthat in \"all-stop, which this runControl service only handles,\nwe run async if and only if the full console is enabled\"",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_5a0c2ecc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-01-25T19:28:33Z",
+      "side": 1,
+      "message": "Done",
       "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

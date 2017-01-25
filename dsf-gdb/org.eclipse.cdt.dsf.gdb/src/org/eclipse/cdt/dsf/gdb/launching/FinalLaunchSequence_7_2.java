@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -85,6 +86,11 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 	 */
 	@Execute
 	public void stepDetachOnFork(final RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			rm.done();
+			return;
+		}
+		
 		boolean debugOnFork = CDebugUtils.getAttribute(getAttributes(), 
 				                                       IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				                                       IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);

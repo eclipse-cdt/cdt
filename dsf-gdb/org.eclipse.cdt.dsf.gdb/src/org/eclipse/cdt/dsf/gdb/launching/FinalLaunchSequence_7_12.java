@@ -17,14 +17,27 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo2;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -60,6 +73,17 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			
 			orderList.add(orderList.indexOf("stepSetTargetAsync") + 1, //$NON-NLS-1$
 					"stepSetRecordFullStopAtLimit"); //$NON-NLS-1$
+			
+			
+			
+			
+//			orderList.add(orderList.indexOf("stepSetTargetAsync") + 2, //$NON-NLS-1$
+//					"stepSyncToExistingGDBSession"); //$NON-NLS-1$
+			
+			orderList.add(orderList.indexOf("stepSetTargetAsync") + 2, //$NON-NLS-1$
+					"stepSyncToExistingGDBSessionUsingListThreadGroupRecursive"); //$NON-NLS-1$
+			// stepSyncToExistingGDBSessionUsingListThreadGroupRecursive
+			
 
 			return orderList.toArray(new String[orderList.size()]);
 		}
@@ -92,6 +116,11 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 
 	@Execute
 	public void stepSetTargetAsync(RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		// Use target async when interfacing with GDB 7.12 or higher
 		// this will allow us to use the new enhanced GDB Full CLI console
 		fCommandControl.queueCommand(
@@ -113,6 +142,11 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	 */
 	@Execute
 	public void stepSetRecordFullStopAtLimit(RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		fCommandControl.queueCommand(
 			fCommandFactory.createMIGDBSetRecordFullStopAtLimit(fCommandControl.getContext(), false),
 			new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
@@ -130,7 +164,12 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 		boolean isNonStop = CDebugUtils.getAttribute(fAttributes,
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
 				LaunchUtils.getIsNonStopModeDefault());
-
+		
+		if (fGDBBackend.getSessionType() == SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		
 		if (isNonStop) {
 			// GDBs that don't support non-stop don't allow you to set it to false.
 			// We really should set it to false when GDB supports it though.
@@ -142,5 +181,99 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 		} else {
 			requestMonitor.done();
 		}
+	}	
+	
+	
+	/**
+	 * Since we're connecting to an existing GDB session, we missed important event, 
+	 * and are in an unknown state (which procs being debugged, what are their threads, etc)
+	 * So attempt to have strategic CDT services sync'ed to GDB's state
+	 * 
+	 * @since 5.3
+	 */
+	@Execute
+	public void stepSyncToExistingGDBSessionUsingListThreadGroupRecursive(RequestMonitor requestMonitor) {
+		if (fGDBBackend.getSessionType() != SessionType.EXISTING) {
+			requestMonitor.done();
+			return;
+		}
+		IMIProcesses proc = fTracker.getService(IMIProcesses.class);
+		IGDBControl control = fTracker.getService(IGDBControl.class);
+		
+		DataRequestMonitor<MIListThreadGroupsInfo> rm = 
+				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), requestMonitor) {
+			@Override
+			protected void handleSuccess() {
+				MIListThreadGroupsInfo info = getData();
+				IThreadGroupInfo[] groups = info.getGroupList();
+				
+				for (IThreadGroupInfo group : groups) {
+					final String procPid = group.getPid();
+					final String groupId = group.getGroupId();
+					Path execPath = new Path(group.getExecutable());
+					// "create" process
+					proc.createProcess(groupId, procPid, execPath.lastSegment());
+					
+					// send MIThreadGroupCreatedEvent for each process
+					if (procPid != null) {
+						final IProcessDMContext procDmc = proc.createProcessContext(control.getContext(), procPid);
+						MIEvent<?> event =  new MIThreadGroupCreatedEvent(procDmc, 0, groupId);
+						getSession().dispatchEvent(event, null);
+						
+						// threads under this process
+						if (group instanceof IThreadGroupInfo2) {
+							IThreadGroupInfo2 group2 = (IThreadGroupInfo2) group;
+							MIThread[] threads = group2.getThreads();
+							for (MIThread t : threads) {
+								// "create" thread
+								proc.createThread(t.getThreadId(), groupId);
+								
+								// send MIThreadCreatedEvent
+								IMIContainerDMContext containerCtx =  proc.createContainerContext(procDmc, groupId);
+								
+								IContainerDMContext cont = null;
+								event =  new MIThreadCreatedEvent(containerCtx, t.getThreadId());
+								getSession().dispatchEvent(event, null);
+								
+							}
+							
+						}
+					}
+					
+					requestMonitor.done();
+				}
+			}
+		};
+		
+		// use recursive version -list-thread-group, since it helpfully groups threads under their inferior  - 
+		// which we need here
+		fCommandControl.queueCommand(fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), false, true),rm);
+		
 	}
+	
+	
+	/*
+	proc.getProcessesBeingDebugged(control.getContext(), new DataRequestMonitor<IDMContext[]> (getExecutor(), rm) {
+		@Override
+		public void handleSuccess() {
+			IDMContext[] ctxs = getData();
+			for (IDMContext c : ctxs) {
+				System.out.println("*** container context: " + c.toString()); //$NON-NLS-1$
+				
+				proc.getProcessesBeingDebugged(c, new DataRequestMonitor<IDMContext[]> (getExecutor(), rm) {
+					@Override
+					public void handleSuccess() {
+						IDMContext[] ctxs = getData();
+						for (IDMContext c : ctxs) {
+							System.out.println("*** thread context: " + c.toString()); //$NON-NLS-1$
+							
+						}
+					}
+				});
+				
+				
+			}
+		}
+	}); */
+	
 }

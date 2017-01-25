@@ -15,6 +15,8 @@ public class ConsoleMessages extends NLS {
 	public static String ConsoleDropDownAction_description;
 	public static String LaunchBinarylessSessionAction_name;
 	public static String LaunchBinarylessSessionAction_description;
+	public static String LaunchExistingGDBSessionAction_name;
+	public static String LaunchExistingGDBSessionAction_description;
 	
 	static {
 		// initialize resource bundle

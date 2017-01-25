@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_7ad1eaf6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_12.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-25T16:27:11Z",
+      "side": 1,
+      "message": "It turns out that when we run the basic console, we launch GDB in MI mode (-i mi2)\nand in that case, GDB does not paginate, no matter what the pagination option says.\nSo we only need to turn off pagination when the full console is used, and we do\nthat already when starting GDB.\nSo there is nothing to do in this case.\nThe confusion came from the fact that in the base class we do turn off pagination\nalthough we didn\u0027t need to.\nSorry for the back-and-forth.",
+      "revId": "cab8c241e8ab74bf1427681428ead0c427fa09a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_25a6780b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
         "patchSetId": 7

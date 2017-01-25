@@ -320,7 +320,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * ATTR_DEBUGGER_START_MODE. Startup debugger in no specific mode. 
 	 * later the debugger can be made to adopt any of the available
 	 * modes.
-	 * @since 8.1
+	 * @since 8.2
 	 */
 	public static String DEBUGGER_MODE_FLUID = "fluid"; //$NON-NLS-1$
 

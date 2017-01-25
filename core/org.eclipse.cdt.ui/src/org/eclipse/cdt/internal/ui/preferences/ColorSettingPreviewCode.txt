@@ -15,7 +15,7 @@ public:
   enum Number { ZERO, ONE, TWO };
   static char staticField;
   int field;
-  virtual Number vmethod();
+  virtual Number vmethod() const;
   void method(Number n) const {
     int local= (int)MACRO('\0');
 label: myfunc(local);

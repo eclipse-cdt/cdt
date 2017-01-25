@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_7a9acac6",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/PinDebugContextActionDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-25T18:25:46Z",
+      "side": 1,
+      "message": "Is there a case where partClosed() will be called here but the dispose()\nmethod will not be called directly?\nIf not, then why do we need this IPartListener2 and not rely on dispose()\nall the time?\nIf so, then calling dispose() ourselves does more cleanup than we used to.",
+      "revId": "afe63314cd791519aff27fe068eb129ce6d98dd0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

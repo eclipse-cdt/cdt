@@ -711,8 +711,8 @@ public class MIVariableManager implements ICommandControl {
 			childId.generateId(childFullExpression, getInternalId());
 			MIVariableObject varobjOfChild = lruVariableList.remove(childId);
 			if (varobjOfChild != null) {
-				// Remove it from the list of modifiable descendants
-				getRootToUpdate().removeModifiableDescendant(varobjOfChild.getGdbName());
+				// Remove it from the list of descendants
+				getRootToUpdate().removeDescendant(varobjOfChild.getGdbName());
 				// Remove children recursively
 				varobjOfChild.cleanupChildren();
 			}
@@ -1978,17 +1978,6 @@ public class MIVariableManager implements ICommandControl {
 	    }
 
 		/**
-		 * @return If true, this variable object can be reported as changed in
-		 *         a -var-update MI command.
-		 */
-		public boolean isModifiable() {
-			if (!isComplex() || isDynamic()) {
-				return true;
-			}
-			return false;
-		}
-
-		/**
 		 * @param exprCtx
 		 * @param rm
 		 * 
@@ -2062,10 +2051,8 @@ public class MIVariableManager implements ICommandControl {
 			// This will replace any existing entry
 			lruVariableList.put(getInternalId(), this);
 
-			// Is this new child a modifiable descendant of the root?
-			if (isModifiable()) {
-				getRootToUpdate().addModifiableDescendant(miVar.getVarName(), this);
-			}
+			// Add this child as a descendant of the root.
+			getRootToUpdate().addDescendant(miVar.getVarName(), this);
 		}
 	}
 	
@@ -2101,16 +2088,15 @@ public class MIVariableManager implements ICommandControl {
 		private boolean fOutOfDate = false;
 		
 		/**
-	     * A modifiable descendant is any variable object that is a descendant and
-	     * for which the value (leaf variable objects and dynamic variable objects)
-	     * or number of children (dynamic variable objects) can change.
+	     * Descendants of that root variable object (including itself).
+	     *
+	     * TODO: explain what's the key in the map
 		 */
-		private Map<String, MIVariableObject> modifiableDescendants;
+		private Map<String, MIVariableObject> descendants = new HashMap<String, MIVariableObject>();
 
 		public MIRootVariableObject(VariableObjectId id) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
-			modifiableDescendants = new HashMap<String, MIVariableObject>();
 		}
 
 		public ICommandControlDMContext getControlDMContext() { return fControlContext; }
@@ -2121,20 +2107,18 @@ public class MIVariableManager implements ICommandControl {
 		
 		public boolean getOutOfDate() { return fOutOfDate; }
 		
-		// Remember that we must add ourself as a modifiable descendant if our value can change
-		public void addModifiableDescendant(String gdbName, MIVariableObject descendant) {
-			modifiableDescendants.put(gdbName, descendant);
+		public void addDescendant(String gdbName, MIVariableObject descendant) {
+			descendants.put(gdbName, descendant);
 		}
 		
 		/**
 		 * Removes the descendant with the specified name from the collection of
-		 * modifiable descendants. Does nothing if there is no child with such
-		 * name.
+		 * descendants. Does nothing if there is no child with such name.
 		 * 
 		 * @since 4.1
 		 */
-		public void removeModifiableDescendant(String gdbName) {
-			modifiableDescendants.remove(gdbName);
+		public void removeDescendant(String gdbName) {
+			descendants.remove(gdbName);
 		}
 		
 		/**
@@ -2145,7 +2129,7 @@ public class MIVariableManager implements ICommandControl {
 			countingRm.setDoneCount(updates.length);
 			
 			for (MIVarChange update : updates) {
-				MIVariableObject descendant = modifiableDescendants.get(update.getVarName());
+				MIVariableObject descendant = descendants.get(update.getVarName());
 				
 				// Descendant should never be null, but just to be safe
 				if (descendant != null) {
@@ -2202,10 +2186,7 @@ public class MIVariableManager implements ICommandControl {
 										setValue(getCurrentFormat(), getData().getValue());
 									}
 									
-									// If we are modifiable, we should be in our modifiable list
-									if (isModifiable()) {
-										addModifiableDescendant(getData().getName(), MIRootVariableObject.this);
-									}
+									addDescendant(getData().getName(), MIRootVariableObject.this);
 
 									if (localExprInfo.isDynamic()
 											&& (localExprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {

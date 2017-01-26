@@ -4133,6 +4133,23 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertEquals("string", ASTTypeUtil.getType(s.getType(), false));
 	}
 
+	//	template<typename T, bool b = __is_class(T)>
+	//	class A {};
+	//
+	//	template<typename T>
+	//	class A<T, true> {
+	//	  void waldo();
+	//	};
+	//
+	//	class B {};
+	//
+	//	void test(A<const B> p) {
+	//	  p.waldo();
+	//	}
+	public void testTypeTraitWithQualifier_511143() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
 	//  template <typename CL, typename T>
 	//  struct A {
 	//    template<typename U> struct C {

@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -387,6 +388,10 @@ public class ValueFactory {
 	}
 
 	private static IValue applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {
+		while (type instanceof IQualifierType) {
+			type = ((IQualifierType) type).getType();
+		}
+
 		switch (operator) {
 			case op_sizeof:
 				return getSize(type, point);

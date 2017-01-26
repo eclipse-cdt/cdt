@@ -16,6 +16,24 @@
       "revId": "afe63314cd791519aff27fe068eb129ce6d98dd0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b01561cc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/PinDebugContextActionDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 7168
+      },
+      "writtenOn": "2017-01-26T11:22:35Z",
+      "side": 1,
+      "message": "\"Is there a case where partClosed() will be called here but the dispose() method will not be called directly?\"\n\nI don\u0027t think so, because the lifecycle of the action delegate is bound to the lifecycle of the view part. I wish this was clearly document in code, or even enforced by API. Also, it\u0027s unclear at a glance which one gets called first. From testing it, dispose gets called first, which causes partClosed to not be called because IPartListener2 is removed.\n\nBut, it\u0027s something that might change in the future. Imagine PinDebugContextActionDelegate gets refactored to use the commands/handlers mechanism instead. Then maybe partClosed would get called first. Or dispose not called at all?\n\nNote that in this particular case dispose() is re-entrant, if it gets called a second time I think it will simply have no effect. This way I reckon we are protected from having to care if both of dispose and partClose get called or if just one.",
+      "parentUuid": "a7c23755_7a9acac6",
+      "revId": "afe63314cd791519aff27fe068eb129ce6d98dd0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

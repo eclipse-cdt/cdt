@@ -23,6 +23,7 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -62,6 +63,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 import com.ibm.icu.text.Collator;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -816,7 +818,16 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 	private Control createPreviewer(Composite parent) {
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
-		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), generalTextStore });
+		// Task tags can have their own coloring, and to demonstrate this, the preview code
+		// contains a "TODO" task tag. In order for the comment scanner to recognize this 
+		// as a task tag and apply the coloring, "TODO" needs to be present under the
+		// TODO_TASK_TAGS preference key. Normally this is contained in the core preference
+		// store, but since the user can override the set of task tags, we provide a custom
+		// preference store that always has "TODO" under that key.
+		IPreferenceStore taskTagPreferenceStore= new PreferenceStore();
+		taskTagPreferenceStore.setValue(CCorePreferenceConstants.TODO_TASK_TAGS, "TODO");  //$NON-NLS-1$
+		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), 
+				taskTagPreferenceStore, generalTextStore });
 		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store);
 		SimpleCSourceViewerConfiguration configuration = new SimpleCSourceViewerConfiguration(fColorManager, store, null, ICPartitions.C_PARTITIONING, false);
 		fPreviewViewer.configure(configuration);

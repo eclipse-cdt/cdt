@@ -10,6 +10,7 @@ int static myfunc(uint parameter) {
   return parameter - 1;
 }
 void mutator(int&);
+template <typename Item>
 class MyClass {
 public:
   enum Number { ZERO, ONE, TWO };
@@ -21,7 +22,7 @@ public:
 label: myfunc(local);
     vmethod();
     staticMethod();
-    problem();
+    problem();  // TODO: fix
     mutator(local);
   }
   static void staticMethod();

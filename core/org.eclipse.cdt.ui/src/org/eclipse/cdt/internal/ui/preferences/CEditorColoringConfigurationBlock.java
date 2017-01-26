@@ -816,7 +816,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 	private Control createPreviewer(Composite parent) {
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
-		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), generalTextStore });
+		IPreferenceStore corePreferenceStore= CUIPlugin.getDefault().getCorePreferenceStore();
+		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), 
+				corePreferenceStore, generalTextStore });
 		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store);
 		SimpleCSourceViewerConfiguration configuration = new SimpleCSourceViewerConfiguration(fColorManager, store, null, ICPartitions.C_PARTITIONING, false);
 		fPreviewViewer.configure(configuration);

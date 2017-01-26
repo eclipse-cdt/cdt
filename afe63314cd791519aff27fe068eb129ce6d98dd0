@@ -34,6 +34,23 @@
       "revId": "afe63314cd791519aff27fe068eb129ce6d98dd0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2b43a616",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/PinDebugContextActionDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-01-26T16:21:35Z",
+      "side": 1,
+      "message": "Yes, dispose is re-entrant, so that is safe.\nHowever, I am concerned that partClosed() now calls: \n\t\tDebugUITools.removePartDebugContextListener(fPart.getSite(), this);\n\t\tfPart.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);\nwhich it didn\u0027t call before.\nIf there could be a scenario where partClosed() is called but dispose() is not,\nthen partOpened() could be called and everything would continue to work properly with the previous code;\nhowever, with the new code, things won\u0027t work anymore.\nTherefore, I sugggest not calling dispose() from partClosed() but instead to leave\npartClosed() as before, and make the modificationly to dispose() and put a comment\nthat partClosed() may not get called due to a race, so we uncheck the pin button directly\nin dispose() also.",
+      "revId": "afe63314cd791519aff27fe068eb129ce6d98dd0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

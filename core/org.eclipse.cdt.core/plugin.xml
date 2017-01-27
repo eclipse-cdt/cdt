@@ -169,7 +169,14 @@
          <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.WarningConflictingTypesFor" severity="Warning" variable-expr="$5"/>
          <pattern description-expr="$5" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNULinkerErrorParser.regex.WarningDangerousFunction" severity="Warning" variable-expr="$6"/>
          <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.InstantiatedFromHere" severity="Info"/>
-         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericError" severity="Error"/>
+         <pattern
+               description-expr="$7"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.GenericError"
+               severity="Error"
+               variable-expr="$3"/>
          <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericWarning" severity="Warning"/>
          <pattern description-expr="$9" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericInfo" severity="Info"/>
          <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.OtherError" severity="Error"/>

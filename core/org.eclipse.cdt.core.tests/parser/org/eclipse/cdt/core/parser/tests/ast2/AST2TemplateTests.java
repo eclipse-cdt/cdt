@@ -9916,7 +9916,43 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    MyContainer c;
 	//	    reverse(c);   // Ambiguous
 	//	}
-	public void testWaldo_510834() throws Exception {
+	public void testSFINAEInEvalIdWithFieldOwner_510834() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename, typename>
+	//	struct is_same {
+	//	    static constexpr bool value = false;
+	//	};
+	//
+	//	template <typename T>
+	//	struct is_same<T, T> {
+	//	    static constexpr bool value = true;
+	//	};
+	//
+	//	template <bool C, typename>
+	//	struct enable_if {};
+	//
+	//	template <typename R>
+	//	struct enable_if<true, R> {
+	//	    typedef R type;
+	//	};
+	//
+	//	template <typename, typename>
+	//	struct arg {};
+	//
+	//	template <typename>
+	//	struct param {
+	//	    template<typename I>
+	//	    param(arg<I, typename enable_if<is_same<I, int>::value, int>::type>&) {}
+	//	};
+	//
+	//	void foo(param<int>);
+	//
+	//	void bar(arg<int, int>& x) {
+	//	    foo(x);
+	//	}
+	public void testInstantiationOfEvalIdWithFieldOwner_511108() throws Exception {
 		parseAndCheckBindings();
 	}
 }

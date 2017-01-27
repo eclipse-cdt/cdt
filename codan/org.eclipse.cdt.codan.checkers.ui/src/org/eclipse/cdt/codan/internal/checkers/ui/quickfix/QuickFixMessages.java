@@ -19,6 +19,10 @@ public class QuickFixMessages extends NLS {
 	public static String QuickFixCreateField_create_field;
 	public static String QuickFixCreateLocalVariable_create_local_variable;
 	public static String QuickFixCreateParameter_create_parameter;
+	public static String QuickFixRenameMember_rename_member;
+	public static String QuickFixAddSemicolon_add_semicolon;
+	public static String QuickFixUsePointer_replace_dot;
+	public static String QuickFixUseDotOperator_replace_ptr;
 
 	static {
 		NLS.initializeMessages(QuickFixMessages.class.getName(), QuickFixMessages.class);

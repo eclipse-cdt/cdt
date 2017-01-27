@@ -464,6 +464,32 @@ public class SyncUtil {
         return fSession.getExecutor().submit(callable).get();
     }
 
+	public static IExpressionDMContext[] getSubExpressions(final IExpressionDMContext dmc)
+			throws InterruptedException, ExecutionException {
+		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
+			@Override
+			protected void execute(DataRequestMonitor<IExpressionDMContext[]> rm) {
+				fExpressions.getSubExpressions(dmc, rm);
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get();
+	}
+
+	/*
+	 * Like getSubExpressions, but for cases where we know there will be only
+	 * one child.
+	 */
+	public static IExpressionDMContext getSubExpression(final IExpressionDMContext dmc)
+			throws InterruptedException, ExecutionException {
+		IExpressionDMContext[] subExpressions = SyncUtil.getSubExpressions(dmc);
+
+		assertEquals(1, subExpressions.length);
+
+		return subExpressions[0];
+	}
+
     public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) 
         throws Throwable {
 		Query<String> query = new Query<String>() {

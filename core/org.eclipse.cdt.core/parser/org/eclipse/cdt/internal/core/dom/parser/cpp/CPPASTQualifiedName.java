@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -342,6 +343,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return bindings;
 	}
 
+	// Are we inside a using-declaration?
+	private boolean inUsingDecl() {
+		return getParent() instanceof ICPPASTUsingDeclaration;
+	}
+	
 	private boolean canBeFieldAccess(ICPPClassType baseClass) {
 		IASTNode parent= getParent();
 		if (parent instanceof IASTFieldReference) {
@@ -368,14 +374,14 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	private List<IBinding> filterClassScopeBindings(ICPPClassType classType, IBinding[] bindings,
 			final boolean isDeclaration) {
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		final boolean canBeFieldAccess = canBeFieldAccess(classType);
+		final boolean allowNonstatic = canBeFieldAccess(classType) || inUsingDecl();
 		final IBinding templateDefinition = (classType instanceof ICPPTemplateInstance)
 				? ((ICPPTemplateInstance) classType).getTemplateDefinition() : null;
 
 		for (final IBinding binding : bindings) {
 			if (binding instanceof IField) {
 				IField field = (IField) binding;
-				if (!canBeFieldAccess && !field.isStatic())
+				if (!allowNonstatic && !field.isStatic())
 					continue;
 			} else if (binding instanceof ICPPMethod) {
 				ICPPMethod method = (ICPPMethod) binding;
@@ -383,7 +389,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 					continue;
 				if (!isDeclaration) {
 					if (method.isDestructor() || method instanceof ICPPConstructor
-							|| (!canBeFieldAccess && !method.isStatic()))
+							|| (!allowNonstatic && !method.isStatic()))
 						continue;
 				}
 			} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {

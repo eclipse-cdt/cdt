@@ -46,6 +46,30 @@
       "revId": "704dc4a53f48c0678fdf090e86432eb1536413cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_658a26f9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1984,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-27T16:33:45Z",
+      "side": 0,
+      "message": "Maybe. Here\u0027s my non-educated suggestion:\n- return true here. Mark the method as deprecated explaining that now all variable objects are assumed to be \"modifiable\"\n- Mark add/removeModifiableDescendant as deprecated: See isModifiable. Call add/removeDescendant from them. \n- Do add/removeDescendants need to be public? Maybe make them private?\n\nLater, the deprecated stuff can be cleaned up.",
+      "parentUuid": "a7c23755_c5c13a28",
+      "range": {
+        "startLine": 1984,
+        "startChar": 17,
+        "endLine": 1984,
+        "endChar": 29
+      },
+      "revId": "704dc4a53f48c0678fdf090e86432eb1536413cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_4816210b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/.settings/org.eclipse.pde.api.tools.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-27T21:21:58Z",
+      "side": 1,
+      "message": "This line ignores adding default methods to interfaces.",
+      "range": {
+        "startLine": 53,
+        "startChar": 44,
+        "endLine": 53,
+        "endChar": 50
+      },
+      "revId": "a182fb73611954ebc934f635a8f6d9e0d3b5944d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_28f00551",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/.settings/org.eclipse.pde.api.tools.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-27T21:21:58Z",
+      "side": 1,
+      "message": "This line is the actual line that ignores adding fields",
+      "range": {
+        "startLine": 13,
+        "startChar": 31,
+        "endLine": 13,
+        "endChar": 37
+      },
+      "revId": "a182fb73611954ebc934f635a8f6d9e0d3b5944d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

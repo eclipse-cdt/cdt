@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 	private IMICommandControl fCommandControl;
 	private CommandFactory fCommandFactory;
+	private IGDBBackend fGDBBackEnd;
 	private Map<String, EnableReverseAtLocOperation> fBpIdToReverseOpMap = new HashMap<>();
 
 	public GDBRunControl_7_12(DsfSession session) {
@@ -61,6 +62,8 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	private void doInitialize(final RequestMonitor rm) {
         fCommandControl = getServicesTracker().getService(IMICommandControl.class);
+        fGDBBackEnd = getServicesTracker().getService(IGDBBackend.class);
+
         fCommandFactory = fCommandControl.getCommandFactory();
 		
 		register(new String[]{ GDBRunControl_7_12.class.getName() }, 
@@ -87,32 +90,48 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
     }
 	
 	private void doSuspend(IExecutionDMContext context, final RequestMonitor rm) {
-		// Start the job before sending the interrupt command
-		// to make sure we don't miss the *stopped event
-		final MonitorSuspendJob monitorJob = new MonitorSuspendJob(0, rm);
-		fCommandControl.queueCommand(fCommandFactory.createMIExecInterrupt(context),
-				new ImmediateDataRequestMonitor<MIInfo>() {
-					@Override
-					protected void handleSuccess() {
-						// Nothing to do in the case of success, the monitoring job
-						// will take care of completing the RM once it gets the
-						// *stopped event.
-					}
+		// We use the MI interrupt command when working in async mode.
+		// Since this run control service is specifically for all-stop mode,
+		// the only possibility to be running asynchronously is if the Full GDB console
+		// is being used.
+		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
+			// Start the job before sending the interrupt command
+			// to make sure we don't miss the *stopped event
+			final MonitorSuspendJob monitorJob = new MonitorSuspendJob(0, rm);
+			fCommandControl.queueCommand(fCommandFactory.createMIExecInterrupt(context),
+					new ImmediateDataRequestMonitor<MIInfo>() {
+						@Override
+						protected void handleSuccess() {
+							// Nothing to do in the case of success, the monitoring job
+							// will take care of completing the RM once it gets the
+							// *stopped event.
+						}
 
-					@Override
-					protected void handleFailure() {
-						// In case of failure, we must cancel the monitoring job
-						// and indicate the failure in the rm.
-						monitorJob.cleanAndCancel();
-						rm.done(getStatus());
-					}
-				});
+						@Override
+						protected void handleFailure() {
+							// In case of failure, we must cancel the monitoring job
+							// and indicate the failure in the rm.
+							monitorJob.cleanAndCancel();
+							rm.done(getStatus());
+						}
+					});
+		} else {
+			// Asynchronous mode is off
+			super.suspend(context, rm);
+		}
 	}
 
 	@Override
 	public boolean isTargetAcceptingCommands() {
-		// Async mode is on when running with GDB 7.12 or higher
-		return true;
+		// We shall directly return true if the async mode is ON, 
+		// Since this run control service is specifically for all-stop mode,
+		//   The only possibility to be running asynchronously is if the Full GDB console
+		// is being used.
+		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
+			return true;
+		}
+
+		return super.isTargetAcceptingCommands();
 	}
 
 	/**

@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -336,6 +337,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			&& ((IASTUnaryExpression) getParent().getParent()).getOperator() == IASTUnaryExpression.op_amper;
 	}
 	
+	// Are we inside a using-declaration?
+	private boolean inUsingDecl() {
+		return getParent() instanceof ICPPASTUsingDeclaration;
+	}
+	
 	private boolean canBeFieldAccess(ICPPClassType baseClass) {
 		IASTNode parent= getParent();
 		if (parent instanceof IASTFieldReference) {
@@ -390,7 +396,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	private List<IBinding> filterClassScopeBindings(ICPPClassType classType, IBinding[] bindings,
 			final boolean isDeclaration) {
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		final boolean allowNonstatic = canBeFieldAccess(classType) || isAddressOf();
+		final boolean allowNonstatic = canBeFieldAccess(classType) || isAddressOf() || inUsingDecl();
 		final IBinding templateDefinition = (classType instanceof ICPPTemplateInstance)
 				? ((ICPPTemplateInstance) classType).getTemplateDefinition() : null;
 

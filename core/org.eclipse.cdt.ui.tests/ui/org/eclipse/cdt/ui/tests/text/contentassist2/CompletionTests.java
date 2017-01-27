@@ -1364,6 +1364,23 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 	
+	//	class Base {
+	//	private:
+	//	    void priv();
+	//	protected:
+	//	    void prot();
+	//	public:
+	//	    void publ();
+	//	};
+	//	class Derived : Base {
+	//	    using Base::/*cursor*/
+	//	};
+	public void testUsingDeclarationInClass_511048() throws Exception {
+		final String[] expected = { "prot(void)", "publ(void)" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+	
+	
 	//	template <typen/*cursor*/
 	public void testTemplateDeclaration_397288() throws Exception {
 		final String[] expected= { "typename" };

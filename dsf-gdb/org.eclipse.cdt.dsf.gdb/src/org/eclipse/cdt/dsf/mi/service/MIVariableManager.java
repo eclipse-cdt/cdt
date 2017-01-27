@@ -112,15 +112,13 @@ import org.eclipse.core.runtime.Status;
  * o A varObject created with -var-create is a ROOT
  * o A varObject created with -var-list-children, is not a root
  * o Only varObject with no children or varObjects that are pointers can change values 
- *   and therefore 
- *   those objects can be used with -var-assign
+ *   and therefore those objects can be used with -var-assign
  * o After a program stops, a varObject must be 'updated' before used 
  * o Only root varObject can be updated with -var-update, which will trigger all
  *   of the root's descendants to be updated.
  * o Once updated, a varObject need not be updated until the program resumes again;
  *   this is true even after -var-assign is used (because it does an implicit -var-update)
- * o -var-update will return the list of all modifiable descendants of the udpated root which
- *   have changed
+ * o -var-update will return the list of all descendants of the updated root which have changed
  * o -var-update will indicate if a root is out-of-scope (which implies that all
  *   its descendants are out-of-scope)
  * o if a varObject is out-of-scope, another varObject may be valid for the same
@@ -139,9 +137,8 @@ import org.eclipse.core.runtime.Status;
  *   root varObjects created with -var-create.  Objects created with -var-list-children
  *   are MIVariableObjects only.  The root class will keep track of if the root object 
  *   needs to be updated, if the root object is out-of-scope, and of a list of all 
- *   modifiable descendants of this root.  The list of modifiable descendants is 
- *   accessed using the gdb-given name to allow quick updates from the -var-update 
- *   result (see below.)
+ *   descendants of this root.  The list of descendants is accessed using the gdb-given
+ *   name to allow quick updates from the -var-update result (see below.)
  * 
  * - we do not use -var-list-children for arrays, but create them manually
  *  
@@ -151,14 +148,11 @@ import org.eclipse.core.runtime.Status;
  * as needing to be updated.
  * 
  * - when a varObject is accessed, if its root must be updated, the var-update
- * command shall be used.  The result of that command will indicate all
- * modifiable descendants that have changed.  We also use --all-values with -var-update
- * to get the new value (in the current format) for each modified descendant.  Using the list of modifiable
- * descendants of the root, we can quickly update the changed ones to invalidate their buffered
- * values and store the new current format value.
- * 
- * - all values of non-modifiable varObjects (except arrays) will be set to {...}
- * without going to the back-end
+ * command shall be used.  The result of that command will indicate all descendants that
+ * have changed.  We also use --all-values with -var-update to get the new value (in the
+ * current format) for each modified descendant.  Using the list of descendants of the root,
+ * we can quickly update the changed ones to invalidate their buffered values and store the
+ * new current format value.
  * 
  * - requesting the value of an array varObject will trigger the creation of a new
  * varObject for the array's address.  Note that we must still use a variable

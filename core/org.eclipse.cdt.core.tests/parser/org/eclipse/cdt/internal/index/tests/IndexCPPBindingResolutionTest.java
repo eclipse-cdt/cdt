@@ -1758,20 +1758,6 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		assertEquals("void (char)", ASTTypeUtil.getType(ref.getType()));
 		getBindingFromASTName("g(1)", 1);
 	}
-	
-	//	namespace std {
-	//	    inline namespace __cxx11 { }
-	//	}
-	
-	//	namespace std {
-	//	    namespace __cxx11 {
-	//	        class string {};
-	//	    }
-	//	    void regex_match(string);  // Type 'string' could not be resolved
-	//	}
-	public void testInlineNamespaceReopenedWithoutInlineKeyword_483824() {
-		checkBindings();
-	}
 
 	//	namespace ns {
 	//		void fun();

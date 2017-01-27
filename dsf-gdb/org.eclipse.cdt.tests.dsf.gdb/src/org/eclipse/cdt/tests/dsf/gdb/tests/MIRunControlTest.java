@@ -14,6 +14,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -23,10 +24,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -39,7 +42,11 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.gdb.service.extensions.GDBBackend_HEAD;
+import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
@@ -51,10 +58,15 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
+import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceFactoriesManager;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTest.TestServicesFactory.TestBackEndBasicConsole;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -81,6 +93,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
     private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
+	private IGDBBackend fBackend;
 
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
@@ -97,6 +110,31 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
+
+	public class TestServicesFactory extends GdbDebugServicesFactory {
+		public TestServicesFactory(String version, ILaunchConfiguration config) {
+			super(version, config);
+		}
+
+		@Override
+		protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
+			if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
+				return new TestBackEndBasicConsole(session, lc);
+			}
+			return super.createBackendGDBService(session, lc);
+		}
+
+		public class TestBackEndBasicConsole extends GDBBackend_HEAD {
+			public TestBackEndBasicConsole(DsfSession session, ILaunchConfiguration lc) {
+				super(session, lc);
+			}
+
+			@Override
+			public boolean isFullGdbConsoleSupported() {
+				return false;
+			}
+		}
+	}
 
 	@Override
 	public void doBeforeTest() throws Exception {
@@ -121,9 +159,19 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
             	fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
             	
             	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+            	fBackend = fServicesTracker.getService(IGDBBackend.class);
             }
         };
         session.getExecutor().submit(runnable).get();
+
+		// Validate that only test cases marked with CLI are running a modified/test version of the BackEnd
+		// service
+        if (testName.getMethodName().contains("_CLI")) {
+	        assertTrue("Expecting a Test Backend service", fBackend instanceof TestBackEndBasicConsole);
+		} else {
+	        // Make sure we are using the original unmodified backend service
+	        assertFalse("Expecting original Backend service", fBackend instanceof TestBackEndBasicConsole);
+		}
 	}
 
 
@@ -133,7 +181,29 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		
         if (fServicesTracker!=null) fServicesTracker.dispose();
 	}
-	
+
+	@Override
+	protected void initializeLaunchAttributes() {
+		// Select a unique id for the Test Debug services factory
+		String servicesFactoryId = this.getClass().getName() + "#" + testName.getMethodName();
+
+		// Use a modified service for our CLI test cases (i.e. triggering interrupt via CLI)
+		if (servicesFactoryId.contains("_CLI")) {
+			try {
+				// Register this test case factory
+				BaseTestCase.getServiceFactoriesManager().addTestServicesFactory(servicesFactoryId,
+						new TestServicesFactory(getGdbVersion(), getLaunchConfiguration()));
+			} catch (CoreException e) {
+				// Must likely the factory id was not unique
+				Assert.fail(e.getMessage());
+			}
+
+			// Register the factory id using a launch attribute, so it can be later resolved
+			// e.g. by a test launch delegate
+			setLaunchAttribute(ServiceFactoriesManager.DEBUG_SERVICES_FACTORY_KEY, servicesFactoryId);
+		}
+	}
+
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
@@ -183,6 +253,12 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				}
 				else {
 					i = 0;
+				}
+			}
+			if (fis !=null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
 				}
 			}
 	    }
@@ -619,56 +695,69 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
     @Test
     public void resumeContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
-	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+	    resumeContainerContextCmn();
+	    
+	    if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_12)) {
+		    assertTrue("Target should be running with async on, and shall be accepting commands", fRunCtrl.isTargetAcceptingCommands());
+	    } else {
+		    assertFalse("Target should be running with async off, and shall NOT be accepting commands", fRunCtrl.isTargetAcceptingCommands());
+	    }
+    }
 
-	    final DataRequestMonitor<MIInfo> rm = 
-        	new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
-            @Override
-			protected void handleCompleted() {
-                wait.waitFinished(getStatus());
-             }
-        };
-        
-        final ServiceEventWaitor<IResumedDMEvent> eventWaitor =
-            new ServiceEventWaitor<IResumedDMEvent>(
-                    getGDBLaunch().getSession(),
-                    IResumedDMEvent.class);
+	/**
+	 * Validate we can terminate a running program via the CLI, 
+	 * This would not be feasible to test in the traditional test environment e.g. Linux with GDB 7.12
+	 * This test case forces the use of the Basic console which triggers async mode off, and will cause
+	 * the program interrupt via the CLI (rather than MI -exec-interrupt which is used with async mode)
+	 * 
+	 * Note: This test case uses a modified Test BackEnd service which is instrumented before
+	 * test execution, see initializeLaunchAttributes
+	 */
+    @Test
+    public void resumeContainerContext_CLI() throws InterruptedException, ExecutionException, TimeoutException {
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_12);
+	    resumeContainerContextCmn();
+	    assertFalse("Target should be running with async off, and shall NOT be accepting commands", fRunCtrl.isTargetAcceptingCommands());
+    }
 
-         fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-           		fRunCtrl.resume(fContainerDmc, rm);
-            }
-        });
-        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
-        try {
-			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
-			//TestsPlugin.debug("DsfMIRunningEvent received");	
+	private void resumeContainerContextCmn()
+			throws InterruptedException, ExecutionException, TimeoutException {
+
+		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+				getGDBLaunch().getSession(), IResumedDMEvent.class);
+
+		Query<MIInfo> query = new Query<MIInfo>() {
+			@Override
+			protected void execute(DataRequestMonitor<MIInfo> rm) {
+				fRunCtrl.resume(fContainerDmc, rm);
+			}
+		};
+
+		fRunCtrl.getExecutor().execute(query);
+		query.get(TestsPlugin.massageTimeout(5000), TimeUnit.MILLISECONDS);
+
+		try {
+			resumedWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
 		} catch (Exception e) {
 			Assert.fail("Exception raised:: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
 
-		Assert.assertTrue(wait.getMessage(), wait.isOK());
-		
-		wait.waitReset();
-		
-        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-            	wait.waitFinished();
-            }
-        });
+		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
-        Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
+		Query<Boolean> querySuspend = new Query<Boolean>() {
+			@Override
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+				rm.setData(fRunCtrl.isSuspended(containerDmc));
+				rm.done();
+			}
+		};
 
-        wait.waitReset();
-    }
+		fRunCtrl.getExecutor().execute(querySuspend);
+		Boolean suspended = querySuspend.get(TestsPlugin.massageTimeout(5000), TimeUnit.MILLISECONDS);
+		Assert.assertFalse("Target is suspended. It should have been running", suspended);
+	}
     
     @Test
     public void runToLine() throws Throwable {
@@ -713,74 +802,102 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
         wait.waitReset();
     }
-    
-    /**
+
+	/**
+	 * Validate we can interrupt via the CLI, 
+	 * This would not be feasible to test in the traditional test environment e.g. Linux with GDB 7.12
+	 * This test case forces the use of the Basic console which triggers async mode off, and will cause
+	 * the program interrupt via the CLI (rather than MI -exec-interrupt which is used with async mode)
+	 * 
+	 * Note: This test case uses a modified Test BackEnd service which is instrumented before
+	 * test execution, see initializeLaunchAttributes
+	 */
+	private void interruptRunningTargetCmn()
+			throws InterruptedException, Exception, ExecutionException, TimeoutException {
+		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+	
+	    ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+	    		getGDBLaunch().getSession(),
+	    		ISuspendedDMEvent.class);
+
+	    // Resume the target 
+	    fRunCtrl.getExecutor().submit(new Runnable() {
+	        @Override
+			public void run() {
+	       		fRunCtrl.resume(fThreadExecDmc, 
+	       				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+	       			@Override
+	       			protected void handleCompleted() {
+	       				wait.waitFinished(getStatus());
+	       			}
+	            });
+	        }
+	    });
+	    wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+	    Assert.assertTrue(wait.getMessage(), wait.isOK());
+	    wait.waitReset();
+	     
+		// Wait one second and attempt to interrupt the target.
+	    // As of gdb 7.8, interrupting execution after a thread exit does not
+	    // work well. This test works around it by interrupting before threads
+	    // exit. Once the bug in gdb is fixed, we should add a test that
+	    // interrupts after the threads exit.
+	    // Ref: https://sourceware.org/bugzilla/show_bug.cgi?id=17627
+	    Thread.sleep(1000);	
+	    fRunCtrl.getExecutor().submit(new Runnable() {
+	        @Override
+			public void run() {
+	       		fRunCtrl.suspend(fThreadExecDmc, 
+	       				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+	       			@Override
+	       			protected void handleCompleted() {
+	       				wait.waitFinished(getStatus());
+	       			}
+	            });
+	        }
+	    });
+	
+	    wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+	    Assert.assertTrue(wait.getMessage(), wait.isOK());
+	    wait.waitReset();
+	
+	    // Wait up to 2 seconds for the target to suspend. Should happen immediately.
+	    suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
+	
+	    // Double check that the target is in the suspended state
+	    final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+	    fRunCtrl.getExecutor().submit(new Runnable() {
+	        @Override
+			public void run() {
+	        	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+	        	wait.waitFinished();
+	        }
+	    });
+	    wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+	    Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
+	    wait.waitReset();
+	}
+
+	/**
      * Test that interrupting a running target works 
      */
     @Test
     public void interruptRunningTarget() throws Throwable {
-    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        interruptRunningTargetCmn();
+    }
 
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
-
- 
-        // Resume the target 
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-           		fRunCtrl.resume(fThreadExecDmc, 
-           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
-           			@Override
-           			protected void handleCompleted() {
-           				wait.waitFinished(getStatus());
-           			}
-                });
-            }
-        });
-        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
-        Assert.assertTrue(wait.getMessage(), wait.isOK());
-        wait.waitReset();
-         
-		// Wait one second and attempt to interrupt the target.
-        // As of gdb 7.8, interrupting execution after a thread exit does not
-        // work well. This test works around it by interrupting before threads
-        // exit. Once the bug in gdb is fixed, we should add a test that
-        // interrupts after the threads exit.
-        // Ref: https://sourceware.org/bugzilla/show_bug.cgi?id=17627
-        Thread.sleep(1000);	
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-           		fRunCtrl.suspend(fThreadExecDmc, 
-           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
-           			@Override
-           			protected void handleCompleted() {
-           				wait.waitFinished(getStatus());
-           			}
-                });
-            }
-        });
-
-        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
-        Assert.assertTrue(wait.getMessage(), wait.isOK());
-        wait.waitReset();
-
-        // Wait up to 2 seconds for the target to suspend. Should happen immediately.
-        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-
-        // Double check that the target is in the suspended state
-        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-            	wait.waitFinished();
-            }
-        });
-        wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-        Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
-        wait.waitReset();
+	/**
+	 * Validate we can interrupt via the CLI, 
+	 * This would not be feasible to test in the traditional test environment e.g. Linux with GDB 7.12
+	 * This test case forces the use of the Basic console which triggers async mode off, and will cause
+	 * the program interrupt via the CLI (rather than MI -exec-interrupt which is used with async mode)
+	 * 
+	 * Note: This test case uses a modified Test BackEnd service which is instrumented before
+	 * test execution, see initializeLaunchAttributes
+	 */
+	@Test
+    public void interruptRunningTarget_CLI() throws Throwable {
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_12);
+        interruptRunningTargetCmn();
     }
 }

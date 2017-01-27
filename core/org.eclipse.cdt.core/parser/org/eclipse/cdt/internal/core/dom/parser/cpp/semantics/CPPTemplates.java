@@ -3164,4 +3164,51 @@ public class CPPTemplates {
 		}
 		return exec;
 	}
+	
+	/**
+	 * Instantiate a plain name (simple-id).
+	 * Only destructor names require instantiation, e.g. the name "~T", when instantiated
+	 * with a parameter map that maps T to C, needs to become "~C".
+	 * 
+	 * @param name the name to be instantiated
+	 * @param context the instantiation context
+	 * @param enclosingTemplate The enclosing template definition. This is required because the
+	 *                          instantiation context doesn't actually store parameter names, so
+	 *                          we need to walk the chain of enclosing templates to find potential
+	 *                          template parameter names.
+	 * @return The instantiated name. If the provided name is not a destructor name, or if
+	 *         the type named by the destructor name is not mapped to anything in the
+	 *         instantiation context's parameter map, the provided name is returned unchanged. 
+	 */
+	public static char[] instantiateName(char[] name, InstantiationContext context, IBinding enclosingTemplate) {
+		if (name == null || name.length == 0 || name[0] != '~') {
+			return name;
+		}
+		String typename = new String(name).substring(1);
+		ICPPTemplateParameterMap map = context.getParameterMap();
+		IBinding enclosing = enclosingTemplate;
+		while (enclosing != null) {
+			if (enclosing instanceof ICPPTemplateDefinition) {
+				for (ICPPTemplateParameter param : ((ICPPTemplateDefinition) enclosing).getTemplateParameters()) {
+					if (param instanceof ICPPTemplateTypeParameter) {
+						if (param.getName().equals(typename)) {
+							ICPPTemplateArgument arg = map.getArgument(param);
+							if (arg instanceof CPPTemplateTypeArgument) {
+								IType argType = arg.getTypeValue();
+								argType = SemanticUtil.getNestedType(argType, CVTYPE | TDEF);
+								if (argType instanceof ICPPClassType) {
+									StringBuilder result = new StringBuilder();
+									result.append('~');
+									result.append(((ICPPClassType) argType).getName());
+									return result.toString().toCharArray();
+								}
+							}
+						}
+					}
+				}
+			}
+			enclosing = enclosing.getOwner();
+		}
+		return name;
+	}
 }

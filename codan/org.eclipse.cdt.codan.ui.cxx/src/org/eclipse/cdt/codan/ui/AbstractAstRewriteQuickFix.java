@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.cdt.codan.internal.ui.cxx.Activator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.resources.IMarker;
@@ -103,4 +104,58 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 		astName = getASTNameFromPositions(ast, region.getOffset(), region.getLength());
 		return astName;
 	}
+	
+	/**
+	 * @param marker
+	 * @param ast
+	 * @param argumentIndex TODO
+	 * @return
+	 * @throws BadLocationException
+	 */
+	public IASTNode getAstNodeFromProblemArgument(IMarker marker, IASTTranslationUnit ast, int argumentIndex) {
+		IASTNode astNode = null;
+		int pos = getOffset(marker, getDocument());
+		String name = null;
+		try {
+			name = getProblemArgument(marker, argumentIndex);
+		} catch (Exception e) {
+			return null;
+		}
+		if (name == null)
+			return null;
+		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(getDocument());
+		IRegion region;
+		try {
+			region = dad.find(pos, name,
+			/* forwardSearch */true, /* caseSensitive */true,
+			/* wholeWord */false, /* regExSearch */false);
+		} catch (BadLocationException e) {
+			return null;
+		}
+		astNode = getASTNodeFromPosition(ast, region.getOffset(), region.getLength());
+		return astNode;
+	}
+	
+	/**
+	 * @param ast
+	 * @param charStart
+	 * @param length
+	 * @return
+	 */
+	public IASTNode getASTNodeFromPosition(IASTTranslationUnit ast, final int charStart, final int length) {
+		IASTNode node = ast.getNodeSelector(null).findStrictlyEnclosingNode(charStart, length);
+		return node;
+	}
+	
+	/**
+	 * @param ast
+	 * @param charStart
+	 * @param length
+	 * @return
+	 */
+	public IASTNode getASTFirstContainedNodeFromPosition(IASTTranslationUnit ast, final int charStart, final int length) {
+		IASTNode node = ast.getNodeSelector(null).findFirstContainedNode(charStart, length);
+		return node;
+	}
+
 }

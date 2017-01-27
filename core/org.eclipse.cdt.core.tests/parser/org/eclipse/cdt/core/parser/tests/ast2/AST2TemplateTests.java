@@ -10089,4 +10089,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testInstantiationOfEvalIdWithFieldOwner_511108() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	class C {};
+	//
+	//	template <typename T, typename = decltype(C().~C())>
+	//	void test();
+	//
+	//	void foo() {
+	//	    test<C>();  // Error
+	//	}
+	public void testDependentDestructorName_511122() throws Exception {
+		parseAndCheckBindings();
+	}
 }

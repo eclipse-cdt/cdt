@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -2577,244 +2579,55 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testUpdateOfPointer() throws Throwable {
-        SyncUtil.runToLocation("testUpdateOfPointer");
-        MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
-        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		SyncUtil.runToLocation("testUpdateOfPointer");
+		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-        final String firstValue = "1";
-        final String secondValue = "2";
-        final String thirdValue = "3"; 
-        
-        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
-        fExpService.getExecutor().submit(new Runnable() {
-        	@Override
-			public void run() {
-        		
-        		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
+		/* Create expression for the structure. */
+		IExpressionDMContext structDmc = SyncUtil.createExpression(frameDmc, "z");
 
-    			fExpService.getSubExpressions(
-    					parentDmc, 
-    					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-    						@Override
-    						protected void handleCompleted() {
-    							if (!isSuccess()) {
-    								wait.waitFinished(getStatus());
-    							} else if (getData().length != 2) {
-    								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-    										"Failed getting children; expecting 2 got " + getData().length, null));
-    							} else {
-    				        		// check that we have the proper value for both children
-    								globalExpressionCtx1 = getData()[0];
-    								globalExpressionCtx2 = getData()[1];
+		/* Create sub-expressions for the structure field. */
+		IExpressionDMContext[] fieldsDmc = SyncUtil.getSubExpressions(structDmc);
+		assertThat(fieldsDmc.length, is(2));
 
-    								// Get the value of the first child
-    								wait.increment();
-    								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
-    										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-    											@Override
-    											protected void handleCompleted() {
-    												if (!isSuccess()) {
-    													wait.waitFinished(getStatus());
-    												} else if (getData().getFormattedValue().equals(firstValue)) {
-    													wait.waitFinished();
-    												} else {
-    													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-    															"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got " + getData().getFormattedValue()
-    															+ " instead of " + firstValue, null));
-    												}
-    											}
-    										});
-    								
-    								// Get the value of the second child
-    								wait.increment();
-    								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
-    										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-    											@Override
-    											protected void handleCompleted() {
-    												if (!isSuccess()) {
-    													wait.waitFinished(getStatus());
-    												} else {
-    													wait.setReturnInfo(getData().getFormattedValue());
-    													wait.waitFinished();
-    												}
-    											}
-    										});
-    							}
-    						}
-    					});
-        	}
-        });
+		/* Get the value of the integer. */
+		String integerValue = SyncUtil.getExpressionValue(fieldsDmc[0], IFormattedValues.NATURAL_FORMAT);
+		assertThat(integerValue, is("1"));
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(wait.getMessage(), wait.isOK());
-        final String pointerValue = (String)wait.getReturnInfo();
-        wait.waitReset();
+		/* Get the value of the integer pointer. */
+		String pointerFirstValue = SyncUtil.getExpressionValue(fieldsDmc[1], IFormattedValues.NATURAL_FORMAT);
 
-        fExpService.getExecutor().submit(new Runnable() {
-        	@Override
-			public void run() {
+		/* Get the value pointed by the pointer field. */
+		IExpressionDMContext pointeeDmc = SyncUtil.getSubExpression(fieldsDmc[1]);
+		String pointeeActualValue = SyncUtil.getExpressionValue(pointeeDmc, IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointeeActualValue, is("1"));
 
-        		// also get the child of the pointer
-        		fExpService.getSubExpressions(
-        				globalExpressionCtx2, 
-        				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-        					@Override
-        					protected void handleCompleted() {
-        						if (!isSuccess()) {
-        							wait.waitFinished(getStatus());
-        						} else if (getData().length != 1) {
-        							wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-        									"Failed getting children; expecting 1 got " + getData().length, null));
-        						} else {
-        							// Get the value of the child of the pointer
-        							globalExpressionCtx2 = getData()[0];
-        							fExpService.getFormattedExpressionValue(
-        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
-        									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-        										@Override
-        										protected void handleCompleted() {
-        											if (!isSuccess()) {
-        												wait.waitFinished(getStatus());
-        											} else if (getData().getFormattedValue().equals(firstValue)) {
-        												wait.waitFinished();
-        											} else {
-        												wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-        														"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got " + getData().getFormattedValue()
-        														+ " instead of " + firstValue, null));
-        											}
-        										}
-        									});
-        						}
-        					}
-        				});
-        	}
-        });
+		/* Now, step to change the values of all the children. */
+		stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(wait.getMessage(), wait.isOK());
-        wait.waitReset();
-        
-        // Now step to change the values of all the children
-        stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
-        final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        
-        fExpService.getExecutor().submit(new Runnable() {
-        	@Override
-			public void run() {
-        		
-        		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
+		/* Create expression for the structure. */
+		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
-    			fExpService.getSubExpressions(
-    					parentDmc, 
-    					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-    						@Override
-    						protected void handleCompleted() {
-    							if (!isSuccess()) {
-    								wait.waitFinished(getStatus());
-    							} else if (getData().length != 2) {
-    								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-    										"Failed getting children; expecting 2 got " + getData().length, null));
-    							} else {
-    				        		// check that we have the proper value for both children
-    								globalExpressionCtx1 = getData()[0];
-    								globalExpressionCtx2 = getData()[1];
+		/* Create sub-expressions for the structure field. */
+		fieldsDmc = SyncUtil.getSubExpressions(structDmc);
+		assertThat(fieldsDmc.length, is(2));
 
-    								// Get the value of the first child
-    								wait.increment();
-    								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
-    										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-    											@Override
-    											protected void handleCompleted() {
-    												if (!isSuccess()) {
-    													wait.waitFinished(getStatus());
-    												} else if (getData().getFormattedValue().equals(secondValue)) {
-    													wait.waitFinished();
-    												} else {
-    													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-    															"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got " + getData().getFormattedValue()
-    															+ " instead of " + secondValue, null));
-    												}
-    											}
-    										});
-    								
-    								// Get the value of the second child
-    								wait.increment();
-    								fExpService.getFormattedExpressionValue(
-    										fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
-    										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-    											@Override
-    											protected void handleCompleted() {
-    												if (!isSuccess()) {
-    													wait.waitFinished(getStatus());
-    												} else if (!getData().getFormattedValue().equals(pointerValue)) {
-    													// The value should have changed
-    													wait.waitFinished();
-    												} else {
-    													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-    															"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got " + getData().getFormattedValue()
-    															+ " instead of some other value", null));												
-    												}
-    											}
-    										});
-    							}
-    						}
-    					});
-        	}
-        });
+		/* Get the value of the integer. */
+		integerValue = SyncUtil.getExpressionValue(fieldsDmc[0], IFormattedValues.NATURAL_FORMAT);
+		assertThat(integerValue, is("2"));
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(wait.getMessage(), wait.isOK());
-        wait.waitReset();
+		/* Get the value of the integer pointer. It should have changed from
+		   last time. */
+		String pointerSecondValue = SyncUtil.getExpressionValue(fieldsDmc[1], IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointerSecondValue, is(not(equalTo(pointerFirstValue))));
 
-        fExpService.getExecutor().submit(new Runnable() {
-        	@Override
-			public void run() {
-
-        		// also get the child of the pointer
-        		fExpService.getSubExpressions(
-        				globalExpressionCtx2, 
-        				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-        					@Override
-        					protected void handleCompleted() {
-        						if (!isSuccess()) {
-        							wait.waitFinished(getStatus());
-        						} else if (getData().length != 1) {
-        							wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-        									"Failed getting children; expecting 1 got " + getData().length, null));
-        						} else {
-        							// Get the value of the child of the pointer
-        							globalExpressionCtx2 = getData()[0];
-        							fExpService.getFormattedExpressionValue(
-        									fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
-        									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-        										@Override
-        										protected void handleCompleted() {
-        											if (!isSuccess()) {
-        												wait.waitFinished(getStatus());
-        											} else if (getData().getFormattedValue().equals(thirdValue)) {
-        												wait.waitFinished();
-        											} else {
-        												wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-        														"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got " + getData().getFormattedValue()
-        														+ " instead of " + thirdValue, null));
-        											}
-        										}
-        									});
-        						}
-        					}
-        				});
-        	}
-        });
-
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(wait.getMessage(), wait.isOK());
-        wait.waitReset();
+		/* Get the value pointed by the pointer field. */
+		pointeeDmc = SyncUtil.getSubExpression(fieldsDmc[1]);
+		pointeeActualValue = SyncUtil.getExpressionValue(pointeeDmc, IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointeeActualValue, is("3"));
     }
-    
+
     /**
      * This test verifies that we properly return if we can write to different expressions
      */

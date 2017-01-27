@@ -1127,7 +1127,8 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		doLaunch(EXEC_PATH + EXEC_NAME);
 		GdbLaunch launch1 = getGDBLaunch();
 		// Launch additional session with same launch configuration
-		GdbLaunch launch2 = doLaunchInner();
+		doLaunchInner();
+		GdbLaunch launch2 = getGDBLaunch();
 
 		/*
 		 * Bug 494650 affects when two launches are terminated too close

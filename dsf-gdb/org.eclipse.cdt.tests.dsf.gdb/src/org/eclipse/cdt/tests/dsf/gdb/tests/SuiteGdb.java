@@ -11,12 +11,6 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.GDBMultiNonStopRunControlTest;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIExpressionsNonStopTest;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvailableTest;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.OperationsWhileTargetIsRunningNonStopTest;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.StepIntoSelectionNonStopTest;
-import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.ThreadStackFrameSyncTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -33,34 +27,35 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 		// new style tests
-		MIBreakpointsTest.class,
-		MICatchpointsTest.class,
-		MIRegistersTest.class,
-		MIExpressionsTest.class,
-		LaunchConfigurationAndRestartTest.class,
-		SourceLookupTest.class,
-		StepIntoSelectionTest.class,
-		OperationsWhileTargetIsRunningTest.class,
+//		MIBreakpointsTest.class,
+//		MICatchpointsTest.class,
+//		MIRegistersTest.class,
+//		MIExpressionsTest.class,
+//		LaunchConfigurationAndRestartTest.class,
+//		SourceLookupTest.class,
+//		StepIntoSelectionTest.class,
+//		OperationsWhileTargetIsRunningTest.class,
+		MIRunControlSimServicesTest.class,
 		MIRunControlTest.class,
-		MIRunControlTargetAvailableTest.class,
-		MIRunControlReverseTest.class,
-		GDBPatternMatchingExpressionsTest.class,
-		GDBMultiNonStopRunControlTest.class,
-		GDBConsoleBreakpointsTest.class,
-		MIRunControlNonStopTargetAvailableTest.class,
-		MIExpressionsNonStopTest.class,
-		OperationsWhileTargetIsRunningNonStopTest.class,
-		StepIntoSelectionNonStopTest.class,
-		GDBRemoteTracepointsTest.class,
-		TraceFileTest.class,
-		GDBConsoleSynchronizingTest.class,
-		MIMemoryTest.class,
-		MIDisassemblyTest.class,
-		GDBProcessesTest.class,
-		PostMortemCoreTest.class,
-		CommandTimeoutTest.class,
-		ThreadStackFrameSyncTest.class,
-		CommandLineArgsTest.class,
+//		MIRunControlTargetAvailableTest.class,
+//		MIRunControlReverseTest.class,
+//		GDBPatternMatchingExpressionsTest.class,
+//		GDBMultiNonStopRunControlTest.class,
+//		GDBConsoleBreakpointsTest.class,
+//		MIRunControlNonStopTargetAvailableTest.class,
+//		MIExpressionsNonStopTest.class,
+//		OperationsWhileTargetIsRunningNonStopTest.class,
+//		StepIntoSelectionNonStopTest.class,
+//		GDBRemoteTracepointsTest.class,
+//		TraceFileTest.class,
+//		GDBConsoleSynchronizingTest.class,
+//		MIMemoryTest.class,
+//		MIDisassemblyTest.class,
+//		GDBProcessesTest.class,
+//		PostMortemCoreTest.class,
+//		CommandTimeoutTest.class,
+//		ThreadStackFrameSyncTest.class,
+//		CommandLineArgsTest.class,
 		/* Add your test class here */
 })
 public class SuiteGdb {

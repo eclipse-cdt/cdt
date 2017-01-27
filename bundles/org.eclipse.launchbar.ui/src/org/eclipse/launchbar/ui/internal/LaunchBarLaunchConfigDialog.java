@@ -9,6 +9,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPre
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -27,6 +28,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -203,10 +205,70 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		}
 	}
 
+	private String getTabsErrorMessage() {
+		ILaunchConfigurationTab activeTab = getActiveTab();
+		if (activeTab != null) {
+			String message = activeTab.getErrorMessage();
+			if (message != null) {
+				return message;
+			}
+		}
+
+		for (ILaunchConfigurationTab tab : getTabs()) {
+			if (tab != activeTab) {
+				String message = tab.getErrorMessage();
+				if (message != null) {
+					return message;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private String getTabsMessage() {
+		ILaunchConfigurationTab activeTab = getActiveTab();
+		if (activeTab != null) {
+			String message = activeTab.getMessage();
+			if (message != null) {
+				return message;
+			}
+		}
+
+		for (ILaunchConfigurationTab tab : getTabs()) {
+			if (tab != activeTab) {
+				String message = tab.getMessage();
+				if (message != null) {
+					return message;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	@Override
 	public void updateMessage() {
-		// TODO Auto-generated method stub
+		if (initing) {
+			return;
+		}
 
+		for (ILaunchConfigurationTab tab : getTabs()) {
+			tab.isValid(workingCopy);
+		}
+
+		Button okButton = getButton(IDialogConstants.OK_ID);
+
+		String message = getTabsErrorMessage();
+		if (message != null) {
+			setMessage(message, IMessageProvider.ERROR);
+			okButton.setEnabled(false);
+			return;
+		}
+
+		message = getTabsMessage();
+		setMessage(message);
+		okButton.setEnabled(true);
 	}
 
 	@Override

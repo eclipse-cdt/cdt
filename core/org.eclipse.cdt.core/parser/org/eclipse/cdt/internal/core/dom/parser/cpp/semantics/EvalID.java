@@ -346,6 +346,9 @@ public class EvalID extends CPPDependentEvaluation {
 		if (templateArgs != null) {
 			templateArgs = instantiateArguments(templateArgs, context, false);
 		}
+		
+		char[] name = fName;
+		name = CPPTemplates.instantiateName(name, context, getTemplateDefinition());
 
 		ICPPEvaluation fieldOwner = fFieldOwner;
 		if (fieldOwner != null) {
@@ -372,7 +375,7 @@ public class EvalID extends CPPDependentEvaluation {
 
 		boolean nameOwnerStillDependent = false;
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, null, templateArgs, null, context.getPoint());
+			ICPPEvaluation eval = resolveName(name, (ICPPClassType) nameOwner, null, templateArgs, null, context.getPoint());
 			if (eval != null)
 				return eval;
 			if (CPPTemplates.isDependentType((ICPPClassType) nameOwner)) {
@@ -395,7 +398,8 @@ public class EvalID extends CPPDependentEvaluation {
 			IType fieldOwnerClassTypeCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
 			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
 			if (fieldOwnerClassType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName((ICPPClassType) fieldOwnerClassType, fieldOwner, templateArgs, fieldOwnerClassTypeCV, context.getPoint());
+				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerClassType, fieldOwner, 
+						templateArgs, fieldOwnerClassTypeCV, context.getPoint());
 				if (eval != null)
 					return eval;
 				if (!CPPTemplates.isDependentType(fieldOwnerClassType)) 
@@ -403,7 +407,7 @@ public class EvalID extends CPPDependentEvaluation {
 			}
 		}
 
-		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, fIsPointerDeref, templateArgs,
+		return new EvalID(fieldOwner, nameOwner, name, fAddressOf, fQualified, fIsPointerDeref, templateArgs,
 				getTemplateDefinition());
 	}
 
@@ -420,9 +424,9 @@ public class EvalID extends CPPDependentEvaluation {
 		return newEvalID;
 	}
 
-	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPEvaluation ownerEval, ICPPTemplateArgument[] templateArgs,
-			IType impliedObjectType, IASTNode point) {
-		LookupData data = new LookupData(fName, templateArgs, point);
+	private ICPPEvaluation resolveName(char[] name, ICPPClassType nameOwner, ICPPEvaluation ownerEval, 
+			ICPPTemplateArgument[] templateArgs, IType impliedObjectType, IASTNode point) {
+		LookupData data = new LookupData(name, templateArgs, point);
 		data.qualified = fQualified;
 		try {
 			CPPSemantics.lookup(data, nameOwner.getCompositeScope());

@@ -9961,4 +9961,20 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testNoexceptSpecifierInTypeTemplateArgument_511186() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	class C {};
+	//	typedef C D;
+	//
+	//	template <typename T, typename = decltype(T().~T())>
+	//	void test();
+	//
+	//	void foo() {
+	//	    test<C>();
+	//		test<const C>();
+	//		test<D>();
+	//		test<const D>();
+	//	}
+	public void testDependentDestructorName_511122() throws Exception {
+		parseAndCheckBindings();
+	}
 }

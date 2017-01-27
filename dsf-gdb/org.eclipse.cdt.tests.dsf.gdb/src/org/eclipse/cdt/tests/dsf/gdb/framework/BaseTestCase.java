@@ -128,6 +128,10 @@ public class BaseTestCase {
 
 	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
+	// Provides the possibility to override the Debug Services factory which
+	// provide the facility to override specific service(s)
+	private static final ServiceFactoriesManager fTstDbgSrvcesFactory = new ServiceFactoriesManager();
+
 	/**
 	 * Return the launch created when {@link #doLaunch()} was called.
 	 */
@@ -431,7 +435,7 @@ public class BaseTestCase {
  		lcWorkingCopy.setAttributes(launchAttributes);
 
  		fLaunchConfiguration = lcWorkingCopy.doSave();
- 		fLaunch = doLaunchInner();
+ 		doLaunchInner();
 
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
@@ -453,10 +457,11 @@ public class BaseTestCase {
  	 * and no launches are currently running.
  	 * 
  	 * This method is blocking until the breakpoint at main in the program is reached.
+ 	 * @return 
  	 * 
  	 * @return the new launch created
  	 */
-	protected GdbLaunch doLaunchInner() throws Exception {
+	protected void doLaunchInner() throws Exception {
 		assertNotNull("The launch configuration has not been created. Call doLaunch first.", fLaunchConfiguration);
 		
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
@@ -475,7 +480,7 @@ public class BaseTestCase {
 		// before the launch() call returns (unless, of course, there was a
 		// problem launching and no session is created).
  		DsfSession.addSessionStartedListener(sessionStartedListener);
- 		GdbLaunch launch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
+ 		fLaunch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
  		DsfSession.removeSessionStartedListener(sessionStartedListener);
 
  		try {
@@ -505,15 +510,14 @@ public class BaseTestCase {
  	 		
  		} catch (Exception e) {
  			try {
- 				launch.terminate();
- 				assertLaunchTerminates(launch);
+ 				fLaunch.terminate();
+ 				assertLaunchTerminates(fLaunch);
  			} catch (Exception inner) {
  				e.addSuppressed(inner);
  			}
  			throw e;
  		}
 		
-		return launch;
 	} 	
 
 	/**
@@ -710,5 +714,13 @@ public class BaseTestCase {
 	protected void waitUntil(String message, Callable<Boolean> callable) throws Exception {
 		waitUntil(message, callable, TestsPlugin.massageTimeout(2000));
 	}
-	
+
+	/**
+	 * @return A Test Debug Service Factories manager which allow individual tests to register
+	 * a specific service factory which can then provide mocked/extended instances of Test Services
+	 */
+	public static ServiceFactoriesManager getServiceFactoriesManager() {
+		return fTstDbgSrvcesFactory;
+	}
+
 }

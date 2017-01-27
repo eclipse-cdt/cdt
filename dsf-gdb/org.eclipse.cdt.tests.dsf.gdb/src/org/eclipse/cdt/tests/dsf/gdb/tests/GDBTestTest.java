@@ -58,7 +58,8 @@ public class GDBTestTest extends BaseParametrizedTestCase {
 		waitUntil("Launch did not terminate", () -> autoLaunched.isTerminated());
 		
 		// launch an additional launch
-		GdbLaunch secondLaunch = doLaunchInner();
+		doLaunchInner();
+		GdbLaunch secondLaunch = getGDBLaunch();
 		assertFalse("Second launch should be running", secondLaunch.isTerminated());
 		
 		secondLaunch.terminate();

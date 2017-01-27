@@ -80,6 +80,9 @@ If this is not codan problem (for example gcc error), it can be ommitted. Messag
                <documentation>
                   If problem id is not enought to identity the fix messagePattern can be used to apply fix for given message
                </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

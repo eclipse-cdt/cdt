@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_45ce0a5e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1984,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-27T16:17:32Z",
+      "side": 0,
+      "message": "removing this breaks the API. The other public methods that were modified too. I\u0027m not sure how likely someone would be overriding/calling this.",
+      "range": {
+        "startLine": 1984,
+        "startChar": 17,
+        "endLine": 1984,
+        "endChar": 29
+      },
+      "revId": "704dc4a53f48c0678fdf090e86432eb1536413cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

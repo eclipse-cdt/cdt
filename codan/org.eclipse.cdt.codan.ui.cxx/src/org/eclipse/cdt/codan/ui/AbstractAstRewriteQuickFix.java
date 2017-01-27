@@ -102,5 +102,5 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 		}
 		astName = getASTNameFromPositions(ast, region.getOffset(), region.getLength());
 		return astName;
-	}
+	}	
 }

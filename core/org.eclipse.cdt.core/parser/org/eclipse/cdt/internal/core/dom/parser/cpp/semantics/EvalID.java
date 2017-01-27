@@ -369,15 +369,19 @@ public class EvalID extends CPPDependentEvaluation {
 		if (templateArgs == fTemplateArgs && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
+		boolean nameOwnerStillDependent = false;
 		if (nameOwner instanceof ICPPClassType) {
 			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, null, templateArgs, null, context.getPoint());
 			if (eval != null)
 				return eval;
-			if (!CPPTemplates.isDependentType((ICPPClassType) nameOwner))
+			if (CPPTemplates.isDependentType((ICPPClassType) nameOwner)) {
+				nameOwnerStillDependent = true;
+			} else {
 				return EvalFixed.INCOMPLETE;
+			}
 		}
 
-		if (fieldOwner != null && !fieldOwner.isTypeDependent()) {
+		if (!nameOwnerStillDependent && fieldOwner != null && !fieldOwner.isTypeDependent()) {
 			IType fieldOwnerType = fieldOwner.getType(context.getPoint());
 			if (fIsPointerDeref) {
 				fieldOwnerType = SemanticUtil.getSimplifiedType(fieldOwnerType);

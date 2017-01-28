@@ -96,7 +96,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 		if (isValueDependent()) {
 			return DependentValue.create(this);
 		}
-		return CompositeValue.create(this);
+		return CompositeValue.create(this, point);
 	}
 
 	@Override

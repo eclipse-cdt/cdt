@@ -258,8 +258,13 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	private static ICPPEvaluation[] evaluateArguments(IASTInitializerClause... clauses) {
 		ICPPEvaluation[] args = new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < clauses.length; i++) {
-			ICPPEvaluationOwner clause = (ICPPEvaluationOwner) clauses[i];
-			args[i] = clause.getEvaluation();
+			IASTInitializerClause initializerClause = clauses[i];
+			if (initializerClause instanceof ICPPEvaluationOwner) {
+				ICPPEvaluationOwner clause = (ICPPEvaluationOwner) initializerClause;
+				args[i] = clause.getEvaluation();
+			} else {
+				args[i] = EvalFixed.INCOMPLETE;
+			}
 		}
 		return args;
 	}

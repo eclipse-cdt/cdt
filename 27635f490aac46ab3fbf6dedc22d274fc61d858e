@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_96a93667",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-28T23:24:07Z",
+      "side": 1,
+      "message": "It\u0027s worth noting that for C++ code, the corresponding message has a different pattern:\n\n  error: request for member \u0027\u003cmember\u003e\u0027 in \u0027\u003ctype\u003e\u0027, which is of pointer type \u0027\u003ctype\u003e*\u0027 (maybe you meant to use \u0027-\u003e\u0027 ?)",
+      "revId": "27635f490aac46ab3fbf6dedc22d274fc61d858e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b6b392d0",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-01-28T23:24:07Z",
+      "side": 1,
+      "message": "And likewise for this one:\n\n  error: base operand of \u0027-\u003e\u0027 has non-pointer type \u0027\u003ctype\u003e\u0027",
+      "revId": "27635f490aac46ab3fbf6dedc22d274fc61d858e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

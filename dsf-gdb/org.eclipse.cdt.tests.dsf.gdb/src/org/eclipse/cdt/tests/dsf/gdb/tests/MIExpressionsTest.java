@@ -96,6 +96,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	private static final String[] LINE_TAGS = new String[] {
 		"testUpdateOfPointer_1",
 		"testUpdateOfPointer_2",
+		"testUpdateOfPointerTypedef_1",
+		"testUpdateOfPointerTypedef_2",
 	};
 
     @Override
@@ -2630,6 +2632,59 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		/* Get the value pointed by the pointer field. */
 		pointeeActualValue = SyncUtil.getExpressionValue(pointeeDmc, IFormattedValues.NATURAL_FORMAT);
 		assertThat(pointeeActualValue, is("3"));
+    }
+
+    /**
+	 * This test is similar to {@link #testUpdateOfPointer()
+	 * testUpdateOfPointer}, but uses a pointer declared using a typedef. We
+	 * test both a pointer that is a root varobj (a variable) and a pointer that
+	 * is a child varobj (field in a structure).
+	 */
+    @Test
+    @Ignore
+    public void testUpdateOfPointerTypedef() throws Throwable {
+		/* Places we're going to run to. */
+		String tag1 = String.format("%s:%d", SOURCE_NAME, getLineForTag("testUpdateOfPointerTypedef_1"));
+		String tag2 = String.format("%s:%d", SOURCE_NAME, getLineForTag("testUpdateOfPointerTypedef_2"));
+
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(tag1);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+		/* Create expression for the structure. */
+		IExpressionDMContext structDmc = SyncUtil.createExpression(frameDmc, "s");
+
+		/* Create expression for the pointer variable and its target. */
+		IExpressionDMContext pointerVarDmc = SyncUtil.createExpression(frameDmc, "ptr");
+		IExpressionDMContext pointerVarTargetDmc = SyncUtil.getSubExpression(pointerVarDmc);
+
+		/* Create expression for the pointer field and its target. */
+		IExpressionDMContext pointerFieldDmc = SyncUtil.getSubExpression(structDmc);
+		IExpressionDMContext pointerFieldTargetDmc = SyncUtil.getSubExpression(pointerFieldDmc);
+
+		/* Get the values of the pointers. */
+		String pointerVarValue1 = SyncUtil.getExpressionValue(pointerVarDmc, IFormattedValues.NATURAL_FORMAT);
+		String pointerFieldValue1 = SyncUtil.getExpressionValue(pointerFieldDmc, IFormattedValues.NATURAL_FORMAT);
+
+		/* Verify the pointed values. */
+		String pointerVarTargetValue = SyncUtil.getExpressionValue(pointerVarTargetDmc, IFormattedValues.NATURAL_FORMAT);
+		String pointerFieldTargetValue = SyncUtil.getExpressionValue(pointerFieldTargetDmc, IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointerVarTargetValue, is("1"));
+		assertThat(pointerFieldTargetValue, is("2"));
+
+		/* Run to the second tag. */
+		SyncUtil.runToLocation(tag2);
+
+		/* Get the new values of the pointers and make sure they have changed. */
+		String pointerVarValue2 = SyncUtil.getExpressionValue(pointerVarDmc, IFormattedValues.NATURAL_FORMAT);
+		String pointerFieldValue2 = SyncUtil.getExpressionValue(pointerFieldDmc, IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointerVarValue2, is(not(equalTo(pointerVarValue1))));
+		assertThat(pointerFieldValue2, is(not(equalTo(pointerFieldValue1))));
+
+		/* Verify the new pointed values. */
+		pointerVarTargetValue = SyncUtil.getExpressionValue(pointerVarTargetDmc, IFormattedValues.NATURAL_FORMAT);
+		pointerFieldTargetValue = SyncUtil.getExpressionValue(pointerFieldTargetDmc, IFormattedValues.NATURAL_FORMAT);
+		assertThat(pointerVarTargetValue, is("3"));
+		assertThat(pointerFieldTargetValue, is("4"));
     }
 
     /**

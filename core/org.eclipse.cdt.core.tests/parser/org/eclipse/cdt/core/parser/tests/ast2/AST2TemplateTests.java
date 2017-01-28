@@ -10101,4 +10101,10 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentDestructorName_511122() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename> struct Waldo {};
+	//	Waldo<void() noexcept> var;
+	public void testNoexceptSpecifierInTypeTemplateArgument_511186() throws Exception {
+		parseAndCheckBindings();
+	}
 }

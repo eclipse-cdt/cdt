@@ -48,8 +48,10 @@ public class ExpressionEvaluator {
 	private CharArrayMap<PreprocessorMacro> fDictionary;
 	private ArrayList<IASTName> fMacrosInDefinedExpressions= new ArrayList<>();
 	private LocationMap fLocationMap;
+	private CPreprocessor fPreprocessor;
 
-	ExpressionEvaluator() {
+	ExpressionEvaluator(CPreprocessor preprocessor) {
+		fPreprocessor = preprocessor;
 	}
 
 	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary,
@@ -335,7 +337,7 @@ public class ExpressionEvaluator {
     		throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
     	}
     	final char[] featureName = fTokens.getCharImage();
-    	boolean supported = CPreprocessor.getSupportedFeatures().contains(new String(featureName));
+    	boolean supported = fPreprocessor.getSupportedFeatures().contains(new String(featureName));
     	consume();  // feature name token
 		if (LA() != IToken.tRPAREN) {
 			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);

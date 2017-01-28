@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -228,7 +229,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
-	private static Set<String> sSupportedFeatures;
+	private Set<String> sSupportedFeatures;
 	
 	TokenSequence fInputToMacroExpansion= new TokenSequence(false);
 	TokenSequence fLineInputToMacroExpansion= new TokenSequence(true);
@@ -309,7 +310,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fPPKeywords= new CharArrayIntMap(40, -1);
         configureKeywords(language, configuration);
 
-        fExpressionEvaluator= new ExpressionEvaluator();
+        fExpressionEvaluator= new ExpressionEvaluator(this);
         fMacroDefinitionParser= new MacroDefinitionParser();
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fIncludeFileResolutionHeuristics= fFileContentProvider.getIncludeHeuristics();
@@ -2086,7 +2087,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	}
 	
 	@SuppressWarnings("nls")
-	public static Set<String> getSupportedFeatures() {
+	public Set<String> getSupportedFeatures() {
 		if (sSupportedFeatures == null) {
 			sSupportedFeatures = new HashSet<>();
 			
@@ -2153,38 +2154,50 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: c_thread_local (bug 445297)
 			
 			// Type trait primitives
+			// Whether support for these is activated depends on the scanner extension
+			// configuration, so check it and report support accordingly.
+			// Note also that having a keyword for it doesn't necessarily mean we fully
+			// support it. For example, currently we have a keyword 
+			// GCCKeywords.cp__has_nothrown_assign, but we don't support evaluation of
+			// this trait at the semantics level, so we don't report support for it.
 			// missing: has_nothrow_assign
 			// missing: has_nothrow_copy
 			// missing: has_nothrow_constructor
 			// missing: has_trivial_assign
-			sSupportedFeatures.add("has_trivial_copy");
+			addTypeTraitPrimitive("has_trivial_copy", GCCKeywords.cp__has_trivial_copy);
 			// missing: has_trivial_constructor
 			// missing: has_trivial_destructor
 			// missing: has_virtual_destructor
-			sSupportedFeatures.add("is_abstract");
-			sSupportedFeatures.add("is_base_of");
-			sSupportedFeatures.add("is_class");
+			addTypeTraitPrimitive("is_abstract", GCCKeywords.cp__is_abstract);
+			addTypeTraitPrimitive("is_base_of", GCCKeywords.cp__is_base_of);
+			addTypeTraitPrimitive("is_class", GCCKeywords.cp__is_class);
 			// missing: is_constructible
 			// missing: is_convertible_to
 			// missing: is_destructible
 			// missing: is_empty
-			sSupportedFeatures.add("is_enum");
-			sSupportedFeatures.add("is_final");
+			addTypeTraitPrimitive("is_enum", GCCKeywords.cp__is_enum);
+			addTypeTraitPrimitive("is_final", GCCKeywords.cp__is_final);
 			// missing: is_interface_class
 			// missing: is_literal
 			// missing: is_nothrow_assignable
 			// missing: is_nothrow_constructible
 			// missing: is_nothrow_destructible
-			sSupportedFeatures.add("is_pod");
-			sSupportedFeatures.add("is_polymorphic");
+			addTypeTraitPrimitive("is_pod", GCCKeywords.cp__is_pod);
+			addTypeTraitPrimitive("is_polymorphic", GCCKeywords.cp__is_polymorphic);
 			// missing: is_standard_layout
 			// missing: is_trivial
 			// missing: is_trivially_assignable
 			// missing: is_trivially_constructible
 			// missing: is_trivially_copyable
-			sSupportedFeatures.add("is_union");
-			sSupportedFeatures.add("underlying_type");
+			addTypeTraitPrimitive("is_union", GCCKeywords.cp__is_union);
+			addTypeTraitPrimitive("underlying_type", GCCKeywords.cp__underlying_type);
 		}
 		return sSupportedFeatures;
+	}
+	
+	private void addTypeTraitPrimitive(String featureName, char[] keyword) {
+		if (fKeywords.containsKey(keyword)) {
+			sSupportedFeatures.add(featureName);
+		}
 	}
 }

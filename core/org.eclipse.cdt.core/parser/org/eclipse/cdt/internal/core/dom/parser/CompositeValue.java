@@ -284,11 +284,11 @@ public final class CompositeValue implements IValue {
 	}
 
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
-		ICPPEvaluation evaluation = (ICPPEvaluation) buf.unmarshalEvaluation();
+		ICPPEvaluation evaluation = buf.unmarshalEvaluation();
 		int len = buf.getInt();
 		ICPPEvaluation values[] = new ICPPEvaluation[len];
 		for (int i = 0; i < len; i++) {
-			values[i] = (ICPPEvaluation) buf.unmarshalEvaluation();
+			values[i] = buf.unmarshalEvaluation();
 		}
 		return new CompositeValue(evaluation, values);
 	}

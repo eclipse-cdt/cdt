@@ -1115,7 +1115,7 @@ public class CPPSemantics {
 				if (item instanceof IBinding) {
 					IBinding binding = (IBinding) item;
 					CPPASTTranslationUnit tu = data.getTranslationUnit();
-					if (!isFromIndex(binding) || tu == null || tu.isReachableFromAst(binding)) {
+					if (!isFromIndex(binding) || tu == null || isReachableFromAst(tu, binding)) {
 						return true;
 					}
 				}
@@ -2289,7 +2289,7 @@ public class CPPSemantics {
 	 * the two bindings have the same relevance; -1 if <code>b1</code> is less relevant than
 	 * <code>b2</code>.
 	 */
-	static int compareByRelevance(CPPASTTranslationUnit tu, IBinding b1, IBinding b2) {
+	static int compareByRelevance(IASTTranslationUnit tu, IBinding b1, IBinding b2) {
 		boolean b1FromIndex= isFromIndex(b1);
 		boolean b2FromIndex= isFromIndex(b2);
 		if (b1FromIndex != b2FromIndex) {
@@ -2297,8 +2297,8 @@ public class CPPSemantics {
 		} else if (b1FromIndex) {
 			// Both are from index.
 			if (tu != null) {
-				boolean b1Reachable= tu.isReachableFromAst(b1);
-				boolean b2Reachable= tu.isReachableFromAst(b2);
+				boolean b1Reachable= isReachableFromAst(tu, b1);
+				boolean b2Reachable= isReachableFromAst(tu, b2);
 				if (b1Reachable != b2Reachable) {
 					return b1Reachable ? 1 : -1;
 				}
@@ -2317,7 +2317,7 @@ public class CPPSemantics {
 			return false;
 		final CPPASTTranslationUnit tu = data.getTranslationUnit();
 		if (tu != null) {
-			return !tu.isReachableFromAst(b2) && tu.isReachableFromAst(type);
+			return !isReachableFromAst(tu, b2) && isReachableFromAst(tu, type);
 		}
 		return false;
 	}
@@ -2338,12 +2338,12 @@ public class CPPSemantics {
 			}
 		}
 
-		if (!tu.isReachableFromAst(type)) {
+		if (!isReachableFromAst(tu, type)) {
 			return false;
 		}
 
 		for (IFunction fn : fns) {
-			if (tu.isReachableFromAst(fn)) {
+			if (isReachableFromAst(tu, fn)) {
 				return false;	// function from ast
 			}
 		}
@@ -2400,12 +2400,12 @@ public class CPPSemantics {
 			}
 			// Everything is from the index
 			final CPPASTTranslationUnit tu = data.getTranslationUnit();
-			if (!tu.isReachableFromAst(obj)) {
+			if (!isReachableFromAst(tu, obj)) {
 				return -1; // obj not reachable
 			}
 
 			for (IFunction fn : fns) {
-				if (tu.isReachableFromAst(fn)) {
+				if (isReachableFromAst(tu, fn)) {
 					return 0; // obj reachable, 1 function reachable
 				}
 			}
@@ -2433,12 +2433,43 @@ public class CPPSemantics {
 
 	/**
 	 * Checks if a binding is an AST binding, or is reachable from the AST through includes.
-	 * The binding is assumed to belong to the AST, if it is not an IIndexBinding and not
+	 * The binding is assumed to belong to the AST, if it is not an {@link IIndexBinding} and not
 	 * a specialization of an IIndexBinding.
 	 *
-	 * @param ast
-	 * @param binding
-	 * @return {@code true} if the {@code binding}> is reachable from {@code ast}.
+	 * @param ast the ast to check
+	 * @param binding the binding to check
+	 * @return {@code true} if the {@code binding}> is reachable from the {@code ast}
+	 */
+	private static boolean isReachableFromAst(IASTTranslationUnit ast, IBinding binding) {
+		IIndexBinding indexBinding = null;
+		if (binding instanceof IIndexBinding) {
+			indexBinding = (IIndexBinding) binding;
+		}
+		if (binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			if (binding instanceof IIndexBinding) {
+				indexBinding = (IIndexBinding) binding;
+			}
+		}
+		if (indexBinding == null) {
+			// We don't check if the binding really belongs to the AST specified by the ast
+			// parameter assuming that the caller doesn't deal with two ASTs at a time.
+			return true;
+		}
+		IIndexFileSet indexFileSet = ast.getIndexFileSet();
+		IIndexFileSet astFileSet = ast.getASTFileSet();
+		return indexFileSet != null &&
+				(indexFileSet.containsDeclaration(indexBinding) ||
+				 astFileSet.containsDeclaration(indexBinding));
+	}
+
+	/**
+	 * Checks if a name is an AST name, or is reachable from the AST through includes.
+	 * The name is assumed to belong to the AST, if it is not an {@link IIndexName}.
+	 *
+	 * @param ast the ast to check
+	 * @param name the name to check
+	 * @return {@code true} if the {@code name}> is reachable from the {@code ast}
 	 */
 	private static boolean isReachableFromAst(IASTTranslationUnit ast, IName name) {
 		if (!(name instanceof IIndexName)) {
@@ -2752,7 +2783,7 @@ public class CPPSemantics {
 		}
 
 		// Try to instantiate a template
-		CPPASTTranslationUnit tu= data.getTranslationUnit();
+		IASTTranslationUnit tu= data.getTranslationUnit();
 		ICPPTemplateArgument[] tmplArgs= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		if (templateID instanceof ICPPASTTemplateId) {
 			tmplArgs = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) templateID);
@@ -3325,7 +3356,7 @@ public class CPPSemantics {
 		ICPPFunction result= null;
 		ICPPFunctionTemplate resultTemplate= null;
 		boolean isAmbiguous= false;
-		final CPPASTTranslationUnit tu= (CPPASTTranslationUnit) point.getTranslationUnit();
+		final IASTTranslationUnit tu= point.getTranslationUnit();
 		for (IFunction fn : fns) {
 			try {
 				if (fn instanceof ICPPFunctionTemplate) {

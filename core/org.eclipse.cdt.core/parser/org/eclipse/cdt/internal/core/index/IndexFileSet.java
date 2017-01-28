@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 
 public class IndexFileSet implements IIndexFileSet {
 	private IIndexFileSet fInverse;
-	private HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
+	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
+	private final Map<IBinding, Boolean> fDeclarationContainmentCache = new HashMap<>();
 
 	public IndexFileSet() {
 	}
@@ -40,7 +41,7 @@ public class IndexFileSet implements IIndexFileSet {
 	public void add(IIndexFile indexFile) {
 		final IIndexFragmentFile fragFile = (IIndexFragmentFile) indexFile;
 		final IIndexFragment frag= fragFile.getIndexFragment();
-		IIndexFragmentFileSet subSet= fSubSets.get(frag);		
+		IIndexFragmentFileSet subSet= fSubSets.get(frag);
 		if (subSet == null) {
 			subSet= frag.createFileSet();
 			fSubSets.put(frag, subSet);
@@ -60,6 +61,10 @@ public class IndexFileSet implements IIndexFileSet {
 
 	@Override
 	public boolean containsDeclaration(IIndexBinding binding) {
+		Boolean cachedValue = fDeclarationContainmentCache.get(binding);
+		if (cachedValue != null)
+			return cachedValue;
+
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
 			IIndexFragment fragment = entry.getKey();
 			IIndexFragmentFileSet fragmentFileSet = entry.getValue();
@@ -72,14 +77,17 @@ public class IndexFileSet implements IIndexFileSet {
 					long nameRecord;
 					while ((nameRecord = nameIterator.next()) != 0) {
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
-						if (pdomFileSet.containsFile(fileRecord))
+						if (pdomFileSet.containsFile(fileRecord)) {
+							fDeclarationContainmentCache.put(binding, true);
 							return true;
+						}
 					}
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		}
+		fDeclarationContainmentCache.put(binding, false);
 		return false;
 	}
 
@@ -223,6 +231,7 @@ public class IndexFileSet implements IIndexFileSet {
 				public boolean containsDeclaration(IIndexBinding binding) {
 					throw new UnsupportedOperationException();
 				}
+
 				@Override
 				public boolean containsNonLocalDeclaration(IBinding binding, IIndexFragment ignore) {
 					throw new UnsupportedOperationException();

@@ -250,7 +250,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 					return null;
 				}
 				if (!initEval.isValueDependent() ) {
-				  IASTNode point = fDefinition != null ? fDefinition : fDeclarations[0];
+					IASTNode point = fDefinition != null ? fDefinition : fDeclarations[0];
 					return initEval.getValue(point);
 				}
 				return DependentValue.create(initEval);

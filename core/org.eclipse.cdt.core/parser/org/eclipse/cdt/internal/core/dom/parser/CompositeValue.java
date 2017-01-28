@@ -95,12 +95,12 @@ public final class CompositeValue implements IValue {
 		return 0 <= index && index < values.length;
 	}
 
-	public static IValue create(EvalInitList initList) {
+	public static IValue create(EvalInitList initList, IASTNode point) {
 		ICPPEvaluation[] clauses = initList.getClauses();
 		ICPPEvaluation[] values = new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < clauses.length; i++) {
 			ICPPEvaluation eval = clauses[i];
-			values[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), eval.getValue(null));
+			values[i] = new EvalFixed(eval.getType(point), eval.getValueCategory(point), eval.getValue(point));
 		}
 		return new CompositeValue(initList, values);
 	}

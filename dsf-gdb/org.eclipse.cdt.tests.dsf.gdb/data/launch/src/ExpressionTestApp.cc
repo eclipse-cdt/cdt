@@ -283,18 +283,23 @@ int testConcurrentUpdateOutOfScopeChildThenParent() {
 
 int testUpdateOfPointer() {
 	struct {
-		int a;
-		int* b;	
-	}z;
+		int value;
+		int* ptr;
+	} z;
 	
-	int c = 3;
+	int otherValue = 3;
 	
-	z.b = &(z.a);
-	z.a = 1;
+	z.ptr = &z.value;
+	z.value = 1;
 
-	z.b = &c;
-	z.a = 2;
-	z.a = 2; // this redundant line is here to ensure 6 steps after running to this func leaves locals visible
+	/* testUpdateOfPointer_1 */
+
+	z.ptr = &otherValue;
+	z.value = 2;
+
+	/* testUpdateOfPointer_2 */
+
+	return 0;
 }
 
 int testCanWrite() {

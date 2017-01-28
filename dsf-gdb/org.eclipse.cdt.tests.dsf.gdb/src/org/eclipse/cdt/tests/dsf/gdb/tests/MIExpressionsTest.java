@@ -70,6 +70,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class MIExpressionsTest extends BaseParametrizedTestCase {
 	private static final String EXEC_NAME = "ExpressionTestApp.exe";
+	private static final String SOURCE_NAME = "ExpressionTestApp.cc";
 
     private DsfSession fSession;
 
@@ -91,9 +92,18 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
 
+	/* Line tags in the source file. */
+	private static final String[] LINE_TAGS = new String[] {
+		"testUpdateOfPointer_1",
+		"testUpdateOfPointer_2",
+	};
+
     @Override
     public void doBeforeTest() throws Exception {
     	super.doBeforeTest();
+
+		/* Resolve line tags in source file. */
+		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
     	fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
@@ -2579,8 +2589,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
      */
     @Test
     public void testUpdateOfPointer() throws Throwable {
-		SyncUtil.runToLocation("testUpdateOfPointer");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		/* Places we're going to run to. */
+		String tag1 = String.format("%s:%d", SOURCE_NAME, getLineForTag("testUpdateOfPointer_1"));
+		String tag2 = String.format("%s:%d", SOURCE_NAME, getLineForTag("testUpdateOfPointer_2"));
+
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(tag1);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		/* Create expression for the structure. */
@@ -2602,8 +2615,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		String pointeeActualValue = SyncUtil.getExpressionValue(pointeeDmc, IFormattedValues.NATURAL_FORMAT);
 		assertThat(pointeeActualValue, is("1"));
 
-		/* Now, step to change the values of all the children. */
-		SyncUtil.step(2, StepType.STEP_OVER);
+		/* Run to the second tag. */
+		SyncUtil.runToLocation(tag2);
 
 		/* Get the value of the integer. */
 		integerValue = SyncUtil.getExpressionValue(fieldsDmc[0], IFormattedValues.NATURAL_FORMAT);

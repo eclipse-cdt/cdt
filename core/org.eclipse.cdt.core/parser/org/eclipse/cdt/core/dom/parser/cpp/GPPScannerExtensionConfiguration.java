@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.Keywords;
  * Configures the preprocessor for c++-sources as accepted by g++.
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
+	private static enum CompilerType { GCC, Clang }
 	private static final int VERSION_4_2 = version(4, 2);
 	private static final int VERSION_4_3 = version(4, 3);
 	private static final int VERSION_4_6 = version(4, 6);
@@ -39,6 +40,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_4_6= new GPPScannerExtensionConfiguration(VERSION_4_6);
 	private static GPPScannerExtensionConfiguration CONFIG_4_7= new GPPScannerExtensionConfiguration(VERSION_4_7);
 	private static GPPScannerExtensionConfiguration CONFIG_5_0= new GPPScannerExtensionConfiguration(VERSION_5_0);
+	private static GPPScannerExtensionConfiguration CONFIG_CLANG= 
+			new GPPScannerExtensionConfiguration(CompilerType.Clang, 0 /* version is ignored for now */);
 	
 	public static GPPScannerExtensionConfiguration getInstance() {
 		return CONFIG;
@@ -51,6 +54,14 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		if (info != null) {
 			try {
 				final Map<String, String> definedSymbols = info.getDefinedSymbols();
+				
+				// Clang. Needs to be checked first since it pretends to be GCC too.
+				String clang= definedSymbols.get("__clang__");  //$NON-NLS-1$
+				if (clang != null && Integer.valueOf(clang) > 0) {
+					return CONFIG_CLANG;
+				}
+				
+				// GCC
 				int major= Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
 				int minor= Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
 				int version= version(major, minor);
@@ -77,26 +88,71 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	}
 
 	public GPPScannerExtensionConfiguration() {
-		this(0);
+		this(CompilerType.GCC, 0);
 	}
 	
 	/**
 	 * @since 5.4
 	 */
-	@SuppressWarnings("nls")
 	public GPPScannerExtensionConfiguration(int version) {
+		this(CompilerType.GCC, version);
+	}
+	
+	/**
+	 * @since 6.3
+	 */
+	@SuppressWarnings("nls")
+	public GPPScannerExtensionConfiguration(CompilerType compiler, int version) {
 		addMacro("__null", "0");  
 		addMacro("__builtin_offsetof(T,m)", "(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
-
-		if (version >= VERSION_4_2) {
-			addKeyword(GCCKeywords.cp_decimal32, IGCCToken.t_decimal32);
-			addKeyword(GCCKeywords.cp_decimal64, IGCCToken.t_decimal64);
-			addKeyword(GCCKeywords.cp_decimal128, IGCCToken.t_decimal128);
-		}
-		// Type-traits supported by gcc 4.3
-		if (version >= VERSION_4_3) {
+		
+		if (compiler == CompilerType.GCC) {
+			if (version >= VERSION_4_2) {
+				addKeyword(GCCKeywords.cp_decimal32, IGCCToken.t_decimal32);
+				addKeyword(GCCKeywords.cp_decimal64, IGCCToken.t_decimal64);
+				addKeyword(GCCKeywords.cp_decimal128, IGCCToken.t_decimal128);
+			}
+			// Type-traits supported by gcc 4.3
+			if (version >= VERSION_4_3) {
+				addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
+				addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
+				addKeyword(GCCKeywords.cp__has_nothrow_copy, IGCCToken.tTT_has_nothrow_copy);
+				addKeyword(GCCKeywords.cp__has_trivial_assign, IGCCToken.tTT_has_trivial_assign);
+				addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
+				addKeyword(GCCKeywords.cp__has_trivial_copy, IGCCToken.tTT_has_trivial_copy);
+				addKeyword(GCCKeywords.cp__has_trivial_destructor, IGCCToken.tTT_has_trivial_destructor);
+				addKeyword(GCCKeywords.cp__has_virtual_destructor, IGCCToken.tTT_has_virtual_destructor);
+				addKeyword(GCCKeywords.cp__is_abstract, IGCCToken.tTT_is_abstract);
+				addKeyword(GCCKeywords.cp__is_base_of, IGCCToken.tTT_is_base_of);
+				addKeyword(GCCKeywords.cp__is_class, IGCCToken.tTT_is_class);
+				addKeyword(GCCKeywords.cp__is_empty, IGCCToken.tTT_is_empty);
+				addKeyword(GCCKeywords.cp__is_enum, IGCCToken.tTT_is_enum);
+				addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
+				addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
+				addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
+			}
+			if (version >= VERSION_4_6) {
+				addKeyword(GCCKeywords.cp__is_literal_type, IGCCToken.tTT_is_literal_type);
+				addKeyword(GCCKeywords.cp__is_standard_layout, IGCCToken.tTT_is_standard_layout);
+				addKeyword(GCCKeywords.cp__is_trivial, IGCCToken.tTT_is_trivial);
+			}
+			if (version >= VERSION_4_7) {
+				addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
+				addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
+				addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
+				addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
+			}
+			if (version >= VERSION_5_0) {
+				addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
+				addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
+				addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
+			}
+		} else if (compiler == CompilerType.Clang) {
+			// As documented at 
+			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
+			// For now we don't make it dependent on the version.
 			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
 			addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
 			addKeyword(GCCKeywords.cp__has_nothrow_copy, IGCCToken.tTT_has_nothrow_copy);
@@ -113,20 +169,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
 			addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
 			addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
-		}
-		if (version >= VERSION_4_6) {
-			addKeyword(GCCKeywords.cp__is_literal_type, IGCCToken.tTT_is_literal_type);
-			addKeyword(GCCKeywords.cp__is_standard_layout, IGCCToken.tTT_is_standard_layout);
-			addKeyword(GCCKeywords.cp__is_trivial, IGCCToken.tTT_is_trivial);
-		}
-		if (version >= VERSION_4_7) {
-			addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
-			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
 			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
 			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
-		}
-		if (version >= VERSION_5_0) {
-			addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
 			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
 			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
 		}

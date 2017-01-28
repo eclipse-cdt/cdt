@@ -2137,7 +2137,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: cxx_decltype_auto (bug 408470)
 			// missing: cxx_generic_lambdas
 			// missing: cxx_init_captures (bug 413527)
-			// missing: cxx_relaxed_constexpr (bug 490475)
+			sSupportedFeatures.add("cxx_relaxed_constexpr");
 			// missing: cxx_return_type_deduction (bug 408470)
 			sSupportedFeatures.add("cxx_variable_templates");
 			
@@ -2170,7 +2170,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: is_constructible
 			// missing: is_convertible_to
 			// missing: is_destructible
-			// missing: is_empty
+			addTypeTraitPrimitive("is_empty", GCCKeywords.cp__is_empty);
 			addTypeTraitPrimitive("is_enum", GCCKeywords.cp__is_enum);
 			addTypeTraitPrimitive("is_final", GCCKeywords.cp__is_final);
 			// missing: is_interface_class
@@ -2180,11 +2180,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: is_nothrow_destructible
 			addTypeTraitPrimitive("is_pod", GCCKeywords.cp__is_pod);
 			addTypeTraitPrimitive("is_polymorphic", GCCKeywords.cp__is_polymorphic);
-			// missing: is_standard_layout
-			// missing: is_trivial
+			addTypeTraitPrimitive("is_standard_layout", GCCKeywords.cp__is_standard_layout);
+			addTypeTraitPrimitive("is_trivial", GCCKeywords.cp__is_trivial);
 			// missing: is_trivially_assignable
 			// missing: is_trivially_constructible
-			// missing: is_trivially_copyable
+			addTypeTraitPrimitive("is_trivially_copyable", GCCKeywords.cp__is_trivially_copyable);
 			addTypeTraitPrimitive("is_union", GCCKeywords.cp__is_union);
 			addTypeTraitPrimitive("underlying_type", GCCKeywords.cp__underlying_type);
 		}

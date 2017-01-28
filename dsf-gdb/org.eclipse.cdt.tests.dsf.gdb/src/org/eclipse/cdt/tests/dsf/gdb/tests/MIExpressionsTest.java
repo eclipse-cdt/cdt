@@ -2641,7 +2641,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * is a child varobj (field in a structure).
 	 */
     @Test
-    @Ignore
     public void testUpdateOfPointerTypedef() throws Throwable {
 		/* Places we're going to run to. */
 		String tag1 = String.format("%s:%d", SOURCE_NAME, getLineForTag("testUpdateOfPointerTypedef_1"));

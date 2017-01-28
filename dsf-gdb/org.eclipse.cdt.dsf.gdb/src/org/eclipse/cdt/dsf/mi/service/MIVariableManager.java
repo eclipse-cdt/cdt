@@ -112,15 +112,13 @@ import org.eclipse.core.runtime.Status;
  * o A varObject created with -var-create is a ROOT
  * o A varObject created with -var-list-children, is not a root
  * o Only varObject with no children or varObjects that are pointers can change values 
- *   and therefore 
- *   those objects can be used with -var-assign
+ *   and therefore those objects can be used with -var-assign
  * o After a program stops, a varObject must be 'updated' before used 
  * o Only root varObject can be updated with -var-update, which will trigger all
  *   of the root's descendants to be updated.
  * o Once updated, a varObject need not be updated until the program resumes again;
  *   this is true even after -var-assign is used (because it does an implicit -var-update)
- * o -var-update will return the list of all modifiable descendants of the udpated root which
- *   have changed
+ * o -var-update will return the list of all descendants of the updated root which have changed
  * o -var-update will indicate if a root is out-of-scope (which implies that all
  *   its descendants are out-of-scope)
  * o if a varObject is out-of-scope, another varObject may be valid for the same
@@ -139,9 +137,8 @@ import org.eclipse.core.runtime.Status;
  *   root varObjects created with -var-create.  Objects created with -var-list-children
  *   are MIVariableObjects only.  The root class will keep track of if the root object 
  *   needs to be updated, if the root object is out-of-scope, and of a list of all 
- *   modifiable descendants of this root.  The list of modifiable descendants is 
- *   accessed using the gdb-given name to allow quick updates from the -var-update 
- *   result (see below.)
+ *   descendants of this root.  The list of descendants is accessed using the gdb-given
+ *   name to allow quick updates from the -var-update result (see below.)
  * 
  * - we do not use -var-list-children for arrays, but create them manually
  *  
@@ -151,14 +148,11 @@ import org.eclipse.core.runtime.Status;
  * as needing to be updated.
  * 
  * - when a varObject is accessed, if its root must be updated, the var-update
- * command shall be used.  The result of that command will indicate all
- * modifiable descendants that have changed.  We also use --all-values with -var-update
- * to get the new value (in the current format) for each modified descendant.  Using the list of modifiable
- * descendants of the root, we can quickly update the changed ones to invalidate their buffered
- * values and store the new current format value.
- * 
- * - all values of non-modifiable varObjects (except arrays) will be set to {...}
- * without going to the back-end
+ * command shall be used.  The result of that command will indicate all descendants that
+ * have changed.  We also use --all-values with -var-update to get the new value (in the
+ * current format) for each modified descendant.  Using the list of descendants of the root,
+ * we can quickly update the changed ones to invalidate their buffered values and store the
+ * new current format value.
  * 
  * - requesting the value of an array varObject will trigger the creation of a new
  * varObject for the array's address.  Note that we must still use a variable
@@ -711,8 +705,8 @@ public class MIVariableManager implements ICommandControl {
 			childId.generateId(childFullExpression, getInternalId());
 			MIVariableObject varobjOfChild = lruVariableList.remove(childId);
 			if (varobjOfChild != null) {
-				// Remove it from the list of modifiable descendants
-				getRootToUpdate().removeModifiableDescendant(varobjOfChild.getGdbName());
+				// Remove it from the list of descendants
+				getRootToUpdate().removeDescendant(varobjOfChild.getGdbName());
 				// Remove children recursively
 				varobjOfChild.cleanupChildren();
 			}
@@ -1978,14 +1972,18 @@ public class MIVariableManager implements ICommandControl {
 	    }
 
 		/**
-		 * @return If true, this variable object can be reported as changed in
-		 *         a -var-update MI command.
+		 * This method has been deprecated because it turns out that we can't
+		 * reliably determine whether a variable object is really modifiable or
+		 * not. For example, we would consider a pointer declared using a
+		 * typedef as non-modifiable, because we don't actually know it's a
+		 * pointer.  See bug 399494.  Therefore, it now always return true
+		 * 
+		 * @return If true, this variable object can be reported as changed in a
+		 *         -var-update MI command.
 		 */
+		@Deprecated
 		public boolean isModifiable() {
-			if (!isComplex() || isDynamic()) {
-				return true;
-			}
-			return false;
+			return true;
 		}
 
 		/**
@@ -2062,10 +2060,8 @@ public class MIVariableManager implements ICommandControl {
 			// This will replace any existing entry
 			lruVariableList.put(getInternalId(), this);
 
-			// Is this new child a modifiable descendant of the root?
-			if (isModifiable()) {
-				getRootToUpdate().addModifiableDescendant(miVar.getVarName(), this);
-			}
+			// Add this new child as a descendant of the root.
+			getRootToUpdate().addDescendant(miVar.getVarName(), this);
 		}
 	}
 	
@@ -2101,16 +2097,14 @@ public class MIVariableManager implements ICommandControl {
 		private boolean fOutOfDate = false;
 		
 		/**
-	     * A modifiable descendant is any variable object that is a descendant and
-	     * for which the value (leaf variable objects and dynamic variable objects)
-	     * or number of children (dynamic variable objects) can change.
+	     * The descendants of this root variable object, including itself.
 		 */
-		private Map<String, MIVariableObject> modifiableDescendants;
+		private Map<String, MIVariableObject> descendants;
 
 		public MIRootVariableObject(VariableObjectId id) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
-			modifiableDescendants = new HashMap<String, MIVariableObject>();
+			descendants = new HashMap<String, MIVariableObject>();
 		}
 
 		public ICommandControlDMContext getControlDMContext() { return fControlContext; }
@@ -2120,23 +2114,51 @@ public class MIVariableManager implements ICommandControl {
 		public void setOutOfDate(boolean outOfDate) { fOutOfDate = outOfDate; }
 		
 		public boolean getOutOfDate() { return fOutOfDate; }
-		
-		// Remember that we must add ourself as a modifiable descendant if our value can change
-		public void addModifiableDescendant(String gdbName, MIVariableObject descendant) {
-			modifiableDescendants.put(gdbName, descendant);
-		}
-		
+
 		/**
-		 * Removes the descendant with the specified name from the collection of
-		 * modifiable descendants. Does nothing if there is no child with such
-		 * name.
+		 * Since we consider all descendants modifiable (including the root) and
+		 * the concept of *modifiable* descendants has been removed, this method
+		 * is deprecated in favor of
+		 * {@link #addDescendant(String, MIVariableObject)}.
+		 */
+		@Deprecated
+		public void addModifiableDescendant(String gdbName, MIVariableObject descendant) {
+			addDescendant(gdbName, descendant);
+		}
+
+		/**
+		 * Add a descendant variable object to this root.
+		 *
+		 * @param gdbName The fully qualified gdb name of the descendant variable.
+		 * @param descendant The descendant variable object.
+		 * @since 5.3
+		 */
+		public void addDescendant(String gdbName, MIVariableObject descendant) {
+			descendants.put(gdbName, descendant);
+		}
+
+		/**
+		 * Since we consider all descendants modifiable (including the root) and
+		 * the concept of *modifiable* descendants has been removed, this method
+		 * is deprecated in favor of {@link #removeDescendant(String)}.
 		 * 
 		 * @since 4.1
 		 */
+		@Deprecated
 		public void removeModifiableDescendant(String gdbName) {
-			modifiableDescendants.remove(gdbName);
+			removeDescendant(gdbName);
 		}
-		
+
+		/**
+		 * Remove the descendant with the specified name from the collection of
+		 * descendants. Does nothing if there is no child with such name.
+		 *
+		 * @since 5.3
+		 */
+		public void removeDescendant(String gdbName) {
+			descendants.remove(gdbName);
+		}
+
 		/**
 		 * @since 4.0
 		 */
@@ -2145,7 +2167,7 @@ public class MIVariableManager implements ICommandControl {
 			countingRm.setDoneCount(updates.length);
 			
 			for (MIVarChange update : updates) {
-				MIVariableObject descendant = modifiableDescendants.get(update.getVarName());
+				MIVariableObject descendant = descendants.get(update.getVarName());
 				
 				// Descendant should never be null, but just to be safe
 				if (descendant != null) {
@@ -2202,10 +2224,8 @@ public class MIVariableManager implements ICommandControl {
 										setValue(getCurrentFormat(), getData().getValue());
 									}
 									
-									// If we are modifiable, we should be in our modifiable list
-									if (isModifiable()) {
-										addModifiableDescendant(getData().getName(), MIRootVariableObject.this);
-									}
+									// Add ourself to the descendant list.
+									addDescendant(getData().getName(), MIRootVariableObject.this);
 
 									if (localExprInfo.isDynamic()
 											&& (localExprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {

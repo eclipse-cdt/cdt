@@ -4633,10 +4633,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (LT(1) == IToken.tLPAREN) {
 				consume();		// (
 				expression = expression();
-				endOffset = consume(IToken.tRPAREN).getEndOffset();	//)
+				consume(IToken.tRPAREN);	//)
 			} else {
 				expression = ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT;
 			}
+			endOffset = getEndOffset();
 			fc.setNoexceptExpression((ICPPASTExpression) expression);
 		}
 

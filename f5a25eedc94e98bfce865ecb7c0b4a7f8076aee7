@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_76457aec",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3197,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-01-29T18:37:48Z",
+      "side": 1,
+      "message": "Here, argType can be a CPPQualifierType, see bug 511244",
+      "range": {
+        "startLine": 3197,
+        "startChar": 14,
+        "endLine": 3197,
+        "endChar": 21
+      },
+      "revId": "f5a25eedc94e98bfce865ecb7c0b4a7f8076aee7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

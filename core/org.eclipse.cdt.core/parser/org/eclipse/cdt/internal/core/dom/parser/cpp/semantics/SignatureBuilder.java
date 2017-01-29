@@ -81,7 +81,9 @@ class SignatureBuilder implements ITypeMarshalBuffer {
 			// a need to write it to the index, but it can appear in a signature
 			// during partial ordering of function templates.
 			appendSeparator();
-			fBuffer.append("<UniqueType>");  //$NON-NLS-1$
+			fBuffer.append("Unique(@");  //$NON-NLS-1$
+			fBuffer.append(Integer.toHexString(System.identityHashCode(type)));
+			fBuffer.append(')');
 		} else {
 			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putShort(UNSTORABLE_TYPE);

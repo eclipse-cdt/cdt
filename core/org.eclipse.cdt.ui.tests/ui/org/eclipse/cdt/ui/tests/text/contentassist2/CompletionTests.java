@@ -38,6 +38,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+
 /**
  * A collection of code completion tests.
  *
@@ -1658,6 +1660,17 @@ public class CompletionTests extends CompletionTestBase {
 		} finally {
 			enableParameterGuessing(true);
 		}
+	}
+	
+	//	void foo(int x, int y);
+	//	void caller() {
+	//		fo/*cursor*/
+	//	}
+	public void testReplacementLength_511274() throws Exception {
+		Object[] results = invokeContentAssist(fCursorOffset, 0, true, false, true).results;
+		assertEquals(1, results.length);
+		assertInstance(results[0], CCompletionProposal.class);
+		assertEquals(2, ((CCompletionProposal) results[0]).getReplacementLength());
 	}
 	
 	//	struct A {

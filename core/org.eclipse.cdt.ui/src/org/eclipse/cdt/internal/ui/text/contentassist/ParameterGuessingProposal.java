@@ -113,7 +113,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			replacement = fullPrefix + replacement + ")"; //$NON-NLS-1$
 			replacementOffset = proposal.getReplacementOffset();
 		}
-		replacementLength = replacement.length();
+		replacementLength = prefix.length();
 		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
 				replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(),
 				proposal.getRelevance(), context.getViewer(), function, invocationOffset, parseOffset,

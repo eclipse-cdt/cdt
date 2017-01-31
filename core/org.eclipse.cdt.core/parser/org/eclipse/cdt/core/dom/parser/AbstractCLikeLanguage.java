@@ -270,7 +270,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * Create the scanner to be used with the parser.
 	 * @since 5.2
 	 */
-	protected final IScanner createScanner(FileContent content, IScannerInfo scanInfo, IncludeFileContentProvider fcp, IParserLogService log) {
+	protected IScanner createScanner(FileContent content, IScannerInfo scanInfo, IncludeFileContentProvider fcp, IParserLogService log) {
 		return new CPreprocessor(content, scanInfo, getParserLanguage(), log, getScannerExtensionConfiguration(scanInfo), fcp);
 	}
 

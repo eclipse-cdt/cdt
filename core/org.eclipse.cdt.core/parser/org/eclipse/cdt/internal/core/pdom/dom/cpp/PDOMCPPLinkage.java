@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -89,6 +90,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableExecution;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -1551,9 +1553,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_FUNCTION:
 			return CPPDeferredFunction.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
+			IType type= TypeOfDependentExpression.unmarshal(firstBytes, buffer);
+			if (type instanceof IBinding)
+				return (IBinding) type;
+			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a binding, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 
 	@Override

@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -129,5 +132,20 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	
 	public IIndexBinding getRawBinding() {
 		return rbinding;
+	}
+	
+	protected IIndexFragmentBinding adaptBinding(IBinding binding) {
+		if (binding instanceof IIndexFragmentBinding) {
+			return (IIndexFragmentBinding) binding;
+		}
+		ILinkage linkage = rbinding.getLinkage();
+		if (linkage instanceof PDOMLinkage) {
+			try {
+				return ((PDOMLinkage) linkage).adaptBinding(binding);
+			} catch(CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return null;
 	}
 }

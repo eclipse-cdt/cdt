@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -213,7 +212,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	protected <T extends IBinding> T[] wrapBindings(T[] bindings) {
 		T[] result = Arrays.copyOf(bindings, bindings.length);
 		for (int i= 0; i < bindings.length; i++) {
-			result[i] = (T) cf.getCompositeBinding((IIndexFragmentBinding) bindings[i]);
+			// Cannot assume the incoming binding is an index binding in all cases. 
+			result[i] = (T) cf.getCompositeBinding(adaptBinding(bindings[i]));
 		}
 		return result;
 	}

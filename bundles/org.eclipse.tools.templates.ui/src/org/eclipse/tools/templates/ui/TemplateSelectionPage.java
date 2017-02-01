@@ -100,11 +100,34 @@ public class TemplateSelectionPage extends WizardPage {
 			tags.addAll(template.getTags());
 		}
 
+		if (requestedTags.length == 1) {
+			// Implies that the requested tag is actually the same as All.
+			// We can safely remove it.
+			for (Tag tag : tags) {
+				if (tag.getId().equals(requestedTags[0])) {
+					tags.remove(tag);
+					break;
+				}
+			}
+		}
+
 		templateTable.setTemplates(templates);
 		tagList.setInput(tags);
 		tagList.getList().select(0); // All
 		
 		form.setWeights(new int[] { 20, 80 });
+	}
+
+	public void selectTemplate(String id) {
+		if (templateTable != null) {
+			for (Template template : templates) {
+				if (template.getId().equals(id)) {
+					templateTable.selectTemplate(template);
+					updateButtons();
+					break;
+				}
+			}
+		}
 	}
 
 	private void updateButtons() {

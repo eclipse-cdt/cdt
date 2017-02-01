@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 public abstract class FMProjectGenerator extends FMGenerator {
 
@@ -65,6 +66,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 	}
 
 	protected IProject createProject(IProgressMonitor monitor) throws CoreException {
+		SubMonitor sub = SubMonitor.convert(monitor, "Creating project", 1);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		project = workspace.getRoot().getProject(projectName);
@@ -75,13 +77,14 @@ public abstract class FMProjectGenerator extends FMGenerator {
 				description.setReferencedProjects(referencedProjects);
 			}
 			initProjectDescription(description);
-			project.create(description, monitor);
-			project.open(monitor);
+			project.create(description, sub);
+			project.open(sub);
 		} else {
 			// TODO make sure it's got all our settings or is this an error
 			// condition?
 		}
 
+		sub.worked(1);
 		return project;
 	}
 

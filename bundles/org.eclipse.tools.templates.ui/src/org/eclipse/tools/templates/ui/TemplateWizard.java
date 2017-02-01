@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.tools.templates.core.IGenerator;
 import org.eclipse.tools.templates.ui.internal.Activator;
@@ -29,6 +30,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * Template Selection Page in the parent wizard.
  */
 public abstract class TemplateWizard extends BasicNewResourceWizard {
+
+	public TemplateWizard() {
+		setNeedsProgressMonitor(true);
+	}
 
 	/**
 	 * The generator to be called when the wizard is finished.
@@ -78,15 +83,15 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				@Override
 				protected void execute(IProgressMonitor monitor)
 						throws CoreException, InvocationTargetException, InterruptedException {
-					monitor.beginTask("Generating project", 1); //$NON-NLS-1$
-					generator.generate(model, monitor);
+					SubMonitor sub = SubMonitor.convert(monitor, "Generating", 1);
+					generator.generate(model, sub);
 					getWorkbench().getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
 							postProcess(generator);
 						}
 					});
-					monitor.done();
+					sub.done();
 				}
 
 				@Override

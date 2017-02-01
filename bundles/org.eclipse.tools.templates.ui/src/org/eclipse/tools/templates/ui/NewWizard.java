@@ -21,6 +21,7 @@ public class NewWizard extends Wizard implements INewWizard {
 	protected NewWizard(String... tags) {
 		this.tags = tags;
 		setForcePreviousAndNextButtons(true);
+		setNeedsProgressMonitor(true);
 	}
 
 	protected void setTemplateSelectionPageTitle(String title) {
@@ -59,6 +60,12 @@ public class NewWizard extends Wizard implements INewWizard {
 	 */
 	public void initialize(INewWizard nextWizard) {
 		nextWizard.init(workbench, selection);
+	}
+
+	public void selectTemplate(String id) {
+		if (templateSelectionPage != null) {
+			templateSelectionPage.selectTemplate(id);
+		}
 	}
 
 	@Override

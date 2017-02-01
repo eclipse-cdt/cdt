@@ -1562,9 +1562,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_FUNCTION:
 			return CPPDeferredFunction.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
+			IType type= TypeOfDependentExpression.unmarshal(firstBytes, buffer);
+			if (type instanceof IBinding)
+				return (IBinding) type;
+			break;
 		}
 
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a binding, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
 
 	@Override

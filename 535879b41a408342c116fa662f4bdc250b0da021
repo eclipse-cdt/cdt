@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_ae1c0ba0",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractAstRewriteQuickFix.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-02-02T21:12:20Z",
+      "side": 1,
+      "message": "No.  I have removed it.",
+      "parentUuid": "a7c23755_38e12846",
+      "revId": "535879b41a408342c116fa662f4bdc250b0da021",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_78e72059",
         "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractAstRewriteQuickFix.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2017-02-01T01:15:50Z",
       "side": 1,
       "message": "This needs a \"@since 3.3\" annotation.",
+      "revId": "535879b41a408342c116fa662f4bdc250b0da021",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ee16037c",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractAstRewriteQuickFix.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-02-02T21:12:20Z",
+      "side": 1,
+      "message": "I decided to move it to where it was used since leaving it here would require a minor version bump to the plug-in (adding a public method).  I would like to make it possible for the fix to make 9.2.1 if desired.",
+      "parentUuid": "a7c23755_78e72059",
       "revId": "535879b41a408342c116fa662f4bdc250b0da021",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

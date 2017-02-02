@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_9af4edfb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPLinkage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1569,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-02-02T03:53:22Z",
+      "side": 1,
+      "message": "Should new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED) be returned here?",
+      "range": {
+        "startLine": 1569,
+        "startChar": 3,
+        "endLine": 1569,
+        "endChar": 8
+      },
+      "revId": "a46ac804ea1700d096ce0810cdf117875b6449c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

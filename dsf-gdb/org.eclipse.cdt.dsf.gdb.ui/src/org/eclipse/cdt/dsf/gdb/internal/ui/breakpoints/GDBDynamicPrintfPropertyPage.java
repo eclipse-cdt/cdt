@@ -477,7 +477,12 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	 */
     @Override
 	public void setElement(IAdaptable element) {
-		fElement = element;
+    	if (element instanceof ICBreakpoint) {
+			fElement = new CBreakpointContext((ICBreakpoint)element, null);
+		}
+		else {
+			fElement = element;
+		}
 	}
 
 	protected String[] getDebugModelIds() {

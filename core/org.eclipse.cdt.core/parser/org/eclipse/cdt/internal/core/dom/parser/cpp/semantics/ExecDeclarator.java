@@ -109,7 +109,7 @@ public final class ExecDeclarator implements ICPPExecution {
 		} else if (isArrayType(nestedType) && !isCStringType(nestedType)) {
 			if (computedInitializerEval instanceof EvalInitList) {
 				IValue value = CompositeValue.create((EvalInitList) computedInitializerEval, 
-						(IArrayType) type, context.getPoint());
+						(IArrayType) nestedType, context.getPoint());
 				return new EvalFixed(type, computedInitializerEval.getValueCategory(context.getPoint()), value);
 			} else {
 				// TODO(sprigogin): Should something else be done here?

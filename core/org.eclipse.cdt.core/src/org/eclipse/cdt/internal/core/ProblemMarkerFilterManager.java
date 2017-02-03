@@ -8,6 +8,7 @@
 package org.eclipse.cdt.internal.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IProblemMarkerFilter;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -51,6 +53,11 @@ public class ProblemMarkerFilterManager {
 	private final Map<IProject, List<ProblemMarkerFilterDesc>> filtersCache = new WeakHashMap<IProject, List<ProblemMarkerFilterDesc>>();
 
 	/**
+	 * Last Problem Marker that was accepted.
+	 */
+	private Map<IResource, ProblemMarkerInfo> lastAcceptedProblemMarker = new HashMap<>();
+	
+	/**
 	 * Return singleton instance of ProblemMarkerFilterManager 
 	 * 
 	 * @return singleton instance of ProblemMarkerFilterManager 
@@ -77,6 +84,15 @@ public class ProblemMarkerFilterManager {
 	}
 
 	/**
+	 * Get the last accepted problem marker for a particular file.
+	 * @param resource file to get last marker for
+	 * @return last accepted marker
+	 */
+	public ProblemMarkerInfo getLastProblemMarker(IResource resource) {
+		return lastAcceptedProblemMarker.get(resource);
+	}
+	
+	/**
 	 * Called by {@link ErrorParserManager#addProblemMarker(ProblemMarkerInfo)} to filter out unnecessary problem markers 
 	 * 
 	 * Problem marker is ignored if any plug-in that implements ProblemMarkerFilter extension point rejects it.
@@ -88,14 +104,19 @@ public class ProblemMarkerFilterManager {
 	 */
 	public boolean acceptMarker(ProblemMarkerInfo markerInfo) {
 		IProject project = markerInfo.file.getProject();
-		if (project == null || !project.isOpen())
+		if (project == null || !project.isOpen()) {
+			// store last marker for a file for back-tracking (e.g. fix-it messages)
+			lastAcceptedProblemMarker.put(markerInfo.file, markerInfo);
 			return true;
+		}
 		List<ProblemMarkerFilterDesc> enabledFilters = findEnabledFilters(project);
 		for (ProblemMarkerFilterDesc filterDesc: enabledFilters) {
 			if ( ! filterDesc.getFilter().acceptMarker(markerInfo) ) {
 				return false;
 			}
 		}
+		// store last marker for a file for back-tracking (e.g. fix-it messages)
+		lastAcceptedProblemMarker.put(markerInfo.file, markerInfo);
 		return true;
 	}
 

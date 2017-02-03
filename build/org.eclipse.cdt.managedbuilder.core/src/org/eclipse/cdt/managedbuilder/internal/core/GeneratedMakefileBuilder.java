@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
+import org.eclipse.cdt.internal.errorparsers.FixitManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -1162,6 +1163,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 *
 	 * @param project
 	 */
+	@SuppressWarnings("restriction")
 	private void removeAllMarkers(IProject project) {
 		if (project == null || !project.isAccessible()) return;
 
@@ -1177,6 +1179,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (markers != null) {
 			try {
 				workspace.deleteMarkers(markers);
+				FixitManager.getInstance().deleteMarkers(markers);
 			} catch (CoreException e) {
 				// The only situation that might cause this is some sort of resource change event
 				return;

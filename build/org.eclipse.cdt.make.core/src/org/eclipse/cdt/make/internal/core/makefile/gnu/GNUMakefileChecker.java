@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.internal.errorparsers.FixitManager;
 import org.eclipse.cdt.make.core.makefile.IMakefileValidator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -147,6 +148,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		return validator;
 	}
 
+	@SuppressWarnings("restriction")
 	private void removeAllMarkers(IFile file) throws CoreException {
 		IWorkspace workspace = file.getWorkspace();
 
@@ -154,6 +156,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 		if (markers != null) {
 			workspace.deleteMarkers(markers);
+			FixitManager.getInstance().deleteMarkers(markers);
 		}
 	}
 }

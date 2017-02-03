@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
@@ -25,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -73,14 +73,14 @@ public final class ExecDeclarator implements ICPPExecution {
 		}
 		
 		// Never unwrap initializers for array types.
-		if (isArrayType(targetType)) {
+		if (targetType instanceof IArrayType) {
 			return eval;
 		}
 
 		// Only unwrap initializers for class types if the type of the initializer
 		// element matches the class type, indicating that we're calling the
 		// implicit copy constructor (as opposed to doing memberwise initialization).
-		if (isClassType(targetType)) {
+		if (targetType instanceof ICPPClassType) {
 			if (!initList.getClauses()[0].getType(point).isSameType(targetType)) {
 				return eval;
 			}
@@ -90,23 +90,25 @@ public final class ExecDeclarator implements ICPPExecution {
 		return initList.getClauses()[0];
 	}
 	
-	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record, ConstexprEvaluationContext context) {
+	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		if (initializerEval == null) {
 			return createDefaultInitializedCompositeValue(type);
 		}
 
 		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 
-		ICPPEvaluation computedInitializerEval = initializerEval.computeForFunctionCall(record, context.recordStep());
+		ICPPEvaluation computedInitializerEval =
+				initializerEval.computeForFunctionCall(record, context.recordStep());
 
 		// In some contexts, unwrap 1-element initializer lists.
 		computedInitializerEval = maybeUnwrapInitList(computedInitializerEval, nestedType, context.getPoint());
 
-		if (isReferenceType(type)) {
+		if (type instanceof ICPPReferenceType) {
 			return createReferenceValue(record, context, computedInitializerEval);
-		} else if (isPointerType(nestedType) && !isCStringType(nestedType)) {
+		} else if (nestedType instanceof IPointerType && !isCStringType(nestedType)) {
 			return createPointerValue(record, context, computedInitializerEval);
-		} else if (isArrayType(nestedType) && !isCStringType(nestedType)) {
+		} else if (nestedType instanceof IArrayType && !isCStringType(nestedType)) {
 			if (computedInitializerEval instanceof EvalInitList) {
 				IValue value = CompositeValue.create((EvalInitList) computedInitializerEval, 
 						(IArrayType) nestedType, context.getPoint());
@@ -116,8 +118,10 @@ public final class ExecDeclarator implements ICPPExecution {
 				return EvalFixed.INCOMPLETE;
 			}
 		} else if (isValueInitialization(computedInitializerEval)) {
-			ICPPEvaluation defaultValue = new EvalTypeId(type, context.getPoint(), false, new ICPPEvaluation[]{});
-			return new EvalFixed(type, defaultValue.getValueCategory(context.getPoint()), defaultValue.getValue(context.getPoint()));
+			ICPPEvaluation defaultValue =
+					new EvalTypeId(type, context.getPoint(), false, ICPPEvaluation.EMPTY_ARRAY);
+			return new EvalFixed(type, defaultValue.getValueCategory(context.getPoint()),
+					defaultValue.getValue(context.getPoint()));
 		} else {
 			return new EvalFixed(type, computedInitializerEval.getValueCategory(context.getPoint()),
 					computedInitializerEval.getValue(context.getPoint()));
@@ -125,7 +129,7 @@ public final class ExecDeclarator implements ICPPExecution {
 	}
 
 	private static ICPPEvaluation createDefaultInitializedCompositeValue(IType type) {
-		if (!isClassType(type)) {
+		if (!(type instanceof ICPPClassType)) {
 			return EvalFixed.INCOMPLETE;
 		}
 		ICPPClassType classType = (ICPPClassType) type;
@@ -195,18 +199,6 @@ public final class ExecDeclarator implements ICPPExecution {
 		return new EvalPointer(record, evalCompAccess, context.getPoint());
 	}
 
-	private static boolean isReferenceType(IType type) {
-		return type instanceof ICPPReferenceType;
-	}
-
-	private static boolean isPointerType(IType type) {
-		return type instanceof IPointerType;
-	}
-
-	private static boolean isArrayType(IType type) {
-		return type instanceof IArrayType;
-	}
-
 	private static boolean isCStringType(IType type) {
 		IType nestedType = null;
 		if (type instanceof IArrayType) {
@@ -215,14 +207,12 @@ public final class ExecDeclarator implements ICPPExecution {
 			nestedType = ((IPointerType) type).getType();
 		}
 
-		if (nestedType != null) {
-			return nestedType.isSameType(new CPPQualifierType(CPPBasicType.CHAR, true, false));
+		if (nestedType instanceof IQualifierType) {
+			IQualifierType qualifierType = (IQualifierType) nestedType;
+			if (qualifierType.isConst() && !qualifierType.isVolatile())
+				return qualifierType.getType().isSameType(CPPBasicType.CHAR);
 		}
 		return false;
-	}
-
-	private static boolean isClassType(IType type) {
-		return type instanceof ICPPClassType;
 	}
 
 	@Override

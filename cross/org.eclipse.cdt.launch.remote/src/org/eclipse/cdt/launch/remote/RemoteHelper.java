@@ -112,31 +112,8 @@ public class RemoteHelper {
 			if (!localFile.fetchInfo().exists()) {
 				return;
 			}
+
 			localFile.copy(remoteFile, EFS.OVERWRITE, monitor);
-			// Need to change the permissions to match the original file
-			// permissions because of a bug in upload
-			Process p = remoteShellExec(
-					config,
-					"", "chmod", "+x " + spaceEscapify(remoteExePath), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-			// Wait if necessary for the permission change
-			try {
-				int timeOut = 10;
-				boolean exited = p.waitFor(timeOut, TimeUnit.SECONDS);
-
-				if (!exited) {
-					Status status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR,
-							"Failed to change file permissions in the remote system, path: " + remoteExePath, //$NON-NLS-1$
-							null);
-					throw new CoreException(status);
-				}
-			} catch (InterruptedException e) {
-				Status status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR,
-						"Interrupted while changing file permissions in the remote system, path: " //$NON-NLS-1$
-								+ remoteExePath,
-						e);
-				throw new CoreException(status);
-			}
 		} catch (CoreException e) {
 			abort(Messages.RemoteRunLaunchDelegate_6, e,
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

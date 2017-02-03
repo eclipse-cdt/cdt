@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.internal.errorparsers.FixitManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.messages.Messages;
 import org.eclipse.core.resources.IMarker;
@@ -106,6 +107,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 		markerJob.schedule();
 	}
 
+	@SuppressWarnings("restriction")
 	public void removeMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		IWorkspace workspace = file.getWorkspace();
 		// remove specific marker
@@ -126,6 +128,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 				}
 				if (exactMarkers.size() > 0) {
 					workspace.deleteMarkers(exactMarkers.toArray(new IMarker[exactMarkers.size()]));
+					FixitManager.getInstance().deleteMarkers(exactMarkers.toArray(new IMarker[0]));
 				}
 			}
 		}

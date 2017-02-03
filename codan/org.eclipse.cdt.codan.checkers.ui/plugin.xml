@@ -4,6 +4,10 @@
     <extension
           point="org.eclipse.cdt.codan.ui.codanMarkerResolution">
        <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixForFixit"
+             messagePattern=".*">
+       </resolution>
+       <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFix"
              problemId="org.eclipse.cdt.codan.internal.checkers.CatchByReference">
        </resolution>

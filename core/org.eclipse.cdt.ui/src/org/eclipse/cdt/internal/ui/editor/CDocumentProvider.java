@@ -546,7 +546,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private void setOverlay(Object value, ProblemAnnotation problemAnnotation) {
 			if (value instanceof CMarkerAnnotation) {
 				CMarkerAnnotation annotation= (CMarkerAnnotation) value;
-				if (annotation.isProblem()) {
+				if (annotation.isProblem() && !annotation.isQuickFixable()) {
 					annotation.setOverlay(problemAnnotation);
 					fPreviouslyOverlaid.remove(annotation);
 					fCurrentlyOverlaid.add(annotation);

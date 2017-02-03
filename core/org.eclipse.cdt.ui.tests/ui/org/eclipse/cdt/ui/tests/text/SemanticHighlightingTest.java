@@ -643,4 +643,14 @@ public class SemanticHighlightingTest extends TestCase {
     public void testArgumentsOfFunctionTemplateSpecialization_510788() throws Exception {
     	makeAssertions();
     }
+    
+    //	struct Waldo {                                   //$class
+    //		static void find();                          //$methodDeclaration
+    //	};
+    //	int main() {                                     //$functionDeclaration
+    //		Waldo::search();                             //$class,problem
+    //	}
+    public void testQualifiedName_511331() throws Exception {
+    	makeAssertions();
+    }
 }

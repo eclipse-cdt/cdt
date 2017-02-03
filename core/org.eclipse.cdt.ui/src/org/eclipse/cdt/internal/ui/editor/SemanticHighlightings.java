@@ -1469,6 +1469,11 @@ public class SemanticHighlightings {
 			if (node instanceof IASTProblem) {
 				return true;
 			}
+			if (node instanceof ICPPASTQualifiedName) {
+				// Do not highlight entire qualified name. Allow those of its segments
+				// which resolve, to get a non-Problem highlighting.
+				return false;
+			}
 			IBinding binding= token.getBinding();
 			if (binding instanceof IProblemBinding) {
 				IProblemBinding problemBinding = (IProblemBinding) binding;

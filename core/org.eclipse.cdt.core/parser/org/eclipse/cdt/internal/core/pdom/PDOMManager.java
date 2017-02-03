@@ -69,6 +69,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
+import org.eclipse.cdt.internal.core.index.IndexFileSet;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
@@ -198,6 +199,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$
+		IndexFileSet.sDEBUG_INDEX_FILE_SET=
+				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/indexfileset"));  //$NON-NLS-1$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);

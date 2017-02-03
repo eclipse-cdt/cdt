@@ -110,7 +110,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
 	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
 	private static final int LONG_READ_LOCK_WAIT_REPORT_THRESHOLD = 1000;
-	static boolean sDEBUG_LOCKS= false; // Initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
+	static boolean sDEBUG_LOCKS; // Initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
 	 * Identifier for PDOM format

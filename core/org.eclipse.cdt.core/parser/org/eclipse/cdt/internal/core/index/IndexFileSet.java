@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 public class IndexFileSet implements IIndexFileSet {
+	public static boolean sDEBUG_INDEX_FILE_SET; // Initialized in the PDOMManager.
+
 	private IIndexFileSet fInverse;
 	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
 	private final Map<IBinding, Boolean> fDeclarationContainmentCache = new HashMap<>();
@@ -67,6 +69,7 @@ public class IndexFileSet implements IIndexFileSet {
 		if (cachedValue != null)
 			return cachedValue;
 
+		int iterationCount = 0;
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
 			IIndexFragment fragment = entry.getKey();
 			IIndexFragmentFileSet fragmentFileSet = entry.getValue();
@@ -81,13 +84,34 @@ public class IndexFileSet implements IIndexFileSet {
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
 						if (pdomFileSet.containsFile(fileRecord)) {
 							fDeclarationContainmentCache.put(binding, true);
+							if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
+								System.out.println(
+										String.format("IndexFileSet: %s (%s) found after %d iterations", //$NON-NLS-1$
+												String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+												binding.getClass().getSimpleName(),
+												iterationCount));
+							}
 							return true;
+						}
+						if (sDEBUG_INDEX_FILE_SET && ++iterationCount % 1000 == 0) {
+							System.out.println(
+									String.format("IndexFileSet: %s (%s) not yet found after %d iterations", //$NON-NLS-1$
+											String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+											binding.getClass().getSimpleName(),
+											iterationCount));
 						}
 					}
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+		}
+		if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
+			System.out.println(
+					String.format("IndexFileSet: %s (%s) not found after %d iterations", //$NON-NLS-1$
+							String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+							binding.getClass().getSimpleName(),
+							iterationCount));
 		}
 		fDeclarationContainmentCache.put(binding, false);
 		return false;

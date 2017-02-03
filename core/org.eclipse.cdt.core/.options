@@ -33,6 +33,9 @@ org.eclipse.cdt.core/debug/typeresolver=false
 # Reports issues with locking the index
 org.eclipse.cdt.core/debug/index/locks=false
 
+# Reports unusually slow IndexFileSet operations
+org.eclipse.cdt.core/debug/index/indexfileset=false
+
 # Reports events related to setting up the indexer for a project
 org.eclipse.cdt.core/debug/indexer/setup=false
 

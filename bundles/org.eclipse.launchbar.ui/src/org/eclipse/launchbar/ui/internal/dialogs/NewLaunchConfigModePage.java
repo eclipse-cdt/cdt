@@ -83,6 +83,9 @@ public class NewLaunchConfigModePage extends WizardPage {
 			if (!hasDebug) {
 				table.select(0);
 			}
+
+			// We're guaranteed to have made a selection here
+			table.notifyListeners(SWT.Selection, null);
 		}
 
 		setControl(comp);
@@ -101,7 +104,6 @@ public class NewLaunchConfigModePage extends WizardPage {
 		item.setData(group);
 	}
 
-	
 	public ILaunchGroup getSelectedGroup() {
 		return (ILaunchGroup) table.getSelection()[0].getData();
 	}

@@ -78,6 +78,7 @@ public class NewLaunchConfigTypePage extends WizardPage {
 
 		if (haveItems) {
 			table.select(0);
+			table.notifyListeners(SWT.Selection, null);
 		}
 		setPageComplete(haveItems);
 	}
@@ -85,9 +86,9 @@ public class NewLaunchConfigTypePage extends WizardPage {
 	public void addTypeSelectionListener(SelectionListener listener) {
 		table.addSelectionListener(listener);
 	}
-	
+
 	public ILaunchConfigurationType getSelectedType() {
 		return (ILaunchConfigurationType) table.getSelection()[0].getData();
 	}
-	
+
 }

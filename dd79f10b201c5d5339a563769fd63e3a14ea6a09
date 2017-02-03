@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_11c7dbaa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbCoreDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-03T21:30:35Z",
+      "side": 1,
+      "message": "Here we are dealing with the result of the browse dialog.\nI don\u0027t undertstand how there could be double quotes in that result?",
+      "revId": "dd79f10b201c5d5339a563769fd63e3a14ea6a09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

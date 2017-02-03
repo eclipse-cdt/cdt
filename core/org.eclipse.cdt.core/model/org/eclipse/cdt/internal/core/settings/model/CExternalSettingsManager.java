@@ -36,8 +36,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class CExternalSettingsManager implements ICExternalSettingsListener, ICProjectDescriptionListener{
 	private static final int OP_CHANGED = 1;
@@ -435,8 +435,10 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		};
 		if (isWorkspaceReconcile)
 			workspaceReconcileRunnable = r;
-		// schedule / run in-line
-		CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
+		// Schedule in a job.
+		Job job = Job.createSystem(r);
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		job.schedule();
 	}
 
 	private List<ICProjectDescription> getModifiedProjDesList(ProjDesCfgList[] lists){

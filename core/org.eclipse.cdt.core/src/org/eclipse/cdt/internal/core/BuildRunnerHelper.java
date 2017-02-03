@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.internal.errorparsers.FixitManager;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -216,6 +217,7 @@ public class BuildRunnerHelper implements Closeable {
 					}
 					if (markersList.size() > 0) {
 						workspace.deleteMarkers(markersList.toArray(new IMarker[markersList.size()]));
+						FixitManager.getInstance().deleteMarkers(markersList.toArray(new IMarker[markersList.size()]));
 					}
 				} catch (CoreException e) {
 					// ignore

@@ -18,12 +18,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.runtime.CoreException;
@@ -115,32 +115,17 @@ public class RemoteHelper {
 				return;
 			}
 
+			/* Copy the file to the remote file system. */
 			localFile.copy(remoteFile, EFS.OVERWRITE, subMonitor.split(95));
 
-			// Need to change the permissions to match the original file
-			// permissions because of a bug in upload
-			Process p = remoteShellExec(
-					config,
-					"", "chmod", "+x " + spaceEscapify(remoteExePath), subMonitor.split(5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			/* Force the file to executable. */
+			IFileInfo remoteFileInfo = remoteFile.fetchInfo();
 
-			// Wait if necessary for the permission change
-			try {
-				int timeOut = 10;
-				boolean exited = p.waitFor(timeOut, TimeUnit.SECONDS);
+			remoteFileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, true);
+			remoteFileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, true);
+			remoteFileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, true);
 
-				if (!exited) {
-					Status status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR,
-							"Failed to change file permissions in the remote system, path: " + remoteExePath, //$NON-NLS-1$
-							null);
-					throw new CoreException(status);
-				}
-			} catch (InterruptedException e) {
-				Status status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.ERROR,
-						"Interrupted while changing file permissions in the remote system, path: " //$NON-NLS-1$
-								+ remoteExePath,
-						e);
-				throw new CoreException(status);
-			}
+			remoteFile.putInfo(remoteFileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(5));
 		} catch (CoreException e) {
 			abort(Messages.RemoteRunLaunchDelegate_6, e,
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

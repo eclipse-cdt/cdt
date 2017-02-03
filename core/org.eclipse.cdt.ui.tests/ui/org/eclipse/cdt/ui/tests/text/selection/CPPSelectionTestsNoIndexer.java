@@ -1297,4 +1297,18 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		// not the definition.
 		assertInstance(target.getParent(), IASTElaboratedTypeSpecifier.class);
 	}
+	
+	//	struct Waldo {};
+	//	Waldo find();
+	//	int main() {
+	//		auto waldo = find();
+	//	}
+	public void testAutoType_511522() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug511522.cpp", code);
+		
+		int offset = code.indexOf("auto");
+		IASTNode target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+	}
 }

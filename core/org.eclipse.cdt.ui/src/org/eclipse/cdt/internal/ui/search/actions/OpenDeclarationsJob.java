@@ -14,6 +14,9 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
@@ -458,6 +462,9 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 	/**
 	 * Returns definitions of bindings referenced by implicit name at the given location.
+	 * 
+	 * Also, if the given location is over the 'auto' in a variable declaration, the
+	 * variable's type is opened.
 	 */
 	private IName[] findImplicitTargets(IASTTranslationUnit ast, IASTNodeSelector nodeSelector,
 			int offset, int length) throws CoreException {
@@ -470,6 +477,29 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					IBinding binding = name.resolveBinding(); // Guaranteed to resolve.
 					IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, binding);
 					definitions = ArrayUtil.addAll(definitions, declNames);
+				}
+			}
+		} else {
+			IASTNode enclosingNode = nodeSelector.findEnclosingNode(offset, length);
+			if (enclosingNode instanceof ICPPASTSimpleDeclSpecifier) {
+				if (((ICPPASTSimpleDeclSpecifier) enclosingNode).getType() == ICPPASTSimpleDeclSpecifier.t_auto) {
+					if (enclosingNode.getParent() instanceof IASTSimpleDeclaration) {
+						IASTDeclarator[] declarators = ((IASTSimpleDeclaration) enclosingNode.getParent()).getDeclarators();
+						if (declarators.length > 0) {
+							// It's invalid for different declarators to deduce different
+							// types with 'auto', so just get the type based on the first
+							// declarator.
+							IType type = CPPVisitor.createType(declarators[0]);
+							// Strip qualifiers, references, and pointers, but NOT 
+							// typedefs, since for typedefs we want to navigate to the 
+							// typedef declaration.
+							type = SemanticUtil.getNestedType(type, CVTYPE | REF | PTR);
+							if (type instanceof IBinding) {
+								IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, (IBinding) type);
+								definitions = ArrayUtil.addAll(definitions, declNames);
+							}
+						}
+					}
 				}
 			}
 		}

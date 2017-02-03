@@ -156,7 +156,7 @@
          name="%CDTGNUCErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
-            class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
+            class="org.eclipse.cdt.core.errorparsers.FixitErrorParser"
             id="org.eclipse.cdt.core.GCCErrorParser"
             name="%CDTGNUCErrorParser.name">
          <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ReportedOnlyOnce" severity="Ignore"/>

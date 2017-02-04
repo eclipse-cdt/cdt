@@ -54,7 +54,6 @@
 		<module>core/org.eclipse.cdt.core.win32.x86</module>
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
 		<module>core/org.eclipse.cdt.core.macosx</module>
-		<module>core/org.eclipse.cdt.core.aix</module>
 		<module>native/org.eclipse.cdt.native.serial</module>
 		<module>releng/org.eclipse.cdt.native-feature</module>
 
@@ -402,11 +401,6 @@
 									<arch>x86_64</arch>
 								</environment>
 								<environment>
-									<os>aix</os>
-									<ws>gtk</ws>
-									<arch>ppc</arch>
-								</environment>
-								<environment>
 									<os>linux</os>
 									<ws>gtk</ws>
 									<arch>ppc64le</arch>
@@ -463,11 +457,6 @@
 							<os>macosx</os>
 							<ws>cocoa</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>aix</os>
-							<ws>gtk</ws>
-							<arch>ppc</arch>
 						</environment>
 					</environments>
 					<target>

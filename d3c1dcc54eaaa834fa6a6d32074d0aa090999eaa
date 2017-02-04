@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_34acc5f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "Variable never used",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f4c96dbf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "By making ServiceFactoriesManager\u0027s members and methods static, we can remove the above.",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_14c7c9aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "By making ServiceFactoriesManager\u0027s members and methods static, we can remove the above.",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_d4bc7124",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/ServiceFactoriesManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "The map and both methods could be made static.\nIn that case, we would need to instantiate this class at all\nand we could access the methods in a simpler way than through the BaseTestCase",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_94bbd92b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "Won\u0027t this fail for GDB \u003c 7.12 since you don\u0027t instantiate the new backend class for those GDBs?",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b4bff516",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-04T03:52:39Z",
+      "side": 1,
+      "message": "Using the name of the test class is not very elegant in JUnit4.\nAlso, currently there is only one factory that can be added.\nIt would be nice to add a way to add a specified new factory\ndepending on the testcase.  So a more generic framework to do this\nwould be nice.\nI was thinking that we could define an annotation that wold specify\nas a parameter the name of the factory to be used.\nThis annotation would be added to testcases that want to specify\na new factory.",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

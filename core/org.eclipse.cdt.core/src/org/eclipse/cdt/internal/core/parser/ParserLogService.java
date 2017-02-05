@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Mike Kucera (IBM)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 

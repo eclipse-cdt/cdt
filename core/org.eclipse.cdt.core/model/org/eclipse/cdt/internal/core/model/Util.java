@@ -12,7 +12,6 @@
  *     IBM Corporation - EFS support
  *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.BufferedInputStream;
@@ -46,11 +45,11 @@ import org.osgi.service.prefs.Preferences;
 import com.ibm.icu.text.MessageFormat;
 
 public class Util implements ICLogConstants {
-	public static boolean VERBOSE_PARSER = false;
-	public static boolean VERBOSE_SCANNER = false;
-	public static boolean VERBOSE_MODEL = false;
-	public static boolean VERBOSE_DELTA = false;
-	public static boolean PARSER_EXCEPTIONS= false;
+	public static boolean VERBOSE_PARSER;
+	public static boolean VERBOSE_SCANNER;
+	public static boolean VERBOSE_MODEL;
+	public static boolean VERBOSE_DELTA;
+	public static boolean PARSER_EXCEPTIONS;
 
 	public static String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
@@ -222,9 +221,9 @@ public class Util implements ICLogConstants {
 	public static boolean isActive(DebugLogConstants client) {
 		if (client.equals(DebugLogConstants.PARSER)) {
 			return VERBOSE_PARSER;
-		} else if (client.equals(DebugLogConstants.SCANNER))
+		} else if (client.equals(DebugLogConstants.SCANNER)) {
 			return VERBOSE_SCANNER;
-		else if (client.equals(DebugLogConstants.MODEL)) {
+		} else if (client.equals(DebugLogConstants.MODEL)) {
 			return VERBOSE_MODEL;
 		}
 		return false;

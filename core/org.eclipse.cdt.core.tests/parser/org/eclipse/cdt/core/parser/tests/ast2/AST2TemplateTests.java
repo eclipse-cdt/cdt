@@ -9977,4 +9977,17 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentDestructorName_511122() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class T>
+	//	using alias = T;
+	//
+	//	struct A {};
+	//
+	//	void foo() {
+	//	    A a;
+	//	    a.~alias<A>();
+	//	}
+	public void testDestructorCallViaAliasedTemplateName_511658() throws Exception {
+		parseAndCheckBindings();
+	}
 }

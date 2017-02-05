@@ -17,49 +17,6 @@
 
 	<profiles>
 		<profile>
-			<id>ppc64le</id>
-				<build>				
-					<plugins>
-						<plugin>
-							<groupId>org.eclipse.tycho</groupId>
-							<artifactId>target-platform-configuration</artifactId>
-							<version>${tycho-version}</version>
-							<configuration>
-								<resolver>p2</resolver>
-								<pomDependencies>consider</pomDependencies>
-								<environments>
-								   <environment>
-								     <os>linux</os>
-								     <ws>gtk</ws>
-								     <arch>ppc64le</arch>
-                        					   </environment>
-								   <environment>
-								      <os>linux</os>
-								      <ws>gtk</ws>
-								      <arch>x86</arch>
-								    </environment>
-								    <environment>
-								      <os>linux</os>
-								      <ws>gtk</ws>
-								      <arch>x86_64</arch>
-								    </environment>
-								    <environment>
-								      <os>linux</os>
-								      <ws>gtk</ws>
-								      <arch>ppc</arch>
-								    </environment>
-								    <environment>
-								      <os>linux</os>
-								      <ws>gtk</ws>
-								      <arch>ppc64</arch>
-								    </environment>
-								</environments>
-							</configuration>
-						</plugin>
-					</plugins>
-				</build>	
-		</profile>
-		<profile>
 			<id>build-native.linux.x86</id>
 			<activation>
 				<property>
@@ -250,6 +207,11 @@
 	      <os>linux</os>
 	      <ws>gtk</ws>
 	      <arch>ppc64</arch>
+	    </environment>
+	    <environment>
+	      <os>linux</os>
+	      <ws>gtk</ws>
+	      <arch>ppc64le</arch>
 	    </environment>
 	  </environments>
 	</configuration>

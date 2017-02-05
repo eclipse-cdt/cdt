@@ -142,6 +142,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -1188,7 +1189,8 @@ public class CPPSemantics {
 		char[] tchars= new char[typeDtorChars.length - 1];
 		System.arraycopy(typeDtorChars, 1, tchars, 0, tchars.length);
 
-		LookupData ld2= new LookupData(tchars, data.getTemplateArguments(), data.getLookupPoint());
+		ICPPTemplateArgument[] templateArgs = data.getTemplateArguments();
+		LookupData ld2= new LookupData(tchars, templateArgs, data.getLookupPoint());
 		ld2.setIgnorePointOfDeclaration(data.isIgnorePointOfDeclaration());
 		ld2.contentAssist= data.contentAssist;
 		ld2.fNoNarrowing= data.fNoNarrowing;
@@ -1197,10 +1199,29 @@ public class CPPSemantics {
 		ld2.typesOnly= true;
 		lookup(ld2, getLookupScope(typeDtorName));
 		IBinding[] typedefs = ld2.getFoundBindings();
-		if (typedefs.length < 1 || !(typedefs[0] instanceof ITypedef))
+		ITypedef typedef = null;
+		for (IBinding candidate : typedefs) {
+			if (!(candidate instanceof IType)) {
+				continue;
+			}
+			IType type = (IType) candidate;
+			if (templateArgs != null && type instanceof ICPPAliasTemplate) {
+				IBinding instantiated = CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) type, 
+						templateArgs, data.getLookupPoint());
+				if (instantiated instanceof IType) {
+					type = (IType) instantiated;
+				}
+			}
+			if (type instanceof ITypedef) {
+				typedef = (ITypedef) type;
+				break;
+			}
+		}
+		if (typedef == null) {
 			return false;
+		}
 
-		IType t= SemanticUtil.getNestedType((ITypedef) typedefs[0], TDEF);
+		IType t= SemanticUtil.getNestedType(typedef, TDEF);
 		if (t instanceof ICPPUnknownBinding || t instanceof ISemanticProblem ||
 				!(t instanceof ICPPClassType)) {
 			return false;

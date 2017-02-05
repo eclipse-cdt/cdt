@@ -10106,6 +10106,19 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <class T>
+	//	using alias = T;
+	//
+	//	struct A {};
+	//
+	//	void foo() {
+	//	    A a;
+	//	    a.~alias<A>();
+	//	}
+	public void testDestructorCallViaAliasedTemplateName_511658() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename> struct Waldo {};
 	//	Waldo<void() noexcept> var;
 	public void testNoexceptSpecifierInTypeTemplateArgument_511186() throws Exception {

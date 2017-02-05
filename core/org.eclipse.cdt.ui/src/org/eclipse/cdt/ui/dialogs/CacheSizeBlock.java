@@ -28,9 +28,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.parser.CodeReaderCache;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -97,14 +94,6 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		LayoutUtil.setHorizontalGrabbing(control, false);
 		ControlFactory.createLabel(cacheComp, DialogsMessages.Megabyte);
 
-		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
-		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
-		fCodeReaderLimit.setValidRange(1, 10000);
-		control = fCodeReaderLimit.getTextControl(cacheComp);
-		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
-		LayoutUtil.setHorizontalGrabbing(control, false);
-		ControlFactory.createLabel(cacheComp, DialogsMessages.Megabyte);
-
 		gl= (GridLayout) cacheComp.getLayout();
 		gl.numColumns= 3;
 		gl.makeColumnsEqualWidth= false;
@@ -112,11 +101,6 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		gl.verticalSpacing= 2;
 
 		gd= (GridData) dbCacheLabel.getLayoutData();
-		gd.horizontalSpan= 3;
-
-		int vindent= pixelConverter.convertHeightInCharsToPixels(1) / 2;
-		gd= (GridData) codeReaderLabel.getLayoutData();
-		gd.verticalIndent= vindent;
 		gd.horizontalSpan= 3;
 
 		int hindent= pixelConverter.convertWidthInCharsToPixels(2);
@@ -158,12 +142,6 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		fDBLimitPct.store();
 		fDBAbsoluteLimit.store();
 		fCodeReaderLimit.store();
-
-		// code reader cache does not listen for pref-changes, help out:
-		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
-		if (cache instanceof CodeReaderCache) {
-			((CodeReaderCache) cache).setCacheSize(fCodeReaderLimit.getIntValue());
-		}
     }
 
     @Override

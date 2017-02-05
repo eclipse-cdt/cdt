@@ -12,15 +12,12 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IScanner;
 
 /**
  * @author jcamelon
  */
 @Deprecated
 public class WorkingCopyCodeReaderFactory extends PartialWorkingCopyCodeReaderFactory {
-
     /**
      * @param provider
      */
@@ -28,19 +25,8 @@ public class WorkingCopyCodeReaderFactory extends PartialWorkingCopyCodeReaderFa
         super(provider, heuristics);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
-     */
     @Override
 	public int getUniqueIdentifier() {
         return CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
-     */
-    public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
-        return checkWorkingCopyThenCache(path);
-    }
-
 }

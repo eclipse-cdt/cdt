@@ -314,8 +314,9 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		ICPPClassType classQualifier = getClassQualifier();
 		if (classQualifier != null) {
 			final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
+			final boolean isUsingDecl = getParent() instanceof ICPPASTUsingDeclaration;
 			List<IBinding> filtered = filterClassScopeBindings(classQualifier, bindings, isDeclaration);
-			if (isDeclaration && nameMatches(classQualifier.getNameCharArray(),
+			if ((isDeclaration || isUsingDecl) && nameMatches(classQualifier.getNameCharArray(),
 					n.getLookupKey(), isPrefix)) {
 				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classQualifier, n);
 				for (int i = 0; i < constructors.length; i++) {

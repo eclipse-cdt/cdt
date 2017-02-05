@@ -1855,4 +1855,14 @@ public class CompletionTests extends CompletionTestBase {
 	public void testExistingParens_72391() throws Exception {
 		assertCompletionResults(new String[] { "waldo" });  // expect no parens in replacement
 	}
+
+	//	struct A{
+	//	    A(int,int);
+	//	};
+	//	struct B: A{
+	//	    using A::/*cursor*/
+	//	};
+	public void testInheritingConstructor_511653() throws Exception {
+		assertCompletionResults(new String[] { "A;" });
+	}
 }

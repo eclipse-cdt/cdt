@@ -19,6 +19,7 @@ public class ParserLogServiceWrapper extends AbstractParserLogService {
 	public ParserLogServiceWrapper(IParserLogService log) {
 		fDelegate= log;
 	}
+
 	@Override
 	public boolean isTracing() {
 		return fDelegate.isTracing();

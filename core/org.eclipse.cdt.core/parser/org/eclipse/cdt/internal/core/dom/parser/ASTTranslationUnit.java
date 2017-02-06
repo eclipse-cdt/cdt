@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
+import org.eclipse.cdt.internal.core.index.IndexFileSet;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
@@ -459,6 +460,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				return PROCESS_CONTINUE;
 			}
 		});
+
+		if (IndexFileSet.sDEBUG_INDEX_FILE_SET) {
+			long t = ((IndexFileSet) fIndexFileSet).getTimingContainsDeclarationNanos() +
+					((IndexFileSet) fASTFileSet).getTimingContainsDeclarationNanos();
+			String forName = fOriginatingTranslationUnit == null ?
+					"" : " for " + fOriginatingTranslationUnit.getElementName(); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(String.format("IndexFileSet.containsDeclaration %s took %.2g ms", forName, t / 1.e6)); //$NON-NLS-1$
+		}
 	}
 
 	@Override

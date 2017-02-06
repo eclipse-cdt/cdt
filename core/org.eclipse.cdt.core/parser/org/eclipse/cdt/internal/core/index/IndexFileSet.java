@@ -35,6 +35,7 @@ public class IndexFileSet implements IIndexFileSet {
 	private IIndexFileSet fInverse;
 	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
 	private final Map<IBinding, Boolean> fDeclarationContainmentCache = new HashMap<>();
+	private long timingContainsDeclarationNanos;
 
 	public IndexFileSet() {
 	}
@@ -69,6 +70,16 @@ public class IndexFileSet implements IIndexFileSet {
 		if (cachedValue != null)
 			return cachedValue;
 
+		long startTime = sDEBUG_INDEX_FILE_SET ? System.nanoTime() : 0;
+		boolean contains = computeContainsDeclaration(binding);
+		fDeclarationContainmentCache.put(binding, contains);
+		if (sDEBUG_INDEX_FILE_SET) {
+			timingContainsDeclarationNanos += System.nanoTime() - startTime;
+		}
+		return false;
+	}
+
+	private boolean computeContainsDeclaration(IIndexBinding binding) {
 		int iterationCount = 0;
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
 			IIndexFragment fragment = entry.getKey();
@@ -83,7 +94,6 @@ public class IndexFileSet implements IIndexFileSet {
 					while ((nameRecord = nameIterator.next()) != 0) {
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
 						if (pdomFileSet.containsFile(fileRecord)) {
-							fDeclarationContainmentCache.put(binding, true);
 							if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
 								System.out.println(
 										String.format("IndexFileSet: %s (%s) found after %d iterations", //$NON-NLS-1$
@@ -113,8 +123,11 @@ public class IndexFileSet implements IIndexFileSet {
 							binding.getClass().getSimpleName(),
 							iterationCount));
 		}
-		fDeclarationContainmentCache.put(binding, false);
 		return false;
+	}
+
+	public long getTimingContainsDeclarationNanos() {
+		return timingContainsDeclarationNanos;
 	}
 
 	@Override

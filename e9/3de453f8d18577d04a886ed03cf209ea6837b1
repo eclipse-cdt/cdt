@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Code-Review+2: Jonah Graham <jonah@kichwacoders.com>
+Submitted-by: Jonah Graham <jonah@kichwacoders.com>
+Submitted-at: Mon, 06 Feb 2017 06:15:17 -0500
+Reviewed-on: https://git.eclipse.org/r/88157
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

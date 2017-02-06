@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IProject;
 public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	private static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String REFERENCED_PROJECTS_PROVIDER_ID = ReferencedProjectsLanguageSettingsProvider.ID;
+	/* This extension comes from org.eclipse.cdt.ui which is why this test plug-in depends on it */
 	private static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String GCC_SPECS_DETECTOR_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector";
 	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";

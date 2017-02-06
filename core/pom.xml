@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+		xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>9.3.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>org.eclipse.cdt-parent</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>org.eclipse.cdt.core.native</module>
+		<module>org.eclipse.cdt.core.linux</module>
+		<module>org.eclipse.cdt.core.linux.x86</module>
+		<module>org.eclipse.cdt.core.linux.x86_64</module>
+		<module>org.eclipse.cdt.core.linux.ppc64</module>
+		<module>org.eclipse.cdt.core.linux.ppc64le</module>
+		<module>org.eclipse.cdt.core.win32</module>
+		<module>org.eclipse.cdt.core.win32.x86</module>
+		<module>org.eclipse.cdt.core.win32.x86_64</module>
+		<module>org.eclipse.cdt.core.macosx</module>
+
+		<module>org.eclipse.cdt.core</module>
+		<module>org.eclipse.cdt.ui</module>
+
+		<module>org.eclipse.cdt.core.tests</module>
+		<module>org.eclipse.cdt.ui.tests</module>
+	</modules>
+</project>

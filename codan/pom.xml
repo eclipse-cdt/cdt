@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+		xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>9.3.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>org.eclipse.cdt.codan-parent</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>org.eclipse.cdt.codan.core</module>
+		<module>org.eclipse.cdt.codan.ui</module>
+		<module>org.eclipse.cdt.codan.core.cxx</module>
+		<module>org.eclipse.cdt.codan.ui.cxx</module>
+		<module>org.eclipse.cdt.codan.checkers</module>
+		<module>org.eclipse.cdt.codan.checkers.ui</module>
+		<module>org.eclipse.cdt.codan.core.tests</module>
+		<module>org.eclipse.cdt.codan.checkers.ui.tests</module>
+	</modules>
+</project>

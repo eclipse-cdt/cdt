@@ -322,6 +322,9 @@ public class CPPASTFieldReference extends ASTNode
 
 	public static int getFieldPosition(ICPPField field) {
 		final ICPPClassType ownerType = field.getClassOwner();
+		if (ownerType == null) {
+			return -1;
+		}
 		final ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(ownerType, null);
 		int baseFields = 0;
 		for (ICPPClassType baseClass : baseClasses) {

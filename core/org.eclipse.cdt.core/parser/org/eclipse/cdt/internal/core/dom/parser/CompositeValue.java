@@ -205,6 +205,9 @@ public final class CompositeValue implements IValue {
 					IValue compValue = CompositeValue.create(baseClassType);
 					for (ICPPField baseField : baseFields) {
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
+						if (fieldPos == -1) {
+							continue;
+						}
 						record.update(baseField, compValue.getSubValue(fieldPos));
 						// TODO(nathanridge): This won't work with multiple inheritance, since 'fieldPos'
 						// is a field position in the base class' hierarchy, while values[] expects
@@ -220,6 +223,9 @@ public final class CompositeValue implements IValue {
 					continue;
 				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record);
 				int fieldPos = CPPASTFieldReference.getFieldPosition(field);
+				if (fieldPos == -1) {
+					continue;
+				}
 				record.update(field, value);
 				values[fieldPos] = value;
 			}

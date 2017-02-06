@@ -677,20 +677,23 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     @Override
 	public IASTTranslationUnit parse() {
-        long startTime = System.currentTimeMillis();
+        long t0 = log.isTracing() ? System.currentTimeMillis() : 0;
         translationUnit();
-        log.traceLog("Parse " //$NON-NLS-1$
-                + (++parseCount) + ": " //$NON-NLS-1$
-                + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
-                + (parsePassed ? "" : " - parse failure")); //$NON-NLS-1$ //$NON-NLS-2$
-        startTime = System.currentTimeMillis();
+        long t1 = log.isTracing() ? System.currentTimeMillis() : 0;
         resolveAmbiguities();
-        log.traceLog("Ambiguity resolution : " //$NON-NLS-1$
-                + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$
-        IASTTranslationUnit result = getTranslationUnit();
+        IASTTranslationUnit ast = getTranslationUnit();
+        if (log.isTracing()) {
+	        String message = "Parse " //$NON-NLS-1$
+	                + (++parseCount) + ": " //$NON-NLS-1$
+	                + (t1 - t0) + "ms" //$NON-NLS-1$
+	                + (parsePassed ? "." : " - parse failure.")  //$NON-NLS-1$//$NON-NLS-2$
+	                + " Ambiguity resolution: " //$NON-NLS-1$
+	                + (System.currentTimeMillis() - t1) + "ms"; //$NON-NLS-1$
+			log.traceLog(message);
+        }
         nullifyTranslationUnit();
-        result.freeze(); // Make the AST immutable.
-        return result;
+        ast.freeze(); // Make the AST immutable.
+        return ast;
     }
 
     protected void resolveAmbiguities() {

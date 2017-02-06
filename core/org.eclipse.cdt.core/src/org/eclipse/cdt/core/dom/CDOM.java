@@ -13,9 +13,6 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
-import org.eclipse.cdt.internal.core.dom.PartialWorkingCopyCodeReaderFactory;
-import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.dom.WorkingCopyCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
@@ -33,12 +30,10 @@ import org.eclipse.core.resources.IStorage;
  */
 @Deprecated
 public class CDOM implements IASTServiceProvider {
-
     /**
      * Singleton - Constructor is private.
      */
-    private CDOM()
-    {
+    private CDOM() {
     }
 
     /**
@@ -50,8 +45,7 @@ public class CDOM implements IASTServiceProvider {
      * accessor for singleton instance
      * @return instance
      */
-    public static CDOM getInstance()
-    {
+    public static CDOM getInstance() {
         return instance;
     }
 
@@ -59,7 +53,6 @@ public class CDOM implements IASTServiceProvider {
      * Currently, only one AST Service is provided.
      */
     private IASTServiceProvider defaultService = new InternalASTServiceProvider();
-
 
     /**
      * @return IASTServiceProvider, the mechanism for obtaining an AST
@@ -73,7 +66,6 @@ public class CDOM implements IASTServiceProvider {
         //client
         return this;
     }
-
 
     /**
      * Constant <code>PARSE_SAVED_RESOURCES</code> - Parse saved resources in the workspace
@@ -90,37 +82,13 @@ public class CDOM implements IASTServiceProvider {
      */
     public static final int PARSE_WORKING_COPY_WHENEVER_POSSIBLE = 2;
 
-
     /**
-     * <code>provider</code> is registered by the UI as a IWorkingCopyProvider.
+     * This method always returns <code>null</code>.
      */
-    private IWorkingCopyProvider provider;
-
-    /**
-     * This is the factory function that returns an ICodeReaderFactory instance based upon the key provided.
-     *
-     * @param key  one of PARSE_SAVED_RESOURCES, PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS, PARSE_WORKING_COPY_WHENEVER_POSSIBLE
-     * @return     an implementation that works according to the key specified or null for an invalid key
-     */
-    public ICodeReaderFactory getCodeReaderFactory( int key )
-    {
-        //TODO - eventually these factories will need to hook into the
-        //CodeReader caches
-        switch( key )
-        {
-        	case PARSE_SAVED_RESOURCES:
-        	    return SavedCodeReaderFactory.getInstance();
-        	case PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS:
-        	    return new PartialWorkingCopyCodeReaderFactory(provider, null);
-        	case PARSE_WORKING_COPY_WHENEVER_POSSIBLE:
-        	    return new WorkingCopyCodeReaderFactory( provider, null );
-        }
+    public ICodeReaderFactory getCodeReaderFactory(int key) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile)
-     */
     @Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
     	//TODO - At this time, we purely delegate blindly
@@ -128,9 +96,6 @@ public class CDOM implements IASTServiceProvider {
         return defaultService.getTranslationUnit(fileToParse);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile, org.eclipse.cdt.core.dom.ICodeReaderFactory)
-     */
     @Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
     	//TODO - At this time, we purely delegate blindly
@@ -138,9 +103,6 @@ public class CDOM implements IASTServiceProvider {
     	return defaultService.getTranslationUnit(fileToParse, fileCreator );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.dom.IParserConfiguration)
-     */
     @Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
     	//TODO - At this time, we purely delegate blindly
@@ -165,12 +127,9 @@ public class CDOM implements IASTServiceProvider {
     }
 
     /**
-     * This method allows a UI component to register its IWorkingCopyProvider to the CDOM.
-     *
-     * @param workingCopyProvider - UI components buffer manager
+     * This method has no effect.
      */
     public void setWorkingCopyProvider(IWorkingCopyProvider workingCopyProvider) {
-        this.provider = workingCopyProvider;
     }
 
     @Override
@@ -192,5 +151,4 @@ public class CDOM implements IASTServiceProvider {
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, boolean parseComments) throws UnsupportedDialectException {
     	return defaultService.getTranslationUnit(fileToParse, fileCreator, parseComments);
 	}
-
 }

@@ -80,7 +80,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
@@ -578,13 +577,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		configurePluginDebugOptions();
 
 		registerAdapters();
-		IWorkingCopyProvider workingCopyProvider = new IWorkingCopyProvider() {
-			@Override
-			public IWorkingCopy[] getWorkingCopies() {
-				return CUIPlugin.getSharedWorkingCopies();
-			}
-		};
-		CCorePlugin.getDefault().getDOM().setWorkingCopyProvider(workingCopyProvider);
 
 		if (PlatformUI.isWorkbenchRunning()) {
 			// Initialize AST provider

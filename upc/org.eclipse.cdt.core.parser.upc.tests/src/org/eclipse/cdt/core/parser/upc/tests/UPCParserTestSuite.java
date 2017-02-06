@@ -20,7 +20,6 @@ public class UPCParserTestSuite extends TestSuite {
 			addTestSuite(UPCCommentTests.class);
 			addTestSuite(UPCCompletionBasicTest.class);
 			addTestSuite(UPCCompletionParseTest.class);
-			addTestSuite(UPCDOMLocationInclusionTests.class);
 			addTestSuite(UPCDOMLocationMacroTests.class);
 			addTestSuite(UPCDOMLocationTests.class);
 			addTestSuite(UPCDOMPreprocessorInformationTest.class);

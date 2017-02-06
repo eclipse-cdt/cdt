@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -177,7 +178,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected static enum ExprKind {eExpression, eAssignment, eConstant}
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
-    protected static int parseCount = 0;
 
 	protected final AbstractParserLogService log;
     protected final IScanner scanner;
@@ -194,7 +194,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected boolean supportExtendedSizeofOperator;
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
 
-    protected boolean functionCallCanBeLValue= false;
+    protected boolean functionCallCanBeLValue;
 	protected int maximumTrivialExpressionsInAggregateInitializers= Integer.MAX_VALUE;
 
     /**
@@ -677,20 +677,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     @Override
 	public IASTTranslationUnit parse() {
-        long startTime = System.currentTimeMillis();
+        long t0 = log.isTracing() ? System.currentTimeMillis() : 0;
         translationUnit();
-        log.traceLog("Parse " //$NON-NLS-1$
-                + (++parseCount) + ": " //$NON-NLS-1$
-                + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
-                + (parsePassed ? "" : " - parse failure")); //$NON-NLS-1$ //$NON-NLS-2$
-        startTime = System.currentTimeMillis();
+        long t1 = log.isTracing() ? System.currentTimeMillis() : 0;
         resolveAmbiguities();
-        log.traceLog("Ambiguity resolution : " //$NON-NLS-1$
-                + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$
-        IASTTranslationUnit result = getTranslationUnit();
+        IASTTranslationUnit ast = getTranslationUnit();
+        if (log.isTracing()) {
+        	ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+			String name = tu == null ? "<unknown>" : tu.getElementName(); //$NON-NLS-1$
+	        String message = String.format("Parsed %s: %d ms %s. Ambiguity resolution: %d ms", //$NON-NLS-1$
+	        		name, t1 - t0, parsePassed ? "" : " - parse failure", System.currentTimeMillis() - t1); //$NON-NLS-1$//$NON-NLS-2$
+			log.traceLog(message);
+        }
         nullifyTranslationUnit();
-        result.freeze(); // Make the AST immutable.
-        return result;
+        ast.freeze(); // Make the AST immutable.
+        return ast;
     }
 
     protected void resolveAmbiguities() {

@@ -69,6 +69,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private static final String REMOTE_PROG_LABEL_TEXT = Messages.RemoteCMainTab_Program;
 	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = Messages.RemoteCMainTab_SkipDownload;
 	private static final String REMOTE_PROG_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoProgram;
+	private static final String REMOTE_PROG_NOT_ABSOLUTE = Messages.RemoteCMainTab_ErrorRemoteProgNotAbsolute;
 	private static final String CONNECTION_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoConnection;
 	private static final String PRE_RUN_LABEL_TEXT = Messages.RemoteCMainTab_Prerun;
 
@@ -132,25 +133,41 @@ public class RemoteCDSFMainTab extends CMainTab {
 	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
-		boolean retVal = super.isValid(config);
-		if (retVal == true) {
-			setErrorMessage(null);
-			int currentSelection = connectionCombo.getSelectionIndex();
-			String connection_name = currentSelection >= 0 ? connectionCombo
-					.getItem(currentSelection) : ""; //$NON-NLS-1$
-			if (connection_name.isEmpty()) {
-				setErrorMessage(CONNECTION_TEXT_ERROR);
-				retVal = false;
-			}
-			if (retVal) {
-				String name = remoteProgText.getText().trim();
-				if (name.length() == 0) {
-					setErrorMessage(REMOTE_PROG_TEXT_ERROR);
-					retVal = false;
-				}
-			}
+		if (!super.isValid(config)) {
+			return false;
 		}
-		return retVal;
+
+		/* Clear any pre-existing message. */
+		setErrorMessage(null);
+
+		/* Verify that a remote connection is selected. */
+		int currentSelection = connectionCombo.getSelectionIndex();
+		if (currentSelection < 0) {
+			setErrorMessage(CONNECTION_TEXT_ERROR);
+			return false;
+		}
+
+		String connection_name = connectionCombo.getItem(currentSelection);
+		if (connection_name.isEmpty()) {
+			setErrorMessage(CONNECTION_TEXT_ERROR);
+			return false;
+		}
+
+		/* Verify that the remote executable file name is specified. */
+		String remoteProgName = remoteProgText.getText().trim();
+		if (remoteProgName.isEmpty()) {
+			setErrorMessage(REMOTE_PROG_TEXT_ERROR);
+			return false;
+		}
+
+		/* Verify that the remote executable file name is absolute. */
+		Path remoteProgPath = Path.forPosix(remoteProgName);
+		if (!remoteProgPath.isAbsolute()) {
+			setErrorMessage(REMOTE_PROG_NOT_ABSOLUTE);
+			return false;
+		}
+
+		return true;
 	}
 
 	protected void createRemoteConnectionGroup(Composite parent, int colSpan) {

@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_cf5e9ebf",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/model/IRegisterGroupDescriptor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "we can add a new default method \"getContainerId() here, rather than on the abstract class",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2f247260",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "Although not a formal convention, it\u0027s very common\r\nto name instance variables to start with letter \"f\" e.g. fSession",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4f644e98",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "It seens like the actual intention is to simply fail the test case rather than \r\nthrowing the exception with can call Junit fail() method and return;",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6f690a6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "we can substitute debug for ILaunchManager.DEBUG_MODE",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_8f6e6676",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "I think we can directly use static Junit assertTrue",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af73225a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "We can replace this with fail(); return;",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cf777e45",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/CommonDsfTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "We can replace this with fail(message); return;",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_af4a42fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "remove commented out line",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0f8256a2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "typo on Registor",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2f7f121e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "any reason to increase visibility ?\nI have reverted the visibility as a proposal, feel free to put it back if you really need it.",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4f4b6e05",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "Any reason to create doSave ?   Shouldn\u0027t extenders be able to override \u0027save()\u0027",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6f502aad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "do we need a new plublic API ? It seems like overriding save() would be sufficient ?",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_8f4586f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "a couple of types, \u0027containter\u0027 and \u0027accross\u0027",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0f27b667",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AbstractDsfRegisterGroupActions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-06T13:11:00Z",
+      "side": 1,
+      "message": "we can move this one as a default method in the actual interface, \nthanks to Java 8.",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

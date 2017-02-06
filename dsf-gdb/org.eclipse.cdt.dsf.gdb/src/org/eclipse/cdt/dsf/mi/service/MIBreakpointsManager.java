@@ -822,7 +822,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         	@Override
         	protected void handleSuccess() {
         		Map<ICBreakpoint,Map<String,Object>> platformBPs = fPlatformToAttributesMaps.get(dmc);
-        		platformBPs.remove(breakpoint);
+        		// Note: Protect against NPE. It looks like we just checked the "platformBPs" is not null, 
+        		// in doUninstallBreakpoint(), but there is a race condition that can make it null 
+        		// in the meantime, if the debug session is destroyed. See bug 511727
+        		if (platformBPs != null) {
+        			platformBPs.remove(breakpoint);
+        		}
         		super.handleSuccess();
         	}
         });

@@ -37,7 +37,6 @@ public class LRParserTestSuite extends TestSuite {
 			addTest(LRCPPTests.suite()); 
 			addTest(LRCSpecTests.suite()); // a couple of failures
 			addTest(LRDigraphTrigraphTests.suite());
-			addTest(LRDOMLocationInclusionTests.suite());
 			addTest(LRDOMLocationMacroTests.suite());
 			addTest(LRDOMLocationTests.suite());
 			addTest(LRDOMPreprocessorInformationTest.suite());

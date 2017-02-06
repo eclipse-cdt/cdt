@@ -37,7 +37,6 @@ public class XlcLRParserTestSuite extends TestSuite {
 			addTest(XlcLRCPPTests.suite()); 
 			addTest(XlcLRCSpecTests.suite()); // a couple of failures
 			addTest(XlcLRDigraphTrigraphTests.suite());
-			addTest(XlcLRDOMLocationInclusionTests.suite());
 			addTest(XlcLRDOMLocationMacroTests.suite());
 			addTest(XlcLRDOMLocationTests.suite());
 			addTest(XlcLRDOMPreprocessorInformationTest.suite());

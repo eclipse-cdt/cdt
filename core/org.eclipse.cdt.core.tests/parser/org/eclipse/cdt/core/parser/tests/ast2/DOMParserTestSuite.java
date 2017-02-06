@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
 
 /**
  * @author jcamelon
@@ -37,13 +37,11 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(DOMLocationTests.suite());
 		suite.addTestSuite(DOMLocationMacroTests.class);
 		suite.addTest(ImageLocationTests.suite());
-		suite.addTest(DOMLocationInclusionTests.suite());
 		suite.addTestSuite(AST2KnRTests.class);
 		suite.addTestSuite(AST2UtilTests.class);
 		suite.addTestSuite(AST2UtilOldTests.class);
 		suite.addTestSuite(AST2SelectionParseTest.class);
 		suite.addTest(ASTNodeSelectorTest.suite());
-		suite.addTestSuite(CodeReaderCacheTest.class);
 		suite.addTest(AST2CPPSpecTest.suite());
 		suite.addTestSuite(AST2CSpecTest.class);
 		suite.addTestSuite(DOMSelectionParseTest.class);

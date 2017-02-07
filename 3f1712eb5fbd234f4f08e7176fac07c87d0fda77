@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_babfd7f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-07T11:21:07Z",
+      "side": 1,
+      "message": "Maybe place the JavaDoc comment on a single line, like is being done above?",
+      "revId": "3f1712eb5fbd234f4f08e7176fac07c87d0fda77",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

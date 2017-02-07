@@ -172,6 +172,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_6fdae398",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 7168
+      },
+      "writtenOn": "2017-02-07T10:58:14Z",
+      "side": 1,
+      "message": "As a general principle, it adds more flexibility when writing tests. But I agree, here it\u0027s not really necessary to widen visibility until a test actually requires it, if that ever happens.",
+      "parentUuid": "a7c23755_2f7f121e",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_4f4b6e05",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
         "patchSetId": 3
@@ -183,6 +201,24 @@
       "writtenOn": "2017-02-06T13:11:00Z",
       "side": 1,
       "message": "Any reason to create doSave ?   Shouldn\u0027t extenders be able to override \u0027save()\u0027",
+      "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2fd8eb97",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 7168
+      },
+      "writtenOn": "2017-02-07T10:58:14Z",
+      "side": 1,
+      "message": "It\u0027s just a shortcut/abbreviation, saves extenders from having to write the try-catch block of save(). But I\u0027m not fussed about it either way.",
+      "parentUuid": "a7c23755_4f4b6e05",
       "revId": "36deddd57d3a25c6043bc07578bf5cfae40a94ee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

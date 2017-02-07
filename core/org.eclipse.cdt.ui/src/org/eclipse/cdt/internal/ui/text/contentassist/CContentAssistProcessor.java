@@ -266,29 +266,35 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		char activationChar = getActivationChar(viewer, offset);
 		CContentAssistInvocationContext context =
 		  		new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
-		if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters != null &&
-				fReplacementAutoActivationCharacters.contains('.')) {
-			IASTCompletionNode node = context.getCompletionNode();
-			if (node != null) {
-				IASTName[] names = node.getNames();
-				if (names.length > 0 && names[0].getParent() instanceof IASTFieldReference) {
-					IASTFieldReference ref = (IASTFieldReference) names[0].getParent();
-					IASTExpression ownerExpr = ref.getFieldOwner();
-					IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(), SemanticUtil.TDEF);
-					if (ownerExprType instanceof ICPPUnknownType) {
-						ownerExprType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) ownerExprType, 
-								names[0]);
-					}
-					if (ownerExprType instanceof IPointerType) {
-						context = replaceDotWithArrow(viewer, offset, isCompletion, context, activationChar);
+		try {
+			if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters != null &&
+					fReplacementAutoActivationCharacters.contains('.')) {
+				IASTCompletionNode node = context.getCompletionNode();
+				if (node != null) {
+					IASTName[] names = node.getNames();
+					if (names.length > 0 && names[0].getParent() instanceof IASTFieldReference) {
+						IASTFieldReference ref = (IASTFieldReference) names[0].getParent();
+						IASTExpression ownerExpr = ref.getFieldOwner();
+						IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(), SemanticUtil.TDEF);
+						if (ownerExprType instanceof ICPPUnknownType) {
+							ownerExprType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) ownerExprType, 
+									names[0]);
+						}
+						if (ownerExprType instanceof IPointerType) {
+							context = replaceDotWithArrow(viewer, offset, isCompletion, context, activationChar);
+						}
 					}
 				}
+				if (context != null && isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
+					// Auto-replace, but not auto-content-assist - bug 344387.
+					context.dispose();
+					context = null;
+				}
 			}
-			if (context != null && isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
-				// Auto-replace, but not auto-content-assist - bug 344387.
+		} catch (RuntimeException | Error e) {
+			if (context != null)
 				context.dispose();
-				context = null;
-			}
+			throw e;
 		}
 
 		return context;

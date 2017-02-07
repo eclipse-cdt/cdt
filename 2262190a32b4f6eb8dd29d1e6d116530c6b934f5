@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_2c439917",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 982,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-07T04:00:16Z",
+      "side": 1,
+      "message": "I think we should check for ICBreakpoint instead to include any other\nkind of breakpoints that uses this properties page.\nFor example a watchpoint or an eventBreakpoing can trigger this code.",
+      "revId": "2262190a32b4f6eb8dd29d1e6d116530c6b934f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cce6a5a5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-07T04:00:16Z",
+      "side": 1,
+      "message": "We shoudl also fix the other property pages:\nGDBDynamicPrintfPropertyPage\nGDBTracepointPropertyPage",
+      "revId": "2262190a32b4f6eb8dd29d1e6d116530c6b934f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_00bdbc1d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "Done, Thanks !",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_f4c96dbf",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
         "patchSetId": 4
@@ -30,6 +47,23 @@
       "writtenOn": "2017-02-04T03:52:39Z",
       "side": 1,
       "message": "By making ServiceFactoriesManager\u0027s members and methods static, we can remove the above.",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_db1c95a1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "see my comment on the SeviceFactoriesManager",
       "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_fb1951ae",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "see my comment in the ServiceFactoriesManager",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_d4bc7124",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/ServiceFactoriesManager.java",
         "patchSetId": 4
@@ -64,6 +115,23 @@
       "writtenOn": "2017-02-04T03:52:39Z",
       "side": 1,
       "message": "The map and both methods could be made static.\nIn that case, we would need to instantiate this class at all\nand we could access the methods in a simpler way than through the BaseTestCase",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_dbf575bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/ServiceFactoriesManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "I wanted this factory manager to be unique per test case class, not for all test suites, it would minimize the \npossibilities for collision if tests were at some point run simultaneously or jobs running in parallel before full termination of previous test cases.\n  Then it gives the test class, more flexibility to possibly clear its cache wihtout affecting other test suites.\nNot being static gives also less coupling and possibilities to replace this implementation later on, may be even transition this to an interface to \nhave a loose coupling which could be more flexible",
       "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +155,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_8098ecce",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "Nope, the CLI test cases are meant to work in GDB 7.12 and higher\nso they include a call to assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_12);",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_b4bff516",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
         "patchSetId": 4
@@ -98,6 +183,23 @@
       "writtenOn": "2017-02-04T03:52:39Z",
       "side": 1,
       "message": "Using the name of the test class is not very elegant in JUnit4.\nAlso, currently there is only one factory that can be added.\nIt would be nice to add a way to add a specified new factory\ndepending on the testcase.  So a more generic framework to do this\nwould be nice.\nI was thinking that we could define an annotation that wold specify\nas a parameter the name of the factory to be used.\nThis annotation would be added to testcases that want to specify\na new factory.",
+      "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e071a002",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-07T18:41:36Z",
+      "side": 1,
+      "message": "The current approach uses the test class and method as an id to the factory, however the individual test \nis in charge to create its instance, so one factory per test case, this should be sufficient as you can create another test case\nshould you need a different factory.\t\n\nThe idea to use annotations is interesting, but I don\u0027t see how to figure out what factory services class to instantiate from and Id.\nIn this implementation the test class is in charge to instantiate and associate factories to specific test cases.",
       "revId": "d3c1dcc54eaaa834fa6a6d32074d0aa090999eaa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

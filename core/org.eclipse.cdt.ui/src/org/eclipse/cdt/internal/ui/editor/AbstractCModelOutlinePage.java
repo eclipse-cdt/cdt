@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -153,13 +154,12 @@ public abstract class AbstractCModelOutlinePage extends Page
 			if (node instanceof Item) {
 				Item i= (Item) node;
 				final Object data = i.getData();
-				// don't expand include grouping by default
+				// Don't expand include grouping by default.
 				if (data instanceof IncludesGrouping) {
 					return;
-				} else if (data instanceof ICElement) {
-					if (!shouldExpandElement((ICElement)data)) {
-						return;
-					}
+				}
+				if (data instanceof ICElement && !shouldExpandElement((ICElement) data)) {
+					return;
 				}
 			}
 			super.internalExpandToLevel(node, level);
@@ -198,9 +198,6 @@ public abstract class AbstractCModelOutlinePage extends Page
 			fOutLinePage = outlinePage;
 		}
 
-		/**
-		 * Runs the action.
-		 */
 		@Override
 		public void run() {
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, isChecked());
@@ -212,7 +209,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	/**
-	 * This action toggles macro grouping
+	 * This action toggles macro grouping.
 	 * 
 	 * @since 5.2
 	 */
@@ -231,9 +228,6 @@ public abstract class AbstractCModelOutlinePage extends Page
 			setChecked(enabled);
 		}
 
-		/**
-		 * Runs the action.
-		 */
 		@Override
 		public void run() {
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, isChecked());
@@ -258,9 +252,6 @@ public abstract class AbstractCModelOutlinePage extends Page
 			setChecked(isLinkingEnabled());
 		}
 
-		/**
-		 * Runs the action.
-		 */
 		@Override
 		public void run() {
 			boolean checked = isChecked();
@@ -277,7 +268,8 @@ public abstract class AbstractCModelOutlinePage extends Page
 	protected ITextEditor fEditor;
 	protected ITranslationUnit fInput;
 	private ProblemTreeViewer fTreeViewer;
-	private ListenerList fSelectionChangedListeners = new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<ISelectionChangedListener> fSelectionChangedListeners =
+			new ListenerList<>(ListenerList.IDENTITY);
 	protected TogglePresentationAction fTogglePresentation;
 	protected String fContextMenuId;
 	private Menu fMenu;
@@ -336,7 +328,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	/**
-	 * Returns the <code>IShowInSource</code> for this view.
+	 * Returns the {@code IShowInSource} for this view.
 	 *
 	 * @return the {@link IShowInSource}
 	 */
@@ -344,15 +336,13 @@ public abstract class AbstractCModelOutlinePage extends Page
 		return new IShowInSource() {
 			@Override
 			public ShowInContext getShowInContext() {
-				return new ShowInContext(
-					null,
-					getSite().getSelectionProvider().getSelection());
+				return new ShowInContext(null, getSite().getSelectionProvider().getSelection());
 			}
 		};
 	}
 
 	/**
-	 * Returns the <code>IShowInTarget</code> for this view.
+	 * Returns the {@code IShowInTarget} for this view.
 	 *
 	 * @return the {@link IShowInTarget}
 	 */
@@ -619,8 +609,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	/**
-	 * return an ActionGroup contributing search actions or
-	 *         <code>null</code> if search is not supported
+	 * return an ActionGroup contributing search actions or {@code null} if search is not supported
 	 */
 	protected ActionGroup createSearchActionGroup() {
 		// default: no search action group
@@ -629,7 +618,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * @return an OpenViewActionGroup contributing open view actions or
-	 *         <code>null</code> if open view actions are not wanted
+	 *         {@code null} if open view actions are not wanted
 	 */
 	protected ActionGroup createOpenViewActionGroup() {
 		// default: no open view action group
@@ -638,7 +627,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * @return an ActionGroup contributing refactoring actions or
-	 *         <code>null</code> if refactoring is not supported
+	 *         {@code null} if refactoring is not supported
 	 */
 	protected ActionGroup createRefactoringActionGroup() {
 		// default: no refactoring actions
@@ -647,7 +636,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	
 	/**
 	 * @return an ActionGroup contributing source actions or
-	 *         <code>null</code> if source actions are not supported
+	 *         {@code null} if source actions are not supported
 	 */
 	protected ActionGroup createSourceActionGroup() {
 		// default: no source actions
@@ -656,7 +645,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * @return an ActionGroup instance to provide custom filters or
-	 *         <code>null</code> if this action group is not wanted
+	 *         {@code null} if this action group is not wanted
 	 */
 	protected ActionGroup createCustomFiltersActionGroup() {
 		// default: no custom filters
@@ -664,7 +653,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	/**
-	 * @return an ActionGroup contributing member filters or <code>null</code>
+	 * @return an ActionGroup contributing member filters or {@code null}
 	 *         if member filters are not wanted
 	 */
 	protected ActionGroup createMemberFilterActionGroup() {
@@ -683,10 +672,10 @@ public abstract class AbstractCModelOutlinePage extends Page
 	 * @param selection the new selection
 	 */
 	protected void fireSelectionChanged(ISelection selection) {
-		// create an event
+		// Create an event.
 		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
 	
-		// fire the event
+		// Fire the event.
 		Object[] listeners = fSelectionChangedListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
@@ -719,8 +708,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	/**
 	 * Returns this page's tree viewer.
 	 *
-	 * @return this page's tree viewer, or <code>null</code> if 
-	 *   <code>createControl</code> has not been called yet
+	 * @return this page's tree viewer, or {@code null} if {@code createControl} has not been called yet
 	 */
 	protected TreeViewer getTreeViewer() {
 		return fTreeViewer;
@@ -767,13 +755,13 @@ public abstract class AbstractCModelOutlinePage extends Page
 			LocalSelectionTransfer.getTransfer()
 		};
 		
-		// Drop Adapter
+		// Drop adapter.
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
 			new SelectionTransferDropAdapter(fTreeViewer)
 		};
 		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
 		
-		// Drag Adapter
+		// Drag adapter.
 		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
 			new SelectionTransferDragAdapter(fTreeViewer)
 		};

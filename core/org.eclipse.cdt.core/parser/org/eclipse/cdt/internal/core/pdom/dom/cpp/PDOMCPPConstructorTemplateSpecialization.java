@@ -71,7 +71,7 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 			return null;
 
 		try {
-			ICPPExecution exec = (ICPPExecution) getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
+			ICPPExecution exec = getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 			if (exec == null) {
 				exec = CPPTemplates.instantiateConstructorChain(this, point);
 			}

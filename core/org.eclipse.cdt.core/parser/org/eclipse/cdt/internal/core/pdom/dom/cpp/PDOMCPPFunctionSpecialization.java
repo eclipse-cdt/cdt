@@ -301,7 +301,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			return null;
 
 		try {
-			ICPPExecution exec = (ICPPExecution) getLinkage().loadExecution(record + FUNCTION_BODY);
+			ICPPExecution exec = getLinkage().loadExecution(record + FUNCTION_BODY);
 			if (exec == null) {
 				exec = CPPTemplates.instantiateFunctionBody(this, point);
 			}

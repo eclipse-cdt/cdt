@@ -69,7 +69,7 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 			return null;
 
 		try {
-			return (ICPPExecution) getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
+			return getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

@@ -72,7 +72,7 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 			return null;
 
 		try {
-			return (ICPPExecution) getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
+			return getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

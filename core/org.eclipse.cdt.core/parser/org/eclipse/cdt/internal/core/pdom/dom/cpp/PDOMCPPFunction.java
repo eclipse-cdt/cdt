@@ -407,7 +407,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			return null;
 
 		try {
-			return (ICPPExecution) getLinkage().loadExecution(record + FUNCTION_BODY);
+			return getLinkage().loadExecution(record + FUNCTION_BODY);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

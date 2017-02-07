@@ -170,15 +170,14 @@ public abstract class AbstractCModelOutlinePage extends Page
 			if (parent == null) {
 				return false;
 			}
-			// expand classes and namespaces
+			// Expand classes and namespaces.
 			final int elementType= cElement.getElementType();
 			final int parentType= parent.getElementType();
 			switch (elementType) {
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
-				return parentType == ICElement.C_UNIT || parentType == ICElement.C_NAMESPACE;
 			case ICElement.C_NAMESPACE:
-				return parentType == ICElement.C_UNIT;
+				return parentType == ICElement.C_UNIT || parentType == ICElement.C_NAMESPACE;
 			default:
 				return false;
 			}

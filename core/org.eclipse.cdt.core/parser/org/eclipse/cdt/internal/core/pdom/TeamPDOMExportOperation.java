@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	/**
@@ -100,35 +100,32 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		try {
 			PDOMManager pdomManager= CCoreInternals.getPDOMManager();
 	
-			// wait for indexer
-			monitor.beginTask("", 100); //$NON-NLS-1$
-			pdomManager.joinIndexer(Integer.MAX_VALUE, subMonitor(monitor, 1));
-			checkMonitor(monitor);
+			// Wait for indexer.
+			SubMonitor progress = SubMonitor.convert(monitor, 100);
+			pdomManager.joinIndexer(Integer.MAX_VALUE, progress.split(1));
 	
-			// create index
+			// Create index.
 			IIndexLocationConverter converter= new PDOMProjectIndexLocationConverter(fProject.getProject(), true);
-			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter, monitor);
-			checkMonitor(monitor);
+			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter, progress.split(50));
 			monitor.worked(5);
-			
-			// create checksums
+
+			// Create checksums.
 			PDOM pdom= new PDOM(tmpPDOM, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			pdom.acquireReadLock();
 			try {
-				monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
-				createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));
+				progress.setTaskName(Messages.Checksums_taskComputeChecksums);
+				createChecksums(fProject, pdom, tmpChecksums, progress.split(49));
 				pdom.db.setExclusiveLock();	// The tmpPDOM is all ours.
 				pdom.close();
-			}
-			finally {
+			} finally {
 				pdom.releaseReadLock();
 			}
 			
-			// create archive
+			// Create archive.
 			createArchive(tmpPDOM, tmpChecksums);
 			
-			// store preferences
-			monitor.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
+			// Store preferences.
+			progress.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
 			IndexerPreferences.setIndexImportLocation(fProject.getProject(), fTargetLocation.toString());
 			
 			// store resource snapshot
@@ -140,9 +137,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			return;
-		}
-		finally {
+		} finally {
 			if (tmpPDOM != null) {
 				tmpPDOM.delete();
 			}
@@ -190,8 +185,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 					fullPaths.add(fullPath);
 				}
 			}
-		}
-		finally {
+		} finally {
 			pdom.releaseReadLock();
 		}
 		int i=0;
@@ -211,8 +205,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			out.writeObject(map);
 		} catch (IOException e) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorWriteTempFile, e));
-		}
-		finally {
+		} finally {
 			close(out);
 		}
 	}
@@ -246,11 +239,9 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			out.setLevel(Deflater.BEST_COMPRESSION);
 			writeEntry(out, TeamPDOMImportOperation.INDEX_NAME, tmpPDOM);
 			writeEntry(out, TeamPDOMImportOperation.CHECKSUMS_NAME, tmpChecksums);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorCreateArchive, e));
-		}
-		finally {
+		} finally {
 			close(out);
 		}
 		IFile[] wsResource= ResourceLookup.findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
@@ -273,16 +264,6 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		}
 		finally {
 			close(in);
-		}
-	}
-
-	private SubProgressMonitor subMonitor(IProgressMonitor monitor, int ticks) {
-		return new SubProgressMonitor(monitor, ticks);
-	}
-
-	private void checkMonitor(IProgressMonitor monitor) {
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
 		}
 	}
 }

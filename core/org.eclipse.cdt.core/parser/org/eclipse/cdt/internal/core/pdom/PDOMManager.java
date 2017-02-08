@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CyclicBarrier;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -145,6 +146,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public static final int[] IDS_FOR_LINKAGES_TO_INDEX_C_FIRST = {
 		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
+
+	public static boolean debug = false;
+	public static CyclicBarrier barrier = new CyclicBarrier(2);
+	public static CyclicBarrier barrier2 = new CyclicBarrier(2);
 
 	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<>();
 	private final PDOMSetupJob fSetupJob;

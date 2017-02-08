@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -43,10 +44,13 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	private final IndexerProgress fProgress;
 	private volatile IPDOMIndexerTask fDelegate;
 	private IProgressMonitor fProgressMonitor;
+	Throwable e;
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
 		fProgress= createProgress();
+		e = new Throwable();
+		e.printStackTrace();
 	}
 
 	private IndexerProgress createProgress() {
@@ -62,6 +66,15 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
+		
+		if (PDOMManager.debug == true) {
+			try {
+				PDOMManager.barrier.await();
+			} catch (InterruptedException | BrokenBarrierException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		fProgressMonitor = monitor;
 		try {
 			monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 

@@ -39,30 +39,30 @@ public class AllCoreTests {
 
         // Just add more test cases here as you create them for
         // each class being tested
-		suite.addTest(AllLanguageInterfaceTests.suite());
-        suite.addTest(CModelTests.suite());
-        suite.addTest(CModelElementsTests.suite());
-        suite.addTest(CModelIdentifierTests.suite());
-        suite.addTest(CModelExceptionTest.suite());
-        suite.addTest(CModelBuilderInactiveCodeTest.suite());
-        suite.addTest(FlagTests.suite());
-        suite.addTest(ArchiveTests.suite());
-        suite.addTest(BinaryTests.suite());
-        suite.addTest(TranslationUnitTests.suite());
-		suite.addTest(DeclaratorsTests.suite());
-		suite.addTest(MacroTests.suite());
-//		suite.addTest(FailedMacroTests.suite());
-		suite.addTest(CPathEntryTest.suite());
+//		suite.addTest(AllLanguageInterfaceTests.suite());
+//        suite.addTest(CModelTests.suite());
+//        suite.addTest(CModelElementsTests.suite());
+//        suite.addTest(CModelIdentifierTests.suite());
+//        suite.addTest(CModelExceptionTest.suite());
+//        suite.addTest(CModelBuilderInactiveCodeTest.suite());
+//        suite.addTest(FlagTests.suite());
+//        suite.addTest(ArchiveTests.suite());
+//        suite.addTest(BinaryTests.suite());
+//        suite.addTest(TranslationUnitTests.suite());
+//		suite.addTest(DeclaratorsTests.suite());
+//		suite.addTest(MacroTests.suite());
+////		suite.addTest(FailedMacroTests.suite());
+//		suite.addTest(CPathEntryTest.suite());
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
 		suite.addTest(AllCProjectDescriptionTests.suite());
-		suite.addTest(PathSettingsContainerTests.suite());
-		suite.addTest(ASTCacheTests.suite());
-		suite.addTest(AsmModelBuilderTest.suite());
-		suite.addTest(CModelBuilderBugsTest.suite());
-		suite.addTest(Bug311189.suite());
-
-		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
+//		suite.addTest(PathSettingsContainerTests.suite());
+//		suite.addTest(ASTCacheTests.suite());
+//		suite.addTest(AsmModelBuilderTest.suite());
+//		suite.addTest(CModelBuilderBugsTest.suite());
+//		suite.addTest(Bug311189.suite());
+//
+//		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
         return suite;
 
     }

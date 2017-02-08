@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFolder;
@@ -33,10 +35,20 @@ public class PDOMSetupJob extends Job {
 	PDOMSetupJob(PDOMManager manager) {
 		super(Messages.PDOMManager_StartJob_name);
 		fManager= manager;
+		new Throwable().printStackTrace();
 	}
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		if (PDOMManager.debug == true) {
+			try {
+				PDOMManager.barrier2.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println();
+		}
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		while (true) {
 			ICProject cproject= fManager.getNextProject();

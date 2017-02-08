@@ -41,6 +41,7 @@ import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -1894,6 +1895,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	Display.getDefault().asyncExec(new Runnable(){
     		public void run()
     		{
+		    	if (isShowCrossReferenceInfo()) {
+		            resolveAddressInfoForCurrentSelection();
+		    	}
     			layoutPanes();
     		}
     	});
@@ -2343,6 +2347,19 @@ public class Rendering extends Composite implements IDebugEventSetListener
      */
     Map<BigInteger, List<IMemoryBlockAddressInfoItem>> getVisibleValueToAddressInfoItems() {
         return fMapStartAddrToInfoItems;
+    }
+
+    /**
+	 * @since 1.5
+	 */
+    protected boolean isShowCrossReferenceInfo() {
+    	// Check settings in preference store
+        IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        boolean prefShowInfo = store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO);
+    	
+    	// Cross Reference information can not be properly highlighted for a Little Endian display
+    	// see Bug 509577 - [Traditional Rendering] Local variable enclosing markings may be wrong in Little Endian presentation
+    	return (!isDisplayLittleEndian() && prefShowInfo);
     }
 
     /**

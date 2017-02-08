@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -382,6 +384,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		// Performance: If workspace reconcile already scheduled, then nothing to do...
 		// Current project && cfgId always null (i.e. always reconcile at the workspace level) but don't assume this for the future
 		final boolean isWorkspaceReconcile = project == null && cfgId == null;
+		new Throwable().printStackTrace();
 		IWorkspaceRunnable r = workspaceReconcileRunnable;
 		if (r != null && isWorkspaceReconcile)
 			return;
@@ -436,6 +439,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		if (isWorkspaceReconcile)
 			workspaceReconcileRunnable = r;
 		// schedule / run in-line
+//		if (PDOMManager.debug == true) {
+//			try {
+//				PDOMManager.barrier.await();
+//			} catch (InterruptedException | BrokenBarrierException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//		}
 		CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
 	}
 

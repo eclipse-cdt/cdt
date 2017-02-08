@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -43,10 +44,22 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	private final IndexerProgress fProgress;
 	private volatile IPDOMIndexerTask fDelegate;
 	private IProgressMonitor fProgressMonitor;
+	Throwable e;
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
+//		if (PDOMManager.debug == true) {
+//			try {
+//				PDOMManager.barrier2.await();
+//			} catch (InterruptedException | BrokenBarrierException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			System.out.println();
+//		}
 		fIndexer= indexer;
 		fProgress= createProgress();
+		e = new Throwable();
+		e.printStackTrace();
 	}
 
 	private IndexerProgress createProgress() {
@@ -115,7 +128,25 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		List<ITranslationUnit> sources= new ArrayList<>();
 		List<ITranslationUnit> headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
+		if (PDOMManager.debug == true) {
+			try {
+				PDOMManager.pdomRebuildBarrier.await();
+				PDOMManager.binaryParserBarrier.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		project.accept(collector);
+		if (PDOMManager.debug == true) {
+			try {
+				PDOMManager.cancelJobBarrier.await();
+			} catch (InterruptedException | BrokenBarrierException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println();
+		}
 		ITranslationUnit[] tus= sources.toArray(new ITranslationUnit[sources.size()]);
 		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (delegate instanceof PDOMIndexerTask) {

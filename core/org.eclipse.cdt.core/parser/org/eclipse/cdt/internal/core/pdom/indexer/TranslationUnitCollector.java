@@ -31,7 +31,9 @@ final public class TranslationUnitCollector implements ICElementVisitor {
 
 	@Override
 	public boolean visit(ICElement element) throws CoreException {
+		System.out.println("visiting " + element);
 		if (fProgressMonitor.isCanceled()) {
+			System.out.println("Cancelled");
 			return false;
 		}
 		switch (element.getElementType()) {

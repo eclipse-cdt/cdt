@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.Arrays;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -264,6 +266,7 @@ final class DeltaProcessor {
 			elementRemoved(element, delta);
 			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
+			System.out.println("CProject closed");
 		} else {
 			fCurrentDelta.closed(element);
 		}

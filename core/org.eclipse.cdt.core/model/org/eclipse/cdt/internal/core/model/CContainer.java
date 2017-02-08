@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -151,8 +152,14 @@ public class CContainer extends Openable implements ICContainer {
 		try {
 			IResource res = getResource();
 			if (res != null && res.isAccessible()) {
+				if (PDOMManager.debug == true) {
+					System.out.println("buildStructure about to call computeChildren");
+				}
 				validInfo = computeChildren(info, res);
 			} else {
+				if (PDOMManager.debug == true) {
+					System.out.println("buildStructure res null or inaccessible");
+				}
 				throw newNotPresentException();
 			}
 		} finally {
@@ -179,10 +186,17 @@ public class CContainer extends Openable implements ICContainer {
 			if (resources != null) {
 				ICProject cproject = getCProject();
 				for (IResource resource : resources) {
+					if (PDOMManager.debug == true) {
+						System.out.println("computeChildren about to call computeChild on " + resource);
+					}
 					ICElement celement = computeChild(resource, cproject);
 					if (celement != null) {
 						vChildren.add(celement);
 					}
+				}
+			} else {
+				if (PDOMManager.debug == true) {
+					System.out.println("computeChildren null children");
 				}
 			}
 		} catch (CoreException e) {
@@ -211,6 +225,9 @@ public class CContainer extends Openable implements ICContainer {
 					} else {
 						checkBinary = true;
 					}
+				}
+				if (PDOMManager.debug == true) {
+					System.out.println("computeChild checkBinary: " + checkBinary);
 				}
 				if (checkBinary && cproject.isOnOutputEntry(file)) {
 					IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);

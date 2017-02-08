@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -63,6 +64,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -605,8 +607,14 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	public BinaryParserConfig[] getBinaryParser(IProject project) {
+		if (PDOMManager.debug == true) {
+			System.out.println("getBinaryParser for: " + project);
+		}
 		BinaryParserConfig[] parsers = binaryParsersMap.get(project);
 		if (parsers == null) {
+			if (PDOMManager.debug == true) {
+				System.out.println("getBinaryParser not in map");
+			}
 			try {
 				// Check for new style build configs first
 				Set<String> parserIds = new HashSet<>();
@@ -659,6 +667,10 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 					parsers = new BinaryParserConfig[] { config };
 				} catch (CoreException e) {
 				}
+			}
+		} else {
+			if (PDOMManager.debug == true) {
+				System.out.println("getBinaryParser in map");
 			}
 		}
 		if (parsers != null) {
@@ -1411,6 +1423,12 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	private void preCloseProject(IProject project) {
 		// Remove binary parsers
 		binaryParsersMap.remove(project);
+		try {
+			PDOMManager.binaryParserBarrier.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// Stop the binary runner for this project
 		removeBinaryRunner(project);
 		// Stop indexing jobs for this project

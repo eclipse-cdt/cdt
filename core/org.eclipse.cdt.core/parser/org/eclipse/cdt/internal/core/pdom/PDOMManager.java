@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -145,6 +147,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public static final int[] IDS_FOR_LINKAGES_TO_INDEX_C_FIRST = {
 		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
+
+	public static boolean debug = false;
+	// Make sure the index job is not canceled before it tries use the TranslationUnitCollector on the project
+	public static CyclicBarrier cancelJobBarrier = new CyclicBarrier(2);
+	// Make sure the index job is started before closing the project
+	public static CyclicBarrier pdomRebuildBarrier = new CyclicBarrier(2);
+	// Make sure the cached binary parsers are cleared for the project before trying to use the TranslationUnitCollector on the project
+	public static CyclicBarrier binaryParserBarrier = new CyclicBarrier(2);
 
 	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<>();
 	private final PDOMSetupJob fSetupJob;

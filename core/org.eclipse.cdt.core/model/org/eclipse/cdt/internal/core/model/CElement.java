@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -298,6 +299,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public CElementInfo getElementInfo (IProgressMonitor monitor) throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
 		CElementInfo info = (CElementInfo) manager.getInfo(this);
+		if (PDOMManager.debug == true) {
+			System.out.println("getElementInfo, info " + info == null);
+		}
 		if (info != null) {
 			return info;
 		}
@@ -515,14 +519,19 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	@Override
 	public void accept(ICElementVisitor visitor) throws CoreException {
+		System.out.println(this.toString() + " accepting " + visitor);
 		// Visit me, return right away if the visitor doesn't want to visit my children
-		if (!visitor.visit(this))
+		if (!visitor.visit(this)) {
+			System.out.println("don't care about children");
 			return;
+		}
 
 		// If I am a Parent, visit my children
 		if (this instanceof IParent) {
 			ICElement [] children = ((IParent) this).getChildren();
+			System.out.println(this.toString() + " considering "  + children.length);
 			for (int i = 0; i < children.length; ++i) {
+				System.out.println("child " + children[i] + " about to accept ");
 				children[i].accept(visitor);
 			}
 		}

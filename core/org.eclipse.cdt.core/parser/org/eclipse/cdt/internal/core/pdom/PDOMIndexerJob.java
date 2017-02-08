@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.concurrent.BrokenBarrierException;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -193,6 +195,16 @@ public class PDOMIndexerJob extends Job {
 	}
 		
 	public void cancelJobs(IPDOMIndexer indexer, boolean waitUntilCancelled) {
+		if (PDOMManager.debug == true) {
+			try {
+				System.out.println("cancelJobs before barrier");
+				PDOMManager.cancelJobBarrier.await();
+				System.out.println("cancelJobs after barrier");
+			} catch (InterruptedException | BrokenBarrierException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		synchronized (taskMutex) {
 			if (currentTask != null && (indexer == null || currentTask.getIndexer() == indexer)) {
 				synchronized (this) {

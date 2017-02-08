@@ -122,6 +122,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	@Override
 	public void accept(ICElementVisitor visitor) throws CoreException {
+		System.out.println("elementHandle, do nothing");
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IBufferChangedListener;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IOpenable;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -248,8 +249,12 @@ public abstract class Openable extends Parent implements IOpenable {
 
 		// Open the parent if necessary.
 		openParent(info, newElements, monitor);
-		if (monitor != null && monitor.isCanceled())
-			return;
+		if (monitor != null && monitor.isCanceled()) {
+			if (PDOMManager.debug == true) {
+				System.out.println("generateInfos cancelled");
+			}
+			return;			
+		}
 
 		// Put the info before building the structure so that questions to the handle behave as if
 		// the element existed (case of compilation units becoming working copies).

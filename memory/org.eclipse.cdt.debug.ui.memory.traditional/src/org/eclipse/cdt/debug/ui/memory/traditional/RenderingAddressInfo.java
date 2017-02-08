@@ -217,7 +217,7 @@ public class RenderingAddressInfo extends Rendering
     }
 
     private void handleDebugContextChanged(final Object context) {
-        if (isDisposed() || context == null || !fParent.isShowCrossRefInfoGlobalPref()) {
+        if (isDisposed() || context == null || !isShowCrossReferenceInfo()) {
             // Invalid context or user has chosen not to see additional address information
             return;
         }
@@ -246,7 +246,7 @@ public class RenderingAddressInfo extends Rendering
                                 final IMemoryBlockAddressInfoItem[] addressInfoItems = getAllAddressInfoItems();
                                 
 
-                                if (fParent.isShowCrossRefInfoGlobalPref()) {
+                                if (isShowCrossReferenceInfo()) {
                                     final String[] types = getAddressInfoItemTypes();
 
                                     if (!display.isDisposed()) {
@@ -334,7 +334,7 @@ public class RenderingAddressInfo extends Rendering
     @Override
     Map<BigInteger, List<IMemoryBlockAddressInfoItem>> getVisibleValueToAddressInfoItems() {
         IMemoryBlockAddressInfoItem[] items = fAddressInfoItems;
-        if (items == null || !fParent.isShowCrossRefInfoGlobalPref()) {
+        if (items == null || !isShowCrossReferenceInfo()) {
             fMapStartAddrToInfoItems.clear();
             fMapAddrToInfoItems.clear();
             return fMapStartAddrToInfoItems;

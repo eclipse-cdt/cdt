@@ -782,6 +782,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     /**
      * @since 1.4
+     * @deprecated - use: {@link Rendering#isShowCrossReferenceInfo()}
      */
     public boolean isShowCrossRefInfoGlobalPref() {
         IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
@@ -1264,7 +1265,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
                 // if there is cross reference info types available
                 // add Actions to allow the user to toggle the visibility for each of them
-                if (isShowCrossRefInfoGlobalPref()) {
+                if (fRendering.isShowCrossReferenceInfo()) {
                     Action[] dynamicActions = fRendering.getDynamicActions();
                     if (dynamicActions != null) {
                         sub = new MenuManager(TraditionalRenderingMessages

@@ -26,6 +26,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
+import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager;
+import org.eclipse.cdt.internal.core.settings.model.CfgExportSettingContainerFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -62,6 +65,10 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		// Adds a listener that for external settings that screws things up
+//		CfgExportSettingContainerFactory.getInstance().startup();
+//		CfgExportSettingContainerFactory.getInstance().addListener(CExternalSettingsManager.getInstance());
+		PDOMManager.debug = true;
 		cProj = CProjectHelper.createNewStyleCProject("CProjDescStorage", IPDOMManager.ID_FAST_INDEXER);
 		resListener = new OurResourceChangeListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resListener);
@@ -69,6 +76,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		PDOMManager.debug = false;
 		// Remover our resource change listener
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resListener);
 		// Make the project files writable so they can be deleted...
@@ -123,6 +131,8 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 		backUpCProjectFile(testingStorage);
 
 		// Close and open project
+		PDOMManager.barrier2.await();
+		PDOMManager.barrier.await();
 		project.close(null);
 		project.open(null);
 
@@ -177,7 +187,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * (Bug 311189)
 	 * @throws Exception
 	 */
-	public void testExternalCProjDescRemoveAndReplace() throws Exception {
+	public void tesstExternalCProjDescRemoveAndReplace() throws Exception {
 		// Create auto-refresh Thread
 		Job refreshJob = new Job("Auto-Refresh") {
 			@Override
@@ -244,7 +254,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * Tests that a read-only project description file is picked up
 	 * @throws Exception
 	 */
-	public void testReadOnlyProjectDescription() throws Exception {
+	public void tesstReadOnlyProjectDescription() throws Exception {
 		enableSetWritableWhenHeadless(true);
 		try {
 			makeDescriptionReadOnly();

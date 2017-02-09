@@ -17,7 +17,9 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -223,8 +225,10 @@ public class StepBuilder implements IBuildModelBuilder {
 				fCommandBuilders = new CommandBuilder[0];
 			else {
 				fCommandBuilders = new CommandBuilder[cmds.length];
+				IConfiguration cfg = fStep.getBuildDescription().getConfiguration();
+				IProject project = (IProject)cfg.getOwner();
 				for(int i = 0; i < cmds.length; i++){
-					fCommandBuilders[i] = new CommandBuilder(cmds[i], fRebuildStateContainer);
+					fCommandBuilders[i] = new CommandBuilder(cmds[i], fRebuildStateContainer, project);
 				}
 			}
 		}

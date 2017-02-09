@@ -221,9 +221,11 @@ public class CModelMock {
 	 */
 	public static class DummyCConfigurationDescription implements ICConfigurationDescription {
 		private String id;
+		private ICProjectDescription projectDescription;
 
 		public DummyCConfigurationDescription(String id) {
 			this.id = id;
+			this.projectDescription = new DummyCProjectDescription();
 		}
 
 		@Override
@@ -302,7 +304,7 @@ public class CModelMock {
 
 		@Override
 		public ICProjectDescription getProjectDescription() {
-			return null;
+			return projectDescription;
 		}
 
 		@Override

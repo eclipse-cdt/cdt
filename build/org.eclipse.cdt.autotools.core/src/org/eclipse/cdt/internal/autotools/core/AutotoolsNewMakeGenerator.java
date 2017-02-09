@@ -893,7 +893,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher();
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 
@@ -1042,7 +1042,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						new Path(SHELL_COMMAND), //$NON-NLS-1$
 						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
 						env,
-						new Path("."), //$NON-NLS-1$
+						buildLocation,
 						SubMonitor.convert(monitor));
 				if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 					winOSType = out.toString().trim();
@@ -1207,7 +1207,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher();
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 

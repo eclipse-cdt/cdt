@@ -19,13 +19,18 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -253,6 +258,31 @@ public class LaunchShortcut implements ILaunchShortcut {
 		ILaunchConfiguration configuration = null;
 		ILaunchConfigurationType configType = getLaunchConfigType();
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
+		IProject project = bin.getCProject().getProject();
+		ICConfigurationDescription cfgd = CoreModel.getDefault()
+				.getProjectDescription(project).getActiveConfiguration();
+		String connectionUri = null;
+		String imageName = null;
+		if (cfgd != null) {
+			IConfiguration cfg = ManagedBuildManager
+					.getConfigurationForDescription(cfgd);
+			if (cfg != null) {
+				IOptionalBuildProperties props = cfg
+						.getOptionalBuildProperties();
+				String containerBuild = props.getProperty(
+						ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+				if (containerBuild != null) {
+					boolean containerBuildEnabled = Boolean
+							.parseBoolean(containerBuild);
+					if (containerBuildEnabled) {
+						connectionUri = props.getProperty(
+								ContainerCommandLauncher.CONNECTION_ID);
+						imageName = props
+								.getProperty(ContainerCommandLauncher.IMAGE_ID);
+					}
+				}
+			}
+		}
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault()
 					.getLaunchManager().getLaunchConfigurations(configType);
@@ -265,7 +295,17 @@ public class LaunchShortcut implements ILaunchShortcut {
 					if (projectName != null
 							&& projectName.equals(bin.getCProject()
 									.getProject().getName())) {
-						candidateConfigs.add(config);
+						// if we have an active configuration with container
+						// build properties, make sure they match, otherwise
+						// add the launch config as a candidate
+						if (connectionUri.equals(config.getAttribute(
+								ILaunchConstants.ATTR_CONNECTION_URI,
+								connectionUri))) {
+							if (imageName.equals(config.getAttribute(
+									ILaunchConstants.ATTR_IMAGE, imageName))) {
+								candidateConfigs.add(config);
+							}
+						}
 					}
 				}
 			}
@@ -312,11 +352,40 @@ public class LaunchShortcut implements ILaunchShortcut {
 			String binaryPath = bin.getResource().getProjectRelativePath()
 					.toString();
 
+			IProject project = bin.getResource().getProject();
+
+			ICConfigurationDescription cfgd = CoreModel.getDefault()
+					.getProjectDescription(project).getActiveConfiguration();
+			IConfiguration cfg = ManagedBuildManager
+					.getConfigurationForDescription(cfgd);
+
+			IOptionalBuildProperties options = cfg.getOptionalBuildProperties();
+			boolean containerBuild = false;
+			String connectionId = null;
+			String imageName = null;
+
+			if (options != null) {
+				String containerBuildString = options.getProperty(
+						ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+				if (containerBuildString != null) {
+					containerBuild = Boolean.parseBoolean(options.getProperty(
+							ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
+				}
+				if (containerBuild) {
+					connectionId = options.getProperty(
+							ContainerCommandLauncher.CONNECTION_ID);
+					imageName = options
+							.getProperty(ContainerCommandLauncher.IMAGE_ID);
+				}
+			}
+
 			ILaunchConfigurationType configType = getLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(
 					null,
 					getLaunchManager().generateLaunchConfigurationName(
-							bin.getElementName()));
+							bin.getResource().getName() + (imageName != null
+									? ("[" + imageName + "]") //$NON-NLS-1$ //$NON-NLS-2$
+									: ""))); //$NON-NLS-1$
 
 			// DSF settings...use GdbUIPlugin preference store for defaults
 			IPreferenceStore preferenceStore = GdbUIPlugin.getDefault()
@@ -357,19 +426,25 @@ public class LaunchShortcut implements ILaunchShortcut {
 			Preferences prefs = InstanceScope.INSTANCE
 					.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
 
-			// get the connection from the ConnectionListener which waits for
-			// any activity
-			// from the DockerExplorerView
-			IDockerConnection connection = ConnectionListener.getInstance()
+			// get the connection using following order:
+			// 1. connection used in build of project
+			// 2. current connection
+			// 3. first connection
+			IDockerConnection connection = null;
+			if (connectionId != null) {
+				connection = DockerConnectionManager.getInstance()
+						.getConnectionByUri(connectionId);
+			}
+			if (connection == null) {
+				connection = ConnectionListener.getInstance()
 					.getCurrentConnection();
+			}
 			if (connection == null) {
 				IDockerConnection[] connections = DockerConnectionManager
 						.getInstance().getConnections();
 				if (connections != null && connections.length > 0)
-					connection = DockerConnectionManager.getInstance()
-							.getConnections()[0];
+					connection = connections[0];
 			}
-
 			// issue error message if no connections exist
 			if (connection == null) {
 				Display.getDefault().syncExec(new Runnable() {
@@ -389,9 +464,14 @@ public class LaunchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILaunchConstants.ATTR_CONNECTION_URI,
 					connection.getUri());
 
-			// get any default image if specified, otherwise use first
+			// use build image if one is specified, otherwise, see if a default
+			// image is set in preferences, otherwise find first image in image
+			// list
 			// image in image list for connection
-			String image = prefs.get(PreferenceConstants.DEFAULT_IMAGE, null);
+			String image = imageName;
+			if (image == null) {
+				image = prefs.get(PreferenceConstants.DEFAULT_IMAGE, null);
+			}
 			if (image == null) {
 				List<IDockerImage> images = connection.getImages();
 				if (images != null && images.size() > 0)

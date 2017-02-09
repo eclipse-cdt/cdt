@@ -65,6 +65,12 @@
             id="org.eclipse.cdt.docker.launcher.page1"
             name="%DockerLaunchPreferencePage.name">
       </page>
+       <page
+            category="org.eclipse.cdt.docker.launcher.page1"
+            class="org.eclipse.cdt.internal.docker.launcher.ui.preferences.DockerHeaderPreferencePage"
+            id="org.eclipse.cdt.docker.launcher.page2"
+            name="%DockerHeaderPreferencePage.name">
+      </page>
    </extension>
    <extension
        point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -88,5 +94,24 @@
             id="org.eclipse.cdt.docker.launcher.launchConfigurationTypeImage1">
        </launchConfigurationTypeImage>
    </extension>
-   
+   <extension
+       id="CommandLauncherFactories"
+       name="%ContainerCommandLauncherFactory.name"
+       point="org.eclipse.cdt.core.CommandLauncherFactory">
+       <factory
+          id="ContainerCommandLauncherFactory"
+          class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.cPropertyTab">
+      <tab
+            class="org.eclipse.cdt.internal.docker.launcher.ContainerPropertyTab"
+            icon="icons/repository-middle.gif"
+            name="%Container.settings"
+            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
+            weight="020">
+      </tab>
+   </extension>
+  
 </plugin>

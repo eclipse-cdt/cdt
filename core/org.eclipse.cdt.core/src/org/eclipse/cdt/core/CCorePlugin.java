@@ -156,6 +156,17 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static final String ERROR_PARSER_UNIQ_ID = PLUGIN_ID + "." + ERROR_PARSER_SIMPLE_ID; //$NON-NLS-1$
 
+	/**
+	 * Name of the extension point for contributing a Command Launcher factory
+	 * @since 6.3
+	 */
+	public static final String COMMAND_LAUNCHER_FACTORY_SIMPLE_ID = "CommandLauncherFactory"; //$NON-NLS-1$
+	/**
+	 * Full unique name of the extension point for contributing a Command Launcher factory
+	 * @since 6.3
+	 */
+	public static final String COMMAND_LAUNCHER_FACTORY_UNIQ_ID = PLUGIN_ID + "." + COMMAND_LAUNCHER_FACTORY_SIMPLE_ID; //$NON-NLS-1$
+
 	// default store for pathentry
 	public static final String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$
 

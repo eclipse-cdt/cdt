@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
@@ -178,6 +179,10 @@ public class LanguageSettingsProvidersSerializer {
 		public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			List<ICLanguageSettingEntry> entries = rawProvider!=null ? rawProvider.getSettingEntries(cfgDescription, rc, languageId) : null;
+			if (cfgDescription != null) {
+				IProject project = cfgDescription.getProjectDescription().getProject();
+				entries = CommandLauncherManager.getInstance().getLanguageSettingEntries(project, entries);
+			}
 			return entries;
 		}
 
@@ -1456,6 +1461,10 @@ public class LanguageSettingsProvidersSerializer {
 					return getSettingEntriesUpResourceTree(provider, cfgDescription, parentFolder, languageId);
 				}
 				// if out of parent resources - get default entries
+				entries = getSettingEntriesPooled(provider, cfgDescription, null, languageId);
+				if (entries != null) {
+					return entries;
+				}
 				entries = getSettingEntriesPooled(provider, null, null, languageId);
 				if (entries != null) {
 					return entries;

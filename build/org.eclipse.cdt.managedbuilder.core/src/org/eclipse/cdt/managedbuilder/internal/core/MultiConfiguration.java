@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -1202,6 +1203,14 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	@Override
 	public IBuildObjectProperties getBuildProperties() {
 		return curr().getBuildProperties();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getOptionalBuildProperties()
+	 */
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() {
+		return curr().getOptionalBuildProperties();
 	}
 
 	@Override

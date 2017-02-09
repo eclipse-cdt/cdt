@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 public class CacheSizeBlock extends AbstractCOptionPage {
 	private IntegerFieldEditor fDBLimitPct;
 	private IntegerFieldEditor fDBAbsoluteLimit;
-	private IntegerFieldEditor fCodeReaderLimit;
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         @Override
@@ -114,11 +113,6 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		gd.horizontalIndent= hindent;
 		fDBAbsoluteLimit.getLabelControl(cacheComp).setLayoutData(gd);
 
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.FILL;
-		gd.horizontalIndent= hindent;
-		fCodeReaderLimit.getLabelControl(cacheComp).setLayoutData(gd);
-
 		initializeValues();
     }
 
@@ -129,26 +123,21 @@ public class CacheSizeBlock extends AbstractCOptionPage {
     	fDBLimitPct.setPropertyChangeListener(validityChangeListener);
     	fDBAbsoluteLimit.setPreferenceStore(prefStore);
     	fDBAbsoluteLimit.setPropertyChangeListener(validityChangeListener);
-    	fCodeReaderLimit.setPreferenceStore(prefStore);
-    	fCodeReaderLimit.setPropertyChangeListener(validityChangeListener);
 
 		fDBLimitPct.load();
 		fDBAbsoluteLimit.load();
-		fCodeReaderLimit.load();
 	}
 
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		fDBLimitPct.store();
 		fDBAbsoluteLimit.store();
-		fCodeReaderLimit.store();
     }
 
     @Override
 	public void performDefaults() {
     	fDBLimitPct.loadDefault();
 		fDBAbsoluteLimit.loadDefault();
-		fCodeReaderLimit.loadDefault();
     }
 
     private void updateValidState() {
@@ -157,9 +146,6 @@ public class CacheSizeBlock extends AbstractCOptionPage {
     		setValid(false);
     	} else if (!fDBAbsoluteLimit.isValid()) {
     		setErrorMessage(fDBAbsoluteLimit.getErrorMessage());
-    		setValid(false);
-    	} else if (!fCodeReaderLimit.isValid()) {
-    		setErrorMessage(fCodeReaderLimit.getErrorMessage());
     		setValid(false);
     	} else {
     		setValid(true);

@@ -90,6 +90,12 @@ public class Messages extends NLS {
 			
 	public static String StandardGDBDebuggerPage14;
 
+	public static String ContainerPropertyTab_Title;
+	public static String ContainerPropertyTab_Enable_Msg;
+
+	public static String ContainerCommandLauncher_image_msg;
+	public static String CommandLauncher_CommandCancelled;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

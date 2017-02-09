@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
@@ -57,6 +58,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 //	private StorableEnvironment userDefinedEnvironment;
 
 	private BuildObjectProperties buildProperties;
+	private OptionalBuildProperties optionalBuildProperties;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -191,6 +193,10 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null && props.length() != 0)
 			buildProperties = new BuildObjectProperties(props, this, this);
+		
+		String optionalProps = element.getAttribute(OPTIONAL_BUILD_PROPERTIES);
+		if (optionalProps != null && optionalProps.length() != 0)
+			optionalBuildProperties = new OptionalBuildProperties(optionalProps);
 
 		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
 		if(artType != null){
@@ -576,6 +582,18 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return buildProperties;
 	}
 
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() {
+		if(optionalBuildProperties == null){
+			OptionalBuildProperties parentProps = findOptionalBuildProperties();
+			if(parentProps != null)
+				optionalBuildProperties = new OptionalBuildProperties(parentProps);
+			else
+				optionalBuildProperties = new OptionalBuildProperties();
+		}
+		return optionalBuildProperties;
+	}
+
 	private BuildObjectProperties findBuildProperties(){
 		if(buildProperties == null){
 			if(projectType != null){
@@ -584,6 +602,16 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			return null;
 		}
 		return buildProperties;
+	}
+
+	private OptionalBuildProperties findOptionalBuildProperties(){
+		if(optionalBuildProperties == null){
+			if(projectType != null){
+				return ((ProjectType)projectType).findOptionalBuildProperties();
+			}
+			return null;
+		}
+		return optionalBuildProperties;
 	}
 
 	@Override

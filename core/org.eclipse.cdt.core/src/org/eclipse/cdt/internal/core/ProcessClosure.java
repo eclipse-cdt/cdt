@@ -217,14 +217,18 @@ public class ProcessClosure {
 			fProcess.destroy();
 			fProcess = null;
 		}
-		if (!fOutputReader.finished()) {
-			fOutputReader.waitFor();
+		if (fOutputReader != null) {
+			if (!fOutputReader.finished()) {
+				fOutputReader.waitFor();
+			}
+			fOutputReader.close();
 		}
-		if (!fErrorReader.finished()) {
-			fErrorReader.waitFor();
+		if (fErrorReader != null) {
+			if (!fErrorReader.finished()) {
+				fErrorReader.waitFor();
+			}
+			fErrorReader.close();
 		}
-		fOutputReader.close();
-		fErrorReader.close();
 		fOutputReader = null;
 		fErrorReader = null;
 	}

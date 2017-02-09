@@ -44,7 +44,7 @@ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContainer {
+public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
 	public static final String PROJECTTYPE_ELEMENT_NAME = "projectType";	//$NON-NLS-1$
 	public static final String SUPERCLASS = "superClass";					//$NON-NLS-1$
 	public static final String IS_ABSTRACT = "isAbstract";					//$NON-NLS-1$

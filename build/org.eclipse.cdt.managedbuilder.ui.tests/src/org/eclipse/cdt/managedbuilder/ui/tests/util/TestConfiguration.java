@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -632,6 +633,13 @@ public class TestConfiguration implements IConfiguration {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public IResource getOwner() { return null; }
 

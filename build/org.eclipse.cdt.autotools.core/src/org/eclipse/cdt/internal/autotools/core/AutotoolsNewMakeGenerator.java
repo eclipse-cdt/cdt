@@ -893,7 +893,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher();
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 
@@ -1207,7 +1207,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher();
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 

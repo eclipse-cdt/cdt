@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherFactoryManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -656,7 +656,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			console.start(currentProject);
 
-			ICommandLauncher launcher = new CommandLauncher();
+			ICommandLauncher launcher = CommandLauncherFactoryManager.getInstance().getCommandLauncher();
 			launcher.setProject(currentProject);
 
 			IPath program = new Path(""); //$NON-NLS-1$

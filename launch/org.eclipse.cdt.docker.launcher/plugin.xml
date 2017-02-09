@@ -88,5 +88,25 @@
             id="org.eclipse.cdt.docker.launcher.launchConfigurationTypeImage1">
        </launchConfigurationTypeImage>
    </extension>
-   
+   <extension
+       id="ContainerCommandLauncherFactory"
+       name="%ContainerCommandLauncherFactory.name"
+       point="org.eclipse.cdt.core.CommandLauncherFactory">
+       <cextension>
+          <run
+               class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory">
+          </run>
+      </cextension>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.cPropertyTab">
+      <tab
+            class="org.eclipse.cdt.internal.docker.launcher.ContainerPropertyTab"
+            icon="icons/repository-middle.gif"
+            name="%Container.settings"
+            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_BuildSettings"
+            weight="020">
+      </tab>
+   </extension>
+  
 </plugin>

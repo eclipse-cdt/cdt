@@ -79,7 +79,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 
 		@Override
 		public void newOutput(String output) {
-			if (output.contains(Messages.Gdbserver_up)) {
+			if (output.contains(Messages.Gdbserver_up)
+					|| output.contains("gdbserver:")) { //$NON-NLS-1$
 				started = true;
 			}
 

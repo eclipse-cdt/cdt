@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
@@ -1044,6 +1045,11 @@ public class SemanticHighlightings {
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof ICPPASTQualifiedName || node instanceof ICPPASTTemplateId) {
+				return false;
+			}
+			if (node instanceof IASTImplicitName && node.getParent() instanceof ICPPASTUsingDeclaration) {
+				// For names in an inheriting constructor declaration, we want to use the method 
+				// highlighting (since it's a constructor), not the class highlighting. 
 				return false;
 			}
 			if (node instanceof IASTName) {

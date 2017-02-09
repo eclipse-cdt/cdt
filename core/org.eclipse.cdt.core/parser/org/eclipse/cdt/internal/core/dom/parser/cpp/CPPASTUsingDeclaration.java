@@ -16,17 +16,23 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 		implements ICPPASTUsingDeclaration, ICPPASTCompletionContext {
     private boolean typeName;
     private IASTName name;
+    
+    // The using-declaration has an implicit name referencing every delegate binding.
+    private IASTImplicitName[] fImplicitNames;
 
     public CPPASTUsingDeclaration() {
 	}
@@ -86,6 +92,12 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 
         if (!acceptByAttributeSpecifiers(action)) return false;
         if (name != null && !name.accept(action)) return false;
+        
+        if (action.shouldVisitImplicitNames) {
+        	for (IASTImplicitName name : getImplicitNames()) {
+        		if (!name.accept(action)) return false;
+        	}
+        }
 
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
@@ -131,5 +143,26 @@ public class CPPASTUsingDeclaration extends CPPASTAttributeOwner
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
+	}
+
+	@Override
+	public IASTImplicitName[] getImplicitNames() {
+		if (fImplicitNames == null) {
+			fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			IBinding usingDecl = name.resolveBinding();
+			if (usingDecl instanceof ICPPUsingDeclaration) {
+				IBinding[] delegates = ((ICPPUsingDeclaration) usingDecl).getDelegates();
+				if (delegates.length > 0) {
+					fImplicitNames = new IASTImplicitName[delegates.length];
+					for (int i = 0; i < delegates.length; ++i) {
+						CPPASTImplicitName reference = new CPPASTImplicitName(name.getSimpleID(), this);
+						reference.setBinding(delegates[i]);
+						reference.setOffsetAndLength((ASTNode) name.getLastName());
+						fImplicitNames[i] = reference;
+					}
+				}
+			}
+		}
+		return fImplicitNames;
 	}
 }

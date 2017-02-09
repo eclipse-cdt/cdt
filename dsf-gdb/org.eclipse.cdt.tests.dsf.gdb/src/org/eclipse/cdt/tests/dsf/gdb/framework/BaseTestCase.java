@@ -413,9 +413,15 @@ public class BaseTestCase {
 
     	if (GdbDebugOptions.DEBUG) {
     		GdbDebugOptions.trace("===============================================================================================\n");
-    		GdbDebugOptions.trace(String.format("%s \"%s\" launching %s %s\n",
-    				GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
-    		GdbDebugOptions.trace("===============================================================================================\n");
+    	}
+
+    	// Always print this output to help easily troubleshoot tests on Hudson
+    	// Don't end with a new line as we may add another printout in doInnerLaunch()
+    	GdbDebugOptions.trace(String.format("%s \"%s\" requesting %s%s",
+    			GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? " with gdbserver." : "."));
+
+    	if (GdbDebugOptions.DEBUG) {
+    		GdbDebugOptions.trace("\n===============================================================================================\n");
     	}
 
 		launchGdbServer();
@@ -476,6 +482,12 @@ public class BaseTestCase {
 		// problem launching and no session is created).
  		DsfSession.addSessionStartedListener(sessionStartedListener);
  		GdbLaunch launch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
+ 		if (!GdbDebugOptions.DEBUG) {
+ 			// Now that we have started the launch we can print the real GDB version
+ 			// but not if DEBUG is on since we get the version anyway in that case.
+ 			GdbDebugOptions.trace(String.format(" Launched gdb %s.\n", launch.getGDBVersion()));
+ 		}
+
  		DsfSession.removeSessionStartedListener(sessionStartedListener);
 
  		try {

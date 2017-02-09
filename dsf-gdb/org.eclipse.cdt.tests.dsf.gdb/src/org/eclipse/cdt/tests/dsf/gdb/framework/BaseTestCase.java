@@ -411,7 +411,8 @@ public class BaseTestCase {
  	protected void doLaunch() throws Exception {
  		boolean remote = isRemoteSession();
 
-    	if (GdbDebugOptions.DEBUG) {
+//    	if (GdbDebugOptions.DEBUG) 
+    	{
     		GdbDebugOptions.trace("===============================================================================================\n");
     		GdbDebugOptions.trace(String.format("%s \"%s\" launching %s %s\n",
     				GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));

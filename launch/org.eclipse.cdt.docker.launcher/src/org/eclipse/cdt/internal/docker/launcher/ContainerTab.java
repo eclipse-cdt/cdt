@@ -517,7 +517,8 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 		return SWTImagesFactory.get(SWTImagesFactory.IMG_CONTAINER);
 	}
 
-	public void changeEvent(int type) {
+	@Override
+	public void changeEvent(IDockerConnection changedConnection, int type) {
 		String currUri = null;
 		int currIndex = 0;
 		connections = DockerConnectionManager.getInstance().getConnections();
@@ -547,10 +548,6 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connectionSelector.setText("");
 		}
 		connectionSelector.addModifyListener(connectionModifyListener);
-	}
-
-	public void changeEvent(IDockerConnection connection, int event) {
-		changeEvent(event);
 	}
 
 	public void listChanged(IDockerConnection c,

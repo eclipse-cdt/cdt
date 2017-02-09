@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesContainer {
+public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesContainer, IOptionalBuildObjectPropertiesContainer {
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
     public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$
@@ -54,6 +54,10 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+	/**
+	 * @since 8.5
+	 */
+	public static final String OPTIONAL_BUILD_PROPERTIES = "optionalBuildProperties"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
 

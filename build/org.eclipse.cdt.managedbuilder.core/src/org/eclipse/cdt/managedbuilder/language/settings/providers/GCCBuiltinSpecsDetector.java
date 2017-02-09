@@ -74,7 +74,7 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	@Override
 	protected List<String> parseOptions(String line) {
 		line = line.trim();
-
+		
 		// contribution of -dD option
 		if (line.startsWith("#define")) {
 			return makeList(line);

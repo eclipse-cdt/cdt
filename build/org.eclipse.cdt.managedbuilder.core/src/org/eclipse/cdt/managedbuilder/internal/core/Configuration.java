@@ -45,6 +45,7 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
@@ -114,6 +115,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private String description;
 	private ICSourceEntry[] sourceEntries;
 	private BuildObjectProperties buildProperties;
+	private OptionalBuildProperties optionalBuildProperties;
 	private boolean isTest;
 	private SupportedProperties supportedProperties;
 
@@ -260,6 +262,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
+
+		String optionalProps = SafeStringInterner.safeIntern(element.getAttribute(OPTIONAL_BUILD_PROPERTIES));
+		if(optionalProps != null)
+			optionalBuildProperties = new OptionalBuildProperties(optionalProps);
 
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
@@ -482,6 +488,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if(baseCfg.buildProperties != null)
 				this.buildProperties = new BuildObjectProperties(baseCfg.buildProperties, this, this);
 
+			if (baseCfg.optionalBuildProperties != null)
+				this.optionalBuildProperties = new OptionalBuildProperties(baseCfg.optionalBuildProperties);
+			
 			// set managedBuildRevision
 			setManagedBuildRevision(baseCfg.getManagedBuildRevision());
 
@@ -624,6 +633,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		fCfgData = new BuildConfigurationData(this);
 		if(cloneConfig.buildProperties != null) {
 			this.buildProperties = new BuildObjectProperties(cloneConfig.buildProperties, this, this);
+		}
+		
+		if (cloneConfig.optionalBuildProperties != null) {
+			this.optionalBuildProperties = new OptionalBuildProperties(cloneConfig.optionalBuildProperties);
 		}
 
 		this.description = cloneConfig.getDescription();
@@ -819,6 +832,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 
+		String optionalProps = element.getAttribute(OPTIONAL_BUILD_PROPERTIES);
+		if (optionalProps != null)
+			optionalBuildProperties = new OptionalBuildProperties(optionalProps);
+		
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
@@ -906,6 +923,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				IBuildPropertyValue val = prop.getValue();
 				element.setAttribute(BUILD_ARTEFACT_TYPE, val.getId());
 			}
+		}
+
+		if(optionalBuildProperties != null){
+			element.setAttribute(OPTIONAL_BUILD_PROPERTIES, optionalBuildProperties.toString());
 		}
 
 		if (parent != null)
@@ -2398,6 +2419,18 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return buildProperties;
 	}
 
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() {
+		if (optionalBuildProperties == null){
+			OptionalBuildProperties parentProps = findOptionalBuildProperties();
+			if(parentProps != null)
+				optionalBuildProperties = new OptionalBuildProperties(parentProps);
+			else
+				optionalBuildProperties = new OptionalBuildProperties();
+		}
+		return optionalBuildProperties;
+	}
+
 	private BuildObjectProperties findBuildProperties(){
 		if(buildProperties == null){
 			if(parent != null){
@@ -2406,6 +2439,16 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return null;
 		}
 		return buildProperties;
+	}
+	
+	private OptionalBuildProperties findOptionalBuildProperties(){
+		if (optionalBuildProperties == null){
+			if (parent != null){
+				return ((Configuration)parent).findOptionalBuildProperties();
+			}
+			return null;
+		}
+		return optionalBuildProperties;
 	}
 
 	public boolean supportsType(IBuildPropertyType type) {

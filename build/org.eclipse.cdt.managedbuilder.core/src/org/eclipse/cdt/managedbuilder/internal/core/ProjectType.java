@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -66,6 +67,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	private IProjectBuildMacroSupplier buildMacroSupplier = null;
 
 	BuildObjectProperties buildProperties;
+	OptionalBuildProperties optionalBuildProperties;
 
 
 	//  Miscellaneous
@@ -705,6 +707,28 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			return null;
 		}
 		return buildProperties;
+	}
+
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() {
+		if(optionalBuildProperties == null){
+			OptionalBuildProperties parentProps = findOptionalBuildProperties();
+			if(parentProps != null)
+				optionalBuildProperties = new OptionalBuildProperties(parentProps);
+			else
+				optionalBuildProperties = new OptionalBuildProperties();
+		}
+		return optionalBuildProperties;
+	}
+
+	OptionalBuildProperties findOptionalBuildProperties(){
+		if(optionalBuildProperties == null){
+			if(superClass != null){
+				return ((ProjectType)superClass).findOptionalBuildProperties();
+			}
+			return null;
+		}
+		return optionalBuildProperties;
 	}
 
 	@Override

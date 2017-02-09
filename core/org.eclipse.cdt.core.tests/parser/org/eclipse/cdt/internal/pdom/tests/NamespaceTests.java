@@ -209,6 +209,6 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(0, decls.length);
 
 		IName[] refs = pdom.findNames(variable1, IIndex.FIND_REFERENCES);
-		assertEquals(2, refs.length);
+		assertEquals(3, refs.length);
 	}
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_9823f930",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-09T14:58:55Z",
+      "side": 1,
+      "message": "Reading through the bugzilla and looking at this patch, it seems that the bug\u0027s title does not reflect well what is contained in the patch. i.e. we are not removing the LE representation. Maybe rename the bug to match better? Or if we want to keep this bugzilla as-is, maybe we could open a new one that more closely explains/reflects this change?\n\nAlternatively, the patch could maybe fit this other bugzilla: 509577",
+      "revId": "6a70ad66bbbdf6c7a171ba45f86fc972e7333f5c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

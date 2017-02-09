@@ -88,7 +88,9 @@ public class LaunchDescriptorTypeInfo {
 	public boolean enabled(Object launchObject) throws CoreException {
 		if (expression == null)
 			return true;
-		EvaluationResult result = expression.evaluate(new EvaluationContext(null, launchObject));
+		EvaluationContext context = new EvaluationContext(null, launchObject);
+		context.setAllowPluginActivation(true);
+		EvaluationResult result = expression.evaluate(context);
 		return (result == EvaluationResult.TRUE);
 	}
 }

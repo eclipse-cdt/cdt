@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
@@ -23,7 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner {
+public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner,
+		IASTImplicitNameOwner {
 	/**
 	 * <code>NAME</code> is the qualified name brought into scope.
 	 */

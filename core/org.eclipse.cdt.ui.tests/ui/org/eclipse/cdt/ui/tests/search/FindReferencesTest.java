@@ -132,6 +132,17 @@ public class FindReferencesTest extends SearchTestBase {
 		assertNotNull(matches[0].getEnclosingElement());
 	}
 	
+	//	namespace N {
+	//		void foo();
+	//	}
+	//	using N::foo;
+	
+	//	// empty file
+	public void testUsingDeclaration_399147() throws Exception {
+		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("foo", "void foo", fHeaderContents));
+		assertOccurrences(query, 1);
+	}
+	
 	//	// empty file
 
 	//	namespace { struct A {}; }

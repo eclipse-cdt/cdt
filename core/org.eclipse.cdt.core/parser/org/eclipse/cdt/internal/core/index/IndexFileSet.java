@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -25,7 +27,9 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOMFileSet;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IRecordIterator;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
@@ -90,8 +94,14 @@ public class IndexFileSet implements IIndexFileSet {
 					PDOMFileSet pdomFileSet = (PDOMFileSet) fragmentFileSet;
 					Database db = pdom.getDB();
 					IRecordIterator nameIterator = pdom.getDeclarationsDefintitionsRecordIterator(binding);
+					Set<Long> visited = null;
 					long nameRecord;
 					while ((nameRecord = nameIterator.next()) != 0) {
+						if (visited != null && !visited.add(nameRecord)) {
+							// Cycle detected!
+							logInvalidNameChain(pdom, binding);
+							return false;
+						}
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
 						if (pdomFileSet.containsFile(fileRecord)) {
 							if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
@@ -103,12 +113,11 @@ public class IndexFileSet implements IIndexFileSet {
 							}
 							return true;
 						}
-						if (sDEBUG_INDEX_FILE_SET && ++iterationCount % 1000 == 0) {
-							System.out.println(
-									String.format("IndexFileSet: %s (%s) not yet found after %d iterations", //$NON-NLS-1$
-											String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
-											binding.getClass().getSimpleName(),
-											iterationCount));
+						if (iterationCount >= 1000 && visited == null) {
+							// Iteration count is suspiciously high. Start keeping track of visited names
+							// to be able to detect a cycle.
+							visited = new HashSet<>();
+							visited.add(nameRecord);
 						}
 					}
 				}
@@ -124,6 +133,40 @@ public class IndexFileSet implements IIndexFileSet {
 							iterationCount));
 		}
 		return false;
+	}
+
+	private void logInvalidNameChain(PDOM pdom, IIndexBinding binding) {
+		try {
+			PDOMBinding pdomBinding = (PDOMBinding) binding;
+			for (String listType : new String[] {"declarations", "definitions"}) {  //$NON-NLS-1$//$NON-NLS-2$
+				StringBuilder nameChain = new StringBuilder();
+				Set<PDOMName> visited = new HashSet<>();
+				PDOMName first = listType.equals("declarations") ? pdomBinding.getFirstDeclaration() : pdomBinding.getFirstDefinition(); //$NON-NLS-1$
+				for (PDOMName name = first; name != null; name= name.getNextInBinding()) {
+					if (nameChain.length() != 0)
+						nameChain.append(", "); //$NON-NLS-1$
+					nameChain.append(name.getRecord());
+					PDOMBinding nameBinding = name.getBinding();
+					if (!nameBinding.equals(binding)) {
+						nameChain.append(String.format(" belongs to %s (%s) @%d", //$NON-NLS-1$
+								String.join("::", nameBinding.getQualifiedName()), //$NON-NLS-1$
+								nameBinding.getClass().getSimpleName(),
+								((PDOMNode) nameBinding).getRecord()));
+					}
+					if (!visited.add(name)) {
+						CCorePlugin.log(String.format("IndexFileSet: %s (%s) @%d - list of %s contains a cycle: ", //$NON-NLS-1$
+								String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
+								binding.getClass().getSimpleName(),
+								pdomBinding.getRecord(),
+								listType,
+								nameChain.toString()));
+						return;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	public long getTimingContainsDeclarationNanos() {

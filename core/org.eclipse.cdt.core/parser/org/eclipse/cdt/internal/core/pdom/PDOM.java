@@ -283,10 +283,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 9.3 development (versions not supported on the 9.2.x branch)
 	 *  207.0 - Store a caller record for macro reference names.
+	 *  208.0 - Trigger index rebuild to rebuild corrupted binding reference lists, bug 399147.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(207, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(207, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(207, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(208, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(208, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(208, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

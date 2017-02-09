@@ -437,15 +437,15 @@ public class BaseTestCase {
  		lcWorkingCopy.setAttributes(launchAttributes);
 
  		fLaunchConfiguration = lcWorkingCopy.doSave();
- 		fLaunch = doLaunchInner();
+ 		doLaunchInner();
 
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
-            DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
+            DebugPlugin.newProcess(getGDBLaunch(), gdbserverProc, "gdbserver");
  		}
 
  		// Now initialize our SyncUtility, since we have the launcher
- 		SyncUtil.initialize(fLaunch.getSession());
+ 		SyncUtil.initialize(getGDBLaunch().getSession());
 
 	}
 
@@ -459,10 +459,8 @@ public class BaseTestCase {
  	 * and no launches are currently running.
  	 * 
  	 * This method is blocking until the breakpoint at main in the program is reached.
- 	 * 
- 	 * @return the new launch created
  	 */
-	protected GdbLaunch doLaunchInner() throws Exception {
+	protected void doLaunchInner() throws Exception {
 		assertNotNull("The launch configuration has not been created. Call doLaunch first.", fLaunchConfiguration);
 		
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
@@ -481,14 +479,16 @@ public class BaseTestCase {
 		// before the launch() call returns (unless, of course, there was a
 		// problem launching and no session is created).
  		DsfSession.addSessionStartedListener(sessionStartedListener);
- 		GdbLaunch launch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
+ 		fLaunch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
  		if (!GdbDebugOptions.DEBUG) {
  			// Now that we have started the launch we can print the real GDB version
  			// but not if DEBUG is on since we get the version anyway in that case.
- 			GdbDebugOptions.trace(String.format(" Launched gdb %s.\n", launch.getGDBVersion()));
+ 			GdbDebugOptions.trace(String.format(" Launched gdb %s.\n", getGDBLaunch().getGDBVersion()));
  		}
 
  		DsfSession.removeSessionStartedListener(sessionStartedListener);
+
+ 		validateGdbVersion(getGDBLaunch());
 
  		try {
 
@@ -517,16 +517,22 @@ public class BaseTestCase {
  	 		
  		} catch (Exception e) {
  			try {
- 				launch.terminate();
- 				assertLaunchTerminates(launch);
+ 				getGDBLaunch().terminate();
+ 				assertLaunchTerminates(getGDBLaunch());
  			} catch (Exception inner) {
  				e.addSuppressed(inner);
  			}
  			throw e;
  		}
-		
-		return launch;
 	} 	
+
+	/**
+	 * Validate that the gdb version launched is the one that was targetted.
+	 * Will fail the test if the versions don't match.
+	 * 
+	 * @param launch The launch in which we can find the gdb version
+	 */
+	protected void validateGdbVersion(GdbLaunch launch) {};
 
 	/**
 	 * Assert that the launch terminates. Callers should have already

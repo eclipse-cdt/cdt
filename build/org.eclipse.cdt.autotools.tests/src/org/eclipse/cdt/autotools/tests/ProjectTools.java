@@ -18,6 +18,8 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
 import org.eclipse.cdt.internal.autotools.core.configure.IAConfiguration;
@@ -129,7 +131,8 @@ public class ProjectTools {
 	 */
 	public static boolean markExecutable(IProject project, String filePath) {
 		// Get a launcher for the config command
-		CommandLauncher launcher = new CommandLauncher();
+		ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
+		launcher.setProject(project);
 		OutputStream stdout = new ByteArrayOutputStream();
 		OutputStream stderr = new ByteArrayOutputStream();
 

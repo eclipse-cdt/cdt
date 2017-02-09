@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.tests.util;
 
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
@@ -76,6 +77,8 @@ public class TestProjectType implements IProjectType {
 	public void setVersion(Version version) {}
 	@Override
 	public IBuildObjectProperties getBuildProperties() { return null; }
+	@Override
+	public IOptionalBuildProperties getOptionalBuildProperties() { return null; }
 
 	@Override
 	public IBuildPropertyValue getBuildArtefactType() {

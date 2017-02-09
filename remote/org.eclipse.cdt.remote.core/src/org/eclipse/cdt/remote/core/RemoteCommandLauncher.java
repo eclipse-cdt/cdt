@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.remote.internal.core.Activator;
 import org.eclipse.cdt.remote.internal.core.messages.Messages;
@@ -40,6 +40,8 @@ import org.eclipse.remote.core.RemoteProcessAdapter;
 public class RemoteCommandLauncher implements ICommandLauncher {
 	
 	private static final String CYGWIN_PREFIX = "cygdrive"; //$NON-NLS-1$
+	
+	private boolean usingLocalLauncher = false;
 
 	/**
 	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
@@ -102,7 +104,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		return s;
 	}
 	
-	private final ICommandLauncher fLocalLauncher = new CommandLauncher();
+	private ICommandLauncher fLocalLauncher = CommandLauncherManager.getInstance().getCommandLauncher();
 	private boolean fShowCommand;
 	private String[] fCommandArgs;
 	private IRemoteConnection fConnection;
@@ -129,13 +131,18 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor)
 			throws CoreException {
+		ICommandLauncher localLauncher = CommandLauncherManager.getInstance().getCommandLauncher(getProject());
+		localLauncher.setProject(getProject());
+		localLauncher.setErrorMessage(getErrorMessage());
+		usingLocalLauncher = false;
+		fLocalLauncher = localLauncher;
 		if (getProject() != null) {
 			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
 				URI uri = remRes.getActiveLocationURI();
 				IRemoteServicesManager remoteServicesManager = Activator.getService(IRemoteServicesManager.class);
 				IRemoteConnectionType connectionType = remoteServicesManager.getConnectionType(uri);
-				if (connectionType != null) {
+				if (connectionType != null && !connectionType.getScheme().equals("file")) { //$NON-NLS-1$
 					fConnection = connectionType.getConnection(uri);
 					if (fConnection != null) {
 						parseEnvironment(env);
@@ -163,16 +170,23 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 				}
 			}
 		}
+		usingLocalLauncher = true;
 		return fLocalLauncher.execute(commandPath, args, env, workingDirectory, monitor);
 	}
 
 	@Override
 	public String[] getCommandArgs() {
+		if (usingLocalLauncher) {
+			return fLocalLauncher.getCommandArgs();
+		}
 		return fCommandArgs;
 	}
 
 	@Override
 	public String getCommandLine() {
+		if (usingLocalLauncher) {
+			return fLocalLauncher.getCommandLine();
+		}
 		return getCommandLine(fCommandArgs);
 	}
 
@@ -202,6 +216,9 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 
 	@Override
 	public Properties getEnvironment() {
+		if (usingLocalLauncher) {
+			return fLocalLauncher.getEnvironment();
+		}
 		return fEnvironment;
 	}
 
@@ -261,8 +278,15 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		fShowCommand = show;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public int waitAndRead(OutputStream out, OutputStream err) {
+		
+		if (usingLocalLauncher) {
+			return fLocalLauncher.waitAndRead(out, err);
+		}
+		
+		// otherwise remote process
 		if (fShowCommand) {
 			printCommandLine(out);
 		}
@@ -278,6 +302,11 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 
 	@Override
 	public int waitAndRead(OutputStream out, OutputStream err, IProgressMonitor monitor) {
+		if (usingLocalLauncher) {
+			return fLocalLauncher.waitAndRead(out, err, monitor);
+		}
+		
+		// otherwise remote process
 		if (fShowCommand) {
 			printCommandLine(out);
 		}

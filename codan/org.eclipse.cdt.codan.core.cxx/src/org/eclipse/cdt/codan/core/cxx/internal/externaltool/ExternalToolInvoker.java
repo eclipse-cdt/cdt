@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.cxx.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.cxx.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.cxx.externaltool.InvocationParameters;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -85,7 +85,7 @@ public class ExternalToolInvoker {
 		final OutputStream out = sniffer.getOutputStream();
 		final OutputStream err = sniffer.getErrorStream();
 		try {
-			ICommandLauncher launcher = new CommandLauncher();
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 			launcher.showCommand(true);
 			launcher.setProject(project);
 			Process p = launcher.execute(commandPath, commandArgs, commandEnv, workingDirectory, new SubProgressMonitor(monitor, 50));

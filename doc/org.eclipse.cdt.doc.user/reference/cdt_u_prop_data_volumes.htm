@@ -3,23 +3,23 @@
 <head>
   <meta http-equiv="Content-Language" content="en-us">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>C/C++ Project Properties, Build, Settings, Binary Parser</title>
+  <title>C/C++ Project Properties, Build, Settings, Data Volume Dialog</title>
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<div role="main"><h1>C/C++ Project Properties, Build, Settings, Binary Parser</h1>
-<p>Use the <strong>Binary Parsers</strong> properties tab to
-ensure the accuracy of the <a href="cdt_u_project_explorer_view.htm">Project Explorer</a> and <a href="cdt_u_cproj_view.htm">C/C++ Projects</a> views, and to successfully run
-and debug your programs. After you select the correct parser for your
-development environment and build your project, you can view the
-symbols of the object file using the C/C++ Projects view.</p>
+<div role="main"><h1>C/C++ Project Properties, Build, Settings, Data Volume Dialog</h1>
+<p>The <strong>Data Volume</strong> dialog is brought up when a user selects the
+Add... button from the Container Settings Data Volumes table.  Like the properties tab,
+this dialog is only available if the optional Docker C/C++ Launch feature is installed.</p>
+<p>Data volumes can be specified from the local file system, another Container, or created
+as empty, in the Docker Container where the build will be performed.</p>
 
-<p><img img="" src="../images/prop_bin.png"
- alt="C/C++ Project Properties, Build, Settings, Binary Parser"></p>
+<p><img img="" src="../images/prop_datavolumes.png"
+ alt="C/C++ Project Properties, Build, Settings, Data Volume Dialog"></p>
 
 
 <table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
-	<caption><strong>Binary parser options</strong></caption>
+	<caption><strong>Data Volume Dialog</strong></caption>
 	<colgroup>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
@@ -30,28 +30,47 @@ symbols of the object file using the C/C++ Projects view.</p>
 			<th id="description"><strong>Description</strong></th>
 		</tr>
 		<tr>
-			<td headers="group"><strong>Configuration</strong></td>
-			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
-		</tr>
-		<tr>
-			<td headers="group"><strong>Manage Configurations...</strong></td>
-			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
-		</tr>
-		<tr>
-			<td headers="group"><strong>Binary Parser</strong> (top pane)</td>
-			<td headers="description">Lists all of the binary parsers currently known to CDT. Select the parsers that you want to use, and select the corresponding line to edit parser's options, if required.</td>
+			<td headers="group"><strong>Container path</strong></td>
+			<td headers="description">This defines the path that the data volume will be mounted as within the Docker Container.</td>
 			</tr>		
 		<tr>
-			<td headers="group"><strong>Binary Parser Option</strong></td>
-			<td headers="description">Shows the parameters for the currently selected parser in the list above. Depending on the parser you select, the options in the list will be different (in particular, some may have no options at all).</td>
+			<td headers="group"><strong>No external mount</strong></td>
+			<td headers="description">Use this option to create a new empty directory in the Docker Container that is not mounted
+			to any external directory.</td>
 			</tr>	
 		<tr>
-			<td headers="group"><strong>Move Up</strong></td>
-			<td headers="description">Moves the selected parser higher in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			<td headers="group"><strong>Mount a host directory or host file</strong></td>
+			<td headers="description">Use this to specify a local system path that will be mounted in the Docker Container with
+			the given Container path.</td>
 			</tr>		
 		<tr>
-			<td headers="group"><strong>Move Down</strong></td>
-			<td headers="description">Move the selected parser lower in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			<td headers="group"><strong>Path</strong></td>
+			<td headers="description">This is the local path of the directory or file to mount in the Docker Container.  This
+			can be specified manually or via the Directory/File buttons.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Directory</strong></td>
+			<td headers="description">Use this button to bring up a local directory browser to fill in the Path text field
+			when mounting a local directory in the Docker Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>File</strong></td>
+			<td headers="description">Use this button to bring up a local file browser to fill in the Path text field
+			when mounting a local file in the Docker Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Read-only access</strong></td>
+			<td headers="description">Check this button if mounting a local directory or file and you do not wish the
+			Container to modify it.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Mount a data volume container</strong></td>
+			<td headers="description">Check this button if mounting the volumes of another Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Container</strong></td>
+			<td headers="description">This is a pull-down containing actively running Containers to use data volumes from if
+			the option above is chosen.</td>
 			</tr>		
 	</tbody>
 </table>
@@ -61,7 +80,7 @@ symbols of the object file using the C/C++ Projects view.</p>
 <p><img src="../images/ngtasks.gif" alt="Related tasks"
  width="143" height="21">
 <br>
-<a href="../tasks/cdt_t_proj_parser.htm">Selecting a binary parser</a></p>
+</p>
 
 
 <p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
@@ -85,7 +104,7 @@ symbols of the object file using the C/C++ Projects view.</p>
    <li>Settings page
        <ul> 
        <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
-       <li><a href="cdt_u_prop_build_settings_container.htm">Container Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_container.htm">ContainerSettings tab</a>
        <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
        <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
        <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>

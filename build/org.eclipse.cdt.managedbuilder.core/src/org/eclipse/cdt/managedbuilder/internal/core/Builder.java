@@ -25,7 +25,7 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
@@ -2858,7 +2858,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			return getSuperClass().getCommandLauncher();
 		
 		else if(fCommandLauncher == null) // catch all for backwards compatibility
-			fCommandLauncher = new CommandLauncher();
+			fCommandLauncher = CommandLauncherManager.getInstance().getCommandLauncher();
 		
 		return fCommandLauncher;
 	}

@@ -692,6 +692,7 @@
    <extension-point id="ProblemMarkerFilter" name="%problemMarkerFilter.name" schema="schema/ProblemMarkerFilter.exsd"/>
    <extension-point id="buildConfigProvider" name="buildConfigProvider" schema="schema/buildConfigProvider.exsd"/>
    <extension-point id="toolChainProvider" name="Tool Chain Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension-point id="CommandLauncherFactory" name="CommandLauncherFactory" schema="schema/CommandLauncherFactory.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

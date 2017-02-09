@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -180,7 +180,7 @@ public class MakeBuilder extends ACBuilder {
 				console.start(project);
 
 				// Prepare launch parameters for BuildRunnerHelper
-				ICommandLauncher launcher = new CommandLauncher();
+				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget()))

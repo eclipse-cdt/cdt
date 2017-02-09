@@ -18,11 +18,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,6 +47,8 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
+
+	private IProject fProject;
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -80,8 +83,9 @@ public class CommandBuilder implements IBuildModelBuilder {
 
 	}
 
-	public CommandBuilder(IBuildCommand cmd, IResourceRebuildStateContainer cr){
+	public CommandBuilder(IBuildCommand cmd, IResourceRebuildStateContainer cr, IProject project){
 		fCmd = cmd;
+		fProject = project;
 	}
 
 	protected OutputStream wrap(OutputStream out){
@@ -143,7 +147,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	}
 
 	protected ICommandLauncher createLauncher() {
-		return new CommandLauncher();
+		return CommandLauncherManager.getInstance().getCommandLauncher(fProject);
 	}
 
 	public String getErrMsg() {

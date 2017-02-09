@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -542,6 +542,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			boolean isChanged = false;
 
 			List<String> languageIds = getLanguageScope();
+			
 			if (languageIds != null) {
 				monitor.beginTask(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.ScannerDiscoveryTaskTitle"), //$NON-NLS-1$
 						TICKS_REMOVE_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
@@ -656,7 +657,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			console.start(currentProject);
 
-			ICommandLauncher launcher = new CommandLauncher();
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(currentCfgDescription);
 			launcher.setProject(currentProject);
 
 			IPath program = new Path(""); //$NON-NLS-1$
@@ -765,7 +766,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// so collect them to save later when output finishes
 		if (entries != null) {
 			for (ICLanguageSettingEntry entry : entries) {
-				if (!detectedSettingEntries.contains(entry)) {
+				if (detectedSettingEntries != null && !detectedSettingEntries.contains(entry)) {
 					detectedSettingEntries.add(entry);
 				}
 			}

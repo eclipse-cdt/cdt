@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -120,7 +120,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 			}
 			console.start(project);
 
-			ICommandLauncher launcher = new CommandLauncher();
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 			launcher.setProject(project);
 
 			IPath program = getCommandToLaunch();

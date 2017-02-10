@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,8 +20,10 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.eclipse.core.runtime.CoreException;
 import org.junit.Assume;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -78,7 +83,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 				gdbVersionPostfix = parameter;
 			}
 			if (gdbVersionPostfix.isEmpty())
-				gdbVersionPostfix = "default";
+				gdbVersionPostfix = DEFAULT_VERSION_STRING;
 		}
 	}
 
@@ -129,7 +134,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 			// fail assumption
 			Assume.assumeFalse("GDB cannot be run " + gdbPath, true);
 		}
-		if (checkVersion == null || checkVersion.isEmpty() || checkVersion.equals("default"))
+		if (checkVersion == null || checkVersion.isEmpty() || checkVersion.equals(DEFAULT_VERSION_STRING))
 			return; // no version restrictions
 		if (checkVersion.equals(gdbVersion))
 			return;
@@ -154,5 +159,35 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		if (remote)
 			setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+	}
+	
+	@Override
+	protected void validateGdbVersion(GdbLaunch launch) {
+		try {
+			String expected = getGdbVersionParameter();
+			if (expected.equals(DEFAULT_VERSION_STRING)) {
+				// If the user has requested the default GDB, we accept whatever version runs.
+				return;
+			}
+			
+			String actual = launch.getGDBVersion();
+			
+			String[] expectedParts = expected.split("\\."); //$NON-NLS-1$
+			String[] actualParts = actual.split("\\."); //$NON-NLS-1$
+			
+			String comparableActualString = actual;
+			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number 
+					&& actualParts.length == 3) {  // and the actual version has a maintenance number
+				// We should ignore the maintenance number.
+				// For example, if we expect 7.12, then the actual
+				// version we should accept can be 7.12 or 7.12.1 or 7.12.2, etc.
+				comparableActualString = actual.substring(0, actual.lastIndexOf('.'));
+			}
+			
+			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual, 
+					   LaunchUtils.compareVersions(expected, comparableActualString) == 0);
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
 	}
 }

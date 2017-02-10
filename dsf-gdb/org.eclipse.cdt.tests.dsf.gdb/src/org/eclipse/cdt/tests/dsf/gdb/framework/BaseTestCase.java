@@ -80,6 +80,12 @@ import org.junit.rules.Timeout;
  */
 @SuppressWarnings("restriction")
 public class BaseTestCase {
+	/** 
+	 * When used, the tests will use a GDB called 'gdb'.  This uses
+	 * whatever GDB is installed on the machine where the tests are run.
+	 */
+	public final static String DEFAULT_VERSION_STRING = "default";
+
 	/*
 	 * Path to executable
 	 */
@@ -168,6 +174,14 @@ public class BaseTestCase {
 	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
     }
 
+	/**
+	 * Validate that the gdb version launched is the one that was targeted.
+	 * Will fail the test if the versions don't match.
+	 * 
+	 * @param launch The launch in which we can find the gdb version
+	 */
+	protected void validateGdbVersion(GdbLaunch launch) {};
+	
     /**
 	 * We listen for the target to stop at the main breakpoint. This listener is
 	 * installed when the session is created and we uninstall ourselves when we
@@ -441,6 +455,8 @@ public class BaseTestCase {
  		fLaunchConfiguration = lcWorkingCopy.doSave();
  		fLaunch = doLaunchInner();
 
+ 		validateGdbVersion(fLaunch);
+
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
             DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
@@ -623,7 +639,7 @@ public class BaseTestCase {
 		boolean isWindows = runningOnWindows();
 		String gdbPath = System.getProperty("cdt.tests.dsf.gdb.path");
 		String fileExtension = isWindows ? ".exe" : "";
-		String versionPostfix = (!version.equals("default")) ? "." + version : "";
+		String versionPostfix = (!version.equals(DEFAULT_VERSION_STRING)) ? "." + version : "";
 		String debugName = main + versionPostfix + fileExtension;
 		if (gdbPath != null) {
 			debugName = gdbPath + "/" + debugName;

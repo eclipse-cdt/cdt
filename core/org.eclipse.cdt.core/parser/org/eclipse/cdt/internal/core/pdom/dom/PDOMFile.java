@@ -143,7 +143,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return record;
 	}
 
-	public PDOM getPDOM() {
+	public final PDOM getPDOM() {
 		return fLinkage.getPDOM();
 	}
 
@@ -153,14 +153,14 @@ public class PDOMFile implements IIndexFragmentFile {
 			return true;
 		if (obj instanceof PDOMFile) {
 			PDOMFile other = (PDOMFile) obj;
-			return fLinkage.getPDOM().equals(other.getLinkage().getPDOM()) && record == other.record;
+			return getPDOM() == other.getPDOM() && record == other.record;
 		}
 		return false;
 	}
 
 	@Override
 	public final int hashCode() {
-		return System.identityHashCode(fLinkage.getPDOM()) + (int) (41 * record);
+		return System.identityHashCode(getPDOM()) + (int) (41 * record);
 	}
 
 	/**

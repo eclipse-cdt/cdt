@@ -225,6 +225,23 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 
 	@Override
+	public final boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof PDOMName) {
+			PDOMName other = (PDOMName) obj;
+			return record == other.record && linkage.equals(other.linkage);
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public final int hashCode() {
+		return linkage.hashCode() + (int) (41 * record);
+	}
+
+	@Override
 	public String toString() {
 		return new String(getSimpleID());
 	}

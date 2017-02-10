@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_f2c5e407",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2361,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-10T19:28:23Z",
+      "side": 1,
+      "message": "the bug associated to this patch has been updated: \nBug 509577 - [Traditional Rendering] Local variable enclosing markings may be wrong in Little Endian presentation",
+      "revId": "f89c7bffd001d06927b8728004a825e6d1b70987",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_12cb401c",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2362,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-10T19:28:23Z",
+      "side": 1,
+      "message": "we could use the getter instead of directly accessing the variable: isDisplayLittleEndian()",
+      "revId": "f89c7bffd001d06927b8728004a825e6d1b70987",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

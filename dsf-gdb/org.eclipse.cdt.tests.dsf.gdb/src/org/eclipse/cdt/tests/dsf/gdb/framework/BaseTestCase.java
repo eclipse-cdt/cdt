@@ -168,6 +168,14 @@ public class BaseTestCase {
 	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
     }
 
+	/**
+	 * Validate that the gdb version launched is the one that was targeted.
+	 * Will fail the test if the versions don't match.
+	 * 
+	 * @param launch The launch in which we can find the gdb version
+	 */
+	protected void validateGdbVersion(GdbLaunch launch) {};
+	
     /**
 	 * We listen for the target to stop at the main breakpoint. This listener is
 	 * installed when the session is created and we uninstall ourselves when we
@@ -438,6 +446,8 @@ public class BaseTestCase {
 
  		fLaunchConfiguration = lcWorkingCopy.doSave();
  		fLaunch = doLaunchInner();
+
+ 		validateGdbVersion(fLaunch);
 
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {

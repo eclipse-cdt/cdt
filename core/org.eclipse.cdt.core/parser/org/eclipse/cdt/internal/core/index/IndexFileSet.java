@@ -144,8 +144,8 @@ public class IndexFileSet implements IIndexFileSet {
 				PDOMName first = listType.equals("declarations") ? pdomBinding.getFirstDeclaration() : pdomBinding.getFirstDefinition(); //$NON-NLS-1$
 				for (PDOMName name = first; name != null; name= name.getNextInBinding()) {
 					if (nameChain.length() != 0)
-						nameChain.append(", "); //$NON-NLS-1$
-					nameChain.append(name.getRecord());
+						nameChain.append('\n');
+					nameChain.append(String.format("%s @%d", String.valueOf(name.getSimpleID()), name.getRecord())); //$NON-NLS-1$
 					PDOMBinding nameBinding = name.getBinding();
 					if (!nameBinding.equals(binding)) {
 						nameChain.append(String.format(" belongs to %s (%s) @%d", //$NON-NLS-1$
@@ -154,7 +154,7 @@ public class IndexFileSet implements IIndexFileSet {
 								((PDOMNode) nameBinding).getRecord()));
 					}
 					if (!visited.add(name)) {
-						CCorePlugin.log(String.format("IndexFileSet: %s (%s) @%d - list of %s contains a cycle: ", //$NON-NLS-1$
+						CCorePlugin.log(String.format("IndexFileSet: %s (%s) @%d - list of %s contains a cycle:\n%s", //$NON-NLS-1$
 								String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
 								binding.getClass().getSimpleName(),
 								pdomBinding.getRecord(),

@@ -1409,12 +1409,12 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	private void preCloseProject(IProject project) {
+		// Stop indexing jobs for this project
+		CCoreInternals.getPDOMManager().preCloseProject(create(project));
 		// Remove binary parsers
 		binaryParsersMap.remove(project);
 		// Stop the binary runner for this project
 		removeBinaryRunner(project);
-		// Stop indexing jobs for this project
-		CCoreInternals.getPDOMManager().preCloseProject(create(project));
 	}
 
 	public IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory) {

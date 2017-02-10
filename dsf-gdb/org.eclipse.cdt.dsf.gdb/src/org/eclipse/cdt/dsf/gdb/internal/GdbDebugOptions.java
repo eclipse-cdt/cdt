@@ -68,12 +68,29 @@ public class GdbDebugOptions implements DebugOptionsListener {
 	 * @param throwable the {@link Throwable} or <code>null</code>
 	 */
 	public static void trace(String option, String message, Throwable throwable) {
-		//divide the string into substrings of 100 chars or less for printing
-		//to console
-		String systemPrintableMessage = message; 
-		while (systemPrintableMessage.length() > 100) {
-			String partial = systemPrintableMessage.substring(0, 100); 
-			systemPrintableMessage = systemPrintableMessage.substring(100);
+		trace(option, message, 100, throwable);
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * @param option the option or <code>null</code>
+	 * @param message the message to print or <code>null</code>
+	 * @param lineMax the number of character at which point the line should be
+	 *        split. Minimum 100.  Negative number to indicate no split.
+	 * @param throwable the {@link Throwable} or <code>null</code>
+	 */
+	public static void trace(String option, String message, int lineMax, Throwable throwable) {
+		if (lineMax < 0) {
+			lineMax = Integer.MAX_VALUE;
+		} else if (lineMax < 100) {
+			lineMax = 100;
+		}
+		
+		//divide the string into substrings of 'lineMax' chars or less for printing to console
+		String systemPrintableMessage = message;
+		while (systemPrintableMessage.length() > lineMax) {
+			String partial = systemPrintableMessage.substring(0, lineMax); 
+			systemPrintableMessage = systemPrintableMessage.substring(lineMax);
 			System.out.println(partial + "\\"); //$NON-NLS-1$
 		}
 		System.out.print(systemPrintableMessage);
@@ -81,6 +98,17 @@ public class GdbDebugOptions implements DebugOptionsListener {
 		if(fgDebugTrace != null) {
 			fgDebugTrace.trace(option, message, throwable);
 		}
+	}
+
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 *
+	 * @param message the message or <code>null</code>
+	 * @param lineMax the number of character at which point the line should be
+	 *        split. Minimum 100.  Negative number to indicate no split.
+	 */
+	public static void trace(String message, int lineMax) {
+		trace(null, message, lineMax, null);
 	}
 
 	/**

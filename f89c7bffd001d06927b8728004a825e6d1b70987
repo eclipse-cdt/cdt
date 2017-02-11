@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_cd012d7d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2361,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-11T00:43:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_f2c5e407",
+      "revId": "f89c7bffd001d06927b8728004a825e6d1b70987",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_12cb401c",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2017-02-10T19:28:23Z",
       "side": 1,
       "message": "we could use the getter instead of directly accessing the variable: isDisplayLittleEndian()",
+      "revId": "f89c7bffd001d06927b8728004a825e6d1b70987",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ed06e992",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/Rendering.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2362,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-11T00:43:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_12cb401c",
       "revId": "f89c7bffd001d06927b8728004a825e6d1b70987",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

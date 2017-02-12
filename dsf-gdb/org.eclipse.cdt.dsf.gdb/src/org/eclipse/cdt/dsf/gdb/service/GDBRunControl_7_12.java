@@ -292,8 +292,13 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 			if(frame != null) {
 				String fileLocation = frame.getFile() + ":" + frame.getLine();  //$NON-NLS-1$
 				String addrLocation = frame.getAddress();
-				equalFileLocation = fileLocation.equals(enableReverse.getFileLocation());
-				equalAddrLocation = addrLocation.equals(enableReverse.getAddrLocation());
+				String fileLocation2 = enableReverse.getFileLocation();
+				equalFileLocation = fileLocation.equals(fileLocation2);
+				String addrLocation2 = enableReverse.getAddrLocation();
+				equalAddrLocation = addrLocation.equals(addrLocation2);
+				System.out.println("equalFileLocation: " + equalFileLocation + " fileLocation: " + fileLocation + " fileLocation2: " + fileLocation2);
+				System.out.println("equalAddrLocation: " + equalAddrLocation + " addrLocation: " + addrLocation + " addrLocation2: " + addrLocation2);
+				System.out.println("equalBpId: " + equalBpId);
 			}
 			
 			if (equalFileLocation || equalAddrLocation || equalBpId) {

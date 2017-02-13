@@ -14,6 +14,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -81,6 +83,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
     private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
+    private IGDBBackend fBackEnd;
 
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
@@ -121,6 +124,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
             	fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
             	
             	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+            	fBackEnd = fServicesTracker.getService(IGDBBackend.class);
             }
         };
         session.getExecutor().submit(runnable).get();
@@ -183,6 +187,12 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				}
 				else {
 					i = 0;
+				}
+			}
+			if (fis !=null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
 				}
 			}
 	    }
@@ -668,7 +678,17 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();
-    }
+
+        // In all-stop mode, MI async is active when the Full GDB console is used
+		if (fBackEnd.isFullGdbConsoleSupported()) {
+			assertTrue("Target should be running with async on, and shall be accepting commands",
+					fRunCtrl.isTargetAcceptingCommands());
+			return;
+		}
+
+		assertFalse("Target should be running with async off, and shall NOT be accepting commands",
+				fRunCtrl.isTargetAcceptingCommands());
+	}
     
     @Test
     public void runToLine() throws Throwable {

@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_84da565d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2017-02-13T20:12:53Z",
+      "side": 1,
+      "message": "Using IExecutionDMContext as the key allows us to store only the latest command for an execution context. If the command token is the key the map will grow with every new execution command.",
+      "parentUuid": "a7c23755_21741e42",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_21397e8b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2016-12-12T15:23:59Z",
       "side": 1,
       "message": "You can use the \u003c\u003e operator and use new HashMap\u003c\u003e();",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_24c42286",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2017-02-13T20:12:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_21397e8b",
       "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_53093736",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2017-02-13T20:12:53Z",
+      "side": 1,
+      "message": "See my comment above.",
+      "parentUuid": "a7c23755_6175363c",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_01480205",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
         "patchSetId": 2
@@ -81,6 +135,24 @@
       "writtenOn": "2016-12-12T15:23:59Z",
       "side": 1,
       "message": "No need to call session.dispatchEvent() on the executor since it is @ThreadSafe. \nIt will make its own call to the executor.",
+      "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_04c7268d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2017-02-13T20:12:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_01480205",
       "revId": "a1a60b50c350c1f7f987a64aa828002efcdd06c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

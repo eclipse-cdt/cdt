@@ -41,6 +41,7 @@ import org.junit.runners.Suite;
 		SourceLookupTest.class,
 		StepIntoSelectionTest.class,
 		OperationsWhileTargetIsRunningTest.class,
+		MIRunControlSimServicesTest.class,
 		MIRunControlTest.class,
 		MIRunControlTargetAvailableTest.class,
 		MIRunControlReverseTest.class,

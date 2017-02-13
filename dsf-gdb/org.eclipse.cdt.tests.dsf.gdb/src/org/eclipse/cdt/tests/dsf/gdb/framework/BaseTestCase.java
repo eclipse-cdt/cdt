@@ -128,6 +128,10 @@ public class BaseTestCase {
 
 	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
+	// Provides the possibility to override the Debug Services factory and
+	// override specific service(s)
+	private static ServiceFactoriesManager fTstDbgSrvcesFactory = new ServiceFactoriesManager();
+
 	/**
 	 * Return the launch created when {@link #doLaunch()} was called.
 	 */
@@ -710,5 +714,13 @@ public class BaseTestCase {
 	protected void waitUntil(String message, Callable<Boolean> callable) throws Exception {
 		waitUntil(message, callable, TestsPlugin.massageTimeout(2000));
 	}
-	
+
+	/**
+	 * @return A Test Debug Service Factories manager which allow individual tests to register
+	 * a specific service factory which can then provide mocked/extended instances of Test Services
+	 */
+	public static ServiceFactoriesManager getServiceFactoriesManager() {
+		return fTstDbgSrvcesFactory;
+	}
+
 }

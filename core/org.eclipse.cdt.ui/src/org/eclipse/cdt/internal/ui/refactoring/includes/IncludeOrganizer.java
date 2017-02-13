@@ -616,13 +616,13 @@ public class IncludeOrganizer {
 		}
 
 		if (fContext.getPreferences().allowPartnerIndirectInclusion) {
-			// Mark all headers included by the partner header as already included.
+			// Mark all headers included by a close partner header as already included.
 			if (partnerHeader == null) {
 				for (IASTPreprocessorIncludeStatement include : existingIncludes) {
 					if (include.isPartOfTranslationUnitFile()) {
 						IIndexFile header = include.getImportedIndexFile();
 						if (header != null) {
-							if (fContext.isPartnerFile(new Path(include.getPath()))) {
+							if (fContext.isClosePartnerFile(new Path(include.getPath()))) {
 								partnerHeader = header;
 								break;
 							}
@@ -630,7 +630,8 @@ public class IncludeOrganizer {
 					}
 				}
 			}
-			if (partnerHeader != null) {
+			if (partnerHeader != null
+					&& fContext.isClosePartnerFile(getAbsolutePath(partnerHeader.getLocation()))) {
 				for (IIndexInclude include : partnerHeader.getIncludes()) {
 					IIndexFileLocation headerLocation = include.getIncludesLocation();
 					if (headerLocation != null) {

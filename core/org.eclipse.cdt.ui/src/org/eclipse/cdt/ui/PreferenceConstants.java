@@ -1982,7 +1982,8 @@ public class PreferenceConstants {
 	public static final String INCLUDES_ALLOW_REORDERING = "organizeIncludes.allowReordering"; //$NON-NLS-1$
 
 	/**
-	 * Whether indirect inclusion through a partner header file is allowed.
+	 * Whether indirect inclusion through a close partner header file is allowed. A header is considered
+	 * a close partner if its name without extension is the same as the name of the translation unit.
 	 *
 	 * @since 5.7
 	 */

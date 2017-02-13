@@ -39,6 +39,24 @@
       "revId": "7aa9a161a09df31aa56b67751cb045e0002d7b5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_13ea5f22",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-13T20:20:52Z",
+      "side": 1,
+      "message": "We may have some inconstant behavior like tests passing in local machine but not on the server however these discrepancies will be easier to troubleshoot now that we have the expected and actual GDB versions printed as part of the tests.  \n   So I am OK with it",
+      "parentUuid": "a7c23755_7372b3d5",
+      "revId": "7aa9a161a09df31aa56b67751cb045e0002d7b5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

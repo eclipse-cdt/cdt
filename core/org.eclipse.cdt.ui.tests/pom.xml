@@ -63,6 +63,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
+					<appArgLine>-consoleLog</appArgLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

@@ -154,18 +154,6 @@ public final class IncludeCreationContext extends InclusionContext {
 	}
 
 	/**
-	 * Returns the path of the partner header included previously, or {@code null} if the partner was not
-	 * included.
-	 */
-	public final IPath getPartnerHeaderIncludedPreviously() {
-		for (IPath path : fHeadersIncludedPreviously) {
-			if (isPartnerFile(path))
-				return path;
-		}
-		return null;
-	}
-
-	/**
 	 * Checks if the given file is suitable for inclusion. A file is suitable for inclusion if it is a header
 	 * file, or if it is already included by some other file.
 	 */

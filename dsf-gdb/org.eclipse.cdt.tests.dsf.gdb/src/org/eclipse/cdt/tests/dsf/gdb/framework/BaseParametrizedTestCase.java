@@ -127,6 +127,22 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		return getGdbVersion(gdbPath);
 	}
 
+	public boolean isGdbVersionAtLeast(String checkVersion) {
+		String gdbVersion = getGdbVersion();
+		if (gdbVersion == GDB_NOT_FOUND) {
+			return false;
+		}
+		
+		if (checkVersion == null || checkVersion.isEmpty() || checkVersion.equals("default"))
+			return false;
+		
+		if (checkVersion.equals(gdbVersion))
+			return true;
+
+		// return if it has to be same of higher
+		return LaunchUtils.compareVersions(checkVersion, gdbVersion) <= 0;
+	}
+
 	public void assumeGdbVersionAtLeast(String checkVersion) {
 		String gdbVersion = getGdbVersion();
 		if (gdbVersion == GDB_NOT_FOUND) {

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_3fc1e476",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-13T13:45:26Z",
+      "side": 1,
+      "message": "The expected version can be \"default\", used when no specific version of GDB is provided, this case is probably very common as it does no require any launch settings and it also triggers the tests to run against GDB and then GDBSERVER.\n\nSo a check against \u0027default\u0027 will always fail. In order to make it easier for the developers, we could check for \u0027default\u0027 and fail it directly with a message guiding the user on how to specify the GDB version when running from Eclipse and Maven.\n\nAnother approach to consider is to replace the use of \u0027default\u0027 with the latest supported GDB version which can be derived from \nITestConstants.ALL_SUPPORTED_VERSIONS.\n  This would not require the specification of a GDB version in the launch configuration and it will work as today as long as the available GDB is compatible with the latest.",
+      "range": {
+        "startLine": 167,
+        "startChar": 43,
+        "endLine": 167,
+        "endChar": 46
+      },
+      "revId": "7aa9a161a09df31aa56b67751cb045e0002d7b5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

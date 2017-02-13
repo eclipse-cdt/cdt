@@ -14,6 +14,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -183,6 +184,12 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				}
 				else {
 					i = 0;
+				}
+			}
+			if (fis !=null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
 				}
 			}
 	    }
@@ -668,6 +675,12 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();
+	    
+	    if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_12)) {
+		    assertTrue("Target should be running with async on, and shall be accepting commands", fRunCtrl.isTargetAcceptingCommands());
+	    } else {
+		    assertFalse("Target should be running with async off, and shall NOT be accepting commands", fRunCtrl.isTargetAcceptingCommands());
+	    }
     }
     
     @Test

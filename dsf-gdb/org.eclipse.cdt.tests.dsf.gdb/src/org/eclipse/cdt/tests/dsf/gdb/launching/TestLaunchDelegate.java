@@ -11,7 +11,10 @@
 package org.eclipse.cdt.tests.dsf.gdb.launching; 
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceFactoriesManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,4 +65,22 @@ public class TestLaunchDelegate extends GdbLaunchDelegate
     	return super.checkBinaryDetails(config); 
     }
 
+	@Override
+	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
+		// Check if this test has registered a services factory for this launch
+		String servicesFactoryId = null;
+		try {
+			servicesFactoryId = config.getAttribute(ServiceFactoriesManager.DEBUG_SERVICES_FACTORY_KEY, "");
+		} catch (CoreException e) {
+		}
+
+		if (servicesFactoryId != null && servicesFactoryId.length() > 0) {
+			// A services factory has been registered, so lets resolve it and use it
+			return BaseTestCase.getServiceFactoriesManager()
+					.removeTestServicesFactory(servicesFactoryId);
+		}
+
+		// Use the original services factory
+		return super.newServiceFactory(config, version);
+	}
 }

@@ -22,6 +22,23 @@
       "revId": "7aa9a161a09df31aa56b67751cb045e0002d7b5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_7372b3d5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-13T17:59:19Z",
+      "side": 1,
+      "message": "First, great catch!\nBut I think supporting the \u0027default\u0027 case is important.  We don\u0027t want to force users to have to install a different\nversion of GDB than what is on their machine, so we probably shouldn\u0027t require the latest version.\nAnd I think it is nicer to allow the user to leave the version empty or to use the string \u0027default\u0027.\nSo, I suggest that in those cases, we don\u0027t do any validation.\nThe validation will be used when the user has specified a specifc version of GDB and we run a different one.\nIs that ok with you?",
+      "revId": "7aa9a161a09df31aa56b67751cb045e0002d7b5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

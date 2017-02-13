@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_737b9399",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1408,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-02-13T18:16:38Z",
+      "side": 1,
+      "message": "Probably makes sense to move this up too.",
+      "range": {
+        "startLine": 1408,
+        "startChar": 2,
+        "endLine": 1408,
+        "endChar": 67
+      },
+      "revId": "e26076ca49552c3e0faa9129b72af1c51f68d0d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

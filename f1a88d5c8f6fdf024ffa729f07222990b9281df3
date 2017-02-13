@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_f335e300",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-13T18:56:53Z",
+      "side": 1,
+      "message": "It\u0027s better for our Sonar stats to use brackets, even if the \"if\" block contains a single instruction.",
+      "revId": "f1a88d5c8f6fdf024ffa729f07222990b9281df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

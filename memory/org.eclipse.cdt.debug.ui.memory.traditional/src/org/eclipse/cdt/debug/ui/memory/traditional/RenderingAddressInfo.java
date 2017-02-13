@@ -386,7 +386,7 @@ public class RenderingAddressInfo extends Rendering
                 // If any address within the item width is within the visible range we want it in the filtered
                 // result
                 BigInteger itemStart = item.getAddress();
-                BigInteger itemEnd = item.getAddress().add(item.getRangeInAddressableUnits());
+                BigInteger itemEnd = item.getAddress().add(item.getRangeInAddressableUnits()).subtract(BigInteger.ONE);
                 boolean itemStartIsInRange = isWithinRange(itemStart, startAddress, endAddress);
                 boolean itemEndIsInRange = isWithinRange(itemEnd, startAddress, endAddress);
                 boolean itemSpansOverVisibleRange = isWithinRange(startAddress, itemStart, itemEnd)

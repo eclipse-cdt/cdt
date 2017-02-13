@@ -40,6 +40,8 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.Includ
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 
 public class InclusionContext {
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
 	private static final IPath UNRESOLVED_INCLUDE = Path.EMPTY;
 
 	private final ITranslationUnit fTu;
@@ -253,6 +255,15 @@ public class InclusionContext {
 	public boolean isPartnerFile(IPath path) {
 		return SourceHeaderPartnerFinder.isPartnerFile(getTranslationUnitLocation(), path,
 				fPreferences.partnerFileSuffixes);
+	}
+
+	/**
+	 * Checks if the given path points to a close partner header of the current translation unit.
+	 * A header is considered a close partner if its name without extension is the same as the name of
+	 * the translation unit.
+	 */
+	public boolean isClosePartnerFile(IPath path) {
+		return SourceHeaderPartnerFinder.isPartnerFile(getTranslationUnitLocation(), path, EMPTY_STRING_ARRAY);
 	}
 
 	public IncludeInfo createIncludeInfo(IPath header, IncludeGroupStyle style) {

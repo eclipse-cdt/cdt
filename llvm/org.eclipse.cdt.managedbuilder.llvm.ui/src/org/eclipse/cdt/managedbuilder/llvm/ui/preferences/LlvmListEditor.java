@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Widget;
  * An abstract list editor that manages a list of input values.
  * The editor displays a list containing the values, buttons for adding and removing
  * values, and Up and Down buttons to adjust the order of elements in the list.
- * 
+ *
  */
 public abstract class LlvmListEditor extends ListEditor {
 
@@ -79,7 +79,7 @@ public abstract class LlvmListEditor extends ListEditor {
 
     /**
      * Creates a list field editor.
-     * 
+     *
      * @param name the name of the preference this field editor works on
      * @param labelText the label text of the field editor
      * @param parent the parent of the field editor's control
@@ -87,11 +87,11 @@ public abstract class LlvmListEditor extends ListEditor {
     protected LlvmListEditor(String name, String labelText, Composite parent) {
     	super(name, labelText, parent);
     }
-    
+
 	@Override
 	/**
 	 * Combines the given list of items into a single String.
-	 * This method is the converse of parseString. 
+	 * This method is the converse of parseString.
 	 */
 	protected String createList(String[] items) {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -129,7 +129,7 @@ public abstract class LlvmListEditor extends ListEditor {
 
     /**
      * Helper method to create a push button.
-     * 
+     *
      * @param parent the parent control
      * @param key the resource name used to supply the button's label text
      * @return Button
@@ -244,13 +244,13 @@ public abstract class LlvmListEditor extends ListEditor {
 
 	/**
 	 * Invoked when the selection in the list has changed.
-	 * 
+	 *
 	 * <p>
 	 * The default implementation of this method utilizes the selection index
 	 * and the size of the list to toggle the enablement of the up, down and
 	 * remove buttons.
 	 * </p>
-	 * 
+	 *
 	 */
     @Override
 	protected void selectionChanged() {
@@ -299,7 +299,7 @@ public abstract class LlvmListEditor extends ListEditor {
 		}
         return this.addButton.getShell();
     }
-    
+
     /**
      * Notifies that the Add button has been pressed.
      */
@@ -317,12 +317,12 @@ public abstract class LlvmListEditor extends ListEditor {
             selectionChanged();
         }
     }
-    
+
     /**
      * Notifies that the Remove button has been pressed.
      */
     protected abstract void removePressed();
-    
+
     /**
      * Notifies that the Up button has been pressed.
      */
@@ -336,5 +336,5 @@ public abstract class LlvmListEditor extends ListEditor {
     void downPressed() {
         swap(false);
     }
-	
+
 }

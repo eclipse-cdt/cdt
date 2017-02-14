@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -18,7 +18,7 @@ public class FileUtil {
 	/**
 	 * Searches cpp and cc file types recursively and returns true if
 	 * the directory tree contains at least one instance of them.
-	 *  
+	 *
 	 * @param directory
 	 * @param filter
 	 * @return
@@ -40,5 +40,5 @@ public class FileUtil {
 		}
 		return false;
 	}
-	
+
 }

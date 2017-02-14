@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -21,92 +21,92 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 /**
  * Class used to access the LLVM Preference store values.
- * 
+ *
  * This class is not intended to be subclassed by clients.
  */
 public class LlvmPreferenceStore {
 
 	/**
 	 * Get the LLVM Preference store.
-	 * 
+	 *
 	 * @return LLVM Preference store.
 	 */
 	public static IEclipsePreferences getPreferenceStore() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LlvmUIPlugin.PLUGIN_ID);
 		return prefs;
 	}
-	
+
 	/**
 	 * Get a value from the LLVM Preference store.
-	 * 
+	 *
 	 * @param name the name of the preference
      * @return the string-valued preference
 	 */
 	public static String getPreferenceStoreValue(String name) {
 		return getPreferenceStore().get(name, ""); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Get the LLVM bin path value from the LLVM Preference store.
-	 * 
+	 *
 	 * @return the LLVM bin path value.
 	 */
 	public static String getBinPath() {
 		return getPreferenceStoreValue(PreferenceConstants.P_LLVM_PATH);
 	}
-	
+
 	/**
 	 * Get the LLVM include path value from the LLVM Preference store.
-	 * 
+	 *
 	 * @return the LLVM include path value.
 	 */
 	public static String getIncludePath() {
 		return getPreferenceStoreValue(PreferenceConstants.P_LLVM_INCLUDE_PATH);
 	}
-	
+
 	/**
 	 * Get the LLVM library path value from the LLVM Preference Store.
-	 * 
+	 *
 	 * @return the LLVM library path value.
 	 */
 	public static String getLibraryPath() {
 		return getPreferenceStoreValue(PreferenceConstants.P_LLVM_LIBRARY_PATH);
 	}
-	
+
 	/**
 	 * Get the LLVM library from the LLVM Preference store.
-	 * 
+	 *
 	 * @return the LLVM library value.
 	 */
 	public static String getLibraries() {
 		return getPreferenceStoreValue(PreferenceConstants.P_LLVM_LIBRARIES);
-	}	
-	
+	}
+
 	/**
 	 * Get values from the LLVM Preference store as a String array.
 	 * Used to get Preference store values which consist of multiple paths
 	 * separated by a path separator.
-	 * 
+	 *
 	 * @param name the name of the preference
      * @return A String array containing all Preference store values
 	 */
 	public static String[] getPreferenceStoreValueAsArray(String name) {
 		return LlvmToolOptionPathUtil.stringToArray(name);
 	}
-	
+
 	/**
 	 * Set LLVM Preference store value.
-	 * 
+	 *
 	 * @param name the name of the preference
      * @param value the string-valued preference
 	 */
 	public static void setPreferenceStoreValue(String name, String value) {
 		getPreferenceStore().put(name, value);
 	}
-	
+
 	/**
 	 * Set LLVM bin path to the LLVM Preference store.
-	 * 
+	 *
 	 * @param path the path to the LLVM bin path.
 	 */
 	public static void setBinPath(String path) {
@@ -115,16 +115,16 @@ public class LlvmPreferenceStore {
 
 	/**
 	 * Set LLVM include path to the LLVM Preference store.
-	 * 
+	 *
 	 * @param path LLVM include path.
 	 */
 	public static void setIncludePath(String path) {
 		setPreferenceStoreValue(PreferenceConstants.P_LLVM_INCLUDE_PATH, path);
 	}
-	
+
 	/**
 	 * Set LLVM library path to the LLVM Preference store.
-	 * 
+	 *
 	 * @param path LLVM library path.
 	 */
 	public static void setLibraryPath(String path) {
@@ -133,18 +133,18 @@ public class LlvmPreferenceStore {
 
 	/**
 	 * Set LLVM library to the LLVM Preference store.
-	 * 
+	 *
 	 * @param lib LLVM library.
 	 */
 	public static void setLibrary(String lib) {
 		setPreferenceStoreValue(PreferenceConstants.P_LLVM_LIBRARIES, lib);
 	}
-	
+
 	/**
 	 * Get existing paths from the Preference store.
-	 * 
+	 *
 	 * @param name the name of the preference
-	 * @return paths 
+	 * @return paths
 	 */
 	private static String getExistingPaths(String name) {
 		String paths = ""; //$NON-NLS-1$
@@ -154,13 +154,13 @@ public class LlvmPreferenceStore {
 			paths = getLibraryPath();
 		} else if (name.equals(PreferenceConstants.P_LLVM_LIBRARIES)) {
 			paths = getLibraries();
-		}	
+		}
 		return paths;
 	}
-	
+
 	/**
 	 * Append a new value to the Preference store if it doesn't already exists.
-	 * 
+	 *
 	 * @param name the name of the preference
 	 * @param value the string-valued preference
 	 */
@@ -183,7 +183,7 @@ public class LlvmPreferenceStore {
 					}
 					//append the new value to end of the list
 					sB.append(value);
-				}				
+				}
 			}
 		} else { //no existing values
 			//if the value is reasonable
@@ -195,40 +195,40 @@ public class LlvmPreferenceStore {
 		String newValues = sB.toString();
 		if (newValues.length()!=0) {
 			//set the new preference store value
-			setPreferenceStoreValue(name, newValues);			
+			setPreferenceStoreValue(name, newValues);
 		}
 	}
 
 	/**
 	 * Append an include path to the LLVM Preference store.
-	 * 
+	 *
 	 * @param path the LLVM include path.
 	 */
 	public static void appendIncludePath(String path) {
 		appendValue(PreferenceConstants.P_LLVM_INCLUDE_PATH, path);
 	}
-	
+
 	/**
 	 * Append a library path to the LLVM Preference store.
-	 * 
+	 *
 	 * @param path the LLVM library path.
 	 */
 	public static void appendLibraryPath(String path) {
 		appendValue(PreferenceConstants.P_LLVM_LIBRARY_PATH, path);
 	}
-	
+
 	/**
 	 * Append a library to the LLVM Preference store.
-	 * 
+	 *
 	 * @param lib the LLVM library.
 	 */
 	public static void appendLibrary(String lib) {
 		appendValue(PreferenceConstants.P_LLVM_LIBRARIES, lib);
 	}
-	
+
 	/**
 	 * Remove a value from the LLVM preference store.
-	 * 
+	 *
 	 * @param name Name of the preference
 	 * @param value Value to remove from the preference store
 	 */
@@ -263,7 +263,7 @@ public class LlvmPreferenceStore {
 				} else { //only one value with a path separator at the end
 					newValue = ""; //$NON-NLS-1$
 				}
-				
+
 			} else { //only value without a path separator at the end
 				newValue = ""; //$NON-NLS-1$
 			}
@@ -271,28 +271,28 @@ public class LlvmPreferenceStore {
 			setPreferenceStoreValue(name, newValue);
 		}
 	}
-	
+
 	/**
 	 * Remove a include path from the LLVM preference store.
-	 * 
+	 *
 	 * @param path The include path to be removed from the LLVM preference store.
 	 */
 	public static void removeIncludePath(String path) {
 		removeValue(PreferenceConstants.P_LLVM_INCLUDE_PATH, path);
 	}
-	
+
 	/**
 	 * Remove a library path from the LLVM preference store.
-	 * 
+	 *
 	 * @param path The library path to be removed from the LLVM preference store.
 	 */
 	public static void removeLibraryPath(String path) {
 		removeValue(PreferenceConstants.P_LLVM_LIBRARY_PATH, path);
 	}
-	
+
 	/**
-	 * Remove a library from the LLVM preference store. 
-	 * 
+	 * Remove a library from the LLVM preference store.
+	 *
 	 * @param lib The library to be removed from the LLVM preference store.
 	 */
 	public static void removeLibrary(String lib) {
@@ -308,7 +308,7 @@ public class LlvmPreferenceStore {
 			appendLibrary("stdc++"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public static void addStdLibUnix() {
 		String path = FindStdLibPath.find();
 		String lib = "stdc++"; //$NON-NLS-1$
@@ -319,5 +319,5 @@ public class LlvmPreferenceStore {
 			appendLibrary(lib);
 		}
 	}
-	
+
 }

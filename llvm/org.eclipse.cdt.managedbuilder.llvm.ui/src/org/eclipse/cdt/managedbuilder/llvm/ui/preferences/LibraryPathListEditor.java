@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -22,13 +22,13 @@ import org.eclipse.swt.widgets.Text;
 /**
  * New implementation of LlvmListEditor.
  * Used to select a library path from the dialog.
- * 
+ *
  */
 public class LibraryPathListEditor extends LlvmListEditor {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -36,7 +36,7 @@ public class LibraryPathListEditor extends LlvmListEditor {
 	LibraryPathListEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}
-	
+
 	@Override
 	/**
 	 * Functionality for New button.
@@ -46,8 +46,8 @@ public class LibraryPathListEditor extends LlvmListEditor {
 		DirectoryDialog dlg = new DirectoryDialog(getShell());
 		final Text text = new Text(getShell(), SWT.BORDER);
 		dlg.setFilterPath(text.getText());
-		dlg.setText(Messages.LibraryPathListEditor_0); 
-		dlg.setMessage(Messages.LibraryPathListEditor_1); 
+		dlg.setText(Messages.LibraryPathListEditor_0);
+		dlg.setMessage(Messages.LibraryPathListEditor_1);
 		String dir = dlg.open();
 		if(dir == null) {
 			return null;
@@ -64,7 +64,7 @@ public class LibraryPathListEditor extends LlvmListEditor {
 					if (item.equalsIgnoreCase(dir)) {
 						return null;
 					}
-				}					
+				}
 			}
 			//add a new library search path to LLVM preference store
 			LlvmPreferenceStore.appendLibraryPath(dir);
@@ -96,5 +96,5 @@ public class LibraryPathListEditor extends LlvmListEditor {
     		selectionChanged();
         }
 	}
-	
+
 }

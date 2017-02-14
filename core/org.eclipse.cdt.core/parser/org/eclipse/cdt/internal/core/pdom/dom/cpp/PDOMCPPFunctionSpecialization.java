@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Binding for function specialization in the index. 
+ * Binding for function specialization in the index.
  */
 class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		implements ICPPFunctionSpecialization, ICPPComputableFunction {
@@ -48,7 +48,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private static final int FIRST_PARAM = NUM_PARAMS + 4;
 
 	/** Offset for type of this function (relative to the beginning of the record). */
-	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;	
+	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;
 
 	/** Offset of start of exception specification. */
 	protected static final int EXCEPTION_SPEC = FUNCTION_TYPE + Database.TYPE_SIZE; // int
@@ -61,7 +61,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	/** Offset of the function body execution for constexpr functions. */
 	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
 	 */
@@ -71,11 +71,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 	private short fAnnotations= -1;
 	private int fRequiredArgCount= -1;
-	
+
 	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
 			PDOMBinding specialized, IASTNode point) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
-		
+
 		Database db = getDB();
 		ICPPParameter[] astParams= astFunction.getParameters();
 		IFunctionType astFt= astFunction.getType();
@@ -109,7 +109,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 		}
 		fAnnotations = PDOMCPPAnnotations.encodeFunctionAnnotations(astFunction);
-		db.putShort(record + ANNOTATION, fAnnotations);	
+		db.putShort(record + ANNOTATION, fAnnotations);
 		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
@@ -127,7 +127,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	public void initData(ICPPExecution functionBody) {
 		if (functionBody == null)
 			return;
@@ -137,7 +137,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -182,10 +182,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			Database db= getDB();
 			ICPPFunctionType ft = getType();
 			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
-			
+
 			int n = db.getInt(record + NUM_PARAMS);
 			ICPPParameter[] result = new ICPPParameter[n];
-			
+
 			long next = db.getRecPtr(record + FIRST_PARAM);
  			for (int i = 0; i < n && next != 0; i++) {
  				IType type= i < ptypes.length ? ptypes[i] : null;
@@ -202,7 +202,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public ICPPFunctionType getType() {		
+	public ICPPFunctionType getType() {
 		if (fType == null) {
 			try {
 				fType= (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
@@ -217,7 +217,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
-		return false; 
+		return false;
 	}
 
 	@Override
@@ -238,7 +238,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
-		return false; 
+		return false;
 	}
 
 	@Override

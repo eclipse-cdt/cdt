@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
@@ -46,13 +47,13 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		super(linkage, parent, spec.getNameCharArray());
 		getDB().putRecPtr(record + SPECIALIZED, specialized.getRecord());
 
-		// Specializations that are not instances have the same map as their owner.
-		if (this instanceof ICPPTemplateInstance) {
-			// Defer storing of template parameter map to the post-process
-			// to avoid infinite recursion when the evaluation of a non-type 
-			// template argument tries to store its template definition.
-			// Until the post-process runs, temporarily store the input (possibly 
-			// non-PDOM) map.
+		// Specializations that are not instances have the same map as their owner except for friend functions
+		// declared inside a class template that are not owned by the template, but have their own template
+		// parameter maps.
+		if (this instanceof ICPPTemplateInstance || !(parent instanceof ICPPSpecialization)) {
+			// Defer storing of template parameter map to the post-process to avoid infinite recursion
+			// when the evaluation of a non-type template argument tries to store its template definition.
+			// Until the post-process runs, temporarily store the input (possibly non-PDOM) map.
 			fArgMap = spec.getTemplateParameterMap();
 			linkage.new ConfigureInstance(this);
 		}
@@ -91,14 +92,20 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 				if (this instanceof ICPPTemplateInstance) {
 					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
 				} else {
-					// specializations that are no instances have the same argmap as their owner.
+					// Specializations that are not instances have the same template parameter map as their
+					// owner.
 					IBinding owner= getOwner();
 					if (owner instanceof ICPPSpecialization) {
 						fArgMap= ((ICPPSpecialization) owner).getTemplateParameterMap();
+					} else {
+						// Friend functions declared inside a class template are not owned by the template,
+						// but have their own template parameter maps.
+						fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
 					}
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+				return CPPTemplateParameterMap.EMPTY;
 			}
 		}
 		return fArgMap;
@@ -106,14 +113,12 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	
 	public void storeTemplateParameterMap() {
 		try {
-			// fArgMap here is the temporarily stored, possibly non-PDOM
-			// map stored by the constructor. Construct the PDOM map and
-			// store it.
+			// fArgMap here is the temporarily stored, possibly non-PDOM map stored by the constructor.
+			// Construct the PDOM map and store it.
 			long rec= PDOMCPPTemplateParameterMap.putMap(this, fArgMap);
 			getDB().putRecPtr(record + ARGMAP, rec);
 			
-			// Read the stored map next time getTemplateParameterMap()
-			// is called.
+			// Read the stored map next time getTemplateParameterMap() is called.
 			fArgMap = null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

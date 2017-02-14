@@ -404,14 +404,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				} catch (InterruptedException e) {
 					throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
 				}
-				if (fromScratch) {
-					pdom.setCreatedFromScratch(true);
-				} else {
-					pdom.clear();
-					pdom.setClearedBecauseOfVersionMismatch(true);
+				try {
+					if (fromScratch) {
+						pdom.setCreatedFromScratch(true);
+					} else {
+						pdom.clear();
+						pdom.setClearedBecauseOfVersionMismatch(true);
+					}
+					writeProjectPDOMProperties(pdom, project);
+				} finally {
+					pdom.releaseWriteLock();
 				}
-				writeProjectPDOMProperties(pdom, project);
-				pdom.releaseWriteLock();
 			}
 			pdom.setASTFilePathResolver(new ProjectIndexerInputAdapter(cProject, false));
 			pdom.addListener(this);

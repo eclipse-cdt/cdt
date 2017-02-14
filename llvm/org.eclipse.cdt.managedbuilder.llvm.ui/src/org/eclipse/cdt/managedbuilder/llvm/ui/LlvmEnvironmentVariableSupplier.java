@@ -38,7 +38,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	private static boolean preferencesChanged = true;
 	// LLVM environment variable data structure
 	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables = 
-		new HashMap<String, LlvmBuildEnvironmentVariable>(6);
+		new HashMap<>(6);
 	// Environment variables for HashMap usage
 	private static final String ENV_VAR_NAME_LLVM_BIN 		= "LLVM_BIN_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LLVMINTERP 	= "LLVMINTERP"; //$NON-NLS-1$

@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.llvm.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.ProcessBuilder;
 
 /**
  * The purpose is to find a path where stdc++ library is located.

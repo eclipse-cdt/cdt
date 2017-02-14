@@ -774,7 +774,7 @@ public class LlvmToolOptionPathUtil {
 	 */
 	public static String[] addNewPathToExistingPathList(String[] existingPaths, String newPath) {
 		String pathSep = java.io.File.pathSeparator;  // semicolon for windows, colon for Linux/Mac
-		List<String> newPathList = new ArrayList<String>();
+		List<String> newPathList = new ArrayList<>();
 		String path;
 		//adds existing paths to new paths list
 		for (int i = 0; i < existingPaths.length; i++) {
@@ -800,7 +800,7 @@ public class LlvmToolOptionPathUtil {
 	 * @return String[] List that includes existing paths without the path that was removed.
 	 */
 	public static String[] removePathFromExistingPathList(String[] existingPaths, String removePath) {
-		List<String> newPathList = new ArrayList<String>();
+		List<String> newPathList = new ArrayList<>();
 		String path;
 		//adds existing paths to new paths list
 		for (int i = 0; i < existingPaths.length; i++) {

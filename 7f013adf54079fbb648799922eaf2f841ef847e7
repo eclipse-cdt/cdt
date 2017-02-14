@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_adbdc71f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Let\u0027s add the vowels to make it readable :-)",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cd6cc3ad",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Can you put some explanation that this file is meant to hold tests that override some services.",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2d99b7d1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Let\u0027s rename the class as it may not be limited to RunControl",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_eddb3fe2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "You can reuse the LINE_TAGS defined in MIRunControlTest like MIRegistersTest does",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0de87b73",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Make the below class private",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_add147c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Can you rename this class to a name that indicate that it creates a basicConsole?",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6d39ef8a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Let\u0027s take this class out so we can make both classes private for better encapsulation",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2ded3784",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Let\u0027s rename to something meaningful",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_edf25f5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Why use fContainerDmc further above, but fetch the new container for below?\nWhy not fetch it at the top and use it?",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_2d18d734",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Why wait for a second (which adds one second to the test) instead of waiting for the resume event?\t\nAlso, the above logic does what resumeContainerContextExe() does also, so let\u0027s call resumeContainerContextExe()",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_4d1d1324",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Why not fetch at the top or even in doLaunch?",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_b0e8baf0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Let\u0027s rename to what the test actually verifies",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ed697f9a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Move this as the first line to avoid launching if we\u0027re not testing the right GDB version.",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0dc15bfb",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "I think this can cause a race condition because doLaunch() sent something to the executor which may not be finished,\nso fBackEnd may not be initialized yet.\nWe can fix this by making doLaunch() of this file use a Query.",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_f0e2320c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "Move up",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_6dbc8f24",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T20:22:07Z",
+      "side": 1,
+      "message": "This will fail if we run the tests on Windows or Mac, which may happen.  How about if we\ncheck for Windows or Mac as part of the logic here?",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

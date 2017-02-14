@@ -61,7 +61,11 @@ public class PDOMTagIndexTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		pdom.close();
+		try {
+			pdom.close();
+		} finally {
+			pdom.releaseWriteLock();
+		}
 		pdomFile.delete();
 		super.tearDown();
 	}

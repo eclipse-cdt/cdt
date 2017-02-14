@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -20,13 +20,13 @@ import org.eclipse.swt.widgets.List;
 /**
  * New implementation of LlvmListEditor.
  * Used to select an include path from the dialog.
- * 
+ *
  */
 public class IncludePathListEditor extends LlvmListEditor {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -34,7 +34,7 @@ public class IncludePathListEditor extends LlvmListEditor {
 	IncludePathListEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}
-	
+
 	@Override
 	/**
 	 * Functionality for New button.
@@ -60,7 +60,7 @@ public class IncludePathListEditor extends LlvmListEditor {
 					if (item.equalsIgnoreCase(dir)) {
 						return null;
 					}
-				}					
+				}
 			}
 			//add a new include path to LLVM preference store
 			LlvmPreferenceStore.appendIncludePath(dir);
@@ -92,5 +92,5 @@ public class IncludePathListEditor extends LlvmListEditor {
     		selectionChanged();
         }
 	}
-	
+
 }

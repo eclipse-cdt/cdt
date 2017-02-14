@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Nokia Siemens Networks - initial implementation
  *     Petri Tuononen - Initial implementation
@@ -23,7 +23,7 @@ public class LlvmResourceListener implements IResourceChangeListener {
 
 	/**
 	 * Defines what happens when resources have changed.
-	 * 
+	 *
 	 * @param event IResourceChangeEvent
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class LlvmResourceListener implements IResourceChangeListener {
 			} else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0 /*|| os.indexOf( "mac") >=0 */) { //$NON-NLS-1$ //$NON-NLS-2$
 				LlvmPreferenceStore.addStdLibUnix();
 			}
-			
+
 			/*
 			 * try to add values (include and library paths and libraries) to
 			 * projects's build configurations to ensure that newly added projects

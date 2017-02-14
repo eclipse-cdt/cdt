@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Leo Hippelainen - Initial implementation
@@ -30,7 +30,7 @@ public class LlvmDependencyCalculator2 extends DefaultGCCDependencyCalculator2 {
 			ITool tool, IPath topBuildDirectory) {
 		return new LlvmDependencyCalculator2Commands(source, resource, buildContext, tool, topBuildDirectory);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath,
 	 * org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)

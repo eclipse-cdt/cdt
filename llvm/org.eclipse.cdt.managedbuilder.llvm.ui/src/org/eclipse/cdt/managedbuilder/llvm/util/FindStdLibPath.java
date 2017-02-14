@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
 /**
  * The purpose is to find a path where stdc++ library is located.
  * Currently the shell script is only for Linux.
- * 
+ *
  * TODO: It might not be able to execute scripts therefore place the command into a variable.
  */
 public class FindStdLibPath {
@@ -27,10 +27,10 @@ public class FindStdLibPath {
 	private static final String STD_LIB = "libstdc++.a"; //$NON-NLS-1$
 	private static final String UNIX_SCRIPT = " echo `locate libstdc++.a | sort -r | head -1 | sed \"s/libstdc++.a$//\"` "; //$NON-NLS-1$
 	private static final String MAC_SCRIPT = " echo `locate libstdc++.dylib | sort -r | head -1 | sed \"s/libstdc++.dylib$//\"` "; //$NON-NLS-1$
-	
+
 	/**
 	 * Find stdc++ library path.
-	 * 
+	 *
 	 * @return Stdc++ library path.
 	 */
 	public static String find() {
@@ -60,5 +60,5 @@ public class FindStdLibPath {
 		}
 		return null;
 	}
-	
+
 }

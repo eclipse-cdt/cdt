@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Leo Hippelainen - Initial implementation
@@ -31,31 +31,31 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle.
  * The main plugin class to be used in the desktop.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This class is not intended to be instantiated by clients.
  */
-public class LlvmUIPlugin extends AbstractUIPlugin { 
+public class LlvmUIPlugin extends AbstractUIPlugin {
 
 	//The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.llvm.ui"; //$NON-NLS-1$
 
 	//The shared instance
 	private static LlvmUIPlugin plugin;
-	
+
 	//Resource bundle
 	private ResourceBundle resourceBundle;
-	
+
 	//Name for the properties file
 	private final static String PROPERTIES = "plugin.properties"; //$NON-NLS-1$
 
 	//Property Resource bundle
 	private PropertyResourceBundle properties;
-	
+
 	//Resource listeners
 	private IResourceChangeListener listener = new LlvmResourceListener();
 	private IResourceChangeListener listener2 = new LlvmResourceListener();
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -128,7 +128,7 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log error.
-	 * 
+	 *
 	 * @param e
 	 */
 	public void log(Throwable e) {
@@ -137,16 +137,16 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log status.
-	 * 
+	 *
 	 * @param status
 	 */
 	public void log(IStatus status) {
 		getLog().log(status);
 	}
-	
+
 	/**
 	 * Get plugin.properties
-	 * 
+	 *
 	 * @return PropertyResourceBundle
 	 */
 	public PropertyResourceBundle getProperties(){
@@ -161,11 +161,11 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 			}
 		}
 		return this.properties;
-	}	  
-	
+	}
+
 	/**
 	 * Get String from the plugin.properties file
-	 * 
+	 *
 	 * @param var Variable name wanted as a String e.g. "ToolName.assembler.llvm"
 	 * @return String e.g. LLVM assembler
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Leo Hippelainen - Initial implementation
@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IPath;
 public class LlvmDependencyCalculator2Commands extends
 		DefaultGCCDependencyCalculator2Commands {
 
-		
-		/** 
+
+		/**
 		 * @param source IPath
 		 * @param resource IResource
 		 * @param buildContext IBuildObject
@@ -50,9 +50,9 @@ public class LlvmDependencyCalculator2Commands extends
 	@Override
 	public String[] getDependencyCommandOptions() {
 		String[] options = new String[2];
-		// -MMD 
+		// -MMD
 		options[0] = "-MMD";						//$NON-NLS-1$
-		// -MP 
+		// -MP
 		options[1] = "-MP";							//$NON-NLS-1$
 		// TODO: Check if -MF and/or -MT supported or needed with Clang
 		return options;

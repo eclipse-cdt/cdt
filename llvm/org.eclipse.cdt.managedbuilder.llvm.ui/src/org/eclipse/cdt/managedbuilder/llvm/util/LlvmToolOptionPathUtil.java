@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * for LLVM compiler and linker Tools which are added in Preferences->LLVM to all projects
  * and build configurations that use LLVM ToolChain. Values added in Preferences->LLVM will
  * show in Project->Properties->C/C++ General->Paths and Symbols tabs.
- * 
+ *
  */
 public class LlvmToolOptionPathUtil {
 
@@ -56,9 +56,9 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Adds new include path to LLVM front-end's Include path option for every project
-	 * in the workspace that uses LLVM Toolchain and for for every build configuration. 
-	 * 
-	 * @param includePath Include path for LLVM front-end's Include Option 
+	 * in the workspace that uses LLVM Toolchain and for for every build configuration.
+	 *
+	 * @param includePath Include path for LLVM front-end's Include Option
 	 */
 	public static void addLlvmIncludePath(String includePath) {
 		addPathToToolOption(includePath, INCLUDE);
@@ -66,9 +66,9 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Removes an include path from LLVM front-end's Include path option for every project
-	 * in the workspace that uses LLVM Toolchain and for for every build configuration. 
-	 * 
-	 * @param includePath Include path for LLVM front-end's Include Option 
+	 * in the workspace that uses LLVM Toolchain and for for every build configuration.
+	 *
+	 * @param includePath Include path for LLVM front-end's Include Option
 	 */
 	public static void removeLlvmIncludePath(String includePath) {
 		removePathFromToolOption(includePath, INCLUDE);
@@ -77,7 +77,7 @@ public class LlvmToolOptionPathUtil {
 	/**
 	 * Adds a new Library to LLVM linker's Libraries Option for every project
 	 * in the workspace that use LLVM Toolchain and for for every build configuration.
-	 * 
+	 *
 	 * @param lib Library name for the LLVM linker's Libraries Option
 	 */
 	public static void addLlvmLib(String lib) {
@@ -87,7 +87,7 @@ public class LlvmToolOptionPathUtil {
 	/**
 	 * Removes a Library to LLVM linker's Libraries Option for every project
 	 * in the workspace that use LLVM Toolchain and for for every build configuration.
-	 * 
+	 *
 	 * @param lib Library name for the LLVM linker's Libraries Option
 	 */
 	public static void removeLlvmLib(String lib) {
@@ -98,7 +98,7 @@ public class LlvmToolOptionPathUtil {
 	 * Adds a new Library search path directory to LLVM linker's Library search path Option
 	 * for every project in the workspace that use LLVM Toolchain and for for every
 	 * build configuration.
-	 * 
+	 *
 	 * @param libDir Library search path directory for LLVM linker's Library search path Option
 	 */
 	public static void addLlvmLibraryPath(String libDir) {
@@ -109,16 +109,16 @@ public class LlvmToolOptionPathUtil {
 	 * Removes a Library search path directory from LLVM linker's Library search path Option
 	 * for every project in the workspace that use LLVM Toolchain and for for every
 	 * build configuration.
-	 * 
+	 *
 	 * @param libDir Library search path directory for LLVM linker's Library search path Option
-	 */	
+	 */
 	public static void removeLlvmLibraryPath(String libDir) {
 		removePathFromToolOption(libDir, LIB_PATH);
 	}
 
 	/**
 	 * Adds a path to Tool option.
-	 * 
+	 *
 	 * @param path Path to add to Tool option
 	 * @param var Tool option's value
 	 */
@@ -130,7 +130,7 @@ public class LlvmToolOptionPathUtil {
 			IProject[] projects = getProjectsInWorkspace();
 			IConfiguration[] configs;
 			for (IProject proj : projects) {
-				
+
 				//get all build configurations of the IProject
 				configs = getAllBuildConfigs(proj);
 				//if build configurations found
@@ -146,16 +146,16 @@ public class LlvmToolOptionPathUtil {
 					//if the path was added successfully
 					if (success) {
 						//save project build info
-						ManagedBuildManager.saveBuildInfo(proj, true);					
+						ManagedBuildManager.saveBuildInfo(proj, true);
 					}
 				}
-			}			
+			}
 		}
 	}
 
 	/**
 	 * Adds a path to Tool option. Only for C++ projects.
-	 * 
+	 *
 	 * @param path Path to add to Tool option
 	 * @param var Tool option's value
 	 */
@@ -187,7 +187,7 @@ public class LlvmToolOptionPathUtil {
 							//if the path was added successfully
 							if (success) {
 								//save project build info
-								ManagedBuildManager.saveBuildInfo(proj, true);		
+								ManagedBuildManager.saveBuildInfo(proj, true);
 								ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(proj);
 								try {
 									CoreModel.getDefault().setProjectDescription(proj, projectDescription);
@@ -208,13 +208,13 @@ public class LlvmToolOptionPathUtil {
 						}
 					}
 				}
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * Removes a path from Tool option.
-	 * 
+	 *
 	 * @param path Path to remove from Tool option
 	 * @param var Tool option's value
 	 */
@@ -241,16 +241,16 @@ public class LlvmToolOptionPathUtil {
 					//if the path was removed successfully
 					if (success) {
 						//save project build info
-						ManagedBuildManager.saveBuildInfo(proj, true);					
+						ManagedBuildManager.saveBuildInfo(proj, true);
 					}
 				}
-			}			
+			}
 		}
 	}
 
 	/**
-	 * Add a path to specific build configuration's Tool option. 
-	 * 
+	 * Add a path to specific build configuration's Tool option.
+	 *
 	 * @param cf Build configuration
 	 * @param path Path or file name to add
 	 * @param var Value of the option type
@@ -270,8 +270,8 @@ public class LlvmToolOptionPathUtil {
 	}
 
 	/**
-	 * Removes a path from specific build configuration's Tool option. 
-	 * 
+	 * Removes a path from specific build configuration's Tool option.
+	 *
 	 * @param cf Build configuration
 	 * @param path Path or file name to remove
 	 * @param var Value of the option type
@@ -292,7 +292,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns all projects in the workspace.
-	 * 
+	 *
 	 * @return IProject[]
 	 */
 	public static IProject[] getProjectsInWorkspace() {
@@ -304,7 +304,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns all build configurations of the project.
-	 * 
+	 *
 	 * @param proj IProject Project
 	 * @return IConfiguration[] Build configurations
 	 */
@@ -334,7 +334,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Adds an include path to LLVM front-end's include path option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param newIncludePath Include path to be added to LLVM front-end's Include path option
 	 */
@@ -348,13 +348,13 @@ public class LlvmToolOptionPathUtil {
 			//add a new include path to front-end's Include paths option.
 			boolean val = addIncludePathToToolOption(cf, llvmFrontEnd, llvmFrontEndIncPathOption, newIncludePath);
 			return val;
-		} 
+		}
 		return false;
 	}
 
 	/**
 	 * Removes an include path from LLVM front-end's include path option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param removeIncludePath Include path to be removed from LLVM front-end's Include path option
 	 */
@@ -368,13 +368,13 @@ public class LlvmToolOptionPathUtil {
 			//remove an include path from front-end's Include paths option.
 			removeIncludePathFromToolOption(cf, llvmFrontEnd, llvmFrontEndIncPathOption, removeIncludePath);
 			return true;
-		} 
+		}
 		return false;
 	}
 
 	/**
 	 * Adds a Library to LLVM linker's Libraries Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param lib Library name
 	 * @return boolean Returns true if Library Option was added successfully for the LLVM Linker.
@@ -389,14 +389,14 @@ public class LlvmToolOptionPathUtil {
 			//add library to LLVM linker's Libraries Option type
 			boolean val = addLibraryToToolOption(cf, llvmLinker, librariesOption, lib);
 			return val;
-		} 
+		}
 		//adding the library failed
 		return false;
 	}
 
 	/**
 	 * Removes a Library from LLVM linker's Libraries Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param removeLib Library name
 	 * @return boolean Returns true if Library Option was removed successfully from the LLVM Linker.
@@ -411,14 +411,14 @@ public class LlvmToolOptionPathUtil {
 			//remove a library from LLVM linker's Libraries Option type
 			removeLibraryFromToolOption(cf, llvmLinker, librariesOption, removeLib);
 			return true;
-		} 
+		}
 		//removing the library failed
 		return false;
 	}
 
 	/**
 	 * Adds a Library search path to LLVM linker's Library search path Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param libDir Library search path
 	 * @return boolean Returns true if Library search path Option was added successfully for the LLVM Linker.
@@ -433,14 +433,14 @@ public class LlvmToolOptionPathUtil {
 			//add library search path to LLVM linker's Library Search Path Option type
 			boolean val = addLibrarySearchPathToToolOption(cf, llvmLinker, libDirOption, libDir);
 			return val;
-		} 
+		}
 		//adding library failed
 		return false;
 	}
 
 	/**
 	 * Removes a Library search path from LLVM linker's Library search path Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param removeLibDir Library search path
 	 * @return boolean Returns true if Library search path Option was removed successfully from the LLVM Linker.
@@ -455,14 +455,14 @@ public class LlvmToolOptionPathUtil {
 			//remove a library search path from LLVM linker's Library Search Path Option type
 			removeLibrarySearchPathFromToolOption(cf, llvmLinker, libDirOption, removeLibDir);
 			return true;
-		} 
+		}
 		//removing the library search path failed
 		return false;
 	}
 
 	/**
 	 * Adds include path for given Build configuration's Tool's Include path Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -488,7 +488,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Removes an include path from given Build configuration's Tool's Include path Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -506,7 +506,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Adds new Library for the Linker's Libraries Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -534,7 +534,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Removes a new Library from the Linker's Libraries Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -553,7 +553,7 @@ public class LlvmToolOptionPathUtil {
 	//Works only if Eclipse Bugzilla Bug 321040 fix is applied
 	/**
 	 * Adds new Library search path for the Linker's Library search path Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -582,7 +582,7 @@ public class LlvmToolOptionPathUtil {
 	/**
 	 * Removes a Library search path from the Linker's Library search path Option.
 	 * Since CDT 8.0 (Bugzilla Bug 321040)
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -600,7 +600,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Adds a new value to specific Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -622,7 +622,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Removes a value from a specific Option.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param cfTool ITool Tool
 	 * @param option Tool Option type
@@ -663,7 +663,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns LLVM linker.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @return ITool LLVM linker
 	 */
@@ -674,7 +674,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns ITool associated with the input extension.
-	 * 
+	 *
 	 * @param cf IConfiguration Build configuration
 	 * @param ext input extension associated with ITool
 	 * @return ITool Tool that matches input extension
@@ -686,7 +686,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns LLVM front-end Include path Option type.
-	 * 
+	 *
 	 * @param cf IConfiguration Project build configuration
 	 * @return IOption Tool option type
 	 */
@@ -700,7 +700,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns LLVM Linker Libraries Option type.
-	 * 
+	 *
 	 * @param cf IConfiguration Project build configuration
 	 * @return IOption Tool option type
 	 */
@@ -714,7 +714,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns LLVM Linker Library search path Option type.
-	 * 
+	 *
 	 * @param cf IConfiguration Project build configuration
 	 * @return IOption Tool option type
 	 */
@@ -728,7 +728,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Returns Tool's option id.
-	 * 
+	 *
 	 * @param cfTool ITool Tool
 	 * @param optionValueType Option's value type.
 	 * @return optionId Tool's option id.
@@ -748,13 +748,13 @@ public class LlvmToolOptionPathUtil {
 			} catch (BuildException e) {
 				//log error
 			}
-		}	
+		}
 		return optionId;
 	}
 
 	/**
 	 * Returns Tool's Option type by Id.
-	 * 
+	 *
 	 * @param cfTool ITool Tool
 	 * @param optionId String Tool option type id
 	 * @return IOption Tool option type
@@ -766,9 +766,9 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Adds one or more paths to the list of paths.
-	 * 
+	 *
 	 * @param existingPaths Existing list of paths to add to
-	 * @param newPath New path to add. May include multiple directories with a path delimiter java.io.File.pathSeparator 
+	 * @param newPath New path to add. May include multiple directories with a path delimiter java.io.File.pathSeparator
 	 * (usually semicolon (Win) or colon (Linux/Mac), OS specific)
 	 * @return String[] List that includes existing paths as well as new paths.
 	 */
@@ -794,7 +794,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Removes one path from the list of paths.
-	 * 
+	 *
 	 * @param existingPaths Existing list of paths to remove from
 	 * @param removePath Path to be removed.
 	 * @return String[] List that includes existing paths without the path that was removed.
@@ -815,7 +815,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Split paths to a String array.
-	 * 
+	 *
 	 * @param str String of paths separated by a path separator.
 	 * @return String array containing multiple paths.
 	 */
@@ -825,26 +825,26 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Append an array of Strings to a String separated by a path separator.
-	 * 
+	 *
 	 * @param array An array of Strings.
 	 * @return string which contains all indexes of
 	 * a String array separated by a path separator.
 	 */
 	public static String arrayToString(String[] array) {
 		StringBuilder sB = new StringBuilder();
-		//if array isn't empty and doesn't contain an empty String 
+		//if array isn't empty and doesn't contain an empty String
 		if (array.length>0 /*&& !array[0].isEmpty()*/) {
 			for (String i : array) {
 				sB.append(i);
 				sB.append(System.getProperty("path.separator")); //$NON-NLS-1$
-			}			
+			}
 		}
 		return sB.toString();
 	}
 
 	/**
 	 * Checks if a file path exists.
-	 * 
+	 *
 	 * @return boolean True if the file exists.
 	 */
 	private static boolean pathExists(String path) {
@@ -854,7 +854,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Get all include paths in a String array.
-	 * 
+	 *
 	 * @return String[] A String array of include paths
 	 */
 	private static String[] getAllIncludePaths() {
@@ -867,7 +867,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Get all libraries in a String array.
-	 * 
+	 *
 	 * @return String[] A String array of libraries
 	 */
 	private static String[] getAllLibraries() {
@@ -880,7 +880,7 @@ public class LlvmToolOptionPathUtil {
 
 	/**
 	 * Get all library paths in a String array.
-	 * 
+	 *
 	 * @return String[] A String array of library paths
 	 */
 	private static String[] getAllLibraryPaths() {
@@ -890,7 +890,7 @@ public class LlvmToolOptionPathUtil {
 		String[] libPaths = libPathList.split(Separators.getPathSeparator());
 		return libPaths;
 	}
-	
+
 	/**
 	 * Add all include paths found in LLVM preference page to
 	 * every project's build configurations.
@@ -898,10 +898,10 @@ public class LlvmToolOptionPathUtil {
 	public static void addAllIncludesToBuildConf() {
 		String[] includes = getAllIncludePaths();
 		for(String inc : includes) {
-			addLlvmIncludePath(inc);			
+			addLlvmIncludePath(inc);
 		}
 	}
-	
+
 	/**
 	 * Add all libraries found in LLVM preference page to
 	 * every project's build configurations.
@@ -914,16 +914,16 @@ public class LlvmToolOptionPathUtil {
 //			}
 		}
 	}
-	
+
 	/**
 	 * Add all library paths found in LLVM preference page to
-	 * every project's build configurations. 
+	 * every project's build configurations.
 	 */
 	public static void addAllLibPathsToBuildConf() {
 		String[] libPaths = getAllLibraryPaths();
 		for(String libPath : libPaths) {
 //			if (!libPath.equalsIgnoreCase(LlvmEnvironmentVariableSupplier.getMinGWStdLib())) { //C++ specific
-				addLlvmLibraryPath(libPath);	
+				addLlvmLibraryPath(libPath);
 //			}
 		}
 	}
@@ -931,7 +931,7 @@ public class LlvmToolOptionPathUtil {
 	//temporary hack until scanner discovery works
 	public static void addMissingCppIncludesForMingw() {
 		//try to find mingw path from MingwEnvironmentVariableSupplier
-		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
+		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables =
 			new MingwEnvironmentVariableSupplier();
 		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable(
 				"PATH", null, null); //$NON-NLS-1$
@@ -976,5 +976,5 @@ public class LlvmToolOptionPathUtil {
     		LlvmEnvironmentVariableSupplier.notifyPreferenceChange();
 		}
 	}
-	
+
 }

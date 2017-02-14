@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Leo Hippelainen - Initial implementation
@@ -30,14 +30,14 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Contains LLVM environment variables.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
 	// toggle for preference changes
 	private static boolean preferencesChanged = true;
 	// LLVM environment variable data structure
-	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables = 
+	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables =
 		new HashMap<>(6);
 	// Environment variables for HashMap usage
 	private static final String ENV_VAR_NAME_LLVM_BIN 		= "LLVM_BIN_PATH"; //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	private static final String ENV_VAR_NAME_INCLUDE_PATH 	= "INCLUDE_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LIBRARY_PATH 	= "LLVM_LIB_SEARCH_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LIBRARIES 		= "LIBRARIES"; //$NON-NLS-1$
-	
+
 	/**
 	 * Initializes llvm environment variable paths from the system environment variables.
 	 */
@@ -68,7 +68,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 					// if path is empty
 					if (envPath == null) {
 						// try to find mingw path from MingwEnvironmentVariableSupplier
-						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = 
+						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables =
 							new MingwEnvironmentVariableSupplier();
 						mingwPath = mingwEnvironmentVariables.getVariable(
 								ENV_VAR_NAME_PATH, null, null);
@@ -103,10 +103,10 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			preferencesChanged = false;
 		}
 	}
-	
+
 	/**
 	 * Returns LLVM bin path
-	 * 
+	 *
 	 * @return LLVM bin path
 	 */
 	public static String getBinPath() {
@@ -115,7 +115,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 
 	/**
 	 * Returns LLVM include paths
-	 * 
+	 *
 	 * @return LLVM include paths
 	 */
 	public static String getIncludePath() {
@@ -124,7 +124,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 
 	/**
 	 * Returns LLVM library paths
-	 * 
+	 *
 	 * @return LLVM library paths
 	 */
 	public static String getLibraryPath() {
@@ -133,61 +133,61 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 
 	/**
 	 * Returns LLVM libraries
-	 * 
+	 *
 	 * @return LLVM libraries
 	 */
 	public static String getLibraries() {
 		return getLlvmEnvironmentVariable(ENV_VAR_NAME_LIBRARIES).getValue();
 	}
-	
+
 	/**
 	 * Sets path to LLVM bin.
-	 * 
+	 *
 	 * @param path Path to LLVM bin location.
 	 */
 	public static void setBinPath(String path) {
 		setLlvmEnvironmentVariableReplace(ENV_VAR_NAME_LLVM_BIN, path);
 	}
-	
+
 	/**
 	 * Appends a new include path.
-	 * 
+	 *
 	 * @param path Include path
 	 */
 	public static void addIncludePath(String path) {
 		String existingIncPaths = getIncludePath();
 		//add the include path only if it doesn't already exists
 		if (!existingIncPaths.contains(path)) {
-			appendLlvmEnvironmentVariable(ENV_VAR_NAME_INCLUDE_PATH, existingIncPaths, path);			
+			appendLlvmEnvironmentVariable(ENV_VAR_NAME_INCLUDE_PATH, existingIncPaths, path);
 		}
 	}
-	
+
 	/**
 	 * Appends a new library path.
-	 * 
+	 *
 	 * @param path Library path
 	 */
 	public static void addLibraryPath(String path) {
 		String existingLibPaths = getLibraryPath();
 		//add the library path only if it doesn't already exists
 		if (!existingLibPaths.contains(path)) {
-			appendLlvmEnvironmentVariable(ENV_VAR_NAME_LIBRARY_PATH, existingLibPaths, path);			
+			appendLlvmEnvironmentVariable(ENV_VAR_NAME_LIBRARY_PATH, existingLibPaths, path);
 		}
 	}
-	
+
 	/**
 	 * Appends a new library.
-	 * 
+	 *
 	 * @param lib Library file
 	 */
 	public static void addLibrary(String lib) {
 		String existingLibs = getLibraries();
 		//add the library only if it doesn't already exists
 		if (!existingLibs.contains(lib)) {
-			appendLlvmEnvironmentVariable(ENV_VAR_NAME_LIBRARIES, existingLibs, lib);			
+			appendLlvmEnvironmentVariable(ENV_VAR_NAME_LIBRARIES, existingLibs, lib);
 		}
 	}
-	
+
 	/**
 	 * This is to be called if some of the preference paths have changed.
 	 */
@@ -197,7 +197,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 
 	/**
 	 * Returns a specific path for given parameters.
-	 * 
+	 *
 	 * @param pathKey Path for specific location
 	 * @param subDirName Additional sub-path
 	 * @return bin path
@@ -205,7 +205,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	private static String findBinDir(String pathKey, String subDirName) {
 		String resultPath = null;
 		// If preferences haven't been changed, try to find the bin path from the LLVM environment
-		// variable map. 
+		// variable map.
 		if (!preferencesChanged) { //TODO: Change
 			//get current path
 			LlvmBuildEnvironmentVariable earlierValue = llvmEnvironmentVariables.get(pathKey);
@@ -248,14 +248,14 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 				}
 			}
 			// return found path
-			return resultPath;			
+			return resultPath;
 		}
 		return null;
 	}
 
 	/**
 	 * Returns LLVM executable path.
-	 * 
+	 *
 	 * @param candidatePath Suggestion for LLVM executable path
 	 * @param subPath Additional sub-path for LLVM executable path
 	 * @return Full path for LLVM executable if valid, otherwise null
@@ -278,7 +278,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	/**
 	 * Returns the full path for llvm executable if the bin path given
 	 * as a parameter is found and executable exists in that path.
-	 * 
+	 *
 	 * @param binPathTemp User provided bin directory path
 	 * @return bin path where llvm-ar is located if executable exists
 	 */
@@ -298,10 +298,10 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 				// Return path where llvm-ar exists.
 				return binPathTemp;
 			}
-		}			
+		}
 		return null;
 	}
-	
+
 	/**
 	 * @return location of $MINGW_HOME/bin folder on the file-system.
 	 * @deprecated. Deprecated as of CDT 8.2. Note that MinGW root path in general may depend on configuration.
@@ -321,7 +321,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 
 	/**
 	 * Returns stdc++ library path located in MinGW installation.
-	 * 
+	 *
 	 * @return stdc++ library path for MinGW
 	 */
 	public static String getMinGWStdLib() {
@@ -346,23 +346,23 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Returns LLVM environment variable.
-	 * 
+	 *
 	 * @param envName Name of the environment variable
 	 */
 	public static LlvmBuildEnvironmentVariable getLlvmEnvironmentVariable(String envName) {
 		return llvmEnvironmentVariables.get(envName);
 	}
-	
+
 	/**
 	 * Sets LLVM environment variable.
-	 * 
+	 *
 	 * @param name Name for the environment variable
 	 * @param path Path for the environment variable
 	 */
@@ -372,10 +372,10 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(
 				name, path, IBuildEnvironmentVariable.ENVVAR_APPEND));
 	}
-	
+
 	/**
 	 * Sets LLVM environment variable by replacing the existing paths.
-	 * 
+	 *
 	 * @param name Name for the environment variable
 	 * @param path Path for the environment variable
 	 */
@@ -384,10 +384,10 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(
 				name, path, IBuildEnvironmentVariable.ENVVAR_REPLACE));
 	}
-	
+
 	/**
 	 * Appends a new LLVM environment variable to existing list.
-	 * 
+	 *
 	 * @param name Name of the preference
 	 * @param oldPath Old paths/preference values
 	 * @param path New path to be added to the environment variable
@@ -412,7 +412,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			}
 		}
 		if (!ok) {
-			newPath=path;			
+			newPath=path;
 		}
 		// Set new path to the HashMap that contains the specific LLVM environment variable
 		// if newPath exists.
@@ -421,14 +421,14 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			if (!newPath.trim().isEmpty()) {
 				// add new values to the LLVM environment variable
 				llvmEnvironmentVariables.put(name, new LlvmBuildEnvironmentVariable(name, newPath,
-						IBuildEnvironmentVariable.ENVVAR_APPEND));				
+						IBuildEnvironmentVariable.ENVVAR_APPEND));
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns a system environment variable path
-	 * 
+	 *
 	 * @param envName Environment variable name
 	 * @return system environment variable path
 	 */
@@ -439,7 +439,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {

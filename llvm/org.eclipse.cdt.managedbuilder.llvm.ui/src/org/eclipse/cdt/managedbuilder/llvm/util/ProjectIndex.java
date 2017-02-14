@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -25,5 +25,5 @@ public class ProjectIndex {
 		ICProject cproject = CoreModel.getDefault().getCModel().getCProject(proj.getName());
 		CCorePlugin.getIndexManager().reindex(cproject);
 	}
-	
+
 }

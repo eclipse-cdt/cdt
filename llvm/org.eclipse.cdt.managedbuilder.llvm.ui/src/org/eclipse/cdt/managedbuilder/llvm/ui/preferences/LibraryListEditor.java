@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -22,13 +22,13 @@ import org.eclipse.swt.widgets.Text;
 /**
  * New implementation of LlvmListEditor.
  * Used to select a library file from the dialog.
- * 
+ *
  */
 public class LibraryListEditor extends LlvmListEditor {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name
 	 * @param labelText
 	 * @param parent
@@ -36,7 +36,7 @@ public class LibraryListEditor extends LlvmListEditor {
 	LibraryListEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}
-	
+
 	@Override
 	/**
 	 * Functionality for New button.
@@ -46,7 +46,7 @@ public class LibraryListEditor extends LlvmListEditor {
 		FileDialog dlg = new FileDialog(getShell());
 		final Text text = new Text(getShell(), SWT.BORDER);
 		dlg.setFilterPath(text.getText());
-		dlg.setText(Messages.LibraryListEditor_0); 
+		dlg.setText(Messages.LibraryListEditor_0);
 		dlg.open();
 		String file = dlg.getFileName();
 		if(file == null) {
@@ -93,5 +93,5 @@ public class LibraryListEditor extends LlvmListEditor {
             selectionChanged();
         }
 	}
-	
+
 }

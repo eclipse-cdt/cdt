@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *      Nokia Siemens Networks - initial implementation
  *      Petri Tuononen - Initial implementation
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Implements project nature for LLVM projects.
- * 
+ *
  */
 public class LlvmProjectNature implements IProjectNature {
 
@@ -43,7 +43,7 @@ public class LlvmProjectNature implements IProjectNature {
 
 	/**
 	 * Return the project.
-	 * 
+	 *
 	 * @return IProject
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class LlvmProjectNature implements IProjectNature {
 
 	/**
 	 * Set the project.
-	 * 
+	 *
 	 * @param proj IProject
 	 */
 	@Override

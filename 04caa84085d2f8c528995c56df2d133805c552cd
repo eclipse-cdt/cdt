@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_2a899d03",
+        "filename": "dsf.debug.options",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-02-14T16:32:33Z",
+      "side": 1,
+      "message": "How about putting this file in the test plugin directory instead of the root?",
+      "revId": "04caa84085d2f8c528995c56df2d133805c552cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

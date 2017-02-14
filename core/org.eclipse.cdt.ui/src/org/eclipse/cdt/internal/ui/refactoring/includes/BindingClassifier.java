@@ -1148,19 +1148,22 @@ public class BindingClassifier {
 		while ((binding = queue.poll()) != null) {
 			if (binding instanceof ICPPSpecialization) {
 				ICPPTemplateParameterMap parameterMap = ((ICPPSpecialization) binding).getTemplateParameterMap();
-				for (Integer position : parameterMap.getAllParameterPositions()) {
-					ICPPTemplateArgument argument = parameterMap.getArgument(position);
-					if (argument != null) {
-						IType type = argument.getTypeValue();
-						// Normally we don't need to define parameters of a template specialization
-						// that were not specified explicitly. std::hash and __gnu_cxx::hash are
-						// exceptions from that rule.
-						if (type instanceof IBinding && CharArrayUtils.equals(((IBinding) type).getNameCharArray(), "hash")) { //$NON-NLS-1$
-							IBinding owner = ((IBinding) type).getOwner();
-							if (owner instanceof ICPPNamespace &&
-									(CharArrayUtils.equals(owner.getNameCharArray(), STD) ||
-									CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) //$NON-NLS-1$
-								addRequiredBindings((IBinding) type, queue);
+				if (parameterMap != null) {
+					for (Integer position : parameterMap.getAllParameterPositions()) {
+						ICPPTemplateArgument argument = parameterMap.getArgument(position);
+						if (argument != null) {
+							IType type = argument.getTypeValue();
+							// Normally we don't need to define parameters of a template specialization
+							// that were not specified explicitly. std::hash and __gnu_cxx::hash are
+							// exceptions from that rule.
+							if (type instanceof IBinding
+									&& CharArrayUtils.equals(((IBinding) type).getNameCharArray(), "hash")) { //$NON-NLS-1$
+								IBinding owner = ((IBinding) type).getOwner();
+								if (owner instanceof ICPPNamespace &&
+										(CharArrayUtils.equals(owner.getNameCharArray(), STD) ||
+										CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) //$NON-NLS-1$
+									addRequiredBindings((IBinding) type, queue);
+							}
 						}
 					}
 				}

@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPClassTemplateSpecialization
 		implements IPDOMPartialSpecialization, ICPPClassTemplatePartialSpecializationSpecialization {
 	private static final int PRIMARY_TEMPLATE = PDOMCPPClassTemplateSpecialization.RECORD_SIZE;
-	private static final int ARGUMENTS = PDOMCPPClassTemplateSpecialization.RECORD_SIZE+4;
-	private static final int NEXT_PARTIAL = PDOMCPPClassTemplateSpecialization.RECORD_SIZE+8;
+	private static final int ARGUMENTS = PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 4;
+	private static final int NEXT_PARTIAL = PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 8;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE= PDOMCPPClassTemplateSpecialization.RECORD_SIZE+12;
+	protected static final int RECORD_SIZE= PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 12;
 
 	private volatile ICPPClassTemplate fPrimaryTemplate;
 

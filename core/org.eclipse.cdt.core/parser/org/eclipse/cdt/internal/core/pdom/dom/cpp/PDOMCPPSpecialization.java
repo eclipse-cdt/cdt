@@ -38,10 +38,10 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
-	
+
 	private volatile IBinding fSpecializedCache;
 	private volatile ICPPTemplateParameterMap fArgMap;
-	
+
 	public PDOMCPPSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPSpecialization spec,
 			IPDOMBinding specialized) throws CoreException {
 		super(linkage, parent, spec.getNameCharArray());
@@ -84,7 +84,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	protected IPDOMBinding loadSpecializedBinding(long specializedRec) throws CoreException {
 		return (IPDOMBinding) PDOMNode.load(getPDOM(), specializedRec);
 	}
-		
+
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		if (fArgMap == null) {
@@ -110,21 +110,21 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		}
 		return fArgMap;
 	}
-	
+
 	public void storeTemplateParameterMap() {
 		try {
 			// fArgMap here is the temporarily stored, possibly non-PDOM map stored by the constructor.
 			// Construct the PDOM map and store it.
 			long rec= PDOMCPPTemplateParameterMap.putMap(this, fArgMap);
 			getDB().putRecPtr(record + ARGMAP, rec);
-			
+
 			// Read the stored map next time getTemplateParameterMap() is called.
 			fArgMap = null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);

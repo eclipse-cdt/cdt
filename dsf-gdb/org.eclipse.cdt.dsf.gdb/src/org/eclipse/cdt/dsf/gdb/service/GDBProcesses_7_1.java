@@ -21,8 +21,6 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
@@ -34,6 +32,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
@@ -229,12 +228,9 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 	
 	@DsfServiceEventHandler
 	public void eventDispatched_7_1(IResumedDMEvent e) {
-		if (e instanceof IContainerResumedDMEvent) {
-			// This will happen in all-stop mode
+		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+		if (runControl != null && !runControl.isTargetAcceptingCommands()) { 
 			fCommandForCoresCache.setContextAvailable(e.getDMContext(), false);
-		} else {
-			// This will happen in non-stop mode
-			// Keep target available for Container commands
 		}
 	}
 
@@ -242,13 +238,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 	// during the time it was running.
     @DsfServiceEventHandler
     public void eventDispatched_7_1(ISuspendedDMEvent e) {
-       	if (e instanceof IContainerSuspendedDMEvent) {
-    		// This will happen in all-stop mode
-       		fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
-       	} else {
-       		// This will happen in non-stop mode
-       	}
-       	
+   		fCommandForCoresCache.setContextAvailable(fCommandControl.getContext(), true);
        	fCommandForCoresCache.reset();
     }
     

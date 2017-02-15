@@ -41,8 +41,6 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
@@ -93,6 +91,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	// Back-end commands cache
 	private CommandCache fCommandCache;
 	private CommandFactory fCommandFactory;
+	private IMIRunControl fRunControl;
 
 	// Map of memory caches
     private Map<IMemoryDMContext, MIMemoryCache> fMemoryCaches;
@@ -142,6 +141,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	fDataReadMemoryBytes = commandControl.getFeatures().contains(READ_MEMORY_BYTES_FEATURE);
     	
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+        fRunControl = getServicesTracker().getService(IMIRunControl.class);
 
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
@@ -434,7 +434,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     //////////////////////////////////////////////////////////////////////////
     @DsfServiceEventHandler
 	public void eventDispatched(IResumedDMEvent e) {
-    	if (e instanceof IContainerResumedDMEvent) {
+    	if (!fRunControl.isTargetAcceptingCommands()) {
     		fCommandCache.setContextAvailable(e.getDMContext(), false);
     	}
     	
@@ -453,9 +453,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
    
     @DsfServiceEventHandler
 	public void eventDispatched(ISuspendedDMEvent e) {
-    	if (e instanceof IContainerSuspendedDMEvent) {
-    		fCommandCache.setContextAvailable(e.getDMContext(), true);
-    	}
+   		fCommandCache.setContextAvailable(e.getDMContext(), true);
     	
     	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
     	// It is the memory context we want to clear, not only the context that stopped.  The stopped context

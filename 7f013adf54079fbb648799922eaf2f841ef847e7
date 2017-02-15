@@ -104,6 +104,23 @@
     },
     {
       "key": {
+        "uuid": "a7c23755_598dd13c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-15T16:48:04Z",
+      "side": 1,
+      "message": "hmm !! That\u0027s fine for now, I was thinking on having multiple Test classes that \ncan use special versions of services so we maintain coherence and avoid being over crowded \nat some point.  But we can for sure start this way and see if there is a need to split it\nat a later point.",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_eddb3fe2",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlSimServicesTest.java",
         "patchSetId": 14
@@ -523,6 +540,24 @@
       "writtenOn": "2017-02-14T20:22:07Z",
       "side": 1,
       "message": "This will fail if we run the tests on Windows or Mac, which may happen.  How about if we\ncheck for Windows or Mac as part of the logic here?",
+      "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_0455b025",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2017-02-15T16:48:04Z",
+      "side": 1,
+      "message": "This has now been addressed in patch set 17",
+      "parentUuid": "a7c23755_6dbc8f24",
       "revId": "7f013adf54079fbb648799922eaf2f841ef847e7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

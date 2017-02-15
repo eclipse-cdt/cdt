@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_1918b934",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2017-02-15T15:45:59Z",
+      "side": 1,
+      "message": "\"Since Eclipse 3.6, implementations shall also make a best effort to consult UNIX umask in order to set the same attributes for other access groups. This setting of attributes for others may change the file system state even if an attribute appears to be set for the current user already.\"\n\nIt seems that the order we set the flags for owner/group/other might change the end result, depending on umask. If I interpret the documentation correctly, I think you did it in the correct order to ensure to end-up with all-open execute perms. But I am curious if you have experimented with this?",
+      "revId": "e14cc2d3206a75b45b26d2b6a46c60248950f8fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

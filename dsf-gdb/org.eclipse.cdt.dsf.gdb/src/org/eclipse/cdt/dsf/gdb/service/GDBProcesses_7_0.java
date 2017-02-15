@@ -56,7 +56,6 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -1851,15 +1850,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
-    	if (e instanceof IContainerResumedDMEvent) {
-    		// This will happen in all-stop mode
+		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+		if (runControl != null && !runControl.isTargetAcceptingCommands()) { 
     		fContainerCommandCache.setContextAvailable(e.getDMContext(), false);
     		fThreadCommandCache.setContextAvailable(e.getDMContext(), false);
     		fListThreadGroupsAvailableCache.setContextAvailable(e.getDMContext(), false);
-    	} else {
-       		// This will happen in non-stop mode
-    		// Keep target available for Container commands
-       	}
+    	}
     }
 
 	/** @since 5.2 */
@@ -1884,14 +1880,21 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
-       	if (e instanceof IContainerSuspendedDMEvent) {
-    		// This will happen in all-stop mode
-       		fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
-       		fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+    	if (!fThreadCommandCache.isTargetAvailable(fCommandControl.getContext())) {
+    		fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+    		fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
     		fListThreadGroupsAvailableCache.setContextAvailable(fCommandControl.getContext(), true);
-       	} else {
-       		// This will happen in non-stop mode
-       	}
+    	} else if (fBackend.getSessionType() == SessionType.REMOTE &&
+    			   e instanceof IContainerSuspendedDMEvent) {
+    		// This will happen in all-stop mode
+    		// If the target was kept available in all-stop, it is possible we have gotten some 
+    		// errors stored in the cache.  This happens when doing remote debugging, where, 
+    		// although GDB is accepting commands while running (when in target-async), 
+    		// it will return an error to a -list-thread-groups <group> command.  
+    		// Now that the target is suspended we need to clear the error, 
+    		// so we need to clear the caches.
+    		flushCache(null);
+    	}
 
        	// If user is debugging a gdb target that doesn't send thread
 		// creation events, make sure we don't use cached thread

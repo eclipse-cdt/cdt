@@ -499,6 +499,25 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			return;
 		}
 
+    	// The running event may have been triggered from a command given in the GDB Console.  In that case,
+    	// the runControl service is not aware that a resume has been requested by the user; therefore
+    	// it does not properly know if the target is accepting commands or not.
+    	// To address this we set the fResumePending flag here instead.
+    	// We are addressing the following scenario:
+    	// 1- We are running in all-stop with mi-sync (i.e. target-async) off
+    	// 2- the user types 'continue' in the gdb console
+    	// 3- the runControl service gets the MIRunningEvent and sends out (below) the ResumedEvent
+    	// 4- the IProcesses services gets the ResumedEvent and checks if we are still accepting commands.
+    	//       It does this by calling IMIRunControl.isTargetAcceptingCommands(); however, the runControl
+    	//       service has not yet received the ResumedEvent and is not ready to properly answer that call.
+    	//       The reason that the IProcesses service receives the IResumed event before the IRunControl
+    	//       service is that IProcesses is initialized before IRunControl in the ServicesLaunchSequence.
+    	// By setting fResumePending here, we make the IMIRunControl service ready to properly answer the 
+    	// request to isTargetAcceptingCommands().
+    	// This is not a problem if the user pressed the resume button in eclipse as that calls
+    	// IRunControl.resume(), which sets the fResumePending, as we need to do here.
+    	fResumePending = true;
+    	
         IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
         IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);

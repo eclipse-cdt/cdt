@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_59ea3123",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseParametrizedTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-02-15T16:09:26Z",
+      "side": 1,
+      "message": "I thought LaunchUtils.getGDBVersionFromText (called indirectly here) would return only a two part version (i.e. 7.12), perhaps the javadoc has to be clearer.\n\"@return String representation of version of gdb such as \"6.8\" on success;\"",
+      "revId": "c0e72388c75bb3963e42eada25b244911e28a86e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

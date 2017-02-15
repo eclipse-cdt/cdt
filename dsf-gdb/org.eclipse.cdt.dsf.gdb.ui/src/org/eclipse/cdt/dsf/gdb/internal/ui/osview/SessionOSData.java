@@ -21,8 +21,6 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -49,6 +47,8 @@ public class SessionOSData {
 	private DsfSession fSession;
 	private DsfServicesTracker fTracker;
 	private IGDBHardwareAndOS2 fHardwareOs;
+	private IMIRunControl fRunControl;
+
 	private ICommandControlDMContext fContext;
 
 	private IResourceClass[] fResourceClasses = new IResourceClass[0];
@@ -78,8 +78,8 @@ public class SessionOSData {
 			@Override
 			public void run() {
 				
-				IMIRunControl runControl = fTracker.getService(IMIRunControl.class);
-				fAcceptingCommands = runControl.isTargetAcceptingCommands();
+				fRunControl = fTracker.getService(IMIRunControl.class);
+				fAcceptingCommands = fRunControl.isTargetAcceptingCommands();
 
 				fSession.addServiceEventListener(SessionOSData.this, null);
 
@@ -273,13 +273,7 @@ public class SessionOSData {
 
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
-    	if (e instanceof IContainerResumedDMEvent) {
-    		// This event is raised only in all-stop. It does not
-    		// seem to be possible to issue -info-os in all-stop,
-    		// regardless of whether target-async is in effect, and
-    		// according to DSF folks, all-stop+target-async will
-    		// not work anyway. So, we assume that no commands
-    		// can be issued right now.
+    	if (!fRunControl.isTargetAcceptingCommands()) {
     		fAcceptingCommands = false;
     		notifyUI();
     	}
@@ -287,10 +281,10 @@ public class SessionOSData {
 
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
-    	if (e instanceof IContainerSuspendedDMEvent) {
-    		fAcceptingCommands = true;
-    		notifyUI();
-    	}
+   		if (!fAcceptingCommands) {
+   			fAcceptingCommands = true;
+   			notifyUI();
+   		}
     }
 
 	/**

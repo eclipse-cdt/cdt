@@ -98,10 +98,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			for (int i= length; --i >= 0;) {
 				// There may be fewer or less original parameters, because of parameter packs.
 				if (i < origAstParams.length - 1) {
-					// Normal case
+					// Normal case.
 					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
 				} else if (origPar == null) {
-					// Use last parameter
+					// Use last parameter.
 					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length - 1], null);
 				}
 				next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
@@ -260,7 +260,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
-				fRequiredArgCount= getDB().getShort(record + REQUIRED_ARG_COUNT );
+				fRequiredArgCount= getDB().getShort(record + REQUIRED_ARG_COUNT);
 			} catch (CoreException e) {
 				fRequiredArgCount= 0;
 			}

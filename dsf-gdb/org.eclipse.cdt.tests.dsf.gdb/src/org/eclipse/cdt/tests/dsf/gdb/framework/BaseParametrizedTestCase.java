@@ -177,11 +177,13 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 			
 			String comparableActualString = actual;
 			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number 
-					&& actualParts.length == 3) {  // and the actual version has a maintenance number
+					&& actualParts.length > 2) {  // and the actual version has a maintenance number (and possibly more)
 				// We should ignore the maintenance number.
 				// For example, if we expect 7.12, then the actual
-				// version we should accept can be 7.12 or 7.12.1 or 7.12.2, etc.
-				comparableActualString = actual.substring(0, actual.lastIndexOf('.'));
+				// version we should accept can be 7.12 or 7.12.1 or 7.12.2, 7.12.50.20170214, etc.
+				int firstDot = actual.indexOf('.');
+				int secondDot = actual.indexOf('.', firstDot + 1);
+				comparableActualString = actual.substring(0, secondDot);
 			}
 			
 			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual, 

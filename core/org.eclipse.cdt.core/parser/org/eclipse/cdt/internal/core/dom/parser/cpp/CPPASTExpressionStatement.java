@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecExpressionStatement;
 
 /**
@@ -93,8 +94,8 @@ public class CPPASTExpressionStatement extends CPPASTAttributeOwner implements I
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) getExpression();
-		ICPPEvaluation exprEval = evalOwner.getEvaluation();
+		ICPPASTExpression expr = (ICPPASTExpression) getExpression();
+		ICPPEvaluation exprEval = expr.getEvaluation();
 		return new ExecExpressionStatement(exprEval);
 	}
 }

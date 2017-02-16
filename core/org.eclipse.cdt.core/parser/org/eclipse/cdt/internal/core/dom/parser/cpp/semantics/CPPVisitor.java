@@ -110,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -221,7 +222,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
@@ -1993,7 +1993,7 @@ public class CPPVisitor extends ASTQueries {
 	        			IASTInitializerClause[] clauses = ((IASTInitializerList) clause).getClauses();
 	        			sizeValue = IntegralValue.create(clauses.length);
 	        		} else if (clause instanceof ICPPASTLiteralExpression) {
-	        			ICPPEvaluation value = ((ICPPEvaluationOwner) clause).getEvaluation();
+	        			ICPPEvaluation value = ((ICPPASTExpression) clause).getEvaluation();
 	        			IType valueType = value.getType(clause);
 	        			if (valueType instanceof IArrayType) {
 	        				sizeValue = ((IArrayType) valueType).getSize();
@@ -2198,7 +2198,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		type = decorateType(type, declSpec, declarator);
-		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner) initClause).getEvaluation();
+		final ICPPEvaluation evaluation = initClause.getEvaluation();
 		initType= evaluation.getType(declarator);
 		valueCat= evaluation.getValueCategory(declarator);
 		if (initType == null || initType instanceof ISemanticProblem) {

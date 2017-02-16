@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallColl
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
-public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
+public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression, IASTAmbiguityParent {
     private static final ICPPEvaluation EVALUATION = new EvalFixed(CPPSemantics.VOID_TYPE, PRVALUE, IntegralValue.UNKNOWN);
 
     private IASTExpression operand;

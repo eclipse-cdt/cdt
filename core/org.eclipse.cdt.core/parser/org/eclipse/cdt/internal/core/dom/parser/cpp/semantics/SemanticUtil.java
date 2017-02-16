@@ -84,7 +84,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -874,7 +873,7 @@ public class SemanticUtil {
 				clause= list.getClauses()[0];
 				break;
 			default:
-				return ((ICPPEvaluationOwner) init).getEvaluation().getValue(init);
+				return ((ICPPASTInitializerList) init).getEvaluation().getValue(init);
 
 			}
 		}
@@ -883,7 +882,7 @@ public class SemanticUtil {
 		}
 
 		if (clause instanceof ICPPASTInitializerList) {
-			return ((ICPPEvaluationOwner) clause).getEvaluation().getValue(clause);
+			return ((ICPPASTInitializerList) clause).getEvaluation().getValue(clause);
 		}
 		return IntegralValue.UNKNOWN;
 	}

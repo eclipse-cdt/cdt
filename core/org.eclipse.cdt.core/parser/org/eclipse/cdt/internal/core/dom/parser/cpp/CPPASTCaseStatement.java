@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCase;
 
 /**
@@ -93,7 +94,7 @@ public class CPPASTCaseStatement extends CPPASTAttributeOwner implements IASTCas
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner caseExpr = (ICPPEvaluationOwner) getExpression();
+		ICPPASTExpression caseExpr = (ICPPASTExpression) getExpression();
 		ICPPEvaluation caseExprEval = caseExpr.getEvaluation();
 		return new ExecCase(caseExprEval);
 	}

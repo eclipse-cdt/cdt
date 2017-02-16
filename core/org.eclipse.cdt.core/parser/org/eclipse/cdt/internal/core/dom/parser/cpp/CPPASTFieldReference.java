@@ -56,7 +56,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFieldReference extends ASTNode
-		implements ICPPASTFieldReference, IASTAmbiguityParent, ICPPASTCompletionContext, ICPPEvaluationOwner {
+		implements ICPPASTFieldReference, IASTAmbiguityParent, ICPPASTCompletionContext {
 	private boolean fIsTemplate;
 	private boolean fIsDeref;
 	private ICPPASTExpression fOwner;
@@ -281,7 +281,7 @@ public class CPPASTFieldReference extends ASTNode
 	}
 
 	private ICPPEvaluation createEvaluation() {
-		ICPPEvaluation ownerEval = ((ICPPEvaluationOwner) fOwner).getEvaluation();
+		ICPPEvaluation ownerEval = fOwner.getEvaluation();
 		if (!ownerEval.isTypeDependent()) {
 			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(this), fIsDeref, this, null, false);
 			if (ownerType != null) {

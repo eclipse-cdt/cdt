@@ -55,13 +55,13 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -80,8 +80,8 @@ public class ValueFactory {
 			return val;
 		}
 
-		if (expr instanceof ICPPEvaluationOwner) {
-			ICPPEvaluation evaluation = ((ICPPEvaluationOwner) expr).getEvaluation();
+		if (expr instanceof ICPPASTInitializerClause) {
+			ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
 			return evaluation.getValue(expr);
 		}
 		return IntegralValue.UNKNOWN;
@@ -601,8 +601,8 @@ public class ValueFactory {
 			return val.numberValue();
 		}
 
-		if (expr instanceof ICPPEvaluationOwner) {
-			ICPPEvaluation eval = ((ICPPEvaluationOwner) expr).getEvaluation();
+		if (expr instanceof ICPPASTInitializerClause) {
+			ICPPEvaluation eval = ((ICPPASTInitializerClause) expr).getEvaluation();
 			if (eval.isConstantExpression(expr) && !eval.isValueDependent())
 				return eval.getValue(expr).numberValue();
 		}

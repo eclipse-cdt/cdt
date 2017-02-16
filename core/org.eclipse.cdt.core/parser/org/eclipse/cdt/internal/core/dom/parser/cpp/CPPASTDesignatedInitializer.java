@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Implementation for designated initializers.
  */
 public class CPPASTDesignatedInitializer extends ASTNode
-		implements ICPPASTDesignatedInitializer, IASTAmbiguityParent, ICPPEvaluationOwner {
+		implements ICPPASTDesignatedInitializer, IASTAmbiguityParent {
     private ICPPASTInitializerClause rhs;
     private ICPPASTDesignator[] designators = ICPPASTDesignator.EMPTY_ARRAY;
     private int designatorsPos;
@@ -83,7 +83,7 @@ public class CPPASTDesignatedInitializer extends ASTNode
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		return ((ICPPEvaluationOwner) rhs).getEvaluation();
+		return rhs.getEvaluation();
 	}
 
 	@Override

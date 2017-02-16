@@ -108,6 +108,11 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
+		
+		// Disabling this suite for GDB < 7.5. There are issues when the test 
+    	// binaries are compiled with gcc > 4.8, which uses DWARF version 4.
+    	// see bug 512303
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
 
 		Runnable runnable = new Runnable() {
 			@Override

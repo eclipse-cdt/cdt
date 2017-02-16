@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 /**
  * e.g.: int a[]= {1,2,3};
  */
-public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList, IASTAmbiguityParent, ICPPEvaluationOwner {
+public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList, IASTAmbiguityParent {
 	private static final ICPPASTInitializerClause[] NO_CLAUSES = {};
 	private ICPPASTInitializerClause[] initializers;
     private int initializersPos= -1;

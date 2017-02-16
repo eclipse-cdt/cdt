@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTConditionalExpression extends ASTNode
-		implements IASTConditionalExpression, ICPPASTExpression, IASTAmbiguityParent, ICPPEvaluationOwner {
+		implements IASTConditionalExpression, ICPPASTExpression, IASTAmbiguityParent {
     private ICPPASTExpression fCondition;
     private ICPPASTExpression fPositive;
     private ICPPASTExpression fNegative;
@@ -179,9 +179,9 @@ public class CPPASTConditionalExpression extends ASTNode
 			if (fCondition == null || fNegative == null) {
 				fEval= EvalFixed.INCOMPLETE;
 			} else {
-				final ICPPEvaluation condEval = ((ICPPEvaluationOwner) fCondition).getEvaluation();
-				final ICPPEvaluation posEval = fPositive == null ? null : ((ICPPEvaluationOwner) fPositive).getEvaluation();
-				final ICPPEvaluation negEval = ((ICPPEvaluationOwner) fNegative).getEvaluation();
+				final ICPPEvaluation condEval = fCondition.getEvaluation();
+				final ICPPEvaluation posEval = fPositive == null ? null : fPositive.getEvaluation();
+				final ICPPEvaluation negEval = fNegative.getEvaluation();
 				fEval= new EvalConditional(condEval, posEval, negEval,
 						isThrowExpression(fPositive), isThrowExpression(fNegative), this);
 			}

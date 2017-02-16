@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
 
@@ -106,8 +107,8 @@ public class CPPASTReturnStatement extends CPPASTAttributeOwner implements IASTR
 
 	@Override
 	public ICPPExecution getExecution() {
-		if (retValue instanceof ICPPEvaluationOwner) {
-			ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) retValue;
+		if (retValue instanceof ICPPASTInitializerClause) {
+			ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) retValue;
 			return new ExecReturn(evalOwner.getEvaluation());
 		}
 		return ExecIncomplete.INSTANCE;

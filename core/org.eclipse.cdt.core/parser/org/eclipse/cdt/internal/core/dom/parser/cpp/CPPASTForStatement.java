@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
@@ -229,11 +230,11 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 	@Override
 	public ICPPExecution getExecution() {
 		ICPPExecution initializerExec = EvalUtil.getExecutionFromStatement(getInitializerStatement());
-		ICPPEvaluationOwner conditionExpr = (ICPPEvaluationOwner) getConditionExpression();
+		ICPPASTExpression conditionExpr = (ICPPASTExpression) getConditionExpression();
 		ICPPExecutionOwner conditionDecl = (ICPPExecutionOwner) getConditionDeclaration();
 		ICPPEvaluation conditionExprEval = conditionExpr != null ? conditionExpr.getEvaluation() : null;
 		ExecSimpleDeclaration conditionDeclExec = conditionDecl != null ? (ExecSimpleDeclaration) conditionDecl.getExecution() : null;
-		ICPPEvaluationOwner iterationExpr = (ICPPEvaluationOwner) getIterationExpression();
+		ICPPASTExpression iterationExpr = (ICPPASTExpression) getIterationExpression();
 		ICPPEvaluation iterationEval = iterationExpr != null ? iterationExpr.getEvaluation() : null;
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
 		return new ExecFor(initializerExec, conditionExprEval, conditionDeclExec, iterationEval, bodyExec);

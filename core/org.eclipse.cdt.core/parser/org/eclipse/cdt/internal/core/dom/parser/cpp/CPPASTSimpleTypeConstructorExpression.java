@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
 public class CPPASTSimpleTypeConstructorExpression extends ASTNode
-		implements ICPPASTSimpleTypeConstructorExpression, IASTImplicitNameOwner, ICPPEvaluationOwner {
+		implements ICPPASTSimpleTypeConstructorExpression, IASTImplicitNameOwner {
 	private ICPPASTDeclSpecifier fDeclSpec;
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -302,14 +303,13 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 				return new EvalConstructor(getType(), constructor, arguments, declarator);
 			} else if (initializer instanceof IASTEqualsInitializer) {
 				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) equalsInitializer.getInitializerClause();
-				return evalOwner.getEvaluation();
+				ICPPASTInitializerClause clause = (ICPPASTInitializerClause) equalsInitializer.getInitializerClause();
+				return clause.getEvaluation();
 			} else if (initializer instanceof ICPPASTInitializerList) {
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) initializer;
-				return evalOwner.getEvaluation();
+				return ((ICPPASTInitializerClause) initializer).getEvaluation();
 			} else if (initializer instanceof ICPPASTConstructorInitializer) {
 				ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) ctorInitializer.getArguments()[0];
+				ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) ctorInitializer.getArguments()[0];
 				return evalOwner.getEvaluation();
 			} else if (initializer == null) {
 				return null;

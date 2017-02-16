@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
 
-public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression, ICPPEvaluationOwner {
+public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
     private int fOperator;
     private IASTTypeId fTypeId;
 	private ICPPEvaluation fEvaluation;

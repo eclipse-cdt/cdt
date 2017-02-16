@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
@@ -161,7 +162,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 
 	@Override
 	public ICPPExecution getExecution() {
-		ICPPEvaluationOwner controllerExpr = (ICPPEvaluationOwner) getControllerExpression();
+		ICPPASTExpression controllerExpr = (ICPPASTExpression) getControllerExpression();
 		ICPPExecutionOwner controllerDecl = (ICPPExecutionOwner) getControllerDeclaration();
 		ICPPEvaluation controllerExprEval = controllerExpr != null ? controllerExpr.getEvaluation() : null;
 		ExecSimpleDeclaration controllerDeclExec = controllerDecl != null ? (ExecSimpleDeclaration) controllerDecl.getExecution() : null;

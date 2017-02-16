@@ -183,7 +183,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDecla
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -2206,7 +2205,7 @@ public class CPPTemplates {
 					result[i]= new CPPTemplateTypeArgument(CPPVisitor.createType((IASTTypeId) arg));
 				} else if (arg instanceof ICPPASTExpression) {
 					ICPPASTExpression expr= (ICPPASTExpression) arg;
-					result[i]= new CPPTemplateNonTypeArgument(((ICPPEvaluationOwner) expr).getEvaluation(), expr);
+					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation(), expr);
 				} else if (arg instanceof ICPPASTAmbiguousTemplateArgument) {
 					IProblemBinding problem = new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 					throw new DOMException(problem);

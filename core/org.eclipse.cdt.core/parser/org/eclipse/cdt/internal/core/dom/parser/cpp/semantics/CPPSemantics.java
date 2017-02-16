@@ -118,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -229,7 +230,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -1291,7 +1291,7 @@ public class CPPSemantics {
 				if (expression instanceof ICPPASTLiteralExpression) {
 					final ICPPASTLiteralExpression litExpr = (ICPPASTLiteralExpression) expression;
 					if (litExpr.getKind() == IASTLiteralExpression.lk_this) {
-						final IType thisType = SemanticUtil.getNestedType(((ICPPEvaluationOwner) litExpr).getEvaluation().getType(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
+						final IType thisType = SemanticUtil.getNestedType(litExpr.getEvaluation().getType(litExpr), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
 						if (thisType instanceof ICPPUnknownBinding || thisType instanceof ICPPTemplateDefinition) {
 							result[0]= true;
 							return PROCESS_ABORT;
@@ -3177,7 +3177,7 @@ public class CPPSemantics {
 
 			// If we're in a dependent context, we don't have enough information
 			// to resolve the function set.
-			if (((ICPPEvaluationOwner) parent).getEvaluation().isTypeDependent()) {
+			if (((ICPPASTExpression) parent).getEvaluation().isTypeDependent()) {
 				return CPPDeferredFunction.createForCandidates(functionSet.getBindings());
 			}
 		}
@@ -3431,7 +3431,7 @@ public class CPPSemantics {
 
 	public static ICPPFunction findOverloadedOperator(ICPPASTNewExpression expr) {
 		OverloadableOperator op = OverloadableOperator.fromNewExpression(expr);
-		final ICPPEvaluation evaluation = ((ICPPEvaluationOwner) expr).getEvaluation();
+		final ICPPEvaluation evaluation = expr.getEvaluation();
 		if (evaluation.isTypeDependent())
 			return null;
 
@@ -3448,8 +3448,7 @@ public class CPPSemantics {
 			args[1]= arg2;
 			int i= 2;
 			for (IASTInitializerClause p : placement) {
-				final ICPPEvaluationOwner arg = (ICPPEvaluationOwner) p;
-				final ICPPEvaluation a = arg.getEvaluation();
+				final ICPPEvaluation a = ((ICPPASTInitializerClause) p).getEvaluation();
 				if (a.isTypeDependent())
 					return null;
 				args[i++]= a;
@@ -3467,7 +3466,7 @@ public class CPPSemantics {
 
 		ICPPEvaluation[] args = {
 				new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN),
-				((ICPPEvaluationOwner) expr.getOperand()).getEvaluation()
+				((ICPPASTExpression) expr.getOperand()).getEvaluation()
 			};
 		return findOverloadedOperator(expr, null, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
 	}
@@ -3555,7 +3554,7 @@ public class CPPSemantics {
 			if (initializer instanceof IASTEqualsInitializer) {
 				// Copy initialization.
 				IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
-				ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) eqInit.getInitializerClause();
+				ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) eqInit.getInitializerClause();
 				final ICPPEvaluation evaluation = evalOwner.getEvaluation();
 				IType sourceType= evaluation.getType(typeId);
 				ValueCategory isLValue= evaluation.getValueCategory(typeId);
@@ -3576,7 +3575,7 @@ public class CPPSemantics {
 				}
 			} else if (initializer instanceof ICPPASTInitializerList) {
 				// List initialization.
-				ICPPEvaluation eval= ((ICPPEvaluationOwner) initializer).getEvaluation();
+				ICPPEvaluation eval= ((ICPPASTInitializerClause) initializer).getEvaluation();
 				if (eval instanceof EvalInitList) {
 					Cost c= Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true, typeId);
 					if (c.converts()) {

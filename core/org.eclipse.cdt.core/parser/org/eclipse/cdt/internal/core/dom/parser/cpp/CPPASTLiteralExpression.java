@@ -49,7 +49,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
 /**
  * Represents a C++ literal.
  */
-public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression, ICPPEvaluationOwner {
+public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
 	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(true));
 	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, IntegralValue.create(false));
 	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, IntegralValue.create(0));

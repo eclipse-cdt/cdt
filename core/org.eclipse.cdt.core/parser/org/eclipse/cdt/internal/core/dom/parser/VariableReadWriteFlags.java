@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
@@ -214,7 +213,7 @@ public abstract class VariableReadWriteFlags {
 
 	private IType getArgumentType(IASTInitializerClause argument) {
 		if (argument instanceof ICPPASTInitializerClause) {
-			return ((ICPPEvaluationOwner) argument).getEvaluation().getType(argument);
+			return ((ICPPASTInitializerClause) argument).getEvaluation().getType(argument);
 		} else if (argument instanceof IASTExpression) {
 			return ((IASTExpression) argument).getExpressionType();
 		}

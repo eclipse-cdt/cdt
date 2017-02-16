@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 /**
  * Implementation for lambda expressions.
  */
-public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpression, ICPPEvaluationOwner {
+public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpression {
 	private static final ICPPASTCapture[] NO_CAPTURES = {};
 
 	private CaptureDefault fCaptureDefault;

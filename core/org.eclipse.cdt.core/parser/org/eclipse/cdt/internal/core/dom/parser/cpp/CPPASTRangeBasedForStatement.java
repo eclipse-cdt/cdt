@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -239,7 +240,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 	@Override
 	public ICPPExecution getExecution() {
 		ExecSimpleDeclaration declarationExec = (ExecSimpleDeclaration)((ICPPExecutionOwner) fDeclaration).getExecution();
-		ICPPEvaluation initClauseEval = ((ICPPEvaluationOwner) fInitClause).getEvaluation();
+		ICPPEvaluation initClauseEval = ((ICPPASTInitializerClause) fInitClause).getEvaluation();
 		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(fBody);
 		IASTImplicitName[] implicitNames = getImplicitNames();
 		ICPPFunction begin = null;

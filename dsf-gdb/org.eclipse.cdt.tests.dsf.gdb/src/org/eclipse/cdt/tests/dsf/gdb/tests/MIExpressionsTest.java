@@ -93,6 +93,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
     public void doBeforeTest() throws Exception {
     	super.doBeforeTest();
 
+    	// Disabling this suite for GDB < 7.5. There are issues when the test 
+    	// binaries are compiled with gcc > 4.8, which uses DWARF version 4.
+    	// see bug 512303
+    	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
+    	
     	fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
@@ -4250,7 +4255,12 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 						new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
 							@Override
 							protected void handleCompleted() {
-								rm.done(getData().getTypeName());
+								if (isSuccess()) {
+									rm.done(getData().getTypeName());
+								}
+								else {
+									rm.done("Spatule!!!");
+								}
 							}	
 						});
 			}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -20,13 +20,9 @@ import org.eclipse.core.resources.IStorage;
 /**
  * @author jcamelon
  *
- * This class serves as the manager of the AST/DOM mechanisms for the CDT.
- * It should be eventually added to CCorePlugin for startup.
- *
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  * @deprecated This class does not take into account language mappings.  Use
- * org.eclipse.cdt.core.model.ILanguage instead.
+ * {@link org.eclipse.cdt.core.model.ILanguage} instead.
+ * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
 public class CDOM implements IASTServiceProvider {

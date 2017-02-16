@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
@@ -19,10 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 
 /**
- * This is the mechanism that represents a parser service in the CDT.
- * 
- * IASTTranslationUnits and ASTCompletionNodes are artifacts that this service returns.
- * 
  * @author jcamelon
  * @deprecated Use methods provided by {@link ITranslationUnit} or {@link ILanguage}.
  * @noreference This interface is not intended to be referenced by clients.

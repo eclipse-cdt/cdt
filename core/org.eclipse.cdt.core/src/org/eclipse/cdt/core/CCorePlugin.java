@@ -1286,6 +1286,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * @deprecated use {@link ITranslationUnit} or {@link ILanguage} to
 	 *             construct ASTs, instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public org.eclipse.cdt.core.dom.CDOM getDOM() {

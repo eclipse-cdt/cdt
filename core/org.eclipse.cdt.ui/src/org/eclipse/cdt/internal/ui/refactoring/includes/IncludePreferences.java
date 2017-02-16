@@ -114,7 +114,8 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 				PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, project, true);
 
 		// Unused include handling preferences
-		value = PreferenceConstants.getPreference(PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project, null);
+		value = PreferenceConstants.getPreference(
+				PreferenceConstants.INCLUDES_UNUSED_STATEMENTS_DISPOSITION, project, null);
 		UnusedStatementDisposition disposition = null;
 		if (value != null)
 			disposition = UnusedStatementDisposition.valueOf(value);

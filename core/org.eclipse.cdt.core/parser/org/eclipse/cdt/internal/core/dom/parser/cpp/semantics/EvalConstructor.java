@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -42,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -267,13 +267,8 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	private static ICPPEvaluation[] evaluateArguments(IASTInitializerClause... clauses) {
 		ICPPEvaluation[] args = new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < clauses.length; i++) {
-			IASTInitializerClause initializerClause = clauses[i];
-			if (initializerClause instanceof ICPPEvaluationOwner) {
-				ICPPEvaluationOwner clause = (ICPPEvaluationOwner) initializerClause;
-				args[i] = clause.getEvaluation();
-			} else {
-				args[i] = EvalFixed.INCOMPLETE;
-			}
+			ICPPASTInitializerClause clause = (ICPPASTInitializerClause) clauses[i];
+			args[i] = clause.getEvaluation();
 		}
 		return args;
 	}

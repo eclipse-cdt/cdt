@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
  * Type id initializer expression for C++, type-id { initializer }
  */
 public class CPPASTTypeIdInitializerExpression extends ASTNode
-		implements IASTTypeIdInitializerExpression, ICPPASTExpression, ICPPEvaluationOwner {
+		implements IASTTypeIdInitializerExpression, ICPPASTExpression {
     private IASTTypeId fTypeId;
     private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
@@ -146,7 +146,7 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 
-		return new EvalTypeId(type, this, false, ((ICPPEvaluationOwner) initializer).getEvaluation());
+		return new EvalTypeId(type, this, false, ((ICPPASTInitializerClause) initializer).getEvaluation());
 	}
 
 	@Override

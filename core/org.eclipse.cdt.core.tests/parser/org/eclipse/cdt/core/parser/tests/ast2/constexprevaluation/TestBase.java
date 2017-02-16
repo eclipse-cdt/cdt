@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
 import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluationOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
@@ -102,7 +101,7 @@ public class TestBase extends IndexBindingResolutionTestBase {
 
 	private IValue getValue() throws Exception {
 		ICPPASTInitializerClause point = getLastDeclarationInitializer();
-		ICPPEvaluation evaluation = ((ICPPEvaluationOwner) point).getEvaluation();
+		ICPPEvaluation evaluation = point.getEvaluation();
 		return evaluation.getValue(point);
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -45,8 +46,8 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
 	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {
 		final IASTInitializer initializer = chainInitializer.getInitializer();
-		if (initializer instanceof ICPPEvaluationOwner) {
-			return ((ICPPEvaluationOwner) initializer).getEvaluation();
+		if (initializer instanceof ICPPASTInitializerClause) {
+			return ((ICPPASTInitializerClause) initializer).getEvaluation();
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
 			IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
 			if (constructor == null) {

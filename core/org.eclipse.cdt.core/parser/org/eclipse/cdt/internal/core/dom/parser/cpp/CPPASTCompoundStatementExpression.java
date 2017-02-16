@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
  * Gnu-extension: ({ ... })
  */
 public class CPPASTCompoundStatementExpression extends ASTNode
-		implements IGNUASTCompoundStatementExpression, ICPPASTExpression, ICPPEvaluationOwner {
+		implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
@@ -79,8 +79,8 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 					IASTStatement st = statements[statements.length - 1];
 					if (st instanceof IASTExpressionStatement) {
 						IASTExpressionStatement exprStmt = (IASTExpressionStatement) st;
-						ICPPEvaluationOwner evalOwner = (ICPPEvaluationOwner) exprStmt.getExpression();
-						fEval= new EvalCompoundStatementExpression(evalOwner.getEvaluation(), this);
+						ICPPASTExpression expr = (ICPPASTExpression) exprStmt.getExpression();
+						fEval= new EvalCompoundStatementExpression(expr.getEvaluation(), this);
 					}
 				}
 			}

@@ -96,12 +96,15 @@ public final class IncludeCreationContext extends InclusionContext {
 		fHeadersToInclude.removeAll(exportedHeaders);
 	}
 
-	private boolean isIncludedFileExported(IIndexInclude include) throws CoreException {
+	private final boolean isIncludedFileExported(IIndexInclude include) throws CoreException {
 		if (include.isIncludedFileExported())
 			return true;
-		String name = include.getName();
-		int index = name.lastIndexOf('.');
-		String extension = index >= 0 ? name.substring(index + 1) : ""; //$NON-NLS-1$
+		return isAutoExportedFile(include.getName());
+	}
+
+	public final boolean isAutoExportedFile(String filename) {
+		int index = filename.lastIndexOf('.');
+		String extension = index >= 0 ? filename.substring(index + 1) : ""; //$NON-NLS-1$
 		return ArrayUtil.containsEqual(getPreferences().extensionsOfAutoExportedFiles, extension);
 	}
 
@@ -160,5 +163,9 @@ public final class IncludeCreationContext extends InclusionContext {
 	public final boolean canBeIncluded(IIndexFile indexFile) throws CoreException {
 		return !IncludeUtil.isSource(indexFile, getProject()) ||
 				fIndex.findIncludedBy(indexFile, 0).length != 0;
+	}
+
+	public final boolean isHeaderFile(String filename) {
+		return IncludeUtil.isHeader(filename, getProject());
 	}
 }

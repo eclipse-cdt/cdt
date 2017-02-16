@@ -57,22 +57,37 @@ public class IncludeUtil {
 	/**
 	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered
 	 * source files.
-	 * @return Returns {@code true} if the the file is a source file.
+	 * @return {@code true} if the the file is a source file.
 	 */
 	public static boolean isSource(IIndexFile file, IProject project) throws CoreException {
 		return isSource(getPath(file), project);
 	}
 
 	/**
-	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered
-	 * source files.
-	 * @return Returns {@code true} if the the file is a source file.
+	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered source files.
+	 * @return {@code true} if the the file is a source file.
 	 */
 	public static boolean isSource(String filename, IProject project) {
 		IContentType ct= CCorePlugin.getContentType(project, filename);
 		if (ct != null) {
 			String id = ct.getId();
 			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if a file is a header file (.h, .hpp, C++ header without extension, etc).
+	 *
+	 * @return {@code true} if the the file is a header file.
+	 */
+	public static boolean isHeader(String filename, IProject project) {
+		IContentType ct= CCorePlugin.getContentType(project, filename);
+		if (ct != null) {
+			String id = ct.getId();
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
 				return true;
 			}
 		}

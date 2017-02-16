@@ -33,9 +33,11 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 public class HeaderSubstitutor {
-	private static int HEURISTIC_SCORE_NAME_MATCH = 1;
-	private static int HEURISTIC_SCORE_NO_EXTENSION = 2;
-	private static int HEURISTIC_SCORE_MAX = HEURISTIC_SCORE_NAME_MATCH + HEURISTIC_SCORE_NO_EXTENSION;
+	private static int HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER = 0x1;
+	private static int HEURISTIC_SCORE_NAME_MATCH = 0x2;
+	private static int HEURISTIC_SCORE_NO_EXTENSION = 0x4;
+	private static int HEURISTIC_SCORE_MAX =
+			HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER + HEURISTIC_SCORE_NAME_MATCH + HEURISTIC_SCORE_NO_EXTENSION;
 
 	private final IncludeCreationContext fContext;
 	private IncludeMap[] fIncludeMaps;
@@ -150,6 +152,10 @@ public class HeaderSubstitutor {
 				}
 			}
 		}
+		String filename = includeInfo.getName();
+		if (!fContext.isHeaderFile(filename) || fContext.isAutoExportedFile(filename)) {
+			return null;
+		}
 		return fContext.resolveInclude(includeInfo);
 	}
 
@@ -248,8 +254,10 @@ public class HeaderSubstitutor {
 		return preferredHeader;
 	}
 
-	private static int getScore(String path, String symbolName) {
+	private int getScore(String path, String symbolName) {
 		int score = 0;
+		if (fContext.isHeaderFile(path) && !fContext.isAutoExportedFile(path))
+			score += HEURISTIC_SCORE_NOT_AUTO_EXPORTED_HEADER;
 		if (getFilename(path).equalsIgnoreCase(symbolName))
 			score += HEURISTIC_SCORE_NAME_MATCH;
 		if (!hasExtension(path))

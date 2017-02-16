@@ -313,6 +313,38 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		assertExpectedResults();
 	}
 
+
+	//a.impl
+	//class A {};
+
+	//a.h
+	//#include "a.impl"  // Non-header file extension
+
+	//b.inc
+	//class B {};
+
+	//b.h
+	//#include "b.inc"   // Auto-exported header file extension
+
+	//c.inc
+	//class C {};
+
+	//test.cpp
+	//A a;
+	//B b;
+	//C c;
+	//====================
+	//#include "a.h"
+	//#include "b.h"
+	//#include "c.inc"
+	//
+	//A a;
+	//B b;
+	//C c;
+	public void testNonStandardFileExtensions() throws Exception {
+		assertExpectedResults();
+	}
+
 	//a.h
 	//class A {};
 

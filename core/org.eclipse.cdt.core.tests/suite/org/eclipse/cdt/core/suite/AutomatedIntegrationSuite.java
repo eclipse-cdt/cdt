@@ -65,37 +65,37 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 
-		// Has intermittent failures
-		if (System.getProperty("cdt.skip.known.test.failures") == null) {		
-			suite.addTest(CDescriptorTests.suite());
-		}
-		suite.addTest(AllConstexprEvalTests.suite());
-		suite.addTest(ParserTestSuite.suite());
-		suite.addTest(CDescriptorOldTests.suite());
-		suite.addTest(IEnvironmentVariableManagerTests.suite());
-		suite.addTest(ErrorParserTests.suite());
-		suite.addTest(AllCoreTests.suite());
-		suite.addTest(ElementDeltaTests.suite());
-		suite.addTest(WorkingCopyTests.suite());
-		suite.addTest(PositionTrackerTests.suite());
-		suite.addTest(ResourceLookupTests.suite());
-		suite.addTest(StringBuilderTest.suite());
-		suite.addTest(AllLanguageTests.suite());
-		suite.addTest(RewriteTests.suite());
-		suite.addTest(CdtVariableResolverTest.suite());
-		suite.addTest(StorableCdtVariablesTest.suite());
-		suite.addTest(CommandLineUtilTest.suite());
-		suite.addTest(WeakHashSetTest.suite());
-		suite.addTest(FindProgramLocationTest.suite());
-		suite.addTest(EFSExtensionTests.suite());
-		suite.addTest(ByteUtilsTest.suite());
+//		// Has intermittent failures
+//		if (System.getProperty("cdt.skip.known.test.failures") == null) {		
+//			suite.addTest(CDescriptorTests.suite());
+//		}
+//		suite.addTest(AllConstexprEvalTests.suite());
+//		suite.addTest(ParserTestSuite.suite());
+//		suite.addTest(CDescriptorOldTests.suite());
+//		suite.addTest(IEnvironmentVariableManagerTests.suite());
+//		suite.addTest(ErrorParserTests.suite());
+//		suite.addTest(AllCoreTests.suite());
+//		suite.addTest(ElementDeltaTests.suite());
+//		suite.addTest(WorkingCopyTests.suite());
+//		suite.addTest(PositionTrackerTests.suite());
+//		suite.addTest(ResourceLookupTests.suite());
+//		suite.addTest(StringBuilderTest.suite());
+//		suite.addTest(AllLanguageTests.suite());
+//		suite.addTest(RewriteTests.suite());
+//		suite.addTest(CdtVariableResolverTest.suite());
+//		suite.addTest(StorableCdtVariablesTest.suite());
+//		suite.addTest(CommandLineUtilTest.suite());
+//		suite.addTest(WeakHashSetTest.suite());
+//		suite.addTest(FindProgramLocationTest.suite());
+//		suite.addTest(EFSExtensionTests.suite());
+//		suite.addTest(ByteUtilsTest.suite());
 		suite.addTest(UNCPathConverterTest.suite());
-
-		// Add in PDOM tests
-		suite.addTest(PDOMTests.suite());
-		suite.addTest(IndexTests.suite());
-
-		suite.addTest(RefreshScopeTests.suite());
+//
+//		// Add in PDOM tests
+//		suite.addTest(PDOMTests.suite());
+//		suite.addTest(IndexTests.suite());
+//
+//		suite.addTest(RefreshScopeTests.suite());
 
 		return suite;
 	}

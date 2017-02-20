@@ -1092,7 +1092,7 @@
             targetTool="cdt.managedbuild.tool.llvm.archiver">
          <builder
                id="cdt.managedbuild.target.llvm.builder.base"
-               isAbstract="true"
+               isAbstract="false"
                superClass="org.eclipse.cdt.build.core.internal.builder">
          </builder>
          <tool

@@ -103,7 +103,12 @@ public class ConfigurationModification extends FolderInfoModification implements
 
 	@Override
 	public CompatibilityStatus getBuilderCompatibilityStatus() {
-		return getCurrentBuilderCompatibilityInfo().getCompatibilityStatus();
+		BuilderCompatibilityInfoElement currentBuilderCompatibilityInfo = getCurrentBuilderCompatibilityInfo();
+		if (currentBuilderCompatibilityInfo == null) {
+			return new CompatibilityStatus(IStatus.ERROR, Messages.getString("ConfigurationModification.0"), null); //$NON-NLS-1$
+		}
+
+		return currentBuilderCompatibilityInfo.getCompatibilityStatus();
 	}
 
 	private ConflictMatchSet getParentConflictMatchSet(){

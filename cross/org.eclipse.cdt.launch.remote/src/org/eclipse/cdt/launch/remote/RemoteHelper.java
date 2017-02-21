@@ -17,7 +17,6 @@ package org.eclipse.cdt.launch.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.osgi.util.NLS;
@@ -97,10 +96,13 @@ public class RemoteHelper {
 						IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
 						false);
 
-		if (skipDownload)
+		if (skipDownload) {
 			// Nothing to do. Download is skipped.
 			return;
-		monitor.beginTask(Messages.RemoteRunLaunchDelegate_2, 100);
+		}
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.RemoteRunLaunchDelegate_2, 100);
+
 		try {
 			IRemoteConnection conn = getCurrentConnection(config);
 			IRemoteFileService fs = conn.getService(IRemoteFileService.class);
@@ -112,12 +114,14 @@ public class RemoteHelper {
 			if (!localFile.fetchInfo().exists()) {
 				return;
 			}
-			localFile.copy(remoteFile, EFS.OVERWRITE, monitor);
+
+			localFile.copy(remoteFile, EFS.OVERWRITE, subMonitor.split(95));
+
 			// Need to change the permissions to match the original file
 			// permissions because of a bug in upload
 			Process p = remoteShellExec(
 					config,
-					"", "chmod", "+x " + spaceEscapify(remoteExePath), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"", "chmod", "+x " + spaceEscapify(remoteExePath), subMonitor.split(5)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			// Wait if necessary for the permission change
 			try {

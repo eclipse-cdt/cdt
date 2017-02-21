@@ -109,6 +109,9 @@
    </feature>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.launchbar.core" version="0.0.0"/>
+   <iu id="org.eclipse.launchbar.ui" version="0.0.0"/>
+   <iu id="org.eclipse.tm.terminal.control" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.ui" version="0.0.0"/>

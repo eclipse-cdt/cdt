@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_712a92b6",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-02-21T13:00:09Z",
+      "side": 1,
+      "message": "This method is used to display the environment to the user. It seems that we should not modify the display values to the user.",
+      "revId": "16ba2132f4cd520b519ca9f96c98a39044233add",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

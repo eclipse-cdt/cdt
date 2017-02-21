@@ -106,6 +106,17 @@ public class CommandLauncher implements ICommandLauncher {
 		}
 		return fEnvironment;
 	}
+	
+	/**
+	 * Returns a property from the given environment.
+	 * Asks the Environment reader directly for its key instead of retrieving this entire property map
+	 */
+	private String getEnvironmentProperty(String key) {
+		if (fEnvironment == null) {
+			return EnvironmentReader.getEnvVar(key);
+		}
+		return fEnvironment.getProperty(key);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandLine()
@@ -138,6 +149,9 @@ public class CommandLauncher implements ICommandLauncher {
 				if (pos < 0)
 					pos = envStr.length();
 				String key = envStr.substring(0, pos);
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					key = key.toUpperCase();
+				}
 				String value = envStr.substring(pos + 1);
 				fEnvironment.put(key, value);
 			}
@@ -166,7 +180,7 @@ public class CommandLauncher implements ICommandLauncher {
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException {
 		parseEnvironment(env);
-		String envPathValue = (String) getEnvironment().get(PATH_ENV);
+		String envPathValue =  getEnvironmentProperty(PATH_ENV);
 
 		Boolean isFound = null;
 		String command = commandPath.toOSString();

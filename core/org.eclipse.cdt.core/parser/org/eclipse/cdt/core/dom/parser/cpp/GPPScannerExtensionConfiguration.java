@@ -98,11 +98,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		this(CompilerType.GCC, version);
 	}
 	
-	/**
-	 * @since 6.3
-	 */
 	@SuppressWarnings("nls")
-	public GPPScannerExtensionConfiguration(CompilerType compiler, int version) {
+	private GPPScannerExtensionConfiguration(CompilerType compiler, int version) {
 		addMacro("__null", "0");  
 		addMacro("__builtin_offsetof(T,m)", "(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);

@@ -16,6 +16,47 @@
       "revId": "e14cc2d3206a75b45b26d2b6a46c60248950f8fd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_a358615e",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2017-02-21T16:14:58Z",
+      "side": 1,
+      "message": "Another question, should I pass \"monitor\" as the last argument to putInfo?",
+      "range": {
+        "startLine": 127,
+        "startChar": 58,
+        "endLine": 127,
+        "endChar": 62
+      },
+      "revId": "e14cc2d3206a75b45b26d2b6a46c60248950f8fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_031e7597",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2017-02-21T16:14:58Z",
+      "side": 1,
+      "message": "The order of the three setAttribute calls definitely doesn\u0027t matter, since all they do is set a bit in a bit field [1], which is commutative.\n\nI have read the bug that lead to the introduction of this comment [1], and here\u0027s the important bit:\n\n\u003cquote\u003e\nThis is needed in an SCM system for example if a file is marked as executable, then it should be brought over and the execute bit set not just for owner, but according to the umask. It is exactly the role of per-process umask to determine who gets permission when it is only known generically (i.e. this file is executable).\n\u003c/quote\u003e\n\nIn other works, some implementations could decide that when you set a file owner-executable, they\u0027ll consult the umask to maybe set the file group-executable and other-executable as well.  So when you set some bits, you might end up with more bits set than expected, but never less.  I couldn\u0027t find an implementation that does this however.\n\nIn our case it doesn\u0027t really matter because we force all three executable bits to 1, so they will always end up all set.  In reality, we only care that the user/owner has the permission to execute the file, so we could also skip setting it for group/others...\n\n[1] https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d259643",
+      "parentUuid": "a7c23755_1918b934",
+      "revId": "e14cc2d3206a75b45b26d2b6a46c60248950f8fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

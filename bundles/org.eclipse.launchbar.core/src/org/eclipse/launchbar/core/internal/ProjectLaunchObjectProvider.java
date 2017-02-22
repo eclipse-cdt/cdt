@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,9 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 	public void init(ILaunchBarManager manager) throws CoreException {
 		this.manager = manager;
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			manager.launchObjectAdded(project);
+			if (project.isOpen()) {
+				manager.launchObjectAdded(project);
+			}
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}

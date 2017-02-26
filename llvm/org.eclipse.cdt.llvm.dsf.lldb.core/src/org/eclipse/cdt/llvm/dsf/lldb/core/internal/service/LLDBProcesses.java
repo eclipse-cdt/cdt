@@ -18,11 +18,14 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_4;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 
@@ -150,5 +153,17 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 		public boolean isDebuggerAttached() {
 			return true;
 		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IExitedDMEvent e) {
+		if (e.getDMContext() instanceof IMIContainerDMContext && getNumConnected() == 0) {
+			// FIXME: Work around bug http://bugs.llvm.org/show_bug.cgi?id=32053
+			// And also https://bugs.eclipse.org/bugs/show_bug.cgi?id=510832
+			// LLDB-MI sends an extra "=thread-group-exited" event.
+			// This override should be completely removed once fixed.
+			return;
+		}
+		super.eventDispatched(e);
 	}
 }

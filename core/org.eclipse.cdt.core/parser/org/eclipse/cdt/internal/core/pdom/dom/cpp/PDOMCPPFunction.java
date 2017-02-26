@@ -78,15 +78,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	/** Offset of the function body execution for constexpr functions. */
 	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
 	
+	/** Offset of the function's declared type. */
+	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE;  // Database.TYPE_SIZE
+	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FUNCTION_BODY + Database.EXECUTION_SIZE;
+	protected static final int RECORD_SIZE = DECLARED_TYPE + Database.TYPE_SIZE;
 
 	private short fAnnotations = -1;
 	private int fRequiredArgCount = -1;
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
+	private ICPPFunctionType fDeclaredType;
 
 	public PDOMCPPFunction(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function,
 			boolean setTypes, IASTNode point) throws CoreException, DOMException {
@@ -105,10 +109,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return PDOMCPPAnnotations.encodeFunctionAnnotations(function);
 	}
 
-	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec,
-			ICPPExecution functionBody) {
+	public void initData(ICPPFunctionType ftype, ICPPFunctionType declaredType, ICPPParameter[] params,
+			IType[] exceptionSpec, ICPPExecution functionBody) {
 		try {
 			setType(ftype);
+			setDeclaredType(declaredType);
 			setParameters(params);
 			storeExceptionSpec(exceptionSpec);
 			getLinkage().storeExecution(record + FUNCTION_BODY, functionBody);
@@ -124,16 +129,20 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 		ICPPFunction func = (ICPPFunction) newBinding;
 		ICPPFunctionType newType;
+		ICPPFunctionType newDeclaredType;
 		ICPPParameter[] newParams;
 		short newAnnotation;
 		int newBindingRequiredArgCount;
 		newType = func.getType();
+		newDeclaredType = func.getDeclaredType();
 		newParams = func.getParameters();
 		newAnnotation = getAnnotations(func);
 		newBindingRequiredArgCount = func.getRequiredArgumentCount();
 
 		fType = null;
+		fDeclaredType = null;
 		linkage.storeType(record + FUNCTION_TYPE, newType);
+		linkage.storeType(record + DECLARED_TYPE, newDeclaredType);
 
 		PDOMCPPParameter oldParams = getFirstParameter(null);
 		int requiredCount;
@@ -205,6 +214,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	private void setType(ICPPFunctionType ft) throws CoreException {
 		fType = null;
 		getLinkage().storeType(record + FUNCTION_TYPE, ft);
+	}
+	
+	private void setDeclaredType(ICPPFunctionType ft) throws CoreException {
+		fType = null;
+		getLinkage().storeType(record + DECLARED_TYPE, ft);
 	}
 
 	@Override
@@ -303,6 +317,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
+	@Override
+	public ICPPFunctionType getDeclaredType() {
+		if (fDeclaredType == null) {
+			try {
+				fDeclaredType = (ICPPFunctionType) getLinkage().loadType(record + DECLARED_TYPE);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fDeclaredType = new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
+			}
+		}
+		return fDeclaredType;
+	}
+	
 	@Override
 	public final ICPPFunctionType getType() {
 		if (fType == null) {

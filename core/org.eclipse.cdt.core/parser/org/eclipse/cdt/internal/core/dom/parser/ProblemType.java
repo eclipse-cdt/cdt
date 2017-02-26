@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType AUTO_FOR_NON_STATIC_FIELD = new ProblemType(TYPE_AUTO_FOR_NON_STATIC_FIELD);
+	public static final IType AUTO_FOR_VIRTUAL_METHOD = new ProblemType(TYPE_AUTO_FOR_VIRTUAL_METHOD);
 	public static final IType CANNOT_DEDUCE_AUTO_TYPE = new ProblemType(TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 	public static final IType CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE = new ProblemType(TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE);
 	public static final IType ENUMERATION_EXPECTED = new ProblemType(TYPE_ENUMERATION_EXPECTED);

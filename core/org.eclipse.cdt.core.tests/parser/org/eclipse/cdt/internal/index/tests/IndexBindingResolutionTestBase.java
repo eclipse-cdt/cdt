@@ -385,6 +385,12 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		}
 		return i - offset;
 	}
+	
+	// Get a BindingAssertionHelper for the last AST.
+	protected BindingAssertionHelper getAssertionHelper() {
+		int index = strategy.getAstCount() - 1;
+		return new BindingAssertionHelper(strategy.getAstSource(index).toString(), strategy.getAst(index));
+	}
 
 	static protected class NameCollector extends ASTVisitor {
         {

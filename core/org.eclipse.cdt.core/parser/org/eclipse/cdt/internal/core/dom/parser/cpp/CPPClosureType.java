@@ -22,11 +22,10 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -52,9 +51,9 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType.PlaceholderKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.core.runtime.PlatformObject;
@@ -143,33 +142,29 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	}
 
 	private IType getReturnType() {
+		IASTDeclSpecifier declSpecForDeduction = null;
+		IASTDeclarator declaratorForDeduction = null;
 		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
+		PlaceholderKind placeholder = null;
 		if (lambdaDtor != null) {
 			IASTTypeId trailingReturnType = lambdaDtor.getTrailingReturnType();
 			if (trailingReturnType != null) {
-				return CPPVisitor.createType(trailingReturnType);
+				IASTDeclSpecifier declSpec = trailingReturnType.getDeclSpecifier();
+				placeholder = CPPVisitor.usesAuto(declSpec);
+				if (placeholder != null) {
+					declSpecForDeduction = declSpec;
+					declaratorForDeduction = trailingReturnType.getAbstractDeclarator();
+				} else {
+					return CPPVisitor.createType(trailingReturnType);
+				}
 			}
 		}
 		IASTCompoundStatement body = fLambdaExpression.getBody();
 		if (body != null) {
-			IASTStatement[] stmts = body.getStatements();
-			if (stmts.length > 0) {
-				// Gnu extension allows to deduce return type in complex compound statements
-				IASTStatement stmt= stmts[stmts.length - 1];
-				if (stmt instanceof IASTReturnStatement) {
-					IASTReturnStatement rtstmt= (IASTReturnStatement) stmt;
-					IASTExpression expr= rtstmt.getReturnValue();
-					if (expr != null) {
-						IType type= expr.getExpressionType();
-						type= Conversions.lvalue_to_rvalue(type, false);
-						if (type != null) {
-							return type;
-						}
-					}
-				}
-			}
+			return CPPVisitor.deduceReturnType(body, declSpecForDeduction, declaratorForDeduction, 
+					placeholder, body);
 		}
-		return CPPSemantics.VOID_TYPE;
+		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 	}
 
 	private IType[] getParameterTypes() {

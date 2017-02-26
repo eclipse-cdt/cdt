@@ -100,6 +100,7 @@ public class ParserMessages {
 		case ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION: return "ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION";
 		case ISemanticProblem.TYPE_NOT_PERSISTED: return "ISemanticProblem.TYPE_NOT_PERSISTED";		
 		case ISemanticProblem.TYPE_ENUMERATION_EXPECTED: return "ISemanticProblem.TYPE_ENUMERATION_EXPECTED";
+		case ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE: return "ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE";
 		}
 		return null;
 	}

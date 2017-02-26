@@ -10306,4 +10306,26 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testReferenceBinding_Regression_516284() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	// Declare a constexpr function that turns int and int& into different values.
+	//	template <typename T> constexpr int foo();
+	//	template <> constexpr int foo<int>() { return 42; };
+	//	template <> constexpr int foo<int&>() { return 43; };
+	//
+	//	template <typename T>
+	//	constexpr int bar(T arg) {
+	//		// Bind a TypeOfDependentExpression to an 'auto'.
+	//	    auto local = *&arg;
+	//
+	//		// Leak the deduced type via the return value.
+	//	    return foo<decltype(local)>();
+	//	}
+	//
+	//	// Instantiate with [T = int] and capture the return value.
+	//	constexpr int waldo = bar(0);
+	public void testDependentTypeBindingToAuto_408470() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		// Check that the TypeOfDependentExpression instantiated to the correct type.
+		helper.assertVariableValue("waldo", 42);
+	}
 }

@@ -66,6 +66,11 @@ public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	}
 
 	@Override
+	public ICPPFunctionType getDeclaredType() {
+		return FUNCTION_TYPE;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
 		// TODO(nathanridge): We'd like to return a TypeOfUnknownMember here,
 		// but that doesn't implement ICPPFuncionType. We'll probably have

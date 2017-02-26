@@ -118,6 +118,11 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	}
 
 	@Override
+	public ICPPFunctionType getDeclaredType() {
+		return FUNCTION_TYPE;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
 		return FUNCTION_TYPE;
 	}

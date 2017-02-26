@@ -27,14 +27,29 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPPUnknownType, ISerializableType {
 	private final ICPPEvaluation fEvaluation;
+	// Whether this represents a decltype(expr), or a dependent type in another context.
+	private boolean fIsForDecltype;
 
 	public TypeOfDependentExpression(ICPPEvaluation evaluation) {
-		super(null);
-		fEvaluation= evaluation;
+		this(evaluation, true);
 	}
-
+	
+	public TypeOfDependentExpression(ICPPEvaluation evaluation, boolean isForDecltype) {
+		super(null);
+		fEvaluation = evaluation;
+		fIsForDecltype = isForDecltype;
+	}
+	
 	public ICPPEvaluation getEvaluation() {
 		return fEvaluation;
+	}
+	
+	public boolean isForDecltype() {
+		return fIsForDecltype;
+	}
+	
+	public void setIsForDecltype(boolean isForDecltype) {
+		fIsForDecltype = isForDecltype;
 	}
 
 	@Override
@@ -61,14 +76,20 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		buffer.putShort(ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE);
+		short firstBytes = ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE;
+		if (fIsForDecltype) {
+			firstBytes |= ITypeMarshalBuffer.FLAG1;
+		}
+		buffer.putShort(firstBytes);
 		buffer.marshalEvaluation(fEvaluation, false);
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation eval= buffer.unmarshalEvaluation();
-		if (eval != null)
-			return new TypeOfDependentExpression(eval);
+		if (eval != null) {
+			boolean isForDecltype = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+			return new TypeOfDependentExpression(eval, isForDecltype);
+		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 

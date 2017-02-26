@@ -53,12 +53,23 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	public IType[] getExceptionSpecification();
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the function's type.
+	 * Any placeholders in the type are resolved.
+	 * If the type contains placeholders and a function definition is not available to
+	 * resolve them, a ProblemType is returned (call sites that do not need the 
+	 * placeholders resolved should call getDeclaredType() instead).
 	 * @since 5.1
 	 */
 	@Override
 	public ICPPFunctionType getType();
 
+	/**
+	 * Returns the function's declared type.
+	 * This is the function's type without any placeholders resolved.
+	 * @since 6.3
+	 */
+	public ICPPFunctionType getDeclaredType();
+	
 	/**
 	 * @since 5.2
 	 */

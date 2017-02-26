@@ -251,6 +251,10 @@ public class TemplateArgumentDeduction {
 			TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
 		boolean isReferenceTypeParameter= false;
 		if (par instanceof ICPPReferenceType) {
+			// Cannot deduce a reference type from a void type.
+			if (SemanticUtil.isVoidType(arg)) {
+				return false;
+			}
 			// If P is an rvalue reference to a cv-unqualified template parameter and the argument
 			// is an lvalue, the type "lvalue reference to A" is used in place of A for type
 			// deduction.

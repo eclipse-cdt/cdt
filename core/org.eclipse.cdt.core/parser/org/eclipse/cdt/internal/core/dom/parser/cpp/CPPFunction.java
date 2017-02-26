@@ -51,6 +51,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -68,6 +69,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	protected IASTDeclarator[] declarations;
 	protected ICPPASTFunctionDeclarator definition;
+	protected ICPPFunctionType declaredType;
 	protected ICPPFunctionType type;
 
 	private static final int FULLY_RESOLVED         = 1;
@@ -294,23 +296,47 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return null;
 	}
 
-    @Override
+	// Helper function for getDeclaredType() and getType().
+	public static ICPPFunctionType toFunctionType(IType type) {
+		if (type instanceof ICPPFunctionType) {
+			return (ICPPFunctionType) type;
+		} else {
+			type = getNestedType(type, TDEF);
+			if (type instanceof ICPPFunctionType) {
+				return (ICPPFunctionType) type;
+			} else if (type instanceof ISemanticProblem) {
+				return new ProblemFunctionType(((ISemanticProblem) type).getID());
+			} else {
+				// This case is unexpected
+				return new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+			}
+		}
+	}
+	
+	@Override
+	public ICPPFunctionType getDeclaredType() {
+        if (declaredType == null) {
+			IType t = CPPVisitor.createType((definition != null) ? definition : declarations[0], 
+					CPPVisitor.DO_NOT_RESOLVE_PLACEHOLDERS);
+			declaredType = toFunctionType(t);
+		}
+        return declaredType;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
         if (type == null) {
+        	// TODO: As an optimization, check if declaredType contains placeholders,
+        	//       and if it doesn't, just return that.
 			IType t = CPPVisitor.createType((definition != null) ? definition : declarations[0]);
-			if (t instanceof ICPPFunctionType) {
-				type = (ICPPFunctionType) t;
-			} else {
-				t = getNestedType(t, TDEF);
-				if (t instanceof ICPPFunctionType) {
-					type = (ICPPFunctionType) t;
-				} else if (t instanceof ISemanticProblem) {
-					type= new ProblemFunctionType(((ISemanticProblem) t).getID());
-				} else {
-					// This case is unexpected
-					type = new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+			// The declaration may not specify the return type, so look at the definition.
+			if (t == ProblemType.NO_NAME) {
+				findDefinition();
+				if (definition != null) {
+					t = CPPVisitor.createType(definition);
 				}
 			}
+			type = toFunctionType(t);
 		}
         return type;
     }
@@ -712,5 +738,14 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			}
 		}
 		return null;
+	}
+	
+	private void findDefinition() {
+		if (definition != null)
+			return;
+
+		IASTName[] definitions = declarations[0].getTranslationUnit().getDefinitionsInAST(this);
+		if (definitions.length != 0)
+			addDefinition(definitions[0]);
 	}
 }

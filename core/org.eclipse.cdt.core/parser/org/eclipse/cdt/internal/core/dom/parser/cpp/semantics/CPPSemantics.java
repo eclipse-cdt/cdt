@@ -4318,8 +4318,9 @@ public class CPPSemantics {
 
 		declarator= ASTQueries.findTypeRelevantDeclarator(declarator);
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
-			IType type = function.getType();
-			return type.isSameType(CPPVisitor.createType(declarator));
+			// For declaration matching, compare the declared types (placeholders not resolved).
+			IType type = function.getDeclaredType();
+			return type.isSameType(CPPVisitor.createType(declarator, CPPVisitor.DO_NOT_RESOLVE_PLACEHOLDERS));
 		}
 		return false;
 	}

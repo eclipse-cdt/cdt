@@ -45,6 +45,8 @@ public interface ISemanticProblem {
 	int TYPE_ENUMERATION_EXPECTED					= 10006;
 	/** @since 6.1 */
 	int TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE		= 10007;
+	/** @since 6.3 */
+	int TYPE_AUTO_FOR_VIRTUAL_METHOD                = 10008;
 
 	/**
      * Returns the ID of the problem.

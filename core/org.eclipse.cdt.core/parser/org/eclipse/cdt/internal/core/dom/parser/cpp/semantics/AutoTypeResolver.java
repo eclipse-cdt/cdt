@@ -48,6 +48,11 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	@Override
+	public ICPPFunctionType getDeclaredType() {
+		return functionType;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
 		return functionType;
 	}

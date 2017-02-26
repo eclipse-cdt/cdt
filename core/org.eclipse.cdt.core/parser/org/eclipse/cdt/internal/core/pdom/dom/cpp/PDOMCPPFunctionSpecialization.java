@@ -61,14 +61,18 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	/** Offset of the function body execution for constexpr functions. */
 	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
+	
+	/** Offset of the function's declared type. */
+	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE;  // Database.TYPE_SIZE
 
 	/**
 	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FUNCTION_BODY + Database.EXECUTION_SIZE;
+	protected static final int RECORD_SIZE = DECLARED_TYPE + Database.TYPE_SIZE;
 
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
+	private ICPPFunctionType fDeclaredType;
 	private short fAnnotations= -1;
 	private int fRequiredArgCount= -1;
 
@@ -81,6 +85,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		IFunctionType astFt= astFunction.getType();
 		if (astFt != null) {
 			getLinkage().storeType(record + FUNCTION_TYPE, astFt);
+		}
+		IFunctionType astDeclaredType = astFunction.getDeclaredType();
+		if (astDeclaredType != null) {
+			getLinkage().storeType(record + DECLARED_TYPE, astDeclaredType);
 		}
 
 		ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization) astFunction).getSpecializedBinding();
@@ -201,6 +209,19 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		}
 	}
 
+	@Override
+	public ICPPFunctionType getDeclaredType() {
+		if (fDeclaredType == null) {
+			try {
+				fDeclaredType = (ICPPFunctionType) getLinkage().loadType(record + DECLARED_TYPE);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fDeclaredType = new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
+			}
+		}
+		return fDeclaredType;
+	}
+	
 	@Override
 	public ICPPFunctionType getType() {
 		if (fType == null) {

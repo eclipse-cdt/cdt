@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.parser.tests.ast2.constexprevaluation.AllConstexprEvalTests;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.AllConstexprEvalTests;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;

@@ -6,7 +6,7 @@
 * which accompanies this distribution, and is available at
 * http://www.eclipse.org/legal/epl-v10.html
 *******************************************************************************/
-package org.eclipse.cdt.core.parser.tests.ast2.constexprevaluation;
+package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;

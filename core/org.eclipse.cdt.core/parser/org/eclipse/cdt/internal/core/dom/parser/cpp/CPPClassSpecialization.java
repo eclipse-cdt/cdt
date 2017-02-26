@@ -130,6 +130,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 
 		@Override
+		public ICPPFunctionType getDeclaredType() {
+			return new ProblemFunctionType(getID());
+		}
+		
+		@Override
 		public ICPPFunctionType getType() {
 			return new ProblemFunctionType(getID());
 		}

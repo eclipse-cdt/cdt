@@ -100,6 +100,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -291,6 +292,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	class ConfigureFunction implements Runnable {
 		private final PDOMCPPFunction fFunction;
 		private final ICPPFunctionType fOriginalFunctionType;
+		private final ICPPFunctionType fDeclaredType;
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPExecution fFunctionBody;
@@ -299,6 +301,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				throws DOMException {
 			fFunction = function;
 			fOriginalFunctionType= original.getType();
+			fDeclaredType = original.getDeclaredType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= function.extractExceptionSpec(original);
 			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
@@ -307,8 +310,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		@Override
 		public void run() {
-			fFunction.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fFunctionBody);
+			fFunction.initData(fOriginalFunctionType, fDeclaredType, fOriginalParameters, 
+					fOriginalExceptionSpec, fFunctionBody);
 		}
 	}
 	
@@ -399,6 +402,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
 		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
 		private final ICPPFunctionType fOriginalFunctionType;
+		private final ICPPFunctionType fDeclaredType;
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPExecution fFunctionBody;
@@ -409,6 +413,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fTemplateParameters= template.getTemplateParameters();
 			fOriginalTemplateParameters= original.getTemplateParameters();
 			fOriginalFunctionType= original.getType();
+			fDeclaredType = original.getDeclaredType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= template.extractExceptionSpec(original);
 			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
@@ -422,8 +427,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (tp != null)
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
-			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
-					fFunctionBody);
+			fTemplate.initData(fOriginalFunctionType, fDeclaredType, fOriginalParameters, 
+					fOriginalExceptionSpec, fFunctionBody);
 		}
 	}
 
@@ -1542,6 +1547,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return TypeOfUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.INITIALIZER_LIST_TYPE:
 			return InitializerListType.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.PLACEHOLDER_TYPE:
+			return CPPPlaceholderType.unmarshal(firstBytes, buffer);
 		// Don't handle DEFERRED_FUNCTION, because it's never a type.
 		}
 

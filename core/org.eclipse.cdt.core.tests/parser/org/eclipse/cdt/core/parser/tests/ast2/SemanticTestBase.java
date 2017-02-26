@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -346,6 +347,11 @@ public class SemanticTestBase extends BaseTestCase {
     	public void assertVariableType(String variableName, IType expectedType) {
     		IVariable var = assertNonProblem(variableName);
     		assertSameType(expectedType, var.getType());
+    	}
+    	
+    	public void assertVariableTypeProblem(String variableName) {
+    		IVariable var = assertNonProblem(variableName);
+    		assertInstance(var.getType(), IProblemType.class);
     	}
     	
     	public void assertVariableValue(String variableName, long expectedValue) {

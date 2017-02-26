@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
@@ -170,6 +171,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.util.ReturnStatementVisitor;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -210,6 +212,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType.PlaceholderKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -241,6 +245,12 @@ public class CPPVisitor extends ASTQueries {
 	private static final char[][] EMPTY_CHAR_ARRAY_ARRAY = {};
 	public static final IASTInitializerClause[] NO_ARGS = {};
 
+	// Flags for createType().
+	public static final int RESOLVE_PLACEHOLDERS = 0x1;
+	
+	// Common combinations of flags.
+	public static final int DO_NOT_RESOLVE_PLACEHOLDERS = 0;
+	
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
@@ -1889,7 +1899,7 @@ public class CPPVisitor extends ASTQueries {
 		return pt;
 	}
 
-	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
+	private static IType createFunctionType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
 	    IType[] pTypes = createParameterTypes(fnDtor);
 
 	    IASTName name = fnDtor.getName().getLastName();
@@ -2038,7 +2048,24 @@ public class CPPVisitor extends ASTQueries {
 	    return type;
 	}
 
+	public static PlaceholderKind usesAuto(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+			int declSpecType = ((ICPPASTSimpleDeclSpecifier) declSpec).getType();
+			if (declSpecType == IASTSimpleDeclSpecifier.t_auto) {
+				return PlaceholderKind.Auto;
+			} else if (declSpecType == IASTSimpleDeclSpecifier.t_decltype_auto) {
+				return PlaceholderKind.DecltypeAuto;
+			}
+		}
+		return null;
+	}
+	
 	public static IType createType(IASTDeclarator declarator) {
+		// Resolve placeholders by default.
+		return createType(declarator, RESOLVE_PLACEHOLDERS);
+	}
+	
+	public static IType createType(IASTDeclarator declarator, int flags) {
 		if (declarator == null)
 			return ProblemType.NO_NAME;
 
@@ -2061,14 +2088,9 @@ public class CPPVisitor extends ASTQueries {
 			throw new IllegalArgumentException();
 		}
 
-		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
-			ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpec;
-			int declSpecifierType = simpleDeclSpecifier.getType();
-			if (declSpecifierType == IASTSimpleDeclSpecifier.t_auto) {
-				return createAutoType(declSpec, declarator);
-			} else if (declSpecifierType == IASTSimpleDeclSpecifier.t_decltype_auto) {
-				return createDecltypeAutoType(declarator, simpleDeclSpecifier);
-			}
+		PlaceholderKind placeholder = usesAuto(declSpec);
+		if (placeholder != null) {
+			return createAutoType(declSpec, declarator, flags, placeholder);
 		}
 
 		IType type = createType(declSpec);
@@ -2096,51 +2118,21 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
-	private static IType createDecltypeAutoType(IASTDeclarator declarator, ICPPASTSimpleDeclSpecifier simpleDeclSpecifier) {
-		IASTInitializerClause initializerClause = getInitializerClauseForDecltypeAuto(declarator);
-		if (initializerClause instanceof IASTExpression) {
-			return getDeclType((IASTExpression) initializerClause);
-		}
-		return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
-	}
-
-	private static IASTInitializerClause getInitializerClauseForDecltypeAuto(IASTDeclarator declarator) {
-		IASTInitializer initializer = declarator.getInitializer();
-		if (initializer == null) {
-			ICPPASTNewExpression newExpression = findAncestorWithType(declarator, ICPPASTNewExpression.class);
-			if (newExpression != null) {
-				initializer = newExpression.getInitializer();
-			}
-		}
-		if (initializer instanceof IASTEqualsInitializer) {
-			return ((IASTEqualsInitializer) initializer).getInitializerClause();
-		} else if (initializer instanceof ICPPASTConstructorInitializer) {
-			ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
-			IASTInitializerClause[] arguments = constructorInitializer.getArguments();
-			if (arguments.length == 1) {
-				return arguments[0];
-			}
-		} else if (initializer instanceof IASTInitializerList) {
-			IASTInitializerList initializerList = (IASTInitializerList) initializer;
-			IASTInitializerClause[] clauses = initializerList.getClauses();
-			if (clauses.length == 1) {
-				return clauses[0];
-			}
-		}
-
-		return null;
-	}
-
-	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator, 
+			int flags, PlaceholderKind placeholderKind) {
+		IType cannotDeduce = placeholderKind == PlaceholderKind.Auto ? 
+				ProblemType.CANNOT_DEDUCE_AUTO_TYPE :
+			    ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 		Set<IASTDeclSpecifier> recursionProtectionSet = autoTypeDeclSpecs.get();
 		if (!recursionProtectionSet.add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
-			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+			return cannotDeduce;
 		}
 
 		try {
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
-				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
+				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator, flags,
+						placeholderKind);
 			}
 			ICPPASTInitializerClause autoInitClause= null;
 			IASTNode parent = declarator.getParent().getParent();
@@ -2179,7 +2171,7 @@ public class CPPVisitor extends ASTQueries {
 							beginExpr= new CPPASTFunctionCallExpression(new CPPASTIdExpression(name), beginCallArguments);
 						}
 					} else {
-						return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+						return cannotDeduce;
 					}
 				}
 				autoInitClause= new CPPASTUnaryExpression(IASTUnaryExpression.op_star, beginExpr);
@@ -2198,74 +2190,239 @@ public class CPPVisitor extends ASTQueries {
 					if (arguments.length == 1)
 						autoInitClause = (ICPPASTInitializerClause) arguments[0];
 				} else if (initClause instanceof ICPPASTInitializerClause) {
-					autoInitClause= (ICPPASTInitializerClause) initClause;
+					if (initClause instanceof ICPPASTInitializerList) {
+						IASTInitializerClause[] clauses = ((ICPPASTInitializerList) initClause).getClauses();
+						if (clauses.length == 1) {
+							autoInitClause = (ICPPASTInitializerClause) clauses[0];
+						}
+					}
+					if (autoInitClause == null) {
+						autoInitClause= (ICPPASTInitializerClause) initClause;
+					}
 				}
 			}
-			return createAutoType(autoInitClause, declSpec, declarator);
+			if (autoInitClause == null) {
+				return cannotDeduce;
+			}
+			if (placeholderKind == PlaceholderKind.Auto) {
+				return createAutoType(autoInitClause.getEvaluation(), declSpec, declarator, autoInitClause);
+			} else /* decltype(auto) */ {
+				if (declarator.getPointerOperators().length > 0) {
+					// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
+					return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+				}
+				if (autoInitClause instanceof IASTExpression) {
+					return getDeclType((IASTExpression) autoInitClause);					
+				} else {
+					return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+				}
+			}
 		} finally {
 			recursionProtectionSet.remove(declSpec);
 		}
 	}
 
-	private static IType createAutoType(ICPPASTInitializerClause initClause, IASTDeclSpecifier declSpec,
-			IASTDeclarator declarator) {
+	private static IType createAutoType(final ICPPEvaluation evaluation, IASTDeclSpecifier declSpec,
+			IASTDeclarator declarator, IASTNode point) {
 		//  C++0x: 7.1.6.4
-		if (initClause == null) {
-			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
-		}
-
 		IType type = AutoTypeResolver.AUTO_TYPE;
 		IType initType = null;
 		ValueCategory valueCat= null;
+		initType = evaluation.getType(declarator);
+		valueCat = evaluation.getValueCategory(declarator);
+		if (initType == null || initType instanceof ISemanticProblem) {
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+		}
 		ICPPClassTemplate initializer_list_template = null;
-		if (initClause instanceof ICPPASTInitializerList) {
+		if (evaluation instanceof EvalInitList) {
 			initializer_list_template = get_initializer_list(declSpec);
 			if (initializer_list_template == null) {
 				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, point);
 			if (type instanceof IProblemBinding) {
 				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 		}
 		type = decorateType(type, declSpec, declarator);
-		final ICPPEvaluation evaluation = initClause.getEvaluation();
-		initType= evaluation.getType(declarator);
-		valueCat= evaluation.getValueCategory(declarator);
-		if (initType == null || initType instanceof ISemanticProblem) {
-			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
-		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
 		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),
-				Collections.singletonList(valueCat), paramMap, initClause);
+				Collections.singletonList(valueCat), paramMap, point);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 		type = argument.getTypeValue();
+		if (type instanceof TypeOfDependentExpression) {
+			// After binding to 'auto', a dependent type no longer acts like 'decltype(expr)'.
+			// For example, after instantiation it's no longer wrapped into a reference type
+			// if it's an lvalue the way 'decltype(expr)' usually is.
+			((TypeOfDependentExpression) type).setIsForDecltype(false);
+		}
 		IType t = SemanticUtil.substituteTypedef(type, initType);
 		if (t != null)
 			type = t;
-		if (initClause instanceof ICPPASTInitializerList) {
+		if (evaluation instanceof EvalInitList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, point);
 		}
 		return decorateType(type, declSpec, declarator);
 	}
+	
+	private static class ReturnTypeDeducer extends ReturnStatementVisitor {
+		private static final ICPPEvaluation voidEval = new EvalFixed(
+				CPPSemantics.VOID_TYPE, ValueCategory.PRVALUE, IntegralValue.UNKNOWN);
+		
+		private ICPPEvaluation fReturnEval = null;
+		private boolean fEncounteredReturnStatement = false;
+		
+		protected ReturnTypeDeducer(IASTFunctionDefinition func) {
+			super(func);
+		}
 
+		@Override
+		protected void onReturnStatement(IASTReturnStatement stmt) {
+			fEncounteredReturnStatement = true;
+			ICPPEvaluation returnEval = null;
+			IASTInitializerClause returnExpression = stmt.getReturnArgument();
+			if (returnExpression == null) {
+				returnEval = voidEval;
+			} else {
+				
+				returnEval = ((ICPPASTInitializerClause) returnExpression).getEvaluation();
+			}
+			IType returnType = returnEval.getType(stmt);
+			if (returnType instanceof ISemanticProblem) {
+				// If a function makes a recursive call in some of its return statements,
+				// the type those return expressions will be a problem type. We ignore 
+				// these, because we can still successfully deduce from another return 
+				// statement that is not recursive.
+				// If all return statements are recursive, fReturnEval will remain null
+				// and getReturnEvaluation() will construct an EvalFixed.INCOMPLETE as desired.
+				return;
+			}
+			
+			if (fReturnEval == null) {
+				fReturnEval = returnEval;
+			} else if (!fReturnEval.getType(stmt).isSameType(returnType)) {
+				fReturnEval = EvalFixed.INCOMPLETE;
+			}
+		}
+		
+		public ICPPEvaluation getReturnEvaluation() {
+			if (fReturnEval == null) {
+				if (!fEncounteredReturnStatement) {
+					return voidEval;
+				}
+				fReturnEval = EvalFixed.INCOMPLETE;
+			}
+			return fReturnEval;
+		}
+	}
+
+	public static IType deduceReturnType(IASTStatement functionBody, IASTDeclSpecifier autoDeclSpec, 
+			IASTDeclarator autoDeclarator, PlaceholderKind placeholder, IASTNode point) {
+		ICPPEvaluation returnEval = null;
+		if (functionBody != null) {
+			ReturnTypeDeducer deducer = new ReturnTypeDeducer(null);
+			functionBody.accept(deducer);
+			returnEval = deducer.getReturnEvaluation();
+		}
+		if (returnEval == null || returnEval == EvalFixed.INCOMPLETE) {
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+		}
+		
+		// [dcl.spec.auto] p7:
+		//   If the deduction is for a return statement and the initializer is a
+		//   braced-init-list, the proram is ill-formed.
+		if (returnEval instanceof EvalInitList) {
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+		}
+
+		if (placeholder == PlaceholderKind.DecltypeAuto) {
+			if (autoDeclarator != null && autoDeclarator.getPointerOperators().length > 0) {
+				// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
+				return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+			}
+			return CPPSemantics.getDeclTypeForEvaluation(returnEval, point);
+		} else /* auto */ {
+			if (autoDeclSpec == null || autoDeclarator == null) {
+				return returnEval.getType(point);
+			} else {
+				return createAutoType(returnEval, autoDeclSpec, autoDeclarator, autoDeclarator);
+			}
+		}
+	}
+	
 	/**
 	 * C++0x: [8.3.5-2]
 	 */
-	private static IType createAutoFunctionType(IASTDeclSpecifier declSpec, ICPPASTFunctionDeclarator declarator) {
-		IASTTypeId id= declarator.getTrailingReturnType();
-		if (id == null)
-			return ProblemType.NO_NAME;
-
-		IType t= createType(id.getAbstractDeclarator());
-		t= qualifyType(t, declSpec);
-		return createType(t, declarator);
+	private static IType createAutoFunctionType(IASTDeclSpecifier declSpec, 
+			ICPPASTFunctionDeclarator declarator, int flags, PlaceholderKind placeholder) {
+		IType returnType = null;
+		IASTDeclSpecifier declSpecForDeduction = null;
+		IASTDeclarator declaratorForDeduction = null;
+		IASTTypeId trailingReturnType = declarator.getTrailingReturnType();
+		if (trailingReturnType == null) {
+			// No trailing return type.
+			if ((flags & RESOLVE_PLACEHOLDERS) != 0) {
+				declSpecForDeduction = declSpec;
+				declaratorForDeduction = declarator;
+			} else {
+				returnType = new CPPPlaceholderType(PlaceholderKind.Auto);
+			}
+		} else {
+			IASTDeclSpecifier trailingDeclSpec = trailingReturnType.getDeclSpecifier();
+			IASTDeclarator trailingDeclarator = trailingReturnType.getAbstractDeclarator();
+			PlaceholderKind trailingPlaceholder = usesAuto(trailingDeclSpec);
+			if (trailingPlaceholder != null && !(trailingDeclarator instanceof IASTFunctionDeclarator)) {
+				// Trailing return type uses 'auto', other than to introduce
+				// another trailing return type for a function type, so we'll
+				// need to look at the function body and deduce the return type.
+				declSpecForDeduction = trailingDeclSpec;
+				declaratorForDeduction = trailingDeclarator;
+				placeholder = trailingPlaceholder;
+			} else {
+				// Trailing return type specifies the type.
+				returnType = createType(trailingDeclarator);
+				returnType = qualifyType(returnType, declSpec);
+			}
+		}
+		
+		if (returnType == null) {
+			// Try to deduce return type from return statement.
+			
+			// [dcl.spec.auto] p14:
+			//   A function declared with a return type that uses a placeholder type
+			//   shall not be virtual.
+			if (((ICPPASTDeclSpecifier) declSpec).isVirtual())
+				return ProblemType.AUTO_FOR_VIRTUAL_METHOD;
+			
+			ICPPASTFunctionDefinition definition= CPPFunction.getFunctionDefinition(declarator);
+			if (definition != null) {
+				returnType = deduceReturnType(definition.getBody(), declSpecForDeduction, 
+						declaratorForDeduction, placeholder, declaratorForDeduction);
+			}
+		}
+		
+		if (returnType != null) {
+			// Do not use createFunctionType() because that would decorate the return type
+			// with pointer operators from e.g. an 'auto &', but we have already done that
+			// above.
+			IType[] pTypes = createParameterTypes(declarator);
+			RefQualifier refQualifier = declarator.getRefQualifier();
+			IType result = new CPPFunctionType(returnType, pTypes, declarator.isConst(), declarator.isVolatile(),
+					refQualifier != null, refQualifier == RefQualifier.RVALUE, declarator.takesVarArgs());
+			final IASTDeclarator nested = declarator.getNestedDeclarator();
+			if (nested != null) {
+				result = createType(result, nested);
+			}
+			return result;
+		}
+		return ProblemType.NO_NAME;
+		
 	}
 
 	public static IType createType(IASTDeclSpecifier declSpec) {
@@ -2310,10 +2467,12 @@ public class CPPVisitor extends ASTQueries {
     	return ProblemType.UNRESOLVED_NAME;
 	}
 
+	// Helper function for createAutoType().
 	private static IType decorateType(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		type = qualifyType(type, declSpec);
 		type = makeConstIfConstexpr(type, declSpec, declarator);
-		return createType(type, declarator);
+		// Ignore function declarator because we already handled that in createAutoFunctionType().
+		return createType(type, declarator, true /* ignore function declarator */);
 	}
 
 	private static IType makeConstIfConstexpr(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
@@ -2333,8 +2492,12 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType createType(IType baseType, IASTDeclarator declarator) {
-	    if (declarator instanceof ICPPASTFunctionDeclarator)
-	        return createType(baseType, (ICPPASTFunctionDeclarator) declarator);
+		return createType(baseType, declarator, false);
+	}
+	
+	private static IType createType(IType baseType, IASTDeclarator declarator, boolean ignoreFunctionDeclarator) {
+	    if (!ignoreFunctionDeclarator && declarator instanceof ICPPASTFunctionDeclarator)
+	        return createFunctionType(baseType, (ICPPASTFunctionDeclarator) declarator);
 
 		IType type = baseType;
 		type = applyAttributes(type, declarator);

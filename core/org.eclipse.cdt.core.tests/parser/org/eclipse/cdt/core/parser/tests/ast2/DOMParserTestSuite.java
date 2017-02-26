@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.VariableTemplateTests;
 import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
 
 import junit.framework.Test;
@@ -57,7 +58,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(AccessControlTests.suite());
 		suite.addTest(VariableReadWriteFlagsTest.suite());
 		suite.addTest(AST2CPPAttributeTests.suite());
-		suite.addTest(AST2VariableTemplateTests.suite());
+		suite.addTest(VariableTemplateTests.suite());
 		return suite;
 	}
 }

@@ -9,7 +9,7 @@
  * Contributors:
  *     Lukas Wegmann (IFS) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.parser.tests.ast2;
+package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -23,15 +23,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplateSpecialization;
 
 import junit.framework.TestSuite;
 
-public class AST2VariableTemplateTests extends AST2TestBase {
+public class VariableTemplateTests extends AST2TestBase {
 
 	public static TestSuite suite() {
-		return suite(AST2VariableTemplateTests.class);
+		return suite(VariableTemplateTests.class);
 	}
 
 	// template<typename T> constexpr T pi = T(3);

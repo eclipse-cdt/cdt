@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -137,8 +138,30 @@ public class AST2TestBase extends BaseTestCase {
     
     protected static class CommonCPPTypes {
     	public static IType int_ = CPPBasicType.INT;
-    	public static IType pointerToInt = new CPPPointerType(int_);
-    	public static IType constInt = new CPPQualifierType(int_, true, false);
+    	public static IType void_ = CPPBasicType.VOID;
+    	public static IType constInt = constOf(int_);
+    	public static IType pointerToInt = pointerTo(int_);
+    	public static IType pointerToConstInt = pointerTo(constInt);
+    	public static IType referenceToInt = referenceTo(int_);
+    	public static IType referenceToConstInt = referenceTo(constInt);
+    	public static IType rvalueReferenceToInt = rvalueReferenceTo(int_);
+    	public static IType rvalueReferenceToConstInt = rvalueReferenceTo(constInt);
+    	
+    	private static IType pointerTo(IType type) {
+    		return new CPPPointerType(type);
+    	}
+    	
+    	private static IType constOf(IType type) {
+    		return new CPPQualifierType(type, true, false);
+    	}
+    	
+    	private static IType referenceTo(IType type) {
+    		return new CPPReferenceType(type, false);
+    	}
+    	
+    	private static IType rvalueReferenceTo(IType type) {
+    		return new CPPReferenceType(type, true);
+    	}
     }
 
     private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());

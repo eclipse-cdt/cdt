@@ -86,6 +86,11 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	@Override
+	public ICPPFunctionType getDeclaredType() {
+		return fType;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
 		return fType;
 	}

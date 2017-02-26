@@ -52,6 +52,11 @@ public class CPPImplicitFunction extends CPPFunction {
 	public ICPPFunctionType getType() {
     	return functionType;
     }
+    
+    @Override
+    public ICPPFunctionType getDeclaredType() {
+    	return functionType;
+    }
 
     @Override
 	public String getName() {

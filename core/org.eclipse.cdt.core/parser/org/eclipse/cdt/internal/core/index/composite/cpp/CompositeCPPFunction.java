@@ -70,6 +70,12 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 		IType rtype = ((ICPPFunction) rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
 	}
+	
+	@Override
+	public ICPPFunctionType getDeclaredType() {
+		IType rtype = ((ICPPFunction) rbinding).getDeclaredType();
+		return (ICPPFunctionType) cf.getCompositeType(rtype);
+	}
 
 	@Override
 	public boolean isDeleted() {

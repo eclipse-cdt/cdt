@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -29,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -40,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -49,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
 		implements ICPPFunctionTemplate, ICPPInternalFunction {
+	protected ICPPFunctionType declaredType;
 	protected ICPPFunctionType type;
 
 	public CPPFunctionTemplate(IASTName name) {
@@ -170,22 +166,31 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	}
 
 	@Override
+	public ICPPFunctionType getDeclaredType() {
+		if (declaredType == null) {
+			IASTName name = getTemplateName();
+			IASTNode parent = name.getParent();
+			while (parent.getParent() instanceof IASTDeclarator)
+				parent = parent.getParent();
+			
+			IType t = CPPVisitor.createType((IASTDeclarator) parent, CPPVisitor.DO_NOT_RESOLVE_PLACEHOLDERS);
+			declaredType = CPPFunction.toFunctionType(t);
+		}
+		return declaredType;
+	}
+	
+	@Override
 	public ICPPFunctionType getType() {
 		if (type == null) {
 			IASTName name = getTemplateName();
 			IASTNode parent = name.getParent();
 			while (parent.getParent() instanceof IASTDeclarator)
 				parent = parent.getParent();
-
-			IType t = getNestedType(CPPVisitor.createType((IASTDeclarator) parent), TDEF);
-			if (t instanceof ICPPFunctionType) {
-				type = (ICPPFunctionType) t;
-			} else if (t instanceof ISemanticProblem) {
-				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
-			} else {
-				// This case is unexpected.
-				type= new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
-			}
+			
+			IType t = CPPVisitor.createType((IASTDeclarator) parent);
+			// TODO(nathanridge): Do we need to search for the definition here, if t is 
+			// ProblemType.NO_NAME, as in CPPFunction?
+			type = CPPFunction.toFunctionType(t);
 		}
 		return type;
 	}

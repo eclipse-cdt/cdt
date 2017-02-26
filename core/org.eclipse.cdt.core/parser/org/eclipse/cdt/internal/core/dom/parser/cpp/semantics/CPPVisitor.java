@@ -2040,7 +2040,7 @@ public class CPPVisitor extends ASTQueries {
 
 	public static IType createType(IASTDeclarator declarator) {
 		if (declarator == null)
-			return new ProblemType(ISemanticProblem.TYPE_NO_NAME);
+			return ProblemType.NO_NAME;
 
 		declarator= findOutermostDeclarator(declarator);
 		IASTNode parent = declarator.getParent();
@@ -2101,7 +2101,7 @@ public class CPPVisitor extends ASTQueries {
 		if (initializerClause instanceof IASTExpression) {
 			return getDeclType((IASTExpression) initializerClause);
 		}
-		return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE);
+		return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 	}
 
 	private static IASTInitializerClause getInitializerClauseForDecltypeAuto(IASTDeclarator declarator) {
@@ -2135,7 +2135,7 @@ public class CPPVisitor extends ASTQueries {
 		Set<IASTDeclSpecifier> recursionProtectionSet = autoTypeDeclSpecs.get();
 		if (!recursionProtectionSet.add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
-			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 
 		try {
@@ -2179,7 +2179,7 @@ public class CPPVisitor extends ASTQueries {
 							beginExpr= new CPPASTFunctionCallExpression(new CPPASTIdExpression(name), beginCallArguments);
 						}
 					} else {
-						return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+						return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 					}
 				}
 				autoInitClause= new CPPASTUnaryExpression(IASTUnaryExpression.op_star, beginExpr);
@@ -2188,7 +2188,7 @@ public class CPPVisitor extends ASTQueries {
 			} else if (parent instanceof IASTCompositeTypeSpecifier &&
 					declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
 				// Non-static auto-typed class members are not allowed.
-				return new ProblemType(ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD);
+				return ProblemType.AUTO_FOR_NON_STATIC_FIELD;
 			} else {
 				IASTInitializer initClause= declarator.getInitializer();
 				if (initClause instanceof IASTEqualsInitializer) {
@@ -2211,7 +2211,7 @@ public class CPPVisitor extends ASTQueries {
 			IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
 		if (initClause == null) {
-			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 
 		IType type = AutoTypeResolver.AUTO_TYPE;
@@ -2221,12 +2221,12 @@ public class CPPVisitor extends ASTQueries {
 		if (initClause instanceof ICPPASTInitializerList) {
 			initializer_list_template = get_initializer_list(declSpec);
 			if (initializer_list_template == null) {
-				return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
 					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
 			if (type instanceof IProblemBinding) {
-				return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 		}
 		type = decorateType(type, declSpec, declarator);
@@ -2234,7 +2234,7 @@ public class CPPVisitor extends ASTQueries {
 		initType= evaluation.getType(declarator);
 		valueCat= evaluation.getValueCategory(declarator);
 		if (initType == null || initType instanceof ISemanticProblem) {
-			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
@@ -2242,7 +2242,7 @@ public class CPPVisitor extends ASTQueries {
 				Collections.singletonList(valueCat), paramMap, initClause);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
-			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
+			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 		type = argument.getTypeValue();
 		IType t = SemanticUtil.substituteTypedef(type, initType);
@@ -2261,7 +2261,7 @@ public class CPPVisitor extends ASTQueries {
 	private static IType createAutoFunctionType(IASTDeclSpecifier declSpec, ICPPASTFunctionDeclarator declarator) {
 		IASTTypeId id= declarator.getTrailingReturnType();
 		if (id == null)
-			return new ProblemType(ISemanticProblem.TYPE_NO_NAME);
+			return ProblemType.NO_NAME;
 
 		IType t= createType(id.getAbstractDeclarator());
 		t= qualifyType(t, declSpec);
@@ -2297,7 +2297,7 @@ public class CPPVisitor extends ASTQueries {
 			throw new IllegalArgumentException();
 		}
 	    if (name == null)
-	    	return new ProblemType(ISemanticProblem.TYPE_NO_NAME);
+			return ProblemType.NO_NAME;
 
 	    IBinding binding = name.resolvePreBinding();
 	    if (!(binding instanceof IProblemBinding)) {
@@ -2307,7 +2307,7 @@ public class CPPVisitor extends ASTQueries {
 	    	if (binding instanceof IType)
 	    		return (IType) binding;
 	    }
-    	return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+    	return ProblemType.UNRESOLVED_NAME;
 	}
 
 	private static IType decorateType(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {

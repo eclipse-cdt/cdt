@@ -10170,6 +10170,30 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testOverrideSpecifierAfterTrailingReturnType_489876() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	auto (*x1)() -> int;
+	//	int (*x2)();
+	//
+	//	auto (*y1)() -> int(*)();
+	//	int (*(*y2)())();
+	//	
+	//	auto (*z1)() -> auto(*)() -> int(*)();
+	//	int (*(*(*z2)())())();
+	public void testTrailingReturnTypeInFunctionPointer() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		
+		ICPPVariable x1 = bh.assertNonProblem("x1");
+		ICPPVariable x2 = bh.assertNonProblem("x2");
+		assertSameType(x1.getType(), x2.getType());
+
+		ICPPVariable y1 = bh.assertNonProblem("y1");
+		ICPPVariable y2 = bh.assertNonProblem("y2");
+		assertSameType(y1.getType(), y2.getType());
+
+		ICPPVariable z1 = bh.assertNonProblem("z1");
+		ICPPVariable z2 = bh.assertNonProblem("z2");
+		assertSameType(z1.getType(), z2.getType());
+	}
 
 	//	struct CHAINER {
 	//	    CHAINER const & operator,(int x) const;

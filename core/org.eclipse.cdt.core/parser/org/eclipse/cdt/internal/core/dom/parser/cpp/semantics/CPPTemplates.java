@@ -1523,10 +1523,15 @@ public class CPPTemplates {
 
 			if (type instanceof ICPPUnknownBinding) {
 				if (type instanceof TypeOfDependentExpression) {
-					ICPPEvaluation eval = ((TypeOfDependentExpression) type).getEvaluation();
+					TypeOfDependentExpression dependentType = (TypeOfDependentExpression) type;
+					ICPPEvaluation eval = dependentType.getEvaluation();
 					ICPPEvaluation instantiated = eval.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
 					if (instantiated != eval) {
-						return CPPSemantics.getDeclTypeForEvaluation(instantiated, context.getPoint());
+						if (dependentType.isForDecltype()) {
+							return CPPSemantics.getDeclTypeForEvaluation(instantiated, context.getPoint());
+						} else {
+							return instantiated.getType(context.getPoint());
+						}
 					}
 				} else {
 					IBinding binding= resolveUnknown((ICPPUnknownBinding) type, context);

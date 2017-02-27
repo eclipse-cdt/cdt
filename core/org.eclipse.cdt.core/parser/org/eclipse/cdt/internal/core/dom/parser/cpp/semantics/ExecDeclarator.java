@@ -88,7 +88,7 @@ public final class ExecDeclarator implements ICPPExecution {
 	private ICPPEvaluation createInitialValue(IType type, ActivationRecord record,
 			ConstexprEvaluationContext context) {
 		if (initializerEval == null)
-			return createDefaultInitializedCompositeValue(type);
+			return createDefaultInitializedCompositeValue(type, context.getPoint());
 
 		IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 
@@ -125,14 +125,14 @@ public final class ExecDeclarator implements ICPPExecution {
 				computedInitializerEval.getValue(context.getPoint()));
 	}
 
-	private static ICPPEvaluation createDefaultInitializedCompositeValue(IType type) {
+	private static ICPPEvaluation createDefaultInitializedCompositeValue(IType type, IASTNode point) {
 		if (!(type instanceof ICPPClassType)) {
 			return EvalFixed.INCOMPLETE;
 		}
 		ICPPClassType classType = (ICPPClassType) type;
 		// TODO(nathanridge): CompositeValue.create() only consider default member initializers, not
 		// constructors. Should we be considering constructors here as well?
-		IValue compositeValue = CompositeValue.create(classType);
+		IValue compositeValue = CompositeValue.create(classType, point);
 		EvalFixed initialValue = new EvalFixed(type, ValueCategory.PRVALUE, compositeValue);
 		return initialValue;
 	}

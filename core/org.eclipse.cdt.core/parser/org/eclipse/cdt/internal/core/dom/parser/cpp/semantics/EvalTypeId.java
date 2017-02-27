@@ -150,7 +150,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			ICPPClassType classType = (ICPPClassType) fInputType;
 			IBinding ctor = getConstructor(point);
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
-				return CompositeValue.create(classType);
+				return CompositeValue.create(classType, point);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
 				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), 
 						classType, point);

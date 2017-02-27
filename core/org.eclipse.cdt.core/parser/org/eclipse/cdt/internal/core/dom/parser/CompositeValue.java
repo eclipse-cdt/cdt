@@ -186,23 +186,23 @@ public final class CompositeValue implements IValue {
 	 * determined by the default member initializers only. Constructors are not considered
 	 * when determining the values of the fields.
 	 */
-	public static CompositeValue create(ICPPClassType classType) {
+	public static CompositeValue create(ICPPClassType classType, IASTNode point) {
 		Set<ICPPClassType> recursionProtectionSet = fCreateInProgress.get();
 		if (!recursionProtectionSet.add(classType)) {
 			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
 		}
 		try {
 			ActivationRecord record = new ActivationRecord();
-			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, null).length];
+			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, point).length];
 
 			// Recursively create all the base class member variables.
-			ICPPBase[] bases = ClassTypeHelper.getBases(classType, null);
+			ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);
 			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();
 				if (baseClass instanceof ICPPClassType) {
 					ICPPClassType baseClassType = (ICPPClassType) baseClass;
-					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, null);
-					IValue compValue = CompositeValue.create(baseClassType);
+					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, point);
+					IValue compValue = CompositeValue.create(baseClassType, point);
 					for (ICPPField baseField : baseFields) {
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
 						if (fieldPos == -1) {
@@ -217,7 +217,7 @@ public final class CompositeValue implements IValue {
 				}
 			}
 
-			ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, null);
+			ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
 			for (ICPPField field : fields) {
 				if (field.isStatic())
 					continue;

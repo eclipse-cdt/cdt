@@ -102,7 +102,7 @@ public interface IValue {
 	IValue clone();
 	
 	/**
-	 * Serialize this value to the given type marhsal buffer.
+	 * Serialize this value to the given type marshal buffer.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void marshal(ITypeMarshalBuffer buffer) throws CoreException;

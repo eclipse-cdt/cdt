@@ -199,8 +199,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$
-		IndexFileSet.sDEBUG_INDEX_FILE_SET=
-				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/indexfileset"));  //$NON-NLS-1$
+		IndexFileSet.sDEBUG=
+				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/IndexFileSet"));  //$NON-NLS-1$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);

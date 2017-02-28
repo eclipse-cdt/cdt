@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -33,6 +34,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 public final class CompositeValue implements IValue {
+	public static boolean sDEBUG; // Initialized in the TranslationUnit.
+
 	private final ICPPEvaluation evaluation;
 	private final ICPPEvaluation[] values;
 
@@ -169,9 +172,21 @@ public final class CompositeValue implements IValue {
 	 * when determining the values of the fields.
 	 */
 	public static CompositeValue create(ICPPClassType classType, IASTNode point) {
+		return create(classType, point, 0);
+	}
+
+	/**
+	 * Creates a value representing an instance of a class type, with the values of the fields
+	 * determined by the default member initializers only. Constructors are not considered
+	 * when determining the values of the fields.
+	 */
+	public static CompositeValue create(ICPPClassType classType, IASTNode point, int nestingLevel) {
 		Set<ICPPClassType> recursionProtectionSet = fCreateInProgress.get();
 		if (!recursionProtectionSet.add(classType)) {
 			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
+		}
+		if (sDEBUG && nestingLevel > 0) {
+			System.out.println("CompositeValue.create(" + ASTTypeUtil.getType(classType) + ", " + nestingLevel + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 			ActivationRecord record = new ActivationRecord();
@@ -184,7 +199,7 @@ public final class CompositeValue implements IValue {
 				if (baseClass instanceof ICPPClassType) {
 					ICPPClassType baseClassType = (ICPPClassType) baseClass;
 					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, point);
-					IValue compValue = CompositeValue.create(baseClassType, point);
+					IValue compValue = CompositeValue.create(baseClassType, point, nestingLevel + 1);
 					for (ICPPField baseField : baseFields) {
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
 						if (fieldPos == -1) {

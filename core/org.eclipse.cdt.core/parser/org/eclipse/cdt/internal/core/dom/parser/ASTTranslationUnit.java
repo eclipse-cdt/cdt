@@ -461,7 +461,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			}
 		});
 
-		if (IndexFileSet.sDEBUG_INDEX_FILE_SET && fIndexFileSet != null && fASTFileSet != null) {
+		if (IndexFileSet.sDEBUG && fIndexFileSet != null && fASTFileSet != null) {
 			long t = ((IndexFileSet) fIndexFileSet).getTimingContainsDeclarationNanos() +
 					((IndexFileSet) fASTFileSet).getTimingContainsDeclarationNanos();
 			String forName = fOriginatingTranslationUnit == null ?

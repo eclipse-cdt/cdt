@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
@@ -90,6 +91,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
 
@@ -97,7 +99,12 @@ import org.eclipse.osgi.util.NLS;
  * @see ITranslationUnit
  */
 public class TranslationUnit extends Openable implements ITranslationUnit {
-	private URI location = null;
+	static {
+		CompositeValue.sDEBUG=
+				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/parser/CompositeValue"));  //$NON-NLS-1$
+	}
+
+	private URI location;
 	private String contentTypeId;
 
 	/**
@@ -106,7 +113,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	protected IProblemRequestor problemRequestor;
 
-	SourceManipulationInfo sourceManipulationInfo = null;
+	SourceManipulationInfo sourceManipulationInfo;
 	private ILanguage fLanguageOfContext;
 
 	public TranslationUnit(ICElement parent, IFile file, String idType) {

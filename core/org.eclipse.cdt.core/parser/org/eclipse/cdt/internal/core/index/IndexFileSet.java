@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 public class IndexFileSet implements IIndexFileSet {
-	public static boolean sDEBUG_INDEX_FILE_SET; // Initialized in the PDOMManager.
+	public static boolean sDEBUG; // Initialized in the PDOMManager.
 
 	private IIndexFileSet fInverse;
 	private final HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
@@ -74,10 +74,10 @@ public class IndexFileSet implements IIndexFileSet {
 		if (cachedValue != null)
 			return cachedValue;
 
-		long startTime = sDEBUG_INDEX_FILE_SET ? System.nanoTime() : 0;
+		long startTime = sDEBUG ? System.nanoTime() : 0;
 		boolean contains = computeContainsDeclaration(binding);
 		fDeclarationContainmentCache.put(binding, contains);
-		if (sDEBUG_INDEX_FILE_SET) {
+		if (sDEBUG) {
 			timingContainsDeclarationNanos += System.nanoTime() - startTime;
 		}
 		return contains;
@@ -104,7 +104,7 @@ public class IndexFileSet implements IIndexFileSet {
 						}
 						long fileRecord = PDOMName.getFileRecord(db, nameRecord);
 						if (pdomFileSet.containsFile(fileRecord)) {
-							if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
+							if (sDEBUG && iterationCount >= 200) {
 								System.out.println(
 										String.format("IndexFileSet: %s (%s) found after %d iterations", //$NON-NLS-1$
 												String.join("::", binding.getQualifiedName()), //$NON-NLS-1$
@@ -125,7 +125,7 @@ public class IndexFileSet implements IIndexFileSet {
 				CCorePlugin.log(e);
 			}
 		}
-		if (sDEBUG_INDEX_FILE_SET && iterationCount >= 200) {
+		if (sDEBUG && iterationCount >= 200) {
 			System.out.println(
 					String.format("IndexFileSet: %s (%s) not found after %d iterations", //$NON-NLS-1$
 							String.join("::", binding.getQualifiedName()), //$NON-NLS-1$

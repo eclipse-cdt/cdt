@@ -59,7 +59,7 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 
 	@Override
 	public void getRunningProcesses(IDMContext dmc, DataRequestMonitor<IProcessDMContext[]> rm) {
-		// '-list-thread-groups --available' is not supported by lldm-mi so we
+		// FIXME '-list-thread-groups --available' is not supported by lldm-mi so we
 		// fall back to CDT Core's implementation of listing running processes.
 		// This works just like GDBProcesses#getRunningProcesses.
 
@@ -115,6 +115,7 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 			// yet so the process names map will be empty. This can happen when
 			// doing local debugging but not attach mode.
 			if (fProcessNames.isEmpty()) {
+				// FIXME: This triggers a double done()!! (Bug 510833)
 				getRunningProcesses(dmc, new DataRequestMonitor<>(getExecutor(), rm));
 			}
 

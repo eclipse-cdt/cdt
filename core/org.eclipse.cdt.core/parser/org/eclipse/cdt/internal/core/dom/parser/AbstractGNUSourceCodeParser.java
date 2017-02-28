@@ -685,7 +685,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (log.isTracing()) {
         	ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 			String name = tu == null ? "<unknown>" : tu.getElementName(); //$NON-NLS-1$
-	        String message = String.format("Parsed %s: %d ms %s. Ambiguity resolution: %d ms", //$NON-NLS-1$
+	        String message = String.format("Parsed %s: %d ms%s. Ambiguity resolution: %d ms", //$NON-NLS-1$
 	        		name, t1 - t0, parsePassed ? "" : " - parse failure", System.currentTimeMillis() - t1); //$NON-NLS-1$//$NON-NLS-2$
 			log.traceLog(message);
         }

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -32,11 +31,6 @@ public class DependentValue implements IValue {
 	}
 
 	@Override
-	public Long numericalValue() {
-		return null;
-	}
-
-	@Override
 	public final Number numberValue() {
 		return null;
 	}
@@ -52,18 +46,6 @@ public class DependentValue implements IValue {
 			fSignature = fEvaluation.getSignature();
 		}
 		return fSignature;
-	}
-
-	@Deprecated
-	@Override
-	public char[] getInternalExpression() {
-		return CharArrayUtils.EMPTY_CHAR_ARRAY;
-	}
-
-	@Deprecated
-	@Override
-	public IBinding[] getUnknownBindings() {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

@@ -352,7 +352,7 @@ public class BaseTestCase extends TestCase {
 	
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
 		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
-		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
 		for (Class c : cs) {
 			assertNotNull("Expected object of " + c.getName() + " but got a null value", o);
 			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
@@ -362,8 +362,8 @@ public class BaseTestCase extends TestCase {
 	
 	protected static void assertValue(IValue value, long expectedValue) {
 		assertNotNull(value);
-		assertNotNull(value.numericalValue());
-		assertEquals(expectedValue, value.numericalValue().longValue());
+		assertTrue(value.numberValue() instanceof Long);
+		assertEquals(expectedValue, value.numberValue().longValue());
 	}
 	
 	protected static void assertVariableValue(IVariable var, long expectedValue) {

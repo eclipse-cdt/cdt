@@ -10,7 +10,6 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -30,11 +29,6 @@ public final class FloatingPointValue implements IValue {
 
 	public static FloatingPointValue create(double value) {
 		return new FloatingPointValue(toCharArray(value));
-	}
-
-	@Override
-	public Long numericalValue() {
-		return null;  // not a Long
 	}
 
 	@Override
@@ -137,18 +131,6 @@ public final class FloatingPointValue implements IValue {
 		if (fFixedValue != null)
 			return CharArrayUtils.equals(fFixedValue, rhs.fFixedValue);
 		return CharArrayUtils.equals(getSignature(), rhs.getSignature());
-	}
-
-	@Deprecated
-	@Override
-	public char[] getInternalExpression() {
-		return CharArrayUtils.EMPTY_CHAR_ARRAY;
-	}
-
-	@Deprecated
-	@Override
-	public IBinding[] getUnknownBindings() {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

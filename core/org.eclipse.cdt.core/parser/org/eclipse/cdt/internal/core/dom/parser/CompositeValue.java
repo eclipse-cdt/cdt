@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -47,11 +46,6 @@ public final class CompositeValue implements IValue {
 	}
 
 	@Override
-	public Long numericalValue() {
-		return null;
-	}
-
-	@Override
 	public Number numberValue() {
 		return null;
 	}
@@ -67,18 +61,6 @@ public final class CompositeValue implements IValue {
 			return evaluation.getSignature();
 		}
 		return new char[]{};
-	}
-
-	@Deprecated
-	@Override
-	public char[] getInternalExpression() {
-		return CharArrayUtils.EMPTY_CHAR_ARRAY;
-	}
-
-	@Deprecated
-	@Override
-	public IBinding[] getUnknownBindings() {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

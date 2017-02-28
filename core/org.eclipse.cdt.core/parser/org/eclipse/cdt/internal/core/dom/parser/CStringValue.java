@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -157,11 +156,6 @@ public final class CStringValue implements IValue {
 	}
 
 	@Override
-	public Long numericalValue() {
-		return null;
-	}
-
-	@Override
 	public Number numberValue() {
 		return null;
 	}
@@ -218,18 +212,6 @@ public final class CStringValue implements IValue {
 		if (fFixedValue != null)
 			return CharArrayUtils.equals(fFixedValue, rhs.fFixedValue);
 		return CharArrayUtils.equals(getSignature(), rhs.getSignature());
-	}
-
-	@Deprecated
-	@Override
-	public char[] getInternalExpression() {
-		return CharArrayUtils.EMPTY_CHAR_ARRAY;
-	}
-
-	@Deprecated
-	@Override
-	public IBinding[] getUnknownBindings() {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

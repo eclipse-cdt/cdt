@@ -11,6 +11,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +29,10 @@ public interface IValue {
 	 * @deprecated Use numberValue() instead. 
 	 */
 	@Deprecated
-	Long numericalValue();
+	default Long numericalValue() {
+		Number num = numberValue();
+		return num instanceof Long ? (Long) num : null;
+	}
 
 	/**
 	 * Returns the value as a number, or {@code null} if it is not possible.
@@ -78,14 +82,18 @@ public interface IValue {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	char[] getInternalExpression(); 
+	public default char[] getInternalExpression() {
+		return CharArrayUtils.EMPTY_CHAR_ARRAY;
+	}
 
 	/**
 	 * @deprecated Returns an empty array.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	IBinding[] getUnknownBindings();
+	public default IBinding[] getUnknownBindings() {
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
 	/**
 	 * If this value consists of sub-values, set the sub-value at the given position to the given new value.

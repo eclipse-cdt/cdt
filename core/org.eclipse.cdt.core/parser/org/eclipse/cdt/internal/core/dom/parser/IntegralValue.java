@@ -15,7 +15,6 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -72,11 +71,6 @@ public class IntegralValue implements IValue {
 	}
 
 	@Override
-	public Long numericalValue() {
-		return (Long) numberValue();  // IntegralValue.numberValue() always returns a Long
-	}
-
-	@Override
 	public final Number numberValue() {
 		return parseLong(fFixedValue);
 	}
@@ -89,18 +83,6 @@ public class IntegralValue implements IValue {
 	@Override
 	public final char[] getSignature() {
 		return fFixedValue;
-	}
-
-	@Deprecated
-	@Override
-	public char[] getInternalExpression() {
-		return CharArrayUtils.EMPTY_CHAR_ARRAY;
-	}
-
-	@Deprecated
-	@Override
-	public IBinding[] getUnknownBindings() {
-		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

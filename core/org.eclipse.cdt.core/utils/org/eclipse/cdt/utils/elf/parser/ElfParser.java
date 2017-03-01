@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
+import org.eclipse.cdt.utils.elf.Elf.PHdr;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -67,7 +68,22 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 							break;
 
 						case Attribute.ELF_TYPE_SHLIB :
-							binary = createBinaryShared(path);
+							// Special case of PIE executable that looks like shared library
+							try {
+								Elf elf = new Elf(path.toOSString());
+								for (PHdr phdr : elf.getPHdrs()) {
+									if (phdr.p_type == PHdr.PT_INTERP) {
+										binary  = createBinaryExecutable(path);
+										break;
+									}
+								}
+							} catch (IOException e) {
+								CCorePlugin.log(e);
+							}
+
+							if (binary == null) {
+								binary = createBinaryShared(path);
+							}
 							break;
 
 						case Attribute.ELF_TYPE_OBJ :

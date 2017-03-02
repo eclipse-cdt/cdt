@@ -22,8 +22,6 @@
       </vmArgsLin>
       <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=1.8 -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
-      <vmArgsSol>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.8
-      </vmArgsSol>
       <vmArgsWin>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.8
       </vmArgsWin>
    </launcherArgs>
@@ -33,7 +31,6 @@
    <launcher name="cdtdebug">
       <linux icon="../org.eclipse.cdt.debug.application/icons/cc.xpm"/>
       <macosx icon="../org.eclipse.cdt.debug.application/icons/cc.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="../org.eclipse.cdt.debug.application/icons/cc.ico"/>
          <bmp/>
@@ -384,7 +381,8 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />

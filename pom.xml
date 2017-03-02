@@ -15,6 +15,7 @@
 	<name>CDT Parent</name>
 
 	<properties>
+		<maven.test.skip>true</maven.test.skip>
 		<required-maven-version>3.3</required-maven-version>
 		<tycho-version>1.0.0</tycho-version>
 		<tycho-extras-version>1.0.0</tycho-extras-version>
@@ -258,6 +259,26 @@
 	</profiles>
 	<build>
 		<plugins>
+	       <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>build-helper-maven-plugin</artifactId>
+	            <version>1.12</version>
+	            <executions>
+	                <execution>
+	                    <id>regex-property</id>
+	                    <goals>
+	                        <goal>regex-property</goal>
+	                    </goals>
+	                    <configuration>
+	                        <name>maven.test.skip</name>
+	                        <value>${project.artifactId}</value>
+	                        <regex>org.eclipse.cdt.tests.dsf.gdb</regex>
+	                        <replacement>false</replacement>
+	                        <failIfNoMatch>false</failIfNoMatch>
+	                    </configuration>
+	                </execution>
+	            </executions>
+	        </plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>

@@ -82,24 +82,17 @@ fi
 ECLIPSE_HOME=$(cd "$SCRIPT_DIR/../../.." && pwd)  # install.sh will modify this line.  DO NOT REMOVE THE FOLLOWING MARKER: @#@#
 ECLIPSE_EXEC="$ECLIPSE_HOME/eclipse"
 
-# On Mac OS X, the application layout is a bit different (Eclipse.app)
+# On macOS, the application layout is a bit different (Eclipse.app)
 case $ECLIPSE_HOME in
   *MacOS) ECLIPSE_HOME="$ECLIPSE_HOME/../Eclipse" ;;
 esac
 
 PLUGIN_DIR="$ECLIPSE_HOME/plugins"
 OSGI_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.osgi_*.jar' -not -name '*source*' -exec basename {} \; | tail -1`
-SWT_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.swt.*.jar' -not -name '*source*' -exec basename {} \; | tail -1`
-SWT_PLUGIN=`echo $SWT_JAR | sed -e "s/_[0-9]*\..*.jar//"`
-FS_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.core.filesystem.*.jar' -not -name '*source*' -exec basename {} \; | grep -v java7 | tail -1`
-FS_PLUGIN=`echo $FS_JAR | sed -e "s/_[0-9]*\..*.jar//"`
-LINUX_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.cdt.core.linux.*.jar' -not -name '*source*' -exec basename {} \; | tail -1`
-LINUX_PLUGIN=`echo $LINUX_JAR | sed -e "s/_[0-9]*\..*.jar//"`
 
 # Run eclipse with the Stand-alone Debugger product specified
 "$ECLIPSE_EXEC" -clean -product org.eclipse.cdt.debug.application.product \
                         -data "$HOME/workspace-cdtdebug" -configuration file\:"$HOME/cdtdebugger" \
                         -dev file\:"$HOME/cdtdebugger/dev.properties" $options \
-                        -vmargs -Dosgi.jar=$OSGI_JAR -Dswt.plugin=$SWT_PLUGIN -Dfs.plugin=$FS_PLUGIN \
-                        -Dlinux.plugin=$LINUX_PLUGIN -Declipse.home="$ECLIPSE_HOME"
+                        -vmargs -Dosgi.jar=$OSGI_JAR -Declipse.home="$ECLIPSE_HOME"
 

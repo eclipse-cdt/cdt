@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -308,6 +309,30 @@ public class BaseTestCase {
 		for (ILaunchConfiguration launchConfiguration : launchConfigurations) {
 			launchConfiguration.delete();
 		}
+		
+		assertLaunchAndConfigCounts(0, 0);
+	}
+
+	/**
+	 * Check assumption about how many launches and launch configurations are registered.
+	 * 
+	 * This was added to to track down when the extra launches are being left around to lead to Bug 512180. 
+	 */
+	protected void assertLaunchAndConfigCounts(int expectedLaunchesLength, int expectedLaunchConfigurationsLength)
+			throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		assertEquals("Unexpected number of launches", expectedLaunchesLength, launchManager.getLaunches().length);
+		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
+		if (launchConfigurations.length != expectedLaunchConfigurationsLength) {
+			System.out.println("Launch configurations present (" + launchConfigurations.length + ") expected ("
+					+ expectedLaunchConfigurationsLength + ")");
+			for (ILaunchConfiguration config : launchConfigurations) {
+				System.out.println(config.getClass().getName() + "@" + System.identityHashCode(config) + " name:"
+						+ config.getName() + " location" + config.getLocation() + " memento" + config.getMemento());
+			}
+		}
+		assertEquals("Unexpected number of launchConfigurations (see sysout for details)",
+				expectedLaunchConfigurationsLength, launchConfigurations.length);
 	}
 
 	@Before

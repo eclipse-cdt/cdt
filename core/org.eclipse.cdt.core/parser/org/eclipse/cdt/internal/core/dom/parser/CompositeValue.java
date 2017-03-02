@@ -8,8 +8,8 @@
 *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -157,12 +157,16 @@ public final class CompositeValue implements IValue {
 	}
 
 	// The set of class types for which composite value creation is in progress on each thread.
-	// Used to guard against infinite recursion due to a class (invalidly) aggregating itself.
+	// Used to guard against infinite recursion due to a class (illegally) aggregating itself.
 	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress =
 			new ThreadLocal<Set<ICPPClassType>>() {
 		@Override
 		protected Set<ICPPClassType> initialValue() {
-			return new HashSet<>();
+			return new TreeSet<>((type1, type2) -> {
+				if (type1.isSameType(type2))
+					return 0;
+				return ASTTypeUtil.getType(type1, true).compareTo(ASTTypeUtil.getType(type2, true));
+			});
 		}
 	};
 
@@ -185,10 +189,11 @@ public final class CompositeValue implements IValue {
 		if (!recursionProtectionSet.add(classType)) {
 			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
 		}
-		if (sDEBUG && nestingLevel > 0) {
-			System.out.println("CompositeValue.create(" + ASTTypeUtil.getType(classType) + ", " + nestingLevel + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		}
 		try {
+			if (sDEBUG && nestingLevel > 0) {
+				System.out.println("CompositeValue.create(" + ASTTypeUtil.getType(classType) + ", " + nestingLevel + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				System.out.flush();
+			}
 			ActivationRecord record = new ActivationRecord();
 			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, point).length];
 

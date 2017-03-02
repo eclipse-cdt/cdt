@@ -888,9 +888,14 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * gets used.
 	 */
 	public void sourceFinderMappingAC_ActiveLaunchHelper(boolean withBackend) throws Throwable {
+		assertLaunchAndConfigCounts(0, 0);
 		assertFinderDoesNotFind(EXEC_AC_NAME, new File(BUILD_PATH, SOURCE_NAME).getAbsolutePath());
+		assertLaunchAndConfigCounts(0, 0);
+	
 		doMappingAndLaunch(EXEC_AC_NAME, withBackend);
+		assertLaunchAndConfigCounts(1, 1);
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+		assertLaunchAndConfigCounts(1, 1);
 	}
 
 	@Test
@@ -912,10 +917,14 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	public void sourceFinderMappingAC_TerminatedLaunchHelper(boolean withBackend) throws Throwable {
 		sourceFinderMappingAC_ActiveLaunchHelper(withBackend);
+		assertLaunchAndConfigCounts(1, 1);
 
 		// Terminate the launch, but don't remove it
 		doAfterTest();
+		assertLaunchAndConfigCounts(1, 1);
+		
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+		assertLaunchAndConfigCounts(1, 1);
 	}
 
 	@Test
@@ -937,6 +946,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	public void sourceFinderMappingAC_LaunchConfigHelper(boolean withBackend) throws Throwable {
 		sourceFinderMappingAC_TerminatedLaunchHelper(withBackend);
+		assertLaunchAndConfigCounts(1, 1);
 
 		// Remove the launch, so that we can test with the existing
 		// configuration
@@ -944,12 +954,17 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		ILaunch[] launches = launchManager.getLaunches();
 		assertEquals("Unexpected number of launches", 1, launches.length);
 		assertTrue(launches[0].isTerminated());
+		assertLaunchAndConfigCounts(1, 1);
 		launchManager.removeLaunches(launches);
 
+		assertLaunchAndConfigCounts(0, 1);
 		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
 		assertEquals("Unexpected number of launch configuration", 1, launchConfigurations.length);
 
+		assertLaunchAndConfigCounts(0, 1);
+
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
+		assertLaunchAndConfigCounts(0, 1);
 	}
 
 	@Test

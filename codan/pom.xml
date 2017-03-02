@@ -19,7 +19,5 @@
 		<module>org.eclipse.cdt.codan.ui.cxx</module>
 		<module>org.eclipse.cdt.codan.checkers</module>
 		<module>org.eclipse.cdt.codan.checkers.ui</module>
-		<module>org.eclipse.cdt.codan.core.tests</module>
-		<module>org.eclipse.cdt.codan.checkers.ui.tests</module>
 	</modules>
 </project>

@@ -17,6 +17,7 @@
 	
 	<properties>
 		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
+		<skipTests>false</skipTests>
 		<dsf.gdb.tests.gdbTestSuite>AutomatedSuite.java</dsf.gdb.tests.gdbTestSuite>
 		<dsf.gdb.tests.timeout.multiplier>1</dsf.gdb.tests.timeout.multiplier>
 		<cdt.tests.dsf.gdb.versions>gdb.7.12</cdt.tests.dsf.gdb.versions>

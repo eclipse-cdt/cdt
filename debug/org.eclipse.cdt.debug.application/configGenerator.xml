@@ -1,0 +1,15 @@
+<!-- This generates the config.ini file, based on the debug.product -->
+<project name="Build specific targets and properties" default="generate.configuration">
+	<target name="generate.configuration" description="Generates config.ini file">
+		<java classname="org.eclipse.cdt.debug.application.ConfigGenerator" failonerror="true">
+			<arg value="-product"/>
+			<arg value="${product_path}"/>
+			<arg value="-out"/>
+			<arg value="${config_path}"/>
+			<classpath>
+				<pathelement path="bin"/>
+				<pathelement path="target/classes"/>
+			</classpath>
+		</java>
+	</target>
+</project>

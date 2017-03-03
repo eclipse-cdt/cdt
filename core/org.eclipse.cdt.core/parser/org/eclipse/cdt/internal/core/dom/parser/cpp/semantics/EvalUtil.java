@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -43,22 +44,26 @@ public class EvalUtil {
 		}
 	};
 
-	public static IValue getConditionExprValue(ICPPEvaluation conditionExprEval, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static IValue getConditionExprValue(ICPPEvaluation conditionExprEval, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		return conditionExprEval.computeForFunctionCall(record, context.recordStep()).getValue(context.getPoint());
 	}
 
-	public static IValue getConditionDeclValue(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static IValue getConditionDeclValue(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		ICPPBinding declaredBinding = ((ExecDeclarator) conditionDeclExec.getDeclaratorExecutions()[0]).getDeclaredBinding();
 		conditionDeclExec.executeForFunctionCall(record, context.recordStep());
 		return record.getVariable(declaredBinding).computeForFunctionCall(record, context).getValue(context.getPoint());
 	}
 
-	public static boolean conditionExprSatisfied(ICPPEvaluation conditionExprEval, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static boolean conditionExprSatisfied(ICPPEvaluation conditionExprEval, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		Number result = getConditionExprValue(conditionExprEval, record, context).numberValue();
 		return result != null && result.longValue() != 0;
 	}
 
-	public static boolean conditionDeclSatisfied(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static boolean conditionDeclSatisfied(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		Number result = getConditionDeclValue(conditionDeclExec, record, context).numberValue();
 		return result != null && result.longValue() != 0;
 	}
@@ -72,7 +77,8 @@ public class EvalUtil {
 	}
 
 	// A return value != null means that there was a return, break or continue in that statement.
-	public static ICPPExecution executeStatement(ICPPExecution exec, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static ICPPExecution executeStatement(ICPPExecution exec, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		if (exec instanceof ExecExpressionStatement
 				|| exec instanceof ExecDeclarationStatement
 				|| exec instanceof ExecCase
@@ -101,7 +107,8 @@ public class EvalUtil {
 	}
 
 	private static boolean isUpdateable(ICPPEvaluation eval) {
-		return eval instanceof EvalBinding || (eval instanceof EvalReference && !(eval instanceof EvalPointer)) || eval instanceof EvalCompositeAccess;
+		return eval instanceof EvalBinding || (eval instanceof EvalReference && !(eval instanceof EvalPointer)) ||
+				eval instanceof EvalCompositeAccess;
 	}
 
 	/**
@@ -110,7 +117,8 @@ public class EvalUtil {
 	 * The second, "fixed", is a value (usually EvalFixed or EvalPointer).
 	 * We return both because, depending on the operation, we may need one representation or another.
 	 */
-	public static Pair<ICPPEvaluation, ICPPEvaluation> getValuePair(ICPPEvaluation eval, ActivationRecord record, ConstexprEvaluationContext context) {
+	public static Pair<ICPPEvaluation, ICPPEvaluation> getValuePair(ICPPEvaluation eval, ActivationRecord record,
+			ConstexprEvaluationContext context) {
 		ICPPEvaluation updateable = null;
 		if (isUpdateable(eval)) {
 			updateable = eval;
@@ -150,7 +158,8 @@ public class EvalUtil {
 	 * Returns the initial value of the given variable, evaluated in the context of
 	 * the given activation record.
 	 */
-	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record) {
+	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record,
+			IASTNode point) {
 		Set<ICPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
 		if (!recursionProtectionSet.add(variable)) {
 			return EvalFixed.INCOMPLETE;
@@ -169,7 +178,7 @@ public class EvalUtil {
 				}
 				ExecDeclarator declaratorExec = new ExecDeclarator(variable, initializerEval);
 	
-				ConstexprEvaluationContext context = new ConstexprEvaluationContext(null);
+				ConstexprEvaluationContext context = new ConstexprEvaluationContext(point);
 				if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
 					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
 				}
@@ -178,7 +187,7 @@ public class EvalUtil {
 			}
 	
 			if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
-					valueEval.getValue(null) == IntegralValue.UNKNOWN)) {
+					valueEval.getValue(point) == IntegralValue.UNKNOWN)) {
 				return null;
 			}
 			return valueEval;

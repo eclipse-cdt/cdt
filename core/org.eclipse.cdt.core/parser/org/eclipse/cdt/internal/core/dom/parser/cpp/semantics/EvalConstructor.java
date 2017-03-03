@@ -185,7 +185,7 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 				ExecDeclarator declaratorExec = getDeclaratorExecutionFromMemberInitializerList(initializer);
 				value = getFieldValue(declaratorExec, classType, localRecord, context);
 			} else {
-				value = EvalUtil.getVariableValue(field, localRecord);
+				value = EvalUtil.getVariableValue(field, localRecord, point);
 			}
 			final int fieldPos = CPPASTFieldReference.getFieldPosition(field);
 			compositeValue.setSubValue(fieldPos, value);

@@ -95,7 +95,6 @@ public class LookupData extends ScopeLookupData {
 	public boolean ignoreMembers;
 
 	public boolean qualified;
-	public boolean checkAssociatedScopes;
 
 	public boolean forUsingDeclaration;
 

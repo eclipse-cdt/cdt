@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -82,7 +84,9 @@ class BuiltinOperators {
 
 	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, IASTNode point,
 			Object[] globCandidates) {
-		fFileScope= point.getTranslationUnit().getScope();
+		fFileScope= point == null ?
+				new CPPScope.CPPScopeProblem(null, IProblemBinding.SEMANTIC_BAD_SCOPE) :
+				point.getTranslationUnit().getScope();
 		fOperator= operator;
 		fPoint = point;
 		fUnary= args.length < 2;
@@ -91,7 +95,6 @@ class BuiltinOperators {
 			IType type= args[0].getType(point);
 			if (!(type instanceof ISemanticProblem))
 				fType1= type;
-
 		}
 		if (args.length > 1) {
 			IType type= args[1].getType(point);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -290,7 +291,7 @@ public class BaseTestCase {
 
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
-	 * existing launches or launch configurations.
+	 * existing launches.
 	 */
 	public void removeTeminatedLaunchesBeforeTest() throws CoreException {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -303,11 +304,24 @@ public class BaseTestCase {
 		if (launches.length > 0) {
 			launchManager.removeLaunches(launches);
 		}
+	}
 
+	/**
+	 * Make sure we are starting with a clean/known state. That means no
+	 * existing launch configurations.
+	 * 
+	 * XXX: Bugs 512180 and 501906, limit this call to only those test that
+	 * really need a clean state. This does not remove the race condition, but
+	 * does improve it somewhat.
+	 */
+	public void removeLaunchConfigurationsBeforeTest() throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
 		for (ILaunchConfiguration launchConfiguration : launchConfigurations) {
 			launchConfiguration.delete();
 		}
+
+		assertEquals("Failed to delete launch configurations", 0, launchManager.getLaunchConfigurations().length);
 	}
 
 	@Before

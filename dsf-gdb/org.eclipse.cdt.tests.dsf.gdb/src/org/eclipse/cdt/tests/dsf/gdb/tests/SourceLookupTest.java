@@ -954,11 +954,13 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 
 	@Test
 	public void sourceFinderMappingAC_LaunchConfig() throws Throwable {
+		removeLaunchConfigurationsBeforeTest();
 		sourceFinderMappingAC_LaunchConfigHelper(false);
 	}
 
 	@Test
 	public void sourceFinderSubstituteAC_LaunchConfig() throws Throwable {
+		removeLaunchConfigurationsBeforeTest();
 		sourceFinderMappingAC_LaunchConfigHelper(true);
 	}
 

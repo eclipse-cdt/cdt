@@ -577,7 +577,7 @@ public class BaseTestCase {
 		if (launch != null) {
 			// Give a few seconds to allow the launch to terminate
 			int waitCount = 100;
-			while (!launch.isTerminated() && --waitCount > 0) {
+			while (!launch.isTerminated() && !launch.getDsfExecutor().isShutdown() && --waitCount > 0) {
 				Thread.sleep(TestsPlugin.massageTimeout(100));
 			}
 			assertTrue("Launch failed to terminate before timeout", launch.isTerminated());

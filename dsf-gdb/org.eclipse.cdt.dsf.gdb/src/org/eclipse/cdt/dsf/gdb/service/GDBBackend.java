@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.parser.util.StringUtil;
@@ -495,6 +496,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		class GDBLaunchMonitor {
 			boolean fLaunched = false;
 			boolean fTimedOut = false;
+			public ScheduledFuture<?> fTimeoutFuture;
 		}
 		final GDBLaunchMonitor fGDBLaunchMonitor = new GDBLaunchMonitor();
 
@@ -503,6 +505,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			protected void handleCompleted() {
 				if (!fGDBLaunchMonitor.fTimedOut) {
 					fGDBLaunchMonitor.fLaunched = true;
+					fGDBLaunchMonitor.fTimeoutFuture.cancel(false);
 					if (!isSuccess()) {
 						requestMonitor.setStatus(getStatus());
 					}
@@ -607,7 +610,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		};
 		startGdbJob.schedule();
 
-		getExecutor().schedule(new Runnable() {
+		fGDBLaunchMonitor.fTimeoutFuture = getExecutor().schedule(new Runnable() {
 			@Override
 			public void run() {
 				// Only process the event if we have not finished yet (hit

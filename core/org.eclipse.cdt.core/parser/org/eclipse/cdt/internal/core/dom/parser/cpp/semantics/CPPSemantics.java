@@ -315,7 +315,7 @@ public class CPPSemantics {
 
 			// Perform argument dependent lookup
 			if (data.checkAssociatedScopes() && !data.hasTypeOrMemberFunctionOrVariableResult()) {
-				doKoenigLookup(data);
+				doArgumentDependentLookup(data);
 			}
 		} catch (DOMException e) {
 			data.problem = (ProblemBinding) e.getProblem();
@@ -625,7 +625,7 @@ public class CPPSemantics {
 		return false;
 	}
 
-	public static void doKoenigLookup(LookupData data) throws DOMException {
+	public static void doArgumentDependentLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
 		// Set 'qualified' to true for the duration of this function call so the calls to lookup()
 		// don't ascend into enclosing scopes.
@@ -3805,7 +3805,7 @@ public class CPPSemantics {
 					return null;
 				lookup(funcData, scope);
 				try {
-					doKoenigLookup(funcData);
+					doArgumentDependentLookup(funcData);
 				} catch (DOMException e) {
 				}
 

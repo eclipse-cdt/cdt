@@ -311,7 +311,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		try {
 			// Perform ADL if appropriate.
 			if (!fQualified && fImpliedObjectType == null && !data.hasTypeOrMemberFunctionOrVariableResult()) {
-				CPPSemantics.doKoenigLookup(data);
+				CPPSemantics.doArgumentDependentLookup(data);
 
 				Object[] foundItems = (Object[]) data.foundItems;
 				if (foundItems != null && (functions == null || foundItems.length > functions.length)) {
@@ -327,12 +327,12 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 						}
 					}
 
-					// doKoenigLookup() may introduce duplicates into the result. These must be
+					// doArgumentDependentLookup() may introduce duplicates into the result. These must be
 					// eliminated to avoid resolveFunction() reporting an ambiguity. (Normally, when
-					// lookup() and doKoenigLookup() are called on the same LookupData object, the
+					// lookup() and doArgumentDependentLookup() are called on the same LookupData object, the
 					// two functions coordinate using data stored in that object to eliminate
 					// duplicates, but in this case lookup() was called before with a different
-					// LookupData object and now we are only calling doKoenigLookup()).
+					// LookupData object and now we are only calling doArgumentDependentLookup()).
 					functions = ArrayUtil.removeDuplicates(functions);
 				}
 			}

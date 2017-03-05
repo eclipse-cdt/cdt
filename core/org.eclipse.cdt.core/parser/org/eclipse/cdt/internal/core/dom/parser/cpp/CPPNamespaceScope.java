@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScopeMapper.InlineNamespaceDirective;
@@ -59,6 +60,9 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	private ICPPNamespaceScope[] fEnclosingNamespaceSet;
 	private List<ICPPASTNamespaceDefinition> fInlineNamespaceDefinitions;
 	private ICPPInternalNamespaceScope[] fInlineNamespaces;
+	
+	// The set of names declared in this scope that are currently only visible to argument-dependent lookup.
+	private CharArraySet fVisibleToAdlOnly = new CharArraySet(0);
 
 	public CPPNamespaceScope(IASTNode physicalNode) {
 		super(physicalNode);
@@ -154,10 +158,23 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     }
 
     @Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
     	if (name instanceof ICPPASTQualifiedName && !canDenoteNamespaceMember((ICPPASTQualifiedName) name))
     		return;
-    	super.addName(name);
+    	super.addName(name, adlOnly);
+    	if (adlOnly) {
+    		fVisibleToAdlOnly.put(name.getLookupKey());
+    	} else {
+    		fVisibleToAdlOnly.remove(name.getLookupKey());
+    	}
+    }
+    
+    @Override
+    protected boolean nameIsVisibleToLookup(ScopeLookupData lookup) {
+    	if (lookup.isArgumentDependent()) {
+    		return true;
+    	}
+    	return !fVisibleToAdlOnly.containsKey(lookup.getLookupKey());
     }
 
 	public boolean canDenoteNamespaceMember(ICPPASTQualifiedName name) {

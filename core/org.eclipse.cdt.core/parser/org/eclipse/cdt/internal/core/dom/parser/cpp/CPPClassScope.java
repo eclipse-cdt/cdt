@@ -212,7 +212,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	@Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
 		// Don't add names from inactive code branches.
 		if (!name.isActive())
 			return;
@@ -251,7 +251,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 				return;
 			}
 		}
-		super.addName(name);
+		super.addName(name, adlOnly);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

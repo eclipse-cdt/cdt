@@ -91,8 +91,12 @@ public class ASTInternal {
 	}
 
 	public static void addName(IScope scope, IASTName name) {
+		addName(scope, name, /* adlOnly = */ false);
+	}
+	
+	public static void addName(IScope scope, IASTName name, boolean adlOnly) {
 		if (scope instanceof IASTInternalScope) {
-			((IASTInternalScope) scope).addName(name);
+			((IASTInternalScope) scope).addName(name, adlOnly);
 		}
 	}
 

@@ -178,7 +178,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 	}
 
     @Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
     }
 
 	protected IBinding getOrCreateBinding(final char[] name, int idx) {

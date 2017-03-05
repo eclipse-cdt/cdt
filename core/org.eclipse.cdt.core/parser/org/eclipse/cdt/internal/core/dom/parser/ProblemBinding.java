@@ -192,7 +192,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
     @Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
     }
 
     @Override

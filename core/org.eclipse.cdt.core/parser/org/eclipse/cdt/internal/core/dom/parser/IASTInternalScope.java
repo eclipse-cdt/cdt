@@ -31,9 +31,13 @@ public interface IASTInternalScope extends IScope {
 	public void addBinding(IBinding binding);
 
 	/**
-	 * Adds an IASTName to be cached in this scope
+	 * Adds an IASTName to be cached in this scope.
+	 * @param adlOnly whether this declaration of this name only makes the name visible to
+	 *                argument-dependent lookup
+	 *                
+	 * Implementation note: only CPPNamespaceScope cares about "adlOnly".
 	 */
-	public void addName(IASTName name);
+	public void addName(IASTName name, boolean adlOnly);
 
 	/**
 	 * Can be called during ambiguity resolution to populate a scope without considering

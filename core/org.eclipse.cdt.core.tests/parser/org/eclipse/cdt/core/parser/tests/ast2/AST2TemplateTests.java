@@ -10193,4 +10193,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentSizeofInDefaultArgument_513430() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename>
+	//	struct A;
+	//
+	//	template <typename T>
+	//	struct A<T*> {
+	//	    A(int);
+	//	    A() : A(5) {}
+	//	};
+	public void testDelegatingConstructorInPartialSpecialization_512932() throws Exception {
+		parseAndCheckBindings();
+	}
 }

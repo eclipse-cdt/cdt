@@ -194,7 +194,7 @@ public class CScope implements ICScope, IASTInternalScope {
     }
 
 	@Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
 		final char[] nchars = name.toCharArray();
 		if (nchars.length == 0)
 			return;

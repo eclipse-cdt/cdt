@@ -550,7 +550,14 @@ public class CPPVisitor extends ASTQueries {
         			binding = new CPPClassType(name, binding);
         		}
         		// Name may live in a different scope, so make sure to add it to the owner scope as well.
-        		ASTInternal.addName(scope,  elabType.getName());
+        		// [namespace.memdef] p3:
+        		// 	"If a friend declaration in a non-local class first declares a 
+        		//	class, function, class template or function template the friend 
+        		//	is a member of the innermost enclosing namespace. The friend 
+        		//	declaration does not by itself make the name visible to 
+        		//	unqualified lookup or qualified lookup."
+        		boolean visibleToAdlOnly = isFriend;
+        		ASTInternal.addName(scope,  elabType.getName(), visibleToAdlOnly);
     		}
         } catch (DOMException e) {
             binding = e.getProblem();

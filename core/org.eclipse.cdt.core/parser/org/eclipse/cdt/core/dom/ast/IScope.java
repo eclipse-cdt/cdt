@@ -114,6 +114,7 @@ public interface IScope {
 		private boolean fResolve= true;
 		private boolean fPrefixLookup;
 		private boolean fIgnorePointOfDeclaration;
+		private boolean fArgumentDependent;
 
 		public ScopeLookupData(IASTName name, boolean resolve, boolean prefixLookup) {
 			if (name == null)
@@ -162,6 +163,11 @@ public interface IScope {
 		public final void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
 			fIgnorePointOfDeclaration = ignorePointOfDeclaration;
 		}
+		
+		/** @since 6.3 */
+		public final void setArgumentDependent(boolean argumentDependent) {
+			fArgumentDependent = argumentDependent;
+		}
 
 		public final void setLookupKey(char[] key) {
 			fLookupKey= key;
@@ -185,6 +191,11 @@ public interface IScope {
 
 		public final boolean isIgnorePointOfDeclaration() {
 			return fIgnorePointOfDeclaration;
+		}
+
+		/** @since 6.3 */
+		public final boolean isArgumentDependent() {
+			return fArgumentDependent;
 		}
 
 		public final IIndexFileSet getIncludedFiles() {

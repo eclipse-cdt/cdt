@@ -90,7 +90,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
 		// Don't add inactive names to the scope.
 		if (!name.isActive())
 			return;
@@ -224,11 +224,18 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 
 		return ArrayUtil.trim(IBinding.class, result);
 	}
+	
+	protected boolean nameIsVisibleToLookup(ScopeLookupData lookup) {
+		return true;
+	}
 
 	public IBinding[] getBindingsInAST(ScopeLookupData lookup) {
 		populateCache();
 	    final char[] c = lookup.getLookupKey();
 	    IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
+	    if (!nameIsVisibleToLookup(lookup)) {
+	    	return result;
+	    }
 
 	    Object obj = null;
 	    if (lookup.isPrefixLookup()) {

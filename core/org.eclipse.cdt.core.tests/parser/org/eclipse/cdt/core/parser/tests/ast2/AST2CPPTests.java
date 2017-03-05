@@ -10586,6 +10586,20 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFriendConstructorDestructor_400940() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	namespace Hugo {
+	//	    class C {
+	//	        friend class Waldo;
+	//	    };
+	//	}
+	//	using namespace Hugo;
+	//	class Waldo {};
+	//	void foo() {
+	//	    Waldo c;  // error here
+	//	}
+	public void testFriendClassLookup_512932() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// struct S {
 	//     virtual void mFuncDecl() final;

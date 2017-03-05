@@ -96,7 +96,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	}
 
 	@Override
-	public void addName(IASTName name) {
+	public void addName(IASTName name, boolean adlOnly) {
 		throw new UnsupportedOperationException();
 	}
 

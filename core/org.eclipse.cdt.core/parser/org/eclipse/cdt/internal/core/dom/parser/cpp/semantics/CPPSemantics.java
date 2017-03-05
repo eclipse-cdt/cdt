@@ -631,6 +631,7 @@ public class CPPSemantics {
 		// don't ascend into enclosing scopes.
 		boolean originalQualified = data.qualified;
 		data.qualified = true;
+		data.setArgumentDependent(true);
 		Set<ICPPFunction> friendFns = new HashSet<>(2);
 		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data, friendFns);
 		for (ICPPNamespaceScope scope : associated) {
@@ -643,6 +644,7 @@ public class CPPSemantics {
 				new NameMatcherPredicate(data.getLookupKey())).toArray();
 		mergeResults(data, matchingFriendFns, false);
 		data.qualified = originalQualified;
+		data.setArgumentDependent(false);
 	}
 
 	private static class NameMatcherPredicate implements IUnaryPredicate<ICPPFunction> {

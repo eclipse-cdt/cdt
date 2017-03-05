@@ -404,8 +404,7 @@ public class CPPSemantics {
 				&& !(binding instanceof ICPPTemplateParameter)
 				&& !(lookupName instanceof ICPPASTTemplateId)) {
 			ASTNodeProperty prop = lookupName.getPropertyInParent();
-			if (prop != ICPPASTConstructorChainInitializer.MEMBER_ID &&
-					prop != ICPPASTTemplateId.TEMPLATE_NAME && !lookupName.isQualified()) {
+			if (prop != ICPPASTTemplateId.TEMPLATE_NAME && !lookupName.isQualified()) {
 				// You cannot use a class template name outside of the class template scope,
 				// mark it as a problem.
 				IBinding user= CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, lookupName);

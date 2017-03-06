@@ -11323,6 +11323,15 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <unsigned N>
+	//	void waldo(const char (&)[N]);
+	//	void foo() {
+	//	    waldo(__FUNCTION__);
+	//	}
+	public void testTypeOfBuiltinSymbol_512932() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	struct S {
 	//	  int S;
 	//	};

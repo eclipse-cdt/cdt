@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
@@ -97,9 +99,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	}
 
 	private void addStdBuiltins() {
-		variable("const char*", "__func__");
-		variable("const char*", "__FUNCTION__");
-		variable("const char*", "__PRETTY_FUNCTION__");
+		variable("const char[1]", "__func__");
+		variable("const char[1]", "__FUNCTION__");
+		variable("const char[1]", "__PRETTY_FUNCTION__");
 	}
 
 	private void addGnuBuiltins() {
@@ -514,6 +516,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			final String nested = tstr.substring(0,  tstr.length() - 1).trim();
 			final IType nt= toType(nested);
 			return fCpp ? new CPPPointerType(nt) : new CPointerType(nt, 0);
+		} else if (tstr.endsWith("[1]")) {
+			final String nested = tstr.substring(0,  tstr.length()-3).trim();
+			final IType nt = toType(nested);
+			return fCpp ? new CPPArrayType(nt, IntegralValue.create(1)) : new CArrayType(nt);
 		}
 
 		boolean isConst = false;

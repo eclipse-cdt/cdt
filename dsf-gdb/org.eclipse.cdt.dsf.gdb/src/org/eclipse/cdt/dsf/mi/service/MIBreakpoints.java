@@ -906,12 +906,14 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	 * 
 	 * @since 4.4
 	 */
-	protected void addDynamicPrintf(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm) {
-		// Not supported 
-   		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+	protected void addDynamicPrintf(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes,
+			final DataRequestMonitor<IBreakpointDMContext> drm) {
+		// Not supported
+		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED,
+				"Dynamic-Printf usage in CDT requires GDB 7.7 or later", null)); //$NON-NLS-1$
 		drm.done();
 	}
-	
+
 	//-------------------------------------------------------------------------
 	// removeBreakpoint
 	//-------------------------------------------------------------------------

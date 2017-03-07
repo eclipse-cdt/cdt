@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_d88eff3c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2922,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-03-07T23:07:59Z",
+      "side": 1,
+      "message": "Resolving the argument probably causes the cost to be invalid. Need a test for that.",
+      "range": {
+        "startLine": 2922,
+        "startChar": 4,
+        "endLine": 2922,
+        "endChar": 12
+      },
+      "revId": "4d36a074b0be12f3dc8df5c45e02f693a9d59926",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

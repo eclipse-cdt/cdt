@@ -198,6 +198,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -2626,9 +2627,27 @@ public class CPPSemantics {
 		List<FunctionCost> potentialCosts= null;
 		ICPPFunction unknownFunction= null;
 		final CPPASTTranslationUnit tu = data.getTranslationUnit();
+		IType[] savedArgTypes = null;
 		for (ICPPFunction fn : fns) {
 			if (fn == null)
 				continue;
+
+			if (savedArgTypes != null) {
+				System.arraycopy(savedArgTypes, 0, argTypes, 0, argTypes.length);
+			}
+			IType[] paramTypes = fn.getType().getParameterTypes();
+			for (int i = 0; i < argTypes.length && i < paramTypes.length; i++) {
+				IType argType = argTypes[i];
+				IType paramType = paramTypes[i];
+				IType newArgType = resolveTargetedFunctionSetType(argType, paramType, lookupPoint);
+				if (newArgType != argType) {
+					if (savedArgTypes == null) {
+						savedArgTypes = new IType[argTypes.length];
+						System.arraycopy(argTypes, 0, savedArgTypes, 0, argTypes.length);
+					}
+					argTypes[i] = newArgType;
+				}
+			}
 
 			UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
 			final FunctionCost fnCost= costForFunctionCall(fn, udc, data);
@@ -2704,6 +2723,38 @@ public class CPPSemantics {
 				return firstConversion;
 		}
 		return result;
+	}
+
+	/**
+	 * If {@code type} is a {@link FunctionSetType} or a pointer type containing a FunctionSetType,
+	 * resolves the FunctionSetType using the given target type.
+	 *
+	 * @param type the type to resolve
+	 * @param targetType the target type
+	 * @param point the name lookup context
+	 * @return the resolved type, or the given {@type} if the type didn't contain a FunctionSetType
+	 *     or the targeted function resolution failed
+	 */
+	private static IType resolveTargetedFunctionSetType(IType type, IType targetType, IASTNode point) {
+		targetType = getNestedType(targetType, TDEF);
+		IType t = type;
+		if (type instanceof IPointerType) {
+			t = ((IPointerType) type).getType();
+		}
+
+		if (t instanceof FunctionSetType) {
+			ICPPFunction function =
+					resolveTargetedFunction(targetType, ((FunctionSetType) t).getFunctionSet(), point);
+			if (function != null && !(function instanceof IProblemBinding)) {
+				type = function.getType();
+				if (targetType instanceof ITypeContainer) {
+					ITypeContainer containerType = (ITypeContainer) targetType.clone();
+					containerType.setType(type);
+					type = containerType;
+				}
+			}
+		}
+		return type;
 	}
 
 	private static IBinding createFunctionSet(ICPPFunction[] fns, ICPPTemplateArgument[] args, IASTNode point, IASTName name) {

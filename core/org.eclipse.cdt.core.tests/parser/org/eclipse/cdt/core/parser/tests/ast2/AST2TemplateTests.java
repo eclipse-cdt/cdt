@@ -5969,6 +5969,24 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct A {
+	//	    template <typename U>
+	//	    void m(U);
+	//	};
+	//
+	//	void foo(void(A::*)(int));
+	//	void foo(int);
+	//
+	//	template <typename T>
+	//	decltype(foo(&T::m)) waldo(T);
+	//
+	//	int main() {
+	//	    waldo(A());
+	//	}
+	public void testTargetedFunction_509396() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T, unsigned length> struct Templ {
 	//		Templ(){}
 	//	};
@@ -6652,17 +6670,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
-	//struct A {
-	//	int m(int i) const;
-	//	void m() const;
-	//};
+	//	struct A {
+	//	  int m(int i) const;
+	//	  void m() const;
+	//	};
 	//
-	//template<typename T> struct B {
-	//	typedef int (T::*Method)(int) const;
-	//	B(Method p) {}
-	//};
+	//	template<typename T> struct B {
+	//	  typedef int (T::*Method)(int) const;
+	//	  B(Method p) {}
+	//	};
 	//
-	//B<const A> a(&A::m);
+	//	B<const A> a(&A::m);
 	public void testConstInTypeParameter_377223() throws Exception {
 		parseAndCheckBindings();
 	}

@@ -16,6 +16,24 @@
       "revId": "b0bd43870557c4cb2daa1c0c61ea1376cea2cfc9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ac3e6c3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-03-07T14:47:49Z",
+      "side": 1,
+      "message": "That is fine.\nI notice that all these error messages are marked NON-NLS which is something we should eventually improve: user-facing error message should be translatable.",
+      "parentUuid": "a7c23755_8c8d30be",
+      "revId": "b0bd43870557c4cb2daa1c0c61ea1376cea2cfc9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

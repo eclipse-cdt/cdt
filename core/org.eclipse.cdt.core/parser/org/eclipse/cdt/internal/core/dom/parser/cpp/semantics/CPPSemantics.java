@@ -198,6 +198,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -478,7 +479,7 @@ public class CPPSemantics {
 						// Do not interpret template arguments to a template class as being
 						// explicit template arguments to its templated constructor.
 						data.setTemplateArguments(null);
-						binding= resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
+						binding= resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true, false);
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -2289,7 +2290,7 @@ public class CPPSemantics {
 					return obj;
 				}
 			}
-			return resolveFunction(data, fnArray, true);
+			return resolveFunction(data, fnArray, true, false);
 		}
 
 		if (obj != null) {
@@ -2560,7 +2561,8 @@ public class CPPSemantics {
 		return result;
 	}
 
-	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC) throws DOMException {
+	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC,
+			boolean resolveTargetedArgumentTypes) throws DOMException {
 		final IASTName lookupName = data.getLookupName();
 		if (fns == null || fns.length == 0 || fns[0] == null)
 			return null;
@@ -2585,7 +2587,7 @@ public class CPPSemantics {
 			return createFunctionSet(fns, data.getTemplateArguments(), lookupPoint, lookupName);
 		}
 
-		// Reduce our set of candidate functions to only those who have the right number of parameters
+		// Reduce our set of candidate functions to only those who have the right number of parameters.
 		final IType[] argTypes = data.getFunctionArgumentTypes();
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
 		if (tmp.length == 0 || tmp[0] == null)
@@ -2631,7 +2633,7 @@ public class CPPSemantics {
 				continue;
 
 			UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
-			final FunctionCost fnCost= costForFunctionCall(fn, udc, data);
+			FunctionCost fnCost= costForFunctionCall(fn, udc, data, resolveTargetedArgumentTypes);
 			if (fnCost == null)
 				continue;
 
@@ -2704,6 +2706,38 @@ public class CPPSemantics {
 				return firstConversion;
 		}
 		return result;
+	}
+
+	/**
+	 * If {@code type} is a {@link FunctionSetType} or a pointer type containing a FunctionSetType,
+	 * resolves the FunctionSetType using the given target type.
+	 *
+	 * @param type the type to resolve
+	 * @param targetType the target type
+	 * @param point the name lookup context
+	 * @return the resolved type, or the given {@type} if the type didn't contain a FunctionSetType
+	 *     or the targeted function resolution failed
+	 */
+	private static IType resolveTargetedFunctionSetType(IType type, IType targetType, IASTNode point) {
+		targetType = getNestedType(targetType, TDEF);
+		IType t = type;
+		if (type instanceof IPointerType) {
+			t = ((IPointerType) type).getType();
+		}
+
+		if (t instanceof FunctionSetType) {
+			ICPPFunction function =
+					resolveTargetedFunction(targetType, ((FunctionSetType) t).getFunctionSet(), point);
+			if (function != null && !(function instanceof IProblemBinding)) {
+				type = function.getType();
+				if (targetType instanceof ITypeContainer) {
+					ITypeContainer containerType = (ITypeContainer) targetType.clone();
+					containerType.setType(type);
+					type = containerType;
+				}
+			}
+		}
+		return type;
 	}
 
 	private static IBinding createFunctionSet(ICPPFunction[] fns, ICPPTemplateArgument[] args, IASTNode point, IASTName name) {
@@ -2861,15 +2895,35 @@ public class CPPSemantics {
 		}
 	}
 
-	private static FunctionCost costForFunctionCall(ICPPFunction fn, UDCMode udc, LookupData data)
-			throws DOMException {
-		IType[] argTypes= data.getFunctionArgumentTypes();
-		ValueCategory[] argValueCategories= data.getFunctionArgumentValueCategories();
-		int skipArg= 0;
+	private static FunctionCost costForFunctionCall(ICPPFunction fn, UDCMode udc, LookupData data,
+			boolean resolveTargetedArgumentTypes) throws DOMException {
 		final ICPPFunctionType ftype= fn.getType();
 		if (ftype == null)
 			return null;
 
+		IType[] argTypes= data.getFunctionArgumentTypes();
+		ValueCategory[] argValueCategories= data.getFunctionArgumentValueCategories();
+		if (resolveTargetedArgumentTypes) {
+			IType[] newArgTypes = null;
+			IType[] paramTypes = fn.getType().getParameterTypes();
+			for (int i = 0; i < argTypes.length && i < paramTypes.length; i++) {
+				IType argType = argTypes[i];
+				IType paramType = paramTypes[i];
+				IType newArgType = resolveTargetedFunctionSetType(argType, paramType, data.getLookupPoint());
+				if (newArgType != argType) {
+					if (newArgTypes == null) {
+						newArgTypes = new IType[argTypes.length];
+						System.arraycopy(argTypes, 0, newArgTypes, 0, argTypes.length);
+					}
+					newArgTypes[i] = newArgType;
+				}
+			}
+			if (newArgTypes != null) {
+				argTypes = newArgTypes;
+			}
+		}
+
+		int skipArg= 0;
 		IType implicitParameterType= null;
 		IType impliedObjectType= null;
 		ValueCategory impliedObjectValueCategory= null;
@@ -3087,7 +3141,7 @@ public class CPPSemantics {
 					data.setFunctionArguments(false, init.getArguments());
 					try {
 						IBinding ctor = resolveFunction(data,
-								ClassTypeHelper.getConstructors((ICPPClassType) targetType, name), true);
+								ClassTypeHelper.getConstructors((ICPPClassType) targetType, name), true, false);
 						if (ctor instanceof ICPPConstructor) {
 							int i= 0;
 							for (IASTNode arg : init.getArguments()) {
@@ -3268,7 +3322,7 @@ public class CPPSemantics {
 				 */
 				CPPBasicType t = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG, exp);
 				data.setFunctionArguments(false, createArgForType(exp, t));
-				ret = resolveFunction(data, funcs, true);
+				ret = resolveFunction(data, funcs, true, false);
 				if (isViableUserDefinedLiteralOperator(ret, kind)) {
 					return ret;
 				}
@@ -3282,7 +3336,7 @@ public class CPPSemantics {
 				 */
 				CPPBasicType t = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG, exp);
 				data.setFunctionArguments(false, createArgForType(exp, t));
-				ret = resolveFunction(data, funcs, true);
+				ret = resolveFunction(data, funcs, true, false);
 				if (isViableUserDefinedLiteralOperator(ret, kind)) {
 					return ret;
 				}
@@ -3297,7 +3351,7 @@ public class CPPSemantics {
 			CPPPointerType charArray = new CPPPointerType(CPPBasicType.CHAR, true, false, false);
 			data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), null, exp);
 			data.setFunctionArguments(false, createArgForType(exp, charArray));
-			ret = resolveFunction(data, funcs, true);
+			ret = resolveFunction(data, funcs, true, false);
 
 			//
 			char[] stringLiteral = exp.getValue(); // The string literal that was passed to the operator
@@ -3310,7 +3364,7 @@ public class CPPSemantics {
 			}
 
 			data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), args, exp);
-			IBinding litTpl = resolveFunction(data, tplFunctions, true);
+			IBinding litTpl = resolveFunction(data, tplFunctions, true, false);
 
 			// Do we have valid template and non-template bindings?
 			if (ret != null && !(ret instanceof IProblemBinding)) {
@@ -3342,7 +3396,7 @@ public class CPPSemantics {
 				createArgForType(null, CPPBasicType.UNSIGNED_INT)
 			};
 			data.setFunctionArguments(false, initializer);
-			ret = resolveFunction(data, funcs, true);
+			ret = resolveFunction(data, funcs, true, false);
 		} else if (kind == IASTLiteralExpression.lk_char_constant) {
 			/*
 			 * 2.14.8.6
@@ -3353,7 +3407,7 @@ public class CPPSemantics {
 			 */
 			CPPBasicType t = new CPPBasicType(((CPPASTLiteralExpression) exp).getBasicCharKind(), 0, exp);
 			data.setFunctionArguments(false, createArgForType(exp, t));
-			ret = resolveFunction(data, funcs, true);
+			ret = resolveFunction(data, funcs, true, false);
 		}
 
 		return ret;

@@ -254,7 +254,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 					LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) fFunctionName).getName());
 					try {
 						ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(cls, data.getLookupPoint());
-						IBinding b= CPPSemantics.resolveFunction(data, constructors, true);
+						IBinding b= CPPSemantics.resolveFunction(data, constructors, true, false);
 						if (b instanceof ICPPFunction)
 							return (ICPPFunction) b;
 					} catch (DOMException e) {

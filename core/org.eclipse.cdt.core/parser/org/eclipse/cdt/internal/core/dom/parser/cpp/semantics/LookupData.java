@@ -519,6 +519,7 @@ public class LookupData extends ScopeLookupData {
 	public void setFunctionArguments(boolean containsImpliedObject, ICPPEvaluation... exprs) {
 		argsContainImpliedObject= containsImpliedObject;
 		functionArgs= exprs;
+		functionArgTypes = null;
 	}
 
 	public void setFunctionArguments(boolean containsImpliedObject, IASTInitializerClause... exprs) {

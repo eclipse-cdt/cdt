@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -177,6 +178,12 @@ public class DsfTerminateCommand implements ITerminateHandler {
      * See bug 377447
      */
     private void waitForTermination(final IDebugCommandRequest request) {
+    	class ScheduledFutureWrapper {
+    		ScheduledFuture<?> fFuture;
+    	};
+    	
+    	final ScheduledFutureWrapper fFutureWrapper = new ScheduledFutureWrapper();
+    	
     	// It is possible that the session already had time to terminate
 		if (!DsfSession.isSessionActive(fSession.getId())) {
 			request.done();
@@ -189,6 +196,8 @@ public class DsfTerminateCommand implements ITerminateHandler {
 			public void sessionEnded(DsfSession session) {
 				if (fSession.equals(session)) {
 					DsfSession.removeSessionEndedListener(this);
+					// Cancel the cleanup job since we won't need it
+					fFutureWrapper.fFuture.cancel(false);
 					GdbLaunch launch = getLaunch(request);
 					if (launch != null) {
 						terminateRemainingProcesses(launch, request);
@@ -208,11 +217,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 		// session is also terminated before the timeout).
 		// We haven't found a problem with delaying the completion
 		// of the request that way.
-		// Note that this timeout is not removed even if we don't
-		// need it anymore, once the session has terminated;
-		// instead, we let it timeout and ignore it if the session
-		// is already terminated.
-		fExecutor.schedule(new Runnable() { 
+		 fFutureWrapper.fFuture = fExecutor.schedule(new Runnable() { 
 			@Override
 			public void run() {
 				// Check that the session is still active when the timeout hits.

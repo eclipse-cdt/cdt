@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class CPPVariable extends PlatformObject implements ICPPInternalVariable {
+public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredVariable {
 	private IASTName fDefinition;
 	private IASTName fDeclarations[];
 	private IType fType;
@@ -326,5 +326,10 @@ public class CPPVariable extends PlatformObject implements ICPPInternalVariable 
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void allDeclarationsDefinitionsAdded() {
+		fAllResolved = true;
 	}
 }

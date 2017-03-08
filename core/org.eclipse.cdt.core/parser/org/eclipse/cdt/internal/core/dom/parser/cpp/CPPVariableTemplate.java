@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPVariableTemplate extends CPPTemplateDefinition
-		implements ICPPVariableTemplate, ICPPInternalVariable {
+		implements ICPPVariableTemplate, ICPPInternalDeclaredVariable {
 	private IType fType;
 	private boolean fAllResolved;
 	private ICPPPartialSpecialization[] partialSpecializations = ICPPPartialSpecialization.EMPTY_ARRAY;
@@ -99,5 +99,10 @@ public class CPPVariableTemplate extends CPPTemplateDefinition
 
 	public void addPartialSpecialization(ICPPPartialSpecialization partSpec) {
 		partialSpecializations = ArrayUtil.append(partialSpecializations, partSpec);
+	}
+
+	@Override
+	public void allDeclarationsDefinitionsAdded() {
+		fAllResolved = true;
 	}
 }

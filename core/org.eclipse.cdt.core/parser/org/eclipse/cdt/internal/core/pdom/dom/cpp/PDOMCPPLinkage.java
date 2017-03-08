@@ -634,7 +634,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (fromName != null && shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
-			pdomBinding.update(this, fromBinding, null);
+			pdomBinding.update(this, fromBinding, fromName);
 
 			// Update the tags based on the tags from the new binding.  This cannot be done in
 			// PDOMBinding.update, because not all subclasses (e.g., PDOMCPPFunction) call
@@ -931,7 +931,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						if (pdomBinding == null) {
 							pdomBinding = createBinding(type, method, fileLocalRec, point);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
-							pdomBinding.update(this, method, null);
+							pdomBinding.update(this, method, point);
 							old.remove(pdomBinding);
 
 							// Update the tags based on the tags from the new binding.  This was in

@@ -634,7 +634,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (fromName != null && shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
-			pdomBinding.update(this, fromBinding, null);
+			pdomBinding.update(this, fromBinding, fromName);
 
 			// Update the tags based on the tags from the new binding.  This cannot be done in
 			// PDOMBinding.update, because not all subclasses (e.g., PDOMCPPFunction) call

@@ -1065,11 +1065,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
-		return super.cannotAdapt(inputBinding);
-	}
-
-	@Override
 	public final PDOMBinding adaptBinding(final IBinding inputBinding, boolean includeLocal) throws CoreException {
 		return adaptBinding(null, inputBinding, includeLocal ? FILE_LOCAL_REC_DUMMY : null);
 	}

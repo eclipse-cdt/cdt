@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+/**
+ * A common interface for CPPVariable and CPPVariableTemplate.
+ */
 public interface ICPPInternalDeclaredVariable extends ICPPInternalVariable {
 	/**
 	 * Informs the variable that all its declarations and definitions have already been added. 

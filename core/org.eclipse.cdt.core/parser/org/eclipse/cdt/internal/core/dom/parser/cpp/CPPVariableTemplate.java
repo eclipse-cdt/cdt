@@ -19,11 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPVariableTemplate extends CPPTemplateDefinition
 		implements ICPPVariableTemplate, ICPPInternalDeclaredVariable {
 	private IType fType;
+	private IValue fInitialValue = IntegralValue.NOT_INITIALIZED;
 	private boolean fAllResolved;
 	private ICPPPartialSpecialization[] partialSpecializations = ICPPPartialSpecialization.EMPTY_ARRAY;
 
@@ -61,6 +63,13 @@ public class CPPVariableTemplate extends CPPTemplateDefinition
 
 	@Override
 	public IValue getInitialValue() {
+		if (fInitialValue == IntegralValue.NOT_INITIALIZED) {
+			fInitialValue = computeInitialValue();
+		}
+		return fInitialValue;
+	}
+
+	private IValue computeInitialValue() {
 		return VariableHelpers.getInitialValue((IASTName) getDefinition(), (IASTName[]) getDeclarations(), getType());
 	}
 

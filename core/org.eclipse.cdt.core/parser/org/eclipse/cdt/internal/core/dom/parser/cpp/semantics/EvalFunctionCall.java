@@ -45,6 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 public final class EvalFunctionCall extends CPPDependentEvaluation {
@@ -58,6 +59,9 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 
 	public EvalFunctionCall(ICPPEvaluation[] args, ICPPEvaluation owner, IBinding templateDefinition) {
 		super(templateDefinition);
+		for (int i = 0; i < args.length; i++) {
+			Assert.isNotNull(args[i]);
+		}
 		fArguments = args;
 		fImplicitThis = getImplicitThis() == owner ? null : owner;
 	}
@@ -254,6 +258,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
             } else if (0 < i && i <= parameters.length && !isReference(parameters[i - 1])) {
             	IValue copiedValue = arg.getValue(context.getPoint()).clone();
             	arg = new EvalFixed(arg.getType(context.getPoint()), arg.getValueCategory(context.getPoint()), copiedValue);
+            } else {
+        		return EvalFixed.INCOMPLETE;
             }
 			args[i] = arg;
 		}

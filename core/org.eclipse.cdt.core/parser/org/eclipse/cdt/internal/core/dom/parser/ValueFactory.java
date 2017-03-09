@@ -297,12 +297,14 @@ public class ValueFactory {
 			if (isInvalidValue(v))
 				return v;
 			if (isDeferredValue(v))
-				return null;  // the value will be computed using the evaluation
-			if (v.numberValue().longValue() == 0) {
+				return null;  // The value will be computed using the evaluation.
+			Number numericValue = v.numberValue();
+			if (numericValue == null)
+				return IntegralValue.UNKNOWN;
+			if (v instanceof IntegralValue ? numericValue.longValue() == 0 : numericValue.doubleValue() == 0)
 				return evaluate(cexpr.getNegativeResultExpression());
-			}
 			final IASTExpression pe = cexpr.getPositiveResultExpression();
-			if (pe == null) // gnu-extension allows to omit the positive expression.
+			if (pe == null) // A gnu-extension allows to omit the positive expression.
 				return v;
 			return evaluate(pe);
 		}

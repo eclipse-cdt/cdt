@@ -23,6 +23,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
+import java.util.Collection;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -55,8 +57,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.Collection;
 
 public class EvalMemberAccess extends CPPDependentEvaluation {
 	private final IType fOwnerType;
@@ -430,7 +430,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			EvalBinding evalBinding = new EvalBinding(fMember, fType, getTemplateDefinition());
 			return evalBinding;
 		}
-		if (ownerEval == null) {
+		if (ownerEval == null || ownerEval == this) {
 			return this;
 		}
 

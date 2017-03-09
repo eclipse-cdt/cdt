@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.*;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_assign;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAnd;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAndAssign;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryOr;
@@ -486,7 +486,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 			}
 			return updateable1;
 		} else if (fOperator == op_arrayAccess) {
-			return new EvalCompositeAccess(fixed1, fixed2.getValue(context.getPoint()).numberValue().intValue());
+			Number numericValue = fixed2.getValue(context.getPoint()).numberValue();
+			if (numericValue == null)
+				return EvalFixed.INCOMPLETE;
+			return new EvalCompositeAccess(fixed1, numericValue.intValue());
 		} else if ((isArray(fixed1, context) || isArray(fixed2, context)) && (hasIntType(fixed1, context) || hasIntType(fixed2, context))) {
 			int offset = hasIntType(fixed1, context) ? fixed1.getValue(context.getPoint()).numberValue().intValue() : fixed2.getValue(context.getPoint()).numberValue().intValue();
 			EvalCompositeAccess evalCompositeAccess = new EvalCompositeAccess(isArray(fixed1, context) ? fixed1 : fixed2, offset);

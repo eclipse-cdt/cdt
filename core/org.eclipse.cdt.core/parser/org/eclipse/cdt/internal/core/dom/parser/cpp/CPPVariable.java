@@ -58,6 +58,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 	private IASTName fDefinition;
 	private IASTName fDeclarations[];
 	private IType fType;
+	private IValue fInitialValue = IntegralValue.NOT_INITIALIZED;
 	private boolean fAllResolved;
 
 	/**
@@ -109,10 +110,12 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
 		}
-		// Array types may be incomplete.
+		// An array type may be incomplete and needs to be recalculated.
 		if (fType instanceof IArrayType) {
 			fType = null;
 		}
+		// Initial value has to be recalculated.
+		fInitialValue = IntegralValue.NOT_INITIALIZED;
 	}
 
 	@Override
@@ -238,6 +241,13 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 
 	@Override
 	public IValue getInitialValue() {
+		if (fInitialValue == IntegralValue.NOT_INITIALIZED) {
+			fInitialValue = computeInitialValue();
+		}
+		return fInitialValue;
+	}
+
+	private IValue computeInitialValue() {
 		Set<CPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
 		if (!recursionProtectionSet.add(this)) {
 			return IntegralValue.UNKNOWN;

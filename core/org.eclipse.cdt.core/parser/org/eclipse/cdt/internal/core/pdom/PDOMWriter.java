@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeclaredVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -356,6 +358,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 
 	private void resolveNames(Data data, IProgressMonitor monitor) {
 		long start= System.currentTimeMillis();
+		List<ICPPInternalDeclaredVariable> variables = new ArrayList<>();
 		SubMonitor progress = SubMonitor.convert(monitor, data.fSelectedFiles.length);
 		for (FileInAST file : data.fSelectedFiles) {
 			Symbols symbols= data.fSymbolMap.get(file.includeStatement);
@@ -367,10 +370,13 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				final IASTName[] na= j.next();
 				final IASTName name = na[0];
 				progress2.split(1);
-				if (name != null) { // should not be null, just be defensive.
-					Throwable th= null;
+				if (name != null) { // Should not be null, just be defensive.
 					try {
 						final IBinding binding = name.resolveBinding();
+						if (binding instanceof ICPPInternalDeclaredVariable) {
+							variables.add((ICPPInternalDeclaredVariable) binding);
+						}
+							
 						if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
 								(((IASTName) name.getParent()).getBinding() == binding ||
 								binding instanceof ICPPFunctionTemplate)) {
@@ -401,15 +407,10 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 						} else {
 							fStatistics.fDeclarationCount++;
 						}
-					} catch (RuntimeException e) {
-						th= e;
-					} catch (StackOverflowError e) {
-						th= e;
-					}
-					if (th != null) {
+					} catch (RuntimeException | StackOverflowError e) {
 						if (!reported) {
 							data.fStatuses.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
-									name.toString(), file.fileContentKey.getLocation().getURI().getPath()), th));
+									name.toString(), file.fileContentKey.getLocation().getURI().getPath()), e));
 						}
 						reported= true;
 						j.remove();
@@ -417,6 +418,21 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				}
 			}
 		}
+
+		// Precalculate types and initial values of all fields to avoid doing it later when writing
+		// to the index.
+		for (ICPPInternalDeclaredVariable variable : variables) {
+			variable.allDeclarationsDefinitionsAdded();
+			// TODO(sprigogin): It would be beneficial to precalculate types and initial values of all
+			//                  indexed variables not just fields. It should be done carefully to avoid
+			//                  unnecesssary overhead of doing it for variables that are not being indexed.
+			if (variable instanceof ICPPField) {
+				// Type and initial value will be cached by the variable.
+				variable.getType();
+				variable.getInitialValue();
+			}
+		}
+
 		fStatistics.fResolutionTime += System.currentTimeMillis() - start;
 	}
 

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeclaredVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -49,11 +48,6 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		Database db = getDB();
 		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotations.encodeVariableAnnotations(variable));
 		if (setTypeAndValue) {
-			if (variable instanceof ICPPInternalDeclaredVariable) {
-				// By the time PDOMCPPVariable is created all declarations and definitions have already been
-				// added to the variable.
-				((ICPPInternalDeclaredVariable) variable).allDeclarationsDefinitionsAdded();
-			}
 			setType(parent.getLinkage(), variable.getType());
 			linkage.new ConfigureVariable(variable, this);
 		}

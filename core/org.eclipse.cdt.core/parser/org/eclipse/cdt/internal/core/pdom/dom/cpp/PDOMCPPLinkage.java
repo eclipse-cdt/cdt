@@ -704,7 +704,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				if(binding instanceof ICPPFieldTemplate) {
+				if (binding instanceof ICPPFieldTemplate) {
 					pdomBinding = new PDOMCPPFieldTemplate(this, parent, (ICPPFieldTemplate) binding);
 				} else {
 					pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding, true);
@@ -1062,11 +1062,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		return 0;
-	}
-
-	@Override
-	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
-		return super.cannotAdapt(inputBinding);
 	}
 
 	@Override

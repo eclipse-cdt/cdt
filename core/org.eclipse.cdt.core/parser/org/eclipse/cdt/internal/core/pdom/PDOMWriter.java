@@ -376,7 +376,9 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 					try {
 						final IBinding binding = name.resolveBinding();
 						if (binding instanceof ICPPInternalDeclaredVariable) {
-							variables.add((ICPPInternalDeclaredVariable) binding);
+							ICPPInternalDeclaredVariable variable = (ICPPInternalDeclaredVariable) binding;
+							if (variables.add(variable))
+								variable.allDeclarationsDefinitionsAdded();
 						}
 							
 						if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
@@ -424,7 +426,6 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		// Precalculate types and initial values of all indexed variables to avoid doing it later when writing
 		// to the index.
 		for (ICPPInternalDeclaredVariable variable : variables) {
-			variable.allDeclarationsDefinitionsAdded();
 			if (isVariableIndexed(variable)) {
 				// Type and initial value will be cached by the variable.
 				variable.getType();
@@ -439,7 +440,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		if (variable instanceof ICPPField)
 			return true;
 		IBinding owner = variable.getOwner();
-		if (owner == null || owner instanceof IASTTranslationUnit || owner instanceof ICPPNamespace)
+		if (owner == null || owner instanceof ICPPNamespace)
 			return true;
 		return owner instanceof ICPPFunction && ((ICPPFunction) owner).isConstexpr();
 	}

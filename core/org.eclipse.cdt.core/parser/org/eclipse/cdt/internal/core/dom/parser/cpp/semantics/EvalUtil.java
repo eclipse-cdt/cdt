@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -124,7 +125,9 @@ public class EvalUtil {
 			updateable = eval;
 		}
 		ICPPEvaluation fixed = eval.computeForFunctionCall(record, context.recordStep());
-		if (isUpdateable(fixed)) {
+		if (fixed == EvalFixed.INCOMPLETE) {
+			updateable = fixed;
+		} else if (isUpdateable(fixed)) {
 			updateable = fixed;
 			if (!(fixed instanceof EvalCompositeAccess)) {
 				fixed = fixed.computeForFunctionCall(record, context);
@@ -169,7 +172,7 @@ public class EvalUtil {
 			IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			IValue initialValue = variable.getInitialValue();
 			ICPPEvaluation valueEval = null;
-	
+
 			if ((initialValue != null && initialValue.getEvaluation() != null) ||
 					(initialValue == null && nestedType instanceof ICPPClassType)) {
 				final ICPPEvaluation initializerEval = initialValue == null ? null : initialValue.getEvaluation();
@@ -183,6 +186,8 @@ public class EvalUtil {
 					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
 				}
 			} else if (initialValue != null) {
+				if (ValueFactory.isInvalidValue(initialValue))
+					return EvalFixed.INCOMPLETE;
 				valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
 			}
 	

@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall.ParameterPackType;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -40,6 +41,7 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	private final int elementId;          // The index of the sub-value being accessed
 
 	public EvalCompositeAccess(ICPPEvaluation parent, int elementId) {
+		Assert.isNotNull(parent);
 		this.parent = parent;
 		this.elementId = elementId;
 	}

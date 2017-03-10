@@ -124,7 +124,9 @@ public class EvalUtil {
 			updateable = eval;
 		}
 		ICPPEvaluation fixed = eval.computeForFunctionCall(record, context.recordStep());
-		if (isUpdateable(fixed)) {
+		if (fixed == EvalFixed.INCOMPLETE) {
+			updateable = fixed;
+		} else if (isUpdateable(fixed)) {
 			updateable = fixed;
 			if (!(fixed instanceof EvalCompositeAccess)) {
 				fixed = fixed.computeForFunctionCall(record, context);
@@ -169,7 +171,7 @@ public class EvalUtil {
 			IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			IValue initialValue = variable.getInitialValue();
 			ICPPEvaluation valueEval = null;
-	
+
 			if ((initialValue != null && initialValue.getEvaluation() != null) ||
 					(initialValue == null && nestedType instanceof ICPPClassType)) {
 				final ICPPEvaluation initializerEval = initialValue == null ? null : initialValue.getEvaluation();
@@ -185,7 +187,7 @@ public class EvalUtil {
 			} else if (initialValue != null) {
 				valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
 			}
-	
+
 			if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
 					valueEval.getValue(point) == IntegralValue.UNKNOWN)) {
 				return null;

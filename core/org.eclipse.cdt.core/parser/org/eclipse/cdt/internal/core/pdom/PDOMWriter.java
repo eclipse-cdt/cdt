@@ -45,10 +45,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -358,7 +360,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 
 	private void resolveNames(Data data, IProgressMonitor monitor) {
 		long start= System.currentTimeMillis();
-		List<ICPPInternalDeclaredVariable> variables = new ArrayList<>();
+		Set<ICPPInternalDeclaredVariable> variables = new HashSet<>();
 		SubMonitor progress = SubMonitor.convert(monitor, data.fSelectedFiles.length);
 		for (FileInAST file : data.fSelectedFiles) {
 			Symbols symbols= data.fSymbolMap.get(file.includeStatement);
@@ -419,14 +421,11 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			}
 		}
 
-		// Precalculate types and initial values of all fields to avoid doing it later when writing
+		// Precalculate types and initial values of all indexed variables to avoid doing it later when writing
 		// to the index.
 		for (ICPPInternalDeclaredVariable variable : variables) {
 			variable.allDeclarationsDefinitionsAdded();
-			// TODO(sprigogin): It would be beneficial to precalculate types and initial values of all
-			//                  indexed variables not just fields. It should be done carefully to avoid
-			//                  unnecesssary overhead of doing it for variables that are not being indexed.
-			if (variable instanceof ICPPField) {
+			if (isVariableIndexed(variable)) {
 				// Type and initial value will be cached by the variable.
 				variable.getType();
 				variable.getInitialValue();
@@ -434,6 +433,15 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		}
 
 		fStatistics.fResolutionTime += System.currentTimeMillis() - start;
+	}
+
+	private boolean isVariableIndexed(ICPPVariable variable) {
+		if (variable instanceof ICPPField)
+			return true;
+		IBinding owner = variable.getOwner();
+		if (owner == null || owner instanceof IASTTranslationUnit || owner instanceof ICPPNamespace)
+			return true;
+		return owner instanceof ICPPFunction && ((ICPPFunction) owner).isConstexpr();
 	}
 
 	@Override

@@ -5991,7 +5991,6 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
-
 	//	template<bool> struct S {
 	//		static int m();
 	//	};
@@ -6652,17 +6651,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
-	//struct A {
-	//	int m(int i) const;
-	//	void m() const;
-	//};
+	//	struct A {
+	//	  int m(int i) const;
+	//	  void m() const;
+	//	};
 	//
-	//template<typename T> struct B {
-	//	typedef int (T::*Method)(int) const;
-	//	B(Method p) {}
-	//};
+	//	template<typename T> struct B {
+	//	  typedef int (T::*Method)(int) const;
+	//	  B(Method p) {}
+	//	};
 	//
-	//B<const A> a(&A::m);
+	//	B<const A> a(&A::m);
 	public void testConstInTypeParameter_377223() throws Exception {
 		parseAndCheckBindings();
 	}

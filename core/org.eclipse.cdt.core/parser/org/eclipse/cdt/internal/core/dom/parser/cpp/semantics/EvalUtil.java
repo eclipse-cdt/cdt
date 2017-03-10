@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -124,7 +125,9 @@ public class EvalUtil {
 			updateable = eval;
 		}
 		ICPPEvaluation fixed = eval.computeForFunctionCall(record, context.recordStep());
-		if (isUpdateable(fixed)) {
+		if (fixed == EvalFixed.INCOMPLETE) {
+			updateable = fixed;
+		} else if (isUpdateable(fixed)) {
 			updateable = fixed;
 			if (!(fixed instanceof EvalCompositeAccess)) {
 				fixed = fixed.computeForFunctionCall(record, context);
@@ -182,7 +185,7 @@ public class EvalUtil {
 				if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
 					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
 				}
-			} else if (initialValue != null) {
+			} else if (initialValue != null && !ValueFactory.isInvalidValue(initialValue)) {
 				valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
 			}
 	

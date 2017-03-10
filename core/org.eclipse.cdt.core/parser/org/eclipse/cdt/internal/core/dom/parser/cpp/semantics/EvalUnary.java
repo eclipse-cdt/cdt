@@ -428,8 +428,10 @@ public class EvalUnary extends CPPDependentEvaluation {
 			} else if (updateable instanceof EvalBinding && isStarOperatorOnArrayName(context)) {
 				EvalBinding evalBinding = (EvalBinding) updateable;
 				IBinding binding = evalBinding.getBinding();
-				ICPPEvaluation value = record.getVariable(binding);
-				EvalCompositeAccess compositeAccess = new EvalCompositeAccess(value, 0);
+				ICPPEvaluation eval = record.getVariable(binding);
+				if (eval == null)
+					return EvalFixed.INCOMPLETE;
+				EvalCompositeAccess compositeAccess = new EvalCompositeAccess(eval, 0);
 				return new EvalReference(record, compositeAccess, getTemplateDefinition());
 			}
 			return evalUnary;

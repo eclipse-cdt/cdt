@@ -1980,12 +1980,13 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * @return If true, this variable object can be reported as changed in
 		 *         a -var-update MI command.
+		 *
+		 * Since we can't reliably determine whether a variable is complex or
+		 * not (see bug 399494), we err on the safe side and assume everything
+		 * is. We'll end up asking GDB to update all the variables.
 		 */
 		public boolean isModifiable() {
-			if (!isComplex() || isDynamic()) {
-				return true;
-			}
-			return false;
+			return true;
 		}
 
 		/**

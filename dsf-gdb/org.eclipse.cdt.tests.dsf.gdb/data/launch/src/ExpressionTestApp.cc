@@ -132,7 +132,10 @@ int testChildren() {
 }
 
 int testWrite() {
+	typedef int *intPtr;
+
 	int a[2] = {3, 456};
+	intPtr ptr = 0;
 	
 	return 0;
 }

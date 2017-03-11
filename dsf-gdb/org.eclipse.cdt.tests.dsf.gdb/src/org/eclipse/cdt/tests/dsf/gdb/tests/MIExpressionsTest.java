@@ -512,10 +512,10 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	@Test
 	public void testWriteVariable() throws Throwable {
 		SyncUtil.runToLocation("testWrite");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
 
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "a[1]");
+		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "a[1]");
 
 		writeAndCheck(exprDmc, "987", IFormattedValues.DECIMAL_FORMAT, "987");
 		writeAndCheck(exprDmc, "16", IFormattedValues.HEX_FORMAT, "22");
@@ -526,6 +526,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		writeAndCheck(exprDmc, "0b1001", IFormattedValues.BINARY_FORMAT, "9");
 		writeAndCheck(exprDmc, "456", IFormattedValues.NATURAL_FORMAT, "456");
 
+		exprDmc = SyncUtil.createExpression(frameDmc, "ptr");
+
+		writeAndCheck(exprDmc, "0x10", IFormattedValues.HEX_FORMAT, "16");
 	}
 
 	/*

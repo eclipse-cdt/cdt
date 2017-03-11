@@ -1043,10 +1043,6 @@ public class MIVariableManager implements ICommandControl {
             if (fEditable != null) { 
                 rm.setData(fEditable);
                 rm.done();
-            } else if (isComplex()) {
-                fEditable = false;
-                rm.setData(fEditable);
-                rm.done();
             } else {
                 fCommandControl.queueCommand(
                 		fCommandFactory.createMIVarShowAttributes(getRootToUpdate().getControlDMContext(), getGdbName()), 
@@ -1881,15 +1877,6 @@ public class MIVariableManager implements ICommandControl {
 		 *            The request monitor to indicate the operation is finished
 		 */
 		private void writeValue(String value, String formatId, final RequestMonitor rm) {
-
-			// If the variable is a complex structure (including an array), then we cannot write to it
-			if (isComplex()) {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, 
-						"Cannot change the value of a complex expression", null)); //$NON-NLS-1$
-				rm.done();
-				return;
-	        }
-			
 			// First deal with the format.  For GDB, the way to specify a format is to prefix the value with
 			// 0x for hex, 0 for octal etc  So we need to make sure that 'value' has this prefix.
 			// Note that there is no way to specify a binary format for GDB up to and including

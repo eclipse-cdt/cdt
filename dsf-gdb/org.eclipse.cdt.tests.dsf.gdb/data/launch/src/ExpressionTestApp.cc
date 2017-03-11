@@ -132,7 +132,10 @@ int testChildren() {
 }
 
 int testWrite() {
+	typedef int *intPtr;
+
 	int a[2] = {3, 456};
+	intPtr ptr = 0;
 	
 	return 0;
 }
@@ -302,6 +305,31 @@ int testUpdateOfPointer() {
 	return 0;
 }
 
+int testUpdateOfPointerTypedef() {
+	typedef int *intPtr;
+
+	int int1 = 1;
+	int int2 = 2;
+	int int3 = 3;
+	int int4 = 4;
+
+	struct {
+		intPtr ptr;
+	} s;
+
+	intPtr ptr = &int1;
+	s.ptr = &int2;
+
+	/* testUpdateOfPointerTypedef_1 */
+
+	ptr = &int3;
+	s.ptr = &int4;
+
+	/* testUpdateOfPointerTypedef_2 */
+
+	return 0;
+}
+
 int testCanWrite() {
 	int a = 1;
 	int* b = &a;
@@ -428,6 +456,7 @@ int main() {
     testConcurrentReadAndUpdateChild();
     testConcurrentUpdateOutOfScopeChildThenParent();
     testUpdateOfPointer();
+    testUpdateOfPointerTypedef();
     testCanWrite();
     testArrays();
     testRTTI();

@@ -532,10 +532,11 @@ public class MIVariableManager implements ICommandControl {
 		// children taking into account RTTI ("set print object on")).
 		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
 		public boolean isComplex() {
-			return (getGDBType() == null) ? false
-					: getGDBType().getType() != GDBType.POINTER && getGDBType().getType() != GDBType.REFERENCE
-							&& (getNumChildrenHint() > 0
-									|| hasMore() || getDisplayHint().isCollectionHint());
+			// Since we can't reliably determine whether a variable is complex
+			// (see bug 399494), we err on the safe side and assume they are
+			// not. In the end we'll end up asking GDB a bit more things, but we
+			// should at least get correct results.
+			return false;
 		}
 		
 		/**

@@ -338,7 +338,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			}
 
 			// Perform template instantiation and overload resolution.
-			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
+			IBinding binding = CPPSemantics.resolveFunction(data, functions, true, true);
 			if (binding == null || binding instanceof IProblemBinding)
 				return EvalFixed.INCOMPLETE;
 			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))

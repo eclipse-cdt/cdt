@@ -1082,7 +1082,7 @@ public class BindingClassifier {
 		lookupData.setFunctionArguments(false, new IASTInitializerClause[] { argument });
 		lookupData.qualified = true;
 		try {
-			IBinding constructor = CPPSemantics.resolveFunction(lookupData, ClassTypeHelper.getConstructors(classType, argument), false);
+			IBinding constructor = CPPSemantics.resolveFunction(lookupData, ClassTypeHelper.getConstructors(classType, argument), false, false);
 			if (constructor instanceof ICPPConstructor && !((ICPPConstructor) constructor).isExplicit())
 				return true;
 		} catch (DOMException e) {

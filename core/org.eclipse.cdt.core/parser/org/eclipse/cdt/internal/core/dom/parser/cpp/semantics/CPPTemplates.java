@@ -17,7 +17,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext.getContextClassSpecialization;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
@@ -2276,7 +2278,7 @@ public class CPPTemplates {
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					final ICPPFunction f = (ICPPFunction) instance;
-					if (SemanticUtil.isValidType(f.getType())) {
+					if (isValidFunctionType(f.getType())) {
 						// The number of arguments have been checked against the function
 						// template's required argument count at an earlier stage. However,
 						// the process of instantiation can increase the required argument
@@ -2292,6 +2294,22 @@ public class CPPTemplates {
 		} catch (DOMException e) {
 		}
 		return null;
+	}
+
+	/**
+	 * Checks if the given function type is problem-free and that the return type is not a function set.
+	 */
+	public static boolean isValidFunctionType(IFunctionType type) {
+		if (!SemanticUtil.isValidType(type))
+			return false;
+
+		IType t = type.getReturnType();
+		t = SemanticUtil.getNestedType(t, ALLCVQ | TDEF | REF);
+		if (t instanceof IPointerType)
+			t = ((IPointerType) t).getType();
+		if (t instanceof FunctionSetType)
+			return false;
+		return true;
 	}
 
 	/**

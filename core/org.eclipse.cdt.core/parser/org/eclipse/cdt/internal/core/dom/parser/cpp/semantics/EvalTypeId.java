@@ -282,7 +282,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			data.foundItems = constructors;
 			data.setFunctionArguments(false, arguments);
 			try {
-				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true);
+				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true, false);
 				if (binding instanceof ICPPFunction) {
 					return (ICPPFunction) binding;
 				}

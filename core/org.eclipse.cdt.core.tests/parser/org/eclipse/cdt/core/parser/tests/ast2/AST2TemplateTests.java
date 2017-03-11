@@ -2348,6 +2348,28 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <class U>
+	//	void func(const U& u, const typename U::t& v) {
+	//	}
+	//
+	//	template <class U>
+	//	void func(U& u, const typename U::t& v) {
+	//	}
+	//
+	//	template <typename T>
+	//	struct A {
+	//	  typedef T t;
+	//	};
+	//
+	//	void test(const A<int>& a, int b) {
+	//	  func(a, b);
+	//	}
+	public void testFunctionTemplate_319498() throws Exception {
+		BindingAssertionHelper ah = getAssertionHelper();
+		ICPPFunction f = ah.assertNonProblemOnFirstIdentifier("func(a, b)");
+		assertInstance(f, ICPPTemplateInstance.class);
+	}
+
 	//	template<class U> void f1(void(*f)(const U&)) {}
 	//	void f2(const int& b){}
 	//	void test() {
@@ -5966,6 +5988,43 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	  }
 	//	};
 	public void testFunctionWithVoidParamInTypeDeduction_423127() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	  template <typename U>
+	//	  void m(U);
+	//	  int m(int);
+	//	};
+	//
+	//	void foo(void(A::*)(int));
+	//	void foo(int);
+	//
+	//	template <typename T>
+	//	decltype(foo(&T::m)) waldo(T);
+	//
+	//	int main() {
+	//	  waldo(A());
+	//	}
+	public void testAddressOfMethodTargeted_509396() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	  template <typename U>
+	//	  void m(U t);
+	//	};
+	//
+	//	template <typename T>
+	//	void waldo(T t);
+	//
+	//	template <typename T>
+	//	decltype(&T::m) waldo(T t);
+	//
+	//	void test() {
+	//	  waldo(A());
+	//	}
+	public void testAddressOfMethodUntargeted_509396() throws Exception {
 		parseAndCheckBindings();
 	}
 

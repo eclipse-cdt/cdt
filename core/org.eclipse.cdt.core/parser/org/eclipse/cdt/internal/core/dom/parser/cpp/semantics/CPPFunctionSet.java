@@ -99,4 +99,15 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray(), fBindings));
 		}
 	}
+
+	@Override
+	public String toString() {
+		if (fName != null)
+			return fName.toString();
+		try {
+			return String.join("::", fBindings[0].getQualifiedName()); //$NON-NLS-1$
+		} catch (DOMException e) {
+			return super.toString();
+		}
+	}
 }

@@ -716,7 +716,7 @@ public class Conversions {
 				}
 			}
 		}
-		final IBinding result= CPPSemantics.resolveFunction(data, filteredConstructors, true);
+		final IBinding result= CPPSemantics.resolveFunction(data, filteredConstructors, true, false);
 		final Cost c;
 		if (result instanceof ICPPMethod) {
 			c= new Cost(arg.getType(point), t, Rank.IDENTITY);

@@ -5969,6 +5969,24 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct A {
+	//	    template <typename U>
+	//	    void m(U);
+	//	};
+	//
+	//	void foo(void(A::*)(int));
+	//	void foo(int);
+	//
+	//	template <typename T>
+	//	decltype(foo(&T::m)) waldo(T);
+	//
+	//	int main() {
+	//	    waldo(A());
+	//	}
+	public void testTargetedFunction_509396() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T, unsigned length> struct Templ {
 	//		Templ(){}
 	//	};

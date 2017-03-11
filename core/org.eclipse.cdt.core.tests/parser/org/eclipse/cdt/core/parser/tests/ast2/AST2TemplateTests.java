@@ -10123,4 +10123,18 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testNoexceptSpecifierInTypeTemplateArgument_511186() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<class T, unsigned long Size = sizeof(T)>
+	//	class foobar {};
+	//
+	//	template<class T>
+	//	void waldo(foobar<T>) {}
+	//
+	//	void bar() {
+	//	    foobar<int> obj;
+	//	    waldo(obj);         // Error: Invalid arguments
+	//	}
+	public void testDependentSizeofInDefaultArgument_513430() throws Exception {
+		parseAndCheckBindings();
+	}
 }

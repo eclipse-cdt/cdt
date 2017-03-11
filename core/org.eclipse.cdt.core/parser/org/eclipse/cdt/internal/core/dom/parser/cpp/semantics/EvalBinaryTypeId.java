@@ -153,6 +153,6 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		return false;
+		return CPPTemplates.isDependentType(fType1) || CPPTemplates.isDependentType(fType2);
 	}
 }

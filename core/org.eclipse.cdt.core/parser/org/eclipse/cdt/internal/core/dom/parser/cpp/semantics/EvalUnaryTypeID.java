@@ -234,6 +234,6 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		return false;
+		return CPPTemplates.isDependentType(fOrigType);
 	}
 }

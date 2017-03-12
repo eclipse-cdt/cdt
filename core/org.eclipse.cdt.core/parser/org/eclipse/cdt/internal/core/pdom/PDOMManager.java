@@ -333,8 +333,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IProject rproject = project.getProject();
 			IPDOM pdom = fProjectToPDOM.get(rproject);
 			if (pdom == null) {
-				pdom= new PDOMProxy();
-				fProjectToPDOM.put(rproject, pdom);
+				pdom= getOrCreatePDOM(project, new NullProgressMonitor());
 			}
 			return pdom;
 		}

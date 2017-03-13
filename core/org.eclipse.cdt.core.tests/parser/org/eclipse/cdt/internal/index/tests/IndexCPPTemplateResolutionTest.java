@@ -992,7 +992,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		foo(a);
 	//  }
 	public void testFunctionInstanceParameters() throws Exception {
-		IBinding b0= getBindingFromASTName("foo(a)", 3);
+		IBinding b0= getBindingFromFirstIdentifier("foo(a)");
 		assertInstance(b0, ICPPTemplateInstance.class);
 		assertInstance(b0, ICPPFunction.class);
 
@@ -1033,7 +1033,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  func(&a, &A::m);
 	//	}
 	public void testFunctionTemplate_245030() throws Exception {
-		ICPPFunction f= getBindingFromASTName("func(&a, &A::m)", 4, ICPPFunction.class);
+		ICPPFunction f= getBindingFromFirstIdentifier("func(&a, &A::m)");
 		assertInstance(f, ICPPTemplateInstance.class);
 	}
 
@@ -1054,7 +1054,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  func(a, b);
 	//	}
 	public void testFunctionTemplate_319498() throws Exception {
-		ICPPFunction f= getBindingFromASTName("func(a, b)", 4, ICPPFunction.class);
+		ICPPFunction f= getBindingFromFirstIdentifier("func(a, b)");
 		assertInstance(f, ICPPTemplateInstance.class);
 	}
 

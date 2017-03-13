@@ -55,6 +55,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -222,6 +223,11 @@ public class EvalID extends CPPDependentEvaluation {
 			return new EvalFunctionSet((CPPFunctionSet) binding, qualified, isAddressOf(expr), null, expr);
 		}
 		if (binding instanceof ICPPUnknownBinding) {
+			// If the id-expression names a variable template, there is no need to defer name lookup.
+			if (binding instanceof ICPPDeferredVariableInstance) {
+				return new EvalBinding(binding, null, expr);
+			}
+			
 			ICPPTemplateArgument[] templateArgs = null;
 			final IASTName lastName = name.getLastName();
 			if (lastName instanceof ICPPASTTemplateId) {

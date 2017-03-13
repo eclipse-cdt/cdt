@@ -78,6 +78,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -557,6 +558,15 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						ICPPClassTemplate t= (ICPPClassTemplate) getCompositeType(t0);
 						ICPPTemplateArgument[] args = TemplateInstanceUtil.convert(this, args0);
 						return new CompositeCPPDeferredClassInstance(t, args);
+					} else if (binding instanceof ICPPDeferredVariableInstance) {
+						ICPPDeferredVariableInstance def= (ICPPDeferredVariableInstance) binding;
+						ICPPVariableTemplate t0= def.getTemplateDefinition();
+						ICPPTemplateArgument[] args0= def.getTemplateArguments();
+						
+						ICPPVariableTemplate t= 
+								(ICPPVariableTemplate) getCompositeBinding((IIndexFragmentBinding) t0);
+						ICPPTemplateArgument[] args = TemplateInstanceUtil.convert(this, args0);
+						return new CompositeCPPDeferredVariableInstance(t, args);
 					} else {
 						if (binding instanceof ICPPClassType) {
 							return new CompositeCPPClassInstance(this, (ICPPClassType) findOneBinding(binding));

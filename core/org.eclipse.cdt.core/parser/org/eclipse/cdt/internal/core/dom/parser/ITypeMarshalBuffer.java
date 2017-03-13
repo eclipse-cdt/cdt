@@ -43,7 +43,8 @@ public interface ITypeMarshalBuffer {
 		TYPE_TRANSFORMATION           	= 0x0F,
 		UNKNOWN_MEMBER_TYPE           	= 0x10,
 		INITIALIZER_LIST_TYPE			= 0x11,
-		DEFERRED_FUNCTION               = 0x12;
+		DEFERRED_FUNCTION               = 0x12,
+		DEFERRED_VARIABLE_INSTANCE      = 0x13;
 	// Can add more types up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
 	final static byte

@@ -146,6 +146,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorSpecialization
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerationSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldSpecialization;
@@ -184,6 +185,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplatePartialSp
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
@@ -240,9 +242,9 @@ public class CPPTemplates {
 	};
 
 	/**
-	 * Instantiates a class template with the given arguments. May return {@code null}.
+	 * Instantiates a class or variable template with the given arguments. May return {@code null}.
 	 */
-	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, IASTNode point) {
+	public static IBinding instantiate(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args, IASTNode point) {
 		return instantiate(template, args, false, false, point);
 	}
 
@@ -517,14 +519,8 @@ public class CPPTemplates {
 			addInstance(template, arguments, instance);
 		}
 		if (template instanceof ICPPVariableTemplate) {
-			// TODO(nathanridge): Do we need a CPPDeferredVariableInstance?
-			ICPPVariableTemplate variableTemplate = ((ICPPVariableTemplate) template);
-			CPPTemplateParameterMap tpMap = createParameterMap(template, arguments, point);
-			InstantiationContext context = new InstantiationContext(tpMap, point);
-			IType type = instantiateType(variableTemplate.getType(), context);
-			IValue value = instantiateValue(variableTemplate.getInitialValue(), context,
-					IntegralValue.MAX_RECURSION_DEPTH);
-			instance = new CPPVariableInstance(template, template.getOwner(), tpMap, arguments, type, value);
+			instance = new CPPDeferredVariableInstance((ICPPVariableTemplate) template, arguments);
+			addInstance(template, arguments, instance);
 		}
 		return instance;
 	}
@@ -2960,6 +2956,9 @@ public class CPPTemplates {
 		if (unknown instanceof ICPPDeferredClassInstance) {
 			return resolveDeferredClassInstance((ICPPDeferredClassInstance) unknown, context);
 		}
+		if (unknown instanceof ICPPDeferredVariableInstance) {
+			return resolveDeferredVariableInstance((ICPPDeferredVariableInstance) unknown, context);
+		}
 		if (unknown instanceof ICPPUnknownMember) {
 			return resolveUnknownMember((ICPPUnknownMember) unknown, context);
 		}
@@ -3059,6 +3058,32 @@ public class CPPTemplates {
 				return inst;
 		}
 		return dci;
+	}
+	
+	private static IBinding resolveDeferredVariableInstance(ICPPDeferredVariableInstance dvi, 
+			InstantiationContext context) {
+		ICPPVariableTemplate variableTemplate = dvi.getTemplateDefinition();
+		ICPPTemplateArgument[] arguments = dvi.getTemplateArguments();
+		ICPPTemplateArgument[] newArgs;
+		try {
+			newArgs = instantiateArguments(arguments, context, true);
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		if (newArgs == null) {
+			return createProblem(variableTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, 
+					context.getPoint());
+		}
+		
+		// Unlike class templates, variable templates cannot be passed as template template arguments,
+		// so there is no need to instantiate the template itself.
+		
+		if (arguments != newArgs) {
+			IBinding inst = instantiate(variableTemplate, newArgs, context.getPoint());
+			if (inst != null)
+				return inst;
+		}
+		return dvi;
 	}
 
 	public static boolean haveSameArguments(ICPPTemplateInstance i1, ICPPTemplateInstance i2) {

@@ -95,6 +95,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
@@ -1559,6 +1560,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEFERRED_FUNCTION:
 			return CPPDeferredFunction.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.DEFERRED_VARIABLE_INSTANCE:
+			return CPPDeferredVariableInstance.unmarshal(getPDOM(), firstBytes, buffer);
 		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
 			IType type= TypeOfDependentExpression.unmarshal(firstBytes, buffer);
 			if (type instanceof IBinding)

@@ -46,6 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredVariableInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -231,11 +232,11 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			return true;
 		}
-		if (fBinding instanceof IVariable) {
-			return IntegralValue.isDependentValue(((IVariable) fBinding).getInitialValue());
-		}
 		if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
+		}
+		if (fBinding instanceof IVariable) {
+			return IntegralValue.isDependentValue(((IVariable) fBinding).getInitialValue());
 		}
 		if (fBinding instanceof IFunction) {
 			return false;

@@ -340,6 +340,27 @@ public class AST2VariableTemplateTests extends AST2TestBase {
 		assertEquals(1, args.length);
 		assertValue(args[0].getNonTypeValue(), 1);
 	}
+	
+	//	template<typename T, typename = class _, typename... P>
+	//	constexpr bool type_in_pack{type_in_pack<T, P...>};
+	//
+	//	template<typename T, typename... P>
+	//	constexpr bool type_in_pack<T, T, P...>{true};
+	//
+	//	template<typename T>
+	//	constexpr bool type_in_pack<T>{false};
+	//
+	//	constexpr bool waldo1 = type_in_pack<int, int, char>;
+	//	constexpr bool waldo2 = type_in_pack<int, float, char>;
+	public void testStackOverflow_513429() throws Exception {
+		parseAndCheckBindings();
+		
+		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
+		ICPPVariable waldo1 = ah.assertNonProblem("waldo1");
+		assertVariableValue(waldo1, 1);
+		ICPPVariable waldo2 = ah.assertNonProblem("waldo2");
+		assertVariableValue(waldo2, 0);
+	}
 
 	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
 		return parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_aa363b6b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-03-13T17:18:29Z",
+      "side": 1,
+      "message": "It seems that the bug 387195 can be addressed by adding some synchronization between PDOMIndexerJob and PDOMSetupJob.\n\nThis change has a much more farreaching effect since the getPDOM method can be called on any thread. It also likely to cause regressions according to the Javadoc of PDOMProxy that reads: \"The PDOMProxy is returned by the PDOMManager before the indexer kicks in. Also and more importantly it is returned when the indexer has been shut down (clients may not be aware of this yet). Doing that prevents the creation of empty PDOMs for deleted projects.\"",
+      "range": {
+        "startLine": 336,
+        "startChar": 10,
+        "endLine": 336,
+        "endChar": 25
+      },
+      "revId": "0d7b44809eb094e588af90fbfbb108d4f06d0feb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -414,7 +414,8 @@ public class CPPTemplates {
 	}
 
 	private static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] arguments, CPPTemplateParameterMap tpMap, IASTNode point) throws DOMException {
+			ICPPTemplateArgument[] arguments, CPPTemplateParameterMap tpMap, IASTNode point)
+			throws DOMException {
 		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null) {
 			return instance;
@@ -2297,7 +2298,8 @@ public class CPPTemplates {
 	 * 14.8.2.3 Deducing conversion function template arguments
 	 * @param point
 	 */
-	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType, IASTNode point) {
+	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType,
+			IASTNode point) {
 		boolean checkedForDependentType= false;
 		ICPPFunction[] result= functions;
 		int i= 0;
@@ -2318,7 +2320,8 @@ public class CPPTemplates {
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(1);
 				try {
-					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForConversion(template, conversionType, map, point);
+					ICPPTemplateArgument[] args=
+							TemplateArgumentDeduction.deduceForConversion(template, conversionType, map, point);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 						if (instance instanceof ICPPFunction) {

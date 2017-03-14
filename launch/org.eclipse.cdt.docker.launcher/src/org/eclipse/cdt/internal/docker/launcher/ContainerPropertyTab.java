@@ -67,6 +67,11 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		@Override
 		public void modifyText(ModifyEvent e) {
 			int index = connectionSelector.getSelectionIndex();
+			if (index < 0) {
+				connection = null;
+				connectionName = "";
+				return;
+			}
 			if (connection != null)
 				connection.removeImageListener(containerTab);
 			connection = connections[index];

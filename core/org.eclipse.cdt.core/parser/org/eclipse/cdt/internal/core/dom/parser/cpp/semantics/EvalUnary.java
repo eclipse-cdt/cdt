@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -387,6 +388,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 		}
 		if (argument == fArgument && binding == fAddressOfQualifiedNameBinding)
 			return this;
+
+		if (binding instanceof IProblemBinding)
+			return EvalFixed.INCOMPLETE;
 
 		return new EvalUnary(fOperator, argument, binding, getTemplateDefinition());
 	}

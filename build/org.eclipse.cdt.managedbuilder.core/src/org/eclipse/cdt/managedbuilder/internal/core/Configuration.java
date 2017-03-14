@@ -264,7 +264,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			buildProperties = new BuildObjectProperties(props, this, this);
 
 		String optionalProps = SafeStringInterner.safeIntern(element.getAttribute(OPTIONAL_BUILD_PROPERTIES));
-		if(props != null)
+		if(optionalProps != null)
 			optionalBuildProperties = new OptionalBuildProperties(optionalProps);
 
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));

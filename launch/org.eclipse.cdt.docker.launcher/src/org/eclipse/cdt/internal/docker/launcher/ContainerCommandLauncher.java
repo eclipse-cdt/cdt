@@ -120,6 +120,9 @@ public class ContainerCommandLauncher
 
 		List<String> additionalDirs = new ArrayList<>();
 
+		//
+		additionalDirs.add(fProject.getLocation().toPortableString());
+
 		ArrayList<String> commandSegments = new ArrayList<>();
 
 		StringBuilder b = new StringBuilder();

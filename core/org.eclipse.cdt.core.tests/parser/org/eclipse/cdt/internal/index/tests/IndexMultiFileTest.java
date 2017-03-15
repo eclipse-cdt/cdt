@@ -268,4 +268,37 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 		// This code is invalid, so we don't checkBindings().
 		// If the test gets this far (doesn't throw in setup() during indexing), it passes.
 	}
+
+	// test.h
+	//	namespace ns {
+	//
+	//	template <typename T>
+	//	class A {
+	//	  friend void waldo(A<int> p);
+	//	};
+	//
+	//	void waldo(A<int> p);
+	//
+	//	}
+
+	// test.cpp *
+	//	#include "test.h"
+	//
+	//	ns::A<int> b;
+	//
+	//	void test() {
+	//	  ns::waldo(b);
+	//	}
+
+	// z.cpp
+	//	#include "test.h"
+	//
+	//	ns::A<int> a;
+	//
+	//	void func() {
+	//	  waldo(a);
+	//	}
+	public void testFriendFunctionDeclarationInNamespace_513681() throws Exception {
+		checkBindings();
+	}
 }

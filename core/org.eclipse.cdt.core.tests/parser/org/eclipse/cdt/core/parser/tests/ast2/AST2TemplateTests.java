@@ -10160,4 +10160,24 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testNoexceptSpecifierInTypeTemplateArgument_511186() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	namespace ns {
+	//
+	//	template <typename T>
+	//	class A {
+	//	  friend void waldo(A<int> flag);
+	//	};
+	//
+	//	void waldo(A<int> flag);
+	//
+	//	}
+	//
+	//	ns::A<int> a;
+	//
+	//	void func() {
+	//	  waldo(a);
+	//	}
+	public void testFriendFunctionDeclarationInNamespace_513681() throws Exception {
+		parseAndCheckBindings();
+	}
 }

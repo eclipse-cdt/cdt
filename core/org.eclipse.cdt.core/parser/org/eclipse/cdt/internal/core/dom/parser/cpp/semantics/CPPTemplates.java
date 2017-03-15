@@ -1105,14 +1105,21 @@ public class CPPTemplates {
 				} else if (decl instanceof ICPPMethod && classOwner != null) {
 					functionSpec = new CPPMethodSpecialization((ICPPMethod) decl, classOwner, tpMap, type, exceptionSpecs);
 				} else if (decl instanceof ICPPFunction) {
-					IBinding oldOwner = decl.getOwner();
-					functionSpec = new CPPFunctionSpecialization((ICPPFunction) decl, oldOwner, tpMap, type, exceptionSpecs);
+					if (type.isSameType(func.getType())) {
+						// There is no need to create a CPPFunctionSpecialization object since the function is
+						// a friend function with the type that is not affected by the specialization.
+						// See http://bugs.eclipse.org/513681
+						spec = func;
+					} else {
+						IBinding oldOwner = decl.getOwner();
+						functionSpec = new CPPFunctionSpecialization(func, oldOwner, tpMap, type, exceptionSpecs);
+					}
 				}
 				if (functionSpec != null) {
 					functionSpec.setParameters(specializeParameters(func.getParameters(), functionSpec, context,
 							IntegralValue.MAX_RECURSION_DEPTH));
+					spec = functionSpec;
 				}
-				spec = functionSpec;
 			} else if (decl instanceof ITypedef) {
 				InstantiationContext context = createInstantiationContext(tpMap, owner, point);
 				IType type= instantiateType(((ITypedef) decl).getType(), context);

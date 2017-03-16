@@ -68,6 +68,40 @@
       "revId": "be5adf02ed1f5770e3ceaa9383b14a2c4d0759bd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_70a245af",
+        "filename": "debug/org.eclipse.cdt.debug.application/src-config-generator/org/eclipse/cdt/debug/application/ConfigGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-03-16T20:13:12Z",
+      "side": 1,
+      "message": "I guess you can simplify the pattern and end it after the second quote?  We only care about what comes before that.",
+      "revId": "be5adf02ed1f5770e3ceaa9383b14a2c4d0759bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_108bd12a",
+        "filename": "debug/org.eclipse.cdt.debug.application/src-config-generator/org/eclipse/cdt/debug/application/ConfigGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-03-16T20:13:12Z",
+      "side": 1,
+      "message": "This won\u0027t work well if PLUGINS_NOT_IN_SCRIPT_VERSION contains the last plugin as we\u0027ll\nend up with a , at the end.\tIn fact, this is what is happening now :-)\nBut after testing it with a comma at the end of the plugin list, it seems to work fine\nso we can just leave the comma there to simplify this code",
+      "revId": "be5adf02ed1f5770e3ceaa9383b14a2c4d0759bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

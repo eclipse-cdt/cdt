@@ -42,7 +42,11 @@
 										<ant antfile="${project.build.directory}/antArtifactsUpdater.xml"/>
 
 										<!-- now promote the update build to our download area -->
-									 	<delete dir="${cdt-download-dir}"/>
+										<delete>
+											<fileset dir="${cdt-download-dir}">
+												<exclude name="rcp*"/>
+											</fileset>
+										</delete>
 										<copy includeemptydirs="false" todir="${cdt-download-dir}">
 											<fileset dir="target/repository">
 												<include name="**" />

@@ -13,6 +13,7 @@
  *                                  - Bug 300554 Build status not propagated
  *                                    to exit code
  *     R. Zulliger, C. Walther (Indel AG) - Bug 355609 Disable indexer
+ *     John Dallaway - Bug 513763 Save workspace on conclusion
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -550,6 +551,9 @@ public class HeadlessBuilder implements IApplication {
 			IWorkspaceDescription desc = root.getWorkspace().getDescription();
 			desc.setAutoBuilding(isAutoBuilding);
 			root.getWorkspace().setDescription(desc);
+
+			// Save modified workspace (bug 513763)
+			root.getWorkspace().save(true, monitor);
 		}
 
 		return buildSuccessful ? OK : ERROR;

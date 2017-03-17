@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBDebugPreferenceConstants;
 import org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBLaunchConfigurationConstants;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.ILLDBConstants;
+import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBTrait;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -51,6 +54,7 @@ public class LLDBLaunch extends GdbLaunch {
 
 	private IntegerTuple fLldbVersion;
 	private IntegerTuple fLldbRevision;
+	private Set<LLDBTrait> fTraits;
 
 	/**
 	 * Constructs a launch.
@@ -183,6 +187,7 @@ public class LLDBLaunch extends GdbLaunch {
 							detailedException));
 				}
 			}
+			computeTraits();
 		} catch (IOException e) {
 			// Since we can't use lldb-mi for version checking, we try to use
 			// the lldb executable but it's possible that it's not there at all
@@ -202,6 +207,17 @@ public class LLDBLaunch extends GdbLaunch {
 
 			if (process != null) {
 				process.destroy();
+			}
+		}
+	}
+
+	private void computeTraits() {
+		if (fTraits == null) {
+			fTraits = new HashSet<>();
+
+			// 360.1.70 == Xcode 8.2.1
+			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0 || fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(360, 1, 70)) < 0) {
+				fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
 			}
 		}
 	}
@@ -374,5 +390,16 @@ public class LLDBLaunch extends GdbLaunch {
 			path = getGDBWorkingDirectory().append(path);
 		}
 		return path.toOSString();
+	}
+
+	/**
+	 * Returns whether or not the LLDB use by this launch has the given trait.
+	 *
+	 * @param trait
+	 *            the trait to check
+	 * @return if the launch has this trait for the LLDB, false otherwise
+	 */
+	public boolean hasTrait (LLDBTrait trait) {
+		return fTraits.contains(trait);
 	}
 }

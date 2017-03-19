@@ -44,7 +44,7 @@
 										<!-- now promote the update build to our download area -->
 										<delete>
 											<fileset dir="${cdt-download-dir}">
-												<exclude name="rcp*"/>
+												<exclude name="rcp*/**"/>
 											</fileset>
 										</delete>
 										<copy includeemptydirs="false" todir="${cdt-download-dir}">

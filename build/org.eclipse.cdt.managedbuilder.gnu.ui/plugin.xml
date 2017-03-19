@@ -1845,7 +1845,7 @@
                category="gnu.cpp.compiler.category.other"
                command="-pthread"
                defaultValue="false"
-               id="cdt.managedbuild.tool.gnu.cpp.pthread"
+               id="gnu.cpp.compiler.option.pthread"
                name="%Option.Pthread"
                tip="%Option.PthreadCompilerTip"
                valueType="boolean">
@@ -1858,7 +1858,7 @@
                            category="gnu.c.compiler.category.other"
                            command="-pthread"
                            defaultValue="false"
-                           id="cdt.managedbuild.tool.gnu.c.pthread"
+                           id="gnu.c.compiler.option.pthread"
                            name="%Option.Pthread"
                            tip="%Option.PthreadCompilerTip"
                            valueType="boolean">
@@ -1892,7 +1892,7 @@
                            category="gnu.cpp.link.category.options"
                            command="-pthread"
                            defaultValue="false"
-                           id="cdt.managedbuild.tool.gnu.c.pthread"
+                           id="gnu.cpp.link.option.pthread"
                            name="%Option.Pthread"
                            tip="%Option.PthreadLinkerTip"
                            valueType="boolean">

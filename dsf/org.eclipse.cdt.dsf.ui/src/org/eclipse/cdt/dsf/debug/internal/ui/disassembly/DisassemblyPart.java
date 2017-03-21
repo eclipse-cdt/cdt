@@ -1448,7 +1448,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public final void gotoSymbol(final String symbol) {
-		if (!fActive || fBackend == null || !fBackend.hasFrameContext()) {
+		if (!fActive || fBackend == null) {
 			return;
 		}
 		fBackend.gotoSymbol(symbol);
@@ -1525,7 +1525,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (!fActive || fUpdatePending || fViewer == null || fDebugSessionId == null) {
 			return;
 		}
-		if (fBackend == null || !fBackend.hasDebugContext() || !fBackend.canDisassemble() || fFrameAddress == PC_UNKNOWN) {
+		// Removed check on frameAddress.
+		if (fBackend == null || !fBackend.hasDebugContext() || !fBackend.canDisassemble()) {
 			return;
 		}
 		StyledText styledText = fViewer.getTextWidget();

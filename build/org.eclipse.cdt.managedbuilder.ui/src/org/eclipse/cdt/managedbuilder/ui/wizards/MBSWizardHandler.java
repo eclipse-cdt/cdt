@@ -102,7 +102,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	protected CDTConfigWizardPage fConfigPage;
 	private IToolChain[] savedToolChains = null;
 	private IWizard wizard;
-	private IWizardPage startingPage;
+	private IWizardPage newProjectCreationPage;
 	//	private EntryDescriptor entryDescriptor = null;
 	private EntryInfo entryInfo;
 	protected CfgHolder[] cfgs = null;
@@ -346,21 +346,32 @@ public class MBSWizardHandler extends CWizardHandler {
 		propertyId = val.getId();
 		setWizard(w);
 	}
+
 	private void setWizard(IWizard w) {
 		if (w != null) {
-			if (w.getStartingPage() instanceof IWizardItemsListListener)
-				listener = (IWizardItemsListListener)w.getStartingPage();
 			wizard = w;
-			startingPage = w.getStartingPage();
+			for (IWizardPage page : w.getPages()) {
+				if (page instanceof WizardNewProjectCreationPage) {
+					newProjectCreationPage = page;
+					break;
+				}
+			}
+			if (newProjectCreationPage instanceof IWizardItemsListListener)
+				listener = (IWizardItemsListListener) newProjectCreationPage;
 		}
 	}
 
+	@Deprecated
 	protected IWizardPage getStartingPage(){
-		return startingPage;
+		return newProjectCreationPage;
+	}
+
+	protected IWizardPage getNewProjectCreationPage() {
+		return newProjectCreationPage;
 	}
 
 	public Map<String, String> getMainPageData() {
-		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage)getStartingPage();
+		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage) getNewProjectCreationPage();
 		Map<String, String> data = new HashMap<String, String>();
 		String projName = page.getProjectName();
 		projName = projName != null ? projName.trim() : EMPTY_STR;
@@ -452,7 +463,7 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)getWizard();
 		MBSCustomPageManager.init();
-		MBSCustomPageManager.addStockPage(getStartingPage(), CDTMainWizardPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(getNewProjectCreationPage(), CDTMainWizardPage.PAGE_ID);
 		MBSCustomPageManager.addStockPage(getConfigPage(), CDTConfigWizardPage.PAGE_ID);
 
 		// load all custom pages specified via extensions
@@ -626,7 +637,8 @@ public class MBSWizardHandler extends CWizardHandler {
 		if(entryInfo == null)
 			return;
 
-		Template template = entryInfo.getInitializedTemplate(getStartingPage(), getConfigPage(), getMainPageData());
+		Template template = entryInfo.getInitializedTemplate(getNewProjectCreationPage(), getConfigPage(),
+				getMainPageData());
 		if(template == null)
 			return;
 
@@ -651,7 +663,7 @@ public class MBSWizardHandler extends CWizardHandler {
 
 	@Override
 	public IWizardPage getSpecificPage() {
-		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
+		return entryInfo.getNextPage(getNewProjectCreationPage(), getConfigPage());
 	}
 
 	/**
@@ -872,7 +884,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (!getConfigPage().isCustomPageComplete())
 			return false;
 
-		if(!entryInfo.canFinish(startingPage, getConfigPage()))
+		if(!entryInfo.canFinish(newProjectCreationPage, getConfigPage()))
 			return false;
 
 		if (customPages != null)

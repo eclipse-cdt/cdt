@@ -28,6 +28,6 @@ public class DBStatus extends Status {
 	}
 
 	public DBStatus(String msg) {
-		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Error", null); //$NON-NLS-1$
+		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, msg, null);
 	}
 }

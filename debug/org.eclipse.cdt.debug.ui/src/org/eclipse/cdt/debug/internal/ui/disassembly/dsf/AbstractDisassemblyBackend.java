@@ -80,7 +80,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	
 	@Override
 	public boolean canDisassemble() {
-		return isSuspended();
+		return true;
 	}
 	
 	@Override

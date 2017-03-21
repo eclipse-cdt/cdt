@@ -214,8 +214,13 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		        		}
 					}
 		        }
-
-	        	result.sessionId = fDsfSessionId = dsfSessionId;
+				// Ensures the view will display 'No Debug Context'
+				if (fTargetFrameContext != null) {
+					result.sessionId = fDsfSessionId = dsfSessionId;
+				} else {
+					fDsfSessionId = dsfSessionId;
+					result.sessionId = null;
+				}
 				if (fServicesTracker != null) {
 					fServicesTracker.dispose();
 				}
@@ -242,9 +247,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			IFrameDMContext frame= (IFrameDMContext) dmContext;
 			IExecutionDMContext newExeDmc = DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
 			if (newExeDmc != null) {
-				IDisassemblyDMContext newDisDmc = DMContexts.getAncestorOfType(newExeDmc, IDisassemblyDMContext.class);
-				IDisassemblyDMContext oldDisDmc = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
-				result.contextChanged = !newDisDmc.equals(oldDisDmc);
+				result.contextChanged = true;
 				fTargetContext= newExeDmc;
 				fTargetFrameContext= frame;
 				if (!result.contextChanged) {
@@ -255,10 +258,15 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				fTargetFrameContext = null;
 				result.contextChanged = true;
 			}
+		} else if (dmContext instanceof IExecutionDMContext) {
+			// When switching to and between thread and application nodes.
+			result.sessionId = null;
+			result.contextChanged = false;
+			fTargetContext = (IExecutionDMContext) dmContext;
+			fTargetFrameContext = null;
 		} else if (dmContext.equals(fTargetContext) && canDisassemble()) {
 			result.contextChanged = false;
 			result.sessionId = fDsfSessionId;
-			
 		} else {			
 			fTargetContext = null;
 			fTargetFrameContext = null;
@@ -976,6 +984,9 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 */
 	@Override
 	public void gotoSymbol(final String symbol) {
+		if (!hasFrameContext()) {
+			return;
+		}
 		evaluateAddressExpression(symbol, false, new DataRequestMonitor<BigInteger>(getSession().getExecutor(), null) {			
 			@Override
 			protected void handleSuccess() {
@@ -997,6 +1008,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 */
 	@Override
 	public BigInteger evaluateAddressExpression(final String symbol, final boolean suppressError) {
+		// Without a suspended context, using the expressions service is pointless.
+		if (!hasFrameContext()) {
+			return null;
+		}
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
 			protected void execute(DataRequestMonitor<BigInteger> rm) {
@@ -1293,7 +1308,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 * @return
 	 */
 	protected boolean canDisassembleContext(IDMContext context) {
-		return context instanceof IFrameDMContext;
+		return DMContexts.getAncestorOfType(context, IExecutionDMContext.class) != null;
 	}
 	
 	/**

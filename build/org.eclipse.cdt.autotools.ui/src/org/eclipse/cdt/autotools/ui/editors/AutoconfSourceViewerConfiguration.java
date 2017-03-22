@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Red Hat, Inc.
+ * Copyright (c) 2006, 2017 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.editors;
 
+import org.eclipse.cdt.internal.autotools.ui.editors.autoconf.AutoconfPresentationReconciler;
 import org.eclipse.cdt.internal.autotools.ui.text.hover.AutoconfTextHover;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -19,10 +20,8 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -91,20 +90,6 @@ public class AutoconfSourceViewerConfiguration extends
 	}
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		PresentationReconciler reconciler = new PresentationReconciler();
-
-		DefaultDamagerRepairer dr= new AutoconfMacroDamagerRepairer(new AutoconfMacroCodeScanner());
-		reconciler.setDamager(dr, AutoconfPartitionScanner.AUTOCONF_MACRO);
-		reconciler.setRepairer(dr, AutoconfPartitionScanner.AUTOCONF_MACRO);
-		
-		dr= new DefaultDamagerRepairer(new AutoconfCodeScanner());
-		reconciler.setDamager(dr, AutoconfPartitionScanner.AUTOCONF_COMMENT);
-		reconciler.setRepairer(dr, AutoconfPartitionScanner.AUTOCONF_COMMENT);
-		
-		dr= new MultilineRuleDamagerRepairer(new AutoconfCodeScanner());
-		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		
-		return reconciler;
+		return new AutoconfPresentationReconciler();
 	}
 }

@@ -22,6 +22,30 @@
       "revId": "d3f437afeab4621126a227836546667a549078a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_cee9abf4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2017-03-22T21:06:44Z",
+      "side": 1,
+      "message": "You mean, why check if it is false right above here?\n\nYes, it is to avoid calling notifyUI() when not necessary.  When getting an IResumedDMEvent, we may not set fAcceptingCommands to false, so there would be no need to set it back to true (and call notifyUI()) when the isuspended event arrived.\n\nBTW, in non-stop, there could be multiple suspend/resumed events, but in non-stop the target is always accepting commands.  For all-stop, there will only be one suspend for a resumed event, and vice versa.",
+      "parentUuid": "a7c23755_cbe35dc1",
+      "range": {
+        "startLine": 284,
+        "startChar": 10,
+        "endLine": 284,
+        "endChar": 28
+      },
+      "revId": "d3f437afeab4621126a227836546667a549078a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

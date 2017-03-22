@@ -46,6 +46,30 @@
       "revId": "d3f437afeab4621126a227836546667a549078a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_ae0d4f46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-22T22:13:32Z",
+      "side": 1,
+      "message": "I meant removing the fAcceptingCommands field and calling fRunControl.isTargetAcceptingCommands() directly. But I guess it won\u0027t work because isTargetAcceptingCommands will always return true at this point since it\u0027s suspended. So you do need the field to \"remember\" that it wasn\u0027t accepting commands before.",
+      "parentUuid": "a7c23755_cee9abf4",
+      "range": {
+        "startLine": 284,
+        "startChar": 10,
+        "endLine": 284,
+        "endChar": 28
+      },
+      "revId": "d3f437afeab4621126a227836546667a549078a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

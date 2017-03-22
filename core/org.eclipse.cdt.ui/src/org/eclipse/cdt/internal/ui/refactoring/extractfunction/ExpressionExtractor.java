@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -82,7 +82,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation _,
+	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation nameInfo,
 			List<IASTPointerOperator> pointerOperators) {
 		IType returnType = determineReturnType(extractedNode); 
 		INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();

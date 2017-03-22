@@ -36,11 +36,14 @@
 	  <!-- declares a content type for automake files -->
 	  <content-type id="org.eclipse.cdt.autotools.ui.automake" name="%Automake.name"
 		  base-type="org.eclipse.core.runtime.text"
-		  priority="high"/>
-      <file-association
-       content-type="org.eclipse.cdt.autotools.ui.automake"
-       file-names="Makefile.am"
-       file-extensions="am"/>
+		  file-names="Makefile.in"
+		  file-extensions="am" 
+		  priority="high"></content-type>
+	  <content-type id="org.eclipse.cdt.autotools.ui.autoconf" name="%Autoconf.name"
+		  base-type="org.eclipse.core.runtime.text"
+		  file-names="configure.in,configure.ac"
+		  file-extensions="m4" 
+		  priority="high"></content-type>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -48,21 +51,31 @@
             class="org.eclipse.cdt.autotools.ui.editors.AutoconfEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
-            filenames="configure.in,configure.ac,aclocal.m4,acinclude.m4,libtool.m4,ltversion.m4,ltsugar.m4,ltoptions.m4,ltdl.m4,ltgcc.m4,lt~obsolete.m4"
             icon="icons/autoconf.gif"
             id="org.eclipse.cdt.autotools.ui.editor.autoconf"
-            name="%Autoconf.editor.name"/>
+            name="%Autoconf.editor.name">
+            <contentTypeBinding contentTypeId="org.eclipse.cdt.autotools.ui.autoconf"></contentTypeBinding>
+      </editor>
       <editor
             class="org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor"
             contributorClass="org.eclipse.cdt.internal.autotools.ui.editors.automake.MakefileEditorActionContributor"
             default="true"
-            extensions="am"
-            filenames="Makefile.am,Makefile.in"
             icon="icons/automake.gif"
             id="org.eclipse.cdt.autotools.ui.editors.AutomakeEditor"
             name="%AutomakeEditor.name">
-            <contentTypeBinding contentTypeId="org.eclipse.cdt.autotools.ui.automake"/>
+            <contentTypeBinding contentTypeId="org.eclipse.cdt.autotools.ui.automake"></contentTypeBinding>
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakefilePresentationReconciler"
+            contentType="org.eclipse.cdt.autotools.ui.automake">
+      </presentationReconciler>
+      <presentationReconciler
+            class="org.eclipse.cdt.internal.autotools.ui.editors.autoconf.AutoconfPresentationReconciler"
+            contentType="org.eclipse.cdt.autotools.ui.autoconf">
+      </presentationReconciler>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">

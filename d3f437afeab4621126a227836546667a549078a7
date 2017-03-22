@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_cbe35dc1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-22T19:30:44Z",
+      "side": 1,
+      "message": "why is fAcceptingCommands necessary? It is because it\u0027s possible to get many ISuspendedDMEvent and this allows making sure the notifyUI is only done once?",
+      "range": {
+        "startLine": 284,
+        "startChar": 10,
+        "endLine": 284,
+        "endChar": 28
+      },
+      "revId": "d3f437afeab4621126a227836546667a549078a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

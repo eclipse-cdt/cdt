@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,8 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -82,36 +80,7 @@ public class AutomakefileSourceConfiguration extends
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer v) {
 
-		PresentationReconciler reconciler = new PresentationReconciler();
-
-		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getAutomakeCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
-		return reconciler;
+		return new AutomakefilePresentationReconciler();
 	}
 
 	@Override

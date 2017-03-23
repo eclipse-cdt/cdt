@@ -132,14 +132,11 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		return prefPageIds;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextEditor#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		}
 		return super.getAdapter(adapter);
 	}

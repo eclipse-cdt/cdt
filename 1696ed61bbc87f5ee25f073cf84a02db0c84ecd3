@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_9762622f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-23T16:05:57Z",
+      "side": 1,
+      "message": "should it pass an integer here? Otherwise I get \"$1: unbound variable\" if I pass invalid valid as argument, i.e. ./download-build-gdb.sh 7.1.2",
+      "range": {
+        "startLine": 95,
+        "startChar": 6,
+        "endLine": 95,
+        "endChar": 19
+      },
+      "revId": "1696ed61bbc87f5ee25f073cf84a02db0c84ecd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_e2c2f679",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-23T16:05:57Z",
+      "side": 1,
+      "message": "I noticed this line. readlink -f doesn\u0027t exist on Mac. Don\u0027t worry about it though!",
+      "revId": "1696ed61bbc87f5ee25f073cf84a02db0c84ecd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # * Copyright (c) 2015 Ericsson and others.
 # * All rights reserved. This program and the accompanying materials
@@ -10,10 +10,13 @@
 # *     Simon Marchi (Ericsson) - Initial implementation
 
 # Stop the script if any command fails
-set -e
+set -o errexit
+
+# Consider using an unset variable as an error
+set -o nounset
 
 # Make sure getopt is the command and not the bash built-in
-if [[ `getopt --version` != *"getopt"* ]]; then
+if [[ $(getopt --version) != *"getopt"* ]]; then
   echo "getopt command not found."
   exit 1
 fi
@@ -63,7 +66,7 @@ function help_and_exit() {
   echo "    $ $0 all"
   echo ""
 
-  exit $1
+  exit "$1"
 }
 
 # Output a visible header
@@ -163,7 +166,8 @@ function configure_gdb() {
   local version="$1"
 
   local build="${build_dir}/gdb-${version}"
-  local cflags="-Wno-error -g -O0"
+  local cflags="-Wno-error -g3 -O0"
+  local cxxflags="-Wno-error -g3 -O0"
 
   echo_header "Configuring in ${build}"
 
@@ -175,11 +179,12 @@ function configure_gdb() {
       ;;
   esac
 
-  # Let the user specify some CFLAGS
-  cflags="${cflags} ${CFLAGS}"
+  # If there is already some CFLAGS/CXXFLAGS in the environment, add them to the mix.
+  cflags="${cflags} ${CFLAGS:-}"
+  cxxflags="${cxxflags} ${CXXFLAGS:-}"
 
   # Need to use eval to allow the ${dryrun} trick to work with the env var command at the start.
-  eval ${dryrun} 'CFLAGS="${cflags}" ./configure --prefix="${install_dir}/gdb-${version}"'
+  eval ${dryrun} 'CFLAGS="${cflags}" CXXFLAGS="${cxxflags}" ./configure --prefix="${install_dir}/gdb-${version}"'
 
   ${dryrun} popd
 }
@@ -245,13 +250,8 @@ function symlink_gdb() {
   fi
 }
 
-# Start argument parsing
+# Start argument parsing.  The script will exit (thanks to errexit) if bad arguments are passed.
 args=$(getopt -o b:dhj: -l "base-dir:,dry-run,help,jobs" -n "$0" -- "$@");
-
-# Bad arguments ?
-if [ $? -ne 0 ]; then
-  exit 1
-fi
 
 eval set -- "$args"
 

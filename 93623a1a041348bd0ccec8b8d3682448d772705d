@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_fc79bde8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-23T13:23:11Z",
+      "side": 0,
+      "message": "Maybe the author wanted it to trip here at runtime?! Seems unlikely. That kind of intention would warrant a comment so I think it\u0027s fair game to assume it was not the intention.",
+      "revId": "93623a1a041348bd0ccec8b8d3682448d772705d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

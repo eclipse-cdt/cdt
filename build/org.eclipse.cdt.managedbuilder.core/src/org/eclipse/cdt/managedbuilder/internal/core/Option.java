@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2016 IBM Corporation and others.
+ *  Copyright (c) 2003, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -254,20 +254,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			switch (vType) {
 			case BOOLEAN:
 				if (option.value != null) {
-					value = (Boolean)option.value;
+					value = option.value;
 				}
 				if (option.defaultValue != null) {
-					defaultValue = (Boolean)option.defaultValue;
+					defaultValue = option.defaultValue;
 				}
 				break;
 			case STRING:
 			case ENUMERATED:
 			case TREE:
 				if (option.value != null) {
-					value = (String)option.value;
+					value = option.value;
 				}
 				if (option.defaultValue != null) {
-					defaultValue = (String)option.defaultValue;
+					defaultValue = option.defaultValue;
 				}
 				break;
 			case STRING_LIST:

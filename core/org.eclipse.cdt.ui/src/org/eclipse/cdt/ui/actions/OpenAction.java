@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,7 +128,7 @@ public class OpenAction extends SelectionDispatchAction {
 			ICElement element= SelectionConverter.codeResolve(fEditor, getShell(), getDialogTitle(), 
 				ActionMessages.OpenAction_select_element);
 			if (element == null) {
-				IEditorStatusLine statusLine= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
+				IEditorStatusLine statusLine= fEditor.getAdapter(IEditorStatusLine.class);
 				if (statusLine != null)
 					statusLine.setMessage(true, ActionMessages.OpenAction_error_messageBadSelection, null);
 				getShell().getDisplay().beep();

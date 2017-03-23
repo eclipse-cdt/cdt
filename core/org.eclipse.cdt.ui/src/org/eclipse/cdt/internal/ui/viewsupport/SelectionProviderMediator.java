@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,15 +31,10 @@ public class SelectionProviderMediator implements ISelectionProvider {
 	private ISelectionChangedListener fSelectionChangedListener;
 	private FocusListener fFocusListener;
 
-    private ListenerList fListenerList= new ListenerList();
+    private ListenerList<ISelectionChangedListener> fListenerList= new ListenerList<>();
 
 	public SelectionProviderMediator() {
-		fSelectionChangedListener= new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				onSelectionChanged(event);
-			}
-		};
+		fSelectionChangedListener= event -> onSelectionChanged(event);
 		fFocusListener = new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -62,12 +57,10 @@ public class SelectionProviderMediator implements ISelectionProvider {
     }
 
 	final protected void fireSelectionChanged() {
-		Object[] listeners= fListenerList.getListeners();
-		if (listeners.length > 0) {
+		if (!fListenerList.isEmpty()) {
 			SelectionChangedEvent event= new SelectionChangedEvent(this, getSelection());
 			
-			for (int i = 0; i < listeners.length; i++) {
-				ISelectionChangedListener listener= (ISelectionChangedListener) listeners[i];
+			for (ISelectionChangedListener listener : fListenerList) {
 				listener.selectionChanged(event);
 			}
 		}

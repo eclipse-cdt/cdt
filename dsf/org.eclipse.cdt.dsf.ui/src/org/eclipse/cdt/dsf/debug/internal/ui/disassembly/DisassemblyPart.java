@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Wind River Systems and others.
+ * Copyright (c) 2007, 2017 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,7 +251,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private MarkerAnnotationPreferences fAnnotationPreferences;
 	private IPreferenceStore fPreferenceStore;
 	private IOverviewRuler fOverviewRuler;
-	private final ListenerList fRulerContextMenuListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<IMenuListener> fRulerContextMenuListeners= new ListenerList<>(ListenerList.IDENTITY);
 	private SourceViewerDecorationSupport fDecorationSupport;
 	private Font fFont;
 	private IVerticalRuler fVerticalRuler;
@@ -1234,8 +1234,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		addRulerContributionActions(manager);
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
-		for (Object listener : fRulerContextMenuListeners.getListeners())
-			((IMenuListener) listener).menuAboutToShow(manager);
+		for (IMenuListener listener : fRulerContextMenuListeners)
+			listener.menuAboutToShow(manager);
 
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		manager.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.COPY));

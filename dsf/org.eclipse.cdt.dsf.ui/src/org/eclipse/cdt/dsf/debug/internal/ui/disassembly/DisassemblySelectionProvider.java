@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 class DisassemblySelectionProvider implements ISelectionProvider {
 
-	private final ListenerList fListenerList = new ListenerList(ListenerList.IDENTITY);
-	private final ISelectionChangedListener fListener = new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			fireSelectionChanged(event);
-		}
-	};
+	private final ListenerList<ISelectionChangedListener> fListenerList = new ListenerList<>(ListenerList.IDENTITY);
+	private final ISelectionChangedListener fListener = event -> fireSelectionChanged(event);
 	private final DisassemblyPart fPart;
 	
 	DisassemblySelectionProvider(DisassemblyPart disassemblyPart) {
@@ -48,24 +43,16 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 
 	private void fireSelectionChanged(SelectionChangedEvent event) {
 		SelectionChangedEvent newEvent = new SelectionChangedEvent(this, getSelection());
-		Object[] listeners = fListenerList.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			ISelectionChangedListener listener = (ISelectionChangedListener) listeners[i];
+		for (ISelectionChangedListener listener : fListenerList) {
 			listener.selectionChanged(newEvent);
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		fListenerList.add(listener);			
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
 	@Override
 	public ISelection getSelection() {
 		final ISourceViewer textViewer= fPart.getTextViewer();
@@ -76,17 +63,11 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 		return StructuredSelection.EMPTY;
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fListenerList.remove(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		ISelectionProvider provider = fPart.getTextViewer().getSelectionProvider();

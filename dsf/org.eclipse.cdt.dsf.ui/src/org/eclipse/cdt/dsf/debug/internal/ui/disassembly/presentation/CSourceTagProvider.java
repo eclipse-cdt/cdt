@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems and others.
+ * Copyright (c) 2007, 2017 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public class CSourceTagProvider implements ISourceTagProvider {
 
-	private ListenerList fListenerList= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<ISourceTagListener> fListenerList= new ListenerList<>(ListenerList.IDENTITY);
 	private ITranslationUnit fUnit;
 	
 	/**
@@ -89,9 +89,6 @@ public class CSourceTagProvider implements ISourceTagProvider {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourceTagProvider#removeSourceTagListener(org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourceTagListener)
-	 */
 	@Override
 	public void removeSourceTagListener(ISourceTagListener listener) {
 		fListenerList.remove(listener);

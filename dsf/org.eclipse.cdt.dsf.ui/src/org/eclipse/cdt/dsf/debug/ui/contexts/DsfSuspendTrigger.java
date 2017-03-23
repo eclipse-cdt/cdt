@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems and others.
+ * Copyright (c) 2008, 2017 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     private final DsfServicesTracker fServicesTracker;
 
     @ThreadSafe
-    private final ListenerList fListeners = new ListenerList();
+    private final ListenerList<ISuspendTriggerListener> fListeners = new ListenerList<>();
 
     @ThreadSafe
     public DsfSuspendTrigger(DsfSession session, ILaunch launch) {
@@ -192,8 +192,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
      */
     @ThreadSafe
     protected void fireSuspended(final Object context) {
-        final Object[] listeners = fListeners.getListeners();
-        if (listeners.length != 0) {
+        if (!fListeners.isEmpty()) {
             new Job("DSF Suspend Trigger Notify") { //$NON-NLS-1$
                 {
                     setSystem(true);
@@ -202,8 +201,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
                     final MultiStatus status = new MultiStatus(DsfUIPlugin.PLUGIN_ID, 0, "DSF Suspend Trigger Notify Job Status", null); //$NON-NLS-1$
-                    for (int i = 0; i < listeners.length; i++) {
-                        final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
+                    for (final ISuspendTriggerListener listener : fListeners) {
                         SafeRunner.run(new ISafeRunnable() {
                             @Override
                            public void run() throws Exception {

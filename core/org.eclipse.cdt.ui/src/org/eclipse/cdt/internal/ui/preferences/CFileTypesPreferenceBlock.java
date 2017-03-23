@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 TimeSys Corporation and others.
+ * Copyright (c) 2004, 2017 TimeSys Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,9 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -47,8 +45,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -112,7 +108,7 @@ public class CFileTypesPreferenceBlock {
 	}
 	
 	private class AssocLabelProvider implements ILabelProvider, ITableLabelProvider {
-		private ListenerList listeners = new ListenerList();
+		private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 		
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -261,12 +257,7 @@ public class CFileTypesPreferenceBlock {
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnNew);
 		fBtnNew.setLayoutData(gridData);
 		
-		fBtnNew.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				handleAdd();
-			}
-		});
+		fBtnNew.addListener(SWT.Selection, e -> handleAdd());
 
 		// Remove button
 		
@@ -277,12 +268,7 @@ public class CFileTypesPreferenceBlock {
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnRemove);
 		fBtnRemove.setLayoutData(gridData);
 		
-		fBtnRemove.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				handleRemove();
-			}
-		});
+		fBtnRemove.addListener(SWT.Selection, e -> handleRemove());
 
 		// Hook up the viewer
 		
@@ -293,12 +279,7 @@ public class CFileTypesPreferenceBlock {
 		fAssocViewer.setLabelProvider(new AssocLabelProvider());
 		fAssocViewer.setInput(getCFileTypeAssociations());
 
-		fAssocViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged();
-			}
-		});
+		fAssocViewer.addSelectionChangedListener(event -> handleSelectionChanged());
 		
 		handleSelectionChanged();
 		

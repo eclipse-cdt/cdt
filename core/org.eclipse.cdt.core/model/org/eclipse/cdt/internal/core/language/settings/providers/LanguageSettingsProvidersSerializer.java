@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2017 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public class LanguageSettingsProvidersSerializer {
 	/** Cache of workspace providers wrappers */
 	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
 
-	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	private static ListenerList<ILanguageSettingsChangeListener> fLanguageSettingsChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
 	private static ILock serializingLock = Job.getJobManager().newLock();
 	private static ILock serializingLockWsp = Job.getJobManager().newLock();
 
@@ -1407,8 +1407,8 @@ public class LanguageSettingsProvidersSerializer {
 	 * @param event - the {@link ILanguageSettingsChangeEvent} event to be broadcast.
 	 */
 	private static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
-		for (Object listener : fLanguageSettingsChangeListeners.getListeners()) {
-			((ILanguageSettingsChangeListener) listener).handleEvent(event);
+		for (ILanguageSettingsChangeListener listener : fLanguageSettingsChangeListeners) {
+			listener.handleEvent(event);
 		}
 	}
 

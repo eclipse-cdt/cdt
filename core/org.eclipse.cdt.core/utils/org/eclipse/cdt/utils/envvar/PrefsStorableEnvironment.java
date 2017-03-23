@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Broadcom Corporation and others.
+ * Copyright (c) 2009, 2017 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	private boolean fAppendChanged = false;
 	private boolean fAppendContributedChanged = false;
 
-	private static ListenerList fEnvironmentChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	private static ListenerList<IEnvironmentChangeListener> fEnvironmentChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
 	
 	/** A listener for changes in the backing store */
 	private static class PrefListener implements IPreferenceChangeListener, INodeChangeListener {
@@ -573,8 +573,8 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	 * @param event - the {@link IEnvironmentChangeEvent} event to be broadcast.
 	 */
 	private static void notifyLanguageSettingsChangeListeners(IEnvironmentChangeEvent event) {
-		for (Object listener : fEnvironmentChangeListeners.getListeners()) {
-			((IEnvironmentChangeListener) listener).handleEvent(event);
+		for (IEnvironmentChangeListener listener : fEnvironmentChangeListeners) {
+			listener.handleEvent(event);
 		}
 	}
 

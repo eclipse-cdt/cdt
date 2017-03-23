@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	private boolean fUseNewRegistry;
 	private IProblemChangedListener fProblemChangedListener;
 
-	private ListenerList fListeners;
+	private ListenerList<ILabelProviderListener> fListeners;
 	private Map<MarkersCacheKey, IMarker[]> fMarkersCache = new HashMap<MarkersCacheKey, IMarker[]>();
 
 	/**
@@ -290,16 +290,11 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fListeners == null) {
-			fListeners= new ListenerList();
+			fListeners= new ListenerList<>();
 		}
 		fListeners.add(listener);
 		if (fProblemChangedListener == null) {
-			fProblemChangedListener= new IProblemChangedListener() {
-				@Override
-				public void problemsChanged(IResource[] changedResources, boolean isMarkerChange) {
-					fireProblemsChanged(changedResources, isMarkerChange);
-				}
-			};
+			fProblemChangedListener= (changedResources, isMarkerChange) -> fireProblemsChanged(changedResources, isMarkerChange);
 			CUIPlugin.getDefault().getProblemMarkerManager().addListener(fProblemChangedListener);
 		}
 	}
@@ -319,9 +314,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		fMarkersCache.clear();
 		if (fListeners != null && !fListeners.isEmpty()) {
 			LabelProviderChangedEvent event= new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
-			Object[] listeners= fListeners.getListeners();
-			for (Object listener : listeners) {
-				((ILabelProviderListener) listener).labelProviderChanged(event);
+			for (ILabelProviderListener listener : fListeners) {
+				listener.labelProviderChanged(event);
 			}
 		}
 	}

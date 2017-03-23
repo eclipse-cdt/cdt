@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -60,7 +58,7 @@ public class SelectionListenerWithASTManager {
 		private ISelectionListener fPostSelectionListener;
 		private ISelectionChangedListener fSelectionListener;
 		private Job fCurrentJob;
-		private ListenerList fAstListeners;
+		private ListenerList<ISelectionListenerWithAST> fAstListeners;
 		/** Rule to make sure only one job is running at a time */
 		private final ILock fJobLock= Job.getJobManager().newLock();
 		private ISelectionValidator fValidator;
@@ -68,24 +66,18 @@ public class SelectionListenerWithASTManager {
 		public PartListenerGroup(ITextEditor editorPart) {
 			fPart= editorPart;
 			fCurrentJob= null;
-			fAstListeners= new ListenerList(ListenerList.IDENTITY);
+			fAstListeners= new ListenerList<>(ListenerList.IDENTITY);
 			
-			fSelectionListener= new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					ISelection selection= event.getSelection();
-					if (selection instanceof ITextSelection) {
-						fireSelectionChanged((ITextSelection) selection);
-					}
+			fSelectionListener= event -> {
+				ISelection selection= event.getSelection();
+				if (selection instanceof ITextSelection) {
+					fireSelectionChanged((ITextSelection) selection);
 				}
 			};
 			
-			fPostSelectionListener= new ISelectionListener() {
-				@Override
-				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-					if (part == fPart && selection instanceof ITextSelection)
-						firePostSelectionChanged((ITextSelection) selection);
-				}
+			fPostSelectionListener= (part, selection) -> {
+				if (part == fPart && selection instanceof ITextSelection)
+					firePostSelectionChanged((ITextSelection) selection);
 			};
 		}
 

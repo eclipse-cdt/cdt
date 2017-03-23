@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,15 +95,12 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		}
 	}
 
-	ListenerList fListeners;
+	ListenerList<IProblemChangedListener> fListeners;
 
 	public ProblemMarkerManager() {
-		fListeners = new ListenerList();
+		fListeners = new ListenerList<>();
 	}
 
-	/*
-	 * @see IResourceChangeListener#resourceChanged
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		HashSet<IResource> changedElements = new HashSet<IResource>();
@@ -123,21 +120,11 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
-	 */
 	@Override
 	public void modelChanged(IAnnotationModel model) {
 		// no action
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
-	 */
 	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		if (event instanceof TranslationUnitAnnotationModelEvent) {
@@ -178,15 +165,9 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	private void fireChanges(final IResource[] changes, final boolean markerChanged) {
 		Display display = SWTUtil.getStandardDisplay();
 		if (display != null && !display.isDisposed()) {
-			display.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					Object[] listeners = fListeners.getListeners();
-					for (Object listener : listeners) {
-						IProblemChangedListener curr = (IProblemChangedListener)listener;
-						curr.problemsChanged(changes, markerChanged);
-					}
+			display.asyncExec(() -> {
+				for (IProblemChangedListener curr : fListeners) {
+					curr.problemsChanged(changes, markerChanged);
 				}
 			});
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     private IPresentationContext fContext;
     private Viewer fViewer;
     private boolean fDisposed = false;
-    private ListenerList fListeners = new ListenerList();
+    private ListenerList<IModelChangedListener> fListeners = new ListenerList<>();
 	private IDoubleClickListener fDoubleClickListener;
 	private boolean fAllowRecursiveVMNodes = false;
     

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 public class AdaptingSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
 
 	private Class<?> fTargetType;
-	private ListenerList fListenerList;
+	private ListenerList<ISelectionChangedListener> fListenerList;
 	private ISelectionProvider fProvider;
 
 	public AdaptingSelectionProvider(Class<?> targetType, ISelectionProvider provider) {
 		fProvider= provider;
 		fTargetType= targetType;
-		fListenerList= new ListenerList();
+		fListenerList= new ListenerList<>();
 	}
 	
 	private ISelection convertSelection(ISelection selection) {
@@ -96,9 +96,7 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		SelectionChangedEvent event2= new SelectionChangedEvent(this, convertSelection(event.getSelection()));
-		Object[] listeners= fListenerList.getListeners();
-		for (Object listener : listeners) {
-			ISelectionChangedListener l= (ISelectionChangedListener) listener;
+		for (ISelectionChangedListener l : fListenerList) {
 			l.selectionChanged(event2);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * Reconciling listeners.
 	 * @since 3.0
 	 */
-	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<IReconcilingParticipant> fReconcilingListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 
 	MakefileSourceConfiguration getMakefileSourceConfiguration() {
@@ -361,9 +361,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	@Override
 	public void reconciled() {
 		// Notify listeners
-		Object[] listeners = fReconcilingListeners.getListeners();
-		for (Object listener : listeners) {
-			((IReconcilingParticipant)listener).reconciled();
+		for (IReconcilingParticipant listener : fReconcilingListeners) {
+			listener.reconciled();
 		}
 	}
 

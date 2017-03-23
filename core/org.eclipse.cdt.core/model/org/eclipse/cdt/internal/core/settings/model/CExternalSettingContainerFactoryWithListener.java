@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2017 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,12 @@ import org.eclipse.core.runtime.ListenerList;
 
 public abstract class CExternalSettingContainerFactoryWithListener extends
 		CExternalSettingContainerFactory {
-	private ListenerList fListenerList;
+	private ListenerList<ICExternalSettingsListener> fListenerList;
 
 	@Override
 	public void addListener(ICExternalSettingsListener listener){
 		if(fListenerList == null)
-			fListenerList = new ListenerList();
+			fListenerList = new ListenerList<>();
 		
 		fListenerList.add(listener);
 	}
@@ -43,9 +43,8 @@ public abstract class CExternalSettingContainerFactoryWithListener extends
 		
 		CExternalSettingChangeEvent event = new CExternalSettingChangeEvent(infos);
 		
-		Object[] listeners = fListenerList.getListeners();
-		for(int i = 0; i < listeners.length; i++){
-			((ICExternalSettingsListener)listeners[i]).settingsChanged(project, cfgId, event);
+		for(ICExternalSettingsListener listener : fListenerList){
+			listener.settingsChanged(project, cfgId, event);
 		}
 	}
 }

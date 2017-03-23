@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	private static final String BUILD_CONSOLE_NODE = "buildConsole"; //$NON-NLS-1$
 	private static final String PROJECT_LOG_EXT = ".build.log"; //$NON-NLS-1$
 
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<IBuildConsoleListener> listeners = new ListenerList<>();
 	/** UI console object in which per-project consoles are shown */
 	private BuildConsole fConsole;
 	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
@@ -126,10 +126,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 * show the console, and notify listeners
 	 */
 	protected void startConsoleActivity(IProject project) {
-		Object[] list = listeners.getListeners();
-		if (list.length > 0) {
-			for (Object element : list) {
-				IBuildConsoleListener listener = (IBuildConsoleListener)element;
+		if (!listeners.isEmpty()) {
+			for (IBuildConsoleListener listener: listeners) {
 				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, IBuildConsoleEvent.CONSOLE_START);
 				listener.consoleChange(event);
 			}
@@ -196,10 +194,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				IDocumentPartitioner partioner = fConsoleMap.remove(resource);
 				if (partioner != null) {
 					partioner.disconnect();
-					Object[] list = listeners.getListeners();
-					if (list.length > 0) {
-						for (Object element : list) {
-							IBuildConsoleListener listener = (IBuildConsoleListener)element;
+					if (!listeners.isEmpty()) {
+						for (IBuildConsoleListener listener : listeners) {
 							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, IBuildConsoleEvent.CONSOLE_CLOSE);
 							listener.consoleChange(consoleEvent);
 						}

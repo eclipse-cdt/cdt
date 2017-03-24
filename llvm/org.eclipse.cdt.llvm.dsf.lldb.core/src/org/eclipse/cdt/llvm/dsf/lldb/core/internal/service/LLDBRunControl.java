@@ -39,6 +39,7 @@ public class LLDBRunControl extends GDBRunControl_7_0 {
 		// FIXME: LLDB-MI doesn't implement -exec-jump so it will fail. So
 		// disable "move to address" (disassembly) for now.
 		rm.setData(false);
+		rm.done();
 	}
 
 	@Override
@@ -47,5 +48,6 @@ public class LLDBRunControl extends GDBRunControl_7_0 {
 		// FIXME: LLDB-MI doesn't implement -exec-jump so it will fail. So
 		// disable "move to line" for now.
 		rm.setData(false);
+		rm.done();
 	}
 }

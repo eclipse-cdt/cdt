@@ -221,6 +221,7 @@
 		<module>build/org.eclipse.cdt.autotools.tests</module>
 		<module>build/org.eclipse.cdt.autotools.ui.tests</module>
 		<module>build/org.eclipse.cdt.cmake.ui.tests</module>
+		<module>build/org.eclipse.cdt.cmake.core.tests</module>
 		<module>codan/org.eclipse.cdt.codan.core.tests</module>
 		<module>codan/org.eclipse.cdt.codan.checkers.ui.tests</module>
 		<module>core/org.eclipse.cdt.core.tests</module>

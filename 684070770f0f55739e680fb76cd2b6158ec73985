@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_333f8874",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/ResourceToCElementAdapterFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-03-24T21:04:36Z",
+      "side": 1,
+      "message": "Can be moved to a constant.",
+      "range": {
+        "startLine": 37,
+        "startChar": 9,
+        "endLine": 37,
+        "endChar": 50
+      },
+      "revId": "684070770f0f55739e680fb76cd2b6158ec73985",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

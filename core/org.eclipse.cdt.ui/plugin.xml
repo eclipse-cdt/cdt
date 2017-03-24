@@ -3488,8 +3488,11 @@
             name="%CDTLanguagesProperty.name">
          <enabledWhen>
             <and>
+               <adapt type="org.eclipse.core.resources.IFile">
+                 <test property="org.eclipse.core.resources.projectNature"
+                       value="org.eclipse.cdt.core.cnature"/>
+               </adapt>
                <adapt type="org.eclipse.cdt.core.model.ITranslationUnit"/>
-               <adapt type="org.eclipse.core.resources.IFile"/>
             </and>
          </enabledWhen>
       </page>
@@ -5009,6 +5012,16 @@
              id="org.eclipse.cdt.ui.cdtTag">
        </tagReference>
     </template>
+ </extension>
+ <extension
+       point="org.eclipse.core.runtime.adapters">
+    <factory
+          adaptableType="org.eclipse.core.resources.IFile"
+          class="org.eclipse.cdt.internal.ui.ResourceToCElementAdapterFactory">
+       <adapter
+             type="org.eclipse.cdt.core.model.ITranslationUnit">
+       </adapter>
+    </factory>
  </extension>
 
 </plugin>

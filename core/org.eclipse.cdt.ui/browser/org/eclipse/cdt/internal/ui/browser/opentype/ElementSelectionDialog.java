@@ -178,7 +178,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	private String fHelpContextId;
 
 	/**
-	 * Constructs an instance of <code>OpenTypeDialog</code>.
+	 * Constructs an instance of <code>ElementSelectionDialog</code>.
 	 *
 	 * @param parent  the parent shell.
 	 */

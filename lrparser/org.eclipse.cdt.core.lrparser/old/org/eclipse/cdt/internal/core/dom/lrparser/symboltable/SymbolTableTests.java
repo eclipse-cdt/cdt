@@ -199,23 +199,23 @@ public class SymbolTableTests {//extends TestCase {
 		try {
 			map.insert(null, 99);
 			fail();
-		} catch (NullPointerException _) {}
+		} catch (NullPointerException e) {}
 		
 		try {
 			map.containsKey(null);
 			fail();
-		} catch (NullPointerException _) {}
+		} catch (NullPointerException e) {}
 		
 		try {
 			map.lookup(null);
 			fail();
-		} catch (NullPointerException _) {}
+		} catch (NullPointerException e) {}
 		
 		C99SymbolTable table = C99SymbolTable.EMPTY_TABLE;
 		try {
 			table.insert(null, null, new C99Variable("blah")); //$NON-NLS-1$
 			fail();
-		} catch (NullPointerException _) {}
+		} catch (NullPointerException e) {}
 		
 	}
 

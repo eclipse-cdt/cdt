@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_b2be8918",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTSimpleDeclaration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-03-24T15:10:03Z",
+      "side": 1,
+      "message": "Instead of adding this check, please use getDeclarators() instead.",
+      "revId": "81cb914cedaacb4c652c471f4cbd35fd4706834f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

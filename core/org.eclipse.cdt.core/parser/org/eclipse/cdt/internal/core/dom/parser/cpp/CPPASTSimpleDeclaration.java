@@ -23,12 +23,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclarat
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IASTSimpleDeclaration, ICPPExecutionOwner {
-    private IASTDeclarator[] declarators;
-    private int declaratorsPos = -1;
-    private IASTDeclSpecifier declSpecifier;
+public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner
+		implements IASTSimpleDeclaration, ICPPExecutionOwner {
+	private IASTDeclarator[] declarators;
+	private int declaratorsPos = -1;
+	private IASTDeclSpecifier declSpecifier;
 
-    public CPPASTSimpleDeclaration() {
+	public CPPASTSimpleDeclaration() {
 	}
 
 	public CPPASTSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
@@ -52,76 +53,85 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 
 	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
-        return declSpecifier;
-    }
+		return declSpecifier;
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator[] getDeclarators() {
-        if (declarators == null)
-        	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
-        return declarators;
-    }
+		if (declarators == null)
+			return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+		declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
+		return declarators;
+	}
 
-    @Override
+	@Override
 	public void addDeclarator(IASTDeclarator d) {
-        assertNotFrozen();
-    	if (d != null) {
-    		declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);
-    		d.setParent(this);
+		assertNotFrozen();
+		if (d != null) {
+			declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);
+			d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
-    	}
-    }
+		}
+	}
 
-    /**
-     * @param declSpecifier The declSpecifier to set.
-     */
-    @Override
+	/**
+	 * @param declSpecifier
+	 *            The declSpecifier to set.
+	 */
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
-        assertNotFrozen();
-        this.declSpecifier = declSpecifier;
-        if (declSpecifier != null) {
+		assertNotFrozen();
+		this.declSpecifier = declSpecifier;
+		if (declSpecifier != null) {
 			declSpecifier.setParent(this);
 			declSpecifier.setPropertyInParent(DECL_SPECIFIER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarations) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
-        IASTDeclarator[] dtors = getDeclarators();
-        for (int i = 0; i < dtors.length; i++) {
-            if (!dtors[i].accept(action))
-            	return false;
-        }
-
-        if (action.shouldVisitDeclarations) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (declSpecifier != null && !declSpecifier.accept(action))
+			return false;
+		IASTDeclarator[] dtors = getDeclarators();
+		for (int i = 0; i < dtors.length; i++) {
+			if (!dtors[i].accept(action))
+				return false;
 		}
-        return true;
-    }
 
-    @Override
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		IASTDeclarator[] declarators = getDeclarators();
 		for (int i = 0; i < declarators.length; i++) {
 			if (declarators[i] == child) {
 				declarators[i] = (IASTDeclarator) other;
 				other.setParent(child.getParent());
-	            other.setPropertyInParent(child.getPropertyInParent());
+				other.setPropertyInParent(child.getPropertyInParent());
 				return;
 			}
 		}
@@ -130,6 +140,7 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 
 	@Override
 	public ICPPExecution getExecution() {
+		IASTDeclarator[] declarators = getDeclarators();
 		ICPPExecution[] declaratorExecutions = new ICPPExecution[declarators.length];
 		for (int i = 0; i < declarators.length; ++i) {
 			declaratorExecutions[i] = ((ICPPExecutionOwner) declarators[i]).getExecution();

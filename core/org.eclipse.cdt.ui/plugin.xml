@@ -5010,5 +5010,15 @@
        </tagReference>
     </template>
  </extension>
+ <extension
+       point="org.eclipse.core.runtime.adapters">
+    <factory
+          adaptableType="org.eclipse.core.resources.IFile"
+          class="org.eclipse.cdt.internal.ui.ResourceToCElementAdapterFactory">
+       <adapter
+             type="org.eclipse.cdt.core.model.ITranslationUnit">
+       </adapter>
+    </factory>
+ </extension>
 
 </plugin>

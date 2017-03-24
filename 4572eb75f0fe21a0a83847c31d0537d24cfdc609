@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_b30398c6",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/AutoconfMacroDamagerRepairer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-03-24T20:59:21Z",
+      "side": 0,
+      "message": "this breaks the API, no? I get errors for those",
+      "range": {
+        "startLine": 22,
+        "startChar": 28,
+        "endLine": 22,
+        "endChar": 55
+      },
+      "revId": "4572eb75f0fe21a0a83847c31d0537d24cfdc609",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

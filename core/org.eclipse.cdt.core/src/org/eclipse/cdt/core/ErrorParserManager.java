@@ -317,7 +317,11 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	@Override
 	public boolean processLine(String line) {
-		String lineTrimmed = line.trim();
+		/*
+		 * If the tool outputs colored text, it will contain ANSI escape
+		 * sequences. Remove them, since they can confuse the error parsers.
+		 */
+		String lineTrimmed = line.replaceAll("\\e\\[[\\d;]*[^\\d;]", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 		lineCounter++;
 
 		ProblemMarkerInfo marker=null;

@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
@@ -73,6 +74,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @since 5.4
 	 */
 	public static final String BUILD_CONTEXT = "build"; //$NON-NLS-1$
+
+	private static final Pattern ANSI_ESCAPE_RE = Pattern.compile("\\e\\[[\\d;]*[^\\d;]"); //$NON-NLS-1$
 
 	private int nOpens;
 	private int lineCounter=0;
@@ -317,7 +320,11 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	@Override
 	public boolean processLine(String line) {
-		String lineTrimmed = line.trim();
+		/*
+		 * If the tool outputs colored text, it will contain ANSI escape
+		 * sequences. Remove them, since they can confuse the error parsers.
+		 */
+		String lineTrimmed = ANSI_ESCAPE_RE.matcher(line).replaceAll("").trim(); //$NON-NLS-1$
 		lineCounter++;
 
 		ProblemMarkerInfo marker=null;

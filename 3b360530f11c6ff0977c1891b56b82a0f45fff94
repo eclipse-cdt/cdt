@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_eca83696",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-03-27T07:21:31Z",
+      "side": 1,
+      "message": "Please add a deprecated comment (i.e. \"Use #getStartingPage() instead\"",
+      "revId": "3b360530f11c6ff0977c1891b56b82a0f45fff94",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_d9a113f3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-03-27T07:21:31Z",
+      "side": 1,
+      "message": "This is new API so it needs an @since tag, see https://wiki.eclipse.org/CDT/policy#Using_API_Tooling\n\nThere is a cooresponding update to MANIFEST.MF that is probably needed too. With API tools you will get the error.\n\nPS If you are struggling with API tools on the first contribution, don\u0027t worry too much. Let me know and I can make the edits this time.",
+      "revId": "3b360530f11c6ff0977c1891b56b82a0f45fff94",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

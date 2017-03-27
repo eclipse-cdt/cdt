@@ -584,6 +584,28 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	class A;
+	//
+	//	A& f();
+	//
+	//	struct A {
+	//	  void m();
+	//	};
+		
+	//	template <typename T>
+	//	void g(T& p) {
+	//	  p.m();
+	//	}
+	//
+	//	void test() {
+	//	  g(f());
+	//	}
+	public void testTemplateParameter_514197() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertDefined("A");
+		assertDeclared("f");
+	}
+
 	//	namespace std {
 	//  template<typename T> class shared_ptr {};
 	//  template<typename T> class unique_ptr {};

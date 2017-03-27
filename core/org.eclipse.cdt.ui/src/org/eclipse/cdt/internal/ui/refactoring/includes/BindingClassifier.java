@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -115,6 +116,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -132,6 +134,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
@@ -908,6 +911,13 @@ public class BindingClassifier {
 						declareBinding(binding); // Declare the binding of this name.
 					}
 				}
+
+
+				if (binding instanceof ICPPTemplateInstance &&
+						!((ICPPTemplateInstance) binding).isExplicitSpecialization() &&
+						isDeclaredLocally(((ICPPTemplateInstance) binding).getSpecializedBinding())) {
+					fInstancesOfLocallyDefinedTemplates.add((ICPPTemplateInstance) binding);
+				}
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -951,14 +961,15 @@ public class BindingClassifier {
 	private final IncludeCreationContext fContext;
 	private final IncludePreferences fPreferences;
 	/** The bindings which require a full definition. */
-	private final Set<IBinding> fBindingsToDefine;
+	private final Set<IBinding> fBindingsToDefine = new HashSet<>();
 	/** The bindings which only require a simple forward declaration. */
-	private final Set<IBinding> fBindingsToForwardDeclare;
+	private final Set<IBinding> fBindingsToForwardDeclare = new HashSet<>();
 	/** The AST that the classifier is working on. */
 	private IASTTranslationUnit fAst;
-	private final BindingCollector fBindingCollector;
-	private final Set<IBinding> fProcessedDefinedBindings;
-	private final Set<IBinding> fProcessedDeclaredBindings;
+	private final BindingCollector fBindingCollector = new BindingCollector();
+	private final Set<IBinding> fProcessedDefinedBindings = new HashSet<>();
+	private final Set<IBinding> fProcessedDeclaredBindings = new HashSet<>();
+	public final Set<ICPPTemplateInstance> fInstancesOfLocallyDefinedTemplates = new HashSet<>();
 
 	/**
 	 * @param context the context for binding classification
@@ -966,11 +977,6 @@ public class BindingClassifier {
 	public BindingClassifier(IncludeCreationContext context) {
 		fContext = context;
 		fPreferences = context.getPreferences();
-		fBindingsToDefine = new HashSet<>();
-		fBindingsToForwardDeclare = new HashSet<>();
-		fProcessedDefinedBindings = new HashSet<>();
-		fProcessedDeclaredBindings = new HashSet<>();
-		fBindingCollector = new BindingCollector();
 	}
 
 	public void classifyNodeContents(IASTNode node) {
@@ -983,8 +989,39 @@ public class BindingClassifier {
 			// target bindings are in a header not reachable via includes.
 			CPPSemantics.enablePromiscuousBindingResolution();
 			node.accept(fBindingCollector);
+			postprocessTemplates();
 		} finally {
 			CPPSemantics.disablePromiscuousBindingResolution();
+		}
+	}
+
+	private void postprocessTemplates() {
+		Set<ICPPTemplateParameter> templatearametersRequiringDefinition = new HashSet<>();
+		for (Iterator<IBinding> it = fBindingsToDefine.iterator(); it.hasNext();) {
+			IBinding binding = it.next();
+			if (binding instanceof ICPPTemplateParameter) {
+				templatearametersRequiringDefinition.add((ICPPTemplateParameter) binding);
+				it.remove();
+			}
+		}
+		if (templatearametersRequiringDefinition.isEmpty())
+			return;
+
+		for (ICPPTemplateInstance instance : fInstancesOfLocallyDefinedTemplates) {
+			ICPPTemplateParameterMap parameterMap = instance.getTemplateParameterMap();
+			ICPPTemplateParameter[] params = instance.getTemplateDefinition().getTemplateParameters();
+			for (ICPPTemplateParameter param : params) {
+				if (templatearametersRequiringDefinition.contains(param)) {
+					ICPPTemplateArgument argument = parameterMap.getArgument(param);
+					if (argument != null) {
+						defineTemplateArgument(argument);
+					} else {
+						for (ICPPTemplateArgument arg : parameterMap.getPackExpansion(param)) {
+							defineTemplateArgument(arg);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -1159,8 +1196,9 @@ public class BindingClassifier {
 							IBinding owner = ((IBinding) type).getOwner();
 							if (owner instanceof ICPPNamespace &&
 									(CharArrayUtils.equals(owner.getNameCharArray(), STD) ||
-									CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) //$NON-NLS-1$
+									CharArrayUtils.equals(owner.getNameCharArray(), "__gnu_cxx"))) { //$NON-NLS-1$
 								addRequiredBindings((IBinding) type, queue);
+							}
 						}
 					}
 				}
@@ -1195,10 +1233,14 @@ public class BindingClassifier {
 				} catch (CoreException e) {
 				}
 			}
+		} else if (binding instanceof ICPPTemplateParameter) {
+			newBindings.add(binding);
+		} else if (binding instanceof ICPPUnknownBinding) {
+			newBindings.add(binding.getOwner());
 		} else if (binding instanceof ICPPMethod) {
 			newBindings.add(binding);  // Include the method in case we need its inline definition.
 			if (binding instanceof ICPPConstructor)
-				newBindings.add(binding.getOwner()); 
+				newBindings.add(binding.getOwner());
 		} else if (binding instanceof IType) {
 			// Remove type qualifiers.
 			IBinding b = getTypeBinding((IType) binding);
@@ -1225,10 +1267,10 @@ public class BindingClassifier {
 			return;
 		if (fProcessedDefinedBindings.contains(binding))
 			return;
-		if (isDeclaredLocally(binding))
-			return;  // Declared locally.
 		if (!fProcessedDeclaredBindings.add(binding))
 			return;
+		if (isDeclaredLocally(binding))
+			return;  // Declared locally.
 		if (!canForwardDeclare(binding)) {
 			defineBinding(binding);
 			return;
@@ -1472,6 +1514,12 @@ public class BindingClassifier {
 				}
 			}
 		}
+	}
+
+	private void defineTemplateArgument(ICPPTemplateArgument argument) {
+		IType type = argument.getOriginalTypeValue();
+		if (type != null)
+			defineTypeExceptTypedefOrNonFixedEnum(type);
 	}
 
 	private boolean isDefined(IBinding binding) {

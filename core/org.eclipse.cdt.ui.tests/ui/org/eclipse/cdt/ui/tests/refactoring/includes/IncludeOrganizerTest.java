@@ -715,4 +715,42 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertExpectedResults();
 	}
+
+	//h1.h
+	//class A;
+	//
+	//A& f();
+	
+	//h2.h
+	//struct A {
+	//  void m();
+	//};
+
+	//source.cpp
+	//#include "h1.h"
+	//#include "h2.h"
+	//
+	//template <typename T>
+	//void g(T& p) {
+	//  p.m();
+	//}
+	//
+	//void test() {
+	//  g(f());
+	//}
+	//====================
+	//#include "h1.h"
+	//#include "h2.h"
+	//
+	//template <typename T>
+	//void g(T& p) {
+	//  p.m();
+	//}
+	//
+	//void test() {
+	//  g(f());
+	//}
+	public void testTemplateParameter_514197() throws Exception {
+		assertExpectedResults();
+	}
 }

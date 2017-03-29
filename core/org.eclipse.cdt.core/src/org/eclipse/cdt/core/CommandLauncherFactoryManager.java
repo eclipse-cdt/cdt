@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -200,6 +201,16 @@ public class CommandLauncherFactoryManager {
 				}
 			}
 		}
+	}
+
+	public void setLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries) {
+		for (ICommandLauncherFactory factory : factories) {
+			ICommandLauncher launcher = factory.getCommandLauncher(project);
+			if (launcher != null) {
+				factory.registerLanguageSettingEntries(project, entries);
+			}
+		}
+
 	}
 
 

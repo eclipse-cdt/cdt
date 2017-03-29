@@ -11,14 +11,19 @@
 package org.eclipse.cdt.internal.docker.launcher;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
@@ -83,8 +88,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connectionName = connection.getName();
 			properties.setProperty(ContainerCommandLauncher.CONNECTION_ID,
 					connectionUri);
-			properties.setProperty(ContainerCommandLauncher.IMAGE_ID,
-					imageCombo.getText());
 		}
 
 	};
@@ -265,7 +268,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			if (defaultImage != null) {
 				int index = imageCombo.indexOf(defaultImage);
 				if (index > -1) {
-					imageCombo.getItem(index);
 					imageCombo.select(index);
 				} else {
 				}
@@ -312,6 +314,25 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		prop2.setProperty(ContainerCommandLauncher.IMAGE_ID, imageProperty);
 	}
 
+
+	@Override
+	protected void performOK() {
+		if (enableButton.getSelection()) {
+			ICConfigurationDescription cfgd = ManagedBuildManager
+					.getDescriptionForConfiguration(iCfg);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
+					.getLanguageSettingProviders();
+			for (ILanguageSettingsProvider provider : providers) {
+				if (provider instanceof GCCBuiltinSpecsDetector) {
+					GCCBuiltinSpecsDetector d = (GCCBuiltinSpecsDetector) provider;
+					// force recalculation of gcc include path
+					d.clear();
+					d.handleEvent(null);
+				}
+			}
+		}
+		super.performOK();
+	}
 
 	@Override
 	protected void performDefaults() {

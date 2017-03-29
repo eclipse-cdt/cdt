@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import java.util.List;
+
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -23,5 +26,12 @@ public interface ICommandLauncherFactory {
 	 * @return ICommandLauncher or null if not appropriate for project
 	 */
 	public ICommandLauncher getCommandLauncher(IProject project);
+
+	/**
+	 * Register language setting entries for a project
+	 * @param project - IProject used in obtaining language setting entries
+	 * @param entries - List of language setting entries
+	 */
+	public void registerLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries);
 
 }

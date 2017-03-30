@@ -84,8 +84,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 	private void initialize() {
 		// Symbols for all parsers
-		fTypeMap= new HashMap<String, IType>();
-		fBindingList= new ArrayList<IBinding>();
+		fTypeMap= new HashMap<>();
+		fBindingList= new ArrayList<>();
 		addStdBuiltins();
 		if (fGnu) {
 			addGnuBuiltins();
@@ -103,6 +103,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	}
 
 	private void addGnuBuiltins() {
+		// Undocumented GCC built-ins also supported by Clang.
+		typedef("__int128", "__int128_t");
+		typedef("unsigned __int128", "__uint128_t");
+
 		// Used in stdtypes.h, mentioned in the manual but not defined in there.
 		typedef("va_list", 		"__builtin_va_list");
 		function("void*", 		"__builtin_va_start", "va_list", "...");
@@ -501,13 +505,13 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	private IType createType(final String type) {
 		String tstr= type;
 		if (fCpp && tstr.endsWith("&")) {
-			final String nested = tstr.substring(0,  tstr.length()-1).trim();
+			final String nested = tstr.substring(0,  tstr.length() - 1).trim();
 			return new CPPReferenceType(toType(nested), false);
 		}
 		if (tstr.equals("FILE*")) {
 			return toType("void*");
 		} else if (tstr.endsWith("*")) {
-			final String nested = tstr.substring(0,  tstr.length()-1).trim();
+			final String nested = tstr.substring(0,  tstr.length() - 1).trim();
 			final IType nt= toType(nested);
 			return fCpp ? new CPPPointerType(nt) : new CPointerType(nt, 0);
 		}
@@ -556,6 +560,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
 		} else if (tstr.equals("int")) {
 			Kind kind = Kind.eInt;
+			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
+		} else if (tstr.equals("__int128")) {
+			Kind kind = Kind.eInt128;
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
 		} else if (tstr.equals("float")) {
 			Kind kind = Kind.eFloat;

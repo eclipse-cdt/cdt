@@ -11183,6 +11183,19 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	// __int128_t and __uint128_t are available but are not keywords.
+	//	void a() {
+	//	  __int128_t s;
+	//	  __uint128_t t;
+	//	}
+	//	void b() {
+	//	  int __int128_t;
+	//	  int __uint128_t;
+	//	}
+	public void testGCCIntBuiltins_444577() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
 	//	template <typename T>
 	//	struct underlying_type {
 	//	    typedef __underlying_type(T) type;

@@ -659,14 +659,23 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	private void deleteValue(Database db, long offset) throws CoreException {
+		fPDOM.removeCachedResult(offset);
 		deleteSerializedData(db, offset, Database.VALUE_SIZE);
 	}
 
 	public IValue loadValue(long offset) throws CoreException {
+		Long cacheKey = Long.valueOf(offset);
+		IValue value = (IValue) fPDOM.getCachedResult(cacheKey);
+		if (value != null)
+			return value;
+
 		TypeMarshalBuffer buffer = loadBuffer(offset, Database.VALUE_SIZE);
 		if (buffer == null)
 			return null;
-		return buffer.unmarshalValue();
+		value = buffer.unmarshalValue();
+		if (value!= null)
+			fPDOM.putCachedResult(cacheKey, value);
+		return value;
 	}
 
 	public void storeEvaluation(long offset, ICPPEvaluation eval) throws CoreException {

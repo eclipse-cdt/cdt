@@ -195,7 +195,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	}
 
 	public void addBases(PDOMName classDefName, ICPPBase[] bases) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
 		for (ICPPBase base : bases) {
@@ -207,7 +207,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	}
 
 	public void removeBases(PDOMName classDefName) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
 		long nameRec= classDefName.getRecord();

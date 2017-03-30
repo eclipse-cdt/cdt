@@ -53,13 +53,15 @@ public class IntegralValue implements IValue {
 	private static final char UNIQUE_CHAR = '_';
 
 	private final static IntegralValue[] TYPICAL= {
+			new IntegralValue(new char[] {'-', '1'}),
 			new IntegralValue(new char[] {'0'}),
 			new IntegralValue(new char[] {'1'}),
 			new IntegralValue(new char[] {'2'}),
 			new IntegralValue(new char[] {'3'}),
 			new IntegralValue(new char[] {'4'}),
 			new IntegralValue(new char[] {'5'}),
-			new IntegralValue(new char[] {'6'})};
+			new IntegralValue(new char[] {'6'}),
+			new IntegralValue(new char[] {'7'})};
 
 	private static int sUnique= 0;
 
@@ -89,6 +91,8 @@ public class IntegralValue implements IValue {
 	public void marshal(ITypeMarshalBuffer buf) throws CoreException {
 		if (UNKNOWN == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1));
+		} else if (ERROR == this) {
+			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1 | ITypeMarshalBuffer.FLAG2));
 		} else if (THIS == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG5));
 		} else {
@@ -111,19 +115,22 @@ public class IntegralValue implements IValue {
 
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
 		if (firstBytes == TypeMarshalBuffer.NULL_TYPE)
-			return IntegralValue.UNKNOWN;
-		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0)
-			return IntegralValue.UNKNOWN;
+			return UNKNOWN;
+		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
+			if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0)
+				return ERROR;
+			return UNKNOWN;
+		}
 		if ((firstBytes & ITypeMarshalBuffer.FLAG2) != 0)
-			return IntegralValue.create(buf.getLong());
+			return create(buf.getLong());
 		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0)
-			return IntegralValue.create(-buf.getLong());
+			return create(-buf.getLong());
 		if ((firstBytes & ITypeMarshalBuffer.FLAG4) != 0)
 			return new IntegralValue(buf.getCharArray());
 		if ((firstBytes & ITypeMarshalBuffer.FLAG5) != 0)
-			return IntegralValue.THIS;
+			return THIS;
 
-		return IntegralValue.UNKNOWN;
+		return UNKNOWN;
 	}
 
 	@Override
@@ -152,8 +159,8 @@ public class IntegralValue implements IValue {
 	 * Creates a value representing the given number.
 	 */
 	public static IntegralValue create(long value) {
-		if (value >= 0 && value < TYPICAL.length)
-			return TYPICAL[(int) value];
+		if (value >= -1 && value < TYPICAL.length - 1)
+			return TYPICAL[(int) value + 1];
 		return new IntegralValue(toCharArray(value));
 	}
 
@@ -167,6 +174,8 @@ public class IntegralValue implements IValue {
 	public static IValue incrementedValue(IValue value, int increment) {
 		if (value == UNKNOWN)
 			return UNKNOWN;
+		if (value == ERROR)
+			return ERROR;
 		Number val = value.numberValue();
 		if (val != null) {
 			return create(val.longValue() + increment);

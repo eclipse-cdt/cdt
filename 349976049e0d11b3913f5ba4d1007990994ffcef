@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_1d70bcfb",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "There needs to be an about.html in both bin.includes and src.includes. You can copy the file from another plugin in CDT",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_5d7a34dd",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/tests/CMakeServerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "copyright :)",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_bd60a82a",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/tests/CMakeServerTestUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "copyright :)",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_9d6bec0f",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/server/CMakeBuildFile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "copyright :)",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_fd594087",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/server/ICMakeServerBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "copyright :)",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_1d57dc52",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/server/StdoutCMakeServerListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-04T13:13:38Z",
+      "side": 1,
+      "message": "copyright :)",
+      "revId": "349976049e0d11b3913f5ba4d1007990994ffcef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

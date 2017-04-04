@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_f8622eb7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-04T14:59:11Z",
+      "side": 1,
+      "message": "I think this causes over refreshing to happen now :-(",
+      "revId": "ae53760c467a7cc4f90697ac36c1f3e7e405d058",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

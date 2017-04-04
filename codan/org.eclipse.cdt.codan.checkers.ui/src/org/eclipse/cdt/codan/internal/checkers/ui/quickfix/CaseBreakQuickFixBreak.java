@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
-import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
-import org.eclipse.cdt.codan.ui.AbstractAstRewriteQuickFix;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndex;
@@ -27,10 +22,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.ltk.core.refactoring.Change;
 
-public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
+public class CaseBreakQuickFixBreak extends AbstractCaseBreakQuickFix {
 	@Override
 	public boolean isApplicable(IMarker marker) {
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
@@ -44,38 +38,11 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		return QuickFixMessages.CaseBreakQuickFixBreak_Label;
 	}
 
-	protected IASTStatement getStmtBeforeBreak(IMarker marker, IASTTranslationUnit ast) throws BadLocationException {
-		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
-		if (line < 0)
-			return null;
-		IRegion lineInformation = getDocument().getLineInformation(line);
-		IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-		IASTNode containedNode = nodeSelector.findFirstContainedNode(lineInformation.getOffset(), lineInformation.getLength());
-		IASTNode beforeBreakNode = null;
-		if (containedNode != null) {
-			beforeBreakNode = CxxAstUtils.getEnclosingStatement(containedNode);
-		} else {
-			beforeBreakNode = nodeSelector.findEnclosingNode(lineInformation.getOffset(), lineInformation.getLength());
-		}
-		if (beforeBreakNode instanceof IASTCompoundStatement) {
-			while (beforeBreakNode != null) {
-				if (beforeBreakNode.getParent() instanceof IASTCompoundStatement
-						&& beforeBreakNode.getParent().getParent() instanceof IASTSwitchStatement) {
-					return (IASTStatement) beforeBreakNode;
-				}
-				beforeBreakNode = beforeBreakNode.getParent();
-			}
-		}
-		if (beforeBreakNode instanceof IASTStatement)
-			return (IASTStatement) beforeBreakNode;
-		return null;
-	}
-
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		try {
 			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-			IASTStatement beforeBreak = getStmtBeforeBreak(marker, ast);
+			IASTStatement beforeBreak = getStmtBeforeCaseEnd(marker, ast);
 			if (beforeBreak != null && beforeBreak.getParent() instanceof IASTCompoundStatement) {
 				IASTCompoundStatement enclosingStatement;
 				IASTStatement after;
@@ -98,21 +65,5 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		} catch (BadLocationException e) {
 			CheckersUiActivator.log(e);
 		}
-	}
-
-	private IASTStatement getStatementAfter(IASTStatement beforeBreak) {
-		IASTCompoundStatement enclosingStatement = (IASTCompoundStatement) beforeBreak.getParent();
-		IASTStatement after = null;
-		IASTStatement[] statements = enclosingStatement.getStatements();
-		for (int i = 0; i < statements.length; i++) {
-			IASTStatement st = statements[i];
-			if (st == beforeBreak) {
-				if (i < statements.length - 1) {
-					after = statements[i + 1];
-					break;
-				}
-			}
-		}
-		return after;
 	}
 }

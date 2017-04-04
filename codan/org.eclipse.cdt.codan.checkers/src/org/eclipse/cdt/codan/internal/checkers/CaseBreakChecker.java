@@ -19,6 +19,7 @@ import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -43,6 +44,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	public static final String PARAM_LAST_CASE = "last_case_param"; //$NON-NLS-1$
 	public static final String PARAM_EMPTY_CASE = "empty_case_param"; //$NON-NLS-1$
 	public static final String PARAM_NO_BREAK_COMMENT = "no_break_comment"; //$NON-NLS-1$
+	public static final String PARAM_ENABLE_FALLTHROUGH_QUICKFIX = "enable_fallthrough_quickfix_param"; //$NON-NLS-1$
 	public static final String DEFAULT_NO_BREAK_COMMENT = "no break"; //$NON-NLS-1$
 	private boolean fCheckLastCase; // Should we check the last case in the switch?
 	private boolean fCheckEmptyCase; // Should we check an empty case (a case without any statements within it)
@@ -106,6 +108,11 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 							if (!fCheckLastCase && next == null) {
 								continue; // Last case and we don't care
 							}
+							
+							if(next != null && hasValidFallthroughAttribute(curr)) {
+								continue; // Explicit Fallthrough, do not analyse case further (not valid in last case)
+							}
+							
 							// If this is the null statement, base the decision on the previous statement
 							// instead (if there is one). Null statements can sneak in via macros in cases
 							// where the macro expansion ends in a semicolon, and the macro use is followed
@@ -167,6 +174,26 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 				return isFallThroughStamement(ifs.getThenClause()) || isFallThroughStamement(ifs.getElseClause());
 			}
 			return true; // TODO
+		}
+		
+		/**
+		 * @param statement
+		 * @return
+		 */
+		public boolean hasValidFallthroughAttribute(IASTStatement statement) {
+			IASTStatement nullstatement = null;
+			if(statement instanceof IASTNullStatement) nullstatement = statement;
+			else if(statement instanceof IASTCompoundStatement && statement.getChildren().length>0) {
+				IASTNode lastnode = statement.getChildren()[statement.getChildren().length-1];
+				if(lastnode instanceof IASTNullStatement) nullstatement = (IASTStatement) lastnode;
+			}
+			
+			if(nullstatement!=null) {
+				for (IASTAttribute attribute : nullstatement.getAttributes()) {
+					if(String.valueOf(attribute.getName()).equals("fallthrough")) return true; //$NON-NLS-1$
+				}
+			}
+			return false;
 		}
 	}
 
@@ -231,6 +258,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 				DEFAULT_NO_BREAK_COMMENT);
 		addPreference(problem, PARAM_LAST_CASE, CheckersMessages.CaseBreakChecker_LastCaseDescription, Boolean.FALSE);
 		addPreference(problem, PARAM_EMPTY_CASE, CheckersMessages.CaseBreakChecker_EmptyCaseDescription, Boolean.FALSE);
+		addPreference(problem, PARAM_ENABLE_FALLTHROUGH_QUICKFIX, CheckersMessages.CaseBreakChecker_EnableFallthroughQuickfixDescription, Boolean.FALSE);
 	}
 
 	@Override

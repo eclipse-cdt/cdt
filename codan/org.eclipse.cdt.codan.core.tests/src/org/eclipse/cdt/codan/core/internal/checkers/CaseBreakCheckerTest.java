@@ -166,6 +166,18 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		checkNoErrorsOfKind(ER_ID);
 	}
 
+	// void foo(void) {
+	//  int a;
+	//  switch (a) {
+	//  case 1:
+	//    [[fallthrough]]; // not valid in last case
+	//  }
+	// }
+	public void testEmptyLastCaseBadFallthrough() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(5);
+	}
+
 	// void foo(int a, int b) {
 	//  switch (a) {
 	//  case 1:
@@ -199,13 +211,42 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  int a, b;
 	//  switch (a) {
 	//  case 1:
+	//    b = 2;
+	//    [[fallthrough]];
+	//  }
+	// }
+	public void testLastCaseBadFallthrough() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(5);
+	}
+
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
+	//  case 1:
 	//    /* no break */
 	//  case 2:
 	//    b = 2;
 	//    break;
 	//  }
+	// }
 	public void testEmptyCaseOKcomment() throws Exception {
 		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
+	//  case 1:
+	//    [[fallthrough]];
+	//  case 2:
+	//    b = 2;
+	//    break;
+	//  }
+	// }
+	public void testEmptyCaseOKFallthrough() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
 
@@ -221,6 +262,21 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	public void testLastCaseBadCommentNotLast() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
+	}
+
+	// void bye() {}
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
+	//  case 1:
+	//    b = 2;
+	//    [[fallthrough]];
+	//    bye();
+	//  }
+	// }
+	public void testLastCaseBadFallthroughNotLast() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLines(8);
 	}
 
 	// void foo(void) {
@@ -257,6 +313,36 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// void foo(void) {
 	//  int a, b;
 	//  switch (a) {
+	//  case 1:
+	//    b = 2;
+	//    [[fallthrough]];
+	//  case 2:
+	//    b = 2;
+	//    [[ fallthrough ]];
+	//  case 3:
+	//    b = 2;
+	//    [ [ fallthrough ] ] ;
+	//  case 4:
+	//    b = 2;[[fallthrough]];
+	//  case 5:
+	//    b = 2;
+	//    [[fall]];
+	//  case 6:
+	//    b = 2;
+	//    [[FALLTHROUGH]];
+	//  case 7:
+	//    b = 2;
+	//    [[fallthrough]]
+	//  }
+	// }
+	public void testDifferentFallthroughs() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLines(16,19,24);
+	}
+
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
 	//  case 1: //err
 	//    // lolo
 	//  case 2: //err
@@ -286,15 +372,22 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    b = 2;
 	//    /* no break */
 	//  case 4:
-	//    b = 2; // err
+	//    b = 2;
+	//    [[fallthrough]];
 	//  case 5:
+	//    b = 2; // err
+	//  case 6:
 	//    b = 2;
 	//    break;
-	//  case 6:
+	//  case 7:
 	//    b = 2;
 	//    /* no break */
 	//    b = 2; //err
-	//  case 7:
+	//  case 8:
+	//    b = 2;
+	//    [[fallthrough]];
+	//    b = 2; //err
+	//  case 9:
 	//    b = 2;//err
 	//  }
 	//
@@ -310,7 +403,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	public void testGeneral1() throws Exception {
 		setEmpty(true);
 		setLast(true);
-		loadCodeAndRun(getAboveComment());
+		loadCodeAndRunCpp(getAboveComment());
 		checkErrorComments();
 	}
 
@@ -347,6 +440,36 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// void foo(void) {
 	//  int a, b;
 	//  switch (a) {
+	//  case 1:
+	//    b = 2;
+	//    // lolo
+	//    [[fallthrough]];
+	//  case 2:
+	//    b = 2;
+	//    [[fallthrough]];
+	//    // lolo
+	//  case 3:
+	//    [[fallthrough]]; // not valid, not last statement
+	//    b = 2;
+	//    // loo
+	//  case 4:
+	//    b = 2;
+	//    // lolo
+	//    [[fallthrough]];
+	//  case 5:
+	//    // lolo
+	//    b = 2;
+	//    [[fallthrough]]; // not valid in last case
+	//  }
+	// }
+	public void testGeneralFallthroughs1() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLines(14,22);
+	}
+
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
 	//  case 0:
 	//    switch( b ) {
 	//    case 2: // err
@@ -370,13 +493,23 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    } // err
 	//  case 5:
 	//    switch( b ) {
+	//    case 2:
+	//      [[fallthrough]]; // err
+	//    } // err
+	//  case 6:
+	//    switch( b ) {
 	//    case 2: // err
 	//    }
 	//    /* no break */
+	//  case 7:
+	//    switch( b ) {
+	//    case 2: // err
+	//    } // err
+	//    [[fallthrough]];
 	//  }
 	// }
 	public void testNestedSwitches() throws Exception {
-		loadCodeAndRun(getAboveComment());
+		loadCodeAndRunCpp(getAboveComment());
 		checkErrorComments();
 	}
 
@@ -427,6 +560,51 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setEmpty(false);
 		loadCodeAndRun(code);
 		checkErrorLine(4, ER_ID);
+	}
+
+	// void foo() {
+	// int a, b;
+	// switch (a) {
+	// case 1: {
+	//  b = 2;
+	//  [[fallthrough]];
+	// }
+	// case 2: {
+	//  b = 2;
+	// }
+	//  [[fallthrough]];
+	// case 3: {
+	//   b = 2;
+	// }
+	public void testFallthroughAndCompoundStatementCombinations() throws Exception {
+		String code = getAboveComment();
+		loadCodeAndRunCpp(code);
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	// void foo() {
+	//  int a, b;
+	//  switch (a) {
+	//  case 1:
+	//   b = 2; // err
+	//   [[fallthrough]];
+	//  }
+	//  switch (a) {
+	//  case 1: {
+	//   b = 2;
+	//   [[fallthrough]];
+	//  } // err
+	//  }
+	//  switch (a) {
+	//  case 1: {
+	//   b = 2;
+	//  } // err
+	//   [[fallthrough]];
+	//  }
+	public void testBadFallthroughInLastStatement() throws Exception {
+		String code = getAboveComment();
+		loadCodeAndRunCpp(code);
+		checkErrorComments();
 	}
 
 	private void setLast(boolean val) {

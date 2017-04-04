@@ -525,7 +525,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			}
 		} else {
 			// current active target, check if it is supported
-			if (activeLaunchTarget != null && supportsTarget(activeLaunchDesc, activeLaunchTarget)) {
+			if (activeLaunchTarget != null && activeLaunchTarget != ILaunchTarget.NULL_TARGET
+					&& supportsTarget(activeLaunchDesc, activeLaunchTarget)) {
 				setActiveLaunchTarget(activeLaunchTarget);
 				return;
 			}

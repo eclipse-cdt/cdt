@@ -13,5 +13,6 @@
 
 	<groupId>org.eclipse.cdt.features</groupId>
 	<artifactId>org.eclipse.cdt.platform</artifactId>
+	<version>9.2.2-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 </project>

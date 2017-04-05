@@ -18,11 +18,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -109,6 +112,9 @@ public class Database {
 	private long freed;
 	private long cacheHits;
 	private long cacheMisses;
+
+	// a cache for strings which is used for btree lookups; weak refs ensure garbage collection
+	private final Map<Long, WeakReference<IString>> stringCache = new HashMap<>();
 
 	/**
 	 * Construct a new Database object, creating a backing file if necessary.
@@ -243,6 +249,8 @@ public class Database {
 			createNewChunks((int) setasideChunks);
 			flush();
 		}
+		// clear cache for strings which are used for btree searches
+		stringCache.clear();
 	}
 
 	private void removeChunksFromCache() {
@@ -463,6 +471,7 @@ public class Database {
 		}
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;
+		stringCache.remove(offset); // also remove record from string cache (if it exists)
 	}
 
 	public void putByte(long offset, byte value) throws CoreException {
@@ -563,11 +572,11 @@ public class Database {
 			bytelen= 2 * len;
 		}
 
-		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return new LongString(this, chars, useBytes);
-		} else {
-			return new ShortString(this, chars, useBytes);
-		}
+		final IString result = bytelen > ShortString.MAX_BYTE_LENGTH
+				? new LongString(this, chars, useBytes)
+				: new ShortString(this, chars, useBytes);
+		stringCache.put(result.getRecord(), new WeakReference<IString>(result)); // cache this string!
+		return result;
 	}
 
 	private boolean useBytes(char[] chars) {
@@ -579,12 +588,18 @@ public class Database {
 	}
 
 	public IString getString(long offset) throws CoreException {
+		final WeakReference<IString> cachedStringReference = stringCache.get(offset);
+		if (cachedStringReference != null) {
+			final IString cachedString = cachedStringReference.get();
+			if (cachedString != null)
+				return cachedString; // string already cached, no need to re-retrieve it :-)
+		}
 		final int l = getInt(offset);
 		int bytelen= l < 0 ? -l : 2 * l;
-		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return new LongString(this, offset);
-		}
-		return new ShortString(this, offset);
+		final IString result = bytelen > ShortString.MAX_BYTE_LENGTH ? new LongString(this, offset)
+				: new ShortString(this, offset);
+		stringCache.put(offset, new WeakReference<IString>(result));
+		return result;
 	}
 
 	/**

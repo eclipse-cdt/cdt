@@ -130,6 +130,50 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		return result;
 	}
 	
+	private void appendChar(StringBuilder builder, int repeat, char c) {
+		for (int i = 0; i < repeat; i++) {
+			builder.append(c);
+		}
+	}
+	
+	private boolean needsEscaping(String input) {
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '"') {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private String escapeArg(String arg) {
+		if (!arg.isEmpty() && !needsEscaping(arg)) {
+			return arg;
+		}
+		StringBuilder buffer = new StringBuilder();
+		buffer.append('"');
+		for (int i = 0; i < arg.length(); i++) {
+			int numberOfBackslashes = 0;
+			while (i < arg.length() && arg.charAt(i) == '\\') {
+				i++;
+				numberOfBackslashes++;
+			}
+			
+			if (i == arg.length()) {
+				appendChar(buffer, numberOfBackslashes * 2, '\\');
+				break;
+			} else if (arg.charAt(i) == '"') {
+				appendChar(buffer, numberOfBackslashes * 2 + 1, '\\');
+				buffer.append(arg.charAt(i));
+			} else {
+				appendChar(buffer, numberOfBackslashes * 2, '\\');
+				buffer.append(arg.charAt(i));
+			}
+		}
+		buffer.append('"');
+		return buffer.toString();
+	}
+	
 	public class PostWindowCreateRunnable implements IRunnableWithProgress {
 
 		@Override
@@ -198,10 +242,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						StringBuilder argBuffer = new StringBuilder();
 						// Remaining values are arguments to the executable
 						if (i < args.length)
-							argBuffer.append(args[i++]);
+							argBuffer.append(escapeArg(args[i++]));
 						while (i < args.length) {
 							argBuffer.append(" "); //$NON-NLS-1$
-							argBuffer.append(args[i++]);
+							argBuffer.append(escapeArg(args[i++]));
 						}
 						arguments = argBuffer.toString();
 					}

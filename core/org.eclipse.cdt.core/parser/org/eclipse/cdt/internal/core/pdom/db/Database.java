@@ -18,11 +18,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -109,6 +114,22 @@ public class Database {
 	private long freed;
 	private long cacheHits;
 	private long cacheMisses;
+
+	/** Soft reference wrapper to keep track of the record for disposed strings. */
+	private static class SoftStringRef extends SoftReference<IString> {
+		private final long record;
+		public SoftStringRef(IString referent, ReferenceQueue<? super IString> q) {
+			super(referent, q);
+			record = referent.getRecord();
+		}
+		public long getRecord() {
+			return record;
+		}
+	}
+
+	// a cache for strings which is used for btree lookups; soft refs ensure garbage collection
+	private final Map<Long, Reference<IString>> stringCache = new HashMap<>();
+	private final ReferenceQueue<IString> stringDisposal = new ReferenceQueue<>();
 
 	/**
 	 * Construct a new Database object, creating a backing file if necessary.
@@ -243,6 +264,8 @@ public class Database {
 			createNewChunks((int) setasideChunks);
 			flush();
 		}
+		// clear cache for strings which are used for btree searches
+		clearStringCache();
 	}
 
 	private void removeChunksFromCache() {
@@ -463,6 +486,7 @@ public class Database {
 		}
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;
+		stringCache.remove(offset); // also remove record from string cache (if it exists)
 	}
 
 	public void putByte(long offset, byte value) throws CoreException {
@@ -564,9 +588,9 @@ public class Database {
 		}
 
 		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return new LongString(this, chars, useBytes);
+			return addStringToCache(new LongString(this, chars, useBytes));
 		} else {
-			return new ShortString(this, chars, useBytes);
+			return addStringToCache(new ShortString(this, chars, useBytes));
 		}
 	}
 
@@ -579,12 +603,33 @@ public class Database {
 	}
 
 	public IString getString(long offset) throws CoreException {
+		final Reference<IString> cachedStringReference = stringCache.get(offset);
+		if (cachedStringReference != null) {
+			final IString cachedString = cachedStringReference.get();
+			if (cachedString != null) {
+				return cachedString; // string already cached, no need to re-retrieve it :-)
+			}
+		}
 		final int l = getInt(offset);
 		int bytelen= l < 0 ? -l : 2 * l;
 		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return new LongString(this, offset);
+			return addStringToCache(new LongString(this, offset));
 		}
-		return new ShortString(this, offset);
+		return addStringToCache(new ShortString(this, offset));
+	}
+
+	private IString addStringToCache(IString string) {
+		// add string to cache
+		stringCache.put(string.getRecord(), new SoftStringRef(string, stringDisposal));
+		// also remove keys from cache list upon garbage collection
+		if (stringDisposal != null) {
+			Reference<? extends IString> disposedRef = stringDisposal.poll();
+			while (disposedRef instanceof SoftStringRef) {
+				stringCache.remove(((SoftStringRef) disposedRef).getRecord());
+				disposedRef = stringDisposal.poll();
+			}
+		}
+		return string;
 	}
 
 	/**
@@ -629,6 +674,7 @@ public class Database {
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
+		clearStringCache();
 	}
 
 	/**
@@ -731,6 +777,15 @@ public class Database {
 
 		// Also handles header chunk.
 		flushAndUnlockChunks(dirtyChunks, true);
+
+		// And clear string cache
+		clearStringCache();
+	}
+
+	private void clearStringCache() {
+		stringCache.clear();
+		while (stringDisposal.poll() != null) {
+		}
 	}
 
 	private void flushAndUnlockChunks(final ArrayList<Chunk> dirtyChunks, boolean isComplete) throws CoreException {

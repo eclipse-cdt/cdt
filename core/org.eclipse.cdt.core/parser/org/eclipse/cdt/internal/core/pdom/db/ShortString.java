@@ -25,7 +25,10 @@ public class ShortString implements IString {
 	private final Database db;
 	private final long record;
 	private int hash;
-	
+
+	// this string is immutable, so we can cache the actual char array
+	private char[] cachedChars;
+
 	private static final int LENGTH = 0;
 	private static final int CHARS = 4;
 	
@@ -63,6 +66,9 @@ public class ShortString implements IString {
 	
 	@Override
 	public char[] getChars() throws CoreException {
+		if (cachedChars != null) {
+			return cachedChars; // no need to re-retrieve array if it is already cached
+		}
 		final Chunk chunk = db.getChunk(record);
 		final int l = chunk.getInt(record + LENGTH);
 		final int length = Math.abs(l);
@@ -72,6 +78,7 @@ public class ShortString implements IString {
 		} else {
 			chunk.getChars(record + CHARS, chars, 0, length);
 		}
+		cachedChars = chars; // cache the array
 		return chars;
 	}
 	

@@ -27,6 +27,9 @@ public class LongString implements IString {
 	private final long record;
 	private int hash;
 
+	// this string is immutable, so we can cache the actual char array
+	private char[] cachedChars;
+
 	// Additional fields of first record.
 	private static final int LENGTH = 0; // Must be first to match ShortString.
 	private static final int NEXT1 = 4;
@@ -98,6 +101,9 @@ public class LongString implements IString {
 
 	@Override
 	public char[] getChars() throws CoreException {
+		if (cachedChars != null) {
+			return cachedChars; // no need to re-retrieve array if it is already cached
+		}
 		int length = db.getInt(record + LENGTH);
 		final boolean useBytes = length < 0;
 		int numChars1 = NUM_CHARS1;
@@ -135,6 +141,7 @@ public class LongString implements IString {
 			start += partLen;
 			p= p + NEXTN;
 		}
+		cachedChars = chars; // cache the array
 		return chars;
 	}
 

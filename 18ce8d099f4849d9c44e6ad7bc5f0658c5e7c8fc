@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_51605877",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1237,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-06T09:44:16Z",
+      "side": 1,
+      "message": ":-) thanks for fixing this",
+      "revId": "18ce8d099f4849d9c44e6ad7bc5f0658c5e7c8fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

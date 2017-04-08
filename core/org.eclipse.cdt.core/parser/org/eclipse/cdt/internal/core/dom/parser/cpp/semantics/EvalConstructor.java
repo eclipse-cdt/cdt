@@ -331,16 +331,18 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		IType newType = CPPTemplates.instantiateType(fType, context);
-
 		ICPPEvaluation[] newArguments = new ICPPEvaluation[fArguments.length];
 		for (int i = 0; i < fArguments.length; i++) {
 			newArguments[i] = fArguments[i].instantiate(context, maxDepth);
 		}
 
+		IType newType = null;
 		ICPPConstructor newConstructor;
 		try {
 			newConstructor = (ICPPConstructor) CPPTemplates.instantiateBinding(fConstructor, context, maxDepth);
+			if (newConstructor != null) {
+				newType = newConstructor.getClassOwner();
+			}
 			if (newConstructor instanceof CPPDeferredFunction) {
 				ICPPFunction[] candidates = ((CPPDeferredFunction) newConstructor).getCandidates();
 				if (candidates != null) {
@@ -352,11 +354,23 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 					if (resolved instanceof EvalBinding) {
 						EvalBinding evalBinding = (EvalBinding) resolved;
 						newConstructor = (ICPPConstructor) evalBinding.getBinding();
+						if (newConstructor != null) {
+							newType = newConstructor.getClassOwner();
+						}
 					}
 				}
 			}
 		} catch (DOMException e) {
 			newConstructor = fConstructor;
+		}
+
+		// Only instantiate fType separately if we couldn't get the instantiated type
+		// via newConstructor.getClassOwner() for some reason. This is not just for
+		// efficiency; instantiating fType directly will not work if fType is a
+		// CPPClassTemplate because CPPTemplates.instantiateType() does not instantiate
+		// CPPClassTemplates, only CPPDeferredClassInstances (TODO: why?).
+		if (newType == null) {
+			newType = CPPTemplates.instantiateType(fType, context);
 		}
 
 		return new EvalConstructor(newType, newConstructor, newArguments, getTemplateDefinition());

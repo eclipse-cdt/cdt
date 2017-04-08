@@ -2452,6 +2452,26 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testDelegatingConstructorCallInConstexprConstructor_509871() throws Exception {
 		checkBindings();
 	}
+
+	//	// empty file
+	
+	//	template <typename T>
+	//	struct base {
+	//	  constexpr base() : p(0) {}
+	//	  int p;
+	//	};
+	//
+	//	template <typename T>
+	//	struct derived : public base<T> {
+	//	  constexpr derived() : base<T>() {}
+	//	  constexpr derived(int) : derived() {}
+	//	};
+	//
+	//	class C {};
+	//	derived<C> waldo = 0;
+	public void testDelegatingConstructorCallInConstexprConstructor_514595() throws Exception {
+		checkBindings();
+	}
 	
 	//	enum class NoneType { None };
 	//	const NoneType None = None;

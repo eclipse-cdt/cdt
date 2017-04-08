@@ -1565,6 +1565,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         			final IASTEnumerator enumerator= nodeFactory.newEnumerator(etorName, null);
         			endOffset= calculateEndOffset(etorName);
         			setRange(enumerator, problemOffset, endOffset);
+        			
+        	        List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        	        addAttributeSpecifiers(attributes, enumerator);
+        			
         			result.addEnumerator(enumerator);
         			if (LTcatchEOF(1) == IToken.tASSIGN) {
         				problemOffset= consume().getOffset();

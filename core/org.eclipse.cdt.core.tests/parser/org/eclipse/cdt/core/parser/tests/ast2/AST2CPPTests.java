@@ -12238,4 +12238,12 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPFunctionType logicalNotType = logicalNotOverload.getType();
 		isTypeEqual(logicalNotType, "bool (bool)");
 	}
+	
+	//	enum enumDecl {
+	//	    el0 __attribute__((deprecated)),
+	//	    el1,
+	//	};
+	public void testEnumeratorAttribute_514821() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+	}
 }

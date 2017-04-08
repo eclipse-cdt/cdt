@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Base class for C and C++ enumerators.
  */
-public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, IASTAmbiguityParent {
+public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnumerator, IASTAmbiguityParent {
     private IASTName name;
     private IASTExpression value;
     private IValue integralValue;

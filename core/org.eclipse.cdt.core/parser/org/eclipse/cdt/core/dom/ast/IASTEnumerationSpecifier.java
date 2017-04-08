@@ -22,7 +22,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	 * 
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	public interface IASTEnumerator extends IASTNode, IASTNameOwner {
+	public interface IASTEnumerator extends IASTNameOwner, IASTAttributeOwner {
 		/**
 		 * Empty array (constant).
 		 */

@@ -1530,7 +1530,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					singleLine= true;
 				}
 			} else {
-				singleLine= ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType());
+				singleLine= ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType()) || ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(partition.getType());
 			}
 			if (singleLine) {
 				// if comment starts at column 0 and spans only one line

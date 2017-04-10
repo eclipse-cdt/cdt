@@ -19,9 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -32,6 +30,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.projection.IProjectionPosition;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.ui.PartInitException;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -41,9 +40,15 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 import org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingStructureProvider.CProjectionAnnotation;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Code folding tests.
@@ -75,6 +80,7 @@ public class FoldingTest extends BaseUITestCase {
 	private CEditor fEditor;
 	
 	private SourceViewer fSourceViewer;
+	private IFile fFileUnderTest;
 
 	public static Test suite() {
 		return new TestSuite(FoldingTest.class);
@@ -91,7 +97,7 @@ public class FoldingTest extends BaseUITestCase {
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
 		
 		StringBuilder[] contents = getContentsForTest(1);
-		assert contents.length == 1;
+		assertEquals("test requires exactly one test block", 1, contents.length);
 		String code = contents[0].toString();
 		String filename;
 		if (code.trim().isEmpty()) {
@@ -107,16 +113,25 @@ public class FoldingTest extends BaseUITestCase {
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_HEADERS, false);
+		fFileUnderTest = ResourceTestHelper.findFile(filename);
 
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
+		openEditor();
+	}
+
+	private void openEditor() throws PartInitException {
+		fEditor= (CEditor) EditorTestHelper.openInEditor(fFileUnderTest, true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 300));
 	}
 
+	private void closeEditor() {
+		EditorTestHelper.closeEditor(fEditor);
+	}
+
 	@Override
 	protected void tearDown () throws Exception {
-		EditorTestHelper.closeEditor(fEditor);
-		
+		closeEditor();
+
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
 		
@@ -127,9 +142,34 @@ public class FoldingTest extends BaseUITestCase {
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS);
 
+		// Set doctool to none.
+		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(NullDocCommentOwner.INSTANCE);
+
 		super.tearDown();
 	}
-	
+
+	private void setDoctoolToDoxygen() throws PartInitException {
+		// When the workspace comment owner changes, all open editors are
+		// re-opened asynchronously, within the test that async is a problem
+		// because we lose the handle and have no real condition to wait on.
+		// Instead close and reopen editor within this method.
+		closeEditor();
+
+		// Set doctool to doxygen.
+		IDocCommentOwner[] registeredOwners = DocCommentOwnerManager.getInstance().getRegisteredOwners();
+		IDocCommentOwner doxygenOwner = null;
+		for (IDocCommentOwner owner : registeredOwners) {
+			if (owner.getID().contains("doxygen")) {
+				assertNull("More than one owner looks like doxygen", doxygenOwner);
+				doxygenOwner = owner;
+			}
+		}
+		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(doxygenOwner);
+
+		// see comment above closeEditor call above.
+		openEditor();
+	}
+
 	protected void assertEqualPositions(Position[] expected, Position[] actual) throws BadLocationException {
 		assertEquals(expected.length, actual.length);
 		IDocument document= fSourceViewer.getDocument();
@@ -370,5 +410,41 @@ public class FoldingTest extends BaseUITestCase {
 	//	}
 	public void testIdenticalStatements_507138() throws BadLocationException {
 		assertNoKeyCollisions();
+	}
+
+	///*
+	// * Header comment
+	// */
+	//
+	//// non-doc multiline
+	//// line 2
+	//void func1() {}
+	//
+	///// doc multiline
+	///// line 2
+	//void func2() {}
+	//
+	////
+	//// non-doc multiline (with blank first line)
+	//// line 3
+	//void func3() {}
+	//
+	/////
+	///// doc multiline (with blank first line)
+	///// line 3
+	//void func4() {}
+	public void testCollapseAdjacentSingleLineDocComments() throws Exception {
+		setDoctoolToDoxygen();
+
+		Position[] actual= getFoldingPositions();
+		Position[] expected= new Position[] {
+				createPosition(0, 2, 1),
+				createPosition(4, 5),
+				createPosition(8, 9),
+				createPosition(12, 14, 13),
+				createPosition(17, 19, 18),
+			};
+		assertEquals(toString(expected), toString(actual));
+		assertEqualPositions(expected, actual);
 	}
 }

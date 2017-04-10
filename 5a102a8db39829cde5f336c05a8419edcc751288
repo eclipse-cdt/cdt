@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_aa8e8e3b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/StatementWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-04-10T06:53:57Z",
+      "side": 1,
+      "message": "Are you sure that we can have attributes on an ICPPASTCatchHandler? Even though it is a  CPPASTAttributeOwner, it seems to me that the standard does not allow for attributes here.\n\n[gram.stmt] allows for attribute-specifier-seq on try-block but [gram.except] does not further allow for attribute-specifier-seq on neither handler-seq nor handler.\n\nMaybe its a \"bug\" that ICPPASTCatchHandler is a CPPASTAttributeOwner in the first place?",
+      "revId": "5a102a8db39829cde5f336c05a8419edcc751288",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

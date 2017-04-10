@@ -218,7 +218,8 @@ public class LLDBLaunch extends GdbLaunch {
 			// Here are some LLDB/Xcode version mappings
 			// 360.1.65 => Xcode 8.1.0
 			// 360.1.70 => Xcode 8.2.1, 8.2.0
-			// 370.0.30 => Xcode 8.3.0 Beta 4
+			// 370.0.37 => Xcode 8.3.0
+			// 370.0.40 => Xcode 8.3.1
 			//
 			// Note that a LLDB built from source on macOS can report the same
 			// Apple-style version even for different LLDB/Clang-style version
@@ -226,7 +227,7 @@ public class LLDBLaunch extends GdbLaunch {
 			// inconvenient! But this will only affect people building it from
 			// source, not LLDB included in Xcode.
 
-			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0 || fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 30)) < 0) {
+			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0 || fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 37)) < 0) {
 				fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
 			}
 		}

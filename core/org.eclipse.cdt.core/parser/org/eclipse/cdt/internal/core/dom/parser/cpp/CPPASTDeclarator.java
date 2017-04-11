@@ -310,7 +310,9 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 
 	@Override
 	public ICPPExecution getExecution() {
-		final ICPPBinding binding = (ICPPBinding) getName().resolveBinding();
+		final IBinding binding = getName().resolveBinding();
+		if (!(binding instanceof ICPPBinding))  // ProblemBinding
+			return ExecIncomplete.INSTANCE;
 		ICPPEvaluation initializerEval = null;
 		if (binding instanceof CPPVariable) {
 			CPPVariable variable = (CPPVariable) binding;
@@ -319,6 +321,6 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 		if (initializerEval == EvalFixed.INCOMPLETE) {
 			return ExecIncomplete.INSTANCE;
 		}
-		return new ExecDeclarator(binding, initializerEval);
+		return new ExecDeclarator((ICPPBinding) binding, initializerEval);
 	}
 }

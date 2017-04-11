@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_7d9b597f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixForFixit.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "I just left this alone as it is in every other file we have created.",
+      "parentUuid": "87bd33cc_4a989a81",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_6aa556b5",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2017-04-11T05:53:00Z",
       "side": 1,
       "message": "This comment duplicates the comment for RegexErrorParser.processLine(). I would suggest either removing it, or amending it to mention the extra processing (checking for a fixit) done here.",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_bda5f1b7",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_6aa556b5",
       "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_fd02097f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Point taken.  Not as simple to solve.  Can\u0027t change the ErrorParserManager because it is public API and would cause a major release bump.  I ended up hijacking the ProblemMarkerFilterManager which is internal to store the last probleminfo for a resource that was accepted.  I then added code to do a comparison for a match since I only have a ProblemMarkerInfo and I need to look for a match in a list of IMarkers.",
+      "parentUuid": "87bd33cc_2a827e0c",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_acc22979",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2017-04-11T05:53:00Z",
       "side": 1,
       "message": "Should we also catch a NumberFormatException thrown by the Integer.valueOf() calls in the Fixit constructor (called by addMarker() in the try block)?",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_1d942548",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_acc22979",
       "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_dd79cda0",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Actually, we have already matched it to be a fix-it message.  If there is an error, it should be considered consumed by this parser.",
+      "parentUuid": "87bd33cc_8aa2b2ab",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_6cc1f177",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/Fixit.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2017-04-11T05:53:00Z",
       "side": 1,
       "message": "Any reason to keep the range around after construction?",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_1d08a59e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/Fixit.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Nope.  I have changed it.",
+      "parentUuid": "87bd33cc_6cc1f177",
       "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_f83cd7f0",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "I would rather not run a constant thread.  I have added code to various places in the CDT where markers are being deleted and added a call to the FixitManager.deleteMarkers() method which I am also adding.",
+      "parentUuid": "87bd33cc_cccf65a2",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_8cc56d86",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2017-04-11T05:53:00Z",
       "side": 1,
       "message": "private",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_7df6f903",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-11T23:19:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_8cc56d86",
       "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,274 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_ecdd0101",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/AbstractCaseBreakQuickFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Please use \"Institute for Software\" as copyright owner",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 80
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cce045b8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/AbstractCaseBreakQuickFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "(pulled up functions...) That is visible in the commit.\nThe \"Contributors:\" part is optional anyway.",
+      "range": {
+        "startLine": 9,
+        "startChar": 70,
+        "endLine": 9,
+        "endChar": 92
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cc11250d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixFallthroughAttribute.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Did this comment come along with copy pasting the implementation?\n\nYou should pull up this function too. The only difference is the node that gets inserted (here nullStatement).",
+      "range": {
+        "startLine": 57,
+        "startChar": 21,
+        "endLine": 57,
+        "endChar": 29
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_4c35158f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixFallthroughAttribute.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Please use the formatter for new code:\nhttp://wiki.eclipse.org/CDT/policy#Code_Formatting",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 1
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_4c1ef522",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixFallthroughAttribute.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Comment is obvious",
+      "range": {
+        "startLine": 90,
+        "startChar": 23,
+        "endLine": 90,
+        "endChar": 24
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6c9e51ea",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixFallthroughAttribute.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Don\u0027t use literals for specific attributes. You could create a class in cdt.core StandardAttributes to contain such string constants (Suggestion P. Sommerlad).",
+      "range": {
+        "startLine": 94,
+        "startChar": 50,
+        "endLine": 94,
+        "endChar": 61
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cc27653d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CaseBreakChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Check formatting: space after \"if\" and surrounding empty lines\nFallthrough -\u003e fallthrough",
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ec24213b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CaseBreakChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Check formatting\n\nCouldn\u0027t you use AttributeUtil for this?",
+      "range": {
+        "startLine": 183,
+        "startChar": 17,
+        "endLine": 183,
+        "endChar": 45
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ccd9259e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CheckersMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "quick fix",
+      "range": {
+        "startLine": 14,
+        "startChar": 61,
+        "endLine": 14,
+        "endChar": 66
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8cc1ed99",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/CaseBreakCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "\"invalid\" instead of \"not valid\"\nComment required? Test name is good. Add ticket number to case: _514685",
+      "range": {
+        "startLine": 173,
+        "startChar": 40,
+        "endLine": 173,
+        "endChar": 44
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6c8f317f",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/CaseBreakCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "space after comma",
+      "range": {
+        "startLine": 340,
+        "startChar": 21,
+        "endLine": 340,
+        "endChar": 23
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cc7da5d6",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixBreakTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-04-11T09:33:37Z",
+      "side": 1,
+      "message": "Please avoid reformatting existing code in a bug fix/new feature commit",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 80
+      },
+      "revId": "b7a427ec1138090a020e8ae1ae794f89c4557e6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

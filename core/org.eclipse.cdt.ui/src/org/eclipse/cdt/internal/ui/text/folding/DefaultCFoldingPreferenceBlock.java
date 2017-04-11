@@ -58,7 +58,10 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		}
 	};
 	private Button fInactiveCodeFoldingCheckBox;
-	
+	private Button fDocCommentsFoldingCheckBox;
+	private Button fNonDocCommentsFoldingCheckBox;
+	private Button fHeaderCommentsFoldingCheckBox;
+
 
 	public DefaultCFoldingPreferenceBlock() {
 		fStore= CUIPlugin.getDefault().getPreferenceStore();
@@ -74,6 +77,8 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_METHODS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STRUCTURES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_HEADERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
@@ -107,9 +112,11 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_methods, PreferenceConstants.EDITOR_FOLDING_METHODS, 0); 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_structures, PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_comments, PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 0);
-		fInactiveCodeFoldingCheckBox= addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0); 
-		
+		fDocCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_doc_comments, PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS, 20);
+		fNonDocCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_non_doc_comments, PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS, 20);
+		fHeaderCommentsFoldingCheckBox = addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 20);
+		fInactiveCodeFoldingCheckBox= addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0);
+
 		return inner;
 	}
 	
@@ -142,6 +149,13 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	protected void updateEnablement(String key) {
 		if (PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED.equals(key)) {
 			fInactiveCodeFoldingCheckBox.setEnabled(fOverlayStore.getBoolean(key));
+		}
+
+		if (PreferenceConstants.EDITOR_FOLDING_COMMENTS.equals(key)) {
+			boolean enabled = fOverlayStore.getBoolean(key);
+			fDocCommentsFoldingCheckBox.setEnabled(enabled);
+			fNonDocCommentsFoldingCheckBox.setEnabled(enabled);
+			fHeaderCommentsFoldingCheckBox.setEnabled(enabled);
 		}
 	}
 

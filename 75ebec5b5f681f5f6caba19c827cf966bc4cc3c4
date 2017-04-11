@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_4a989a81",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixForFixit.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "As an aside: the \"Contributors\" section is no longer needed. The list of contributors to a file is tracked via git.",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6aa556b5",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "This comment duplicates the comment for RegexErrorParser.processLine(). I would suggest either removing it, or amending it to mention the extra processing (checking for a fixit) done here.",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_2a827e0c",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "I don\u0027t know whether IResource.findMarkers() will return the markers in the order they were created, such that the last one will necessarily be the most recently created one. I can\u0027t find any information about order in the API documentation, and a brief look at the implementation shows they use things like hashing, suggesting there are no guarantees on the order.\n\nIt would probably be safer to have the error parser remember the last marker it created.",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_acc22979",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "Should we also catch a NumberFormatException thrown by the Integer.valueOf() calls in the Fixit constructor (called by addMarker() in the try block)?",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8aa2b2ab",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/errorparsers/FixitErrorParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "We should probably move the \"return true\" inside the \"try\" block, so that if an exception occurs the RegexErrorParser can still process the line.",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6cc1f177",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/Fixit.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "Any reason to keep the range around after construction?",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cccf65a2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "I think there is a potential issue here with the static FixitManager instance keeping markers alive longer than necessary. In particular, when a resource is closed or deleted, presumably its markers become invalid, but the FixitManager will still hold references to them (if they haven\u0027t been resolved by applying the fixit).\n\nWould it be possible to add a mechanism to clear stale markers from the FixitManager?",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8cc56d86",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-11T05:53:00Z",
+      "side": 1,
+      "message": "private",
+      "revId": "75ebec5b5f681f5f6caba19c827cf966bc4cc3c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

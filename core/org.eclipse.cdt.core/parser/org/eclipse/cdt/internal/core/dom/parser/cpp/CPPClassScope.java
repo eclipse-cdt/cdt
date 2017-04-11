@@ -162,6 +162,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 					continue;
 				ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name;
 				ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
+				if (qualifier.length == 0)
+					continue;
 				IBinding parent = qualifier[qualifier.length - 1].resolveBinding();
 				if (!(parent instanceof IType) || parent instanceof IProblemBinding)
 					continue;

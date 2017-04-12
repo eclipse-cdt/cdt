@@ -10,6 +10,7 @@
  *     ARM Ltd. - basic tooltip support
  *     Petri Tuononen - [321040] Get Library Search Paths
  *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
+ *     cartu38 opendev (STMicroelectronics) - [514385] Custom defaultValue-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator;
+import org.eclipse.cdt.managedbuilder.core.IOptionDefaultValueGenerator;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -79,6 +81,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private Map<String, String> namesMap;
 	private Object value;
 	private Object defaultValue;
+	private IConfigurationElement defaultValueGeneratorElement;
+	private IOptionDefaultValueGenerator defaultValueGenerator;
 	private Integer valueType;
 	private Boolean isAbstract;
 	private Integer resourceFilter;
@@ -303,6 +307,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		category = option.category;
 
+		defaultValueGeneratorElement = option.defaultValueGeneratorElement;
+		defaultValueGenerator = option.defaultValueGenerator;
+
 		commandGeneratorElement = option.commandGeneratorElement;
 		commandGenerator = option.commandGenerator;
 
@@ -364,6 +371,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 		if (isAbs != null){
 			isAbstract = Boolean.parseBoolean(isAbs);
+		}
+
+		// Get the defaultValue-generator, if any
+		String defaultValueGeneratorStr = element.getAttribute(DEFAULTVALUE_GENERATOR);
+		if (defaultValueGeneratorStr != null && element instanceof DefaultManagedConfigElement) {
+			defaultValueGeneratorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
 		}
 
 		// Get the command defined for the option
@@ -1226,6 +1239,26 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 		return category;
+	}
+
+	@Override
+	public IOptionDefaultValueGenerator getDefaultValueGenerator() {
+		if (defaultValueGenerator == null) {
+			if (defaultValueGeneratorElement != null) {
+				try {
+					if (defaultValueGeneratorElement.getAttribute(DEFAULTVALUE_GENERATOR) != null) {
+						defaultValueGenerator = (IOptionDefaultValueGenerator) defaultValueGeneratorElement
+								.createExecutableExtension(DEFAULTVALUE_GENERATOR);
+					}
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+			} else if (superClass != null) {
+				defaultValueGenerator = superClass.getDefaultValueGenerator();
+			}
+		}
+
+		return defaultValueGenerator;
 	}
 
 	@Override

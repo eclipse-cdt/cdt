@@ -11,6 +11,7 @@
  *     James Blackburn (Broadcom Corp.)
  *     Petri Tuononen - [321040] Get Library Search Paths
  *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
+ *     cartu38 opendev (STMicroelectronics) - [514385] Custom defaultValue-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -107,6 +108,10 @@ public interface IOption extends IBuildObject {
 	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
 	public static final String CONTEXT_ID = "contextId"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
+	/**
+	 * @since 8.5
+	 */
+	public static final String DEFAULTVALUE_GENERATOR = "defaultValueGenerator"; //$NON-NLS-1$
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
 	/**
 	 * @since 8.1
@@ -481,6 +486,12 @@ public interface IOption extends IBuildObject {
 	 *          The type of Object is specific to the option type.
 	 */
 	public Object getDefaultValue();
+
+	/**
+	 * @return an instance of the class that overrides the default defaultValue generation for the option
+	 * @since 8.5
+	 */
+	public IOptionDefaultValueGenerator getDefaultValueGenerator();
 
 	/**
 	 * @return the type for the value of the option.

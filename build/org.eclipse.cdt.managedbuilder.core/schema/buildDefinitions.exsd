@@ -1363,6 +1363,16 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="defaultValueGenerator" type="string">
+            <annotation>
+               <documentation>
+                  Optional class which can be used to override the default value for an option. This class must implement the IOptionDefaultValueGenerator interface.  If no generator is specified then the &apos;defaultValue&apos; attribute is used to generate the option&apos;s default value.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.IOptionDefaultValueGenerator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="command" type="string">
             <annotation>
                <documentation>

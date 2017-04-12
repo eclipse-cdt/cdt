@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     cartu38 opendev (STMicroelectronics) - [514385] Build setting validity support
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -61,6 +62,14 @@ public interface ICPropertyTab {
 	 */
 	public boolean canBeVisible();
 	
+	/**
+	 * Returns true (by default) if page's contents is correct. Returns false if
+	 * not.
+	 * 
+	 * @since 6.3
+	 */
+	public boolean isValid();
+
 	//*********************************
 	// TODO: in next version, add :
 	//*********************************

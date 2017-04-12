@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     James Blackburn (Broadcom Corp.)
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
+ *     cartu38 opendev (STMicroelectronics) - [514385] Build setting validity support
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -803,5 +804,18 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected boolean isIndexerAffected() {
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.ui.newui.ICPropertyTab#isValid()
+	 */
+	/**
+	 * @since 6.3
+	 */
+	@Override
+	public boolean isValid() {
+		return true;
 	}
 }

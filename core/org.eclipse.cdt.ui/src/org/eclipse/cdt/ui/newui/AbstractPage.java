@@ -12,6 +12,7 @@
  *     QNX Software Systems - [271628] NPE in configs for project that failed to convert
  *     James Blackburn (Broadcom Corp.)
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
+ *     cartu38 opendev (STMicroelectronics) - [514385] Build setting validity support
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -188,7 +189,10 @@ implements
 		String text;
 		String tip;
 		Image image;
-		ICPropertyTab tab;
+		/**
+		 * @since 6.3
+		 */
+		public ICPropertyTab tab;
 
 		InternalTab(Composite _comp, String _text, Image _image, ICPropertyTab _tab, String _tip) {
 			comp  = _comp;

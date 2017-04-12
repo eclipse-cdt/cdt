@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     cartu38 opendev (STMicroelectronics) - [514385] Build setting validity support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -23,4 +24,31 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 public class Page_BuildSettings extends AbstractPage {
 	@Override
 	protected boolean isSingle() {	return false; }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.ui.newui.AbstractPage#isValid()
+	 */
+
+	@Override
+	public boolean isValid() {
+		for (InternalTab itab : itabs) {
+			if (!itab.tab.isValid()) {
+				return false;
+			}
+		}
+		return super.isValid();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.ui.newui.AbstractPage#performDefaults()
+	 */
+	@Override
+	public void performDefaults() {
+		super.performDefaults();
+		updateApplyButton();
+	}
 }

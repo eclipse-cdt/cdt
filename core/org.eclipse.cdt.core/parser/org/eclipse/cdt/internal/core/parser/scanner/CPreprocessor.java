@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -331,9 +332,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fFileContentProvider.resetForTranslationUnit();
     }
     
+    private static Pattern fInvalidMacroPattern = Pattern.compile("[^a-zA-Z_]"); //$NON-NLS-1$
 	private char[] detectIncludeGuard(String filePath, AbstractCharArray source, ScannerContext ctx) {
 		if (!fFileContentProvider.shouldIndexAllHeaderVersions(filePath)) {
-			final char[] guard = IncludeGuardDetection.detectIncludeGuard(source, fLexOptions, fPPKeywords);
+			char[] guard = IncludeGuardDetection.detectIncludeGuard(source, fLexOptions, fPPKeywords);
+			if (guard == null && true) {
+				//Bug 515214: In case no include guard was found in a file, generate a fake
+				//include guard based on the filename in order to improve performance for
+				//headers included in LOTS of different contexts.
+				//TODO This is a proof-of-concept only. This code should be turned on only
+				//conditionally, with a UI preference or System Property. See also Bug 515214.
+				String fakeGuard = "_FAKE_GUARD_"+fInvalidMacroPattern.matcher(filePath).replaceAll("_"); //$NON-NLS-1$ //$NON-NLS-2$
+				guard = fakeGuard.toCharArray();
+			}
 			if (guard != null) {
 				IFileNomination nom= fLocationMap.reportPragmaOnceSemantics(ctx.getLocationCtx());
 				fFileContentProvider.reportPragmaOnceSemantics(filePath, nom);

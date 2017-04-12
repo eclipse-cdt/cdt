@@ -311,8 +311,9 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		for (int i= 0; i < data.fSelectedFiles.length; i++) {
 			final FileInAST fileInAST= data.fSelectedFiles[i];
 			if (fileInAST != null) {
+				long startTime = System.currentTimeMillis();
 				if (fShowActivity) {
-					trace("Indexer: adding " + fileInAST.fileContentKey.getLocation().getURI());  //$NON-NLS-1$
+					trace(startTime + "; Indexer: adding ;" + fileInAST.fileContentKey.getLocation().getURI());  //$NON-NLS-1$
 				}
 				Throwable th= null;
 				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false, progress.split(1));

@@ -148,14 +148,16 @@ public class PDOMIndexerJob extends Job {
 						String name= null;
 						long time= 0;
 						if (fShowActivity) {
+							long startTime = System.currentTimeMillis();
 							name= getClassName(currentTask);
-							time= -System.currentTimeMillis();
-							System.out.println("Indexer: start " + name); //$NON-NLS-1$
+							time= -startTime;
+							System.out.println(startTime + "; Indexer: start ;" + name); //$NON-NLS-1$
 						}
 						currentTask.run(npm);
 						if (fShowActivity) {
-							time += System.currentTimeMillis();
-							System.out.println("Indexer: completed " + name + "[" + time + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							long doneTime = System.currentTimeMillis();
+							time += doneTime;
+							System.out.println(doneTime + "; Indexer: completed ;" + name + "; " + time + "; msec"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();

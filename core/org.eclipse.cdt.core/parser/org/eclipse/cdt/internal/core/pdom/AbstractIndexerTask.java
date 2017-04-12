@@ -1080,18 +1080,23 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		IPath path= getLabel(ifl);
 		Throwable th= null;
 		try {
+			long start= System.currentTimeMillis();
 			if (fShowActivity) {
-				trace("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
+				trace(start + "; Indexer: parsing ;" + path.toOSString()); //$NON-NLS-1$
 			}
 			progress.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));
 			FileContent codeReader= fResolver.getCodeReader(tu);
 
-			long start= System.currentTimeMillis();
 			ASTTypeUtil.startTranslationUnit();
 			IASTTranslationUnit ast=
 					createAST(lang, codeReader, scanInfo, fASTOptions, ctx, progress.split(10));
-			fStatistics.fParsingTime += System.currentTimeMillis() - start;
+			long curTime = System.currentTimeMillis();
+			long timeNeeded = curTime - start;
+			if (fShowActivity) {
+				trace(curTime + "; Indexer: parsed ;" + path.toOSString() + "; " + timeNeeded + "; msec"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			fStatistics.fParsingTime += timeNeeded;
 			if (ast == null) {
 				++fStatistics.fTooManyTokensCount;
 			} else {

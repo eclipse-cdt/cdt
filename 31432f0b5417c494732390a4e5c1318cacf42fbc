@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_8b570a51",
+        "filename": "build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/internal/core/makefile/gnu/GNUMakefileChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-13T22:04:27Z",
+      "side": 1,
+      "message": "May be worth introducing a utility method that both calls IWorkspace.deleteMarkers() and FixitManager.deleteMarkers()?",
+      "revId": "31432f0b5417c494732390a4e5c1318cacf42fbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_eb66be47",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-13T22:04:27Z",
+      "side": 1,
+      "message": "removeMarker, deleteMarkers: let\u0027s use the same word for both",
+      "revId": "31432f0b5417c494732390a4e5c1318cacf42fbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -18,6 +18,7 @@
 	<properties>
 		<extra.vmargs.indexer.timeout></extra.vmargs.indexer.timeout>
 		<extra.vmargs.displayhelper.timeoutmultipler></extra.vmargs.displayhelper.timeoutmultipler>
+		<skipTests>${cdt-ui.skip.tests}</skipTests>
 	</properties>
 
 	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->

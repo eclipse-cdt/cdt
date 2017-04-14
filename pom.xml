@@ -29,6 +29,15 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.5</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
+
+		<!-- By default cdt-other.skip.tests will be false as none of
+		     the skip-tests profiles will be activated. When one is
+		     activated, this allows us to skip all other cdt tests not
+		     explicitly skipped further down the pom hierarchy.
+		     Recall that the command line will take precedence, so
+		     -DskipTests will override anything else as normal maven
+		     users expect. -->
+		<skipTests>${cdt-other.skip.tests}</skipTests>
 	</properties>
 
 	<licenses>
@@ -180,6 +189,35 @@
 				</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>skip-all-tests</id>
+			<properties>
+				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>skip-tests-except-cdt-ui</id>
+			<properties>
+				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>skip-tests-except-dsf-gdb</id>
+			<properties>
+				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>skip-tests-except-cdt-other</id>
+			<properties>
+				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+			</properties>
 		</profile>
 		<profile>
 			<id>production</id>

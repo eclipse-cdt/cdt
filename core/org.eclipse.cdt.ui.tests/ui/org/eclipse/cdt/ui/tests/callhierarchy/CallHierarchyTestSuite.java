@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,25 +7,23 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class CallHierarchyTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    BasicCallHierarchyTest.class,
+    BasicCppCallHierarchyTest.class,
+    InitializersInCallHierarchyTest.class,
+    CppCallHierarchyTest.class,
+    CallHierarchyAcrossProjectsTest.class,
+    CallHierarchyBugs.class,
+})
+public class CallHierarchyTestSuite {
 
-    public static TestSuite suite() {
-        return new CallHierarchyTestSuite();
-    }
-    
-    public CallHierarchyTestSuite() {
-        super(CallHierarchyTestSuite.class.getName());
-        addTest(BasicCallHierarchyTest.suite());
-        addTest(BasicCppCallHierarchyTest.suite());
-        addTest(InitializersInCallHierarchyTest.suite());
-        addTest(CppCallHierarchyTest.suite());
-        addTest(CallHierarchyAcrossProjectsTest.suite());
-        addTest(CallHierarchyBugs.suite());
-    }
 }

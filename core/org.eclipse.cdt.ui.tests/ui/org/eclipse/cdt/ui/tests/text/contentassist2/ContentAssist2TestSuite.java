@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Siemens AG and others.
+ * Copyright (c) 2006, 2017 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,74 +10,71 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *     Mohamed Azab (Mentor Graphics) - Bug 438549. Add mechanism for parameter guessing.
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * This suite bundles all tests for the CContentAssistProcessor
  */
-public class ContentAssist2TestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
 
-	public static Test suite()  {
-		return new ContentAssist2TestSuite();
-	}
-	
-	public ContentAssist2TestSuite()  {
-		super(ContentAssist2TestSuite.class.getName());
-		
-		addTest(CompletionTest_AnonymousTypes.suite());
-		addTest(CompletionTest_ArgumentType_Prefix.suite());
-		addTest(CompletionTest_ArgumentType_Prefix2.suite());
-		addTest(CompletionTest_ClassReference_NoPrefix.suite());
-		addTest(CompletionTest_ClassReference_Prefix.suite());
-		addTest(CompletionTest_ConstructorReference.suite());
-		addTest(CompletionTest_ExceptionReference_NoPrefix.suite());
-		addTest(CompletionTest_ExceptionReference_Prefix.suite());
-		addTest(CompletionTest_FieldType_NoPrefix.suite());
-		addTest(CompletionTest_FieldType_NoPrefix2.suite());
-		addTest(CompletionTest_FieldType_Prefix.suite());
-		addTest(CompletionTest_FunctionReference_Prefix.suite());
-		addTest(CompletionTest_MacroRef_NoPrefix.suite());
-		addTest(CompletionTest_MacroRef_Prefix.suite());
-		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
-		addTest(CompletionTest_MemberReference_Arrow_NoPrefix2.suite());
-		addTest(CompletionTest_MemberReference_Arrow_NoPrefix3.suite());
-		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
-		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
-		addTest(CompletionTest_MemberReference_Dot_NoPrefix.suite());
-		addTest(CompletionTest_MemberReference_Dot_Prefix.suite());
-		addTest(CompletionTest_NamespaceRef_NoPrefix.suite());
-		addTest(CompletionTest_NamespaceRef_Prefix.suite());
-		addTest(CompletionTest_NewTypeReference_NoPrefix.suite());
-		addTest(CompletionTest_NewTypeReference_Prefix.suite());
-		addTest(CompletionTest_ScopedReference_NonCodeScope.suite());
-		addTest(CompletionTest_ScopedReference_NoPrefix.suite());
-		addTest(CompletionTest_ScopedReference_Prefix.suite());
-		addTest(CompletionTest_SingleName_Method_NoPrefix.suite());
-		addTest(CompletionTest_SingleName_Method_Prefix.suite());
-		addTest(CompletionTest_SingleName_NoPrefix.suite());
-		addTest(CompletionTest_SingleName_Prefix.suite());
-		addTest(CompletionTest_SingleName_Prefix2.suite());
-		addTest(CompletionTest_TypeDef_NoPrefix.suite());
-		addTest(CompletionTest_TypeDef_Prefix.suite());
-		addTest(CompletionTest_TypeRef_NoPrefix.suite());
-		addTest(CompletionTest_TypeRef_Prefix.suite());
-		addTest(CompletionTest_VariableType_NestedPrefix.suite());
-		addTest(CompletionTest_VariableType_NoPrefix.suite());
-		addTest(CompletionTest_VariableType_Prefix.suite());
-		
-		addTest(CompletionTests.suite());
-		addTest(HelpProposalTests.suite());
-		addTest(CompletionTests_PlainC.suite());
-		addTest(ParameterHintTests.suite());
-		addTest(CPPParameterGuessingTests.suite());
-		addTest(CParameterGuessingTests.suite());
-		
-		addTest(ShowCamelCasePreferenceTest.suite());
-		
-		addTest(TemplateProposalTest.suite());
-	}
+	CompletionTest_AnonymousTypes.class,
+	CompletionTest_ArgumentType_Prefix.class,
+	CompletionTest_ArgumentType_Prefix2.class,
+	CompletionTest_ClassReference_NoPrefix.class,
+	CompletionTest_ClassReference_Prefix.class,
+	CompletionTest_ConstructorReference.class,
+	CompletionTest_ExceptionReference_NoPrefix.class,
+	CompletionTest_ExceptionReference_Prefix.class,
+	CompletionTest_FieldType_NoPrefix.class,
+	CompletionTest_FieldType_NoPrefix2.class,
+	CompletionTest_FieldType_Prefix.class,
+	CompletionTest_FunctionReference_Prefix.class,
+	CompletionTest_MacroRef_NoPrefix.class,
+	CompletionTest_MacroRef_Prefix.class,
+	CompletionTest_MemberReference_Arrow_NoPrefix.class,
+	CompletionTest_MemberReference_Arrow_NoPrefix2.class,
+	CompletionTest_MemberReference_Arrow_NoPrefix3.class,
+	CompletionTest_MemberReference_Arrow_Prefix.class,
+	CompletionTest_MemberReference_Arrow_Prefix2.class,
+	CompletionTest_MemberReference_Dot_NoPrefix.class,
+	CompletionTest_MemberReference_Dot_Prefix.class,
+	CompletionTest_NamespaceRef_NoPrefix.class,
+	CompletionTest_NamespaceRef_Prefix.class,
+	CompletionTest_NewTypeReference_NoPrefix.class,
+	CompletionTest_NewTypeReference_Prefix.class,
+	CompletionTest_ScopedReference_NonCodeScope.class,
+	CompletionTest_ScopedReference_NoPrefix.class,
+	CompletionTest_ScopedReference_Prefix.class,
+	CompletionTest_SingleName_Method_NoPrefix.class,
+	CompletionTest_SingleName_Method_Prefix.class,
+	CompletionTest_SingleName_NoPrefix.class,
+	CompletionTest_SingleName_Prefix.class,
+	CompletionTest_SingleName_Prefix2.class,
+	CompletionTest_TypeDef_NoPrefix.class,
+	CompletionTest_TypeDef_Prefix.class,
+	CompletionTest_TypeRef_NoPrefix.class,
+	CompletionTest_TypeRef_Prefix.class,
+	CompletionTest_VariableType_NestedPrefix.class,
+	CompletionTest_VariableType_NoPrefix.class,
+	CompletionTest_VariableType_Prefix.class,
+
+	CompletionTests.class,
+	HelpProposalTests.class,
+	CompletionTests_PlainC.class,
+	ParameterHintTests.class,
+	CPPParameterGuessingTests.class,
+	CParameterGuessingTests.class,
+
+	ShowCamelCasePreferenceTest.class,
+
+	TemplateProposalTest.class,
+
+})
+public class ContentAssist2TestSuite {
 }

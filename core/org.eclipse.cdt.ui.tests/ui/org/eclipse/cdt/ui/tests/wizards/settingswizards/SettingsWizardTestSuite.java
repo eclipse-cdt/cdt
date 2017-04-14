@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.wizards.settingswizards;
 
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class SettingsWizardTestSuite extends TestSuite {
-
-    public static TestSuite suite() {
-        return new SettingsWizardTestSuite();
-    }
-    
-    public SettingsWizardTestSuite() {
-        super(SettingsWizardTestSuite.class.getName());
-        addTestSuite(SettingsImportExportTest.class);
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	SettingsImportExportTest.class
+})
+public class SettingsWizardTestSuite {
 }

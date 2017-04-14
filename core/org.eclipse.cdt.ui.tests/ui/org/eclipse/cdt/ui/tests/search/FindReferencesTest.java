@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2016 Nathan Ridge.
+ * Copyright (c) 2016, 2017 Nathan Ridge and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Nathan Ridge - initial implementation
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
@@ -44,9 +48,11 @@ public class FindReferencesTest extends SearchTestBase {
 		public static TestSuite suite() { return suite(ReferencedProject.class); }
 	}
 	
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ReferencedProject.suite());
+	public static TestSuite suite() {
+		TestSuite suite = new TestSuite();
+		suite.addTestSuite(SingleProject.class);
+		suite.addTestSuite(ReferencedProject.class);
+		return suite;
 	}
 	
 	public FindReferencesTest() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Stefan Ghiaus.
+ * Copyright (c) 2011, 2017 Stefan Ghiaus and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,17 @@
  *
  * Contributors:
  *     Stefan Ghiaus - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.wizards.classwizard;
 
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class ClassWizardTestSuite extends TestSuite {
-	
-	public static TestSuite suite() {
-        return new ClassWizardTestSuite();
-    }
-	
-	public ClassWizardTestSuite() {
-		super(ClassWizardTestSuite.class.getName());
-		addTestSuite(ClassWizardNameTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ClassWizardNameTest.class,
+
+})
+public class ClassWizardTestSuite {
 }

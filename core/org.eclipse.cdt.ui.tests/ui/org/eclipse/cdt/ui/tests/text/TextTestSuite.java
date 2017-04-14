@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,75 +9,72 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Sergey Prigogin (Google)
+ *    Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 
-public class TextTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
 
-    public static TestSuite suite() {
-        return new TextTestSuite();
-    }
+    // documentation tool extension tests
+    DocCommentTestSuite.class,
     
-    public TextTestSuite() {
-        super(TextTestSuite.class.getName());
+    // partitioning tests
+	PartitionTokenScannerTest.class,
+	CPartitionerTest.class,
+	AsmPartitionerTest.class,
 
-        // documentation tool extension tests
-        addTest(DocCommentTestSuite.suite());
-        
-        // partitioning tests
-		addTest(PartitionTokenScannerTest.suite());
-		addTest(CPartitionerTest.suite());
-		addTest(AsmPartitionerTest.suite());
+    // smart edit tests
+	CAutoIndentTest.class,
+	CHeuristicScannerTest.class,
+	BracketInserterTest.class,
+	IndentActionTest.class,
+	FormatActionTest.class,
+	ShiftActionTest.class,
+	CodeFormatterTest.class,
+	CIndenterTest.class,
+	TemplateFormatterTest.class,
+	
+	// Break iterator tests.
+	CBreakIteratorTest.class,
+	CWordIteratorTest.class,
 
-        // smart edit tests
-		addTest(CAutoIndentTest.suite());
-		addTest(CHeuristicScannerTest.suite());
-		addTest(BracketInserterTest.suite());
-		addTest(IndentActionTest.suite());
-		addTest(FormatActionTest.suite());
-		addTest(ShiftActionTest.suite());
-		addTest(CodeFormatterTest.suite());
-		addTest(CIndenterTest.suite());
-		addTest(TemplateFormatterTest.suite());
-		
-		// Break iterator tests.
-		addTest(CBreakIteratorTest.suite());
-		addTest(CWordIteratorTest.suite());
+	// highlighting tests
+	SemanticHighlightingTest.class,
+	InactiveCodeHighlightingTest.class,
+	CHeaderRuleTest.class,
+	NumberRuleTest.class,
+	PairMatcherTest.class,
+	MarkOccurrenceTest.class,
 
-		// highlighting tests
-		addTest(SemanticHighlightingTest.suite());
-		addTest(InactiveCodeHighlightingTest.suite());
-		addTest(CHeaderRuleTest.suite());
-		addTest(NumberRuleTest.suite());
-		addTest(PairMatcherTest.suite());
-		addTest(MarkOccurrenceTest.suite());
+	// folding tests
+	FoldingTest.class,
 
-		// folding tests
-		addTest(FoldingTest.suite());
-		
-		// basic editing tests
-		addTest(BasicCEditorTest.suite());
-		
-		// editor hyperlink tests
-		addTest(HyperlinkTest.suite());
+	// basic editing tests
+	BasicCEditorTest.class,
+	
+	// editor hyperlink tests
+	HyperlinkTest.class,
 
-		// word detection
-		addTest(CWordFinderTest.suite());
-		
-		// compare tests
-		addTest(CStructureCreatorTest.suite());
-		
-		// source manipulation tests
-		addTest(AddBlockCommentTest.suite());
-		addTest(RemoveBlockCommentTest.suite());
-		addTest(SortLinesTest.suite());
+	// word detection
+	CWordFinderTest.class,
+	
+	// compare tests
+	CStructureCreatorTest.class,
+	
+	// source manipulation tests
+	AddBlockCommentTest.class,
+	RemoveBlockCommentTest.class,
+	SortLinesTest.class,
 
-		// add include
-		addTest(AddIncludeTest.suite());
-    }
+	// add include
+	AddIncludeTest.class,
+})
+public class TextTestSuite {
 }

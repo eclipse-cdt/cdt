@@ -10,8 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.editor;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,10 +28,7 @@ import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
  * Tests for org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder.
  */
 public class SourceHeaderPartnerFinderTest extends BaseUITestCase {
-	
-	public static TestSuite suite() {
-		return suite(SourceHeaderPartnerFinderTest.class);
-	}
+
 
 	protected static IProgressMonitor NPM= new NullProgressMonitor();
 

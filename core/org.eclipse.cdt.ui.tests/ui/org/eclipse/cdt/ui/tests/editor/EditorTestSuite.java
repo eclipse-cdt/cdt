@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Nathan Ridge.
+ * Copyright (c) 2015, 2017 Nathan Ridge and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,20 @@
  *
  * Contributors:
  *     Nathan Ridge - initial implementation
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.editor;
 
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Tests for functionality in the package org.eclipse.cdt.internal.ui.editor. 
  */
-public class EditorTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	SourceHeaderPartnerFinderTest.class,
 
-    public static TestSuite suite() {
-        return new EditorTestSuite();
-    }
-    
-    public EditorTestSuite() {
-        super(EditorTestSuite.class.getName());
-		addTest(SourceHeaderPartnerFinderTest.suite());
-    }
+})
+public class EditorTestSuite {
 }

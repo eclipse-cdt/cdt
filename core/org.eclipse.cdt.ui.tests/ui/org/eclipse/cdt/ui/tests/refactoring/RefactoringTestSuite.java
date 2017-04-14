@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,11 +10,12 @@
  *     Institute for Software - initial API and implementation
  *     Tom Ball (Google)
  *     Sergey Prigogin (Google)
+ *     Jonah Graham (Kichwa Coders) - converted to new style suite (Bug 515178)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 import org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
@@ -30,20 +31,19 @@ import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 /**
  * @author Emanuel Graf
  */
-public class RefactoringTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	UtilTestSuite.class,
+	RenameRegressionTests.class,
+	ExtractFunctionRefactoringTest.class,
+	ExtractConstantRefactoringTest.class,
+	HideMethodRefactoringTest.class,
+	GenerateGettersAndSettersTest.class,
+	ImplementMethodRefactoringTest.class,
+	ExtractLocalVariableRefactoringTest.class,
+	ToggleRefactoringTest.class,
+	IncludesTestSuite.class,
 
-	public static Test suite() throws Exception {
-		TestSuite suite = new RefactoringTestSuite();
-		suite.addTest(UtilTestSuite.suite());
-		suite.addTest(RenameRegressionTests.suite());
-		suite.addTest(ExtractFunctionRefactoringTest.suite());
-		suite.addTest(ExtractConstantRefactoringTest.suite());
-		suite.addTest(HideMethodRefactoringTest.suite());
-		suite.addTest(GenerateGettersAndSettersTest.suite());
-		suite.addTest(ImplementMethodRefactoringTest.suite());
-		suite.addTest(ExtractLocalVariableRefactoringTest.suite());
-		suite.addTest(ToggleRefactoringTest.suite());
-		suite.addTest(IncludesTestSuite.suite());
-		return suite;
-	}
+})
+public class RefactoringTestSuite {
 }

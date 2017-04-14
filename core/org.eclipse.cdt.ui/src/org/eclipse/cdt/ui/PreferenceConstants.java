@@ -886,6 +886,26 @@ public class PreferenceConstants {
 	public static final String EDITOR_FOLDING_COMMENTS= "editor_folding_default_comments"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that stores the value for document comment folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 6.2
+	 */
+	public static final String EDITOR_FOLDING_DOC_COMMENTS= "editor_folding_default_doc_comments"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for non-document comment folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 6.2
+	 */
+	public static final String EDITOR_FOLDING_NON_DOC_COMMENTS= "editor_folding_default_non_doc_comments"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that stores the value for header comment folding for the default folding provider.
 	 * <p>
 	 * Value is of type {@code Boolean}.
@@ -2211,6 +2231,8 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_FOLDING_METHODS, false);
 		store.setDefault(EDITOR_FOLDING_MACROS, false);
 		store.setDefault(EDITOR_FOLDING_COMMENTS, false);
+		store.setDefault(EDITOR_FOLDING_DOC_COMMENTS, false);
+		store.setDefault(EDITOR_FOLDING_NON_DOC_COMMENTS, false);
 		store.setDefault(EDITOR_FOLDING_HEADERS, true);
 		store.setDefault(EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setDefault(EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);

@@ -443,12 +443,30 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 
 		/**
+		 * Returns <code>true</code> if documentation comments should be collapsed.
+		 *
+		 * @return <code>true</code> if documentation comments should be collapsed
+		 */
+		public boolean collapseDocComments() {
+			return collapseComments() && fCollapseDocComments;
+		}
+
+		/**
+		 * Returns <code>true</code> if non-documentation comments should be collapsed.
+		 *
+		 * @return <code>true</code> if non-documentation comments should be collapsed
+		 */
+		public boolean collapseNonDocComments() {
+			return collapseComments() && fCollapseNonDocComments;
+		}
+
+		/**
 		 * Returns <code>true</code> if header comments should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if header comments should be collapsed
 		 */
 		public boolean collapseHeaderComments() {
-			return fAllowCollapsing && fCollapseHeaderComments;
+			return collapseComments() && fCollapseHeaderComments;
 		}
 
 		/**
@@ -867,6 +885,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	
 	private boolean fCollapseHeaderComments= true;
 	private boolean fCollapseComments= false;
+	private boolean fCollapseDocComments= false;
+	private boolean fCollapseNonDocComments= false;
 	private boolean fCollapseMacros= false;
 	private boolean fCollapseFunctions= true;
 	private boolean fCollapseStructures= true;
@@ -1035,8 +1055,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		fCollapseStructures= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_STRUCTURES);
 		fCollapseMacros= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_MACROS);
 		fCollapseMethods= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_METHODS);
-		fCollapseHeaderComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_HEADERS);
 		fCollapseComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_COMMENTS);
+		fCollapseDocComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_DOC_COMMENTS);
+		fCollapseNonDocComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_NON_DOC_COMMENTS);
+		fCollapseHeaderComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_HEADERS);
 		fCollapseInactiveCode= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		fPreprocessorBranchFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
 		fStatementsFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_STATEMENTS);
@@ -1506,14 +1528,21 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * @throws BadLocationException 
 	 */
 	private void computeFoldingStructure(ITypedRegion[] partitions, FoldingStructureComputationContext ctx) throws BadLocationException {
-		boolean collapse = ctx.collapseComments();
+		boolean collapseDoc = ctx.collapseDocComments();
+		boolean collapseNonDoc = ctx.collapseNonDocComments();
 		IDocument doc= ctx.getDocument();
 		int startLine = -1;
 		int endLine = -1;
+		boolean startLineIsDocComment = false;
 		List<Tuple> comments= new ArrayList<Tuple>();
 		ModifiableRegion commentRange = new ModifiableRegion();
 		for (ITypedRegion partition : partitions) {
 			boolean singleLine= false;
+			boolean collapse = collapseNonDoc;
+			if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())
+				|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(partition.getType())) {
+				collapse = collapseDoc;
+			}
 			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())
 				|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())) {
 				Position position= createCommentPosition(alignRegion(partition, ctx, true));
@@ -1521,7 +1550,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
 						Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 						if (projection != null) {
-							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
+							boolean collapseLast = startLineIsDocComment ? collapseDoc : collapseNonDoc;
+							comments.add(new Tuple(new CProjectionAnnotation(collapseLast, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 						}
 						startLine= -1;
 					}
@@ -1547,11 +1577,14 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
 						Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 						if (projection != null) {
-							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
+							boolean collapseLast = startLineIsDocComment ? collapseDoc : collapseNonDoc;
+							comments.add(new Tuple(new CProjectionAnnotation(collapseLast, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 						}
 					}
 					startLine = lineNr;
 					endLine = lineNr;
+					startLineIsDocComment = ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())
+							|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(partition.getType());
 					commentRange.offset = lineRegion.getOffset();
 					commentRange.length = lineRegion.getLength();
 				} else {
@@ -1564,7 +1597,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
 			Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));
 			if (projection != null) {
-				comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
+				boolean collapseLast = startLineIsDocComment ? collapseDoc : collapseNonDoc;
+				comments.add(new Tuple(new CProjectionAnnotation(collapseLast, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 			}
 		}
 		if (!comments.isEmpty()) {

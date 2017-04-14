@@ -55,6 +55,7 @@ import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 
 	// folding tests
 	FoldingTest.class,
+	FoldingCommentsTest.class,
 
 	// basic editing tests
 	BasicCEditorTest.class,

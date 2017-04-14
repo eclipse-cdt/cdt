@@ -27,6 +27,8 @@ public final class FoldingMessages extends NLS {
 	public static String DefaultCFoldingPreferenceBlock_methods;
 	public static String DefaultCFoldingPreferenceBlock_structures;
 	public static String DefaultCFoldingPreferenceBlock_comments;
+	public static String DefaultCFoldingPreferenceBlock_doc_comments;
+	public static String DefaultCFoldingPreferenceBlock_non_doc_comments;
 	public static String DefaultCFoldingPreferenceBlock_headers;
 	public static String DefaultCFoldingPreferenceBlock_inactive_code;
 	public static String DefaultCFoldingPreferenceBlock_preprocessor_enabled;

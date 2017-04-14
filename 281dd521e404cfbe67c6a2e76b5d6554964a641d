@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_861aa1f8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/IOptionDefaultValueGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T11:29:38Z",
+      "side": 1,
+      "message": "should be @since 8.5",
+      "revId": "281dd521e404cfbe67c6a2e76b5d6554964a641d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

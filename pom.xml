@@ -15,6 +15,7 @@
 	<name>CDT Parent</name>
 
 	<properties>
+		<skipTests>true</skipTests>
 		<required-maven-version>3.3</required-maven-version>
 		<tycho-version>1.0.0</tycho-version>
 		<tycho-extras-version>1.0.0</tycho-extras-version>

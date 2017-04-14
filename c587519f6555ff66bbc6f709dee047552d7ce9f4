@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_e630b573",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "As the version has already been incremented in this release cycle, we don\u0027t need to increment it again. Last CDT release (9.2.2) had org.eclipse.cdt.managedbuilder.ui 9.0.0 in it.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_0636916d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/Page_BuildSettings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "No new non-Javadoc comments please :-) I know they are all over the code, but it would be best to remove them instead.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_665ae57c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/Page_BuildSettings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "It seems to me this should be in AbstractPage?\n\nThat would negate my comment on adding a getter on InternalTab.tab field.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_e602757f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/Page_BuildSettings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "AFAICT org.eclipse.cdt.ui.newui.AbstractPage.performDefaults() should be calling super.performDefaults() which calls updateApplyButton(). Have you considered adding super.performDefaults() to AbstractPage.performDefaults()?",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6644a5d0",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "Likewise this version does not need to be incremented.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_c67ad9db",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractCPropertyTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "Please remove this, see comment in interface for details.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_06e13146",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "Please add public getter instead of public field. As this is new API, unless there is a reason I would prefer not to expose fields.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_268aad6f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/ICPropertyTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-14T12:39:22Z",
+      "side": 1,
+      "message": "This new API would normally require a new interface (e.g. ICPropertyTab2) or a major version bump as existing implementers of this interface would be broken. However we are allowed to add new methods to interfaces if a Java 8 default is provided. Therefore please remove the method implemented in AbstractCPropertyTab and add a default in the interface here, e.g.: \n\n\tdefault public boolean isValid() {\n\t\treturn true;\n\t}\n\nNote, you need an Eclipse install with https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d501745 fixed to not have an API error for the above. Let me know if you have trouble with that. That bug has been fixed in Oxygen (Eclipse 4.7), but if you are using Neon you can\u0027t use it.",
+      "revId": "c587519f6555ff66bbc6f709dee047552d7ce9f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

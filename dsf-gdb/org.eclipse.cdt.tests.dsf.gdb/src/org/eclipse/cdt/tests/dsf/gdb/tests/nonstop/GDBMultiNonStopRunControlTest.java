@@ -754,13 +754,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected not to find all threads suspended, but did", result);
 
-		// Make sure no other running event arrives
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500));
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -848,12 +842,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -900,12 +889,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1102,12 +1086,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected that not all threads are suspended, but they are", result);
 
-		try {
-			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other stopped event arrives
-			fail("Got an unexpected stopped event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitor);
 	}
 
 	/**
@@ -2783,12 +2762,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -2835,12 +2809,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -3132,14 +3101,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no contexts to be suspended, but found some", result);
 
-		try {
-			// TODO: This Test is failing when using TestsPlugin.massageTimeout, 
-			// Investigate if the failure with massageTimeout is justified
-			eventWaitor.waitForEvent(500); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitor);
 	}
 
 	/**
@@ -3180,14 +3142,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no contexts to be suspended, but found some", result);
 
-		try {
-			// TODO: This Test is failing when using TestsPlugin.massageTimeout, 
-			// Investigate if the failure with massageTimeout is justified
-			eventWaitor.waitForEvent(500); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitor);
 	}
 
 	/**
@@ -3231,12 +3186,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -3284,12 +3234,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -3337,12 +3282,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -3390,11 +3330,26 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 
+		assertNoEventsArrive(eventWaitorRunning);
+	}
+
+	/**
+	 * Asserts that after a reasonable amount of time that no unexpected events
+	 * are received.
+	 */
+	private void assertNoEventsArrive(final ServiceEventWaitor<?> eventWaitor) {
 		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
+			/*
+			 * Don't massage this timeout, we are waiting to make sure events
+			 * don't arrive. If we massage timeout we end up waiting much longer
+			 * than test expected or makes any sense. See
+			 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=515307#c5 for
+			 * history as to why this timeout is not massaged.
+			 */
+			eventWaitor.waitForEvent(500);
 			fail("Got an unexpected running event");
 		} catch (Exception e) {
-			// Timeout expected.  Success.
+			// Timeout expected. Success.
 		}
 	}
 
@@ -3760,12 +3715,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -3813,12 +3763,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no process to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no other running event arrives
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	/**
@@ -3866,12 +3811,7 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 
-		try {
-			eventWaitorRunning.waitForEvent(TestsPlugin.massageTimeout(500)); // Make sure no running events arrive
-			fail("Got an unexpected running event");
-		} catch (Exception e) {
-			// Timeout expected.  Success.
-		}
+		assertNoEventsArrive(eventWaitorRunning);
 	}
 
 	//////////////////////////////////////////////////////////////////////

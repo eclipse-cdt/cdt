@@ -185,7 +185,9 @@ public class DestructorCallCollector {
 								IType type = SemanticUtil.getNestedType(var.getType(), TDEF | CVTYPE);
 								if (type instanceof ICPPClassType) {
 									ICPPMethod destructor = findDestructor((ICPPClassType) type, name);
-									addDestructorCall(name, destructor);
+									if (destructor != null) {
+										addDestructorCall(name, destructor);
+									}
 								} else if (type instanceof ICPPReferenceType) {
 									IASTDeclarator decl = (IASTDeclarator) name.getParent();
 									addDestructorCallForTemporaryBoundToReference(decl);

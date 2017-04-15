@@ -489,13 +489,9 @@ public class BracketInserterTest extends TestCase {
 		event.keyCode= keyCode;
 		event.stateMask= stateMask;
 		fAccessor.invoke("handleKeyDown", new Object[] {event});
-		
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return false;
-			}
-		}.waitForCondition(EditorTestHelper.getActiveDisplay(), 200);
+
+		// run event loop once until all events are handled
+		DisplayHelper.runEventLoop(EditorTestHelper.getActiveDisplay(), 0);
 	}
 
 	private int getCaret() {

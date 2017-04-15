@@ -442,8 +442,13 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 				new ServiceEventWaitor<IRegistersChangedDMEvent>(fSession, IRegistersChangedDMEvent.class);
 
 		writeRegister(registerDmc, regValue, formatId);
-		
-		return eventWaitor.waitForEvents(TestsPlugin.massageTimeout(3000));			
+
+		/*
+		 * Wait long enough to find out if too few or too many events arrive. On
+		 * my testing the expected events arrived within 10 ms, so this timeout
+		 * allows 10x that amount of time for unexpected extra events to arrive.
+		 */
+		return eventWaitor.waitForEvents(TestsPlugin.massageTimeout(100));
 	}
 	
 	

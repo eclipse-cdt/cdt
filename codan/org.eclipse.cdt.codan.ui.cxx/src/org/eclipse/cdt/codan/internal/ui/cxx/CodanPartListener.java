@@ -24,9 +24,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Enables Codan's "run as you type", "run on file save" and "run on file open" launch modes.
@@ -35,6 +38,20 @@ class CodanPartListener implements IPartListener2 {
 	private CodanCReconciler reconciler;
 	private IPostSaveListener postSaveListener;
 
+	/**
+	 * Installs CodanPartListener on the given workbench window.
+	 * Must be called from the UI thread.
+	 */
+	static void installOnWindow(IWorkbenchWindow window) {
+		final IWorkbenchPage page = window.getActivePage();
+		CodanPartListener partListener = new CodanPartListener();
+		page.addPartListener(partListener);
+		// Check current open editors.
+		for (IEditorReference ref : page.getEditorReferences()) {
+			partListener.partOpened(ref);
+		}
+	}
+	
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 	}

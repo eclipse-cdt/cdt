@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_f76a1d63",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/CodanWindowListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-04-16T19:54:35Z",
+      "side": 1,
+      "message": "A better way to implement such code is to use WorkbenchObservables.observeActiveEditor and friends in combination with ISideEffect.createResumed.",
+      "range": {
+        "startLine": 27,
+        "startChar": 13,
+        "endLine": 27,
+        "endChar": 25
+      },
+      "revId": "65e232a7af485f2f0cb8113364f28df3cbe68f36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1236,7 +1236,9 @@ public class BindingClassifier {
 		} else if (binding instanceof ICPPTemplateParameter) {
 			newBindings.add(binding);
 		} else if (binding instanceof ICPPUnknownBinding) {
-			newBindings.add(binding.getOwner());
+			IBinding owner = binding.getOwner();
+			if (owner != null)
+				newBindings.add(owner);
 		} else if (binding instanceof ICPPMethod) {
 			newBindings.add(binding);  // Include the method in case we need its inline definition.
 			if (binding instanceof ICPPConstructor)

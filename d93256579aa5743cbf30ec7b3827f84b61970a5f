@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_1e4b3180",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-17T23:37:04Z",
+      "side": 1,
+      "message": "We should probably also do: fixitResourceMap.remove(delta.getResource())",
+      "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_de50d92b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-17T23:37:04Z",
+      "side": 1,
+      "message": "We usually do CCorePlugin.log(e).",
+      "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

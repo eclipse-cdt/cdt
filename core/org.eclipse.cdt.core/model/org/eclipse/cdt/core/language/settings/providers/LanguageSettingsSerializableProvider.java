@@ -169,6 +169,10 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 				entries = fStorage.getSettingEntries(rcProjectPath, null);
 			}
 		}
+		
+		if (cfgDescription != null) {
+			entries = CommandLauncherFactoryManager.getInstance().getLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+		}
 
 		return entries;
 	}

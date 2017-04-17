@@ -1456,6 +1456,10 @@ public class LanguageSettingsProvidersSerializer {
 					return getSettingEntriesUpResourceTree(provider, cfgDescription, parentFolder, languageId);
 				}
 				// if out of parent resources - get default entries
+				entries = getSettingEntriesPooled(provider, cfgDescription, null, languageId);
+				if (entries != null) {
+					return entries;
+				}
 				entries = getSettingEntriesPooled(provider, null, null, languageId);
 				if (entries != null) {
 					return entries;

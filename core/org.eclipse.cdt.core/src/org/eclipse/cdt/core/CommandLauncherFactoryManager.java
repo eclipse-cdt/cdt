@@ -212,6 +212,17 @@ public class CommandLauncherFactoryManager {
 		}
 
 	}
+	
+	public List<ICLanguageSettingEntry> getLanguageSettingEntries(IProject project, List<ICLanguageSettingEntry> entries) {
+		List<ICLanguageSettingEntry> verifiedEntries = entries;
+		for (ICommandLauncherFactory factory : factories) {
+			ICommandLauncher launcher = factory.getCommandLauncher(project);
+			if (launcher != null) {
+				verifiedEntries = factory.verifyLanguageSettingEntries(project, entries);
+			}
+		}
+		return verifiedEntries;
+	}
 
 
 }

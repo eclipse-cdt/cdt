@@ -33,5 +33,14 @@ public interface ICommandLauncherFactory {
 	 * @param entries - List of language setting entries
 	 */
 	public void registerLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries);
+	
+	/**
+	 * Verify language setting entries for a project and change any entries that
+	 * have been copied to a local location
+	 * @param project - IProject used in obtaining language setting entries
+	 * @param entries - List of language setting entries
+	 * @return modified List of language setting entries
+	 */
+	public List<ICLanguageSettingEntry> verifyLanguageSettingEntries(IProject project, List<ICLanguageSettingEntry> entries);
 
 }

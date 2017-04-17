@@ -12,10 +12,12 @@ package org.eclipse.cdt.docker.launcher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncherFactory;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
@@ -58,7 +60,9 @@ public class ContainerCommandLauncherFactory
 
 	@Override
 	public void registerLanguageSettingEntries(IProject project,
-			List<? extends ICLanguageSettingEntry> entries) {
+			List<? extends ICLanguageSettingEntry> langEntries) {
+		@SuppressWarnings("unchecked")
+		List<ICLanguageSettingEntry> entries = (List<ICLanguageSettingEntry>) langEntries;
 		ICConfigurationDescription cfgd = CoreModel.getDefault()
 				.getProjectDescription(project).getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager
@@ -88,14 +92,14 @@ public class ContainerCommandLauncherFactory
 					List<String> paths = new ArrayList<>();
 					for (ICLanguageSettingEntry entry : entries) {
 						if (entry instanceof ICIncludePathEntry) {
-							String path = entry.getValue();
-							paths.add(path);
+							paths.add(entry.getValue());
 						}
 					}
 					if (paths.size() > 0) {
 						IPath pluginPath = Platform.getStateLocation(Platform
 								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
 						IPath hostDir = pluginPath.append(prefix);
+						@SuppressWarnings("unused")
 						int status = launcher.fetchContainerDirs(connectionName,
 								imageName,
 								paths, hostDir);
@@ -104,6 +108,71 @@ public class ContainerCommandLauncherFactory
 			}
 		}
 
+	}
+
+	@Override
+	public List<ICLanguageSettingEntry> verifyLanguageSettingEntries(
+			IProject project, List<ICLanguageSettingEntry> entries) {
+		if (entries == null) {
+			return null;
+		}
+		ICConfigurationDescription cfgd = CoreModel.getDefault()
+				.getProjectDescription(project).getActiveConfiguration();
+		IConfiguration cfg = ManagedBuildManager
+				.getConfigurationForDescription(cfgd);
+		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+		if (props != null) {
+			String enablementProperty = props.getProperty(
+					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			if (enablementProperty != null) {
+				boolean enableContainer = Boolean
+						.parseBoolean(enablementProperty);
+				if (enableContainer) {
+					String connectionName = props.getProperty(
+							ContainerCommandLauncher.CONNECTION_ID);
+					String imageName = props
+							.getProperty(ContainerCommandLauncher.IMAGE_ID);
+					if (connectionName == null || connectionName.isEmpty()
+							|| imageName == null || imageName.isEmpty()) {
+						DockerLaunchUIPlugin.logErrorMessage(
+								Messages.ContainerCommandLauncher_invalid_values);
+						return entries;
+					}
+
+					ContainerLauncher launcher = new ContainerLauncher();
+					Set<String> copiedVolumes = launcher
+							.getCopiedVolumes(connectionName, imageName);
+					List<ICLanguageSettingEntry> newEntries = new ArrayList<>();
+					IPath pluginPath = Platform.getStateLocation(
+							Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
+					String prefix = getCleanName(connectionName)
+							+ IPath.SEPARATOR + getCleanName(imageName); // $NON-NLS-1$
+					IPath hostDir = pluginPath.append(prefix);
+
+					for (ICLanguageSettingEntry entry : entries) {
+						if (entry instanceof ICIncludePathEntry) {
+							if (copiedVolumes
+									.contains(((ICIncludePathEntry) entry)
+											.getName().toString())) {
+																	// //$NON-NLS-2$
+								IPath newPath = hostDir.append(entry.getName());
+								CIncludePathEntry newEntry = new CIncludePathEntry(
+										newPath.toString(),
+										entry.getFlags());
+								newEntries.add(newEntry);
+								continue;
+							} else {
+								newEntries.add(entry);
+							}
+						} else {
+							newEntries.add(entry);
+						}
+					}
+					return newEntries;
+				}
+			}
+		}
+		return entries;
 	}
 
 	private String getCleanName(String name) {

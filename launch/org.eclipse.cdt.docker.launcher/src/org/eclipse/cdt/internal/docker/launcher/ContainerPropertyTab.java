@@ -317,20 +317,19 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	@Override
 	protected void performOK() {
-		if (enableButton.getSelection()) {
-			ICConfigurationDescription cfgd = ManagedBuildManager
-					.getDescriptionForConfiguration(iCfg);
-			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
-					.getLanguageSettingProviders();
-			for (ILanguageSettingsProvider provider : providers) {
-				if (provider instanceof GCCBuiltinSpecsDetector) {
-					GCCBuiltinSpecsDetector d = (GCCBuiltinSpecsDetector) provider;
-					// force recalculation of gcc include path
-					d.clear();
-					d.handleEvent(null);
-				}
+		ICConfigurationDescription cfgd = ManagedBuildManager
+				.getDescriptionForConfiguration(iCfg);
+		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
+				.getLanguageSettingProviders();
+		for (ILanguageSettingsProvider provider : providers) {
+			if (provider instanceof GCCBuiltinSpecsDetector) {
+				GCCBuiltinSpecsDetector d = (GCCBuiltinSpecsDetector) provider;
+				// force recalculation of gcc include path
+				d.clear();
+				d.handleEvent(null);
 			}
 		}
+
 		super.performOK();
 	}
 

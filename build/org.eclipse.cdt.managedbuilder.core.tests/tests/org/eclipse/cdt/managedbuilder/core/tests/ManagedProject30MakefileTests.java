@@ -17,6 +17,8 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
@@ -55,12 +57,18 @@ import junit.framework.TestSuite;
 public class ManagedProject30MakefileTests extends TestCase {
 	public static final String MBS_TEMP_DIR = "MBSTemp";
 
-	static boolean pathVariableCreated = false;
+	boolean pathVariableCreated = false;
 
 	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/")).getAbsolutePath());
 
 	public ManagedProject30MakefileTests(String name) {
 		super(name);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		removePathVariables();
+		super.tearDown();
 	}
 
 	public static Test suite() {
@@ -238,6 +246,13 @@ public class ManagedProject30MakefileTests extends TestCase {
 		} catch (Exception e) {fail("could not create the path variable " + name);}
 	}
 
+	private void removePathVariables() throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace = ResourcesPlugin.getWorkspace();
+		IPathVariableManager pathMan = workspace.getPathVariableManager();
+		pathMan.setValue(MBS_TEMP_DIR, null);
+	}
+
 	private void createFileLink(IProject project, IPath tmpDir, String linkName, String fileName) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String name = MBS_TEMP_DIR;
@@ -309,7 +324,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for linked files
 	 */
-	public void test30LinkedLib(){
+	public void test30LinkedLib() throws IOException{
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"),
 				 Path.fromOSString("objects.mk"),
@@ -321,8 +336,10 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("test_ar_30.h")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedLib30/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
+		IPath tmpRootDir = Path.fromOSString(
+				Files.createTempDirectory("test30LinkedLib").toAbsolutePath().toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
-		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
+		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpRootDir, tmpSubDir, linkedFiles);
 		try {
 			IProject[] projects = createProjects("linkedLib30", null, "cdt.managedbuild.target.gnu30.lib", true);
 			//  There should be only one project.  Add our linked files to it.
@@ -332,13 +349,13 @@ public class ManagedProject30MakefileTests extends TestCase {
 			createFileLink(project, tmpDir, "test_ar_30.h", "test_ar_30.h");
 			//  Build the project
 			buildProjects(projects, makefiles);
-		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
+		} finally {ManagedBuildTestHelper.deleteTempDir(tmpRootDir, tmpSubDir, linkedFiles);}
 	}
 
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for a linked folder
 	 */
-	public void test30LinkedFolder(){
+	public void test30LinkedFolder() throws IOException{
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"),
 				 Path.fromOSString("objects.mk"),
@@ -354,8 +371,10 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("Benchmarks/sources.mk")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
+		IPath tmpRootDir = Path.fromOSString(
+				Files.createTempDirectory("test30LinkedFolder").toAbsolutePath().toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
-		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
+		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpRootDir, tmpSubDir, linkedFiles);
 		if (!pathVariableCreated) {
 			createPathVariable(tmpDir);
 			pathVariableCreated = true;
@@ -365,7 +384,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 			IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.gnu30.lib", false);
 			//  Build the project
 			buildProjects(projects, makefiles);
-		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
+		} finally {ManagedBuildTestHelper.deleteTempDir(tmpRootDir, tmpSubDir, linkedFiles);}
 	}
 
 	/* (non-Javadoc)

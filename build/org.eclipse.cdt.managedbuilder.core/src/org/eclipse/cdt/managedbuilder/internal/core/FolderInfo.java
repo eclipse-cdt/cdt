@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * cartu38 opendev (STMicroelectronics) - [514385] Custom defaultValue-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1334,6 +1335,11 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IOption[] opts = holder.getOptions();
 		for (IOption opt : opts) {
 			Object val = opt.getDefaultValue();
+
+			if (opt.getDefaultValueGenerator() != null) {
+				val = opt.getDefaultValueGenerator().generateDefaultValue(opt);
+			}
+
 			if (val instanceof Boolean) {
 				ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)val);
 			} else if (val instanceof String[]) {

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_5ea84994",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-18T00:01:05Z",
+      "side": 1,
+      "message": "This will be done via removing all markers.  When the marker set is empty, we remove the resource.  See deleteMarker above.",
+      "parentUuid": "87bd33cc_1e4b3180",
+      "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_de50d92b",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2017-04-17T23:37:04Z",
       "side": 1,
       "message": "We usually do CCorePlugin.log(e).",
+      "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_7eab4590",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2017-04-18T00:01:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_de50d92b",
       "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

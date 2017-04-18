@@ -19,6 +19,8 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import junit.framework.Test;
@@ -47,7 +49,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/")).getAbsolutePath());
 	public static final String MBS_TEMP_DIR = "MBSTemp";
 
-	static boolean pathVariableCreated = false;
+	boolean pathVariableCreated = false;
 
 	public ManagedProject21MakefileTests(String name) {
 		super(name);
@@ -66,6 +68,12 @@ public class ManagedProject21MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject21MakefileTests("testLinkedFolder"));
 
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		removePathVariables();
+		super.tearDown();
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
@@ -198,6 +206,13 @@ public class ManagedProject21MakefileTests extends TestCase {
 		} catch (Exception e) {fail("could not create the path variable " + name);}
 	}
 
+	private void removePathVariables() throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace = ResourcesPlugin.getWorkspace();
+		IPathVariableManager pathMan = workspace.getPathVariableManager();
+		pathMan.setValue(MBS_TEMP_DIR, null);
+	}
+
 	private void createFileLink(IProject project, IPath tmpDir, String linkName, String fileName) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String name = MBS_TEMP_DIR;
@@ -265,7 +280,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for linked files
 	 */
-	public void testLinkedLib(){
+	public void testLinkedLib() throws IOException{
 		boolean succeeded = false;
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"),
@@ -278,8 +293,10 @@ public class ManagedProject21MakefileTests extends TestCase {
 				 Path.fromOSString("test_ar.h")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedLib/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
+		IPath tmpRootDir = Path.fromOSString(
+				Files.createTempDirectory("testLinkedLib").toAbsolutePath().toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
-		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
+		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpRootDir, tmpSubDir, linkedFiles);
 		try {
 			IProject[] projects = createProjects("linkedLib", null, "cdt.managedbuild.target.testgnu21.lib", true);
 			//  There should be only one project.  Add our linked files to it.
@@ -291,14 +308,14 @@ public class ManagedProject21MakefileTests extends TestCase {
 			succeeded = buildProjects("linkedLib", projects, makefiles);
 		} finally {
 			if (succeeded)
-				ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);
+				ManagedBuildTestHelper.deleteTempDir(tmpRootDir, tmpSubDir, linkedFiles);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for a linked folder
 	 */
-	public void testLinkedFolder(){
+	public void testLinkedFolder() throws IOException{
 		boolean succeeded = false;
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"),
@@ -316,7 +333,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
-		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
+		IPath tmpRootDir = Path.fromOSString(
+				Files.createTempDirectory("testLinkedFolder").toAbsolutePath().toString());
+		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpRootDir, tmpSubDir, linkedFiles);
 		if (!pathVariableCreated) {
 			createPathVariable(tmpDir);
 			pathVariableCreated = true;

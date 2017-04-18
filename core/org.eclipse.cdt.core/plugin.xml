@@ -536,7 +536,7 @@
           priority="high"/>
    </extension>
 
-   <!-- The reserved filenames by the C++ standard (cinttypes is G++ specific) -->
+   <!-- The reserved filenames by the C++ standard -->
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
@@ -575,7 +575,7 @@
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="condition_variable,ctgmath"/>
+       file-names="condition_variable,ctgmath,cuchar,scoped_allocator,cstdalign,shared_mutex"/>
    </extension> 
  
 <!-- =================================================================================== -->

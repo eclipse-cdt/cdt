@@ -395,7 +395,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		ICPPFunction constructor = getConstructor(null);
+		ICPPFunction constructor = getConstructor(context.getPoint());
 		if (constructor != null && constructor instanceof ICPPConstructor) {
 			return new EvalConstructor(fInputType, (ICPPConstructor) constructor, fArguments,
 					getTemplateDefinition()).computeForFunctionCall(record, context);

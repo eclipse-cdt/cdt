@@ -872,73 +872,70 @@ public class ManagedBuildTestHelper {
 		return buff;
 	}
 
-	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpSubDir, IPath[] files) {
+	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpRootDir, IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
-		String userDirStr = System.getProperty("user.home");
-		if (userDirStr != null) {
-			IPath userDir = Path.fromOSString(userDirStr);
-			tmpSrcDir = userDir.append(tmpSubDir);
-			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");
-			} else {
-				File tmpSrcDirFile = tmpSrcDir.toFile();
-				if (tmpSrcDirFile.exists()) {
-					//  Make sure that this is the expected directory before we delete it...
-					if (tmpSrcDir.lastSegment().equals(tmpSubDir.lastSegment())) {
-						deleteDirectory(tmpSrcDirFile);
-					} else {
-						Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " already exists.");
-					}
+		tmpSrcDir = tmpRootDir.append(tmpSubDir);
+		if (tmpRootDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
+			Assert.fail("Temporary sub-directory cannot be the empty string.");
+		} else {
+			File tmpSrcDirFile = tmpSrcDir.toFile();
+			if (tmpSrcDirFile.exists()) {
+				//  Make sure that this is the expected directory before we delete it...
+				if (tmpSrcDir.lastSegment().equals(tmpSubDir.lastSegment())) {
+					deleteDirectory(tmpSrcDirFile);
+				} else {
+					Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " already exists.");
 				}
-				tmpSrcDirFile.mkdir();
-				if (!tmpSrcDirFile.exists()) {
-					Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+			}
+			tmpSrcDirFile.mkdir();
+			if (!tmpSrcDirFile.exists()) {
+				Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+			}
+			for (int i=0; i<files.length; i++) {
+				IPath file = files[i];
+				IPath srcFile = srcDir.append(file);
+				FileReader srcReader = null;
+				try {
+					srcReader = new FileReader(srcFile.toFile());
+				} catch (Exception e) {
+					Assert.fail("File " + file.toString() + " could not be read.");
+					return null;
 				}
-				for (int i=0; i<files.length; i++) {
-					IPath file = files[i];
-					IPath srcFile = srcDir.append(file);
-					FileReader srcReader = null;
-					try {
-						srcReader = new FileReader(srcFile.toFile());
-					} catch (Exception e) {
-						Assert.fail("File " + file.toString() + " could not be read.");
-						return null;
-					}
-					if (file.segmentCount() > 1) {
-						IPath newDir = tmpSrcDir;
-						do {
-							IPath dir = file.uptoSegment(1);
-							newDir = newDir.append(dir);
-							file = file.removeFirstSegments(1);
-							newDir.toFile().mkdir();
-							if (!newDir.toFile().exists()) {
-								Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
-							}
-						} while (file.segmentCount() > 1);
-					}
-					IPath destFile = tmpSrcDir.append(files[i]);
-					FileWriter writer = null;
-					try {
-						writer = new FileWriter(destFile.toFile());
-					} catch (Exception e) {
-						Assert.fail("File " + files[i].toString() + " could not be written.");
-						return null;
-					}
-					try {
-						int c;
-						do {
-							c = srcReader.read();
-							if (c == -1) break;
-							writer.write(c);
-						} while (c != -1);
-						srcReader.close();
-						writer.close();
-					} catch (Exception e) {
-						Assert.fail("File " + file.toString() + " could not be copied.");
-					}
+				if (file.segmentCount() > 1) {
+					IPath newDir = tmpSrcDir;
+					do {
+						IPath dir = file.uptoSegment(1);
+						newDir = newDir.append(dir);
+						file = file.removeFirstSegments(1);
+						newDir.toFile().mkdir();
+						if (!newDir.toFile().exists()) {
+							Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+						}
+					} while (file.segmentCount() > 1);
+				}
+				IPath destFile = tmpSrcDir.append(files[i]);
+				FileWriter writer = null;
+				try {
+					writer = new FileWriter(destFile.toFile());
+				} catch (Exception e) {
+					Assert.fail("File " + files[i].toString() + " could not be written.");
+					return null;
+				}
+				try {
+					int c;
+					do {
+						c = srcReader.read();
+						if (c == -1) break;
+						writer.write(c);
+					} while (c != -1);
+					srcReader.close();
+					writer.close();
+				} catch (Exception e) {
+					Assert.fail("File " + file.toString() + " could not be copied.");
 				}
 			}
 		}
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		for (IFile rc : root.findFilesForLocation(tmpSrcDir)) {
@@ -951,29 +948,28 @@ public class ManagedBuildTestHelper {
 		return tmpSrcDir;
 	}
 
-	static public void deleteTempDir(IPath tmpSubDir, IPath[] files) {
+	static public void deleteTempDir(IPath tmpRootDir, IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
-		String userDirStr = System.getProperty("user.home");
-		if (userDirStr != null) {
-			IPath userDir = Path.fromOSString(userDirStr);
-			tmpSrcDir = userDir.append(tmpSubDir);
-			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");
-			} else {
-				File tmpSrcDirFile = tmpSrcDir.toFile();
-				if (tmpSrcDirFile.exists()) {
-					for (int i=0; i<files.length; i++) {
-						// Delete the file
-						IPath thisFile = tmpSrcDir.append(files[i]);
-						thisFile.toFile().delete();
-					}
-					// Delete the dir
-					tmpSrcDirFile.delete();
+		tmpSrcDir = tmpRootDir.append(tmpSubDir);
+		if (tmpRootDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
+			Assert.fail("Temporary sub-directory cannot be the empty string.");
+		} else {
+			File tmpSrcDirFile = tmpSrcDir.toFile();
+			if (tmpSrcDirFile.exists()) {
+				for (int i=0; i<files.length; i++) {
+					// Delete the file
+					IPath thisFile = tmpSrcDir.append(files[i]);
+					thisFile.toFile().delete();
 				}
+				// Delete the dir
+				tmpSrcDirFile.delete();
 			}
+			
+			tmpRootDir.toFile().delete();
 		}
 	}
 
+	
 	/*
 	 * Cloned from core CProjectHelper
 	 */
@@ -1208,5 +1204,6 @@ public class ManagedBuildTestHelper {
 			}
 		return false;
 	}
+
 
 }

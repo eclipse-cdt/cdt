@@ -137,6 +137,7 @@ import junit.framework.TestSuite;
  */
 public class AST2Tests extends AST2TestBase {
 	private static final int NUM_TESTS = 3;
+	private static final int RETRY_INTERMITTENT_COUNT = 5;
 
 	public static TestSuite suite() {
 		return suite(AST2Tests.class);
@@ -5810,13 +5811,15 @@ public class AST2Tests extends AST2TestBase {
 		final CharSequence[] input = getContents(3);
 		final String code = concatInput(input, new int[] { 1, AMOUNT / 10, 1 });
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			long mem = memoryUsed();
-			IASTTranslationUnit tu = parse(code, lang, false, true, 0);
-			long diff = memoryUsed() - mem;
-			// Allow a copy of the buffer, plus less than 1.5 bytes per initializer.
-			final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2;
-			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
-			assertTrue(tu.isFrozen());
+			intermittentTest(() -> {
+				long mem = memoryUsed();
+				IASTTranslationUnit tu = parse(code, lang, false, true, 0);
+				long diff = memoryUsed() - mem;
+				// Allow a copy of the buffer, plus less than 1.5 bytes per initializer.
+				final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2;
+				assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+				assertTrue(tu.isFrozen());
+			});
 		}
 	}
 
@@ -5836,13 +5839,16 @@ public class AST2Tests extends AST2TestBase {
 		final CharSequence[] input = getContents(3);
 		final String code = concatInput(input, new int[] { 1, AMOUNT / 10, 1 });
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			long mem = memoryUsed();
-			IASTTranslationUnit tu = parse(code, lang, false, true, 0);
-			long diff = memoryUsed() - mem;
-			// Allow a copy of the buffer, plus less than 1.5 bytes per initializer.
-			final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2;
-			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
-			assertTrue(tu.isFrozen());
+			intermittentTest(() -> {
+				long mem = memoryUsed();
+				IASTTranslationUnit tu = parse(code, lang, false, true, 0);
+				long diff = memoryUsed() - mem;
+				// Allow a copy of the buffer, plus less than 1.5 bytes per
+				// initializer.
+				final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2;
+				assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+				assertTrue(tu.isFrozen());
+			});
 		}
 	}
 
@@ -5859,31 +5865,33 @@ public class AST2Tests extends AST2TestBase {
 		final CharSequence[] input = getContents(3);
 		final String code = concatInput(input, new int[] { 1, AMOUNT / 10, 1 });
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			long mem = memoryUsed();
-			IASTTranslationUnit tu = parse(code, lang, false, true, maximumTrivialExpressionsInInitializer);
-			long diff = memoryUsed() - mem;
-			final int initializerSize = maximumTrivialExpressionsInInitializer * additionalBytesPerInitializer;
-			// Allow a copy of the buffer, plus less than 1.5 bytes per initializer.
-			final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2 + initializerSize;
-			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
-			assertTrue(tu.isFrozen());
-			tu.accept(new ASTVisitor() {
-				{
-					shouldVisitInitializers = true;
-				}
-
-				@Override
-				public int visit(IASTInitializer initializer) {
-					if (initializer instanceof IASTEqualsInitializer) {
-						IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-						IASTInitializerClause initClause = equalsInitializer.getInitializerClause();
-						if (initClause instanceof IASTInitializerList) {
-							IASTInitializerList initList = (IASTInitializerList) initClause;
-							assertEquals(maximumTrivialExpressionsInInitializer, initList.getClauses().length);
-						}
+			intermittentTest(() -> {
+				long mem = memoryUsed();
+				IASTTranslationUnit tu = parse(code, lang, false, true, maximumTrivialExpressionsInInitializer);
+				long diff = memoryUsed() - mem;
+				final int initializerSize = maximumTrivialExpressionsInInitializer * additionalBytesPerInitializer;
+				// Allow a copy of the buffer, plus less than 1.5 bytes per initializer.
+				final int expected = code.length() * 2 + AMOUNT + AMOUNT / 2 + initializerSize;
+				assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+				assertTrue(tu.isFrozen());
+				tu.accept(new ASTVisitor() {
+					{
+						shouldVisitInitializers = true;
 					}
-					return ASTVisitor.PROCESS_CONTINUE;
-				}
+
+					@Override
+					public int visit(IASTInitializer initializer) {
+						if (initializer instanceof IASTEqualsInitializer) {
+							IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+							IASTInitializerClause initClause = equalsInitializer.getInitializerClause();
+							if (initClause instanceof IASTInitializerList) {
+								IASTInitializerList initList = (IASTInitializerList) initClause;
+								assertEquals(maximumTrivialExpressionsInInitializer, initList.getClauses().length);
+							}
+						}
+						return ASTVisitor.PROCESS_CONTINUE;
+					}
+				});
 			});
 		}
 	}
@@ -5900,6 +5908,37 @@ public class AST2Tests extends AST2TestBase {
 		return result.toString();
 	}
 
+	public interface RunnableWithException {
+		public abstract void run() throws Exception;
+	}
+
+	/**
+	 * As the tests using memoryUsed depend on estimating memory used, they can
+	 * be somewhat intermittent if another thread comes along and makes some
+	 * allocations at the wrong time. Therefore allow test to run multiple times
+	 * to ensure memory usage is as expected. See Bug 505743.
+	 */
+	private void intermittentTest(RunnableWithException test) throws Exception {
+		Exception lastException = null;
+		for (int i = 0; i < RETRY_INTERMITTENT_COUNT ; i++) {
+			try {
+				test.run();
+				// no exception, success
+				return;
+			} catch (Exception | AssertionError e) {
+				lastException = new Exception("Attempted intermittent test " + RETRY_INTERMITTENT_COUNT
+						+ " times and it failed each time. Nested exception is last exception."
+						+ "Previous exceptions are on stderr", e);
+				System.err.println("IntermittentTest failed, exception was:");
+				e.printStackTrace();
+			}
+		}
+		throw lastException;
+	}
+
+	/**
+	 * Use {@link #intermittentTest(RunnableWithException)} when testing against memory used.
+	 */
 	private long memoryUsed() throws InterruptedException {
 		final Runtime runtime = Runtime.getRuntime();
 		long mem= runtime.totalMemory()-runtime.freeMemory();

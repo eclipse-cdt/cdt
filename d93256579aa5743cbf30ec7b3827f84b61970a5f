@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_fe7d958e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-18T00:29:10Z",
+      "side": 1,
+      "message": "Ah, good point!",
+      "parentUuid": "87bd33cc_5ea84994",
+      "revId": "d93256579aa5743cbf30ec7b3827f84b61970a5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_de50d92b",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/FixitManager.java",
         "patchSetId": 5

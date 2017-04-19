@@ -29,16 +29,18 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+
+import junit.framework.Test;
 
 /**
  * A collection of code completion tests.
@@ -225,6 +227,10 @@ public class CompletionTests extends CompletionTestBase {
 				"m123(void)", "m12(void)", "m13(void)", "m23(void)", "m1protected(void)",
 				"m2protected(void)", "m2private(void)"
 		};
+		// Bug 515417: add a "sleep" here to allow completion result to be calculated
+		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
+		runEventQueue(250);
+
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 

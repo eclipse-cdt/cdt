@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import org.eclipse.jface.window.Window;
 //import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -64,6 +65,7 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	
 	public boolean open () {
 	 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
+			shell.setImage(Window.getDefaultImage());
 	 		shell.setText(getText());
 	 		createDialogArea(shell);
 	 		
@@ -84,7 +86,7 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	protected static String strip_wsp(String s) {
 		s = s.trim();
 		if (s.startsWith(WSP_BEG) && s.endsWith(WSP_END)) {
-			int x = s.length() - WSP_END.length(); 
+			int x = s.length() - WSP_END.length();
 			s = s.substring(WSP_BEG.length(), x);
 		}
 		return s;

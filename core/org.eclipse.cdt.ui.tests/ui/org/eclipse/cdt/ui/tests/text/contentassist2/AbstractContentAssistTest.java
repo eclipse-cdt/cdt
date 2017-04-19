@@ -107,7 +107,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		assertNotNull(fEditor);
 		CPPASTNameBase.sAllowNameComputation= true;
 
-//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
+		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
 	}
 
 	/**

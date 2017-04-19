@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_fdbf52a5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-19T13:27:20Z",
+      "side": 1,
+      "message": "The override of setFocus is missing.",
+      "revId": "f5bd93996dc46ef5384b3417aa7797991dc64943",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_dd1e1668",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-19T13:27:20Z",
+      "side": 1,
+      "message": "although it existed in CommonSourceNotFoundEditor, there are some whitespace errors. This line and the next few are indented with spaces instead of tabs.",
+      "revId": "f5bd93996dc46ef5384b3417aa7797991dc64943",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3d2f0a91",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-19T13:27:20Z",
+      "side": 1,
+      "message": "Is there an SWT.COLOR_BLACK? If so you can use the system color. The problem with doing new Color is that you have to dispose of it when done.",
+      "revId": "f5bd93996dc46ef5384b3417aa7797991dc64943",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3d18ea7f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-19T13:27:20Z",
+      "side": 1,
+      "message": "Remove this line of code, it is overridden by line below anyway.",
+      "revId": "f5bd93996dc46ef5384b3417aa7797991dc64943",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

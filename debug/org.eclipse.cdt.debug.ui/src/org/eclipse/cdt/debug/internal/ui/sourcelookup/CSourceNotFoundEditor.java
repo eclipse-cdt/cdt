@@ -41,16 +41,21 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -80,6 +85,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private Button editLookupButton;
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
+	private Text fText;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -87,7 +93,31 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
+		GridLayout topLayout = new GridLayout();
+		GridData data = new GridData();
+		topLayout.numColumns = 1;
+		topLayout.verticalSpacing = 10;
+		parent.setLayout(topLayout);
+		parent.setLayoutData(data);
+		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+
+		fText = new Text(parent,SWT.READ_ONLY|SWT.WRAP);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        fText.setLayoutData(data);
+		fText.setForeground(new Color(fText.getDisplay(), 0, 0, 0));
+		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		if (getEditorInput() != null) {
+			setInput(getEditorInput());
+		}
+
+		createButtons(parent);
+
+		Dialog.applyDialogFont(parent);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
+		
+		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICDebugHelpContextIds.SOURCE_NOT_FOUND);
 	}
 
@@ -114,6 +144,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			}
 		}
 		super.setInput(input);
+		if (fText != null) {
+			fText.setText(getText());
+		}
 		syncButtons();
 	}
 

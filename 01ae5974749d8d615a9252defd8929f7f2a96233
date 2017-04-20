@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_4da2532c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T15:02:15Z",
+      "side": 1,
+      "message": "this comment applies to the page.openEditor line, please move it within your new if",
+      "range": {
+        "startLine": 422,
+        "startChar": 8,
+        "endLine": 425,
+        "endChar": 11
+      },
+      "revId": "01ae5974749d8d615a9252defd8929f7f2a96233",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

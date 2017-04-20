@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
@@ -53,6 +55,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -416,15 +419,19 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 					if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
 						try {
 							if (input instanceof CSourceNotFoundEditorInput) {
-								/*
-								 * Don't open additional source not found
-								 * editors if there is one to reuse.
-								 */
-								editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
-								if (editor[0] instanceof IReusableEditor) {
-									IReusableEditor re = (IReusableEditor) editor[0];
-									if (!input.equals(re.getEditorInput())) {
-										re.setInput(input);
+								if (Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+										CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, true, null)) {
+									editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+									/*
+									 * Don't open additional source not found
+									 * editors if there is one to reuse.
+									 */
+									editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+									if (editor[0] instanceof IReusableEditor) {
+										IReusableEditor re = (IReusableEditor) editor[0];
+										if (!input.equals(re.getEditorInput())) {
+											re.setInput(input);
+										}
 									}
 								}
 							} else {

@@ -50,14 +50,15 @@ import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Preference page for debug preferences that apply specifically to C/C++ Debugging.
+ * Preference page for debug preferences that apply specifically to C/C++
+ * Debugging.
  */
 public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private IWorkbench fWorkbench;
 
 	private EncodingFieldEditor fCharsetEditor;
-	
+
 	private EncodingFieldEditor fWideCharsetEditor;
 
 	private PropertyChangeListener fPropertyChangeListener;
@@ -69,10 +70,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		private boolean fHasStateChanged = false;
 
 		@Override
-		public void propertyChange( PropertyChangeEvent event ) {
-			if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) ) {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES)) {
 				fHasStateChanged = true;
-			} else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_CHAR_VALUES ) ) {
+			} else if (event.getProperty().equals(ICDebugPreferenceConstants.PREF_SHOW_CHAR_VALUES)) {
 				fHasStateChanged = true;
 			} else if (event.getProperty().equals(FieldEditor.VALUE)) {
 				fHasStateChanged = true;
@@ -99,104 +100,104 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	public CDebugPreferencePage() {
 		super();
-		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
-		getPreferenceStore().addPropertyChangeListener( getPropertyChangeListener() );
-		setDescription( PreferenceMessages.getString( "CDebugPreferencePage.3" ) ); //$NON-NLS-1$
+		setPreferenceStore(CDebugUIPlugin.getDefault().getPreferenceStore());
+		getPreferenceStore().addPropertyChangeListener(getPropertyChangeListener());
+		setDescription(PreferenceMessages.getString("CDebugPreferencePage.3")); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
-	 */
 	@Override
-	protected Control createContents( Composite parent ) {
-		getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.C_DEBUG_PREFERENCE_PAGE );
-		//The main composite
-		Composite composite = new Composite( parent, SWT.NULL );
+	protected Control createContents(Composite parent) {
+		getWorkbench().getHelpSystem().setHelp(getControl(), ICDebugHelpContextIds.C_DEBUG_PREFERENCE_PAGE);
+		// The main composite
+		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		composite.setLayout( layout );
+		composite.setLayout(layout);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData( data );
-		createSpacer( composite, 1 );
-		createCharsetSettingPreferences( composite );
-		createSpacer( composite, 1 );
-		createBinarySettings( composite );
+		composite.setLayoutData(data);
+		createSpacer(composite, 1);
+		createCharsetSettingPreferences(composite);
+		createSpacer(composite, 1);
+		createBinarySettings(composite);
 		setValues();
 		return composite;
 	}
 
 	/**
-	 * Set the values of the component widgets based on the values in the preference store
+	 * Set the values of the component widgets based on the values in the
+	 * preference store
 	 */
 	private void setValues() {
 		// Set the charset editors.
-		
+
 		// Create a temporary preference store.
 		PreferenceStore ps = new PreferenceStore();
-		
+
 		// Get the default charset and the default wide charset.
-		String defaultCharset = DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).get(ICDebugConstants.PREF_DEBUG_CHARSET, null);
+		String defaultCharset = DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID)
+				.get(ICDebugConstants.PREF_DEBUG_CHARSET, null);
 		if (defaultCharset != null) {
 			ps.setDefault(ICDebugConstants.PREF_DEBUG_CHARSET, defaultCharset);
 		}
-		String defaultWideCharset = DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).get(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, null);
+		String defaultWideCharset = DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID)
+				.get(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, null);
 		if (defaultWideCharset != null) {
 			ps.setDefault(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, defaultWideCharset);
 		}
-		
-		// Get the charset and the wide charset. If they're unset, use the default instead.
-		// Note that we have to call the setValue() function of the PreferenceStore even if we
-		// want to use the default. This is to ensure proper display of the encoding field editor.
-		String charset = InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).get(ICDebugConstants.PREF_DEBUG_CHARSET, null);
+
+		/*
+		 * Get the charset and the wide charset. If they're unset, use the
+		 * default instead. Note that we have to call the setValue() function of
+		 * the PreferenceStore even if we want to use the default. This is to
+		 * ensure proper display of the encoding field editor.
+		 */
+		String charset = InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID)
+				.get(ICDebugConstants.PREF_DEBUG_CHARSET, null);
 		if (charset != null) {
 			ps.setValue(ICDebugConstants.PREF_DEBUG_CHARSET, charset);
 		} else if (defaultCharset != null) {
 			ps.setValue(ICDebugConstants.PREF_DEBUG_CHARSET, defaultCharset);
 		}
-		String wideCharset = InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).get(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, null);
+		String wideCharset = InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID)
+				.get(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, null);
 		if (wideCharset != null) {
 			ps.setValue(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, wideCharset);
 		} else if (defaultWideCharset != null) {
 			ps.setValue(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, defaultWideCharset);
 		}
-		
-		// Initialize the encoding field editors with the values from the preference store.
+
+		// Initialize the encoding field editors with the values from the
+		// preference store.
 		fCharsetEditor.setPreferenceStore(ps);
 		fCharsetEditor.load();
 		fWideCharsetEditor.setPreferenceStore(ps);
 		fWideCharsetEditor.load();
-		
-		// Tell the encoding field editors to check the "Default" option if we're currently using the default values.
+
+		// Tell the encoding field editors to check the "Default" option if
+		// we're currently using the default values.
 		if (charset == null) {
 			fCharsetEditor.loadDefault();
 		}
 		if (wideCharset == null) {
 			fWideCharsetEditor.loadDefault();
 		}
-		
-		
+
 		// Set the values for the remaining preferences.
-		fShowBinarySourceFilesButton.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true, null));
+		fShowBinarySourceFilesButton.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true, null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
-	 */
 	@Override
-	public void init( IWorkbench workbench ) {
+	public void init(IWorkbench workbench) {
 		fWorkbench = workbench;
 	}
 
 	protected PropertyChangeListener getPropertyChangeListener() {
-		if ( fPropertyChangeListener == null ) {
+		if (fPropertyChangeListener == null) {
 			fPropertyChangeListener = new PropertyChangeListener();
 		}
 		return fPropertyChangeListener;
@@ -205,69 +206,67 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Set the default preferences for this page.
 	 */
-	public static void initDefaults( IPreferenceStore store ) {
-		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
+	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
-		getPreferenceStore().removePropertyChangeListener( getPropertyChangeListener() );
+		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
 	}
 
-	private void createCharsetSettingPreferences( Composite parent ) {
+	private void createCharsetSettingPreferences(Composite parent) {
 		// Create containing composite
-		Composite formatComposite = ControlFactory.createComposite( parent, 2);
-		((GridLayout)formatComposite.getLayout()).marginWidth = 0;
-		((GridLayout)formatComposite.getLayout()).marginHeight = 0;
-		
+		Composite formatComposite = ControlFactory.createComposite(parent, 2);
+		((GridLayout) formatComposite.getLayout()).marginWidth = 0;
+		((GridLayout) formatComposite.getLayout()).marginHeight = 0;
+
 		// Create charset editor
 		Composite charsetComposite = ControlFactory.createComposite(formatComposite, 1);
-		fCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.18" ), charsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
+		fCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_CHARSET, "", //$NON-NLS-1$
+				PreferenceMessages.getString("CDebugPreferencePage.18"), charsetComposite); //$NON-NLS-1$
 		fCharsetEditor.setPropertyChangeListener(getPropertyChangeListener());
-		
+
 		// Create wide charset editor
 		Composite wideCharsetComposite = ControlFactory.createComposite(formatComposite, 1);
-		fWideCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.16" ), wideCharsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
+		fWideCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "", //$NON-NLS-1$
+				PreferenceMessages.getString("CDebugPreferencePage.16"), wideCharsetComposite); //$NON-NLS-1$
 		fWideCharsetEditor.setPropertyChangeListener(getPropertyChangeListener());
 	}
-	
-	private void createBinarySettings( Composite parent ) {
-		fShowBinarySourceFilesButton = createCheckButton( parent, PreferenceMessages.getString("CDebugPreferencePage.15") );		 //$NON-NLS-1$
+
+	private void createBinarySettings(Composite parent) {
+		fShowBinarySourceFilesButton = createCheckButton(parent,
+				PreferenceMessages.getString("CDebugPreferencePage.15")); //$NON-NLS-1$
 	}
 
 	/**
-	 * Creates a button with the given label and sets the default configuration data.
+	 * Creates a button with the given label and sets the default configuration
+	 * data.
 	 */
-	private Button createCheckButton( Composite parent, String label ) {
-		Button button = new Button( parent, SWT.CHECK | SWT.LEFT );
-		button.setText( label );
+	private Button createCheckButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
 		// FieldEditor GridData
 		GridData data = new GridData();
-		button.setLayoutData( data );
+		button.setLayoutData(data);
 		return button;
 	}
 
-	protected void createSpacer( Composite composite, int columnSpan ) {
-		Label label = new Label( composite, SWT.NONE );
+	protected void createSpacer(Composite composite, int columnSpan) {
+		Label label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
-		label.setLayoutData( gd );
+		label.setLayoutData(gd);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		storeValues();
-		if ( getPropertyChangeListener().hasStateChanged() ) {
+		if (getPropertyChangeListener().hasStateChanged()) {
 			refreshViews();
 		}
-		
+
 		try {
 			InstanceScope.INSTANCE.getNode(CDebugUIPlugin.PLUGIN_ID).flush();
 			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).flush();
@@ -278,39 +277,40 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * Refresh the variables and expression views as changes have occurred that affects these views.
+	 * Refresh the variables and expression views as changes have occurred that
+	 * affects these views.
 	 */
 	private void refreshViews() {
-		BusyIndicator.showWhile( getShell().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 
 			@Override
 			public void run() {
 				// Refresh interested views
 				IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
 				IWorkbenchPage page = null;
-				for( int i = 0; i < windows.length; i++ ) {
+				for (int i = 0; i < windows.length; i++) {
 					page = windows[i].getActivePage();
-					if ( page != null ) {
-						refreshViews( page, IDebugUIConstants.ID_EXPRESSION_VIEW );
-						refreshViews( page, IDebugUIConstants.ID_VARIABLE_VIEW );
-						refreshViews( page, IDebugUIConstants.ID_REGISTER_VIEW );
+					if (page != null) {
+						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
+						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+						refreshViews(page, IDebugUIConstants.ID_REGISTER_VIEW);
 					}
 				}
 			}
-		} );
+		});
 	}
 
 	/**
 	 * Refresh all views in the given workbench page with the given view id
 	 */
-	protected void refreshViews( IWorkbenchPage page, String viewID ) {
-		IViewPart part = page.findView( viewID );
-		if ( part != null ) {
-			IDebugView adapter = part.getAdapter( IDebugView.class );
-			if ( adapter != null ) {
+	protected void refreshViews(IWorkbenchPage page, String viewID) {
+		IViewPart part = page.findView(viewID);
+		if (part != null) {
+			IDebugView adapter = part.getAdapter(IDebugView.class);
+			if (adapter != null) {
 				Viewer viewer = adapter.getViewer();
-				if ( viewer instanceof StructuredViewer ) {
-					((StructuredViewer)viewer).refresh();
+				if (viewer instanceof StructuredViewer) {
+					((StructuredViewer) viewer).refresh();
 				}
 			}
 		}
@@ -325,19 +325,22 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).remove(ICDebugConstants.PREF_DEBUG_CHARSET);
 		} else {
 			fCharsetEditor.store();
-			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).put(ICDebugConstants.PREF_DEBUG_CHARSET, fCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_CHARSET));
+			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).put(ICDebugConstants.PREF_DEBUG_CHARSET,
+					fCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_CHARSET));
 		}
-		
+
 		// Store the wide charset.
 		if (fWideCharsetEditor.presentsDefaultValue()) {
 			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).remove(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET);
 		} else {
 			fWideCharsetEditor.store();
-			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).put(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, fWideCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET));
+			InstanceScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID).put(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET,
+					fWideCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET));
 		}
-		
+
 		// Store the other preferences.
-		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection());
+		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection());
 	}
 
 	/**
@@ -354,7 +357,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void setDefaultValues() {
 		fCharsetEditor.loadDefault();
 		fWideCharsetEditor.loadDefault();
-		fShowBinarySourceFilesButton.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true));
+		fShowBinarySourceFilesButton.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true));
 	}
 
 	private IWorkbench getWorkbench() {

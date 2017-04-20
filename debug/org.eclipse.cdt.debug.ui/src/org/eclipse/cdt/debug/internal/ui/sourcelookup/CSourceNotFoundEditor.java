@@ -15,6 +15,8 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -33,6 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -70,6 +73,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME + "disassemblyButton"; //$NON-NLS-1$
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
+	public static final String UID_PREFERENCE_CHECKBOX = UID_CLASS_NAME + "preferenceCheckbox"; //$NON-NLS-1$
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -84,6 +88,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
 	private Text fText;
+	private Button preferenceCheckbox;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -179,6 +184,26 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected void createButtons(Composite parent) {
+		{
+			GridData data;
+			preferenceCheckbox = new Button(parent, SWT.CHECK);
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			preferenceCheckbox.setData(data);
+			preferenceCheckbox.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
+			preferenceCheckbox.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Button btn = (Button) e.getSource();
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+							.putBoolean(CCorePreferenceConstants.SHOW_EDITOR_FOR_DEBUG, !btn.getSelection());
+
+				};
+			});
+			preferenceCheckbox.setData(UID_KEY, UID_PREFERENCE_CHECKBOX);
+		}
+
 		if (isDebugElement) {
 			GridData data;
 			disassemblyButton = new Button(parent, SWT.PUSH);

@@ -15,6 +15,8 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -33,6 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -70,6 +73,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME + "disassemblyButton"; //$NON-NLS-1$
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME + "preferenceCheckbox"; //$NON-NLS-1$
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -83,7 +87,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private Button editLookupButton;
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
-	private Text fText;
+	private Text fDontShowSourceNotFoundAgainText;
+	private Button checkboxDontShowSourceEditor;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -99,12 +104,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		parent.setLayoutData(data);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		fText = new Text(parent, SWT.READ_ONLY | SWT.WRAP);
+		fDontShowSourceNotFoundAgainText = new Text(parent, SWT.READ_ONLY | SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
-		fText.setLayoutData(data);
-		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		fDontShowSourceNotFoundAgainText.setLayoutData(data);
+		fDontShowSourceNotFoundAgainText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		fDontShowSourceNotFoundAgainText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		if (getEditorInput() != null) {
 			setInput(getEditorInput());
 		}
@@ -118,8 +123,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	public void setFocus() {
-		if (fText != null) {
-			fText.setFocus();
+		if (fDontShowSourceNotFoundAgainText != null) {
+			fDontShowSourceNotFoundAgainText.setFocus();
 		}
 	}
 
@@ -146,8 +151,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			}
 		}
 		super.setInput(input);
-		if (fText != null) {
-			fText.setText(getText());
+		if (fDontShowSourceNotFoundAgainText != null) {
+			fDontShowSourceNotFoundAgainText.setText(getText());
 		}
 		syncButtons();
 
@@ -179,6 +184,27 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected void createButtons(Composite parent) {
+		{
+			GridData data;
+			checkboxDontShowSourceEditor = new Button(parent, SWT.CHECK);
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			checkboxDontShowSourceEditor.setLayoutData(data);
+			checkboxDontShowSourceEditor.setSelection(true);
+			checkboxDontShowSourceEditor.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
+			checkboxDontShowSourceEditor.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
+							checkboxDontShowSourceEditor.getSelection());
+
+				};
+			});
+			checkboxDontShowSourceEditor.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
+		}
+
 		if (isDebugElement) {
 			GridData data;
 			disassemblyButton = new Button(parent, SWT.PUSH);

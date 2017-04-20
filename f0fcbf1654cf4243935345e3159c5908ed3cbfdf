@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_2e65120f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T08:29:30Z",
+      "side": 1,
+      "message": "What happened to the syncButtons call? Is it really no longer needed?",
+      "revId": "f0fcbf1654cf4243935345e3159c5908ed3cbfdf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

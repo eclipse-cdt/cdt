@@ -152,7 +152,13 @@ public class CCorePreferenceConstants {
 	 * Attempt to show source files for executable binaries.
 	 */
 	public static final String SHOW_SOURCE_FILES_IN_BINARIES = CCorePlugin.PLUGIN_ID + ".showSourceFilesInBinaries"; //$NON-NLS-1$
-
+	
+	/**
+	 * Attempt to (not) show c source not found editor in debug.
+	 * @since 6.3
+	 */
+	public static final String SHOW_EDITOR_FOR_DEBUG = CCorePlugin.PLUGIN_ID + ".showSourceNotFoundEditor"; //$NON-NLS-1$
+	
 	/**
 	 * Show source roots at the top level of projects.
 	 * @since 5.2

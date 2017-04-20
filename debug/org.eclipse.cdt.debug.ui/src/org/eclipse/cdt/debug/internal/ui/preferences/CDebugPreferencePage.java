@@ -64,6 +64,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private PropertyChangeListener fPropertyChangeListener;
 
 	private Button fShowBinarySourceFilesButton;
+	
+	private Button fShowSourceNotFoundEditor;
 
 	protected class PropertyChangeListener implements IPropertyChangeListener {
 
@@ -123,6 +125,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		createCharsetSettingPreferences(composite);
 		createSpacer(composite, 1);
 		createBinarySettings(composite);
+		createShowSourceNotFoundEditor(composite);
 		setValues();
 		return composite;
 	}
@@ -189,6 +192,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		// Set the values for the remaining preferences.
 		fShowBinarySourceFilesButton.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
 				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true, null));
+		
+		fShowSourceNotFoundEditor.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, 
+				CCorePreferenceConstants.SHOW_EDITOR_FOR_DEBUG,true, null));
 	}
 
 	@Override
@@ -238,6 +244,12 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void createBinarySettings(Composite parent) {
 		fShowBinarySourceFilesButton = createCheckButton(parent,
 				PreferenceMessages.getString("CDebugPreferencePage.15")); //$NON-NLS-1$
+	}
+	
+	private void createShowSourceNotFoundEditor(Composite parent)
+	{
+		fShowSourceNotFoundEditor = createCheckButton(parent,
+				PreferenceMessages.getString("CDebugPreferencePage.21")); //$NON-NLS-1$
 	}
 
 	/**
@@ -341,6 +353,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		// Store the other preferences.
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
 				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection());
+		
+		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+				CCorePreferenceConstants.SHOW_EDITOR_FOR_DEBUG, fShowSourceNotFoundEditor.getSelection());
 	}
 
 	/**
@@ -359,6 +374,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fWideCharsetEditor.loadDefault();
 		fShowBinarySourceFilesButton.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
 				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true));
+		fShowSourceNotFoundEditor.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+				.getBoolean(CCorePreferenceConstants.SHOW_EDITOR_FOR_DEBUG, true));
 	}
 
 	private IWorkbench getWorkbench() {

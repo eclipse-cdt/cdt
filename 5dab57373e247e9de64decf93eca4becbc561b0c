@@ -1,0 +1,227 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_0ddcdb02",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "minor - bad whitespace",
+      "range": {
+        "startLine": 155,
+        "startChar": 0,
+        "endLine": 155,
+        "endChar": 1
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6d7f0f5a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "Please rename this constant to SHOW_SOURCE_NOT_FOUND_EDITOR, that better matches the internal name showSourceNotFoundEditor that you chose.\n\n(Use Refactor -\u003e Rename to do this easily)",
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_2d9ef743",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "minor - bad whitespace",
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8df0eb87",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "minor nit, missing whitespace, try using formatter.",
+      "range": {
+        "startLine": 197,
+        "startChar": 50,
+        "endLine": 197,
+        "endChar": 52
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_adb127cb",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "minor - bad whitespace",
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_0d8e9b06",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/PreferenceMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "Change to:\n\nShow the Source Not Found editor when debugger stops at an address with no debug information, or if the associated source file cannot be found.",
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6d7aaf62",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "we may have more preference checkboxes in the future, please provide a more specific name",
+      "range": {
+        "startLine": 76,
+        "startChar": 28,
+        "endLine": 76,
+        "endChar": 51
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8d7d4b5a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "we may have more preference checkboxes in the future, please provide a more specific name",
+      "range": {
+        "startLine": 91,
+        "startChar": 16,
+        "endLine": 91,
+        "endChar": 34
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_0d405b07",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "This should be setLayoutData",
+      "range": {
+        "startLine": 193,
+        "startChar": 22,
+        "endLine": 193,
+        "endChar": 29
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cd45831c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "don\u0027t shorten names.\n\nBut in this case, you don\u0027t need to get the button from the even and cast it, just use \"preferenceCheckbox\" (or the new name for it)",
+      "range": {
+        "startLine": 198,
+        "startChar": 12,
+        "endLine": 198,
+        "endChar": 15
+      },
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_eddf9fcf",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-20T14:46:00Z",
+      "side": 1,
+      "message": "Change this text to be:\n\nShow the Source Not Found editor when debugger stops at an address with no debug information, or if the associated source file cannot be found.\n\nWhat that also means is the checkbox needs to be inverted.",
+      "revId": "5dab57373e247e9de64decf93eca4becbc561b0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

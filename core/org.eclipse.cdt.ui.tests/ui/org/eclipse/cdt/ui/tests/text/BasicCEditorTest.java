@@ -456,7 +456,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		int ngc = 10;
 		while (ref.get() != null && ngc-- > 0) {
 			System.gc();
-			EditorTestHelper.runEventQueue(200);
+			EditorTestHelper.runEventQueue(20000);
 		}
 		assertNull("CEditor instance seems to be leaking after close", ref.get());		
 	}

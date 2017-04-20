@@ -55,6 +55,7 @@ public class SourceLookupUIMessages extends NLS {
 	public static String CSourceNotFoundEditor_3;
 	public static String CSourceNotFoundEditor_4;
 	public static String CSourceNotFoundEditor_5;
+	public static String CSourceNotFoundEditor_6;
 	public static String CompilationDirectorySourceContainerDialog_0;
 	public static String CompilationDirectorySourceContainerDialog_1;
 	public static String CompilationDirectorySourceContainerDialog_2;

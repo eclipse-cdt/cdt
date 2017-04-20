@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Tomasz Wesolowski
+ * Copyright (c) 2010, 2017 Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,12 +134,12 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 	public IASTDeclarator createDeclaratorFromType(IType type, char[] name, boolean changeInitialFunctionToFuncPtr) {
 		IASTDeclarator returnedDeclarator = null;
 
+		IASTName newName = name != null ? factory.newName(name) : factory.newName();
 		try {
 			// Addition of pointer operators has to be in reverse order, so it's deferred until
 			// the end.
 			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
 
-			IASTName newName = name != null ? factory.newName(name) : factory.newName();
 
 			// If the type is an array of something, create a declaration of a pointer to something
 			// instead (to allow assignment, etc).

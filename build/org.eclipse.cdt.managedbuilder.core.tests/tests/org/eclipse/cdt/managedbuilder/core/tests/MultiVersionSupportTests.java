@@ -78,6 +78,12 @@ public class MultiVersionSupportTests extends TestCase {
 		//$JUnit-END$
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	@Override
 	protected void tearDown() throws Exception {

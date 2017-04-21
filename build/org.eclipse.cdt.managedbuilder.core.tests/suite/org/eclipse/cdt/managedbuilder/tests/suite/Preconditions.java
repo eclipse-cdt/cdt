@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 public class Preconditions extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 	}
 
 	@Override

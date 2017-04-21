@@ -30,6 +30,12 @@ public class RegressionTests extends TestCase {
 		return suite;
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
+
 	public RegressionTests() {
 		super(null);
 	}

@@ -219,6 +219,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 		super.setUp();
 	}
 

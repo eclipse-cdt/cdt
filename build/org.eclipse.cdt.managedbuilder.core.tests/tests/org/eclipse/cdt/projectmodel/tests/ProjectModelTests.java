@@ -97,6 +97,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 		super.setUp();
 		fEventChecker = null;
 		CoreModel.getDefault().addElementChangedListener(this);

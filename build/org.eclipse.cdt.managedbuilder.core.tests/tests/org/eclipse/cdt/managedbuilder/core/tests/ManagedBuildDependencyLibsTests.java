@@ -86,6 +86,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 		super.setUp();
 		allToolChains = ManagedBuildManager.
 		getRealToolChains();		

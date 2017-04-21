@@ -55,7 +55,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	public ManagedProject21MakefileTests(String name) {
 		super(name);
 	}
-
+	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedProject21MakefileTests.class.getName());
 
@@ -69,6 +69,12 @@ public class ManagedProject21MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject21MakefileTests("testLinkedFolder"));
 
 		return suite;
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
 	}
 
 	@Override

@@ -160,6 +160,12 @@ public class CCorePreferenceConstants {
 	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR = CCorePlugin.PLUGIN_ID + ".showSourceNotFoundEditor"; //$NON-NLS-1$
 	
 	/**
+	 * Attempt to (not) show c source not found editor in debug.
+	 * @since 6.3
+	 */
+	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME = CCorePlugin.PLUGIN_ID + ".showSourceNotFoundEditorAllTime"; //$NON-NLS-1$
+	
+	/**
 	 * Show source roots at the top level of projects.
 	 * @since 5.2
 	 */

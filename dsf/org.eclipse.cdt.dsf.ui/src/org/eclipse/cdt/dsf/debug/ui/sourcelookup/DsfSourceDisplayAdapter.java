@@ -53,6 +53,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -419,18 +420,29 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 					if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
 						try {
 							if (input instanceof CSourceNotFoundEditorInput) {
+								CSourceNotFoundEditorInput cSourceInput = ((CSourceNotFoundEditorInput) input);
 								if (Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
 										CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, true, null)) {
-									editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
-									/*
-									 * Don't open additional source not found
-									 * editors if there is one to reuse.
-									 */
-									editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
-									if (editor[0] instanceof IReusableEditor) {
-										IReusableEditor re = (IReusableEditor) editor[0];
-										if (!input.equals(re.getEditorInput())) {
-											re.setInput(input);
+									if (Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+											CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME, true,
+											null)) {
+										editor[0] = openCSourceNotFoundEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+										if (editor[0] instanceof IReusableEditor) {
+											IReusableEditor re = (IReusableEditor) editor[0];
+											if (!input.equals(re.getEditorInput())) {
+												re.setInput(input);
+											}
+										}
+									} else {
+										boolean missingFile = isSourceFileNameKnown(cSourceInput);
+										if (missingFile) {
+											editor[0] = openCSourceNotFoundEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+											if (editor[0] instanceof IReusableEditor) {
+												IReusableEditor re = (IReusableEditor) editor[0];
+												if (!input.equals(re.getEditorInput())) {
+													re.setInput(input);
+												}
+											}
 										}
 									}
 								}
@@ -440,6 +452,29 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 						} catch (PartInitException e) {
 						}
 					}
+				}
+				
+				private boolean isSourceFileNameKnown(CSourceNotFoundEditorInput input) {
+					Object artifact = input.getArtifact();
+					if (artifact instanceof CSourceNotFoundElement) {
+						return true;
+					} else if (artifact instanceof ITranslationUnit) {
+						ITranslationUnit tunit = (ITranslationUnit) artifact;
+						IPath tuPath = tunit.getLocation();
+						if (tuPath != null) {
+							return true;
+						} else {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+
+				private IEditorPart openCSourceNotFoundEditor(IEditorInput input, String id, boolean b, int matchId)
+						throws PartInitException {
+					return page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+
 				}
 			};
 			BusyIndicator.showWhile(Display.getDefault(), r);

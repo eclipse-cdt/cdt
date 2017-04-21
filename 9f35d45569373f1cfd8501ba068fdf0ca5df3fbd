@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_761b5c79",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/BasicCEditorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:56:01Z",
+      "side": 1,
+      "message": "This file is not part of the change, please remove it.",
+      "revId": "9f35d45569373f1cfd8501ba068fdf0ca5df3fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_36cc8464",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:56:01Z",
+      "side": 1,
+      "message": "still to do, see previous review comment",
+      "range": {
+        "startLine": 76,
+        "startChar": 89,
+        "endLine": 76,
+        "endChar": 108
+      },
+      "revId": "9f35d45569373f1cfd8501ba068fdf0ca5df3fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_d62fd08e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:56:01Z",
+      "side": 1,
+      "message": "This is still the wrong name, it looks like you accidentally renamed it.",
+      "revId": "9f35d45569373f1cfd8501ba068fdf0ca5df3fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_56cf4058",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:56:01Z",
+      "side": 1,
+      "message": "Note how the other buttons and text boxes say their type at the end, please rename to conform",
+      "range": {
+        "startLine": 91,
+        "startChar": 16,
+        "endLine": 91,
+        "endChar": 44
+      },
+      "revId": "9f35d45569373f1cfd8501ba068fdf0ca5df3fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

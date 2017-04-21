@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_36564433",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/BasicCEditorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:27:49Z",
+      "side": 1,
+      "message": "Unrelated change, please remove",
+      "revId": "59f669d2f8e59382d318480c57bd653697402e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_d6643015",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:27:49Z",
+      "side": 1,
+      "message": "I normally don\u0027t worry about long names, but this one is a bit extreme. How about UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX? Remeber to update the value too.",
+      "revId": "59f669d2f8e59382d318480c57bd653697402e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_363d64eb",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:27:49Z",
+      "side": 1,
+      "message": "Not sure why this variable was renamed? Had you meant to rename next line?",
+      "revId": "59f669d2f8e59382d318480c57bd653697402e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_5640205e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:27:49Z",
+      "side": 1,
+      "message": "Please fix this name",
+      "revId": "59f669d2f8e59382d318480c57bd653697402e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_7637dc08",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-21T09:27:49Z",
+      "side": 1,
+      "message": "This should be \"preferenceCheckbox\"",
+      "range": {
+        "startLine": 202,
+        "startChar": 7,
+        "endLine": 202,
+        "endChar": 31
+      },
+      "revId": "59f669d2f8e59382d318480c57bd653697402e65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

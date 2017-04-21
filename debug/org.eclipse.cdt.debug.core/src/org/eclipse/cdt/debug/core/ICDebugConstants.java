@@ -45,6 +45,14 @@ public interface ICDebugConstants {
 	 * @since 7.2
 	 */
 	public static final String PREF_DEBUG_CHARSET = PLUGIN_ID + "cDebug.non_wide_character_set"; //$NON-NLS-1$
+	
+	/**
+	 * The charset to use for decoding char type strings. We however can't use the ID
+	 * "character_set" here because that would break backwards compatibility as it was
+	 * already used for wide charsets.
+	 * @since 8.1
+	 */
+	public static final String PREF_DEBUG_SOURCE_FILE = PLUGIN_ID + "cDebug.non_source_file_found"; //$NON-NLS-1$
 
 	/**
 	 * The charset to use for decoding wchar_t type strings. We have to use the ID

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;

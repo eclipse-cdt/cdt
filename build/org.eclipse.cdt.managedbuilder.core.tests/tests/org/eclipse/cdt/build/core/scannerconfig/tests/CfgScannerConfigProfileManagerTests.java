@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySu
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -49,6 +50,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 		ManagedBuildTestHelper.removeProject(fProject.getName());
 	}
 

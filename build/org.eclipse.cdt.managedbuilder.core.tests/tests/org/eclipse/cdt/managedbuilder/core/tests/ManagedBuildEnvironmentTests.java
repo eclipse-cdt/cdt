@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -84,6 +85,12 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 //		suite.addTest(new ManagedBuildEnvironmentTests("testEnvRemove"));    //$NON-NLS-1$
 //		suite.addTest(new ManagedBuildEnvironmentTests("testEnvProvider"));  //$NON-NLS-1$
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	//	 Checking behaviour when vars are not defined (except system)

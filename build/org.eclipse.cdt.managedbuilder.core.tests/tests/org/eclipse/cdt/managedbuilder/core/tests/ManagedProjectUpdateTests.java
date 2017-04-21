@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -58,6 +59,12 @@ public class ManagedProjectUpdateTests extends TestCase {
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21CPP_Update"));
 
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	private File getVersionProjectsDir(String version){

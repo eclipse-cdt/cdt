@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -26,6 +27,12 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 public class Preconditions extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		ResourceHelper.cleanUp(getName());
 	}
 
 	/**

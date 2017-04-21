@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -39,7 +40,13 @@ public class OptionCategoryEnablementTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(OptionCategoryEnablementTests.class);
 	}
-	
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
+	}
+
 	private void resetValueHandler(){
 		fHandleValueCalled = false;
 	}

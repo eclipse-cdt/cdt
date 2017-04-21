@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -61,6 +62,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 	}
 
 	/**

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -106,6 +107,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		super.tearDown();
 		fEventChecker = null;
 		CoreModel.getDefault().removeElementChangedListener(this);
+		ResourceHelper.cleanUp(getName());
 	}
 
 	private void modify(ICFileDescription fiDes){

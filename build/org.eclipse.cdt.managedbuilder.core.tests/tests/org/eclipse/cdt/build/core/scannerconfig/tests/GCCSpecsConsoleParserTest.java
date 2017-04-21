@@ -15,6 +15,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser;
@@ -44,6 +45,12 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 		};
 		parser = new GCCSpecsConsoleParser();
 		parser.startup(null, null, collector, null);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	private void enterLine(String line) {

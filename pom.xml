@@ -195,6 +195,7 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<cdt-build.skip.tests>true</cdt-build.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
 			</properties>
 		</profile>
@@ -202,6 +203,7 @@
 			<id>skip-tests-except-cdt-ui</id>
 			<properties>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<cdt-build.skip.tests>true</cdt-build.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
 			</properties>
 		</profile>
@@ -209,6 +211,15 @@
 			<id>skip-tests-except-dsf-gdb</id>
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<cdt-build.skip.tests>true</cdt-build.skip.tests>
+				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>skip-tests-except-cdt-build</id>
+			<properties>
+				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
 			</properties>
 		</profile>
@@ -217,6 +228,8 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<!-- The "other" profile is everything except UI and DSF-GDB
+				   cdt-build.skip.tests>true</cdt-build.skip.tests -->
 			</properties>
 		</profile>
 		<profile>

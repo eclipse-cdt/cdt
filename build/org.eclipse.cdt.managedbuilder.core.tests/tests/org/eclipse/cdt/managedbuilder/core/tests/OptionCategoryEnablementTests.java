@@ -40,6 +40,12 @@ public class OptionCategoryEnablementTests extends TestCase {
 		return new TestSuite(OptionCategoryEnablementTests.class);
 	}
 	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
+	
 	private void resetValueHandler(){
 		fHandleValueCalled = false;
 	}

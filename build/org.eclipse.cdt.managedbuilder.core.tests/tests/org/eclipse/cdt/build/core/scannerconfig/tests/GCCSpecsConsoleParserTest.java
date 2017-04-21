@@ -27,6 +27,7 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 		collector = new IScannerInfoCollector() {
 
 			@Override

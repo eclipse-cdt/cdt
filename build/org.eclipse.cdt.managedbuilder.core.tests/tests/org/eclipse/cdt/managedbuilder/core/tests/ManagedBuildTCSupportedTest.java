@@ -34,6 +34,12 @@ public class ManagedBuildTCSupportedTest extends TestCase {
 		return suite;
 	}
 	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
+	
 	/**
 	 * testIsSupported() - 
 	 */

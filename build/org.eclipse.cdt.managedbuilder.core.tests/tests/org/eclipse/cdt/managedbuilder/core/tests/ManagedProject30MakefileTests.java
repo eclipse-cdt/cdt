@@ -70,6 +70,12 @@ public class ManagedProject30MakefileTests extends TestCase {
 		removePathVariables();
 		super.tearDown();
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedProject30MakefileTests.class.getName());

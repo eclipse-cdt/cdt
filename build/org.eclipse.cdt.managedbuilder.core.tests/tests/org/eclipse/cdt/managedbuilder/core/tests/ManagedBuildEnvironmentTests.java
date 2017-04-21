@@ -85,6 +85,12 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 //		suite.addTest(new ManagedBuildEnvironmentTests("testEnvProvider"));  //$NON-NLS-1$
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	//	 Checking behaviour when vars are not defined (except system)
 	public void testEnvNotDef(){

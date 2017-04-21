@@ -70,6 +70,12 @@ public class ResourceBuildCoreTests extends TestCase {
 //		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	/**
 	 * Creates a couple of resource configurations.

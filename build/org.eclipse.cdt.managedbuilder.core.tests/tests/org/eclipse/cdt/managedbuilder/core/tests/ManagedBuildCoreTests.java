@@ -51,6 +51,12 @@ public class ManagedBuildCoreTests extends TestCase {
 		suite.addTest(new ManagedBuildCoreTests("testOptionsAttributeUseByScannerDiscovery"));
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	/**
 	 * Navigates through a CDT 2.1 manifest file and verifies that the

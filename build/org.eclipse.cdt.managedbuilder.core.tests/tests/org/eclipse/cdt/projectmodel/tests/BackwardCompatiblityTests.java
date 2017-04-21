@@ -75,9 +75,10 @@ public class BackwardCompatiblityTests extends TestCase {
 	private IProject loadStdProject(String name){
 		return ManagedBuildTestHelper.loadProject(name, TEST_3X_STD_MAKE_PROJECTS);
 	}
-
+	
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 		super.setUp();
 	}
 

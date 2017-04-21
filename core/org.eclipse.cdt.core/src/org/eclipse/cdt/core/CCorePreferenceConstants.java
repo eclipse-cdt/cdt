@@ -52,6 +52,25 @@ public class CCorePreferenceConstants {
      *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "high", "normal" or "low"
      *     - default:           ""
      */
+	
+	/**
+	 * Use to display all the time the source not found editor
+	 * @since 6.3
+	 */
+	public static final String ALL_THE_TIME = "all_time"; //$NON-NLS-1$
+	
+	/**
+	 * Use to display sometimes the source not found editor
+	 * @since 6.3
+	 */
+	public static final String SOMETIMES = "sometimes"; //$NON-NLS-1$
+	
+	/**
+	 * Use to don't display the source not found editor
+	 * @since 6.3
+	 */
+	public static final String NEVER = "never"; //$NON-NLS-1$
+	
 
 	/**
 	 * Task tags used in code comments.

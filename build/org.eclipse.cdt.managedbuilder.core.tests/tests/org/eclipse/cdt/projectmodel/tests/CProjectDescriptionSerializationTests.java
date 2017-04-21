@@ -55,9 +55,10 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(CProjectDescriptionSerializationTests.class);
 	}
-
+	
 	@Override
 	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
 	}
 
 	@Override

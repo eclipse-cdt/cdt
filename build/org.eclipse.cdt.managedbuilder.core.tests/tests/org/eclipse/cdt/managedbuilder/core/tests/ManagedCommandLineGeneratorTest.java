@@ -70,7 +70,13 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     public static Test suite() {
         return new TestSuite(ManagedCommandLineGeneratorTest.class);
     }
-    
+
+    @Override
+    protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+    	super.setUp();
+    }
+
     public final void testGetCommandLineGenerator() {
         IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
         assertNotNull( gen );

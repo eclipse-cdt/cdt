@@ -194,6 +194,12 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	private void assertCorrectId(String s1, String s2) {
 		if (testExtensionElements == true) {

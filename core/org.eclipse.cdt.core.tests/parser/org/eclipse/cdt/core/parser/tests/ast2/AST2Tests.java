@@ -5929,7 +5929,11 @@ public class AST2Tests extends AST2TestBase {
 				lastException = new Exception("Attempted intermittent test " + RETRY_INTERMITTENT_COUNT
 						+ " times and it failed each time. Nested exception is last exception."
 						+ "Previous exceptions are on stderr", e);
-				System.err.println("IntermittentTest failed, exception was:");
+				if (i < RETRY_INTERMITTENT_COUNT) {
+					System.err.println("Intermittent test failed, test will be re-tried. Exception was:");
+				} else {
+					System.err.println("Intermittent test failed on each retry, marking test failed. Exception was:");
+				}
 				e.printStackTrace();
 			}
 		}

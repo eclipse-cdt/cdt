@@ -10,6 +10,12 @@
 		<version>9.3.0-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<extra.vmargs.indexer.timeout></extra.vmargs.indexer.timeout>
+		<extra.vmargs.displayhelper.timeoutmultipler></extra.vmargs.displayhelper.timeoutmultipler>
+		<skipTests>${cdt-build.skip.tests}</skipTests>
+	</properties>
+
 	<modules>
 		<module>org.eclipse.cdt.build.gcc.core</module>
 		<module>org.eclipse.cdt.make.core</module>

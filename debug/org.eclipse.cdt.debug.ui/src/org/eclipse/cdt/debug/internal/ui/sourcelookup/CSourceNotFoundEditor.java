@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -35,6 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -53,9 +56,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -73,7 +78,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME + "disassemblyButton"; //$NON-NLS-1$
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
-	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME + "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME
+			+ "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_OPTIONS_GROUP = UID_CLASS_NAME + "radioGroup";
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -89,6 +96,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private boolean isTranslationUnit;
 	private Text fText;
 	private Button dontShowSourceEditorButton;
+	private Group radioGroup;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -167,6 +175,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected String getText() {
+		// Fichier pas trouv�
 		if (missingFile.length() > 0) {
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
 		} else {
@@ -174,11 +183,23 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				return super.getText();
 			String contextDescription;
 			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
-			if (description != null)
-				contextDescription = description.getDescription();
-			else
+			// debugger knows function
+			if (description != null) {
+				Pattern p = Pattern.compile("^0x.*");
+				Matcher m = p.matcher(description.getDescription());
+				if (!m.matches()) {
+					contextDescription = description.getDescription();
+					return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
+				}
+				// debugger knows address
+				else {
+					contextDescription = description.getDescription();
+					return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_9, contextDescription);
+				}
+			} else {
 				contextDescription = context.toString();
-			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
+				return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_7, contextDescription);
+			}
 		}
 	}
 
@@ -199,10 +220,54 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
 							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
 							dontShowSourceEditorButton.getSelection());
+					Button button = ((Button) e.widget);
 
-				};
+					if (button.getSelection()) {
+						radioGroup.getChildren()[0].setEnabled(true);
+						radioGroup.getChildren()[1].setEnabled(true);
+					} else {
+						radioGroup.getChildren()[0].setEnabled(false);
+						radioGroup.getChildren()[1].setEnabled(false);
+					}
+				}
 			});
 			dontShowSourceEditorButton.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
+		}
+
+		{
+			GridData data;
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			radioGroup = new Group(parent, SWT.SHADOW_IN);
+			radioGroup.setLayout(new RowLayout(SWT.VERTICAL));
+			radioGroup.setLayoutData(data);
+			Button showAlwaysButton = new Button(radioGroup, SWT.RADIO);
+			showAlwaysButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
+			showAlwaysButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+							dontShowSourceEditorButton.getSelection());
+				};
+			});
+			Button showInSomeCasesButton = new Button(radioGroup, SWT.RADIO);
+			showInSomeCasesButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_8);
+			showInSomeCasesButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+							!dontShowSourceEditorButton.getSelection());
+				};
+			});
+			boolean val = Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME, true, null);
+			if (val)
+				showAlwaysButton.setSelection(true);
+			else
+				showInSomeCasesButton.setSelection(true);
 		}
 
 		if (isDebugElement) {

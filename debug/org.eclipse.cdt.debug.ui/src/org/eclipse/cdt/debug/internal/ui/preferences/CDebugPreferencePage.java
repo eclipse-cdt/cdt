@@ -40,7 +40,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -64,8 +66,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private PropertyChangeListener fPropertyChangeListener;
 
 	private Button fShowBinarySourceFilesButton;
-	
-	private Button fShowSourceNotFoundEditor;
+
+	private Button fShowSourceNotFoundAllTime;
+	private Button fShowSourceNotFoundOnlyCaseSourceNotFound;
+	private Button fShowSourceNotFoundNever;
 
 	protected class PropertyChangeListener implements IPropertyChangeListener {
 
@@ -124,8 +128,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		createSpacer(composite, 1);
 		createCharsetSettingPreferences(composite);
 		createSpacer(composite, 1);
+		Group fButtonGroupForSourceNotFound = new Group(composite, SWT.SHADOW_ETCHED_IN);
+		createShowSourceNotFoundEditor(fButtonGroupForSourceNotFound);
+		createSpacer(composite, 1);
 		createBinarySettings(composite);
-		createShowSourceNotFoundEditor(composite);
 		setValues();
 		return composite;
 	}
@@ -193,8 +199,23 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fShowBinarySourceFilesButton.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
 				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true, null));
 
-		fShowSourceNotFoundEditor.setSelection(Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
-				CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, true, null));
+		// Set the values for show source not found editor
+		String showEditor = Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+				CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, "all_time", null); //$NON-NLS-1$
+
+		String never = Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+				CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_NEVER, "never", null); //$NON-NLS-1$
+
+		String sometimes = Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+				CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES, "sometimes", null); //$NON-NLS-1$
+
+		if (showEditor.equals(never)) {
+			fShowSourceNotFoundNever.setSelection(true);
+		} else if (showEditor.equals(sometimes)) {
+			fShowSourceNotFoundOnlyCaseSourceNotFound.setSelection(true);
+		} else {
+			fShowSourceNotFoundAllTime.setSelection(true);
+		}
 	}
 
 	@Override
@@ -245,11 +266,26 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fShowBinarySourceFilesButton = createCheckButton(parent,
 				PreferenceMessages.getString("CDebugPreferencePage.15")); //$NON-NLS-1$
 	}
-	
-	private void createShowSourceNotFoundEditor(Composite parent)
-	{
-		fShowSourceNotFoundEditor = createCheckButton(parent,
-				PreferenceMessages.getString("CDebugPreferencePage.21")); //$NON-NLS-1$
+
+	private void createShowSourceNotFoundEditor(Group parent) {
+		{
+			GridLayout gridLayout = new GridLayout();
+			gridLayout.numColumns = 1;
+			parent.setLayout(gridLayout);
+			parent.setText(PreferenceMessages.getString("CDebugPreferencePage.24")); //$NON-NLS-1$
+			Text preferenceText = new Text(parent, SWT.READ_ONLY | SWT.WRAP);
+			preferenceText.setText(PreferenceMessages.getString("CDebugPreferencePage.26")); //$NON-NLS-1$
+		}
+
+		{
+			fShowSourceNotFoundAllTime = createRadioButton(parent,
+					PreferenceMessages.getString("CDebugPreferencePage.22")); //$NON-NLS-1$
+			fShowSourceNotFoundAllTime.setToolTipText(PreferenceMessages.getString("CDebugPreferencePage.25")); //$NON-NLS-1$
+			fShowSourceNotFoundOnlyCaseSourceNotFound = createRadioButton(parent,
+					PreferenceMessages.getString("CDebugPreferencePage.23")); //$NON-NLS-1$
+			fShowSourceNotFoundNever = createRadioButton(parent,
+					PreferenceMessages.getString("CDebugPreferencePage.21")); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -258,6 +294,15 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private Button createCheckButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
+		// FieldEditor GridData
+		GridData data = new GridData();
+		button.setLayoutData(data);
+		return button;
+	}
+
+	private Button createRadioButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
 		// FieldEditor GridData
 		GridData data = new GridData();
@@ -354,8 +399,22 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
 				CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection());
 
-		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
-				CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, fShowSourceNotFoundEditor.getSelection());
+		// Store the show source file editor
+		if (fShowSourceNotFoundAllTime.getSelection()) {
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME, "all_time", null)); //$NON-NLS-1$
+		}
+		if (fShowSourceNotFoundOnlyCaseSourceNotFound.getSelection()) {
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES, "sometimes", null)); //$NON-NLS-1$
+		}
+		if (fShowSourceNotFoundNever.getSelection()) {
+			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+					.put(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_NEVER, "never", null)); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -374,8 +433,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fWideCharsetEditor.loadDefault();
 		fShowBinarySourceFilesButton.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
 				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true));
-		fShowSourceNotFoundEditor.setSelection(DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
-				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR, true));
+		fShowSourceNotFoundAllTime.setSelection(true);
+		fShowSourceNotFoundOnlyCaseSourceNotFound.setSelection(false);
+		fShowSourceNotFoundNever.setSelection(false);
 	}
 
 	private IWorkbench getWorkbench() {

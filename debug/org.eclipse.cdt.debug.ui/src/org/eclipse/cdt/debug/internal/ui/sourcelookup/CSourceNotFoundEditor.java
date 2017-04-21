@@ -53,9 +53,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -74,6 +76,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
 	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME + "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_OPTIONS_GROUP = UID_CLASS_NAME + "radioGroup";
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -89,6 +92,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private boolean isTranslationUnit;
 	private Text fText;
 	private Button dontShowSourceEditorButton;
+	private Group radioGroup;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -199,10 +203,48 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
 							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
 							dontShowSourceEditorButton.getSelection());
-
-				};
+					Button button = ((Button) e.widget);
+					
+					if (button.getSelection()) {
+						radioGroup.getChildren()[0].setEnabled(true);
+						radioGroup.getChildren()[1].setEnabled(true);
+					} else {
+						radioGroup.getChildren()[0].setEnabled(false);
+						radioGroup.getChildren()[1].setEnabled(false);
+					}
+				}
 			});
 			dontShowSourceEditorButton.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
+		}
+		
+		{
+			GridData data;
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			radioGroup = new Group(parent, SWT.SHADOW_IN);
+			radioGroup.setLayout(new RowLayout(SWT.VERTICAL));
+			radioGroup.setLayoutData(data);
+			Button showAlwaysButton = new Button(radioGroup, SWT.RADIO);
+			showAlwaysButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
+			showAlwaysButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					 InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+					 CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+					 dontShowSourceEditorButton.getSelection());
+				};
+			});
+			Button showInSomeCasesButton = new Button(radioGroup, SWT.RADIO);
+			showInSomeCasesButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_8);
+			showInSomeCasesButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					 InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+					 CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+					 !dontShowSourceEditorButton.getSelection());
+				};
+			});
 		}
 
 		if (isDebugElement) {

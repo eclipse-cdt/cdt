@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -53,9 +54,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -73,7 +76,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME + "disassemblyButton"; //$NON-NLS-1$
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
-	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME + "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME
+			+ "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_SHOW_OPTIONS_GROUP = UID_CLASS_NAME + "radioGroup";
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -88,7 +93,10 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
 	private Text fText;
-	private Button dontShowSourceEditorButton;
+	private Button showSourceEditorButton;
+	private Group radioGroup;
+	private Button showAlwaysButton;
+	private Button showInSomeCasesButton;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -167,6 +175,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected String getText() {
+		// File not found
 		if (missingFile.length() > 0) {
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
 		} else {
@@ -179,31 +188,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			else
 				contextDescription = context.toString();
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
+			}
 		}
 	}
 
 	@Override
 	protected void createButtons(Composite parent) {
-		{
-			GridData data;
-			dontShowSourceEditorButton = new Button(parent, SWT.CHECK);
-			data = new GridData();
-			data.grabExcessHorizontalSpace = false;
-			data.grabExcessVerticalSpace = false;
-			dontShowSourceEditorButton.setLayoutData(data);
-			dontShowSourceEditorButton.setSelection(true);
-			dontShowSourceEditorButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
-			dontShowSourceEditorButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
-							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
-							dontShowSourceEditorButton.getSelection());
-
-				};
-			});
-			dontShowSourceEditorButton.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
-		}
 
 		if (isDebugElement) {
 			GridData data;
@@ -254,6 +244,60 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				}
 			});
 			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
+		}
+		{
+			GridData data;
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			radioGroup = new Group(parent, SWT.SHADOW_IN);
+			radioGroup.setLayout(new RowLayout(SWT.VERTICAL));
+			radioGroup.setLayoutData(data);
+			showSourceEditorButton = new Button(radioGroup, SWT.CHECK);
+			showSourceEditorButton.setSelection(true);
+			showSourceEditorButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
+			showSourceEditorButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
+							showSourceEditorButton.getSelection());
+
+					showAlwaysButton.setEnabled(showSourceEditorButton.getSelection());
+					showInSomeCasesButton.setEnabled(showSourceEditorButton.getSelection());
+				}
+			});
+			showSourceEditorButton.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
+		}
+
+		{
+			showAlwaysButton = new Button(radioGroup, SWT.RADIO);
+			showAlwaysButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
+			showAlwaysButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+							showSourceEditorButton.getSelection());
+				};
+			});
+			showInSomeCasesButton = new Button(radioGroup, SWT.RADIO);
+			showInSomeCasesButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_8);
+			showInSomeCasesButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
+							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME,
+							!showSourceEditorButton.getSelection());
+				};
+			});
+			boolean val = Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+					CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME, true, null);
+			if (val) {
+				showAlwaysButton.setSelection(true);
+			} else {
+				showInSomeCasesButton.setSelection(true);
+			}
 		}
 		syncButtons();
 	}

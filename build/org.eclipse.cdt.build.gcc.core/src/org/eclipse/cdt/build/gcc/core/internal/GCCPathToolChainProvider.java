@@ -56,7 +56,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 					if (matcher.matches()) {
 						prefix = matcher.group(1);
 						String cmd = matcher.group(2);
-						String altFile = prefix + (cmd.startsWith("g") ? "g++" : "clang++");
+						String altFile = prefix + (cmd.startsWith("g") ? "g++" : "clang++"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						File altCmd = new File(dir, altFile);
 						hasAltCmd = altCmd.exists() && altCmd.canExecute();
 					}
@@ -65,7 +65,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 						if (matcher.matches()) {
 							prefix = matcher.group(1);
 							String cmd = matcher.group(2);
-							String altFile = prefix + (cmd.startsWith("g") ? "gcc" : "clang");
+							String altFile = prefix + (cmd.startsWith("g") ? "gcc" : "clang"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							File altCmd = new File(dir, altFile);
 							hasAltCmd = altCmd.exists() && altCmd.canExecute();
 						}
@@ -101,26 +101,26 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 									String[] tuple = target.split("-"); //$NON-NLS-1$
 									if (tuple.length > 2) {
 										// Arch
-										if ("x86_64".equals(tuple[0])) {
+										if ("x86_64".equals(tuple[0])) { //$NON-NLS-1$
 											toolChain.setProperty(IToolChain.ATTR_ARCH, tuple[0]);
 										} else {
-											toolChain.setProperty(IToolChain.ATTR_ARCH, "x86"); // default
+											toolChain.setProperty(IToolChain.ATTR_ARCH, "x86"); // default //$NON-NLS-1$
 										}
 										
 										// OS
 										switch (tuple[1]) {
-										case "w64":
+										case "w64": //$NON-NLS-1$
 											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_WIN32);
 											break;
-										case "linux":
+										case "linux": //$NON-NLS-1$
 											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_LINUX);
 											break;
-										case "apple":
+										case "apple": //$NON-NLS-1$
 											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_MACOSX);
 											break;
 										}
 									}
-									toolChain.setProperty(IToolChain.ATTR_PACKAGE, "system");
+									toolChain.setProperty(IToolChain.ATTR_PACKAGE, "system"); //$NON-NLS-1$
 									manager.addToolChain(toolChain);
 								}
 							}

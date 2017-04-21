@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				}
 
 				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
+				
+				String userArgs = properties.get(CMAKE_ARGUMENTS);
+				if (userArgs != null) {
+					command.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
+				}
+
 				command.add(new File(project.getLocationURI()).getAbsolutePath());
 
 				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());

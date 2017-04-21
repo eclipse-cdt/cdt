@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private final IEnvironmentVariable pathVar;
 	private final IEnvironmentVariable[] envVars;
 	private final Map<String, String> properties = new HashMap<>();
+	private String[] commands;
+	private String[] cCommands;
+	private String[] cppCommands;
 
 	public GCCToolChain(IToolChainProvider provider, String id, String version) {
 		this(provider, id, version, null, null);
@@ -73,7 +77,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		this.version = version;
 		this.name = id + " - " + version; //$NON-NLS-1$
 		this.path = path;
-		this.prefix = prefix != null ? prefix : "";
+		this.prefix = prefix != null ? prefix : ""; //$NON-NLS-1$
 
 		if (path != null) {
 			StringBuilder pathString = new StringBuilder();
@@ -269,9 +273,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			// Source is an empty tmp file
 			String extension;
 			if (GPPLanguage.ID.equals(language.getId())) {
-				extension = ".cpp";
+				extension = ".cpp"; //$NON-NLS-1$
 			} else if (GCCLanguage.ID.equals(language.getId())) {
-				extension = ".c";
+				extension = ".c"; //$NON-NLS-1$
 			} else {
 				// In theory we shouldn't get here
 				return null;
@@ -391,17 +395,44 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		return null;
 	}
 
+	private boolean isLocal() {
+		return Platform.getOS().equals(properties.get(ATTR_OS))
+				&& Platform.getOSArch().equals(properties.get(ATTR_ARCH));
+	}
+
 	@Override
 	public String[] getCompileCommands() {
-		return new String[] { prefix + "gcc", prefix + "g++", prefix + "clang", prefix + "clang++", prefix + "cc", prefix + "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		if (commands == null) {
+			boolean local = isLocal();
+
+			List<String> cCommandsList = new ArrayList<>(Arrays.asList(prefix + "gcc", prefix + "clang", prefix + "cc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (local) {
+				cCommandsList.addAll(Arrays.asList("gcc", "clang", "cc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			cCommands = cCommandsList.toArray(new String[cCommandsList.size()]);
+			
+			List<String> cppCommandsList = new ArrayList<>(Arrays.asList(prefix + "g++", prefix + "clang++", prefix + "c++")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (local) {
+				cppCommandsList.addAll(Arrays.asList("g++", "clang++", "c++")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			cppCommands = cppCommandsList.toArray(new String[cppCommandsList.size()]);
+
+			List<String> commandsList = new ArrayList<>(cCommandsList);
+			commandsList.addAll(cppCommandsList);
+			commands = commandsList.toArray(new String[commandsList.size()]);
+		}
+		return commands;
 	}
 
 	@Override
 	public String[] getCompileCommands(ILanguage language) {
+		if (commands == null) {
+			getCompileCommands();
+		}
 		if (GPPLanguage.ID.equals(language.getId())) {
-			return new String[] { prefix + "g++", prefix + "clang++", prefix + "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return cppCommands;
 		} else if (GCCLanguage.ID.equals(language.getId())) {
-			return new String[] { prefix + "gcc", prefix + "clang", prefix + "cc" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return cCommands;
 		} else {
 			return new String[0];
 		}

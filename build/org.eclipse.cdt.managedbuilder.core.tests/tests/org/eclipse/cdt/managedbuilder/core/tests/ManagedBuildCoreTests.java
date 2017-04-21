@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -50,6 +51,12 @@ public class ManagedBuildCoreTests extends TestCase {
 		suite.addTest(new ManagedBuildCoreTests("testTreeOptions"));
 		suite.addTest(new ManagedBuildCoreTests("testOptionsAttributeUseByScannerDiscovery"));
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	/**

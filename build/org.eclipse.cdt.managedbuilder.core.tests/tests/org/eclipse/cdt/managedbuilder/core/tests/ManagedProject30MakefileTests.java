@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -68,6 +69,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		removePathVariables();
+		ResourceHelper.cleanUp(getName());
 		super.tearDown();
 	}
 

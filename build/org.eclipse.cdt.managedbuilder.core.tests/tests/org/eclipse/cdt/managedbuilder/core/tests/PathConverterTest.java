@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -50,6 +51,11 @@ public class PathConverterTest extends TestCase {
 		return suite;
 	}
 
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
+	}
 
 	/**
 	 * The expected converter can be determined from the configuration's id string.

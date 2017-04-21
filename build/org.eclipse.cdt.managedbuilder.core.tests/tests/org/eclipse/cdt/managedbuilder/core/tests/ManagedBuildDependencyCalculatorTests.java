@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -50,6 +51,12 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		suite.addTest(new ManagedBuildDependencyCalculatorTests("test1DepCalc3"));
 		suite.addTest(new ManagedBuildDependencyCalculatorTests("test1DepCalcPreBuild"));
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){

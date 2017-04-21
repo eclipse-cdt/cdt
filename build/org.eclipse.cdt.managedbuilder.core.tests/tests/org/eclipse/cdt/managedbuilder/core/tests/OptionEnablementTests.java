@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -94,6 +95,12 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 
 	public static Test suite() {
 		return new TestSuite(OptionEnablementTests.class);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	private void resetValueHandler(){

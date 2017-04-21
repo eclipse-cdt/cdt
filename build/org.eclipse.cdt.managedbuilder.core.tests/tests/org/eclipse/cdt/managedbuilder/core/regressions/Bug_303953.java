@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.cdt.managedbuilder.testplugin.ResourceDeltaVerifier;
 import org.eclipse.core.resources.IFile;
@@ -30,6 +31,12 @@ import org.eclipse.core.runtime.CoreException;
  * files should be deleted.
  */
 public class Bug_303953 extends AbstractBuilderTest {
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
+	}
 
 	public void testBuildAfterSourcefileDelete() throws CoreException {
 		setWorkspace("regressions");

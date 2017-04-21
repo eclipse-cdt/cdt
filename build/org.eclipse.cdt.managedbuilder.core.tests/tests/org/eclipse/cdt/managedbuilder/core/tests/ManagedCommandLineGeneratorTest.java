@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -70,7 +71,13 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     public static Test suite() {
         return new TestSuite(ManagedCommandLineGeneratorTest.class);
     }
-    
+
+    @Override
+    protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+    	super.tearDown();
+    }
+
     public final void testGetCommandLineGenerator() {
         IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
         assertNotNull( gen );

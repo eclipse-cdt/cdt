@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -69,6 +70,12 @@ public class ResourceBuildCoreTests extends TestCase {
 //		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
 //		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	/**

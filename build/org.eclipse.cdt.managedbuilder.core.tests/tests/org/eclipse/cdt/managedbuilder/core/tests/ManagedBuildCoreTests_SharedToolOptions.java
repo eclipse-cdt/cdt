@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -192,6 +193,12 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 		suite.addTest(new ManagedBuildCoreTests_SharedToolOptions("testConfiguration"));
 
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	private void assertCorrectId(String s1, String s2) {

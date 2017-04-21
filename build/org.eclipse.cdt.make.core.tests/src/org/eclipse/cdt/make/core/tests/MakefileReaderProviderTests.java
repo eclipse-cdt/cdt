@@ -26,6 +26,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
@@ -53,6 +54,12 @@ public class MakefileReaderProviderTests extends TestCase {
 			basePath + "bogus",
 			basePath + "incl"
 		};
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	public void testNoReaderProvider() throws Exception {

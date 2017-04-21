@@ -27,6 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -73,6 +74,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		removePathVariables();
+		ResourceHelper.cleanUp(getName());
 		super.tearDown();
 	}
 

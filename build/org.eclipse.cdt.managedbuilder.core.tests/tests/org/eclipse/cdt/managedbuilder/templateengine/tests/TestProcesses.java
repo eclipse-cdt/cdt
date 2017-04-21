@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -53,6 +54,7 @@ public class TestProcesses extends TestCase {
 	protected void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		ResourceHelper.cleanUp(getName());
 		if (project.exists()) {
 			try {
 				ManagedBuildTestHelper.delete(CoreModel.getDefault().create(project));

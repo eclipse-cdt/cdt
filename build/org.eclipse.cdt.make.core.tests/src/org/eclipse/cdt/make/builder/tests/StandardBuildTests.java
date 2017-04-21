@@ -15,9 +15,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.io.IOException;
+
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
@@ -134,7 +137,8 @@ public class StandardBuildTests extends TestCase {
 	 *
 	 * @param name
 	 */
-	private void removeProject(String name) {
+	private void removeProject(String name) throws CoreException, IOException {
+		ResourceHelper.cleanUp(getName());
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(name);
 		if (project.exists()) {
@@ -149,7 +153,7 @@ public class StandardBuildTests extends TestCase {
 	/**
 	 * Remove all the project information associated with the project used during test.
 	 */
-	public void testProjectCleanup() {
+	public void testProjectCleanup() throws CoreException, IOException {
 		removeProject(PROJECT_NAME);
 	}
 

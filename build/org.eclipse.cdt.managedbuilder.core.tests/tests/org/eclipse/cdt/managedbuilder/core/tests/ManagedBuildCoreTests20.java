@@ -95,6 +95,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		return suite;
 	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		System.err.println("Running test " + getClass().getCanonicalName() + "." + getName());
+		super.setUp();
+	}
 
 	/**
 	 * Convert path to OS specific representation

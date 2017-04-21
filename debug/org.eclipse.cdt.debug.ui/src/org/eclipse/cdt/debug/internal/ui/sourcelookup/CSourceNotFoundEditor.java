@@ -15,8 +15,6 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -29,13 +27,13 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -61,19 +59,22 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Editor that lets you select a replacement for the missing source file and
  * modifies the source locator accordingly.
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
+	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage" //$NON-NLS-1$
+;
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
 	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME + "disassemblyButton"; //$NON-NLS-1$
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
-	public static final String UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX = UID_CLASS_NAME + "dontShowSourceEditorButton"; //$NON-NLS-1$
+	public static final String UID_OPEN_PREFERENCE_BUTTON = UID_CLASS_NAME + "preferenceButton"; //$NON-NLS-1$
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -88,7 +89,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
 	private Text fText;
-	private Button dontShowSourceEditorButton;
+
+	private Text preferenceText;
+	private Button preferenceButton;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -184,26 +187,6 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected void createButtons(Composite parent) {
-		{
-			GridData data;
-			dontShowSourceEditorButton = new Button(parent, SWT.CHECK);
-			data = new GridData();
-			data.grabExcessHorizontalSpace = false;
-			data.grabExcessVerticalSpace = false;
-			dontShowSourceEditorButton.setLayoutData(data);
-			dontShowSourceEditorButton.setSelection(true);
-			dontShowSourceEditorButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
-			dontShowSourceEditorButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
-							CCorePreferenceConstants.SHOW_SOURCE_NOT_FOUND_EDITOR,
-							dontShowSourceEditorButton.getSelection());
-
-				};
-			});
-			dontShowSourceEditorButton.setData(UID_KEY, UID_SHOW_SOURCE_NOT_FOUND_EDITOR_CHECKBOX);
-		}
 
 		if (isDebugElement) {
 			GridData data;
@@ -255,6 +238,24 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			});
 			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
 		}
+
+		{
+			Composite data = ControlFactory.createComposite(parent, 2);
+			((GridLayout) data.getLayout()).marginWidth = 0;
+			((GridLayout) data.getLayout()).marginHeight = 0;
+			preferenceText = new Text(data, SWT.READ_ONLY | SWT.WRAP);
+			preferenceButton = new Button(data, SWT.PUSH);
+			preferenceText.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
+			preferenceButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
+			preferenceButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					PreferencesUtil.createPreferenceDialogOn(parent.getShell(), SOURCE_NOT_FOUND_PATH, null, null)
+							.open();
+				}
+			});
+		}
+
 		syncButtons();
 	}
 

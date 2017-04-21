@@ -52,6 +52,7 @@ public class CCorePreferenceConstants {
      *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "high", "normal" or "low"
      *     - default:           ""
      */
+	
 
 	/**
 	 * Task tags used in code comments.
@@ -158,6 +159,30 @@ public class CCorePreferenceConstants {
 	 * @since 6.3
 	 */
 	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR = CCorePlugin.PLUGIN_ID + ".showSourceNotFoundEditor"; //$NON-NLS-1$
+	
+	/**
+	 * Use to display by default the source not found editor
+	 * @since 6.3
+	 */
+	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR_DEFAULT = "all_time"; //$NON-NLS-1$
+	
+	/**
+	 * Use to display all the time the source not found editor
+	 * @since 6.3
+	 */
+	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_THE_TIME = "all_time"; //$NON-NLS-1$
+	
+	/**
+	 * Use to display sometimes the source not found editor
+	 * @since 6.3
+	 */
+	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR_SOMETIMES = "sometimes"; //$NON-NLS-1$
+	
+	/**
+	 * Use to don't display the source not found editor
+	 * @since 6.3
+	 */
+	public static final String SHOW_SOURCE_NOT_FOUND_EDITOR_NEVER = "never"; //$NON-NLS-1$
 	
 	/**
 	 * Show source roots at the top level of projects.

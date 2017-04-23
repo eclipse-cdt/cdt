@@ -7466,9 +7466,14 @@ public class AST2TemplateTests extends AST2TestBase {
 
 		ICPPAliasTemplateInstance AliasInt =
 				assertionHelper.assertNonProblem("Alias<int> intAlias;", "Alias<int>", ICPPAliasTemplateInstance.class);
-		assertEquals("Alias<int>", AliasInt.getName());
+		assertEquals("Alias", AliasInt.getName());
 		assertEquals("NS", AliasInt.getQualifiedName()[0]);
-		assertEquals("Alias<int>", AliasInt.getQualifiedName()[1]);
+		assertEquals("Alias", AliasInt.getQualifiedName()[1]);
+		IType aliasedType = AliasInt.getType();
+		assertInstance(aliasedType, ICPPTemplateInstance.class);
+		ICPPTemplateArgument[] args = ((ICPPTemplateInstance) aliasedType).getTemplateArguments();
+		assertEquals(1, args.length);
+		assertSameType(CommonCPPTypes.int_, args[0].getTypeValue());		
 
 		ICPPNamespace namespaceNS = assertionHelper.assertNonProblem("using namespace NS;", "NS", ICPPNamespace.class);
 		assertEquals(namespaceNS, AliasInt.getOwner());

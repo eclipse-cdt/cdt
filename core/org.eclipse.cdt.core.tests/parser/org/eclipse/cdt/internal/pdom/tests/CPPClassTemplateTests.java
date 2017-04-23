@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -433,7 +434,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindingA.length);
-		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		assertInstance(bindingA[0], ICPPAliasTemplate.class);
 		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
 		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
 		assertEquals(1, aliasParameters.length);
@@ -443,12 +444,16 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertDeclarationCount(pdom, "aB", 1);
 		assertDeclarationCount(pdom, "sB", 1);
 		
+		IIndexFragmentBinding[] bindingB= pdom.findBindings(new char[][] {{'B'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingB.length);
+		assertInstance(bindingB[0], ICPPClassType.class);
+		
 		IIndexFragmentBinding[] bindingVarSB= pdom.findBindings(new char[][] {"sB".toCharArray()}, IndexFilter.ALL, npm());
 		assertEquals(1, bindingVarSB.length);
-		assertTrue(bindingVarSB[0] instanceof ICPPVariable);
+		assertInstance(bindingVarSB[0], ICPPVariable.class);
 		ICPPVariable variableSB = (ICPPVariable) bindingVarSB[0];
 		IType varSBType = variableSB.getType();
-		assertTrue(varSBType instanceof ICPPClassSpecialization);
+		assertInstance(varSBType, ICPPClassSpecialization.class);
 		ICPPClassSpecialization templateInstanceSB = (ICPPClassSpecialization) varSBType;
 						
 		IIndexFragmentBinding[] bindingVarAB= pdom.findBindings(new char[][] {"aB".toCharArray()}, IndexFilter.ALL, npm());
@@ -456,11 +461,16 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertTrue(bindingVarAB[0] instanceof ICPPVariable);
 		ICPPVariable variableAB = (ICPPVariable) bindingVarAB[0];
 		IType varABType = variableAB.getType();
-		assertTrue(varABType instanceof ICPPAliasTemplateInstance);
+		assertInstance(varABType, ICPPAliasTemplateInstance.class);
 		ICPPAliasTemplateInstance aliasInstanceAB = (ICPPAliasTemplateInstance) varABType;
 		assertTrue(varABType.isSameType(templateInstanceSB));
 		assertTrue(aliasInstanceAB.getTemplateDefinition().isSameType(aliasA));
-		assertEquals("A<B>", aliasInstanceAB.getName());
+		assertEquals("A", aliasInstanceAB.getName());
+		IType aliasedType = aliasInstanceAB.getType();
+		assertInstance(aliasedType, ICPPTemplateInstance.class);
+		ICPPTemplateArgument[] args = ((ICPPTemplateInstance) aliasedType).getTemplateArguments();
+		assertEquals(1, args.length);
+		assertTrue(((ICPPClassType) bindingB[0]).isSameType(args[0].getTypeValue()));
 	}
 	
 	// template<typename T> class CT {

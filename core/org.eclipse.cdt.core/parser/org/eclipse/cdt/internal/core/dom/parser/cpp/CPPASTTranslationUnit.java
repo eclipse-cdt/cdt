@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
@@ -204,10 +206,27 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		fScopeMapper.handleAdditionalDirectives(scope);
 	}
 
+	private class ProblemBindingClearer extends ASTVisitor {
+		public ProblemBindingClearer() {
+			shouldVisitNames = true;
+		}
+		@Override
+		public int visit(IASTName name) {
+			if (name.getBinding() instanceof IProblemBinding) {
+				name.setBinding(null);
+			}
+			return PROCESS_CONTINUE;
+		}
+	}
+	
 	@Override
 	public void resolveAmbiguities() {
 		fAmbiguityResolver = new CPPASTAmbiguityResolver();
 		accept(fAmbiguityResolver);
+		// During ambiguity resolution, names can incorrectly get stuck with ProblemBindings.
+		// To prevent this, clear all ProblemBindings here, allowing name resolution for
+		// the affected names to be attempted again with a fully ambiguity-resolved AST.
+		accept(new ProblemBindingClearer());
 		fAmbiguityResolver = null;
 	}
 

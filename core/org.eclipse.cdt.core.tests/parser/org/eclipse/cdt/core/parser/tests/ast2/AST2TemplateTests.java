@@ -9867,6 +9867,23 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAmbiguityResolutionInNestedClassMethodBody_485388() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename...>
+	//	struct Voider {
+	//	  using type = void;
+	//	};
+	//
+	//	template <typename... Args>
+	//	using void_t = typename Voider<Args...>::type;
+	//
+	//	template <typename, template <typename...> class Op, typename... Args>
+	//	struct IsDetectedImpl;
+	//
+	//	template <template <typename...> class Op, typename... Args>
+	//	struct IsDetectedImpl<void_t<Op<Args...>>, Op, Args...> {};
+	public void testAmbiguityResolution_515453() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<typename T, T v>
 	//	struct F {

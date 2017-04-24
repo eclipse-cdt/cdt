@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
@@ -59,6 +60,7 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 		StandardBuildTestHelper.removeProject("SCDC");
 	}
 

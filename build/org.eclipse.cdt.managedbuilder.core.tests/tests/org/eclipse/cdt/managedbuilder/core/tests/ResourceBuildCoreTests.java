@@ -12,11 +12,8 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.ByteArrayInputStream;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -46,6 +43,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 
 public class ResourceBuildCoreTests extends TestCase {
 	private static final boolean boolVal = true;
@@ -69,6 +70,12 @@ public class ResourceBuildCoreTests extends TestCase {
 //		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
 //		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	/**
@@ -255,6 +262,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		assertNotSame(projDebugOptionValue, newResMainDebugOptionValue);
 
 		// Close and remove project.
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		removeProject(projectName);
 	}
@@ -356,6 +364,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		assertEquals(defaultResToolFlags,resetResToolFlags);
 
 		// Close and remove project.
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		removeProject(projectName);
 	}
@@ -498,6 +507,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project,false);
 		ManagedBuildManager.removeBuildInfo(project);
 
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 
 		// Now reopen the project.
@@ -566,6 +576,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		assertEquals(resBarDebugVal,newResBarDebugVal);
 
 		//	Close and remove project.
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		removeProject(projectName);
 
@@ -612,6 +623,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	 * @param name
 	 */
 	private void removeProject(String name) {
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(name);
 		if (project.exists()) {
@@ -702,6 +714,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
 		try {
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 		} catch (CoreException e) {
 			fail("Failed on project close: " + e.getLocalizedMessage());
@@ -918,6 +931,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		assertEquals(1,resConfigs.length);
 
 		// Close and remove project.
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		removeProject(renamedProjectName2);
 	}

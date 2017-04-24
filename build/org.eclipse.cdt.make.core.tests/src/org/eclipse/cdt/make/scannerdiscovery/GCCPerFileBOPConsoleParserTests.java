@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
@@ -64,6 +65,7 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 		if (fOutputParser != null) {
 			fOutputParser.shutdown();
 		}
+		ResourceHelper.cleanUp(getName());
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}

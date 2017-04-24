@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.io.ByteArrayInputStream;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -42,6 +43,7 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 		StandardBuildTestHelper.removeProject("SCDC");
 	}
 

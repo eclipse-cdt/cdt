@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -58,11 +59,13 @@ public class OptionStringListValueTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 	}
 	
 	public void testCfgDesEntries() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "1";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "cdt.managedbuild.target.gnu30.exe");
+		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		
@@ -111,6 +114,7 @@ public class OptionStringListValueTests extends TestCase {
 	public void testLibFiles() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "2";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "lv.tests.ptype");
+		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		
@@ -200,6 +204,7 @@ public class OptionStringListValueTests extends TestCase {
 	public void testOptions() throws Exception {
 		String projName = PROJ_NAME_PREFIX + "3";
 		IProject project = BuildSystemTestHelper.createProject(projName, null, "lv.tests.ptype");
+		ResourceHelper.addResourceCreated(project);
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		

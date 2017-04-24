@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 
@@ -83,6 +84,7 @@ public class BackwardCompatiblityTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 		for(Iterator<IProject> iter = projList.iterator(); iter.hasNext();){
 			IProject proj = iter.next();
 			try {

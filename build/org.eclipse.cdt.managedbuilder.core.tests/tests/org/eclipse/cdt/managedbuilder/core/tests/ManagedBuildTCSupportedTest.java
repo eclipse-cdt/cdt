@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -33,7 +34,14 @@ public class ManagedBuildTCSupportedTest extends TestCase {
 		suite.addTest(new ManagedBuildTCSupportedTest("testIsSupported"));  //$NON-NLS-1$
 		return suite;
 	}
-	
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.addResourceCreated(ManagedBuildMacrosTests.proj);
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
+	}
+
 	/**
 	 * testIsSupported() - 
 	 */

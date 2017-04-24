@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -854,6 +855,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp(getName());
 		fCleaner.run();
 		if(DbgUtil.DEBUG)
 			DbgUtil.flush();

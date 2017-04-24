@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -302,6 +303,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
 		try {
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 		} catch (CoreException e) {
 			fail("Failed on project close: " + e.getLocalizedMessage());
@@ -474,6 +476,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, false);
 		ManagedBuildManager.removeBuildInfo(project);
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		project.open(null);
 
@@ -612,6 +615,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
 		try {
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 		} catch (CoreException e) {
 			fail("Failed on project close: " + e.getLocalizedMessage());
@@ -1709,7 +1713,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	/**
 	 * Remove all the project information associated with the project used during test.
 	 */
-	public void cleanup() {
+	public void cleanup() throws CoreException, IOException {
+		ResourceHelper.cleanUp(getName());
 		removeProject(projectName);
 		removeProject(projectName2);
 	}
@@ -1831,6 +1836,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
 		try {
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 		} catch (CoreException e) {
 			fail("Failed on error parser project close: " + e.getLocalizedMessage());
@@ -1901,6 +1907,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, false);
 		ManagedBuildManager.removeBuildInfo(project);
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		project.open(null);
 

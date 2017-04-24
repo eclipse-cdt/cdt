@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -174,6 +175,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(false, true, new NullProgressMonitor());
 
 		project = root.getProject(projectName);
@@ -331,6 +333,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 		coreModel.setProjectDescription(project, des);
 
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(false, true, new NullProgressMonitor());
 
 		project = root.getProject(projectName);
@@ -376,6 +379,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		coreModel.setProjectDescription(project, des);
 		fEventChecker = null;
 
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(false, true, new NullProgressMonitor());
 
 		project = root.getProject(projectName);
@@ -463,6 +467,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		coreModel.setProjectDescription(project, des);
 		fEventChecker = null;
 
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(true, true, new NullProgressMonitor());
 	}
 
@@ -503,6 +508,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(false, true, new NullProgressMonitor());
 
 		project = root.getProject(projectName);
@@ -559,6 +565,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		cfgDes = des.getConfigurations()[0];
 		checkArrays(cfgDes.getSourceEntries(), s);
 
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.delete(true, true, new NullProgressMonitor());
 	}
 
@@ -722,6 +729,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
 	
 			// verify that closing/reopening the project preserves active configuration and does not touch project-model files
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
 			project.open(null);
 			des = coreModel.getProjectDescription(project);
@@ -731,6 +739,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
 			
 			// verify that deleting/reimporting the project resets active configuration but does not touch project-model files
+			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.delete(false, true, null);
 			project.create(null);
 			project.open(null);
@@ -747,6 +756,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 		finally {
 			if(project != null)
+				ResourceHelper.joinIndexerBeforeCleanup(getName());
 				project.delete(true, null);
 		}
 	}

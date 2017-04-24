@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -315,6 +316,7 @@ public class BuildSystem40Tests  extends TestCase {
 		//deletion is performed in case if no fail occured
 		for(int i = 0; i < projects.length; i++){
 			try {
+				ResourceHelper.cleanUp(getName());
 				projects[i].delete(true, null);
 				assertNull(mngr.getProjectDescription(projects[i]));
 				assertNull(mngr.getProjectDescription(projects[i], false));
@@ -442,6 +444,7 @@ public class BuildSystem40Tests  extends TestCase {
 
 		//deletion is performed in case if no fail occured
 		for(int i = 0; i < projects.length; i++){
+			ResourceHelper.cleanUp(getName());
 			projects[i].delete(true, null);
 			assertNull(mngr.getProjectDescription(projects[i]));
 			assertNull(mngr.getProjectDescription(projects[i], false));

@@ -164,5 +164,6 @@ public class PathConverterTest extends TestCase {
 		IPath path = entry.getIncludePath();
 		String pathText = path.toString() ;
 		assertEquals("Unexpected value for include path", "/usr/local/include", pathText);
+		ManagedBuildTestHelper.removeProject("pathconverter01");
 	}
 }

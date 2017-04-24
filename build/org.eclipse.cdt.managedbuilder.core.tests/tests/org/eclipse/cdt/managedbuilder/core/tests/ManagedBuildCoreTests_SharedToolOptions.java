@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -276,7 +277,7 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 	 * Sets up the test environment for a project created from the
 	 * default project
 	 */
-	private void setupProject() throws Exception {
+	private IProject setupProject() throws Exception {
 
 		// The assertCorrectId() call needs to be set up
 		testExtensionElements = false;
@@ -307,6 +308,8 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 		testProject = newProject.getProjectType();
 		IConfiguration config = testProject.getConfiguration(configID);
 		testConfig = newProject.createConfiguration(config, configID + ".12345678");
+
+		return project;
 	}
 
 	/**
@@ -553,12 +556,17 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 	public void testConfiguration() throws Exception {
 
 		// Set up the environment
-		setupProject();
-		setupTestEnvironment();
-		// Rerun the other tests, without setting the test up again
-		testIsSetup = true;
-		testIcons();
-		testValueHandlers();
-		testOptions();
+		IProject project = setupProject();
+		try {
+			setupTestEnvironment();
+			// Rerun the other tests, without setting the test up again
+			testIsSetup = true;
+			testIcons();
+			testValueHandlers();
+			testOptions();
+		} finally {
+			ResourceHelper.cleanUp(getName());
+			project.delete(true, new NullProgressMonitor());
+		}
 	}
 }

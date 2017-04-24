@@ -700,19 +700,7 @@ public class ResourceHelper {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		root.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
 
-		// Bug 499471: there is a race condition in the indexer when projects
-		// are created and deleted quickly. Therefore, wait for the indexer
-		// to be idle before deleting projects.
-		if (!CCorePlugin.getIndexManager().isIndexerIdle()) {
-			// the 2 second wait is very long in practice, when the race condition is
-			// happening the total join time is just a few ms for most tests, and
-			// up to 75 ms for a couple of tests on the HIPP
-			boolean joinSuccess = CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor());
-			if (!joinSuccess) {
-				System.err.println(
-						"Indexer did not stop runing, possible deadlock about to happen. Running test " + testName);
-			}
-		}
+		joinIndexerBeforeCleanup(testName);
 
 
 		// Delete all external files & folders created using ResourceHelper
@@ -734,6 +722,22 @@ public class ResourceHelper {
 			}
 		}
 		resourcesCreated.clear();
+	}
+
+	public static void joinIndexerBeforeCleanup(String testName) {
+		// Bug 499471: there is a race condition in the indexer when projects
+		// are created and deleted quickly. Therefore, wait for the indexer
+		// to be idle before deleting projects.
+		if (!CCorePlugin.getIndexManager().isIndexerIdle()) {
+			// the 2 second wait is very long in practice, when the race condition is
+			// happening the total join time is just a few ms for most tests, and
+			// up to 75 ms for a couple of tests on the HIPP
+			boolean joinSuccess = CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor());
+			if (!joinSuccess) {
+				System.err.println(
+						"Indexer did not stop runing, possible deadlock about to happen. Running test " + testName);
+			}
+		}
 	}
 
 	private static void waitForProjectRefreshToFinish() {
@@ -768,5 +772,15 @@ public class ResourceHelper {
 			}
 		}
 		f.delete();
+	}
+
+	/**
+	 * Notify {@link ResourceHelper} that given resource should be removed in
+	 * {@link #cleanUp(String)}.
+	 */
+	public static void addResourceCreated(IResource resource) {
+		if (resource != null) {
+			resourcesCreated.add(resource);
+		}
 	}
 }

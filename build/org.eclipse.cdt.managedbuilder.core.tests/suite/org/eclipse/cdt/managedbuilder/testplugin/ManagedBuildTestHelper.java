@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -214,6 +215,7 @@ public class ManagedBuildTestHelper {
 	 * @param name
 	 */
 	static public void removeProject(String name) {
+		ResourceHelper.joinIndexerBeforeCleanup(ManagedBuildTestHelper.class.getName());
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject project = root.getProject(name);
 		if (project.exists()) {

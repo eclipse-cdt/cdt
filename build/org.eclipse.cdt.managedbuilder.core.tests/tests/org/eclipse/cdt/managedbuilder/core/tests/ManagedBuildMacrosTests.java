@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -103,6 +104,13 @@ public class ManagedBuildMacrosTests extends TestCase {
 //		suite.addTest(new ManagedBuildMacrosTests("testMacroSave"));//$NON-NLS-1$
 		//$JUnit-END$
 		return suite;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ResourceHelper.addResourceCreated(proj);
+		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	/**

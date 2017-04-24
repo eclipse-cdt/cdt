@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -68,6 +69,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		ResourceHelper.cleanUp(getName());
 		// Bug 327126 Stop the indexer before tearing down so we don't deadlock
 		Job.getJobManager().cancel(CCorePlugin.getPDOMManager());
 		Job.getJobManager().join(CCorePlugin.getPDOMManager(), null);

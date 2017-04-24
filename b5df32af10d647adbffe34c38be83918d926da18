@@ -1,0 +1,521 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_167ea3d1",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "Please correct this comment.",
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3650ff55",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "minor niggle, this b should be uppercase",
+      "range": {
+        "startLine": 73,
+        "startChar": 16,
+        "endLine": 73,
+        "endChar": 17
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_59b20c33",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "minor niggle, this s should be uppercase",
+      "range": {
+        "startLine": 74,
+        "startChar": 17,
+        "endLine": 74,
+        "endChar": 18
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_79b50818",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "minor niggle, this s should be uppercase",
+      "range": {
+        "startLine": 75,
+        "startChar": 17,
+        "endLine": 75,
+        "endChar": 18
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_766a770d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "extract this as a variable for here and the next inverted line. It is difficult to see at a glance what is happening here",
+      "range": {
+        "startLine": 206,
+        "startChar": 42,
+        "endLine": 207,
+        "endChar": 79
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_b6640f3e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "this parent is not being used.\n\nStructure the methods the same as the layouts. That means creating a group and passing that group as the parent composite to the other functions.\n\nRecall that Group extends Composite, so the methods should receive parent of type Composite still.",
+      "range": {
+        "startLine": 293,
+        "startChar": 46,
+        "endLine": 293,
+        "endChar": 61
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_99bca406",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/PreferenceMessages.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "match wording here to the editor",
+      "range": {
+        "startLine": 28,
+        "startChar": 25,
+        "endLine": 28,
+        "endChar": 30
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_b9bfa0f7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/PreferenceMessages.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "match wording here to the editor",
+      "range": {
+        "startLine": 29,
+        "startChar": 23,
+        "endLine": 29,
+        "endChar": 34
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_d9ec5c07",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "I should have caught this before, but the name of this variable is \"backwards\". It currently implies that checked means don\u0027t show, but we swapped that.",
+      "range": {
+        "startLine": 98,
+        "startChar": 16,
+        "endLine": 98,
+        "endChar": 42
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_d9c53c85",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "comments in English please :-)",
+      "range": {
+        "startLine": 178,
+        "startChar": 5,
+        "endLine": 178,
+        "endChar": 23
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_19d0943e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "Please pull this change into a separate gerrit",
+      "range": {
+        "startLine": 182,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 2
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_b9d6c035",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "Use dontShowSourceEditorButton as in the line above",
+      "range": {
+        "startLine": 227,
+        "startChar": 9,
+        "endLine": 227,
+        "endChar": 15
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_39cb9097",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": ":-( no magic numbers, please use the button variables.\n\nAlso you can do:\n\n    \u003cname of radio button\u003e.setEnabled(dontShowSourceEditorButton.getSelection())",
+      "range": {
+        "startLine": 228,
+        "startChar": 26,
+        "endLine": 228,
+        "endChar": 35
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_59d92c69",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 229,
+        "startChar": 28,
+        "endLine": 229,
+        "endChar": 33
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_79dc285a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 231,
+        "startChar": 29,
+        "endLine": 231,
+        "endChar": 33
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_99d3c447",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 232,
+        "startChar": 28,
+        "endLine": 232,
+        "endChar": 33
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_f9e7581d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "niggle: add missing braces",
+      "range": {
+        "startLine": 262,
+        "startChar": 10,
+        "endLine": 265,
+        "endChar": 7
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_7940a85e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "this is part of the stuff to pull into other gerrit",
+      "range": {
+        "startLine": 61,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 12
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_39e2b00d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "this line is part of the code that should be moved to another gerrit",
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_19e7b41f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "remove empty line",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 1
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_b9116090",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "Move this typecase up to just after the if (input instan...) so that future readers can immediately tell this can\u0027t cause ClassCastException",
+      "range": {
+        "startLine": 441,
+        "startChar": 29,
+        "endLine": 441,
+        "endChar": 57
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_197414bf",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "There is a possible Null error here (check warning on this line)",
+      "range": {
+        "startLine": 454,
+        "startChar": 14,
+        "endLine": 454,
+        "endChar": 25
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_5904cc53",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 1,
+      "message": "this code is duplicated, please re-write conditions or extract method.\n\nThis method, even before you came to it already has too many ifs in it, so adding more is not great.",
+      "range": {
+        "startLine": 460,
+        "startChar": 11,
+        "endLine": 466,
+        "endChar": 12
+      },
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

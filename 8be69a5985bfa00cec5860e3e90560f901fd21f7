@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_f964b814",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-24T15:20:28Z",
+      "side": 0,
+      "message": "I didn\u0027t notice before commit of change 95383 that this line got duplicated. Thanks for removing it.",
+      "range": {
+        "startLine": 424,
+        "startChar": 9,
+        "endLine": 424,
+        "endChar": 80
+      },
+      "revId": "8be69a5985bfa00cec5860e3e90560f901fd21f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -477,11 +477,31 @@
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLaunchDescriptorType"
             id="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="20">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
+            <test
+                  forcePluginActivation="true"
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.eclipse.cdt.core.CProjectNature">
+            </test>
+         </enablement>
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
+            <test
+                  forcePluginActivation="true"
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.eclipse.cdt.core.CProjectNature">
+            </test>
+         </enablement>
       </configProvider>
    </extension>
 </plugin>

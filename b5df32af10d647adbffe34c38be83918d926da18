@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_79ab4890",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-24T15:24:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_167ea3d1",
+      "revId": "b5df32af10d647adbffe34c38be83918d926da18",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_3650ff55",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
         "patchSetId": 8

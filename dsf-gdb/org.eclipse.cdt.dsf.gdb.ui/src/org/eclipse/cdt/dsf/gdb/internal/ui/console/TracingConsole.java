@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IOConsole;
 
@@ -148,13 +149,10 @@ public class TracingConsole extends IOConsole {
     	final String newName = computeName();
     	String name = getName();
     	if (!name.equals(newName)) {
-    		Runnable r = new Runnable() {
-                @Override
-    			public void run() {
-    				setName(newName);
-    			}
-    		};
-    		PlatformUI.getWorkbench().getDisplay().asyncExec(r);
+    		Display display = PlatformUI.getWorkbench().getDisplay();
+    		if (!display.isDisposed()) {
+    			display.asyncExec(() -> setName(newName));
+    		}
     	}
     }
     

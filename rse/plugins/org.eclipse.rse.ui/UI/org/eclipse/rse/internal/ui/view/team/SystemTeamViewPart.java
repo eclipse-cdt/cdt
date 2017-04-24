@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Kaloyan Raev (Rogue Wave) - [505796] Icons are missing in the Remote System Details View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -114,6 +115,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -851,9 +853,9 @@ public class SystemTeamViewPart
 			collapseAllAction = new SystemCollapseAllAction(getShell()); 
 			collapseAllAction.setSelectionProvider(treeViewer);
 			collapseAllAction.setViewer(treeViewer);
-			collapseAllAction.setImageDescriptor(getNavigatorImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
-			// DKM - changed this icon from clcl16 since navigator no longer has it
-			collapseAllAction.setHoverImageDescriptor(getNavigatorImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
+			ImageDescriptor collapseAllImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL);
+			collapseAllAction.setImageDescriptor(collapseAllImage);
+			collapseAllAction.setHoverImageDescriptor(collapseAllImage);
 		}
 		return collapseAllAction;
 	}

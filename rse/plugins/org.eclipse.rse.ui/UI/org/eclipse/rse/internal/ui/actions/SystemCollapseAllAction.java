@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kaloyan Raev (Rogue Wave) - [505796] Icons are missing in the Remote System Details View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -44,7 +45,6 @@ public class SystemCollapseAllAction extends SystemBaseAction {
 		super(SystemResources.ACTION_COLLAPSE_ALL_LABEL, SystemResources.ACTION_COLLAPSE_ALL_TOOLTIP, PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL), // D54577
 				parent);
-		//setHoverImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptorFromIDE("elcl16/collapseall.gif")); //$NON-NLS-1$
 		setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND); // should never be used

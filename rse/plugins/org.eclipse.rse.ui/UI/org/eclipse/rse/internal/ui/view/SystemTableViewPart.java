@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2017 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -50,12 +50,11 @@
  * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
  * David McKnight   (IBM)        - [373673] Remote Systems Details view calling wrong method for setting action tooltips
  * David McKnight   (IBM)        - [425113] Improve performance of RSE table views by using SWT.VIRTUAL
+ * Kaloyan Raev (Rogue Wave) - [505796] Icons are missing in the Remote System Details View
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,7 +64,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -142,6 +140,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -150,7 +149,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.osgi.framework.Bundle;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -199,10 +197,10 @@ public class SystemTableViewPart extends ViewPart
 	{
 		public ForwardAction()
 		{
-			super(SystemResources.ACTION_HISTORY_MOVEFORWARD_LABEL, getEclipseImageDescriptor("elcl16/forward_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_HISTORY_MOVEFORWARD_LABEL, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
 			setToolTipText(SystemResources.ACTION_HISTORY_MOVEFORWARD_TOOLTIP);
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/forward_nav.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		}
 
 		public void checkEnabledState()
@@ -232,9 +230,9 @@ public class SystemTableViewPart extends ViewPart
 	{
 		public BackwardAction()
 		{
-			super(SystemResources.ACTION_HISTORY_MOVEBACKWARD_LABEL, getEclipseImageDescriptor("elcl16/backward_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_HISTORY_MOVEBACKWARD_LABEL, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 			setToolTipText(SystemResources.ACTION_HISTORY_MOVEBACKWARD_TOOLTIP);
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/backward_nav.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		}
 
 		public void checkEnabledState()
@@ -265,8 +263,8 @@ public class SystemTableViewPart extends ViewPart
 		private IAdaptable _parent;
 		public UpAction()
 		{
-			super(SystemResources.ACTION_GOUPLEVEL_TOOLTIP, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_GOUPLEVEL_TOOLTIP, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UP));
+			setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UP_DISABLED));
 		}
 
 		public void checkEnabledState()
@@ -1433,22 +1431,6 @@ public class SystemTableViewPart extends ViewPart
 
 		_printTableAction.checkEnabledState();
 		_selectColumnsAction.checkEnabledState();
-	}
-
-	private ImageDescriptor getEclipseImageDescriptor(String relativePath)
-	{
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		try
-		{
-		    Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-			URL installURL = bundle.getEntry("/"); //$NON-NLS-1$
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		}
-		catch (MalformedURLException e)
-		{
-			return null;
-		}
 	}
 
 	public void fillLocalToolBar()

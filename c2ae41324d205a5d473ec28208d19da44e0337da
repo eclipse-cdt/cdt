@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_5631fb73",
+        "filename": "debug/org.eclipse.cdt.debug.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 1179
+      },
+      "writtenOn": "2017-04-24T14:21:42Z",
+      "side": 1,
+      "message": "Yep, copy/paste",
+      "parentUuid": "87bd33cc_7617d705",
+      "range": {
+        "startLine": 485,
+        "startChar": 18,
+        "endLine": 485,
+        "endChar": 39
+      },
+      "revId": "c2ae41324d205a5d473ec28208d19da44e0337da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_16122310",
         "filename": "debug/org.eclipse.cdt.debug.core/plugin.xml",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-04-24T14:09:49Z",
       "side": 1,
       "message": "should this be org.eclipse.cdt.core.cnature? (the id of the nature)",
+      "range": {
+        "startLine": 487,
+        "startChar": 46,
+        "endLine": 487,
+        "endChar": 60
+      },
+      "revId": "c2ae41324d205a5d473ec28208d19da44e0337da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_76343765",
+        "filename": "debug/org.eclipse.cdt.debug.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 1179
+      },
+      "writtenOn": "2017-04-24T14:21:42Z",
+      "side": 1,
+      "message": "Arrgh, I\u0027ve copied the wrong string :-)",
+      "parentUuid": "87bd33cc_16122310",
       "range": {
         "startLine": 487,
         "startChar": 46,

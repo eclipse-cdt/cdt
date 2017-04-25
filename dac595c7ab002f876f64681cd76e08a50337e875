@@ -52,6 +52,24 @@
       "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_afd67235",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/CIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-25T08:21:10Z",
+      "side": 1,
+      "message": "Yeah, it\u0027s a concept internal to CDT. It refers to the process of combining the indexes of different projects in a way that creates a unified view of the code in the projects (so that e.g. Find References works across projects).",
+      "parentUuid": "87bd33cc_cc5adc7a",
+      "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

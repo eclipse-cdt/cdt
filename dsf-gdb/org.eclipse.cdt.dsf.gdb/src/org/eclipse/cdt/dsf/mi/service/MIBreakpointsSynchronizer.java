@@ -335,9 +335,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 							try {
 								String threadId = data.getThreadId();
 								if (!threadId.equals("0")) { //$NON-NLS-1$
-									IDsfBreakpointExtension bpExtension = 
-										(IDsfBreakpointExtension)((ICBreakpoint)plBpt).getExtension(
-											MIBreakpointsManager.GDB_DEBUG_MODEL_ID, ICBreakpointExtension.class);
+									IDsfBreakpointExtension bpExtension = fBreakpointsManager.getFilterExtension((ICBreakpoint)plBpt);
 									
 									IMIProcesses processes = getServicesTracker().getService(IMIProcesses.class);
 									if (processes == null) {
@@ -506,8 +504,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (procDmc == null) {
 				return;
 			}
-			IDsfBreakpointExtension bpExtension = (IDsfBreakpointExtension)plBpt.getExtension(
-					MIBreakpointsManager.GDB_DEBUG_MODEL_ID, ICBreakpointExtension.class);
+			IDsfBreakpointExtension bpExtension = fBreakpointsManager.getFilterExtension(plBpt);
+
 			IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
 			if (execDMCs == null) {
 				execDMCs = new IExecutionDMContext[0];

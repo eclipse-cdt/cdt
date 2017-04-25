@@ -494,11 +494,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             IBreakpoint[] breakpoints = fBreakpointManager.getBreakpoints(fDebugModelId);
             for (IBreakpoint breakpoint : breakpoints) {
                 if (supportsBreakpoint(breakpoint)) {
-                    Map<String, Object> attributes = breakpoint.getMarker().getAttributes();
-                    attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
-                    attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, (ICBreakpoint) breakpoint));
-                    attributes.put(ATTR_THREAD_ID, NULL_STRING);
-                    platformBPs.put((ICBreakpoint) breakpoint, attributes);
+                    boolean filtered = isBreakpointEntirelyFiltered(dmc, (ICBreakpoint) breakpoint);
+                    if (!filtered) {
+                        Map<String, Object> attributes = breakpoint.getMarker().getAttributes();
+                        attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
+                        attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, (ICBreakpoint) breakpoint));
+                        attributes.put(ATTR_THREAD_ID, NULL_STRING);
+                        platformBPs.put((ICBreakpoint) breakpoint, attributes);
+                    }
                 }
             }
         } catch (CoreException e) {
@@ -1343,16 +1346,21 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 				};
                 				countingRm.setDoneCount(fPlatformToAttributesMaps.size());
 
-                				for (final IBreakpointsTargetDMContext dmc : fPlatformToAttributesMaps.keySet()) {
-                					determineDebuggerPath(dmc, attrs,
-                							new RequestMonitor(getExecutor(), countingRm) {
-                						@Override
-                						protected void handleSuccess() {
-                							installBreakpoint(dmc, (ICBreakpoint) breakpoint,
-                									attrs, countingRm);
-                						}
-                					});
-                				}
+                                for (final IBreakpointsTargetDMContext dmc : fPlatformToAttributesMaps.keySet()) {
+                                    boolean filtered = isBreakpointEntirelyFiltered(dmc, (ICBreakpoint)breakpoint);
+                                    if (!filtered) {
+                                        determineDebuggerPath(dmc, attrs,
+                                                new RequestMonitor(getExecutor(), countingRm) {
+                                            @Override
+                                            protected void handleSuccess() {
+                                                installBreakpoint(dmc, (ICBreakpoint) breakpoint,
+                                                        attrs, countingRm);
+                                            }
+                                        });
+                                    } else {
+                                        countingRm.done();
+                                    }
+                                }
 
                 			}
                 		});

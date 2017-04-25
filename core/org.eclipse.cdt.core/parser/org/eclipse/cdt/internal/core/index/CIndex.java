@@ -560,7 +560,7 @@ public class CIndex implements IIndex {
 			// if non-empty (non-c) results are returned by a fragment
 			return fCF;
 		}
-		throw new CompositingNotImplementedError();
+		throw new CompositingNotImplementedError("Compositing not implemented for linkage ID " + linkageID);  //$NON-NLS-1$
 	}
 
 	private IndexFilter retargetFilter(final ILinkage linkage, final IndexFilter filter) {

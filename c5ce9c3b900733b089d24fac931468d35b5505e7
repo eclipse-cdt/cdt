@@ -1,0 +1,343 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_0a74b4be",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "this variable \"appears\" out of nowhere. Reading this method makes it hard to understand where this field came from.\n\nCan I recommend instead that createContents calls new method createShowSourceNotFoundGroup(composite) and that createShowSourceNotFoundGroup creates the Group and calls createShowSourceNotFoundEditor and createShowSourceNotFoundAllTime with the group as a parameter.\n\nAn alternative is to do what you did in the editor and just put contents of createShowSourceNotFoundAllTime in  createShowSourceNotFoundEditor. \n\nEither way, I don\u0027t think you need a field for fButtonGroupForSourceNotFound.\n\n----\n\nOn further thought, the createShowSourceNotFoundAllTime method is only two lines of code, it makes sense to go with option 2 for clarity.",
+      "range": {
+        "startLine": 135,
+        "startChar": 34,
+        "endLine": 135,
+        "endChar": 63
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_aa3ae0ed",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "This code may be a little shorter/neater as:\n\n    boolean enabled \u003d \u003ccondition\u003e;\n    fShowSourceNotFoundAllTime.setEnabled(enabled);\n    fShowSourceNotFoundOnlyCaseSourceNotFound.setEnabled(enabled);",
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_aa63c00b",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "Please don\u0027t do unnecessary casting, use the field instead.",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 44
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ea4bf87d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "I think this is unneeded, the enablement is set when setValues() is called.",
+      "range": {
+        "startLine": 295,
+        "startChar": 3,
+        "endLine": 299,
+        "endChar": 3
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8ab284fe",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "Not sure about purpose of the if here. You are just getting out what you just stored in the last line.\n\nAlso, you could store the SHOW_SOURCE_NOT_FOUND_EDITOR_ALL_TIME all the time.",
+      "range": {
+        "startLine": 415,
+        "startChar": 2,
+        "endLine": 416,
+        "endChar": 73
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_aab580e8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "The management of the enabled radios is currently in 4(?) places in this file. Although the cases aren\u0027t too long, it may be worth extracting them as a method.",
+      "range": {
+        "startLine": 445,
+        "startChar": 2,
+        "endLine": 446,
+        "endChar": 61
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ea969854",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "this comment looks like it is part of Change 95675",
+      "range": {
+        "startLine": 178,
+        "startChar": 2,
+        "endLine": 178,
+        "endChar": 19
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_4a8f8c39",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "is this right? I would have expected it to be showAlwaysButton\n\nI didn\u0027t catch this on the last review...",
+      "range": {
+        "startLine": 279,
+        "startChar": 7,
+        "endLine": 279,
+        "endChar": 29
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6a92885e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "is this right? I would have expected it to be !showAlwaysButton or showInSomeCasesButton\n\n\nI didn\u0027t catch this on the last review...",
+      "range": {
+        "startLine": 289,
+        "startChar": 7,
+        "endLine": 289,
+        "endChar": 30
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_2a78909a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "you moved too much up. the typecast was supposed to be moved up, the getArtifact call can wait until it is needed.",
+      "range": {
+        "startLine": 423,
+        "startChar": 26,
+        "endLine": 423,
+        "endChar": 62
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_aa074024",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "extract all this into a suitably named method like:\n\n    boolean isSourceFileNameKnown(CSourceNotFoundEditorInput input) {}",
+      "range": {
+        "startLine": 431,
+        "startChar": 10,
+        "endLine": 443,
+        "endChar": 64
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_8a89a434",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "Rename to \"openCSourceNotFoundEditor\"",
+      "range": {
+        "startLine": 456,
+        "startChar": 17,
+        "endLine": 456,
+        "endChar": 46
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_aa8ca042",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "Simply return the editor normally, don\u0027t return it via this one element array.",
+      "range": {
+        "startLine": 456,
+        "startChar": 47,
+        "endLine": 456,
+        "endChar": 67
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ca82bc0b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "Name this (or even remove it as I don\u0027t see what it is doing.)",
+      "range": {
+        "startLine": 457,
+        "startChar": 14,
+        "endLine": 457,
+        "endChar": 15
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_0a7d948c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T12:13:20Z",
+      "side": 1,
+      "message": "This also is not used, remove it",
+      "range": {
+        "startLine": 457,
+        "startChar": 21,
+        "endLine": 457,
+        "endChar": 28
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

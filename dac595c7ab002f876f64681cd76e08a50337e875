@@ -34,6 +34,24 @@
       "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cc5adc7a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/CIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T08:03:49Z",
+      "side": 1,
+      "message": "OK, thanks. I thought it was my ignorance of C++ that meant I didn\u0027t understand Compositing :-)",
+      "parentUuid": "87bd33cc_ec6eb823",
+      "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

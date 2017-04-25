@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_ea185803",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_0a74b4be",
+      "range": {
+        "startLine": 135,
+        "startChar": 34,
+        "endLine": 135,
+        "endChar": 63
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_aa3ae0ed",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
         "patchSetId": 13
@@ -36,6 +60,24 @@
       "writtenOn": "2017-04-25T12:13:20Z",
       "side": 1,
       "message": "This code may be a little shorter/neater as:\n\n    boolean enabled \u003d \u003ccondition\u003e;\n    fShowSourceNotFoundAllTime.setEnabled(enabled);\n    fShowSourceNotFoundOnlyCaseSourceNotFound.setEnabled(enabled);",
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_6a344865",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_aa3ae0ed",
       "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_aa2e6014",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_aa63c00b",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 279,
+        "endChar": 44
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_ea4bf87d",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
         "patchSetId": 13
@@ -76,6 +142,30 @@
       "writtenOn": "2017-04-25T12:13:20Z",
       "side": 1,
       "message": "I think this is unneeded, the enablement is set when setValues() is called.",
+      "range": {
+        "startLine": 295,
+        "startChar": 3,
+        "endLine": 299,
+        "endChar": 3
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ca447cd2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_ea4bf87d",
       "range": {
         "startLine": 295,
         "startChar": 3,
@@ -122,6 +212,30 @@
       "writtenOn": "2017-04-25T12:13:20Z",
       "side": 1,
       "message": "The management of the enabled radios is currently in 4(?) places in this file. Although the cases aren\u0027t too long, it may be worth extracting them as a method.",
+      "range": {
+        "startLine": 445,
+        "startChar": 2,
+        "endLine": 446,
+        "endChar": 61
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_cacf1cd4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_aab580e8",
       "range": {
         "startLine": 445,
         "startChar": 2,
@@ -261,6 +375,30 @@
       "writtenOn": "2017-04-25T12:13:20Z",
       "side": 1,
       "message": "extract all this into a suitably named method like:\n\n    boolean isSourceFileNameKnown(CSourceNotFoundEditorInput input) {}",
+      "range": {
+        "startLine": 431,
+        "startChar": 10,
+        "endLine": 443,
+        "endChar": 64
+      },
+      "revId": "c5ce9c3b900733b089d24fac931468d35b5505e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_4a95cc94",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-25T14:49:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_aa074024",
       "range": {
         "startLine": 431,
         "startChar": 10,

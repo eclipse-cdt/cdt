@@ -16,6 +16,24 @@
       "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_ec6eb823",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/CIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-04-25T07:58:46Z",
+      "side": 1,
+      "message": "This is not a user-facing error message. (It wouldn\u0027t be a very useful one if it were - users don\u0027t know what \"compositing\" or \"linkage IDs\" are.) The only place it will show up is in the \u003cworkspace\u003e/.metadata/.log file, and in Aeri reports, and the only people to whom its contents are interesting is us, CDT developers.\n\nI believe asking translators to translate this message, and others like it, would be a waste of their time.",
+      "parentUuid": "87bd33cc_ac004075",
+      "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

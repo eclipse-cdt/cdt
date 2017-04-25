@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_ac004075",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/CIndex.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-25T07:35:25Z",
+      "side": 1,
+      "message": "NON-NLS should only be applied to string that shouldn\u0027t be translated, however there are cases all over the code base that already have this mistake. \n\nThis string looks like one that should be translated. The containing package already has a Messages class and one that has parameters for the message. See Messages.IndexFactory_errorNoSuchPDOM0 and its use in org.eclipse.cdt.internal.core.index.IndexFactory.getWritableIndex(ICProject)",
+      "revId": "dac595c7ab002f876f64681cd76e08a50337e875",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -175,7 +177,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	@Override
 	protected String getText() {
-		// File not found
+		//File not found
 		if (missingFile.length() > 0) {
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
 		} else {
@@ -183,13 +185,26 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				return super.getText();
 			String contextDescription;
 			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
-			if (description != null)
-				contextDescription = description.getDescription();
-			else
+			// debugger knows function
+			if (description != null) {
+				Pattern p = Pattern.compile("^0x.*");
+				Matcher m = p.matcher(description.getDescription());
+				if (!m.matches()) {
+					contextDescription = description.getDescription();
+					return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
+				}
+				// debugger knows address
+				else {
+					contextDescription = description.getDescription();
+					return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_9, contextDescription);
+				}
+			} else {
 				contextDescription = context.toString();
-			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
+				return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_7, contextDescription);
+			}
 		}
 	}
+	
 	@Override
 	protected void createButtons(Composite parent) {
 

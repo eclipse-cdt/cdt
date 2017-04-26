@@ -71,7 +71,7 @@ public interface IMIProcesses extends IProcesses
      * if the groupId has been already created.
      * 
      * @param controlDmc The parent command control context of this context
-     * @param goupId The thread-group id of the container we want to create
+     * @param groupId The thread-group id of the container we want to create
      * @since 4.0
      */
     IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId);

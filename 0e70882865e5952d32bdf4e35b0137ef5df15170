@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_7f7403f2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-26T15:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_1fa30f30",
+      "range": {
+        "startLine": 273,
+        "startChar": 1,
+        "endLine": 274,
+        "endChar": 31
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_5f9d87ea",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
         "patchSetId": 20
@@ -59,6 +83,24 @@
       "writtenOn": "2017-04-26T13:51:20Z",
       "side": 1,
       "message": "The default should be \"obtained\" from the DefaultScope",
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_42bdb0ff",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-26T15:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_5f9d87ea",
       "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -82,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "87bd33cc_62c0ec74",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/PreferenceMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-26T15:21:51Z",
+      "side": 1,
+      "message": "newline removed",
+      "parentUuid": "87bd33cc_3f9a8bf5",
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87bd33cc_7f9323de",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
         "patchSetId": 20
@@ -93,6 +153,30 @@
       "writtenOn": "2017-04-26T13:51:20Z",
       "side": 1,
       "message": "this comment is back.",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 173,
+        "endChar": 19
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_82c6e88e",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 113443
+      },
+      "writtenOn": "2017-04-26T15:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87bd33cc_7f9323de",
       "range": {
         "startLine": 173,
         "startChar": 0,

@@ -346,13 +346,16 @@ public class TypeTraits {
 	 * @param point
 	 * @return {@code true} if the class has a trivial default constructor
 	 */
-	public static boolean hasTrivialDefaultConstructor(ICPPClassType classType, IASTNode point) {
+	public static boolean hasTrivialDefaultConstructor(ICPPClassType classType, IASTNode point, int maxdepth) {
+		if (maxdepth <= 0) {
+			return false;
+		}
 		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
 			if (!ctor.isImplicit() && ctor.getParameters().length == 0)
 				return false;
 		}
 		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, null)) {
-			if (!classType.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass, point))
+			if (!classType.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass, point, maxdepth - 1))
 				return false;
 		}
 		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
@@ -360,7 +363,7 @@ public class TypeTraits {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialDefaultConstructor((ICPPClassType) type, point)) {
+						!hasTrivialDefaultConstructor((ICPPClassType) type, point, maxdepth - 1)) {
 					return false;
 				}
 			}

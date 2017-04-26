@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_1fbcef54",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/ICDebugConstants.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "Bad comment",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 4
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_1fa30f30",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "Don\u0027t modify incoming variables.\n\nMove this line:\n\n    \t\tGroup fButtonGroupForSourceNotFound \u003d new Group(composite, SWT.SHADOW_ETCHED_IN);\n\n\ninto this function",
+      "range": {
+        "startLine": 273,
+        "startChar": 1,
+        "endLine": 274,
+        "endChar": 31
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_5f9d87ea",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/CDebugPreferencePage.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "The default should be \"obtained\" from the DefaultScope",
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3f9a8bf5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/preferences/PreferenceMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "Why is there a difference on this line? Newline removed at end of file?",
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_7f9323de",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "this comment is back.",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 173,
+        "endChar": 19
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_bf8dbbbc",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "This line has a warning, please correct it. I recommend \"Extract as constant\"",
+      "range": {
+        "startLine": 255,
+        "startChar": 7,
+        "endLine": 255,
+        "endChar": 54
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_df88b7ab",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 20
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "Similar thing here at the end of the file.",
+      "range": {
+        "startLine": 69,
+        "startChar": 57,
+        "endLine": 69,
+        "endChar": 57
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3f152bcc",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-04-26T13:51:20Z",
+      "side": 1,
+      "message": "please revisit this code duplication",
+      "range": {
+        "startLine": 451,
+        "startChar": 10,
+        "endLine": 465,
+        "endChar": 10
+      },
+      "revId": "0e70882865e5952d32bdf4e35b0137ef5df15170",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

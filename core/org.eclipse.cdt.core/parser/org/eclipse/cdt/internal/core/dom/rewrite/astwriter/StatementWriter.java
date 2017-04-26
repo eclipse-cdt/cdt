@@ -88,6 +88,8 @@ public class StatementWriter extends NodeWriter {
 	 * @return {@link ASTVisitor#PROCESS_SKIP}
 	 */
 	protected int writeStatement(IASTStatement statement, boolean newLine) {
+		adaptIndentationLevel(statement);
+		writeAttributes(statement);
 		if (statement instanceof IASTAmbiguousStatement) {
 			//TODO HSR Leo test
 			statement.accept(visitor);
@@ -163,7 +165,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeDoStatement(IASTDoStatement doStatement) {
-		writeAttributes(doStatement, EnumSet.of(SpaceLocation.AFTER));
 		nextCompoundNoNewLine();
 
 		scribe.print(DO);
@@ -175,7 +176,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeForStatement(IASTForStatement forStatement) {
-		writeAttributes(forStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(FOR);
 		writeStatement(forStatement.getInitializerStatement(),false);
@@ -203,7 +203,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeForStatement(ICPPASTRangeBasedForStatement forStatment) {
-		writeAttributes(forStatment, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(FOR);
 		writeDeclarationWithoutSemicolon(forStatment.getDeclaration());
@@ -216,7 +215,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeIfStatement(IASTIfStatement ifStatement) {
-		writeAttributes(ifStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(IF);
 		scribe.noNewLines();
 		if (ifStatement instanceof ICPPASTIfStatement) {
@@ -249,19 +247,16 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeBreakStatement(IASTBreakStatement statement) {
-		writeAttributes(statement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(BREAK);
 		scribe.printSemicolon();
 	}
 
 	private void writeContinueStatement(IASTContinueStatement statement) {
-		writeAttributes(statement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(CONTINUE);
 		scribe.printSemicolon();
 	}
 
 	private void writeLabelStatement(IASTLabelStatement labelStatement) {
-		writeAttributes(labelStatement, EnumSet.of(SpaceLocation.AFTER));
 		labelStatement.getName().accept(visitor);
 		scribe.print(':');
 		scribe.newLine();
@@ -269,21 +264,18 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeGotoStatement(IASTGotoStatement gotoStatement) {
-		writeAttributes(gotoStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(GOTO);
 		gotoStatement.getName().accept(visitor);
 		scribe.printSemicolon();
 	}
 
 	private void writeGNUASTGotoStatement(IGNUASTGotoStatement gotoStatement) {
-		writeAttributes(gotoStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(GOTO);
 		gotoStatement.getLabelNameExpression().accept(visitor);
 		scribe.printSemicolon();
 	}
 
 	private void writeReturnStatement(IASTReturnStatement returnStatement) {
-		writeAttributes(returnStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(RETURN);
 		IASTExpression returnValue = returnStatement.getReturnValue();
@@ -296,7 +288,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeNullStatement(IASTNullStatement nullStmt) {
-		writeAttributes(nullStmt, EnumSet.noneOf(SpaceLocation.class));
 		scribe.printSemicolon();
 	}
 
@@ -305,7 +296,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeExpressionStatement(IASTExpressionStatement expStmt) {
-		writeAttributes(expStmt, EnumSet.of(SpaceLocation.AFTER));
 		expStmt.getExpression().accept(visitor);
 		scribe.printSemicolon();
 	}
@@ -325,7 +315,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeTryBlockStatement(ICPPASTTryBlockStatement tryStatement) {
-		writeAttributes(tryStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(TRY);
 		tryStatement.getTryBody().accept(visitor);
 		for (ICPPASTCatchHandler catchStatement : tryStatement.getCatchHandlers()) {
@@ -334,7 +323,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeWhileStatement(IASTWhileStatement whileStatment) {
-		writeAttributes(whileStatment, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(WHILE);
 		scribe.noNewLines();
 		if (whileStatment instanceof ICPPASTWhileStatement) {
@@ -354,12 +342,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeCaseStatement(IASTCaseStatement caseStatement) {
-		nextCompoundIndentationLevelOneMore();
-
-		if (!switchIsNew) {
-			scribe.decrementIndentationLevel();
-		}
-		writeAttributes(caseStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(CASE);
 		caseStatement.getExpression().accept(visitor);
 		scribe.print(':');
@@ -368,7 +350,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeSwitchStatement(IASTSwitchStatement switchStatement) {
-		writeAttributes(switchStatement, EnumSet.of(SpaceLocation.AFTER));
 		switchIsNew = true;
 
 		scribe.print(SWITCH_BRACKET);
@@ -392,19 +373,12 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeDefaultStatement(IASTDefaultStatement defaultStatement) {
-		nextCompoundIndentationLevelOneMore();
-
-		if (!switchIsNew) {
-			scribe.decrementIndentationLevel();
-		}
-		writeAttributes(defaultStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(DEFAULT);
 		scribe.incrementIndentationLevel();
 		switchIsNew = false;
 	}
 
 	private void writeCompoundStatement(IASTCompoundStatement compoundStatement) {
-		writeAttributes(compoundStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.printLBrace();
 		scribe.newLine();
 		for (IASTStatement statements : getNestedStatements(compoundStatement)) {
@@ -465,5 +439,36 @@ public class StatementWriter extends NodeWriter {
 		String code = statement.getRawSignature();
 		scribe.println(code);
 		return ASTVisitor.PROCESS_SKIP;
+	}
+
+	protected EnumSet<SpaceLocation> spaceLocationForStatement(IASTStatement attributeOwner) {
+		if (attributeOwner instanceof IASTNullStatement) {
+			return EnumSet.noneOf(SpaceLocation.class);
+		}
+		return EnumSet.of(SpaceLocation.AFTER);
+	}
+
+	protected void writeAttributes(IASTStatement attributeOwner) {
+		if (statementCanHaveAttributes(attributeOwner)) {
+			EnumSet<SpaceLocation> spaceLocation = spaceLocationForStatement(attributeOwner);
+			writeAttributes(attributeOwner, spaceLocation);
+		}
+	}
+
+	protected boolean statementCanHaveAttributes(IASTStatement attributeOwner) {
+		return !(attributeOwner instanceof IASTDeclarationStatement || attributeOwner instanceof ICPPASTCatchHandler);
+	}
+
+	protected void adaptIndentationLevel(IASTStatement statement) {
+		if (isSwitchLabel(statement)) {
+			nextCompoundIndentationLevelOneMore();
+			if (!switchIsNew) {
+				scribe.decrementIndentationLevel();
+			}
+		}
+	}
+
+	private boolean isSwitchLabel(IASTStatement statement) {
+		return statement instanceof IASTDefaultStatement || statement instanceof IASTCaseStatement;
 	}
 }

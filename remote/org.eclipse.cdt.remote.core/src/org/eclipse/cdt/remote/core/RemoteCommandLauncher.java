@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.cdt.core.CommandLauncherFactoryManager;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.remote.internal.core.Activator;
 import org.eclipse.cdt.remote.internal.core.messages.Messages;
@@ -104,7 +104,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		return s;
 	}
 	
-	private ICommandLauncher fLocalLauncher = CommandLauncherFactoryManager.getInstance().getCommandLauncher();
+	private ICommandLauncher fLocalLauncher = CommandLauncherManager.getInstance().getCommandLauncher();
 	private boolean fShowCommand;
 	private String[] fCommandArgs;
 	private IRemoteConnection fConnection;
@@ -131,7 +131,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor)
 			throws CoreException {
-		ICommandLauncher localLauncher = CommandLauncherFactoryManager.getInstance().getCommandLauncher(getProject());
+		ICommandLauncher localLauncher = CommandLauncherManager.getInstance().getCommandLauncher(getProject());
 		localLauncher.setProject(getProject());
 		localLauncher.setErrorMessage(getErrorMessage());
 		usingLocalLauncher = false;

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CommandLauncherFactoryManager;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
@@ -147,7 +147,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	}
 
 	protected ICommandLauncher createLauncher() {
-		return CommandLauncherFactoryManager.getInstance().getCommandLauncher(fProject);
+		return CommandLauncherManager.getInstance().getCommandLauncher(fProject);
 	}
 
 	public String getErrMsg() {

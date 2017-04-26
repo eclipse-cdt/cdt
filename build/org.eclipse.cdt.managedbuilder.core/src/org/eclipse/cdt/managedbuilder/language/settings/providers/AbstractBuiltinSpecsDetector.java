@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncherFactoryManager;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -482,6 +482,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			return;
 		}
 
+		System.out.println("in execute");
+		
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -532,6 +534,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @return status of operation.
 	 */
 	protected IStatus runForEachLanguage(IProgressMonitor monitor) {
+		
+		System.out.println("in runForEachLanguage");
+		
 		MultiStatus status = new MultiStatus(ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null); //$NON-NLS-1$
 
 		if (monitor == null) {
@@ -638,6 +643,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 *    has not been called yet.
 	 */
 	private void runForLanguage(IProgressMonitor monitor) throws CoreException {
+		
+		System.out.println("run for language");
+		
 		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
 		if (monitor == null) {
@@ -656,7 +664,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			console.start(currentProject);
 
-			ICommandLauncher launcher = CommandLauncherFactoryManager.getInstance().getCommandLauncher();
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 			launcher.setProject(currentProject);
 
 			IPath program = new Path(""); //$NON-NLS-1$
@@ -756,6 +764,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
+		System.out.println("runProgramForLanguage");
 		return buildRunnerHelper.build(monitor);
 	}
 

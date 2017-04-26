@@ -29,19 +29,19 @@ import org.eclipse.core.runtime.Platform;
 /**
  * @since 6.3
  */
-public class CommandLauncherFactoryManager {
+public class CommandLauncherManager {
 	
-	private static CommandLauncherFactoryManager instance;
+	private static CommandLauncherManager instance;
 	
 	private List<ICommandLauncherFactory> factories = new ArrayList<>();
 	
-	private CommandLauncherFactoryManager() {
+	private CommandLauncherManager() {
 		loadCommandLauncherFactoryExtensions();
 	}
 	
-	public static synchronized CommandLauncherFactoryManager getInstance() {
+	public static synchronized CommandLauncherManager getInstance() {
 		if (instance == null) {
-			instance = new CommandLauncherFactoryManager();
+			instance = new CommandLauncherManager();
 		}
 		return instance;
 	}
@@ -57,9 +57,9 @@ public class CommandLauncherFactoryManager {
 		private IProject fProject;
 		private boolean fShowCommand;
 		private String fErrorMessage;
-		private CommandLauncherFactoryManager manager;
+		private CommandLauncherManager manager;
 		
-		public CommandLauncherWrapper(CommandLauncherFactoryManager manager) {
+		public CommandLauncherWrapper(CommandLauncherManager manager) {
 			this.manager = manager;
 		}
 
@@ -142,6 +142,7 @@ public class CommandLauncherFactoryManager {
 			return launcher.execute(commandPath, args, env, workingDirectory, monitor);
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public int waitAndRead(OutputStream out, OutputStream err) {
 			if (launcher != null) {

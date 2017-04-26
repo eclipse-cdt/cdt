@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncherFactoryManager;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
@@ -147,7 +147,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			List<? extends ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
-		CommandLauncherFactoryManager.getInstance().setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+		CommandLauncherManager.getInstance().setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		}
 		
 		if (cfgDescription != null) {
-			entries = CommandLauncherFactoryManager.getInstance().getLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+			entries = CommandLauncherManager.getInstance().getLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
 		}
 
 		return entries;

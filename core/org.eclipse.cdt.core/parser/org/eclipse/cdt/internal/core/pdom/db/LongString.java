@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 QNX Software Systems and others.
+ * Copyright (c) 2006, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX - Initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
+ *     Patrick Koenemann (itemis)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -109,33 +110,33 @@ public class LongString implements IString {
 		}
 
 		final char[] chars = new char[length];
-	
+
 		// First record
 		long p = record;
-		Chunk chunk= db.getChunk(p);
-		if (useBytes) {
-			chunk.getCharsFromBytes(p + CHARS1, chars, 0, numChars1);
-		} else {
-			chunk.getChars(p + CHARS1, chars, 0, numChars1);
-		}
-		
+		getCharsFromChunk(db, p, CHARS1, 0, numChars1, useBytes, chars);
+
 		int start= numChars1;
 		p= record + NEXT1;
-				
+
 		// Other records
 		while (start < length) {
 			p = db.getRecPtr(p);
 			int partLen= Math.min(length - start, numCharsn);
-			chunk= db.getChunk(p);
-			if (useBytes) {
-				chunk.getCharsFromBytes(p + CHARSN, chars, start, partLen);
-			} else {
-				chunk.getChars(p + CHARSN, chars, start, partLen);
-			}
+			getCharsFromChunk(db, p, CHARSN, start, partLen, useBytes, chars);
 			start += partLen;
 			p= p + NEXTN;
 		}
 		return chars;
+	}
+
+	private static void getCharsFromChunk(Database db, long record, int key, int start, int length,
+			boolean useBytes, char[] chars) throws CoreException {
+		final Chunk chunk= db.getChunk(record);
+		if (useBytes) {
+			chunk.getCharsFromBytes(record + key, chars, start, length);
+		} else {
+			chunk.getChars(record + key, chars, start, length);
+		}
 	}
 
 	@Override
@@ -210,18 +211,139 @@ public class LongString implements IString {
 	}
 	
 	@Override
-	public int compare(IString string, boolean caseSensitive) throws CoreException {
-		return ShortString.compare(getChars(), string.getChars(), caseSensitive);
+	public int compare(IString other, boolean caseSensitive) throws CoreException {
+		if (!(other instanceof LongString))
+			return compare(other.getChars(), caseSensitive);
+
+		/*
+		 * In this case, we have two pointers to the actual data;
+		 * compare them chunk by chunk to avoid loading all chunks.
+		 */
+		int length = db.getInt(record + LENGTH);
+		final boolean useBytes = length < 0;
+		int numChars1 = NUM_CHARS1;
+		int numCharsn = NUM_CHARSN;
+		if (useBytes) {
+			length= -length;
+			numChars1 *= 2;
+			numCharsn *= 2;
+		}
+		// get the same information for the other
+		final Database otherDb = ((LongString)other).db;
+		int otherLength = otherDb.getInt(other.getRecord() + LENGTH);
+		final boolean otherUseBytes = otherLength < 0;
+		int otherNumChars1 = NUM_CHARS1;
+		int otherNumCharsn = NUM_CHARSN;
+		if (otherUseBytes) {
+			otherLength= -otherLength;
+			otherNumChars1 *= 2;
+			otherNumCharsn *= 2;
+		}
+
+		final int n = Math.min(length, otherLength);
+		final char[] chars = new char[Math.max(numChars1, numCharsn)];
+		final char[] otherChars = new char[Math.max(otherNumChars1, otherNumCharsn)];
+
+		// First records
+		long p = record;
+		getCharsFromChunk(db, p, CHARS1, 0, numChars1, useBytes, chars);
+		long otherP = other.getRecord();
+		getCharsFromChunk(otherDb, otherP, CHARS1, 0, otherNumChars1, otherUseBytes, otherChars);
+
+		// compare first chunk pair
+		int max = Math.min(numChars1, otherNumChars1);
+		for (int i = 0; i < max; i++) {
+			int cmp= ShortString.compareChars(chars[i], otherChars[i], caseSensitive);
+			if (cmp != 0)
+				return cmp;
+		}
+
+		int start= numChars1;
+		p= record + NEXT1;
+		otherP= other.getRecord() + NEXT1;
+
+		// Other records
+		while (start < n) {
+			p = db.getRecPtr(p);
+			otherP = otherDb.getRecPtr(otherP);
+			int partLen= Math.min(length - start, numCharsn);
+			int otherPartLen= Math.min(otherLength - start, otherNumCharsn);
+			getCharsFromChunk(db, p, CHARSN, 0, partLen, useBytes, chars);
+			getCharsFromChunk(otherDb, otherP, CHARSN, 0, otherPartLen, otherUseBytes, otherChars);
+
+			// compare next chunk pair
+			max = Math.min(partLen, otherPartLen);
+			for (int i = 0; i < max; i++) {
+				int cmp= ShortString.compareChars(chars[i], otherChars[i], caseSensitive);
+				if (cmp != 0)
+					return cmp;
+			}
+
+			start += partLen;
+			p= p + NEXTN;
+		}
+
+		return length - otherLength;
 	}
-		
+
 	@Override
 	public int compare(String other, boolean caseSensitive) throws CoreException {
-		return ShortString.compare(getChars(), other.toCharArray(), caseSensitive);
+		return compare(other.toCharArray(), caseSensitive);
 	}
 
 	@Override
 	public int compare(char[] other, boolean caseSensitive) throws CoreException {
-		return ShortString.compare(getChars(), other, caseSensitive);
+		/*
+		 * In this case, we have a pointer to the data and another char array;
+		 * compare the char array chunk by chunk to avoid loading all chunks.
+		 */
+		int length = db.getInt(record + LENGTH);
+		final boolean useBytes = length < 0;
+		int numChars1 = NUM_CHARS1;
+		int numCharsn = NUM_CHARSN;
+		if (useBytes) {
+			length= -length;
+			numChars1 *= 2;
+			numCharsn *= 2;
+		}
+
+		final int n = Math.min(length, other.length);
+		final char[] chars = new char[Math.max(numChars1, numCharsn)];
+
+		// First record
+		long p = record;
+		getCharsFromChunk(db, p, CHARS1, 0, numChars1, useBytes, chars);
+
+		// compare first chunk
+		int max = Math.min(numChars1, n);
+		for (int i = 0; i < max; i++) {
+			int cmp= ShortString.compareChars(chars[i], other[i], caseSensitive);
+			if (cmp != 0)
+				return cmp;
+		}
+
+		int start= numChars1;
+		p= record + NEXT1;
+
+		// Other records
+		while (start < n) {
+			p = db.getRecPtr(p);
+			int partLen= Math.min(length - start, numCharsn);
+			getCharsFromChunk(db, p, CHARSN, 0, partLen, useBytes, chars);
+
+			// compare next chunk
+			max = Math.min(partLen, n - start);
+			for (int i = 0; i < max; i++) {
+				int cmp= ShortString.compareChars(chars[i], other[start + i], caseSensitive);
+				if (cmp != 0)
+					return cmp;
+			}
+
+			start += partLen;
+			p= p + NEXTN;
+		}
+
+		return length - other.length;
 	}
 	
 	@Override

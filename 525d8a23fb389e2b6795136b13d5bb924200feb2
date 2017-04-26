@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_c2b62070",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CaseBreakQuickFixCommentTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-04-26T15:45:57Z",
+      "side": 1,
+      "message": "copyright header is missing",
+      "revId": "525d8a23fb389e2b6795136b13d5bb924200feb2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

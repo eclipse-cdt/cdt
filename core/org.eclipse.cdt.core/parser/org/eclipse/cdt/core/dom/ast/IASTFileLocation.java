@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFileLocation extends IASTNodeLocation {
 	/**
-	 * The name of the file.
+	 * The name of the file. Should not be null.
 	 * 
 	 * @return the name of the file
 	 */

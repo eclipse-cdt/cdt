@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -46,7 +45,7 @@ import org.eclipse.core.runtime.IPath;
  * Represents macro definitions. They are stored with the file and with a PDOMMacroContainer.
  * The latter also contains the references to all macros with the same name.
  */
-public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
+public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 	private static final int CONTAINER = 0;
 	private static final int FILE = 4;
 	private static final int PARAMETERS= 8;
@@ -288,7 +287,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	}
 
 	@Override
-	public String getFileName() {
+	public IASTFileLocation getFileLocation() {
 		try {
 			IIndexFile file = getFile();
 			if (file == null) {
@@ -298,39 +297,17 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 			// how to implement this. Existing implementations return
 			// the absolute path, so here we attempt to do the same.
 			IPath location = IndexLocationFactory.getAbsolutePath(file.getLocation());
-			return location != null ? location.toOSString() : null;
+			if (location == null) {
+				return null;
+			}
+			String filename = location.toOSString();
+			return new PDOMASTFileLocation(filename, getNodeOffset(), getNodeLength());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
 	}
 
-	@Override
-	public int getStartingLineNumber() {
-		return 0;
-	}
-
-	@Override
-	public int getEndingLineNumber() {
-		return 0;
-	}
-
-	@Override
-	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
-		return null;
-	}
-
-	@Override
-	public IASTFileLocation asFileLocation() {
-		return this;
-	}
-	
-	@Override
-	public IASTFileLocation getFileLocation() {
-		return this;
-	}
-
-	@Override
 	public int getNodeLength() {
 		try {
 			return fLinkage.getDB().getShort(fRecord + NAME_LENGTH);
@@ -340,7 +317,6 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		}
 	}
 
-	@Override
 	public int getNodeOffset() {
 		try {
 			return fLinkage.getDB().getInt(fRecord + NAME_OFFSET);

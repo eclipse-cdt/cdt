@@ -75,7 +75,7 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 
 	@Override
 	public IASTFileLocation getFileLocation() {
-		return fMacro;
+		return fMacro.getFileLocation();
 	}
 
 	@Override

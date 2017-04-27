@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -31,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Represents declarations, definitions and references to bindings, except for macros.
  */
-public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFileLocation {
+public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	private final PDOMLinkage linkage;
 	private final long record;
 	
@@ -206,11 +205,6 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	@Override
 	public IASTFileLocation getFileLocation() {
-		return this;
-	}
-
-	@Override
-	public String getFileName() {
 		try {
 			IIndexFile file = getFile();
 			if (file == null) {
@@ -220,31 +214,15 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 			// how to implement this. Existing implementations return
 			// the absolute path, so here we attempt to do the same.
 			IPath location = IndexLocationFactory.getAbsolutePath(file.getLocation());
-			return location != null ? location.toOSString() : null;
+			if (location == null) {
+				return null;
+			}
+			String filename = location.toOSString();
+			return new PDOMASTFileLocation(filename, getNodeOffset(), getNodeLength());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
-	}
-
-	@Override
-	public int getStartingLineNumber() {
-		return 0;
-	}
-
-	@Override
-	public int getEndingLineNumber() {
-		return 0;
-	}
-
-	@Override
-	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
-		return null;
-	}
-
-	@Override
-	public IASTFileLocation asFileLocation() {
-		return this;
 	}
 
 	@Override

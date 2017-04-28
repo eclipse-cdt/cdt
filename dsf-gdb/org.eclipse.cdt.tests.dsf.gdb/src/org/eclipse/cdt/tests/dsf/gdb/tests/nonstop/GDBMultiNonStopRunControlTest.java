@@ -17,7 +17,6 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -110,11 +109,11 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 	    public abstract void run(DataRequestMonitor<V> drm);
 	};
 
-	private <V> V runAsyncCall(final AsyncRunnable<V> runnable) {
+	private <V> V runAsyncCall(final AsyncRunnable<V> runnable) throws Exception {
 		return runAsyncCall(runnable, false);
 	}
 
-	private <V> V runAsyncCall(final AsyncRunnable<V> runnable, boolean expectExecutionException) {
+	private <V> V runAsyncCall(final AsyncRunnable<V> runnable, boolean expectExecutionException) throws Exception {
 		Query<V> query = new Query<V>() {
     		@Override
     		protected void execute(DataRequestMonitor<V> rm) {
@@ -126,15 +125,11 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
     	try {
     		fMultiRun.getExecutor().execute(query);
     		result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
     	} catch (ExecutionException e) {
     		if (expectExecutionException) {
     			return null;
     		}
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
+    		throw new AssertionError(e);
     	}
 
     	if (expectExecutionException) {

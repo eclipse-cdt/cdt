@@ -465,11 +465,8 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		
 		fSession.getExecutor().execute(query);
 		FormattedValueDMData value = null;
-		try {
+		{
 			 value = query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-			fail(e.getMessage());
-			return null;
 		}
 
 		return new Addr64(value.getFormattedValue());

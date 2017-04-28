@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -53,9 +49,6 @@ import org.osgi.service.prefs.Preferences;
  */
 @RunWith(Parameterized.class)
 public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase {
-
-	private static final String TIMEOUT_MESSAGE = "Timeout";
-
 	private DsfServicesTracker fServicesTracker;    
 	private IGDBProcesses fProcesses;
 	private IMIContainerDMContext fContainerDmc;
@@ -241,15 +234,9 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
     	    	fProcesses.terminate(processDmc, rm);
     		}
     	};
-    	try {
+    	{
     		fProcesses.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(1000), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     		
         IExitedDMEvent event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
@@ -329,15 +316,9 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
     	    	fProcesses.detachDebuggerFromProcess(fContainerDmc, rm);
     		}
     	};
-    	try {
+    	{
     		fProcesses.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(1000), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     		
         IExitedDMEvent event = exitedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));

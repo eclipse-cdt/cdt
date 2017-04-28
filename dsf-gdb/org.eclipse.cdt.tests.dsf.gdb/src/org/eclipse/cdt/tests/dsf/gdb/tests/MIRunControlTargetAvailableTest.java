@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -47,9 +46,6 @@ import org.junit.runners.Parameterized;
  */
 @RunWith(Parameterized.class)
 public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
-
-	private static final String TIMEOUT_MESSAGE = "Timeout";
-
 	private DsfServicesTracker fServicesTracker;    
 
     private IGDBControl fGDBCtrl;
@@ -127,15 +123,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	// Now resume the target and check that we stop at the breakpoint.
@@ -182,15 +172,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	// Now check that the target is stopped at the breakpoint.
@@ -244,15 +228,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	// Now resume the target three times and check that we stop three times.
@@ -318,13 +296,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
     	try {
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
     	} catch (ExecutionException e) {
     		// We want to detect the error, so this is success
     		return;
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	fail("Did not detect the error of the step");
@@ -381,15 +355,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	// Now resume the target three times and check that we stop three times.
@@ -463,12 +431,8 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
     	try {
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
     	} catch (ExecutionException e) {
     		caughtError = true;
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	Assert.assertTrue("Did not catch the error of the step", caughtError);
@@ -524,15 +488,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				crm.setDoneCount(index);
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<steps.length; i++) {
@@ -599,15 +557,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				crm.setDoneCount(index);
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<steps.length; i++) {
@@ -668,15 +620,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<2; i++) {
@@ -742,15 +688,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<2; i++) {
@@ -809,15 +749,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<2; i++) {
@@ -881,15 +815,9 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
 			}
         };
-    	try {
+    	{
     		fRunCtrl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(TIMEOUT_MESSAGE);
     	}
     	
     	for (int i=0; i<2; i++) {

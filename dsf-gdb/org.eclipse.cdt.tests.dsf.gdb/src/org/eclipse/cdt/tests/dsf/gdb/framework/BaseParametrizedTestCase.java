@@ -11,7 +11,6 @@
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -178,8 +177,8 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 	}
 	
 	@Override
-	protected void validateGdbVersion(GdbLaunch launch) {
-		try {
+	protected void validateGdbVersion(GdbLaunch launch) throws CoreException {
+		{
 			String expected = getGdbVersionParameter();
 			if (expected.equals(DEFAULT_VERSION_STRING)) {
 				// If the user has requested the default GDB, we accept whatever version runs.
@@ -204,8 +203,6 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 			
 			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual, 
 					   LaunchUtils.compareVersions(expected, comparableActualString) == 0);
-		} catch (CoreException e) {
-			fail(e.getMessage());
 		}
 	}
 }

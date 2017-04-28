@@ -22,9 +22,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -182,15 +180,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     				    rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     }
     	
@@ -223,7 +215,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
         try {
         	doLaunch();
         } catch (CoreException e) {
-        	fail("Launch has failed even though the gdbinit file has the default name of .gdbinit");
+        	throw new AssertionError("Launch has failed even though the gdbinit file has the default name of .gdbinit", e);
         }
     }
     
@@ -260,19 +252,13 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(argcDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		
     		// Argc should be 7: the program name and the six arguments
     		assertTrue("Expected 7 but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().equals("7"));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	// Check that argv is also correct.  For simplicity we only check the last argument
@@ -284,17 +270,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(argvDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query2);
     		FormattedValueDMData value = query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		assertTrue("Expected \"6\" but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().endsWith("\"6\""));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     }
 
@@ -330,17 +310,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
                 		fExpService.getFormattedValueContext(exprDmc, MIExpressions.DETAILS_FORMAT), rm);
 			}
         };
-        try {
+        {
         	fExpService.getExecutor().execute(query);
         	FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         	assertTrue("Expected 0x0 but got " + value.getFormattedValue(),
         			   value.getFormattedValue().equals("0x0"));
-        } catch (InterruptedException e) {
-        	fail(e.getMessage());
-        } catch (ExecutionException e) {
-        	fail(e.getCause().getMessage());
-        } catch (TimeoutException e) {
-        	fail(e.getMessage());
         }
     }
     
@@ -379,17 +353,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(exprDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		assertTrue("Expected a string ending with \"IS SET\" but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().endsWith("\"IS SET\""));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	// Check that the normal environment is there by checking that $HOME (which is stored in 'home" exists.
@@ -401,17 +369,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
                 		fExpService.getFormattedValueContext(exprDmc2, MIExpressions.DETAILS_FORMAT), rm);
 			}
         };
-        try {
+        {
         	fExpService.getExecutor().execute(query2);
         	FormattedValueDMData value = query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         	assertFalse("Expected something else than 0x0",
         			   value.getFormattedValue().equals("0x0"));
-        } catch (InterruptedException e) {
-        	fail(e.getMessage());
-        } catch (ExecutionException e) {
-        	fail(e.getCause().getMessage());
-        } catch (TimeoutException e) {
-        	fail(e.getMessage());
         }
 
     }
@@ -453,17 +415,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(exprDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		assertTrue("Expected a string ending with \"IS SET\" but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().endsWith("\"IS SET\""));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
         // The program has stored the content of $HOME into a variable called 'home'.
@@ -476,17 +432,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
                 		fExpService.getFormattedValueContext(exprDmc2, MIExpressions.DETAILS_FORMAT), rm);
 			}
         };
-        try {
+        {
         	fExpService.getExecutor().execute(query2);
         	FormattedValueDMData value = query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
         	assertTrue("Expected 0x0 but got " + value.getFormattedValue(),
         			   value.getFormattedValue().equals("0x0"));
-        } catch (InterruptedException e) {
-        	fail(e.getMessage());
-        } catch (ExecutionException e) {
-        	fail(e.getCause().getMessage());
-        } catch (TimeoutException e) {
-        	fail(e.getMessage());
         }
     }
 
@@ -523,19 +473,13 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(argcDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		
     		// Argc should be 7: the program name and the six arguments
     		assertTrue("Expected 7 but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().equals("7"));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	// Check that argv is also correct.  For simplicity we only check the last argument
@@ -547,17 +491,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					fExpService.getFormattedValueContext(argvDmc, MIExpressions.DETAILS_FORMAT), rm);
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query2);
     		FormattedValueDMData value = query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		assertTrue("Expected \"6\" but got " + value.getFormattedValue(),
     				value.getFormattedValue().trim().endsWith("\"6\""));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     }
     
@@ -745,7 +683,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					});
     		}
     	};
-    	try {
+    	{
     		fExpService.getExecutor().execute(query);
     		MIBreakListInfo value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     		MIBreakpoint[] bps = value.getMIBreakpoints();
@@ -753,12 +691,6 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     				   bps.length == 1);
     		assertTrue("Expending a <PENDING> breakpoint but got one at " + bps[0].getAddress(),
     				   bps[0].getAddress().equals("<PENDING>"));
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     }
     
@@ -813,15 +745,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					rm);
     		}
     	};
-    	try {
+    	{
     		fGdbControl.getExecutor().execute(query);
     		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
@@ -889,15 +815,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					rm);
     		}
     	};
-    	try {
+    	{
     		fGdbControl.getExecutor().execute(query2);
     		query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
@@ -972,15 +892,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     					rm);
     		}
     	};
-    	try {
+    	{
     		fGdbControl.getExecutor().execute(query2);
     		query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (InterruptedException e) {
-    		fail(e.getMessage());
-    	} catch (ExecutionException e) {
-    		fail(e.getCause().getMessage());
-    	} catch (TimeoutException e) {
-    		fail(e.getMessage());
     	}
     	
     	stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));

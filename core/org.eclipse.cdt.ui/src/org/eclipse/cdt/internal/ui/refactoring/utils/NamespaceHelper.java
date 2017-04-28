@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
@@ -79,7 +80,11 @@ public class NamespaceHelper {
 	}
 	
 	private static boolean checkFileNameAndLocation(final IPath path, final int offset, IASTNode namespace) {
-		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(path.toOSString());
+		IASTFileLocation fileLoc = namespace.getFileLocation();
+		if (fileLoc == null) {
+			return false;
+		}
+		boolean fileNameOk = fileLoc.getFileName().endsWith(path.toOSString());
 		if (!fileNameOk) {
 			return false;
 		}

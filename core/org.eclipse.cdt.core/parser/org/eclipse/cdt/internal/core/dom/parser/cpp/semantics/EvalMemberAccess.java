@@ -15,7 +15,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueTypeWithResolvedTypedefs;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
@@ -265,11 +264,6 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 				e2 = glvalueType(e2);
 			} else if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {
 				e2 = addQualifiersForAccess((ICPPField) fMember, e2, fOwnerType);
-				if (!fIsPointerDeref && fOwnerValueCategory == PRVALUE) {
-					e2 = prvalueType(e2);
-				} else {
-					e2 = glvalueType(e2);
-				}
 			}
 			return SemanticUtil.mapToAST(e2, point);
 		}

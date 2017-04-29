@@ -12269,4 +12269,18 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testEnumeratorAttribute_514821() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
 	}
+	
+	//	struct CType {
+	//	    char m_Array[4];
+	//	};
+	//
+	//	void foo(char(&)[4]);
+	//
+	//	int main() {
+	//	    char name[sizeof(CType().m_Array)];
+	//	    foo(name);
+	//	}
+	public void testSizeofArrayField_512932() throws Exception {
+		parseAndCheckBindings();
+	}
 }

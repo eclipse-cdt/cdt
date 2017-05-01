@@ -299,10 +299,6 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	}
 
 	private IType getStringType() {
-		if (fSuffix.length > 0) {
-			return getUserDefinedLiteralOperatorType();
-		}
-
 		IType type = new CPPBasicType(getBasicCharKind(), 0, this);
 		type = new CPPQualifierType(type, true, false);
 		return new CPPArrayType(type, getStringLiteralSize());

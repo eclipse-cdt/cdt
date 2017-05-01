@@ -29,6 +29,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class CPPEvaluation implements ICPPEvaluation {
@@ -157,24 +159,37 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
 			IASTNode point, boolean allowContextualConversion) {
 		IType type = argument.getType(point);
-		IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-		ValueCategory valueCategory = argument.getValueCategory(point);
-		ICPPFunction conversion = null;
-		if (uqType instanceof ICPPClassType) {
-			try {
+		
+		// Types match - don't bother to check for conversions.
+		if (targetType.isSameType(type)) {
+			return argument;
+		}
+		
+		try {
+			// Source type is class type - check for conversion operator.
+			IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+			ValueCategory valueCategory = argument.getValueCategory(point);
+			if (uqType instanceof ICPPClassType) {
 				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) uqType,
 						targetType, false, point, allowContextualConversion);
-				conversion = cost.getUserDefinedConversion();
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+				ICPPFunction conversion = cost.getUserDefinedConversion();
+				if (conversion != null) {
+					if (!conversion.isConstexpr()) {
+						return EvalFixed.INCOMPLETE;
+					}
+					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false, point);
+					return new EvalFunctionCall(new ICPPEvaluation[] { eval }, null, (IBinding) null);
+				}
 			}
-		}
-		if (conversion != null) {
-			if (!conversion.isConstexpr()) {
+			
+			// Source type is not a class type, or is but a conversion operator wasn't used.
+			// Check for standard conversions.
+			if (!Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN, 
+					Context.ORDINARY, point).converts()) {
 				return EvalFixed.INCOMPLETE;
 			}
-			ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false, point);
-			argument = new EvalFunctionCall(new ICPPEvaluation[] { eval }, null, (IBinding) null);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 		}
 		return argument;
 	}

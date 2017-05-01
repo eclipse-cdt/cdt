@@ -10227,4 +10227,19 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDelegatingConstructorInPartialSpecialization_512932() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	enum class E { F };
+	//
+	//	template <unsigned char>
+	//	void foo();
+	//
+	//	template <E>
+	//	void foo();
+	//
+	//	int main() {
+	//	    foo<E::F>();  // error here
+	//	}
+	public void testOverloadingOnTypeOfNonTypeTemplateParameter_512932() throws Exception {
+		parseAndCheckBindings();
+	}
 }

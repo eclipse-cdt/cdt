@@ -110,7 +110,8 @@ public class EvalReference extends CPPDependentEvaluation {
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
-		return getTargetEvaluation().getValueCategory(point);
+		// An EvalReference always refers to a named variable, so its value category is lvalue.
+		return ValueCategory.LVALUE;
 	}
 
 	@Override

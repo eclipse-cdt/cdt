@@ -653,4 +653,11 @@ public class SemanticHighlightingTest extends TestCase {
     public void testQualifiedName_511331() throws Exception {
     	makeAssertions();
     }
+    
+	//	void foo(unsigned i) {                           //$functionDeclaration,parameterVariable
+	//		__builtin_assume_aligned(i, 4);              //$problem,parameterVariable
+	//	}
+    public void testMisuseOfKnownBuiltin_512932() throws Exception {
+    	makeAssertions();
+    }
 }

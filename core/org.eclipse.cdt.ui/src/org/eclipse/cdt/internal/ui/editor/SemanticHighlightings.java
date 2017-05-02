@@ -74,11 +74,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICColorConstants;
@@ -1477,8 +1477,7 @@ public class SemanticHighlightings {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IProblemBinding) {
 				IProblemBinding problemBinding = (IProblemBinding) binding;
-				if (problemBinding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
-						CharArrayUtils.startsWith(problemBinding.getNameCharArray(), "__builtin_")) { //$NON-NLS-1$
+				if (SemanticQueries.isUnknownBuiltin(problemBinding, node)) {
 					return false;  // Ignore an unknown built-in.
 				}
 				return true;

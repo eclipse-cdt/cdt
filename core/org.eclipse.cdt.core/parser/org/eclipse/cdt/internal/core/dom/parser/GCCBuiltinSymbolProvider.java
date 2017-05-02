@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
@@ -71,6 +72,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 	private Map<String, IType> fTypeMap;
 	private List<IBinding> fBindingList;
+	
+	private CharArraySet fKnownBuiltins = new CharArraySet(50);
 
 	public GCCBuiltinSymbolProvider(ParserLanguage lang, boolean supportGnuSymbols) {
 		fCpp= lang == ParserLanguage.CPP;
@@ -94,6 +97,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		}
 
 		fBindings= fBindingList.toArray(new IBinding[fBindingList.size()]);
+		for (IBinding binding : fBindings) {
+			fKnownBuiltins.put(binding.getNameCharArray());
+		}
 		fTypeMap= null;
 		fBindingList= null;
 	}
@@ -115,13 +121,13 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("void", 		"__builtin_va_end",  "va_list");
 		function("void", 		"__builtin_va_copy",  "va_list", "va_list");
 
-		// GCC 4.6.0, Section 6.48
+		// Return Address (https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html)
 		function("void*", 		"__builtin_return_address",  "unsigned int");
 		function("void*", 		"__builtin_extract_return_address",  "void*");
 		function("void*", 		"__builtin_frob_return_address",  "void*");
 		function("void*", 		"__builtin_frame_address",  "unsigned int");
 
-		// GCC 4.6.0, Section 6.51
+		// __sync Builtins (https://gcc.gnu.org/onlinedocs/gcc/_005f_005fsync-Builtins.html)
 		String[] types= {"int", "long", "long long", "unsigned int", "unsigned long", "unsigned long long"};
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
@@ -145,7 +151,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		}
 		function("void", 	"__sync_synchronize");
 
-		// GCC 4.8, Section 6.52
+		// __atomic Builtins (https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html)
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
 			String typePtr= "volatile " + type + "*";
@@ -177,7 +183,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("bool",	"__atomic_always_lock_free", "size_t", "void*");
 		function("bool",	"__atomic_is_lock_free", "size_t", "void*");
 
-		// GCC 4.8, Section 6.55 (incomplete)
+		// Other Builtins (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html) [incomplete]
 		function("void", 		"__builtin_abort");
 		function("int", 		"__builtin_abs", "int");
 		function("double", 		"__builtin_acos", "double");
@@ -192,6 +198,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", 		"__builtin_asinh", "double");
 		function("float", 		"__builtin_asinhf", "float");
 		function("long double", "__builtin_asinhl", "long double");
+		function("void*",       "__builtin_assume_aligned", "const void*", "size_t", "...");
 		function("double", 		"__builtin_atan", "double");
 		function("float", 		"__builtin_atanf", "float");
 		function("long double", "__builtin_atanl", "long double");
@@ -218,6 +225,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("complex double", 		"__builtin_conj", "complex double");
 		function("complex float", 		"__builtin_conjf", "complex float");
 		function("complex long double", "__builtin_conjl", "complex long double");
+		function("int",         "__builtin_constant_p", "...");
 		function("double", 		"__builtin_copysign", "double", "double");
 		function("float", 		"__builtin_copysignf", "float", "float");
 		function("long double", "__builtin_copysignl", "long double", "long double");
@@ -595,5 +603,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 					new CQualifierType(t, isConst, isVolatile, false);
 		}
 		return t;
+	}
+
+	@Override
+	public boolean isKnownBuiltin(char[] builtinName) {
+		return fKnownBuiltins.containsKey(builtinName);
 	}
 }

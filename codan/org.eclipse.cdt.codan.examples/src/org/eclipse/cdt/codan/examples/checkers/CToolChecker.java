@@ -1,17 +1,14 @@
 /*******************************************************************************
- * Copyright (c) Mar 4, 2015 QNX Software Systems. All Rights Reserved.
+ * Copyright (c) 2009,2015 QNX Software Systems
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * You must obtain a written license from and pay applicable license fees to QNX
- * Software Systems before you may reproduce, modify or distribute this software,
- * or any work that includes all or part of this software.   Free development
- * licenses are available for evaluation and non-commercial purposes.  For more
- * information visit [http://licensing.qnx.com] or email licensing@qnx.com.
- *
- * This file may contain contributions from others.  Please review this entire
- * file for other proprietary rights or license notices, as well as the QNX
- * Development Suite License Guide at [http://licensing.qnx.com/license-guide/]
- * for other information.
+ * Contributors:
+ *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.cdt.codan.examples.checkers;
 
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class CToolChecker extends AbstractCElementChecker {
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
 		getLaunchModePreference(problem).enableInLaunchModes(
-				CheckerLaunchMode.RUN_ON_FILE_SAVE, 
+				CheckerLaunchMode.RUN_ON_FILE_SAVE,
 				CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
@@ -76,13 +73,15 @@ public class CToolChecker extends AbstractCElementChecker {
 		final Map<String, String> symbols = scannerInfo.getDefinedSymbols();
 		List<String> res = new ArrayList<>();
 		for (String macro : symbols.keySet()) {
-			if (macro.startsWith("_"))
+			if (macro.startsWith("_")) {
 				continue; // likely embedded macro
+			}
 			String value = symbols.get(macro);
-			if (value.isEmpty())
+			if (value.isEmpty()) {
 				res.add("-D" + macro);
-			else
+			} else {
 				res.add("-D" + macro + "=" + value);
+			}
 		}
 		for (String inc : scannerInfo.getIncludePaths()) {
 			res.add("-I" + inc);

@@ -367,7 +367,6 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"__STDC_VERSION__",
 				"__STDC__",
 				"__TIME__",
-				"__builtin_constant_p(exp)",
 				"__builtin_va_arg(ap, type)",
 				"__builtin_offsetof(T, m)",
 				"__builtin_types_compatible_p(x, y)",

@@ -109,4 +109,12 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ProblemBindingChecker.ERR_ID_InvalidArguments);
 	}
+
+	//	void foo(unsigned i) {
+	//		__builtin_assume_aligned(i, 4);
+	//	}
+	public void testMisuseOfKnownBuiltin_512932() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(2, ProblemBindingChecker.ERR_ID_InvalidArguments);
+	}
 }

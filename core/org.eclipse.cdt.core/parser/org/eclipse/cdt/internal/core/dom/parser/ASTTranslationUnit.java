@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -86,6 +87,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private final Semaphore fSemaphore= new Semaphore(1);
 	private boolean fBasedOnIncompleteIndex;
 	private boolean fNodesOmitted;
+	private IBuiltinBindingsProvider fBuiltinBindingsProvider;
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -550,4 +552,23 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	 * process it now. Has no effect if ambiguity resolution is not in progress.
 	 */
 	public void resolvePendingAmbiguities(IASTNode node) {}
+	
+	public void setupBuiltinBindings(IBuiltinBindingsProvider builtinBindingsProvider) {
+		IScope tuScope = getScope();
+
+		IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
+		for (IBinding binding : bindings) {
+			ASTInternal.addBinding(tuScope, binding);
+		}
+		
+		// Save the builtin bindings provider for later use by isKnownBuiltin().
+		fBuiltinBindingsProvider = builtinBindingsProvider;
+	}
+	
+	public boolean isKnownBuiltin(char[] builtinName) {
+		if (fBuiltinBindingsProvider != null) {
+			return fBuiltinBindingsProvider.isKnownBuiltin(builtinName);
+		}
+		return false;
+	}
 }

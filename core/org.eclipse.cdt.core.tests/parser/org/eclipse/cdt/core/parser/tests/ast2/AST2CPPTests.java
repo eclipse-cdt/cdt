@@ -11247,6 +11247,36 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSameType((ITypedef) helper.assertNonProblem("ulong_type"), CPPBasicType.UNSIGNED_LONG);
 		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPBasicType.LONG);
 	}
+	
+	//	void ptrFunc(void*);
+	//	void intFunc(int);
+	//	void foo(int* pi, unsigned i) {
+	//		ptrFunc(__builtin_assume_aligned(pi, 4));
+	//		intFunc(__builtin_constant_p(i));
+	//		intFunc(__builtin_expect(i, 0));
+	//		ptrFunc(__builtin_return_address(4));
+	//	}
+	public void testGCCBuiltins_512932a() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+	
+	//	void ptrFunc(void*);
+	//	void intFunc(int);
+	//	void foo(int* pi, unsigned i) {
+	//		ptrFunc(__builtin_assume_aligned(i, 4));
+	//		ptrFunc(__builtin_constant_p(i));
+	//		ptrFunc(__builtin_constant_p(pI));
+	//		intFunc(__builtin_expect(pI, (int*)0));
+	//		ptrFunc(__builtin_expect(i, 0));
+	//	}
+	public void testGCCBuiltins_512932b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertProblem("__builtin_assume_aligned", "__builtin_assume_aligned");
+		helper.assertProblem("ptrFunc(__builtin_constant_p(i", "ptrFunc");
+		helper.assertProblem("ptrFunc(__builtin_constant_p(pI", "ptrFunc");
+		helper.assertProblem("__builtin_expect(pI", "__builtin_expect");
+		helper.assertProblem("ptrFunc(__builtin_expect", "ptrFunc");
+	}
 
 	// namespace A {
 	//   int a;

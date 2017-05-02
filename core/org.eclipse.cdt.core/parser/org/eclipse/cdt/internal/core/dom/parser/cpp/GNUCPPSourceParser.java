@@ -70,8 +70,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
@@ -164,9 +162,9 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -4966,11 +4964,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// Add built-in names to the scope.
 		if (builtinBindingsProvider != null) {
-			IScope tuScope = translationUnit.getScope();
-
-			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
-			for (IBinding binding : bindings) {
-				ASTInternal.addBinding(tuScope, binding);
+			if (translationUnit instanceof ASTTranslationUnit) {
+				((ASTTranslationUnit) translationUnit).setupBuiltinBindings(builtinBindingsProvider);
 			}
 		}
 	}

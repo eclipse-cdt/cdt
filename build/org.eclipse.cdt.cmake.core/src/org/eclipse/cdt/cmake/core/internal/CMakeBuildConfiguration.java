@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -231,7 +232,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			try (FileReader reader = new FileReader(commandsFile.toFile())) {
 				Gson gson = new Gson();
 				CompileCommand[] commands = gson.fromJson(reader, CompileCommand[].class);
+				Map<String, CompileCommand> dedupedCmds = new HashMap<>();
 				for (CompileCommand command : commands) {
+					dedupedCmds.put(command.getFile(), command);
+				}
+				for (CompileCommand command : dedupedCmds.values()) {
 					processLine(command.getCommand());
 				}
 				shutdown();

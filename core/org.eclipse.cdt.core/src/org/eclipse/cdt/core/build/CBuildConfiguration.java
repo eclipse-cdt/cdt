@@ -633,15 +633,18 @@ public abstract class CBuildConfiguration extends PlatformObject
 				for (IResource resource : resources) {
 					loadScannerInfoCache();
 					if (scannerInfoCache.hasCommand(commandStrings)) {
-						scannerInfoCache.addResource(commandStrings, resource);
+						if (!scannerInfoCache.hasResource(commandStrings, resource)) {
+							scannerInfoCache.addResource(commandStrings, resource);
+							infoChanged = true;
+						}
 					} else {
 						Path commandPath = findCommand(command.get(0));
 						command.set(0, commandPath.toString());
 						IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(),
 								command, null, resource, getBuildDirectoryURI());
 						scannerInfoCache.addScannerInfo(commandStrings, info, resource);
+						infoChanged = true;
 					}
-					infoChanged = true;
 				}
 				return true;
 			} else {

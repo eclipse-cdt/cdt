@@ -18,7 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPInheritance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPInheritance.FinalOverriderMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -107,5 +111,28 @@ public class SemanticQueries {
 			}
 		}
 		return pureVirtualMethods.toArray(new ICPPMethod[pureVirtualMethods.size()]);
+	}
+	
+	/**
+	 * Returns whether a problem binding represents a name resolution error due to an unknown built-in.
+	 * Importantly, this will not return true for a misuse of a known builtin, which we want to diagnose.
+	 * @param binding The problem binding to test.
+	 * @param node Any node in the AST. Used to access the AST root.
+	 * @since 6.3
+	 */
+	public static boolean isUnknownBuiltin(IProblemBinding binding, IASTNode node) {
+		char[] name = binding.getNameCharArray();
+		boolean isBuiltin = binding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
+				CharArrayUtils.startsWith(name, "__builtin_");  //$NON-NLS-1$
+		if (isBuiltin) {
+			if (node != null) {
+				IASTTranslationUnit tu = node.getTranslationUnit();
+				if (tu instanceof ASTTranslationUnit) {
+					return !((ASTTranslationUnit) tu).isKnownBuiltin(name);
+				}
+			}
+			return true;	
+		}
+		return false;
 	}
 }

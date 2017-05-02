@@ -35,4 +35,10 @@ public interface IBuiltinBindingsProvider {
 	 */
 	public IBinding[] getBuiltinBindings(IScope scope);
 
+	/**
+	 * Returns whether the given name names a known builtin.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean isKnownBuiltin(char[] builtinName);
 }

@@ -41,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
@@ -148,8 +148,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {
 								return PROCESS_CONTINUE;
 							}
-							if (problemBinding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
-									CharArrayUtils.startsWith(problemBinding.getNameCharArray(), "__builtin_")) { //$NON-NLS-1$
+							if (SemanticQueries.isUnknownBuiltin(problemBinding, name)) {
 								return PROCESS_CONTINUE;  // Ignore an unknown built-in.
 							}
 							if (isFunctionCall(name, parentNode)) {

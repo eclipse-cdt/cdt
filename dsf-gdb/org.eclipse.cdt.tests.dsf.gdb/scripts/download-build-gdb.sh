@@ -31,6 +31,7 @@ jlevel="${default_jlevel}"
 
 # Supported versions
 default_versions="7.12.1 7.11.1 7.10.1 7.9.1 7.8.2 7.7.1 7.6.2 7.5.1 7.4.1 7.3.1 7.2 7.1 7.0.1 6.8 6.7.1 6.6"
+latest_version=`echo ${default_versions} | awk '{print $1}'`
 
 # Is set to "echo" if we are doing a dry-run.
 dryrun=""
@@ -40,12 +41,13 @@ dryrun=""
 # $1: The value to pass to exit
 function help_and_exit() {
   echo "Usage:"
-  echo "  download-build-gdb.sh [OPTIONS] [VERSIONS|all]"
+  echo "  download-build-gdb.sh [OPTIONS] [VERSIONS|all|latest]"
 
   echo ""
   echo "Description:"
   echo "  This script downloads, builds and installs the given versions of gdb."
   echo "  Passing \"all\" to the script is the same as passing all the supported versions."
+  echo "  Passing \"latest\" to the script will build and install the latest gdb version."
   echo ""
   echo "Options:"
   echo "  -b, --base-dir PATH  Set the base directory for downloading, building and "
@@ -308,6 +310,8 @@ versions=$*
 
 if [ "$versions" = "all" ]; then
   versions="${default_versions}"
+elif [ "$versions" = "latest" ]; then
+  versions="${latest_version}"
 fi
 
 # End argument parsing

@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.codan.core.internal.checkers.AbstractClassInstantiationCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentToItselfCheckerTest;
@@ -33,11 +29,16 @@ import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerT
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UnusedSymbolInFileScopeCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.AssignmentInConditionQuickFixTest;
-import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixBreakTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixCommentTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixFallthroughAttributeTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CreateLocalVariableQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
@@ -81,8 +82,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(CreateLocalVariableQuickFixTest.class);
 		suite.addTestSuite(SuggestedParenthesisQuickFixTest.class);
 		suite.addTestSuite(CatchByReferenceQuickFixTest.class);
-		suite.addTestSuite(CaseBreakQuickFixTest.class);
+		suite.addTestSuite(CaseBreakQuickFixBreakTest.class);
 		suite.addTestSuite(CaseBreakQuickFixCommentTest.class);
+		suite.addTestSuite(CaseBreakQuickFixFallthroughAttributeTest.class);
 		suite.addTestSuite(AssignmentInConditionQuickFixTest.class);
 		return suite;
 	}

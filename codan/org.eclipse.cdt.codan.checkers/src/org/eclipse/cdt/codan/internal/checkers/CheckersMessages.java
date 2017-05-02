@@ -19,6 +19,7 @@ public class CheckersMessages extends NLS {
 	public static String CaseBreakChecker_DefaultNoBreakCommentDescription;
 	public static String CaseBreakChecker_EmptyCaseDescription;
 	public static String CaseBreakChecker_LastCaseDescription;
+	public static String CaseBreakChecker_EnableFallthroughQuickfixDescription;
 	public static String CatchByReference_ReportForUnknownType;
 	public static String ClassMembersInitializationChecker_SkipConstructorsWithFCalls;
 	public static String NamingConventionFunctionChecker_LabelNamePattern;

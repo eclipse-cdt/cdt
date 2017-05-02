@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.util;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
+import org.eclipse.cdt.core.parser.StandardAttributes;
 
 /**
  * Collection of static methods for dealing with attributes.
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTToken;
  * @since 5.4
  */
 public class AttributeUtil {
-	private static final String[] ATTRIBUTE_NORETURN = new String[] { "__noreturn__", "noreturn" };  //$NON-NLS-1$//$NON-NLS-2$
+	private static final String[] ATTRIBUTE_NORETURN = new String[] { "__noreturn__", StandardAttributes.NORETURN };  //$NON-NLS-1$
 
 	// Not instantiatable.
 	private AttributeUtil() {}

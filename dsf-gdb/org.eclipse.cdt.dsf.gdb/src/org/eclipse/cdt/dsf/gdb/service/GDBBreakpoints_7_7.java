@@ -110,7 +110,7 @@ public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
 							MIBreakpoint miBpt = getData();
 							if (miBpt != null) {
 								bs.removeCreatedTargetBreakpoint(context, miBpt);
-								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(miBpt);
 								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
 								IBreakpointDMContext dmc = 
 									new MIBreakpointDMContext(GDBBreakpoints_7_7.this, new IDMContext[] { context }, newBreakpoint.getNumber());
@@ -173,7 +173,7 @@ public class GDBBreakpoints_7_7 extends GDBBreakpoints_7_6 {
     							}
 
     							// Create a breakpoint object and store it in the map
-    							final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
+    							final MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(getData().getMIBreakpoints()[0]);
     							String reference = newBreakpoint.getNumber();
     							if (reference.isEmpty()) {
     								rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, DYNAMIC_PRINTF_INSERTION_FAILURE, null));

@@ -222,7 +222,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		if (contextBreakpoints == null) {
 			contextBreakpoints = breakpointsService.createNewBreakpointMap(bpTargetDMC);
 		}
-		contextBreakpoints.put(miBpt.getNumber(), new MIBreakpointDMData(miBpt));
+		contextBreakpoints.put(miBpt.getNumber(), fBreakpointsService.createMIBreakpointDMData(miBpt));
 
 		// Store the created target breakpoint to prevent setting it again on the target 
 		// when addBreakpoint() is called.
@@ -416,7 +416,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			MIBreakpoint miBpt) {
 		Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointsService().getBreakpointMap(bpTargetDMC);
 		MIBreakpointDMData oldData = contextBreakpoints.get(miBpt.getNumber());
-		contextBreakpoints.put(miBpt.getNumber(), new MIBreakpointDMData(miBpt));
+		contextBreakpoints.put(miBpt.getNumber(), fBreakpointsService.createMIBreakpointDMData(miBpt));
 		try {
 			if (plBpt.isEnabled() != miBpt.isEnabled()) {
 				plBpt.setEnabled(miBpt.isEnabled());

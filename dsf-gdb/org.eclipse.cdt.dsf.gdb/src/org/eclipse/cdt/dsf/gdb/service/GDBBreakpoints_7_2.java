@@ -147,7 +147,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 							breakpointContext.clear();
 							IBreakpointDMContext[] result = new IBreakpointDMContext[breakpoints.length];
 							for (int i = 0; i < breakpoints.length; i++) {
-								MIBreakpointDMData breakpointData = new MIBreakpointDMData(breakpoints[i]);
+								MIBreakpointDMData breakpointData = createMIBreakpointDMData(breakpoints[i]);
 								
 								// Now fill in the thread-group information into the breakpoint data
 								// It is ok to get null.  For example, pending breakpoints are not
@@ -222,7 +222,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 						}
 
 						// Create a breakpoint object and store it in the map
-						final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
+						final MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(getData().getMIBreakpoints()[0]);
 						String reference = newBreakpoint.getNumber();
 						if (reference.isEmpty()) {
 							drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));

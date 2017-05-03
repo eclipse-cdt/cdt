@@ -83,6 +83,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -1290,13 +1291,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // IBreakpointListener implementation
     ///////////////////////////////////////////////////////////////////////////
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @ThreadSafe
 	@Override
     public void breakpointAdded(final IBreakpoint breakpoint) {
-
+    	breakpointAdded(breakpoint, null);
+    }
+    
+    /**
+     * Extension of {@link #breakpointAdded(IBreakpoint)}
+     * @param miBpt the MIBreakpoint that initiated the breakpointAdded, or null
+     * @since 5.3
+     */
+    @ThreadSafe
+    public void breakpointAdded(final IBreakpoint breakpoint, MIBreakpoint miBpt) {
         if (supportsBreakpoint(breakpoint)) {
             try {
                 // Retrieve the breakpoint attributes
@@ -1892,7 +1899,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             delta.put(key, null);
         }
 
-        return convertedAttributes(delta);
+        return convertToPlatformAttributes(delta);
     }
 
     /**
@@ -1900,8 +1907,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * 
      * @param cdtAttributes
      * @return
+     * @since 5.3
      */
-    private Map<String, Object> convertedAttributes(Map<String, Object> cdtAttributes) {
+    protected Map<String, Object> convertToPlatformAttributes(Map<String, Object> cdtAttributes) {
 
         Map<String,Object> result = new HashMap<String,Object>();
 

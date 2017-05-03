@@ -188,7 +188,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 							MIBreakpoint miBpt = getData();
 							if (miBpt != null) {
 								bs.removeCreatedTargetBreakpoint(context, miBpt);
-								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(miBpt);
 								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
 								IBreakpointDMContext dmc = 
 									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());
@@ -226,7 +226,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 							MIBreakpoint miBpt = getData();
 							if (miBpt != null) {
 								bs.removeCreatedTargetBreakpoint(context, miBpt);
-								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(miBpt);
 								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
 								IBreakpointDMContext dmc = 
 									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());
@@ -264,7 +264,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 							MIBreakpoint miBpt = getData();
 							if (miBpt != null) {
 								bs.removeCreatedTargetBreakpoint(context, miBpt);
-								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(miBpt);
 								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
 								IBreakpointDMContext dmc = 
 									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());

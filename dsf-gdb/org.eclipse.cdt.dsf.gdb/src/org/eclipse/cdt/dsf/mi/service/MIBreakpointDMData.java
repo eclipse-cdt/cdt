@@ -39,12 +39,20 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	private final MIBreakpoint fBreakpoint;
 	private final Map<String, Object> fProperties;
 
-	// Breakpoint types
-	public static enum MIBreakpointNature { UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT, 
-		                                    /** @since 3.0*/ TRACEPOINT,
-		                                    /** @since 4.4*/ DYNAMICPRINTF };
-	private final MIBreakpointNature fNature;
-
+	/**
+	 * Breakpoint types
+	 * 
+	 * @deprecated This enum is not extensible, so has been deprecated to allow extenders to have their own breakpoint
+	 *             types. Within CDT there was no access to this enum outside of this class. The replacement is to use {@link MIBreakpointDMData#getBreakpointType()}
+	 */
+	@Deprecated
+	public static enum MIBreakpointNature {
+		UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT,
+		/** @since 3.0 */
+		TRACEPOINT,
+		/** @since 4.4 */
+		DYNAMICPRINTF
+	};
 
 	///////////////////////////////////////////////////////////////////////////
 	// Constructors
@@ -54,81 +62,42 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 * Copy constructor
 	 *  
 	 * @param other
+	 * @deprecated Call {@link #copy()} on other instead to allow subclasses to be copied properly.
 	 */
+	@Deprecated
 	public MIBreakpointDMData(MIBreakpointDMData other) {
 
 		fBreakpoint = new MIBreakpoint(other.fBreakpoint);
 		fProperties = new HashMap<String, Object>(other.fProperties);
-		fNature = other.fNature;
 	}
 
 	/**
-	 * Constructs a DsfMIBreakpoint from a back-end object
-	 *  
-	 * @param dsfMIBreakpoint   back-end breakpoint
+	 * Perform a copy.
+	 * 
+	 * @return the copy
+	 * @since 5.3
 	 */
-	public MIBreakpointDMData(MIBreakpoint dsfMIBreakpoint) {
+	public MIBreakpointDMData copy() {
+		return new MIBreakpointDMData(new MIBreakpoint(fBreakpoint), new HashMap<String, Object>(fProperties));
+	}
 
-		// No support for catchpoints yet
+	/**
+	 * Create a MIBreakpointDMData from a breakpoint and a potentially populated properties map.
+	 * 
+	 * @param dsfMIBreakpoint
+	 *            MI Breakpoint to represent
+	 * @param properties
+	 *            if {@code null}, calculate properties, otherwise use properties received
+	 * @since 5.3
+	 */
+	protected MIBreakpointDMData(MIBreakpoint dsfMIBreakpoint, HashMap<String, Object> properties) {
 		fBreakpoint = dsfMIBreakpoint;
-		if (dsfMIBreakpoint.isTracepoint()) {
-			fNature = MIBreakpointNature.TRACEPOINT;
-		} else if (dsfMIBreakpoint.isDynamicPrintf()) {
-			fNature = MIBreakpointNature.DYNAMICPRINTF;
-		} else if (dsfMIBreakpoint.isWatchpoint()) {
-			fNature = MIBreakpointNature.WATCHPOINT;
-		} else if (dsfMIBreakpoint.isCatchpoint()) {
-			fNature = MIBreakpointNature.CATCHPOINT;
+		if (properties != null) {
+			fProperties = properties;
 		} else {
-			fNature = MIBreakpointNature.BREAKPOINT;
-		}
+			fProperties = new HashMap<String,Object>();
 
-		fProperties = new HashMap<String,Object>();
-		switch (fNature) {
-		
-			case BREAKPOINT:
-			{
-				// Note that this may in fact be a catchpoint. See comment below in
-				// CATCHPOINT case
-				
-				// Generic breakpoint attributes
-				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
-				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
-				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
-				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
-				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
-				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getIgnoreCount());
-				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
-				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
-	
-				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
-				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
-				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
-				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
-				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
-				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
-				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
-				fProperties.put(LOCATION,     formatLocation());
-				break;
-			}
-
-			case WATCHPOINT:
-			{
-				// Generic breakpoint attributes
-				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.WATCHPOINT);
-				fProperties.put(MIBreakpoints.EXPRESSION, dsfMIBreakpoint.getExpression());
-				fProperties.put(MIBreakpoints.READ,       dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isReadWatchpoint());
-				fProperties.put(MIBreakpoints.WRITE,      dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isWriteWatchpoint());
-
-				// MI-specific breakpoint attributes
-				fProperties.put(NUMBER,     dsfMIBreakpoint.getNumber());
-				break;
-			}
-			
-			case TRACEPOINT:
-			{
+			if (dsfMIBreakpoint.isTracepoint()) {
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
@@ -149,11 +118,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
 				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
 				fProperties.put(LOCATION,     formatLocation());
-				break;
-			}
-
-			case DYNAMICPRINTF:
-			{
+	
+			} else if (dsfMIBreakpoint.isDynamicPrintf()) {
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
 				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
@@ -174,11 +140,18 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
 				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
 				fProperties.put(LOCATION,     formatLocation());
-				break;
-			}
-			
-			case CATCHPOINT:
-			{
+	
+			} else if (dsfMIBreakpoint.isWatchpoint()) {
+				// Generic breakpoint attributes
+				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.WATCHPOINT);
+				fProperties.put(MIBreakpoints.EXPRESSION, dsfMIBreakpoint.getExpression());
+				fProperties.put(MIBreakpoints.READ,       dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isReadWatchpoint());
+				fProperties.put(MIBreakpoints.WRITE,      dsfMIBreakpoint.isAccessWatchpoint() || dsfMIBreakpoint.isWriteWatchpoint());
+	
+				// MI-specific breakpoint attributes
+				fProperties.put(NUMBER,     dsfMIBreakpoint.getNumber());
+	
+			} else if (dsfMIBreakpoint.isCatchpoint()) {
 				// Because gdb doesn't support catchpoints in mi, we end up using
 				// CLI to set the catchpoint. The sort of MIBreakpoint we create
 				// at that time is minimal as the only information we get back from
@@ -195,18 +168,72 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 				fProperties.put(MIBreakpoints.CATCHPOINT_TYPE, dsfMIBreakpoint.getCatchpointType());
 				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());				
-				break;
-			}
-
-			// Not reachable
-			default:
-			{
-				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, null);
-				break;
+	
+			} else {
+				// For all other breakpoint types, use MIBreakpoints.BREAKPOINT.
+				
+				// Note that this may in fact be a catchpoint. See comment above in
+				// isCatchpoint case
+				
+				// Generic breakpoint attributes
+				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getIgnoreCount());
+				fProperties.put(MIBreakpoints.IS_ENABLED,      Boolean.valueOf(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
+			
+				// MI-specific breakpoint attributes
+				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(IS_TEMPORARY, Boolean.valueOf(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  Boolean.valueOf(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION,     formatLocation());
+	
 			}
 		}
 	}
 
+	
+	/**
+	 * Constructs a DsfMIBreakpoint from a back-end object. Create the object by calling
+	 * {@link MIBreakpoints#createMIBreakpointDMData(MIBreakpoint)} to ensure correct version is called.
+	 * 
+	 * @param dsfMIBreakpoint
+	 *            back-end breakpoint
+	 * @deprecated Call {@link MIBreakpoints#createMIBreakpointDMData(MIBreakpoint)} instead
+	 */
+	@Deprecated
+	public MIBreakpointDMData(MIBreakpoint dsfMIBreakpoint) {
+		this(dsfMIBreakpoint, null);
+	}
+
+	/**
+	 * Obtain the properties map. Method only intended to be called by sub-classes.
+	 * 
+	 * @return properties map
+	 * @since 5.3
+	 */
+	protected Map<String, Object> getProperties() {
+		return fProperties;
+	}
+
+	/**
+	 * Obtain the MI Breakpoint. Method only intended to be called by sub-classes.
+	 * 
+	 * @return breakpoint
+	 * @since 5.3
+	 */
+	protected MIBreakpoint getBreakpoint() {
+		return fBreakpoint;
+	}
+	
 	/**
 	 * Formats the LOCATION synthetic property from the existing fields
 	 *  
@@ -240,21 +267,19 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 * @return
 	 */
 	public boolean equals(MIBreakpointDMData other) {
-		return (fNature == other.fNature) && (fProperties.equals(other.fProperties));
+		return fProperties.equals(other.fProperties);
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		if (this == other) return true;
 		if (!(other instanceof MIBreakpointDMData)) return false;
-		MIBreakpointDMData bpData = (MIBreakpointDMData)other;
-		
-		return (fNature == bpData.fNature) && (fProperties.equals(bpData.fProperties));
+		return equals((MIBreakpointDMData)other);
 	}
 	
 	@Override
 	public int hashCode() {
-		return fNature.hashCode() ^ fProperties.hashCode();
+		return fProperties.hashCode();
 	}
 	
 	///////////////////////////////////////////////////////////////////////////

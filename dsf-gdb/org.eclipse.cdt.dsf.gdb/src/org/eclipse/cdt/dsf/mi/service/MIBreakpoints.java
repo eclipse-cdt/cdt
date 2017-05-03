@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -164,7 +166,35 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		fBreakpoints.put(ctx, map);
 		return map;
 	}
-	
+
+	/**
+	 * Create a new effective breakpoint data object
+	 * 
+	 * @param breakpoint
+	 *            backend breakpoint to create DSF object from
+	 * @return breakpoint data object
+	 * @since 5.3
+	 */
+	@ThreadSafe
+	public MIBreakpointDMData createMIBreakpointDMData(MIBreakpoint breakpoint) {
+		@SuppressWarnings("deprecation")
+		MIBreakpointDMData data = new MIBreakpointDMData(breakpoint);
+		return data;
+	}
+
+	/**
+	 * Create a new MI breakpoint
+	 * 
+	 * @param tuple
+	 *            from backend communication
+	 * @return breakpoint
+	 * @since 5.3
+	 */
+	@ThreadSafe
+	public MIBreakpoint createMIBreakpoint(MITuple tuple) {
+		return new MIBreakpoint(tuple);
+	}
+
 	// Error messages
 	/** @since 3.0 */
 	public static final String NULL_STRING = ""; //$NON-NLS-1$
@@ -436,7 +466,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 					MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
 					IBreakpointDMContext[] result = new IBreakpointDMContext[breakpoints.length];
 					for (int i = 0; i < breakpoints.length; i++) {
-						MIBreakpointDMData breakpoint = new MIBreakpointDMData(breakpoints[i]);
+						MIBreakpointDMData breakpoint = createMIBreakpointDMData(breakpoints[i]);
 						String reference = breakpoint.getReference();
 						result[i] = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
 						breakpointContext.put(reference, breakpoint);
@@ -492,8 +522,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		}
 
 		// No need to go to the back-end for this one
-		IBreakpointDMData breakpointCopy = new MIBreakpointDMData(contextBreakpoints.get(breakpoint.getReference()));
-		drm.setData(breakpointCopy);
+		MIBreakpointDMData breakpointDMData = contextBreakpoints.get(breakpoint.getReference());
+		IBreakpointDMData breakpointDMDataCopy = breakpointDMData.copy();
+		drm.setData(breakpointDMDataCopy);
 		drm.done();
 	}
 
@@ -684,7 +715,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 								}
 
 								// Create a breakpoint object and store it in the map
-								final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
+								final MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(getData().getMIBreakpoints()[0]);
 								String reference = newBreakpoint.getNumber();
 								if (reference.isEmpty()) {
 									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
@@ -774,7 +805,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
                     }
 
                 	// Create a breakpoint object and store it in the map
-                	final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
+                	final MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(getData().getMIBreakpoints()[0]);
                 	String reference = newBreakpoint.getNumber();
                 	if (reference.isEmpty()) {
                    		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
@@ -864,7 +895,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 								}
 
 								// Create a breakpoint object and store it in the map
-								final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBkpt);
+								final MIBreakpointDMData newBreakpoint = createMIBreakpointDMData(miBkpt);
 								String reference = newBreakpoint.getNumber();
 								if (reference.isEmpty()) {
 									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, null));

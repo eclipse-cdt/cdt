@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -165,6 +167,19 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		return map;
 	}
 	
+	/**
+	 * Create a new MI breakpoint
+	 * 
+	 * @param tuple
+	 *            from backend communication
+	 * @return breakpoint
+	 * @since 5.3
+	 */
+	@ThreadSafe
+	public MIBreakpoint createMIBreakpoint(MITuple tuple) {
+		return new MIBreakpoint(tuple);
+	}
+
 	// Error messages
 	/** @since 3.0 */
 	public static final String NULL_STRING = ""; //$NON-NLS-1$

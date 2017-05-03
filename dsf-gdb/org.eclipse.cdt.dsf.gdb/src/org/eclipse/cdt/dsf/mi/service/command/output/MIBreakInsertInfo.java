@@ -43,23 +43,23 @@ public class MIBreakInsertInfo extends MIInfo {
                     MIBreakpoint bpt = null;
                     if (var.equals("wpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {
-                            bpt = new MIBreakpoint((MITuple)val);
+                            bpt = createMIBreakpoint((MITuple)val);
                             bpt.setEnabled(true);
                             bpt.setWriteWatchpoint(true);
                         }
                     } else if (var.equals("bkpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {
-                            bpt = new MIBreakpoint((MITuple)val);
+                            bpt = createMIBreakpoint((MITuple)val);
                         }
                     } else if (var.equals("hw-awpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {
-                            bpt = new MIBreakpoint((MITuple)val);
+                            bpt = createMIBreakpoint((MITuple)val);
                             bpt.setAccessWatchpoint(true);
                             bpt.setEnabled(true);
                         }
                     } else if (var.equals("hw-rwpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {
-                            bpt = new MIBreakpoint((MITuple)val);
+                            bpt = createMIBreakpoint((MITuple)val);
                             bpt.setReadWatchpoint(true);
                             bpt.setEnabled(true);
                         }
@@ -75,5 +75,18 @@ public class MIBreakInsertInfo extends MIInfo {
 
     public MIBreakpoint[] getMIBreakpoints() {
         return breakpoints;
+    }
+
+
+    /**
+     * Create a target specific MIBreakpoint
+     * 
+     * @param value
+     *            tuple suitable for passing to MIBreakpoint constructor
+     * @return new breakpoint
+     * @since 5.3
+     */
+    protected MIBreakpoint createMIBreakpoint(MITuple tuple) {
+        return new MIBreakpoint(tuple);
     }
 }

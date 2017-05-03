@@ -48,7 +48,19 @@ public class CLICatchInfo extends MIInfo {
 	}
 
 	private MIBreakpoint parseCatchpoint(String str) {
-		return str.startsWith("Catchpoint ") ? new MIBreakpoint(str) : null; //$NON-NLS-1$
+		return str.startsWith("Catchpoint ") ? createMIBreakpoint(str) : null; //$NON-NLS-1$
+	}
+
+	/**
+	 * Create a target specific MIBreakpoint
+	 * 
+	 * @param value
+	 *            tuple suitable for passing to MIBreakpoint constructor
+	 * @return new breakpoint
+	 * @since 5.3
+	 */
+	protected MIBreakpoint createMIBreakpoint(String str) {
+		return new MIBreakpoint(str);
 	}
 
 	/**

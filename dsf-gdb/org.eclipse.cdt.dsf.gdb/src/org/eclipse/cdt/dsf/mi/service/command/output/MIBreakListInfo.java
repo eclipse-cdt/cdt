@@ -77,10 +77,22 @@ public class MIBreakListInfo extends MIInfo {
                 if (b.equals("bkpt")) { //$NON-NLS-1$
                     MIValue value = bkpts[i].getMIValue();
                     if (value instanceof MITuple) {
-                        aList.add(new MIBreakpoint((MITuple)value));
+                        aList.add(createMIBreakpoint((MITuple)value));
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Create a target specific MIBreakpoint
+     * 
+     * @param value
+     *            tuple suitable for passing to MIBreakpoint constructor
+     * @return new breakpoint
+     * @since 5.3
+     */
+    protected MIBreakpoint createMIBreakpoint(MITuple tuple) {
+        return new MIBreakpoint(tuple);
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManager;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 
 /**
  * Contain info about the GDB/MI breakpoint.
@@ -64,6 +65,12 @@ import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManage
  * ^done,bkpt={number="9",type="breakpoint",disp="keep",enabled="y",addr="<PENDING>",pending="NotLoadedLibrary.c:26",times="0",original-location="NotLoadedLibrary.c:26"}
  * 
  * Note that any breakpoint that fails to install will be marked as pending when the -f option is used.
+ * <p>
+ * <b>Note on using constructor directly:</b></a> As this class can be extended by third-parties it is
+ * important to allow third parties the ability to have the correct version of MIBreakpoint
+ * created. {@code MIBreakpoint}s should therefore be created via factory methods that can be overloaded.
+ * For examples, see {@link MIBreakpoints#createMIBreakpoint(MITuple)} or
+ * {@link MIBreakInsertInfo#createMIBreakpoint(MITuple)}
  */
 public class MIBreakpoint  {
 
@@ -122,11 +129,27 @@ public class MIBreakpoint  {
 	 * null will be returned if this field is not present. 
 	 */
 	private String[] groupIds;
-	
-    public MIBreakpoint() {
+
+	/**
+	 * No arguments constructor.
+	 * <p>
+	 * See {@link MIBreakpoint} class comment "Note on using constructor
+	 * directly"
+	 */
+	public MIBreakpoint() {
 	}
 
-    public MIBreakpoint(MIBreakpoint other) {
+	/**
+	 * Copy-constructor
+	 * <p>
+	 * See {@link MIBreakpoint} class comment "Note on using constructor
+	 * directly"
+	 * <p>
+	 * 
+	 * @param other
+	 *            breakpoint to copy from
+	 */
+	public MIBreakpoint(MIBreakpoint other) {
         number   = other.number;
         type     = other.type;
         disp     = other.disp;
@@ -159,9 +182,19 @@ public class MIBreakpoint  {
         }
 	}
 
-    public MIBreakpoint(MITuple tuple) {
-        parse(tuple);
-    }
+	/**
+	 * Construct an MIBreakpoint from the MI Tuple received from GDB
+	 * <p>
+	 * See {@link MIBreakpoint} class comment "Note on using constructor
+	 * directly"
+	 * <p>
+	 * 
+	 * @param tuple
+	 *            data received from GDB
+	 */
+	public MIBreakpoint(MITuple tuple) {
+		parse(tuple);
+	}
 
 	/**
 	 * This constructor is used for catchpoints. Catchpoints are not yet
@@ -191,6 +224,9 @@ public class MIBreakpoint  {
 	 * that same breakpoint number, and a consumer of that MIBreakpoint won't be
 	 * able to tell it's a catchpoint. Quite the mess. Wish gdb would treat
 	 * catchpoints like first class citizens.
+	 * 
+	 * <p>
+	 * See {@link MIBreakpoint} class comment "Note on using constructor directly"
 	 * 
 	 * @param cliResult
 	 *            the output from the CLI command. Example:

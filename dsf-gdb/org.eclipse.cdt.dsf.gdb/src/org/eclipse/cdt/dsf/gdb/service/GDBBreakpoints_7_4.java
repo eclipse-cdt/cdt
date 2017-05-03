@@ -145,7 +145,7 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 			MIValue val = results[i].getMIValue();
 			if (var.equals("bkpt")) { //$NON-NLS-1$
 				if (val instanceof MITuple) {
-					bpt = new MIBreakpoint((MITuple)val);
+					bpt = createMIBreakpoint((MITuple)val);
 				}
 			}
 		}

@@ -67,7 +67,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage" //$NON-NLS-1$
-;
+	;
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
@@ -75,6 +75,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME + "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME + "editLookupButton"; //$NON-NLS-1$
 	public static final String UID_OPEN_PREFERENCE_BUTTON = UID_CLASS_NAME + "preferenceButton"; //$NON-NLS-1$
+
+	public static boolean isAdress = false;
 
 	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
@@ -177,10 +179,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				return super.getText();
 			String contextDescription;
 			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
-			if (description != null)
+			if (description != null) {
 				contextDescription = description.getDescription();
-			else
+			} else
 				contextDescription = context.toString();
+			if (isAdress)
+				return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_8, contextDescription);
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
 		}
 	}

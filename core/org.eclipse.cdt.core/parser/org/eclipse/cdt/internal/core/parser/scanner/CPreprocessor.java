@@ -72,6 +72,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.CodeState;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.Conditional;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.osgi.framework.Version;
 
 /**
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly,
@@ -95,7 +96,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 
     // Standard built-ins
-    private static final ObjectStyleMacro __CDT_PARSER__= new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), ONE);   //$NON-NLS-1$
+    private static final ObjectStyleMacro __CDT_PARSER__= new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$ 
+    		Integer.toString(getCDTVersion()).toCharArray());
     private static final ObjectStyleMacro __cplusplus =
     		new ObjectStyleMacro("__cplusplus".toCharArray(), "201103L".toCharArray());   //$NON-NLS-1$ //$NON-NLS-2$
     private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE);  //$NON-NLS-1$
@@ -123,7 +125,25 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	private static final String TRACE_NO_GUARD = CCorePlugin.PLUGIN_ID + "/debug/scanner/missingIncludeGuards"; //$NON-NLS-1$
 
-
+	/**
+	 * Returns an integer, suitable for use as a macro value, representing the current
+	 * version of the CDT feature, composited into a single number.
+	 * For example, version 9.2.1 would be composited into 90201.
+	 * Used as the value of the __CDT_PARSER__ macro.  
+	 */
+	public static int getCDTVersion() {
+		Version version = CCorePlugin.getCDTFeatureVersion();
+		if (version != null) {
+			int major = version.getMajor();
+			int minor = version.getMinor();
+			int micro = version.getMicro();
+			int composite = major * 10000 + minor * 100 + micro;
+			return composite;
+		}
+		// Fall back to the old approach of defining __CDT_PARSER__ as 1.
+		return 1;
+	}
+	
 	private final class MacroDictionary implements IMacroDictionary, ISignificantMacros.IVisitor {
 		@Override
 		public boolean satisfies(ISignificantMacros significantMacros) {

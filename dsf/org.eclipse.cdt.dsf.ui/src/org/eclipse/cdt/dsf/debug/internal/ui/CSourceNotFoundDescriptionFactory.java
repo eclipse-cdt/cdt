@@ -44,39 +44,32 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ICSourceNotFoundDescription.class) && adaptableObject instanceof IFrameDMContext) {
 			final IFrameDMContext frameDMC = (IFrameDMContext) adaptableObject;
-			return (T) new ICSourceNotFoundDescription() {
-
+			Query<IStack.IFrameDMData> query = new Query<IStack.IFrameDMData>() {
 				@Override
-				public String getDescription() {
-					Query<IStack.IFrameDMData> query = new Query<IStack.IFrameDMData>() {
-						@Override
-						protected void execute(DataRequestMonitor<IStack.IFrameDMData> rm) {
-							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
-									frameDMC.getSessionId());
+				protected void execute(DataRequestMonitor<IStack.IFrameDMData> rm) {
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+							frameDMC.getSessionId());
 
-							IStack stack = tracker.getService(IStack.class);
-							if (stack != null) {
-								stack.getFrameData(frameDMC, rm);
-							} else {
-								rm.setData(null);
-								rm.done();
-							}
-							tracker.dispose();
-						}
-					};
-					DsfSession session = DsfSession.getSession(frameDMC.getSessionId());
-					if (session != null && session.getExecutor() != null) {
-						session.getExecutor().execute(query);
-						try {
-							IFrameDMData dmData = query.get();
-							return getFrameDescription(dmData);
-						} catch (Exception e) {
-							return frameDMC.toString();
-						}
+					IStack stack = tracker.getService(IStack.class);
+					if (stack != null) {
+						stack.getFrameData(frameDMC, rm);
+					} else {
+						rm.setData(null);
+						rm.done();
 					}
-					return frameDMC.toString();
+					tracker.dispose();
 				}
 			};
+			DsfSession session = DsfSession.getSession(frameDMC.getSessionId());
+			if (session != null && session.getExecutor() != null) {
+				session.getExecutor().execute(query);
+				try {
+					IFrameDMData dmData = query.get();
+					return (T) getFrameDescription(dmData);
+				} catch (Exception e) {
+					// fall through, not able to adapt
+				}
+			}
 		}
 		return null;
 	}
@@ -93,7 +86,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	 * @param frame
 	 * @return the frame description
 	 */
-	private static String getFrameDescription(IStack.IFrameDMData frame) {
+	private static ICSourceNotFoundDescription getFrameDescription(IStack.IFrameDMData frame) {
 		String formatString = ""; //$NON-NLS-1$
 		String[] propertyNames = null;
 		HashMap<String, Object> properties = new HashMap<String, Object>();
@@ -103,6 +96,9 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		String file = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FILE);
 		String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 		String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
+
+		boolean isAddress = false;
+
 		if (line != null && line >= 0 && file != null && !file.isEmpty()) {
 			if (function != null && function.contains(")")) //$NON-NLS-1$
 				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__text_format;
@@ -133,6 +129,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		} else {
 			formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__Address_only__text_format;
 			propertyNames = new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS };
+			isAddress = true;
 		}
 
 		Object[] propertyValues = new Object[propertyNames.length];
@@ -140,7 +137,24 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 			propertyValues[i] = properties.get(propertyNames[i]);
 		}
 
-		return new MessageFormat(formatString).format(propertyValues, new StringBuffer(), null).toString();
+		String description = new MessageFormat(formatString).format(propertyValues, new StringBuffer(), null)
+				.toString();
+		// makes the variable effectively final
+		boolean isAddressReturn = isAddress;
+
+		return new ICSourceNotFoundDescription() {
+
+			@Override
+			public String getDescription() {
+				return description;
+			}
+
+			@Override
+			public boolean isAddressOnly() {
+				return isAddressReturn;
+			}
+
+		};
 	}
 
 	private static void fillFrameDataProperties(java.util.Map<String, Object> properties, IFrameDMData data) {

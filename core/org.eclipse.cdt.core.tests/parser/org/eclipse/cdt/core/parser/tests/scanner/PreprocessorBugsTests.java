@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
 
 /**
@@ -89,7 +90,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// __CDT_PARSER__
 	public void testPredefinedCDTMacro_Bug173848() throws Exception {
 		initializeScanner();
-		validateInteger("1");
+		validateInteger(Integer.toString(CPreprocessor.getCDTVersion()));
 		validateEOF();
 		validateProblemCount(0);
 	}

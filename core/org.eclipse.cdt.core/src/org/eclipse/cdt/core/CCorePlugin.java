@@ -75,6 +75,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IBundleGroup;
+import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IExtension;
@@ -94,6 +96,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -1616,5 +1619,31 @@ public class CCorePlugin extends Plugin {
 		BundleContext context = fgCPlugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+	
+	private static final String CDT_FEATURE_ID = "org.eclipse.cdt";  //$NON-NLS-1$  
+	
+	/**
+	 * Return the version of the CDT feature in this Eclipse installation, if any.
+	 * 
+	 * Note that, while this is a method in CCorePlugin, it's not specific to the
+	 * org.eclipse.cdt.core plugin; it returns the version of the entire
+	 * org.eclipse.cdt feature.
+	 * 
+	 * @since 6.3
+	 */
+	public static Version getCDTFeatureVersion() {
+		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+		if (providers != null) {
+			for (IBundleGroupProvider provider : providers) {
+				IBundleGroup[] bundleGroups = provider.getBundleGroups();
+				for (IBundleGroup group : bundleGroups) {
+					if (group.getIdentifier().equals(CDT_FEATURE_ID)) {
+						return new Version(group.getVersion());
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -67,7 +67,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage" //$NON-NLS-1$
-;
+	;
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
@@ -177,10 +177,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				return super.getText();
 			String contextDescription;
 			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
-			if (description != null)
+			if (description != null) {
 				contextDescription = description.getDescription();
-			else
+			} else
 				contextDescription = context.toString();
+			if (description.isAdress())
+				return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_8, contextDescription);
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
 		}
 	}

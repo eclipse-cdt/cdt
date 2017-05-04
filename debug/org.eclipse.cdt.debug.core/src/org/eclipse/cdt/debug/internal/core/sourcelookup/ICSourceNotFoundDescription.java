@@ -28,4 +28,8 @@ public interface ICSourceNotFoundDescription {
 	 */
 	String getDescription();
 
+	default boolean isAdress() {
+		return false;
+	}
+
 }

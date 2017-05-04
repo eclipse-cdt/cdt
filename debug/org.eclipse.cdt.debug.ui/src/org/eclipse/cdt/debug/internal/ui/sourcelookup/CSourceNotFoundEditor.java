@@ -181,6 +181,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				contextDescription = description.getDescription();
 			else
 				contextDescription = context.toString();
+			if (description.isAddress())
+				return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_8, contextDescription);
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);
 		}
 	}

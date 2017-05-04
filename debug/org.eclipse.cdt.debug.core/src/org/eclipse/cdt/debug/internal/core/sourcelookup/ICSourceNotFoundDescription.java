@@ -28,4 +28,14 @@ public interface ICSourceNotFoundDescription {
 	 */
 	String getDescription();
 
+	/**
+	 * Return true if the debug element only is an address, false if not.
+	 * This is used by the editor to know wich type of message he should use.
+	 * 
+	 * @return 
+	 */
+	default boolean isAddress() {
+		return false;
+	}
+
 }

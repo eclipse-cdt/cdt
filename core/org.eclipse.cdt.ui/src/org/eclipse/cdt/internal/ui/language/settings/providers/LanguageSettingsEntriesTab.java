@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -39,6 +40,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -375,7 +377,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void createTreeForEntries(Composite parent) {
 		treeEntries = new Tree(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		treeEntries.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		treeEntries.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.GRAB_HORIZONTAL));
 		treeEntries.setHeaderVisible(true);
 		treeEntries.setLinesVisible(true);
 
@@ -383,13 +385,14 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		treeEntries.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				int x = treeEntries.getClientArea().width;
-				if (treeCol.getWidth() != x)
-					treeCol.setWidth(x);
+				Point p = treeEntries.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				if (treeCol.getWidth() != p.x)
+					treeCol.setWidth(p.x);
 			}
 		});
 
 		treeCol.setText(Messages.LanguageSettingsProviderTab_SettingEntries);
+
 		treeCol.setWidth(200);
 		treeCol.setResizable(false);
 		treeCol.setToolTipText(Messages.LanguageSettingsProviderTab_SettingEntriesTooltip);

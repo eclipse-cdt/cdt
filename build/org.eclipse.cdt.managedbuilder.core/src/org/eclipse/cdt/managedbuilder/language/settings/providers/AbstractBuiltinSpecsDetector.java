@@ -482,8 +482,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			return;
 		}
 
-		System.out.println("in execute");
-		
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -534,9 +532,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @return status of operation.
 	 */
 	protected IStatus runForEachLanguage(IProgressMonitor monitor) {
-		
-		System.out.println("in runForEachLanguage");
-		
 		MultiStatus status = new MultiStatus(ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null); //$NON-NLS-1$
 
 		if (monitor == null) {
@@ -547,6 +542,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			boolean isChanged = false;
 
 			List<String> languageIds = getLanguageScope();
+			
 			if (languageIds != null) {
 				monitor.beginTask(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.ScannerDiscoveryTaskTitle"), //$NON-NLS-1$
 						TICKS_REMOVE_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
@@ -643,9 +639,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 *    has not been called yet.
 	 */
 	private void runForLanguage(IProgressMonitor monitor) throws CoreException {
-		
-		System.out.println("run for language");
-		
 		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
 		if (monitor == null) {
@@ -764,7 +757,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
-		System.out.println("runProgramForLanguage");
 		return buildRunnerHelper.build(monitor);
 	}
 

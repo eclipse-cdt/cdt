@@ -65,6 +65,12 @@
             id="org.eclipse.cdt.docker.launcher.page1"
             name="%DockerLaunchPreferencePage.name">
       </page>
+       <page
+            category="org.eclipse.cdt.docker.launcher.page1"
+            class="org.eclipse.cdt.internal.docker.launcher.ui.preferences.DockerHeaderPreferencePage"
+            id="org.eclipse.cdt.docker.launcher.page2"
+            name="%DockerHeaderPreferencePage.name">
+      </page>
    </extension>
    <extension
        point="org.eclipse.debug.ui.launchConfigurationTabGroups">

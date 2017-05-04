@@ -60,12 +60,13 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private String connectionName;
 	private String connectionUri = ""; //$NON-NLS-1$
 
-	private boolean defaultEnabled;
-	private String defaultConnection;
-	private String defaultImage;
+	private boolean initialEnabled;
+	private String initialConnection;
+	private String initialImageId;
+
+	private boolean multiChange;
 
 	private IConfiguration iCfg;
-	private IOptionalBuildProperties properties;
 
 	private ModifyListener connectionModifyListener = new ModifyListener() {
 
@@ -83,11 +84,10 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connectionUri = connection.getUri();
 			if (!connectionName.equals(connection.getName())) {
 				imageCombo.setText("");
-				defaultImage = null;
+				initialImageId = null;
 			}
 			connectionName = connection.getName();
-			properties.setProperty(ContainerCommandLauncher.CONNECTION_ID,
-					connectionUri);
+			setConnection(connectionUri);
 		}
 
 	};
@@ -111,7 +111,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
 
 		iCfg = getCfg();
-		properties = iCfg.getOptionalBuildProperties();
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 5;
@@ -126,7 +125,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		connectionSelectorLabel.setLayoutData(gd);
 
 		connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
-		initializeConnectionSelector(iCfg);
+		initializeConnectionSelector();
 		connectionSelector.addModifyListener(connectionModifyListener);
 		// Following is a kludge so that on Linux the Combo is read-only but
 		// has a white background.
@@ -153,14 +152,13 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		gd.grabExcessHorizontalSpace = true;
 		imageCombo.setLayoutData(gd);
 
-		initializeImageCombo(iCfg);
+		initializeImageCombo();
 
 		imageCombo.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				properties.setProperty(ContainerCommandLauncher.IMAGE_ID,
-						imageCombo.getText());
+				setImageId(imageCombo.getText());
 			}
 
 			@Override
@@ -169,15 +167,13 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		});
 
-		initializeEnablementButton(iCfg);
+		initializeEnablementButton();
 		enableButton.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setControlsEnabled(enableButton.getSelection());
-				properties.setProperty(
-						ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-						Boolean.toString(enableButton.getSelection()));
+				setEnablement(enableButton.getSelection());
 			}
 
 			@Override
@@ -189,31 +185,79 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	}
 
+	private void setEnablement(boolean enabled) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
+					.getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
+						Boolean.toString(enableButton.getSelection()));
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
+					Boolean.toString(enableButton.getSelection()));
+		}
+	}
+
+	private void setImageId(String imageId) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
+					.getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(ContainerCommandLauncher.IMAGE_ID, imageId);
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(ContainerCommandLauncher.IMAGE_ID, imageId);
+		}
+	}
+
+	private void setConnection(String uri) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
+					.getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(ContainerCommandLauncher.CONNECTION_ID, uri);
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(ContainerCommandLauncher.CONNECTION_ID, uri);
+		}
+	}
+
 	private void setControlsEnabled(boolean enabled) {
 		imageCombo.setEnabled(enabled);
 		connectionSelector.setEnabled(enabled);
 	}
 
-	private void initializeEnablementButton(IConfiguration cfg) {
-		defaultEnabled = false;
-		IOptionalBuildProperties properties = cfg.getOptionalBuildProperties();
+	private void initializeEnablementButton() {
+		initialEnabled = false;
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
 		String savedEnabled = properties
 				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 		if (savedEnabled != null) {
-			defaultEnabled = Boolean
+			initialEnabled = Boolean
 					.parseBoolean(savedEnabled);
 		}
-		enableButton.setSelection(defaultEnabled);
-		setControlsEnabled(defaultEnabled);
+		enableButton.setSelection(initialEnabled);
+		setControlsEnabled(initialEnabled);
 	}
 
-	private void initializeConnectionSelector(IConfiguration cfg) {
+	private void initializeConnectionSelector() {
 		int defaultIndex = -1;
-		defaultConnection = null;
+		initialConnection = null;
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
 		String id = properties
 				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 		if (id != null) {
-			defaultConnection = id;
+			initialConnection = id;
 		}
 		connections = DockerConnectionManager.getInstance().getConnections();
 		if (connections.length == 0) {
@@ -223,11 +267,11 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		String[] connectionNames = new String[connections.length];
 		for (int i = 0; i < connections.length; ++i) {
 			connectionNames[i] = connections[i].getName();
-			if (connections[i].getUri().equals(defaultConnection))
+			if (connections[i].getUri().equals(initialConnection))
 				defaultIndex = i;
 		}
 		if (defaultIndex < 0) {
-			defaultEnabled = false;
+			initialEnabled = false;
 			defaultIndex = 0;
 		}
 		connectionSelector.setItems(connectionNames);
@@ -236,16 +280,17 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connection = connections[defaultIndex];
 			connectionName = connection.getName();
 			connectionUri = connection.getUri();
-			defaultConnection = connectionUri;
+			initialConnection = connectionUri;
 		}
 	}
 
-	private void initializeImageCombo(IConfiguration cfg) {
-		defaultImage = null;
+	private void initializeImageCombo() {
+		initialImageId = null;
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
 		String id = properties
 				.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		if (id != null) {
-			defaultImage = id;
+			initialImageId = id;
 		}
 		if (connection != null) {
 			java.util.List<IDockerImage> images = connection.getImages();
@@ -265,8 +310,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				}
 			}
 			imageCombo.setItems(imageNames.toArray(new String[0]));
-			if (defaultImage != null) {
-				int index = imageCombo.indexOf(defaultImage);
+			if (initialImageId != null) {
+				int index = imageCombo.indexOf(initialImageId);
 				if (index > -1) {
 					imageCombo.select(index);
 				} else {
@@ -279,6 +324,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	@Override
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
+		boolean needToRecalculate = false;
+		ICConfigurationDescription defaultCfg = null;
 		if (page.isMultiCfg()) {
 			ICMultiConfigDescription mc1 = (ICMultiConfigDescription) src
 					.getConfiguration();
@@ -288,37 +335,67 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 					.getItems();
 			ICConfigurationDescription[] cds2 = (ICConfigurationDescription[]) mc2
 					.getItems();
+			defaultCfg = cds1[0];
 			for (int i = 0; i < cds1.length; i++)
-				applyToCfg(cds1[i], cds2[i]);
-		} else
-			applyToCfg(src.getConfiguration(), dst.getConfiguration());
-
+				needToRecalculate |= applyToCfg(cds1[i], cds2[i]);
+		} else {
+			defaultCfg = src.getConfiguration();
+			needToRecalculate = applyToCfg(src.getConfiguration(),
+					dst.getConfiguration());
+		}
+		if (needToRecalculate) {
+			recalculateSpecs(defaultCfg, true);
+		}
 	}
 
-	private void applyToCfg(ICConfigurationDescription c1,
+	private boolean applyToCfg(ICConfigurationDescription c1,
 			ICConfigurationDescription c2) {
 		Configuration cfg01 = (Configuration) getCfg(c1);
 		Configuration cfg02 = (Configuration) getCfg(c2);
 		IOptionalBuildProperties prop1 = cfg01.getOptionalBuildProperties();
 		IOptionalBuildProperties prop2 = cfg02.getOptionalBuildProperties();
+		boolean needToRecalculate = false;
 		String enablementProperty = prop1
 				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		String enablementProperty2 = prop2
+				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		if (!enablementProperty.equals(enablementProperty2)) {
+			needToRecalculate = true;
+		}
 		prop2.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
 				enablementProperty);
 		String connectionProperty = prop1
 				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		String connectionProperty2 = prop2
+				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		if (connectionProperty != null
+				&& !connectionProperty.equals(connectionProperty2)) {
+			needToRecalculate = true;
+		}
 		prop2.setProperty(ContainerCommandLauncher.CONNECTION_ID,
 				connectionProperty);
 		String imageProperty = prop1
 				.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		String imageProperty2 = prop2
+				.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		if (imageProperty != null && !imageProperty.equals(imageProperty2)) {
+			needToRecalculate = true;
+		}
 		prop2.setProperty(ContainerCommandLauncher.IMAGE_ID, imageProperty);
+		return needToRecalculate;
 	}
 
 
-	@Override
-	protected void performOK() {
-		ICConfigurationDescription cfgd = ManagedBuildManager
-				.getDescriptionForConfiguration(iCfg);
+	protected void recalculateSpecs(ICConfigurationDescription cfgd,
+			boolean performingApply) {
+		IConfiguration cfg = getCfg(cfgd);
+		IOptionalBuildProperties properties = cfg.getOptionalBuildProperties();
+		initialEnabled = Boolean.parseBoolean(properties
+				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED));
+		initialConnection = properties
+				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+		initialImageId = properties
+				.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
 				.getLanguageSettingProviders();
 		for (ILanguageSettingsProvider provider : providers) {
@@ -326,11 +403,40 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				GCCBuiltinSpecsDetector d = (GCCBuiltinSpecsDetector) provider;
 				// force recalculation of gcc include path
 				d.clear();
-				d.handleEvent(null);
+				if (performingApply) {
+					d.handleEvent(null);
+				}
+				// final IProject project = getProject();
+				// CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(project));
 			}
 		}
+	}
 
-		super.performOK();
+
+	@Override
+	protected void performOK() {
+		boolean needToRecalculate = false;
+		if (iCfg instanceof IMultiConfiguration) {
+			needToRecalculate = multiChange;
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			if (initialEnabled != Boolean.parseBoolean(p.getProperty(
+					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED))) {
+				needToRecalculate = true;
+			} else if (initialEnabled == true) {
+				if (!initialConnection.equals(
+						p.getProperty(ContainerCommandLauncher.CONNECTION_ID))
+						|| !initialImageId.equals(p.getProperty(
+								ContainerCommandLauncher.IMAGE_ID))) {
+					needToRecalculate = true;
+				}
+			}
+		}
+		if (needToRecalculate) {
+			recalculateSpecs(
+					ManagedBuildManager.getDescriptionForConfiguration(iCfg),
+					false);
+		}
 	}
 
 	@Override
@@ -365,7 +471,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			}
 			props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
 		}
-		defaultEnabled = false;
+		initialEnabled = false;
+		initialConnection = null;
+		initialImageId = null;
 		if (connections.length > 0) {
 			connectionSelector.select(0);
 		}
@@ -379,9 +487,12 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		if (cfgd == null)
 			return;
 		iCfg = getCfg(cfgd.getConfiguration());
-		initializeConnectionSelector(iCfg);
-		initializeImageCombo(iCfg);
-		initializeEnablementButton(iCfg);
+
+		multiChange = false;
+
+		initializeConnectionSelector();
+		initializeImageCombo();
+		initializeEnablementButton();
 	}
 
 	@Override

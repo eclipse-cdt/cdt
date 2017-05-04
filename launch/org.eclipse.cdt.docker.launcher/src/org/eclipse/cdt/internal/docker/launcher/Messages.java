@@ -47,6 +47,13 @@ public class Messages extends NLS {
 	public static String ContainerTab_Warning_Connection_Not_Found;
 	public static String ContainerTab_Warning_Image_Not_Found;
 
+	public static String HeaderPreferencePage_Connection_Label;
+	public static String HeaderPreferencePage_Image_Label;
+	public static String HeaderPreferencePage_Remove_Label;
+	public static String HeaderPreferencePage_Remove_Tooltip;
+	public static String HeaderPreferencePage_Confirm_Removal_Title;
+	public static String HeaderPreferencePage_Confirm_Removal_Msg;
+
 	public static String Remote_GDB_Debugger_Options;
 	public static String Gdbserver_Settings_Tab_Name;
 	public static String Gdbserver_name_textfield_label;

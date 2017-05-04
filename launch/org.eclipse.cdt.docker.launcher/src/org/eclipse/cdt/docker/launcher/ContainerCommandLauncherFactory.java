@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.docker.launcher;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -85,9 +89,6 @@ public class ContainerCommandLauncherFactory
 								Messages.ContainerCommandLauncher_invalid_values);
 						return;
 					}
-					String prefix = getCleanName(connectionName)
-							+ IPath.SEPARATOR
-							+ getCleanName(imageName); //$NON-NLS-1$ //$NON-NLS-2$
 					ContainerLauncher launcher = new ContainerLauncher();
 					List<String> paths = new ArrayList<>();
 					for (ICLanguageSettingEntry entry : entries) {
@@ -96,9 +97,57 @@ public class ContainerCommandLauncherFactory
 						}
 					}
 					if (paths.size() > 0) {
+						// Create a directory to put the header files for
+						// the image. Use the connection name to form
+						// the directory name as the connection may be
+						// connected to a different repo using the same
+						// image name.
 						IPath pluginPath = Platform.getStateLocation(Platform
-								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
-						IPath hostDir = pluginPath.append(prefix);
+								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+								.append("HEADERS"); //$NON-NLS-1$
+						pluginPath.toFile().mkdir();
+						pluginPath = pluginPath
+								.append(getCleanName(connectionName));
+						pluginPath.toFile().mkdir();
+						// To allow the user to later manage the headers, store
+						// the
+						// real connection name in a file.
+						IPath connectionNamePath = pluginPath.append(".name"); //$NON-NLS-1$
+						File f = connectionNamePath.toFile();
+						try {
+							f.createNewFile();
+							try (FileWriter writer = new FileWriter(f);
+									BufferedWriter bufferedWriter = new BufferedWriter(
+											writer);) {
+								bufferedWriter.write(connectionName);
+								bufferedWriter.newLine();
+							} catch (IOException e) {
+								DockerLaunchUIPlugin.log(e);
+								return;
+							}
+							pluginPath = pluginPath
+									.append(getCleanName(imageName));
+							pluginPath.toFile().mkdir();
+							// To allow the user to later manage the headers,
+							// store the
+							// real image name in a file.
+							IPath imageNamePath = pluginPath.append(".name"); //$NON-NLS-1$
+							f = imageNamePath.toFile();
+							f.createNewFile();
+							try (FileWriter writer = new FileWriter(f);
+									BufferedWriter bufferedWriter = new BufferedWriter(
+											writer);) {
+								bufferedWriter.write(imageName);
+								bufferedWriter.newLine();
+							} catch (IOException e) {
+								DockerLaunchUIPlugin.log(e);
+								return;
+							}
+						} catch (IOException e) {
+							DockerLaunchUIPlugin.log(e);
+							return;
+						}
+						IPath hostDir = pluginPath;
 						@SuppressWarnings("unused")
 						int status = launcher.fetchContainerDirs(connectionName,
 								imageName,
@@ -145,9 +194,9 @@ public class ContainerCommandLauncherFactory
 					List<ICLanguageSettingEntry> newEntries = new ArrayList<>();
 					IPath pluginPath = Platform.getStateLocation(
 							Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
-					String prefix = getCleanName(connectionName)
-							+ IPath.SEPARATOR + getCleanName(imageName); // $NON-NLS-1$
-					IPath hostDir = pluginPath.append(prefix);
+					IPath hostDir = pluginPath.append("HEADERS") //$NON-NLS-1$
+							.append(getCleanName(connectionName))
+							.append(getCleanName(imageName));
 
 					for (ICLanguageSettingEntry entry : entries) {
 						if (entry instanceof ICIncludePathEntry) {
@@ -176,7 +225,9 @@ public class ContainerCommandLauncherFactory
 	}
 
 	private String getCleanName(String name) {
-		return name.replaceAll("[:/]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+		String cleanName = name.replace("unix:///", "unix_"); //$NON-NLS-1$ //$NON-NLS-2$
+		cleanName = cleanName.replace("tcp://", "tcp_"); //$NON-NLS-1$ //$NON-NLS-2$
+		return cleanName.replaceAll("[:/.]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

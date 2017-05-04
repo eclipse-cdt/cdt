@@ -474,9 +474,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 					 */
 					if (editor instanceof IReusableEditor) {
 						IReusableEditor re = (IReusableEditor) editor;
-						if (!input.equals(re.getEditorInput())) {
-							re.setInput(input);
-						}
+						re.setInput(input);
 					}
 					return editor;
 				}

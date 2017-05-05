@@ -277,14 +277,14 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// int b; // 2
 	public void testDuplicateDefinition() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		bh.assertNonProblem("a; // 1", 1);
 		bh.assertNonProblem("a; // 2", 1);
 		bh.assertNonProblem("a; // 3", 1);
 		bh.assertNonProblem("b; // 1", 1);
 		bh.assertNonProblem("b; // 2", 1);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("a; // 1", 1);
 		bh.assertNonProblem("a; // 2", 1);
 		bh.assertNonProblem("a; // 3", 1);
@@ -305,12 +305,12 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// #endif
 	public void testInactiveClosingBrace() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		IField a= bh.assertNonProblem("a;", 1);
 		IField b= bh.assertNonProblem("b;", 1);
 		assertSame(a.getOwner(), b.getOwner());
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		a= bh.assertNonProblem("a;", 1);
 		b= bh.assertNonProblem("b;", 1);
 		assertSame(a.getOwner(), b.getOwner());
@@ -330,7 +330,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// };
 	public void testOpenBraceInActiveBranch() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		IField a= bh.assertNonProblem("a;", 1);
 		bh.assertNoName("b;", 1);
 		IField c= bh.assertNonProblem("c;", 1);
@@ -338,7 +338,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 		assertSame(a.getOwner(), c.getOwner());
 		assertSame(a.getOwner(), d.getOwner());
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		a= bh.assertNonProblem("a;", 1);
 		bh.assertNoName("b;", 1);
 		c= bh.assertNonProblem("c;", 1);
@@ -360,7 +360,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	// int d;
 	public void testOpenBraceInInactiveBranch() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		IField a= bh.assertNonProblem("a;", 1);
 		IField b= bh.assertNonProblem("b;", 1);
 		IVariable c= bh.assertNonProblem("c;", 1); // part of a different non-nested branch
@@ -369,7 +369,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 		assertNull(c.getOwner());
 		assertNull(d.getOwner());
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		a= bh.assertNonProblem("a;", 1);
 		b= bh.assertNonProblem("b;", 1);
 		c= bh.assertNonProblem("c;", 1); // part of a different non-nested branch
@@ -390,12 +390,12 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	 #endif
 	public void testUnexpectedBranchesInInactiveCode() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		IFunction f= bh.assertNonProblem("f()", 1);
 		bh.assertNoName("a;", 1);
 		bh.assertNoName("b;", 1);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		f= bh.assertNonProblem("f()", 1);
 		bh.assertNoName("a;", 1);
 		bh.assertNoName("b;", 1);

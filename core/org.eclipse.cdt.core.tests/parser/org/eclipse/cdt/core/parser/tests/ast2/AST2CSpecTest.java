@@ -331,7 +331,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	//		cond ? vp : ip;
 	//	}
 	public void test6_5_15s8() throws Exception {
-		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), ParserLanguage.C);
+		BindingAssertionHelper helper = new AST2AssertionHelper(getAboveComment(), ParserLanguage.C);
 		IASTExpression c1 = helper.assertNode("cond ? c_vp : c_ip");
 		IASTExpression c2 = helper.assertNode("cond ? v_ip : 0");
 		IASTExpression c3 = helper.assertNode("cond ? c_ip : v_ip");

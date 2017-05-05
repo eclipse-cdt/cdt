@@ -88,7 +88,7 @@ public class SemanticsTests extends AST2TestBase {
 	//	};
 	public void testConversionOperators() throws Exception {
 		// Test getDeclaredConversionOperators()
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ICPPClassType c= ba.assertNonProblem("X {", 1, ICPPClassType.class);
 		ICPPMethod[] cops= SemanticUtil.getDeclaredConversionOperators(c, null);
 		assertEquals(2, cops.length);

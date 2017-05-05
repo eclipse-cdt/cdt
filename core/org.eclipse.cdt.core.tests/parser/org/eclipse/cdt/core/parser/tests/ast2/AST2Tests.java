@@ -2166,9 +2166,9 @@ public class AST2Tests extends AST2TestBase {
 	//	}
 	public void testArrayPointer_261417() throws Exception {
     	String code= getAboveComment();
-   		BindingAssertionHelper baC= new BindingAssertionHelper(code, false);
+   		BindingAssertionHelper baC= new AST2AssertionHelper(code, false);
    		baC.assertNonProblem("func(&a)", 4, IFunction.class);
-   		BindingAssertionHelper baCpp= new BindingAssertionHelper(code, true);
+   		BindingAssertionHelper baCpp= new AST2AssertionHelper(code, true);
    		baCpp.assertNonProblem("func(&a)", 4, ICPPFunction.class);
 	}
 
@@ -3219,7 +3219,7 @@ public class AST2Tests extends AST2TestBase {
 	//   f1(__null);
 	// }
 	public void testBug240567() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), false);
+    	BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), false);
 		bh.assertNonProblem("f1(__null", 2, IFunction.class);
 	}
 
@@ -4162,7 +4162,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug100641_106279_castAmbiguity() throws Exception {
 		boolean cpp= false;
 		do {
-			BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), cpp);
+			BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), cpp);
 			ba.assertNonProblem("field)", 5);
 			ba.assertNonProblem("bit))", 3);
 			ba.assertNonProblem("foux)", 4);
@@ -4202,7 +4202,7 @@ public class AST2Tests extends AST2TestBase {
 	//    	f4(cvi);
 	//    }
 	public void testBug222418_a() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f1(i)",2);
 		ba.assertProblem("f1(ci)",  2);
 		ba.assertProblem("f1(vi)",  2);
@@ -4241,7 +4241,7 @@ public class AST2Tests extends AST2TestBase {
 	//    	f1(cvi); // (4)
 	//    }
 	public void testBug222418_b() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 
 		ICPPFunction f1_1= ba.assertNonProblem("f1(i)",  2, ICPPFunction.class);
 		ICPPFunction f1_2= ba.assertNonProblem("f1(ci)", 2, ICPPFunction.class);
@@ -4259,7 +4259,7 @@ public class AST2Tests extends AST2TestBase {
 	//    void f1(volatile int r) {} // 3
 	//    void f1(const volatile int r) {} // 4
 	public void testBug222418_b_regression() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f1(int",  2, ICPPFunction.class);
 		ba.assertProblem("f1(const i", 2);
 		ba.assertProblem("f1(vol", 2);
@@ -4285,7 +4285,7 @@ public class AST2Tests extends AST2TestBase {
 	//    	fd(five()); // should be an error
 	//    }
 	public void testBug222418_c() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 
 		ICPPFunction fn= ba.assertNonProblem("five() {", 4, ICPPFunction.class);
 		assertFalse(fn.getType().getReturnType() instanceof IProblemBinding);
@@ -4317,7 +4317,7 @@ public class AST2Tests extends AST2TestBase {
 	//		f_nonconst(2); // should be an error
 	//	}
 	public void testBug222418_d() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f_const(2",  7, ICPPFunction.class);
 		ba.assertProblem("f_nonconst(2",  10);
 	}
@@ -4356,7 +4356,7 @@ public class AST2Tests extends AST2TestBase {
 	//		f4(cvi);
 	//	}
 	public void testBug222418_e() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f1(i)",2);
 		ba.assertProblem("f1(ci)",  2);
 		ba.assertProblem("f1(vi)",  2);
@@ -4431,7 +4431,7 @@ public class AST2Tests extends AST2TestBase {
 	//		return 0;
 	//	}
 	public void testBug222418_f() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("foo1(a)", 4);
 		ba.assertNonProblem("foo2(a)", 4);
 		ba.assertNonProblem("foo1(3)", 4);
@@ -4457,7 +4457,7 @@ public class AST2Tests extends AST2TestBase {
 	//    f(b2);
 	// }
 	public void testBug222418_g_regression() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f(b2)", 1);
 	}
 
@@ -4468,7 +4468,7 @@ public class AST2Tests extends AST2TestBase {
 	//    f(r);
 	// }
 	public void testBug222418_h_regression() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f(r)", 1);
 	}
 
@@ -4481,7 +4481,7 @@ public class AST2Tests extends AST2TestBase {
 	//    f(b2);
 	// }
 	public void testBug222418_i_regression() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f(b2)", 1);
 	}
 
@@ -4520,7 +4520,7 @@ public class AST2Tests extends AST2TestBase {
 	//		return ri;
 	//	}
 	public void testBug222418_j() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 
 		ba.assertNonProblem("fi(ri)", 2);
 		ba.assertNonProblem("fp(&rwi)", 2);
@@ -4559,7 +4559,7 @@ public class AST2Tests extends AST2TestBase {
 	//    a.foo();
 	// }
 	public void testBug222418_k_regression() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("foo();", 3);
 	}
 
@@ -4580,7 +4580,7 @@ public class AST2Tests extends AST2TestBase {
 	//		foo(c);
 	//	}
 	public void testBug222444_a() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ICPPFunction foo1= ba.assertNonProblem("foo(b", 3, ICPPFunction.class);
 		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
 	}
@@ -4601,7 +4601,7 @@ public class AST2Tests extends AST2TestBase {
 	//		foo(c);
 	//	}
 	public void testBug222444_b() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
 	}
 
@@ -4621,7 +4621,7 @@ public class AST2Tests extends AST2TestBase {
 	//		foo(c);
 	//	}
 	public void testBug222444_c() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
 	}
 
@@ -4826,7 +4826,7 @@ public class AST2Tests extends AST2TestBase {
     //    }
     public void testBug228504_nonExistingMembers() throws Exception {
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), lang);
     		for (int i= 1; i < 5; i++) {
 				ba.assertNonProblem("foo=" + i, 3);
 				ba.assertProblem("bar=" + i, 3);
@@ -4872,7 +4872,7 @@ public class AST2Tests extends AST2TestBase {
     public void testOutOfOrderResolution_232300() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		IBinding b1= ba.assertNonProblem("function1(); // decl", 9);
     		IBinding b2= ba.assertNonProblem("function1() {", 9);
     		IBinding b3= ba.assertNonProblem("function1(); // ref", 9);
@@ -4886,7 +4886,7 @@ public class AST2Tests extends AST2TestBase {
     public void testRedefinePtrdiff_230895() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		IBinding b1= ba.assertNonProblem("ptrdiff_t", 9);
     		assertInstance(b1, ITypedef.class);
     		ITypedef td= (ITypedef) b1;
@@ -4902,7 +4902,7 @@ public class AST2Tests extends AST2TestBase {
     public void testRedefineStructInScopeThatIsFullyResolved() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		ba.assertNonProblem("a; // ref", 1);
     		// now scope is fully resolved
     		ICompositeType ct= ba.assertNonProblem("S;", 1, ICompositeType.class);
@@ -4929,7 +4929,7 @@ public class AST2Tests extends AST2TestBase {
     public void testTypedefVoid_221567() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		ITypedef td= ba.assertNonProblem("VOID;", 4, ITypedef.class);
 
     		IFunction func= ba.assertNonProblem("func", 4, IFunction.class);
@@ -4969,7 +4969,7 @@ public class AST2Tests extends AST2TestBase {
     public void testParamWithFunctionType_84242() throws Exception {
     	final String comment= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-        	BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
+        	BindingAssertionHelper ba= new AST2AssertionHelper(comment, lang);
 
         	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
         	isTypeEqual(f.getType(), "int (int (*)(int))");
@@ -4991,7 +4991,7 @@ public class AST2Tests extends AST2TestBase {
     // class C { };
     // void f1(int(C)) { }
     public void testParamWithFunctionTypeCpp_84242() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
 
     	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
     	isTypeEqual(f.getType(), "void (int (*)(C))");
@@ -5002,7 +5002,7 @@ public class AST2Tests extends AST2TestBase {
     public void testFunctionReturningPtrToArray_216609() throws Exception {
     	final String comment= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), lang);
 
     		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
     		isTypeEqual(f.getType(), "int (* (int))[5]");
@@ -5078,7 +5078,7 @@ public class AST2Tests extends AST2TestBase {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(comment, lang);
 
     		ba.assertNonProblem("b; a", 1, IVariable.class);	// fill cache of inner block
     		IVariable v3= ba.assertNonProblem("a; }", 1, IVariable.class);
@@ -5093,7 +5093,7 @@ public class AST2Tests extends AST2TestBase {
     public void testComplexParameterBinding_214482() throws Exception {
     	final String comment= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(comment, lang);
     		IParameter p= ba.assertNonProblem("ptr", 3, IParameter.class);
     		assertEquals("ptr", p.getName());
     	}
@@ -5472,7 +5472,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testAnonymousUnionMember() throws Exception {
 		final boolean[] isCpps= {false, true};
     	for (ParserLanguage lang: ParserLanguage.values()) {
-			BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), lang);
+			BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), lang);
 			bh.assertNonProblem("a1=", 2);
 			bh.assertProblem("a2=", 2);
 			bh.assertNonProblem("a3=", 2);
@@ -5747,7 +5747,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testValues() throws Exception {
 		final String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-			BindingAssertionHelper bh= new BindingAssertionHelper(code, lang);
+			BindingAssertionHelper bh= new AST2AssertionHelper(code, lang);
 			IVariable v= (IVariable) bh.assertNonProblem("a=", 1);
 			checkValue(v.getInitialValue(), -4);
 			v= (IVariable) bh.assertNonProblem("b=", 1);
@@ -6071,7 +6071,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testAmbiguousDeclaration_259373() throws Exception {
 		final String code= getAboveComment();
 		IASTTranslationUnit tu= parseAndCheckBindings(code, C, true);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		ITypedef td= bh.assertNonProblem("TInt; //", 4);
 		IField f= bh.assertNonProblem("a;", 1);
 	}
@@ -6105,7 +6105,7 @@ public class AST2Tests extends AST2TestBase {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
 
-			BindingAssertionHelper ba= new BindingAssertionHelper(code, lang == CPP);
+			BindingAssertionHelper ba= new AST2AssertionHelper(code, lang == CPP);
 			ITypedef t= ba.assertNonProblem("A;", 1);
 			ICompositeType s1= ba.assertNonProblem("A; // struct", 1);
 			ICompositeType s2= ba.assertNonProblem("A*", 1);
@@ -6123,7 +6123,7 @@ public class AST2Tests extends AST2TestBase {
     public void testTypeOfExpressionWithTypedef_380498_1() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		IASTExpression exp = ba.assertNode("a + 5", IASTExpression.class);
     		assertTrue(exp.getExpressionType() instanceof ITypedef);
     		assertEquals("size_t", ((ITypedef) exp.getExpressionType()).getName());
@@ -6145,7 +6145,7 @@ public class AST2Tests extends AST2TestBase {
     public void testTypeOfExpressionWithTypedef_380498_2() throws Exception {
     	String code= getAboveComment();
     	for (ParserLanguage lang: ParserLanguage.values()) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		BindingAssertionHelper ba= new AST2AssertionHelper(code, lang);
     		IASTExpression exp = ba.assertNode("f()", IASTExpression.class);
     		assertTrue(exp.getExpressionType() instanceof ITypedef);
     		assertEquals("VoidPtr", ((ITypedef) exp.getExpressionType()).getName());
@@ -6155,10 +6155,10 @@ public class AST2Tests extends AST2TestBase {
     // int a= TInt; //ref
     public void testTypeAsExpressionIsProblem_261175() throws Exception {
 		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertProblem("TInt; //ref", 4);
 
-		bh= new BindingAssertionHelper(code, false);
+		bh= new AST2AssertionHelper(code, false);
 		bh.assertProblem("TInt; //ref", 4);
     }
 
@@ -6170,7 +6170,7 @@ public class AST2Tests extends AST2TestBase {
     public void testSizeofFunctionType_252243() throws Exception {
 		final String code= getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			BindingAssertionHelper ba= new BindingAssertionHelper(code, lang == CPP);
+			BindingAssertionHelper ba= new AST2AssertionHelper(code, lang == CPP);
 			ba.assertProblem("y));", 1);
 			IVariable v= ba.assertNonProblem("y);", 1);
 		}
@@ -7143,7 +7143,7 @@ public class AST2Tests extends AST2TestBase {
 	// void f2(const int* p) {}
 	public void testDroppingOfStorageDecl_293322() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		IFunction f= bh.assertNonProblem("f1", 2);
 		assertEquals("const int *", ASTTypeUtil.getType(f.getParameters()[0].getType()));
 		f= bh.assertNonProblem("f2", 2);
@@ -7211,7 +7211,7 @@ public class AST2Tests extends AST2TestBase {
 	// typeof(b(1)) b(int);
 	public void testRecursiveFunctionType_321856() throws Exception {
         final String code = getAboveComment();
-        BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+        BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
         IFunction f= bh.assertNonProblem("b(1)", 1);
         f= bh.assertNonProblem("b(int)", 1);
         f.getType();
@@ -7255,10 +7255,10 @@ public class AST2Tests extends AST2TestBase {
 	//	}
 	public void testParameterRedeclaration_301779() throws Exception {
         final String code = getAboveComment();
-        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+        BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
         bh.assertNonProblem("obj", 3, IParameter.class);
         bh.assertProblem("obj =", 3);
-        bh= new BindingAssertionHelper(code, false);
+        bh= new AST2AssertionHelper(code, false);
         bh.assertNonProblem("obj", 3, IParameter.class);
         bh.assertProblem("obj =", 3);
 	}
@@ -7332,12 +7332,12 @@ public class AST2Tests extends AST2TestBase {
 	//	}
 	public void testLocalVariableOfTypeVaList_313270() throws Exception {
         final String code = getAboveComment();
-        BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+        BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
         IBinding var= bh.assertNonProblem("result", 0);
         assertInstance(var, IVariable.class);
         assertTrue(var.getScope().getKind() == EScopeKind.eLocal);
 
-        bh= new BindingAssertionHelper(code, true);
+        bh= new AST2AssertionHelper(code, true);
         var= bh.assertNonProblem("result", 0);
         assertInstance(var, IVariable.class);
         assertTrue(var.getScope().getKind() == EScopeKind.eLocal);
@@ -7349,7 +7349,7 @@ public class AST2Tests extends AST2TestBase {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			BindingAssertionHelper bh= new BindingAssertionHelper(code, lang);
+			BindingAssertionHelper bh= new AST2AssertionHelper(code, lang);
 			IParameter i= bh.assertNonProblem("i)", 1);
 			IParameter j= bh.assertNonProblem("j)", 1);
 			assertSame(i, j);
@@ -7368,7 +7368,7 @@ public class AST2Tests extends AST2TestBase {
         final String comment = getAboveComment();
         String code= comment;
 		parseAndCheckBindings(code, C, true);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, false);
 		ITypedef td= bh.assertNonProblem("ptrdiff_t", 0);
 		assertEquals("long int", ASTTypeUtil.getType(td.getType()));
 		td= bh.assertNonProblem("size_t", 0);
@@ -7376,7 +7376,7 @@ public class AST2Tests extends AST2TestBase {
 
 		code= "namespace std {" + comment + "}";
 		parseAndCheckBindings(code, CPP, true);
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		td= bh.assertNonProblem("ptrdiff_t", 0);
 		assertEquals("long int", ASTTypeUtil.getType(td.getType()));
 		td= bh.assertNonProblem("size_t", 0);
@@ -7390,12 +7390,12 @@ public class AST2Tests extends AST2TestBase {
 	public void testParameterResolution() throws Exception {
 		final String code = getAboveComment();
 
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("f(int a)", 1);
 		bh.assertNonProblem("f(int)", 1);
 		bh.assertNonProblem("a;", 1);
 
-		bh= new BindingAssertionHelper(code, false);
+		bh= new AST2AssertionHelper(code, false);
 		bh.assertNonProblem("f(int a)", 1);
 		bh.assertNonProblem("f(int)", 1);
 		bh.assertNonProblem("a;", 1);
@@ -7541,7 +7541,7 @@ public class AST2Tests extends AST2TestBase {
 				    + "#define STRINGIFY(x) STRINGIFY_(x)\r\n"
 				    + "template <int N> void f(const char (&)[N]);\r\n"
 				    + "int main() { f(STRINGIFY(MACRO)); }\r\n";
-		BindingAssertionHelper helper = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper helper = new AST2AssertionHelper(code, true);
 		ICPPTemplateInstance f = helper.assertNonProblem("f(STRINGIFY", "f");
 		// 7 characters for "foobar" + the null terminator.
 		assertEquals(7, f.getTemplateArguments()[0].getNonTypeValue().numberValue().longValue());

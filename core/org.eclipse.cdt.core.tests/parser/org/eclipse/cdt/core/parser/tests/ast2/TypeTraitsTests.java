@@ -38,7 +38,7 @@ public class TypeTraitsTests extends AST2TestBase {
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code= getAboveComment();
-		return new BindingAssertionHelper(code, true);
+		return new AST2AssertionHelper(code, true);
 	}
 
 	//	struct A {

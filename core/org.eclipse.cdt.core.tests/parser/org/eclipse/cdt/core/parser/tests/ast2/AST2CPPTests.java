@@ -1709,7 +1709,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//
 	//	A a = A(1);
 	public void testConstructorCall() throws Exception {
-		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), CPP);
 		ICPPConstructor ctor = bh.assertNonProblem("A(int x)", "A", ICPPConstructor.class);
 		ICPPClassType classType = bh.assertNonProblem("A(1)", "A", ICPPClassType.class);
 		assertSame(ctor.getOwner(), classType);
@@ -1744,7 +1744,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  A a = A(b);
 	//	}
 	public void _testConversionOperator() throws Exception {
-		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), CPP);
 		ICPPMethod oper = bh.assertNonProblem("operator A", "operator A", ICPPMethod.class);
 		ICPPMethod conv = bh.assertNonProblem("A(b)", "A", ICPPMethod.class);
 		// This assertion fails because conv is the copy ctor A(const A&), not the conversion operator B::operator A()
@@ -2426,7 +2426,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// };
 	public void testFriend_275358() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPClassType A = bh.assertNonProblem("A", 1);
 		IFunction set = bh.assertNonProblem("set()", 3);
 		IFunction m = bh.assertNonProblem("Other::m()", 8);
@@ -4027,7 +4027,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//
 	//	B a = B(1);
 	public void testTypedefConstructorCall() throws Exception {
-		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), CPP);
 		ICPPConstructor ctor = bh.assertNonProblem("A(int x)", "A", ICPPConstructor.class);
 		ITypedef typedef = bh.assertNonProblem("B(1)", "B", ITypedef.class);
 		assertSame(ctor.getOwner(), typedef.getType());
@@ -5159,7 +5159,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testRankingQualificationConversions_c() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		ICPPFunction f1= bh.assertNonProblem("f(const int&)", 1);
 		ICPPFunction f2= bh.assertNonProblem("f(int&)", 1);
@@ -5816,7 +5816,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testQualifiedMemberDeclaration_222026() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		IBinding b= bh.assertNonProblem("member1", 7);
 		IBinding b2= bh.assertNonProblem("member1(){", 7);
@@ -5826,7 +5826,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("Test", m1.getScope().getScopeName().toString());
 		assertSame(b, b2);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b= bh.assertNonProblem("member2", 7);
 		b2= bh.assertNonProblem("member2();", 7);
 		assertTrue(b instanceof ICPPMethod);
@@ -5836,7 +5836,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(b, b2);
 
 		// different resolution order
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b2= bh.assertNonProblem("member1(){", 7);
 		b= bh.assertNonProblem("member1", 7);
 		assertTrue(b instanceof ICPPMethod);
@@ -5845,7 +5845,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("Test", m1.getScope().getScopeName().toString());
 		assertSame(b, b2);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b2= bh.assertNonProblem("member2();", 7);
 		b= bh.assertNonProblem("member2", 7);
 		assertTrue(b instanceof ICPPMethod);
@@ -5864,7 +5864,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testQualifiedMemberDeclarationInNamespace_222026() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		IBinding b= bh.assertNonProblem("member1", 7);
 		IBinding b2= bh.assertNonProblem("member1(){", 7);
@@ -5874,7 +5874,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("Test", m1.getScope().getScopeName().toString());
 		assertSame(b, b2);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b= bh.assertNonProblem("member2", 7);
 		b2= bh.assertNonProblem("member2();", 7);
 		assertTrue(b instanceof ICPPFunction);
@@ -5884,7 +5884,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(b, b2);
 
 		// different resolution order
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b2= bh.assertNonProblem("member1(){", 7);
 		b= bh.assertNonProblem("member1", 7);
 		assertTrue(b instanceof ICPPFunction);
@@ -5893,7 +5893,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("Test", m1.getScope().getScopeName().toString());
 		assertSame(b, b2);
 
-		bh= new BindingAssertionHelper(code, true);
+		bh= new AST2AssertionHelper(code, true);
 		b2= bh.assertNonProblem("member2();", 7);
 		b= bh.assertNonProblem("member2", 7);
 		assertTrue(b instanceof ICPPFunction);
@@ -6512,7 +6512,7 @@ public class AST2CPPTests extends AST2TestBase {
 		final String comment= getAboveComment();
 		final boolean[] isCpps= {false, true};
 		for (boolean isCpp : isCpps) {
-			BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+			BindingAssertionHelper ba= new AST2AssertionHelper(comment, isCpp);
 			ba.assertProblem("a; // should not resolve", 1);
 		}
 	}
@@ -6534,7 +6534,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	public void testNamespaceQualifiedOperator_256840() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("operator ns::A", 14);
 		parseAndCheckBindings(code, CPP);
 	}
@@ -6558,7 +6558,7 @@ public class AST2CPPTests extends AST2TestBase {
 		final String comment= getAboveComment();
 		final boolean[] isCpps= {false, true};
 		for (boolean isCpp : isCpps) {
-			BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+			BindingAssertionHelper ba= new AST2AssertionHelper(comment, isCpp);
 			ba.assertNonProblem("f(p)", 1, IFunction.class);
 		}
 	}
@@ -6576,7 +6576,7 @@ public class AST2CPPTests extends AST2TestBase {
 		final String comment= getAboveComment();
 		final boolean[] isCpps= {false, true};
 		for (boolean isCpp : isCpps) {
-			BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+			BindingAssertionHelper ba= new AST2AssertionHelper(comment, isCpp);
 			IFunction decl= ba.assertNonProblem("f(Incomplete* p)", 1, IFunction.class);
 			IFunction func= ba.assertNonProblem("f(0)", 1, IFunction.class);
 			assertSame(decl, func);
@@ -7009,7 +7009,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testMemberFunctionDisambiguationByCVness_238409() throws Exception {
 		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		ICPPMethod bar_cv= bh.assertNonProblem("bar();/*1*/", 3, ICPPMethod.class);
 		ICPPMethod bar_v=  bh.assertNonProblem("bar();/*2*/", 3, ICPPMethod.class);
@@ -7126,7 +7126,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testAmbiguityResolutionInCondition_263158() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ba.assertNonProblem("A*", 1, ICPPClassType.class);
 		ba.assertNonProblem("a", 1, ICPPVariable.class);
 		ba.assertNonProblem("B*", 1, ICPPVariable.class);
@@ -7140,7 +7140,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testAmbiguityResolutionInDeleteExpression_428922() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ba.assertNonProblem("type)", 4, ITypedef.class);
 		ba.assertNonProblem("ptr);", 3, ICPPVariable.class);
 
@@ -7208,7 +7208,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testConstructorTemplateInImplicitConversion_264314() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ba.assertNonProblem("onRange(ir)", 7);
 		parseAndCheckBindings(code, CPP);
 	}
@@ -7228,7 +7228,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//  CT<pcpi2> ct2;
 	public void testConstTypedef_264474() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ba.assertNonProblem("check(p2)", 5);
 		IBinding ct1= ba.assertNonProblem("CT<pcpi>", 8);
 		IBinding ct2= ba.assertNonProblem("CT<pcpi2>", 9);
@@ -7275,7 +7275,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testMemberPtrs_264479() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ba.assertNonProblem("mpr(&X::f)", 3);
 		ba.assertNonProblem("mpr(&X::m)", 3);
 		ba.assertNonProblem("mprc(&X::cm)", 4);
@@ -7452,7 +7452,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//  }
 	public void testPointerToArrayWithDefaultVal_267184() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ICPPParameter p= ba.assertNonProblem("names", 5);
 		assertTrue(p.hasDefaultValue());
 		IType t= p.getType();
@@ -7643,7 +7643,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testDerivedToBaseConversion_269318() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper ba= new AST2AssertionHelper(code, true);
 		ICPPFunction t= ba.assertNonProblem("test(d1);", 4, ICPPFunction.class);
 		ICPPClassType ct= (ICPPClassType) t.getParameters()[0].getType();
 		assertEquals("C", ct.getName());
@@ -7938,7 +7938,7 @@ public class AST2CPPTests extends AST2TestBase {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
 
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPClassType S= bh.assertNonProblem("S*", 1);
 		assertNull(S.getOwner());
 
@@ -7979,7 +7979,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testMethodTemplateWithSameName_292051() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPMethod m= bh.assertNonProblem("t<1>", 1);
 		assertTrue(m.isInline());
 	}
@@ -8049,7 +8049,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testUserDefinedConversion_222444c() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("foo(c);", 3);
 		bh.assertProblem("foo(cc);", 3);
 	}
@@ -8098,7 +8098,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testLookupInConstructorChainInitializer_293566() throws Exception {
 		final String code = getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("B>(1)", 1);
 		parseAndCheckBindings(code, CPP);
 	}
@@ -8128,7 +8128,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testFunctionDeclViaTypedef_86495() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, CPP);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		ICPPFunctionTemplate template= bh.assertNonProblem("functionTemplate", 16);
 		assertNotNull(template.getType());
@@ -8272,7 +8272,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testRValueReference_294730() throws Exception {
 		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IBinding foo1= bh.assertNonProblem("foo(const A&)", 3);
 		IBinding foo2= bh.assertNonProblem("foo(A&&)", 3);
 		IBinding b;
@@ -8312,7 +8312,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	RRI&& r5 = i;           // r5 has the type int&&
 	public void testRValueReferenceTypedefs_294730() throws Exception {
 		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IVariable v;
 		v= bh.assertNonProblem("r1", 2);
 		assertEquals("int &", ASTTypeUtil.getType(v.getType()));
@@ -8359,7 +8359,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testDirectBinding_294730() throws Exception {
 		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("dref(d)", 4);
 		bh.assertNonProblem("cdref(d)", 5);
 		bh.assertNonProblem("aref(b)", 4);
@@ -8443,7 +8443,7 @@ public class AST2CPPTests extends AST2TestBase {
 		final String code= contents[0].toString();
 		final String end= contents[2].toString();
 		parseAndCheckBindings(code + end, CPP);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code + contents[1] + end, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code + contents[1] + end, true);
 		bh.assertProblem("sink3(source())", 5);
 		bh.assertProblem("sink3(csource())", 5);
 		bh.assertProblem("sink3(z7)", 5);
@@ -8483,7 +8483,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testADL_299101() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, CPP);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction inns= bh.assertNonProblem("f(ns::A, char)", 1);
 		IFunction glob= bh.assertNonProblem("f(ns::A, int)", 1);
 
@@ -8510,7 +8510,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testDecltype_294730() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, CPP);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f= bh.assertNonProblem("t1", 2);
 		assertEquals("const int &&", ASTTypeUtil.getType(f.getType().getReturnType()));
 		f= bh.assertNonProblem("t2", 2);
@@ -8705,7 +8705,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testListInitialization_302412b() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("f({1,2,3})", 1);
 		bh.assertNonProblem("f({'a','b'})", 1);
 		bh.assertProblem("f({1.0})", 1);
@@ -8755,7 +8755,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testListInitialization_302412c() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("e({ 'a', 'b' })", 1);
 		bh.assertNonProblem("g({ 'a', 'b' })", 1);
 		bh.assertProblem("g({ 1.0, 1.0 })", 1);
@@ -8779,7 +8779,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testListInitialization_302412d() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertNonProblem("f({'a', 'b'})", 1);
 		// not detected by CDT
 		// bh.assertProblem("f({1.0})", 1);
@@ -8799,7 +8799,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testListInitialization_302412e() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		// not detected by CDT
 		// bh.assertProblem("g({1})", 1);
 		bh.assertNonProblem("h({'a'})", 1);
@@ -8992,7 +8992,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	auto y = { 1.0, 5 };  // Error - inconsistent types in the array initializer.
 	public void testAutoType_289542() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPVariable b= bh.assertNonProblem("b =", 1);
 		assertEquals("A", ASTTypeUtil.getType(b.getType()));
 		ICPPVariable c= bh.assertNonProblem("c(a)", "c");
@@ -9037,7 +9037,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// struct B { static auto b = 1; };  // Auto-typed static fields are ok.
 	public void testAutoType_305987() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPVariable a= bh.assertNonProblem("a =", 1);
 		IProblemType pt= (IProblemType) a.getType();
 		assertEquals(ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD, pt.getID());
@@ -9048,7 +9048,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// auto fpif2(int)->int(*)(int) {}
 	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		ICPPFunction f= bh.assertNonProblem("fpif1", 0);
 		assertEquals("int (* (int))(int)", ASTTypeUtil.getType(f.getType()));
@@ -9065,7 +9065,7 @@ public class AST2CPPTests extends AST2TestBase {
 	// enum EUnscoped3 : int;
 	public void testScopedEnums_305975a() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		ICPPEnumeration e;
 		ICPPBinding ei;
@@ -9148,7 +9148,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testScopedEnums_305975d() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		bh.assertNonProblem("fCol(Col::red)", 4);
 		bh.assertProblem("fint(Col::red)", 4);
@@ -9193,7 +9193,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testScopedEnums_305975f() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 
 		bh.assertProblem("high;", -1);
 		bh.assertProblem("xdir d", -2);
@@ -9306,7 +9306,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testNewCharacterTypes_305976() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f1= bh.assertNonProblem("f(int)", 1);
 		IFunction f2= bh.assertNonProblem("f(unsigned int)", 1);
 		IBinding b= bh.assertNonProblem("f(c16)", 1);
@@ -9345,7 +9345,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testBuiltinOperators_294543a() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction fint= bh.assertNonProblem("f(int)", 1);
 		IFunction f= bh.assertNonProblem("f(c+1)", 1);
 		assertSame(fint, f);
@@ -9363,7 +9363,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testBuiltinOperators_294543b() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction fA= bh.assertNonProblem("f(A)", 1);
 		IFunction f= bh.assertNonProblem("f(a= 1)", 1);
 		assertSame(fA, f);
@@ -9465,7 +9465,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertFalse(f.isDefaulted());
 		assertTrue(f.isDeleted());
 
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		ICPPFunction fb= bh.assertNonProblem("X() =", 1);
 		assertFalse(fb.isDeleted());
 
@@ -9557,7 +9557,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction fo= bh.assertNonProblem("f(int)", 1);
 		IFunction g= bh.assertNonProblem("g(int)", 1);
 		IFunction fi= bh.assertNonProblem("f(char)", 1);
@@ -9578,7 +9578,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f1= bh.assertNonProblem("f();", 1);
 		IFunction f2= bh.assertNonProblem("f() {", 1);
 		assertSame(f1, f2);
@@ -9640,7 +9640,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void g(MyType& val);
 	public void testTypeString_323596() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f= bh.assertNonProblem("f(", 1);
 		assertEquals("const MyType &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], false));
 		assertEquals("const int &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], true));
@@ -9664,7 +9664,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	public void testConstMember_323599() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f= bh.assertNonProblem("constBegin(); //ref", 10);
 		bh.assertProblem("begin(); //ref", 5);
 	}
@@ -9684,7 +9684,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	public void testExplicitConversionOperators() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		bh.assertProblem("fint(pe + pe);", 4);
 		bh.assertNonProblem("fint(p + p);", 4);
 	}
@@ -9719,7 +9719,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testRankingOfDeprecatedConversionOnStringLiteral() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction g= bh.assertNonProblem("g(char *)", 1);
 		IFunction fconst= bh.assertNonProblem("f(const char *)", 1);
 
@@ -9847,7 +9847,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	S s3 = { };                          // invoke #3
 	public void testEmptyInitializerList_324096() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction ctor1= bh.assertNonProblem("S(std::initializer_list<double>);", 1);
 		IFunction ctor2= bh.assertNonProblem("S(std::initializer_list<int>);", 1);
 		IFunction ctor3= bh.assertNonProblem("S();", 1);
@@ -9926,7 +9926,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	C c5 {1,2};           // C(int, int)
 	public void testCtorForAutomaticVariables_156668() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction ctor1= bh.assertNonProblem("C();", 1);
 		IFunction ctor2= bh.assertNonProblem("C(int a, int b);", 1);
 
@@ -9958,7 +9958,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testTopLevelRestrictQualifier_327328() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction g= bh.assertNonProblem("g(int * __restrict a)", 1);
 		IFunction ref;
 		ref= bh.assertNonProblem("g(int * a)", 1);
@@ -9978,7 +9978,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testOverloadingWithRestrictQualifier_327328() throws Exception {
 		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh= new AST2AssertionHelper(code, true);
 		IFunction f1= bh.assertNonProblem("f(int * __restrict* a)", 1);
 		IFunction f2= bh.assertNonProblem("f(int ** a)", 1);
 		IFunction ref;
@@ -10059,7 +10059,7 @@ public class AST2CPPTests extends AST2TestBase {
 
 	//  auto f2 ();		// missing late return type.
 	public void testBug332114a() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), CPP);
 		IBinding b= bh.assertNonProblem("f2", 0);
 		// Must not throw a NPE
 		IndexCPPSignatureUtil.getSignature(b);
@@ -10519,7 +10519,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//		g( nullptr ); // error
 	//	}
 	public void testNullptr_327298b() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), CPP);
 		bh.assertProblem("checkNullPtr(1)", 12);
 		bh.assertProblem("checklvalue(nullptr)", 11);
 		bh.assertProblem("g( nullptr )", 1);
@@ -10533,7 +10533,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testNullptr_327298c() throws Exception {
 		parseAndCheckBindings();
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), CPP);
 		IFunction f= bh.assertNonProblem("f( nullptr )", 1);
 		assertEquals("void (char *)", ASTTypeUtil.getType(f.getType()));
 		f= bh.assertNonProblem("f( 0 )", 1);
@@ -10542,7 +10542,7 @@ public class AST2CPPTests extends AST2TestBase {
 
 	// void foo(struct S s);
 	public void testParameterForwardDeclaration_379511() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
+		BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), CPP);
 		ICPPClassType struct= bh.assertNonProblem("S", 1, ICPPClassType.class);
 		IName[] declarations= bh.getTranslationUnit().getDeclarations(struct);
 		assertEquals(1, declarations.length);
@@ -10609,7 +10609,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bindingHelper = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bindingHelper = new AST2AssertionHelper(code, true);
 
 		CPPMethod functionDeclarationBinding = bindingHelper.assertNonProblem("mFuncDecl()", 9);
 		assertFalse(functionDeclarationBinding.isOverride());
@@ -10639,7 +10639,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bindingHelper = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bindingHelper = new AST2AssertionHelper(code, true);
 
 		CPPMethod functionDeclarationBinding = bindingHelper.assertNonProblem("mFuncDecl() override", 9);
 		assertTrue(functionDeclarationBinding.isOverride());
@@ -10669,7 +10669,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bindingHelper = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bindingHelper = new AST2AssertionHelper(code, true);
 
 		CPPMethod functionDeclarationBinding = bindingHelper.assertNonProblem("mFuncDecl() final", 9);
 		assertTrue(functionDeclarationBinding.isOverride());
@@ -10700,7 +10700,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		CPPClassType structBase = bh.assertNonProblem("Base {", 4);
 		assertFalse(structBase.isFinal());
@@ -10731,7 +10731,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bindingHelper = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bindingHelper = new AST2AssertionHelper(code, true);
 
 		ICPPMethod fooTemplate = bindingHelper.assertNonProblem("foo(T", 3);
 		assertFalse(fooTemplate.isOverride());
@@ -11080,7 +11080,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPClassType Enclosing = bh.assertNonProblem("Enclosing", 9);
 		ICPPClassType Inner = bh.assertNonProblem("Inner", 5);
@@ -11098,7 +11098,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPClassType Enclosing = bh.assertNonProblem("Enclosing", 9);
 		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
@@ -11113,7 +11113,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPNamespace NamespaceNS = bh.assertNonProblem("NS {", 2);
 		ICPPClassType Inner = bh.assertNonProblem("Inner", 5);
@@ -11129,7 +11129,7 @@ public class AST2CPPTests extends AST2TestBase {
 		String code = getAboveComment();
 		parseAndCheckBindings(code);
 
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		ICPPNamespace NamespaceNS = bh.assertNonProblem("NS {", 2);
 		ICPPClassType Inner = bh.assertNonProblem("Inner;", 5);
 
@@ -12198,7 +12198,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	decltype(auto) l; // Error - missing initializer.
 	public void testDecltypeAutoVariableTypes_482225() throws Exception {
 		String code = getAboveComment();
-		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 
 		ICPPVariable b = bh.assertNonProblem("b =", 1);
 		assertEquals("A", ASTTypeUtil.getType(b.getType()));

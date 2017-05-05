@@ -39,10 +39,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.tests.ast2.SemanticTestBase;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -67,7 +67,7 @@ import org.osgi.framework.Bundle;
  * This class is for testing the process by which bindings are looked up in
  * the PDOM purely from AST information (i.e. without a real binding from the DOM).
  */
-public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
+public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	private static final boolean DEBUG= false;
 	private static final String END_OF_ADDED_CODE_MARKER = "/*END_OF_ADDED_CODE*/";
 	protected ITestStrategy strategy;

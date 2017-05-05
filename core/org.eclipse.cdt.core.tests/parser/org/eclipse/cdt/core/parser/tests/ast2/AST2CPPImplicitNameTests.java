@@ -50,7 +50,7 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code= getAboveComment();
-		return new BindingAssertionHelper(code, ParserLanguage.CPP);
+		return new AST2AssertionHelper(code, ParserLanguage.CPP);
 	}
 
 	protected IASTImplicitName[] getImplicitNames(IASTTranslationUnit tu, String contents, String section, int len) {

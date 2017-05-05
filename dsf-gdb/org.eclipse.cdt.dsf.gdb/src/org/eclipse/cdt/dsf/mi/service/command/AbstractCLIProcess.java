@@ -421,6 +421,20 @@ public abstract class AbstractCLIProcess extends Process
     	return false;
     }
 
+    /**
+     * Return the context under which CLI commands are sent to the backend.
+     * <p>
+     * Returning a context narrower than ICommandControlDMContext will cause
+     * the communication with the backend to select the appropriate thread or
+     * frame.
+     * 
+     * @return the CLI context
+     * @since 5.3
+     */
+    protected IDMContext getCliCommandContext() {
+        return getCommandControlService().getContext();
+    }
+
     private class CLIOutputStream extends OutputStream {
         private final StringBuilder buf = new StringBuilder();
         
@@ -460,16 +474,17 @@ public abstract class AbstractCLIProcess extends Process
             // 3-
             // Normal Command Line Interface.
             boolean secondary = inSecondaryPrompt();
+            IDMContext context = getCliCommandContext();
             if (secondary) {
-                cmd = new RawCommand(getCommandControlService().getContext(), str);
+                cmd = new RawCommand(context, str);
             }
             else if (! isMIOperation(str) &&
             		 ! CLIEventProcessor.isSteppingOperation(str))
             {
-                cmd = new ProcessMIInterpreterExecConsole(getCommandControlService().getContext(), str);
+                cmd = new ProcessMIInterpreterExecConsole(context, str);
             } 
             else {
-                cmd = new ProcessCLICommand(getCommandControlService().getContext(), str);
+                cmd = new ProcessCLICommand(context, str);
             }
             final ICommand<MIInfo> finalCmd = cmd; 
             fSession.getExecutor().execute(new DsfRunnable() { @Override public void run() {

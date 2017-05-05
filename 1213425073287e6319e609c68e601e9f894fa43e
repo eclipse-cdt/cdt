@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_c9fd4a7b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/StatementWriter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-05-05T08:44:20Z",
+      "side": 1,
+      "message": "superfluous whitespace",
+      "range": {
+        "startLine": 465,
+        "startChar": 0,
+        "endLine": 465,
+        "endChar": 1
+      },
+      "revId": "1213425073287e6319e609c68e601e9f894fa43e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -27,7 +27,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	private static final int READ = PDOMName.READ_ACCESS;
 	private static final int WRITE = PDOMName.WRITE_ACCESS;
 
-	protected class AssertionHelper extends BindingAssertionHelper {
+	protected class AssertionHelper extends AST2AssertionHelper {
 		AssertionHelper(String contents, boolean isCPP) throws ParserException {
 			super(contents, isCPP);
 		}

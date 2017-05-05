@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AccessControlTests extends AST2TestBase {
 	
-	protected class AccessAssertionHelper extends BindingAssertionHelper {
+	protected class AccessAssertionHelper extends AST2AssertionHelper {
 		AccessAssertionHelper(String contents) throws ParserException {
 			super(contents, true);
 		}

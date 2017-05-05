@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_44e841ef",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/DeclSpecWriter.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-05-05T11:33:07Z",
+      "side": 1,
+      "message": "could we call this something like \u0027writeConst\u0027 or \u0027shouldWriteConst\u0027? I find constEnabled to be a strange choice.",
+      "range": {
+        "startLine": 354,
+        "startChar": 64,
+        "endLine": 354,
+        "endChar": 76
+      },
+      "revId": "9e3dc508f71693fb93f124d8ae94fb9f823b52b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_e404ed23",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/AlignConstAction.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-05-05T11:33:07Z",
+      "side": 1,
+      "message": "As far as I can tell, ISO-14882 allows both cv-qualifiers to be on the right side. This check would also mark\n\nint const volatile foo{};\n\nfor rewriting. Should we catch that case, or rewrite nonetheless?",
+      "range": {
+        "startLine": 56,
+        "startChar": 15,
+        "endLine": 56,
+        "endChar": 72
+      },
+      "revId": "9e3dc508f71693fb93f124d8ae94fb9f823b52b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

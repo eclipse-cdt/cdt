@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_5f93a82b",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/ICSourceNotFoundDescription.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T14:32:47Z",
+      "side": 1,
+      "message": "Good javadoc\n\nminor - Rename this (use Refactor -\u003e Rename to make life easier) to isAddressOnly\nminor - missing return documentation in javadoc",
+      "range": {
+        "startLine": 37,
+        "startChar": 25,
+        "endLine": 37,
+        "endChar": 28
+      },
+      "revId": "6b1f6a1e9df456683d2865c0fd5d06318ef589f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_bf73dc8b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T14:32:47Z",
+      "side": 1,
+      "message": "with the suggestion below this becomes:\n\n    return createQuery().getDescription();",
+      "range": {
+        "startLine": 51,
+        "startChar": 5,
+        "endLine": 54,
+        "endChar": 32
+      },
+      "revId": "6b1f6a1e9df456683d2865c0fd5d06318ef589f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_3fe26cbf",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T14:32:47Z",
+      "side": 1,
+      "message": "close, but please don\u0027t change this return value.\n\nInstead remove this redundant return (replace with a fall through comment, don\u0027t leave an empty catch block) and have the method do return new ICSourceNotFoundDescription just like getFrameDescription does.\n\nThis has a big advantage in that callers don\u0027t have to deal with the null case. \n\nHere is the sonar rule that covers a similar case: https://sonar.eclipse.org/coding_rules#rule_key\u003dsquid:S1168\n\nThis is an article that covers a similar case: \nhttp://www.informit.com/articles/article.aspx?p\u003d2133373\u0026seqNum\u003d5",
+      "range": {
+        "startLine": 89,
+        "startChar": 14,
+        "endLine": 89,
+        "endChar": 18
+      },
+      "revId": "6b1f6a1e9df456683d2865c0fd5d06318ef589f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

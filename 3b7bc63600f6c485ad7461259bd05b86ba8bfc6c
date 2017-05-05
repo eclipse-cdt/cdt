@@ -1,0 +1,222 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87bd33cc_0993c2af",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/ICSourceNotFoundDescription.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "Add javadoc to new method.",
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_e98f6685",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/ICSourceNotFoundDescription.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "address has two Ds",
+      "range": {
+        "startLine": 31,
+        "startChar": 20,
+        "endLine": 31,
+        "endChar": 21
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_2974fef0",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "leave this unrelated fix out of this gerrit. \n\nSee https://wiki.eclipse.org/CDT/contributing which I quote relevant parts here:\n\n* To minimize the change, do not re-format the source code you edited (except changed lines). Do not fix any warnings in the code you are not changing\n* If you really want to do formatting or styling (such as converting to Java 8) - create another bug for that and submit a gerrit (it is good to fix warnings but it would clutter the patch, you want to solve one problem at a time).",
+      "range": {
+        "startLine": 70,
+        "startChar": 1,
+        "endLine": 70,
+        "endChar": 2
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_496f7a20",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "Same here about formatting",
+      "range": {
+        "startLine": 180,
+        "startChar": 26,
+        "endLine": 180,
+        "endChar": 29
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_697ef6d2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/CSourceNotFoundEditor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "Same here about formatting",
+      "range": {
+        "startLine": 182,
+        "startChar": 3,
+        "endLine": 182,
+        "endChar": 7
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_c96aaa0b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "This file has been reformatted so it is very hard to see the changes. See reformat comment above",
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_44c12175",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "printing stack traces like this is almost never OK. Exceptions need to be handled or logged properly.\n\nThere is an example of handling a few lines up, or if you need to log, log to DsfUIPlugin.log",
+      "range": {
+        "startLine": 89,
+        "startChar": 7,
+        "endLine": 89,
+        "endChar": 27
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_64d0dd3f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "this is good progress on sharing code, but more of it can be shared between isAddress and getDescription",
+      "range": {
+        "startLine": 95,
+        "startChar": 4,
+        "endLine": 95,
+        "endChar": 26
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_295b1e80",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "don\u0027t store booleans a strings",
+      "range": {
+        "startLine": 170,
+        "startChar": 3,
+        "endLine": 170,
+        "endChar": 21
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_c4b5311a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/CSourceNotFoundDescriptionFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-05T10:38:03Z",
+      "side": 1,
+      "message": "to return multiple items from a function, the correct thing to do is define a class or interface that represents the distinct values.\n\nIn this case you already have such an interface, ICSourceNotFoundDescription, so this method can return an instance of ICSourceNotFoundDescription.\n\ne.g.:\n\n\treturn new ICSourceNotFoundDescription() {\n\t\t\n\t\t@Override\n\t\tpublic String getDescription() {\n\t\t\treturn description;\n\t\t}\n\t\t\n\t\t@Override\n\t\tpublic boolean isAdress() {\n\t\t\treturn isAdress; \n\t\t}\n\t};",
+      "range": {
+        "startLine": 180,
+        "startChar": 2,
+        "endLine": 180,
+        "endChar": 52
+      },
+      "revId": "3b7bc63600f6c485ad7461259bd05b86ba8bfc6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

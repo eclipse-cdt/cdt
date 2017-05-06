@@ -68,7 +68,6 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 	public String[] getAdditionalLaunchParameters(String[][] testPaths) throws TestingException {
 		final String[] qtParameters = {
 			"-xml", //$NON-NLS-1$
-			"-flush", //$NON-NLS-1$
 		};
 		String[] result = qtParameters;
 

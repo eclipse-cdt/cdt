@@ -45,9 +45,11 @@ public class QtXmlLogHandler extends DefaultHandler {
 	private static final String XML_NODE_DESCRIPTION = "Description"; //$NON-NLS-1$
 	private static final String XML_NODE_ENVIRONMENT = "Environment"; //$NON-NLS-1$
 	private static final String XML_NODE_QTVERSION = "QtVersion"; //$NON-NLS-1$
+	private static final String XML_NODE_QTBUILD = "QtBuild"; //$NON-NLS-1$
 	private static final String XML_NODE_QTESTVERSION = "QTestVersion"; //$NON-NLS-1$
 	private static final String XML_NODE_BENCHMARK = "BenchmarkResult"; //$NON-NLS-1$
 	private static final String XML_NODE_DATATAG = "DataTag"; //$NON-NLS-1$
+	private static final String XML_NODE_DURATION = "Duration"; //$NON-NLS-1$
 	
 	// Qt Test XML case statuses representation
 	private static final String XML_VALUE_INCIDENT_PASS = "pass"; //$NON-NLS-1$
@@ -69,6 +71,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 	// Qt Test XML log attributes
 	private static final String XML_ATTR_TEST_CASE_NAME = "name"; //$NON-NLS-1$
 	private static final String XML_ATTR_TEST_FUNCTION_NAME = "name"; //$NON-NLS-1$
+	private static final String XML_ATTR_MSECS = "msecs"; //$NON-NLS-1$
 	private static final String XML_ATTR_TYPE = "type"; //$NON-NLS-1$
 	private static final String XML_ATTR_FILE = "file"; //$NON-NLS-1$
 	private static final String XML_ATTR_LINE = "line"; //$NON-NLS-1$
@@ -148,6 +151,9 @@ public class QtXmlLogHandler extends DefaultHandler {
 	
 	/** Stores the message level for currently parsed test message. */
 	private ITestMessage.Level messageLevel;
+	
+	/** Stores the duration in msecs for currently parsed test function. */
+	private int duration;
 	
 	/** Stores the status for currently parsed test case. */
 	private ITestItem.Status testCaseStatus;
@@ -265,6 +271,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 			lastDataTag = ""; //$NON-NLS-1$
 			testCaseAdded = false;
 			testCaseStatus = ITestItem.Status.Passed;
+			duration = 0;
 
 		} else if (qName == XML_NODE_MESSAGE) {
 			String messageLevelStr = attrs.getValue(XML_ATTR_TYPE);
@@ -283,6 +290,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 			messageLevel = getMessageLevel(STRING_INCIDENT_TO_MESSAGE_LEVEL, strType);
 			messageText = null;
 			setCurrentTestCaseStatus(STRING_TO_TEST_STATUS.get(strType));
+			duration = 0;
 
 		} else if (qName == XML_NODE_BENCHMARK) {
 			lastDataTag = attrs.getValue(XML_ATTR_DATA_TAG);
@@ -296,12 +304,17 @@ public class QtXmlLogHandler extends DefaultHandler {
 				)
 			);
 
+		} else if (qName == XML_NODE_DURATION) {
+			float msecs = Float.parseFloat(attrs.getValue(XML_ATTR_MSECS));
+			duration = Math.round(msecs);
+			
 		} else if (qName == XML_NODE_DATATAG) {
 			lastDataTag = ""; //$NON-NLS-1$
 
 		} else if (qName == XML_NODE_DESCRIPTION
 				|| qName == XML_NODE_ENVIRONMENT
 				|| qName == XML_NODE_QTVERSION
+				|| qName == XML_NODE_QTBUILD
 				|| qName == XML_NODE_QTESTVERSION) {
 			/* just skip, do nothing */
 
@@ -319,6 +332,9 @@ public class QtXmlLogHandler extends DefaultHandler {
 		} else if (qName == XML_NODE_TEST_FUNCTION) {
 			createTestCaseIfNecessary();
 			exitTestCaseIfNecessary();
+			if (duration != 0) {
+				modelUpdater.setTestingTime(duration);
+			}
 
 		} else if (qName == XML_NODE_DATATAG) {
 			lastDataTag = elementData;
@@ -337,6 +353,8 @@ public class QtXmlLogHandler extends DefaultHandler {
 		} else if (qName == XML_NODE_ENVIRONMENT
 				|| qName == XML_NODE_QTVERSION
 				|| qName == XML_NODE_QTESTVERSION
+				|| qName == XML_NODE_QTBUILD
+				|| qName == XML_NODE_DURATION
 				|| qName == XML_NODE_BENCHMARK) {
 			/* just skip, do nothing */
 			

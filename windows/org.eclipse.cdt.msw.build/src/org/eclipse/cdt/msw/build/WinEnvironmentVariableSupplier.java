@@ -101,8 +101,18 @@ public class WinEnvironmentVariableSupplier
 	// or Windows SDK 7.1 with Visual C++ 10.0
 	// or Windows SDK 7.0 with Visual C++ 9.0 
 	private static String getSDKDir() {
+		String winSdkVer = System.getenv("ECLIPSE_CDT_WIN_SDK_VERSION");
+		
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder");
+		
+		String sdkDir;
+		if (!winSdkVer.equals(""))
+		{
+			sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v" + winSdkVer, "InstallationFolder");
+			if (sdkDir != null)
+				return sdkDir;
+		}
+		sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder");
 		if (sdkDir != null)
 			return sdkDir;
 		sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
@@ -112,8 +122,19 @@ public class WinEnvironmentVariableSupplier
 	}
 	
 	private static String getVCDir() {
+		String msvcVer = System.getenv("ECLIPSE_CDT_MSVC_VERSION");
+		
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "11.0");
+		
+		String vcDir;
+		if (!msvcVer.equals(""))
+		{
+			vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", msvcVer);
+			if (vcDir != null)
+				return vcDir;
+		}
+		
+		vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "11.0");
 		if (vcDir != null)
 			return vcDir;
 		vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0");

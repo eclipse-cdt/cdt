@@ -10242,4 +10242,17 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testOverloadingOnTypeOfNonTypeTemplateParameter_512932() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	void waldo(T&);
+	//
+	//	class A {};
+	//	typedef const A CA;
+	//
+	//	int main() {
+	//	    waldo(CA());
+	//	}
+	public void testReferenceBinding_Regression_516284() throws Exception {
+		parseAndCheckBindings();
+	}
 }

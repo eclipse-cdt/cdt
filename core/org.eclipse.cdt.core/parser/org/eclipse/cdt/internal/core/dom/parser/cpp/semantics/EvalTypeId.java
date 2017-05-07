@@ -80,7 +80,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			throw new NullPointerException("arguments"); //$NON-NLS-1$
 
 		if (!CPPTemplates.isDependentType(type))
-			type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
+			type = SemanticUtil.getNestedType(type, TDEF);
 		fInputType= type;
 		fArguments= arguments;
 		fRepresentsNewExpression = forNewExpression;

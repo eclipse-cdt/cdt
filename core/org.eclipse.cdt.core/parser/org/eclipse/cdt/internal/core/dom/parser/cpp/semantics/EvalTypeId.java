@@ -80,7 +80,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			throw new NullPointerException("arguments"); //$NON-NLS-1$
 
 		if (!CPPTemplates.isDependentType(type))
-			type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
+			type = SemanticUtil.getNestedType(type, TDEF);
 		fInputType= type;
 		fArguments= arguments;
 		fRepresentsNewExpression = forNewExpression;
@@ -146,8 +146,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (fRepresentsNewExpression)
 			return IntegralValue.UNKNOWN;
 
-		if (fInputType instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType) fInputType;
+		IType inputType = SemanticUtil.getNestedType(fInputType, CVTYPE);
+		if (inputType instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType) inputType;
 			IBinding ctor = getConstructor(point);
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
 				return CompositeValue.create(classType, point);
@@ -164,8 +165,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			}
 		}
 		if (fArguments.length == 0 || isEmptyInitializerList(fArguments)) {
-			if (fInputType instanceof ICPPBasicType) {
-				switch (((ICPPBasicType) fInputType).getKind()) {
+			if (inputType instanceof ICPPBasicType) {
+				switch (((ICPPBasicType) inputType).getKind()) {
 					case eInt:
 					case eInt128:
 					case eDouble:
@@ -254,7 +255,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (isTypeDependent())
 			return null;
 
-		IType simplifiedType = SemanticUtil.getNestedType(fInputType, SemanticUtil.TDEF);
+		IType simplifiedType = SemanticUtil.getNestedType(fInputType, TDEF | CVTYPE);
 		if (simplifiedType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
 			ICPPEvaluation[] arguments = fArguments;

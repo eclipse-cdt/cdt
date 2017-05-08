@@ -10125,7 +10125,25 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	int main() {
 	//	    waldo(foo(0));  // Error here
 	//	}
-	public void testSFINAEInDecltype_516291() throws Exception {
+	public void testSFINAEInDecltype_516291a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	class C {};
+	//
+	//	void aux(C);
+	//
+	//	template<typename T>
+	//	decltype(aux(T()), C()) foo(T);
+	//
+	//	int foo(...);
+	//
+	//	void waldo(int);
+	//
+	//	int main() {
+	//	    waldo(foo(0));  // Error here
+	//	}
+	public void testSFINAEInDecltype_516291b() throws Exception {
 		parseAndCheckBindings();
 	}
 	

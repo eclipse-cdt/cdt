@@ -5,6 +5,10 @@ extern float externCPPFunction(int p1);
 inline void inlineCPPFunction(long p1);
 void varArgsCPPFunction(int p1, ...);
 void noReturnCPPFunction() __attribute__((noreturn));
+[[noreturn]] void trailingNoReturnStdAttributeDecl();
+void leadingNoReturnStdAttributeDecl() [[noreturn]];
+[[noreturn]] void trailingNoReturnStdAttributeDef(){}
+void leadingNoReturnStdAttributeDef() [[noreturn]]{}
 
 void voidCPPFunction();
 int intCPPFunction();

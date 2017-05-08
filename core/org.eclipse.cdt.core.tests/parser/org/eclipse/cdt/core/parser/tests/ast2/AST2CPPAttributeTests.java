@@ -278,9 +278,29 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() throw(char const *) [[noreturn]] -> void {
 	//	  throw "exception";
 	//	}
-	public void testAttributedFunction() throws Exception {
+	public void testTrailingNoreturnFunctionDefinition() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
+	}
+
+	//	[[noreturn]] void foo() throw(char const *) {
+	//	  throw "exception";
+	//	}
+	public void testLeadingNoreturnFunctionDefinition() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDefinition.class);
+	}
+
+	//	void foo() throw(char const *) [[noreturn]];
+	public void testTrailingNoReturnFunctionDeclaration() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
+	}
+
+	//	[[noreturn]] void foo() throw(char const *);
+	public void testLeadingNoReturnFunctionDeclaration() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	class [[attr]] C{};

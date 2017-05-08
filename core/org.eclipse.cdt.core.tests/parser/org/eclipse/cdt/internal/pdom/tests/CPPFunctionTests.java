@@ -143,10 +143,18 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertTrue(((ICPPFunction) bindings[0]).takesVarArgs());
 	}
 
-	public void testNoReturnCPPFunction() throws Exception {
-		IBinding[] bindings = findQualifiedName(pdom, "noReturnCPPFunction");
+	private void assertNoReturnFunction(String functionName) throws CoreException {
+		IBinding[] bindings = findQualifiedName(pdom, functionName);
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isNoReturn());
+	}
+
+	public void testNoReturnCPPFunction() throws Exception {
+		assertNoReturnFunction("noReturnCPPFunction");
+		assertNoReturnFunction("trailingNoReturnStdAttributeDecl");
+		assertNoReturnFunction("leadingNoReturnStdAttributeDecl");
+		assertNoReturnFunction("trailingNoReturnStdAttributeDef");
+		assertNoReturnFunction("leadingNoReturnStdAttributeDef");
 	}
 
 	public void testForwardDeclarationType() throws Exception {

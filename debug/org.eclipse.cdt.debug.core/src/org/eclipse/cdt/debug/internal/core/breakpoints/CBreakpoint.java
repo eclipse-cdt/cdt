@@ -12,9 +12,11 @@
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -48,8 +50,11 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
     /**
      * Map of breakpoint extensions.  The keys to the map are debug model IDs 
      * and values are arrays of breakpoint extensions.
+     * 
+     * This map is sorted to allow consistent iteration order so that extension 
+     * message does not unexpectedly change order
      */
-	private Map<String, ICBreakpointExtension[]> fExtensions = new HashMap<String, ICBreakpointExtension[]>(1);
+	private SortedMap<String, ICBreakpointExtension[]> fExtensions = new TreeMap<String, ICBreakpointExtension[]>();
 	
 	/**
 	 * The number of debug targets the breakpoint is installed in. We don't use
@@ -331,5 +336,28 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
 	public void refreshMessage() throws CoreException {
 	    IMarker marker = ensureMarker();
 	    marker.setAttribute(IMarker.MESSAGE, getMarkerMessage());
+	}
+
+	@Override
+	public String getExtensionMessage() {
+		Collection<ICBreakpointExtension[]> extensionLists;
+		synchronized (fExtensions) {
+			extensionLists = new ArrayList<>(fExtensions.values());
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (ICBreakpointExtension[] extensions : extensionLists) {
+			for (ICBreakpointExtension extension : extensions) {
+				String message = extension.getExtensionMessage();
+				if (message != null && !message.isEmpty()) {
+					if (sb.length() > 0) {
+						sb.append(' ');
+					}
+					sb.append(message);
+				}
+			}
+		}
+
+		return sb.toString();
 	}
 }

@@ -40,4 +40,15 @@ public interface ICBreakpointExtension {
      * marker.
      */
     public void initialize(ICBreakpoint breakpoint) throws CoreException;
+
+	/**
+	 * Return the message associated with this breakpoint extension. This
+	 * message will form part of the marker's message in the Eclipse UI.
+	 * 
+	 * @return custom message, or empty-string ({@code ""}) for no message
+	 * @since 8.2
+	 */
+	default public String getExtensionMessage() {
+		return ""; //$NON-NLS-1$
+	};
 }

@@ -3916,8 +3916,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		bh.assertNonProblem("f(b)", 1, ICPPUnknownBinding.class, IFunction.class);
 		bh.assertNonProblem("h(b)", 1, ICPPUnknownBinding.class, IFunction.class);
 		bh.assertNonProblem("m(b)", 1, ICPPUnknownBinding.class, IFunction.class);
-		IFunction g= bh.assertNonProblem("g(b)", 1);
-		assertFalse(g instanceof ICPPUnknownBinding);
+		bh.assertNonProblem("g(b)", 1, ICPPUnknownBinding.class, IFunction.class);
 	}
 
 	//    template<typename T> struct A  {
@@ -10109,6 +10108,24 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    reverse(c);   // Ambiguous
 	//	}
 	public void testSFINAEInEvalIdWithFieldOwner_510834() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	class C {};
+	//
+	//	void aux(C);
+	//
+	//	template<typename T>
+	//	decltype(aux(T())) foo(T);
+	//
+	//	int foo(...);
+	//
+	//	void waldo(int);
+	//
+	//	int main() {
+	//	    waldo(foo(0));  // Error here
+	//	}
+	public void testSFINAEInDecltype_516291() throws Exception {
 		parseAndCheckBindings();
 	}
 	

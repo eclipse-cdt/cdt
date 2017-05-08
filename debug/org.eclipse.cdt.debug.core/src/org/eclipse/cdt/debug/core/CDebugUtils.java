@@ -34,6 +34,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint2;
+import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -345,6 +347,7 @@ public class CDebugUtils {
 			appendPrintfString((ICDynamicPrintf)breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
+		appendExtensionMessage(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
 		return label.toString();
@@ -360,6 +363,7 @@ public class CDebugUtils {
 			appendWatchRange(wp2, label);
 		}
 		appendBreakpointType(watchpoint, label);
+		appendExtensionMessage(watchpoint, label);
 		appendIgnoreCount(watchpoint, label);
 		appendCondition(watchpoint, label);
 		return label.toString();
@@ -373,6 +377,7 @@ public class CDebugUtils {
 			appendPrintfString((ICDynamicPrintf)breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
+		appendExtensionMessage(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
 		return label.toString();
@@ -386,9 +391,31 @@ public class CDebugUtils {
 			appendPrintfString((ICDynamicPrintf)breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
+		appendExtensionMessage(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
 		return label.toString();
+	}
+
+	/**
+	 * Append the Breakpoint Extension message to the breakpoint text in buffer.
+	 * 
+	 * @param breakpoint C Breakpoint
+	 * @param buffer buffer to append message to
+	 * @see {@link ICBreakpointExtension#getExtensionMessage()
+	 * @since 8.2
+	 */
+	protected static void appendExtensionMessage(ICBreakpoint breakpoint, StringBuffer buffer) {
+		if (breakpoint instanceof ICBreakpoint2) {
+			ICBreakpoint2 breakpoint2 = (ICBreakpoint2) breakpoint;
+			String message = breakpoint2.getExtensionMessage();
+			if (message != null && !message.isEmpty()) {
+				if (buffer.length() > 0) {
+					buffer.append(' ');
+				}
+				buffer.append(message);
+			}
+		}
 	}
 
 	protected static StringBuffer appendSourceName(ICBreakpoint breakpoint, StringBuffer label, boolean qualified) throws CoreException {

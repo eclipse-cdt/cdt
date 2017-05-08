@@ -41,4 +41,15 @@ public interface ICBreakpoint2 extends ICBreakpoint {
      * @return marker type ID
      */
     public String getMarkerType();
+
+	/**
+	 * Obtain the combined message from all installed extensions on the
+	 * breakpoint. See {@link ICBreakpointExtension#getExtensionMessage}
+	 * 
+	 * @return extension message, or empty-string ({@code ""}) for no message
+	 * @since 8.2
+	 */
+	default public String getExtensionMessage() {
+		return ""; //$NON-NLS-1$
+	}
 }

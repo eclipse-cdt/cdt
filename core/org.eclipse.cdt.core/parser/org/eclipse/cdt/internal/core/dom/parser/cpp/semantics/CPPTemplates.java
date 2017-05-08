@@ -1525,8 +1525,9 @@ public class CPPTemplates {
 				if (type instanceof TypeOfDependentExpression) {
 					ICPPEvaluation eval = ((TypeOfDependentExpression) type).getEvaluation();
 					ICPPEvaluation instantiated = eval.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
-					if (instantiated != eval)
-						return instantiated.getType(context.getPoint());
+					if (instantiated != eval) {
+						return CPPSemantics.getDeclTypeForEvaluation(instantiated, context.getPoint());
+					}
 				} else {
 					IBinding binding= resolveUnknown((ICPPUnknownBinding) type, context);
 					if (binding instanceof IType)

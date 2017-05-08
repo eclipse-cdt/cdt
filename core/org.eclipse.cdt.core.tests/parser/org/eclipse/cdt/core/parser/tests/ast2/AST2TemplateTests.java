@@ -10216,6 +10216,22 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	struct S {
+	//	    int& foo();
+	//	};
+	//
+	//	template<typename T>
+	//	decltype(S().foo()) bar();
+	//
+	//	void waldo(int&);
+	//
+	//	int main() {
+	//	    waldo(bar<S>());
+	//	}
+	public void testDependentMemberAccess_516290() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct A;
 	//

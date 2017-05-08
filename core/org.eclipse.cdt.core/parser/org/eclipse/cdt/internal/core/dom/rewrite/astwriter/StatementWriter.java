@@ -163,7 +163,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeDoStatement(IASTDoStatement doStatement) {
-		writeAttributes(doStatement, EnumSet.of(SpaceLocation.AFTER));
 		nextCompoundNoNewLine();
 
 		scribe.print(DO);
@@ -175,7 +174,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeForStatement(IASTForStatement forStatement) {
-		writeAttributes(forStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(FOR);
 		writeStatement(forStatement.getInitializerStatement(),false);
@@ -203,7 +201,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeForStatement(ICPPASTRangeBasedForStatement forStatment) {
-		writeAttributes(forStatment, EnumSet.of(SpaceLocation.AFTER));
 		scribe.noNewLines();
 		scribe.print(FOR);
 		writeDeclarationWithoutSemicolon(forStatment.getDeclaration());
@@ -249,13 +246,11 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeBreakStatement(IASTBreakStatement statement) {
-		writeAttributes(statement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(BREAK);
 		scribe.printSemicolon();
 	}
 
 	private void writeContinueStatement(IASTContinueStatement statement) {
-		writeAttributes(statement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(CONTINUE);
 		scribe.printSemicolon();
 	}
@@ -269,14 +264,12 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeGotoStatement(IASTGotoStatement gotoStatement) {
-		writeAttributes(gotoStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(GOTO);
 		gotoStatement.getName().accept(visitor);
 		scribe.printSemicolon();
 	}
 
 	private void writeGNUASTGotoStatement(IGNUASTGotoStatement gotoStatement) {
-		writeAttributes(gotoStatement, EnumSet.of(SpaceLocation.AFTER));
 		scribe.print(GOTO);
 		gotoStatement.getLabelNameExpression().accept(visitor);
 		scribe.printSemicolon();
@@ -296,7 +289,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeNullStatement(IASTNullStatement nullStmt) {
-		writeAttributes(nullStmt, EnumSet.noneOf(SpaceLocation.class));
 		scribe.printSemicolon();
 	}
 
@@ -368,7 +360,6 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	private void writeSwitchStatement(IASTSwitchStatement switchStatement) {
-		writeAttributes(switchStatement, EnumSet.of(SpaceLocation.AFTER));
 		switchIsNew = true;
 
 		scribe.print(SWITCH_BRACKET);

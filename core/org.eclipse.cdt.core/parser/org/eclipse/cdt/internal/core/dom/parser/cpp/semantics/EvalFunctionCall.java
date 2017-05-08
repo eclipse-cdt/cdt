@@ -224,6 +224,11 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			// Resolve the function using the parameters of the function call.
 			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
 			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length), context.getPoint());
+
+			// Propagate instantiation errors for SFINAE purposes.
+			if (args[0] == EvalFixed.INCOMPLETE) {
+				return args[0];
+			}
 		}
 
 		ICPPEvaluation newImplicitThis = fImplicitThis != null ? fImplicitThis.instantiate(context, maxDepth) : null;

@@ -319,7 +319,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 			/* just skip, do nothing */
 
 		} else {
-			logAndThrowErrorForElement(qName);
+			logUnknownTag(qName);
 		}
 	}
 
@@ -359,7 +359,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 			/* just skip, do nothing */
 			
 		} else {
-			logAndThrowErrorForElement(qName);
+			logUnknownTag(qName);
 		}
 		elementData = null;
 	}
@@ -379,9 +379,21 @@ public class QtXmlLogHandler extends DefaultHandler {
 	 * @param tagName XML tag name
 	 * @throws SAXException the exception that will be thrown
 	 */
+	@SuppressWarnings("unused")
 	private void logAndThrowErrorForElement(String tagName) throws SAXException {
 		logAndThrowError(
 			MessageFormat.format(QtTestsRunnerMessages.QtXmlLogHandler_wrong_tag_name, tagName)
+		);
+	}
+	
+	/**
+	 * Logs a message regarding an unknown XML tag.
+	 * 
+	 * @param tagName XML tag name
+	 */
+	private void logUnknownTag(String tagName) {
+		QtTestsRunnerPlugin.log(new SAXException(
+			MessageFormat.format(QtTestsRunnerMessages.QtXmlLogHandler_wrong_tag_name, tagName))
 		);
 	}
 	

@@ -2616,8 +2616,6 @@ public class CPPSemantics {
 		// Check for dependent arguments
 		fns= tmp;
 		if (CPPTemplates.containsDependentType(argTypes)) {
-			if (viableCount == 1)
-				return fns[0];
 			setTargetedFunctionsToUnknown(argTypes);
 			return CPPDeferredFunction.createForCandidates(fns);
 		}

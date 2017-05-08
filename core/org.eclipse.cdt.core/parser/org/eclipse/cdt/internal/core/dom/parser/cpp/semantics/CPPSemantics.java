@@ -4410,4 +4410,29 @@ public class CPPSemantics {
 	public static boolean isUsingPromiscuousBindingResolution() {
 		return fAllowPromiscuousBindingResolution.get();
 	}
+
+	/**
+	 * Compute decltype(expr) for an expression represented by an evaluation.
+	 * This is similar to CPPVisitor.getDeclType(IASTExpression), but used in cases where the
+	 * original expression was dependent, so we had to represent it as an evaluation and
+	 * instantiate it.
+	 * 
+	 * @param eval the (instantiated) evaluation representing the expression
+	 * @param point
+	 */
+	public static IType getDeclTypeForEvaluation(ICPPEvaluation eval, IASTNode point) {
+		IType expressionType = eval.getType(point);
+		boolean namedEntity = eval instanceof EvalBinding || eval instanceof EvalMemberAccess;
+		if (!namedEntity && !(expressionType instanceof ICPPReferenceType)) {
+			switch (eval.getValueCategory(point)) {
+			case XVALUE:
+				return new CPPReferenceType(expressionType, true);
+			case LVALUE:
+				return new CPPReferenceType(expressionType, false);
+			case PRVALUE:
+				break;
+			}
+		}
+		return expressionType;
+	}
 }

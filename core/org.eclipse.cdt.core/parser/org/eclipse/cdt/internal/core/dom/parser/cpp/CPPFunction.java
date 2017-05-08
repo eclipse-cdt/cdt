@@ -18,6 +18,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -663,7 +664,17 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	@Override
 	public boolean isNoReturn() {
 		ICPPASTFunctionDeclarator dtor = getPreferredDtor();
-		return dtor != null && AttributeUtil.hasNoreturnAttribute(dtor);
+		if (dtor == null) {
+			return false;
+		}
+		if (AttributeUtil.hasNoreturnAttribute(dtor)) {
+			return true;
+		}
+		IASTNode parent = dtor.getParent();
+		if (parent instanceof IASTAttributeOwner) {
+			return AttributeUtil.hasNoreturnAttribute((IASTAttributeOwner) parent); 
+		}
+		return false;
 	}
 
 	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function, IASTNode point) {

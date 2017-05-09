@@ -66,6 +66,23 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * modifies the source locator accordingly.
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
+
+	/**
+	 * Encapsulate all the controls used within this class.
+	 */
+	private static class EditorControls {
+		public Composite buttonParentComposite;
+		public Button disassemblyButton;
+		public GridData disassemblyButtonGridData;
+		public Button locateFileButton;
+		public GridData locateFileButtonGridData;
+		public Button editLookupButton;
+		public GridData editLookupButtonGridData;
+		public Text fText;
+		public Text preferenceText;
+		public Button preferenceButton;
+	}
+
 	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage"; //$NON-NLS-1$
 
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
@@ -81,22 +98,14 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private IAdaptable context;
 	private ITranslationUnit tunit;
 
-	private Button disassemblyButton;
-
-	private Button locateFileButton;
-	private GridData locateFileButtonGridData;
-
-	private Button editLookupButton;
-	private GridData editLookupButtonGridData;
-
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
-	private Text fText;
 
-	private Text preferenceText;
-	private Button preferenceButton;
-
-	private Composite buttonParentComposite;
+	/**
+	 * Encapsulate all the controls used within this class. This will be
+	 * {@code null} until {@link #createPartControl(Composite)} is called.
+	 */
+	private EditorControls controls;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -112,27 +121,34 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		parent.setLayoutData(data);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		fText = new Text(parent, SWT.READ_ONLY | SWT.WRAP);
+		controls = new EditorControls();
+
+		controls.fText = new Text(parent, SWT.READ_ONLY | SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
-		fText.setLayoutData(data);
-		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		if (getEditorInput() != null) {
-			setInput(getEditorInput());
-		}
-
+		controls.fText.setLayoutData(data);
+		controls.fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		controls.fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		createButtons(parent);
 
 		Dialog.applyDialogFont(parent);
-
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICDebugHelpContextIds.SOURCE_NOT_FOUND);
+
+		/*
+		 * Now that all the controls have been created in a non-data dependent
+		 * way synchronize the controls content/visibility with the current
+		 * input data.
+		 */
+		if (getEditorInput() != null) {
+			setInput(getEditorInput());
+		}
+		syncButtons();
 	}
 
 	@Override
 	public void setFocus() {
-		if (fText != null) {
-			fText.setFocus();
+		if (controls != null) {
+			controls.fText.setFocus();
 		}
 	}
 
@@ -160,25 +176,30 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			}
 		}
 		super.setInput(input);
-		if (fText != null) {
-			fText.setText(getText());
+		if (controls != null) {
+			controls.fText.setText(getText());
 		}
 		syncButtons();
 
 	}
 
 	private void syncButtons() {
-		boolean visible = missingFile.length() > 0;
-		if (locateFileButton != null) {
-			locateFileButton.setVisible(visible);
-			locateFileButtonGridData.exclude = !visible;
-		}
-		if (editLookupButton != null) {
-			editLookupButton.setVisible(visible);
-			editLookupButtonGridData.exclude = !visible;
-		}
-		if (buttonParentComposite != null) {
-			buttonParentComposite.layout(true, true);
+		if (controls != null) {
+			boolean missingFileNameKnown = missingFile.length() > 0;
+
+			boolean disassemblyButtonVisible = isDebugElement;
+			controls.disassemblyButton.setVisible(disassemblyButtonVisible);
+			controls.disassemblyButtonGridData.exclude = !disassemblyButtonVisible;
+
+			boolean locateFileButtonVisible = missingFileNameKnown;
+			controls.locateFileButton.setVisible(locateFileButtonVisible);
+			controls.locateFileButtonGridData.exclude = !locateFileButtonVisible;
+
+			boolean editLookupButtonVisible = missingFileNameKnown && isDebugElement;
+			controls.editLookupButton.setVisible(editLookupButtonVisible);
+			controls.editLookupButtonGridData.exclude = !editLookupButtonVisible;
+
+			controls.buttonParentComposite.layout(true, true);
 		}
 	}
 
@@ -210,65 +231,64 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	@Override
 	protected void createButtons(Composite parent) {
 
-		this.buttonParentComposite = parent;
-		if (isDebugElement) {
-			GridData data;
-			disassemblyButton = new Button(parent, SWT.PUSH);
-			data = new GridData();
-			data.grabExcessHorizontalSpace = false;
-			data.grabExcessVerticalSpace = false;
-			disassemblyButton.setLayoutData(data);
-			disassemblyButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_4);
-			disassemblyButton.addSelectionListener(new SelectionAdapter() {
+		controls.buttonParentComposite = parent;
+		{
+			controls.disassemblyButton = new Button(parent, SWT.PUSH);
+			controls.disassemblyButtonGridData = new GridData();
+			controls.disassemblyButtonGridData.grabExcessHorizontalSpace = false;
+			controls.disassemblyButtonGridData.grabExcessVerticalSpace = false;
+			controls.disassemblyButton.setLayoutData(controls.disassemblyButtonGridData);
+			controls.disassemblyButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_4);
+			controls.disassemblyButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					viewDisassembly();
 				}
 			});
-			disassemblyButton.setData(UID_KEY, UID_DISASSEMBLY_BUTTON);
+			controls.disassemblyButton.setData(UID_KEY, UID_DISASSEMBLY_BUTTON);
 		}
 
 		{
-			locateFileButton = new Button(parent, SWT.PUSH);
-			locateFileButtonGridData = new GridData();
-			locateFileButtonGridData.grabExcessHorizontalSpace = false;
-			locateFileButtonGridData.grabExcessVerticalSpace = false;
-			locateFileButton.setLayoutData(locateFileButtonGridData);
-			locateFileButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_1);
-			locateFileButton.addSelectionListener(new SelectionAdapter() {
+			controls.locateFileButton = new Button(parent, SWT.PUSH);
+			controls.locateFileButtonGridData = new GridData();
+			controls.locateFileButtonGridData.grabExcessHorizontalSpace = false;
+			controls.locateFileButtonGridData.grabExcessVerticalSpace = false;
+			controls.locateFileButton.setLayoutData(controls.locateFileButtonGridData);
+			controls.locateFileButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_1);
+			controls.locateFileButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					locateFile();
 				}
 			});
-			locateFileButton.setData(UID_KEY, UID_LOCATE_FILE_BUTTON);
+			controls.locateFileButton.setData(UID_KEY, UID_LOCATE_FILE_BUTTON);
 		}
 
-		if (isDebugElement) {
-			editLookupButton = new Button(parent, SWT.PUSH);
-			editLookupButtonGridData = new GridData();
-			editLookupButtonGridData.grabExcessHorizontalSpace = false;
-			editLookupButtonGridData.grabExcessVerticalSpace = false;
-			editLookupButton.setLayoutData(editLookupButtonGridData);
-			editLookupButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_5);
-			editLookupButton.addSelectionListener(new SelectionAdapter() {
+		{
+			controls.editLookupButton = new Button(parent, SWT.PUSH);
+			controls.editLookupButtonGridData = new GridData();
+			controls.editLookupButtonGridData.grabExcessHorizontalSpace = false;
+			controls.editLookupButtonGridData.grabExcessVerticalSpace = false;
+			controls.editLookupButton.setLayoutData(controls.editLookupButtonGridData);
+			controls.editLookupButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_5);
+			controls.editLookupButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					editSourceLookupPath();
 				}
 			});
-			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
+			controls.editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
 		}
 
 		{
 			Composite data = ControlFactory.createComposite(parent, 2);
 			((GridLayout) data.getLayout()).marginWidth = 0;
 			((GridLayout) data.getLayout()).marginHeight = 0;
-			preferenceText = new Text(data, SWT.READ_ONLY | SWT.WRAP);
-			preferenceButton = new Button(data, SWT.PUSH);
-			preferenceText.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
-			preferenceButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
-			preferenceButton.addSelectionListener(new SelectionAdapter() {
+			controls.preferenceText = new Text(data, SWT.READ_ONLY | SWT.WRAP);
+			controls.preferenceButton = new Button(data, SWT.PUSH);
+			controls.preferenceText.setText(SourceLookupUIMessages.CSourceNotFoundEditor_6);
+			controls.preferenceButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_7);
+			controls.preferenceButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					PreferencesUtil.createPreferenceDialogOn(parent.getShell(), SOURCE_NOT_FOUND_PATH, null, null)
@@ -276,8 +296,6 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				}
 			});
 		}
-
-		syncButtons();
 	}
 
 	protected void viewDisassembly() {

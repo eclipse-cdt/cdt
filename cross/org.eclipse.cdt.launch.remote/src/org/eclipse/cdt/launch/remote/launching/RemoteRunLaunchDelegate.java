@@ -20,6 +20,7 @@
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
  * Anna Dushistova  (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  * Anna Dushistova  (MontaVista)      - [368597][remote debug] if gdbserver fails to launch on target, launch doesn't get terminated
+ * Jawahar Nallasamy  (Elektrobit)    - [516340][remote run] Error "Could not create the hostShellProcess." Connection is not open
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.launching;
@@ -43,6 +44,9 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.RemoteProcessAdapter;
+
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -69,7 +73,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100);
-				Process remoteProcess = null;
+				IRemoteProcess remoteShell = null;
+				Process remoteShellProcess = null;
 				try {
 					// Download the binary to the remote before debugging.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
@@ -77,11 +82,19 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 							remoteExePath, new SubProgressMonitor(monitor, 80));
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
-					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
-									monitor, 20));
-					DebugPlugin.newProcess(launch, remoteProcess,
+					try {
+						remoteShell = RemoteHelper.execCmdInRemoteShell(config, prelaunchCmd,
+								remoteExePath, arguments, new SubProgressMonitor(
+										monitor, 20));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (remoteShell != null) {
+						remoteShellProcess = new RemoteProcessAdapter(remoteShell);
+						DebugPlugin.newProcess(launch, remoteShellProcess,
 							renderProcessLabel(exePath.toOSString()));
+					}
 				} catch (CoreException e) {
 					throw e;
 				} finally {

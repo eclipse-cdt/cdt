@@ -66,8 +66,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * modifies the source locator accordingly.
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
-	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage" //$NON-NLS-1$
-;
+	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage"; //$NON-NLS-1$
+
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();

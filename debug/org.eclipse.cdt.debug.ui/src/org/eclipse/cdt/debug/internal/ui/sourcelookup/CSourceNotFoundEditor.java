@@ -66,8 +66,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * modifies the source locator accordingly.
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
-	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage" //$NON-NLS-1$
-;
+	private static final String SOURCE_NOT_FOUND_PATH = "org.eclipse.cdt.debug.ui.CDebugPreferencePage"; //$NON-NLS-1$
+
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
@@ -147,8 +147,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				isTranslationUnit = true;
 				tunit = (ITranslationUnit) artifact;
 				IPath tuPath = tunit.getLocation();
-				if (tuPath != null)
+				if (tuPath != null) {
 					missingFile = tuPath.toOSString();
+				}
 			} else {
 				missingFile = ""; //$NON-NLS-1$
 			}
@@ -162,10 +163,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	}
 
 	private void syncButtons() {
-		if (locateFileButton != null)
+		if (locateFileButton != null) {
 			locateFileButton.setVisible(missingFile.length() > 0);
-		if (editLookupButton != null)
+		}
+		if (editLookupButton != null) {
 			editLookupButton.setVisible(missingFile.length() > 0);
+		}
 	}
 
 	@Override
@@ -173,8 +176,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		if (missingFile.length() > 0) {
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
 		} else {
-			if (context == null)
+			if (context == null) {
 				return super.getText();
+			}
 			String contextDescription;
 			boolean isAddressOnly;
 			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
@@ -360,10 +364,11 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				IPath newSourcePath = new Path(resParts.getFolder());
 				if (compPath.length() > 0) {
 					try {
-						if (isDebugElement)
+						if (isDebugElement) {
 							addSourceMappingToLaunch(compPath, newSourcePath);
-						else
+						} else {
 							addSourceMappingToCommon(compPath, newSourcePath);
+						}
 					} catch (CoreException e) {
 					}
 				}
@@ -398,11 +403,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 						LocalFileStorage newLocation = (LocalFileStorage) foundElements[0];
 						if (newLocation.getFullPath().toFile().exists()) {
 							ITranslationUnit remappedTU = tu;
-							if (tu instanceof ExternalTranslationUnit)
+							if (tu instanceof ExternalTranslationUnit) {
 								// TODO: source lookup needs to be modified to
 								// use URIs
 								remappedTU = new ExternalTranslationUnit(tu.getParent(),
 										URIUtil.toURI(newLocation.getFullPath()), tu.getContentTypeId());
+							}
 							EditorUtility.openInEditor(remappedTU);
 							return true;
 						}

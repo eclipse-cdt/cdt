@@ -84,14 +84,19 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private Button disassemblyButton;
 
 	private Button locateFileButton;
+	private GridData locateFileButtonGridData;
 
 	private Button editLookupButton;
+	private GridData editLookupButtonGridData;
+
 	private boolean isDebugElement;
 	private boolean isTranslationUnit;
 	private Text fText;
 
 	private Text preferenceText;
 	private Button preferenceButton;
+
+	private Composite buttonParentComposite;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -163,11 +168,17 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	}
 
 	private void syncButtons() {
+		boolean visible = missingFile.length() > 0;
 		if (locateFileButton != null) {
-			locateFileButton.setVisible(missingFile.length() > 0);
+			locateFileButton.setVisible(visible);
+			locateFileButtonGridData.exclude = !visible;
 		}
 		if (editLookupButton != null) {
-			editLookupButton.setVisible(missingFile.length() > 0);
+			editLookupButton.setVisible(visible);
+			editLookupButtonGridData.exclude = !visible;
+		}
+		if (buttonParentComposite != null) {
+			buttonParentComposite.layout(true, true);
 		}
 	}
 
@@ -199,6 +210,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	@Override
 	protected void createButtons(Composite parent) {
 
+		this.buttonParentComposite = parent;
 		if (isDebugElement) {
 			GridData data;
 			disassemblyButton = new Button(parent, SWT.PUSH);
@@ -217,12 +229,11 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 
 		{
-			GridData data;
 			locateFileButton = new Button(parent, SWT.PUSH);
-			data = new GridData();
-			data.grabExcessHorizontalSpace = false;
-			data.grabExcessVerticalSpace = false;
-			locateFileButton.setLayoutData(data);
+			locateFileButtonGridData = new GridData();
+			locateFileButtonGridData.grabExcessHorizontalSpace = false;
+			locateFileButtonGridData.grabExcessVerticalSpace = false;
+			locateFileButton.setLayoutData(locateFileButtonGridData);
 			locateFileButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_1);
 			locateFileButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -234,12 +245,11 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 
 		if (isDebugElement) {
-			GridData data;
 			editLookupButton = new Button(parent, SWT.PUSH);
-			data = new GridData();
-			data.grabExcessHorizontalSpace = false;
-			data.grabExcessVerticalSpace = false;
-			editLookupButton.setLayoutData(data);
+			editLookupButtonGridData = new GridData();
+			editLookupButtonGridData.grabExcessHorizontalSpace = false;
+			editLookupButtonGridData.grabExcessVerticalSpace = false;
+			editLookupButton.setLayoutData(editLookupButtonGridData);
 			editLookupButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_5);
 			editLookupButton.addSelectionListener(new SelectionAdapter() {
 				@Override

@@ -625,7 +625,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	  C<A>::/*cursor*/
 	//	}
 	public void testAliasTemplate_418479() throws Exception {
-		final String[] expected = { "D", "E" };
+		final String[] expected = { "D", "E<typename T>" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 

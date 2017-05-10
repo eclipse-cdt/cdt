@@ -134,6 +134,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
@@ -310,35 +311,6 @@ public class CPPTemplates {
 			}
 			IType aliasedType = aliasTemplate.getType();
 			IBinding owner = aliasTemplate.getOwner();
-			return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, point);
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
-	}
-
-	/**
-	 * Instantiate a specialization of an alias template with the given arguments.
-	 *
-	 * TODO(nathanridge): The reason we have this method is that we (incorrectly) represent
-	 * specializations of alias templates as alias template instances. A specialization of
-	 * an alias template is an alias template, so it needs to be instantiated to produce
-	 * an actual alias template instance. Actual alias template instances do not need to be
-	 * instantiated.
-	 */
-	public static IBinding instantiateAliasTemplateInstance(ICPPAliasTemplateInstance aliasTemplateInstance,
-			ICPPTemplateArgument[] args, IASTNode point) {
-		ICPPAliasTemplate aliasTemplate = aliasTemplateInstance.getTemplateDefinition();
-		try {
-			args = addDefaultArguments(aliasTemplate, args, point);
-			if (args == null) {
-				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
-			}
-			ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args, point);
-			if (parameterMap == null) {
-				return createProblem(aliasTemplate, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
-			}
-			IType aliasedType = aliasTemplateInstance.getType();
-			IBinding owner = aliasTemplateInstance.getOwner();
 			return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, point);
 		} catch (DOMException e) {
 			return e.getProblem();
@@ -797,16 +769,6 @@ public class CPPTemplates {
 				return instantiateAliasTemplate(aliasTemplate, args, id);
 			}
 
-			// Alias template instance.
-			if (template instanceof ICPPAliasTemplateInstance) {
-				// TODO(nathanridge): Remove this branch once we properly represent
-				// specializations of alias templates (which will then implement
-				// ICPPAliasTemplate and be caught by the previous branch).
-				ICPPAliasTemplateInstance aliasTemplateInstance = (ICPPAliasTemplateInstance) template;
-				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
-				return instantiateAliasTemplateInstance(aliasTemplateInstance, args, id);
-			}
-
 			// Class or variable template.
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();
@@ -1120,7 +1082,12 @@ public class CPPTemplates {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
 				InstantiationContext context = createInstantiationContext(tpMap, owner, point);
 				IType type= instantiateType(aliasTemplate.getType(), context);
-				spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
+				CPPAliasTemplateSpecialization aliasSpec = 
+						new CPPAliasTemplateSpecialization(aliasTemplate, owner, tpMap, type);
+				aliasSpec.setTemplateParameters(specializeTemplateParameters(aliasSpec, 
+						(ICPPScope) aliasSpec.getScope(), aliasTemplate.getTemplateParameters(), classOwner, 
+						point));
+				spec = aliasSpec;
 			} else if (decl instanceof ICPPEnumeration && classOwner != null) {
 				// TODO: Handle local enumerations
 				spec = CPPEnumerationSpecialization.createInstance((ICPPEnumeration) decl, classOwner, tpMap, point);
@@ -3012,12 +2979,6 @@ public class CPPTemplates {
 						} else if (result instanceof ICPPAliasTemplate) {
 							result = instantiateAliasTemplate((ICPPAliasTemplate) result, args1,
 									context.getPoint());
-						} else if (result instanceof ICPPAliasTemplateInstance) {
-							// TODO(nathanridge): Remove this branch once we properly represent
-							// specializations of alias templates (which will then implement
-							// ICPPAliasTemplate and be caught by the previous branch).
-							result = instantiateAliasTemplateInstance((ICPPAliasTemplateInstance) result,
-									args1, context.getPoint());
 						}
 					}
 				}

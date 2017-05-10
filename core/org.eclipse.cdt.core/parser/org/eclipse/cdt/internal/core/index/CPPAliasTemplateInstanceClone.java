@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * Delegating clone implementation for index classes implementing {@link ICPPAliasTemplateInstance} interface.
@@ -26,8 +29,32 @@ public class CPPAliasTemplateInstanceClone extends CPPTypedefClone implements IC
 		return new CPPAliasTemplateInstanceClone(this);
 	}
 
+	private ICPPAliasTemplateInstance getDelegate() {
+		return (ICPPAliasTemplateInstance) delegate;
+	}
+	
 	@Override
 	public ICPPAliasTemplate getTemplateDefinition() {
-		return ((ICPPAliasTemplateInstance) delegate).getTemplateDefinition();
+		return getDelegate().getTemplateDefinition();
+	}
+
+	@Override
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return getDelegate().getTemplateArguments();
+	}
+
+	@Override
+	public boolean isExplicitSpecialization() {
+		return false;
+	}
+
+	@Override
+	public IBinding getSpecializedBinding() {
+		return getDelegate().getSpecializedBinding();
+	}
+
+	@Override
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		return getDelegate().getTemplateParameterMap();
 	}
 }

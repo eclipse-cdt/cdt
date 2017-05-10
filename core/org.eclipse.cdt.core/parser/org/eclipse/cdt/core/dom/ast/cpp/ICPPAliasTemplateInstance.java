@@ -20,9 +20,10 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPAliasTemplateInstance extends ITypedef, ICPPBinding {
+public interface ICPPAliasTemplateInstance extends ITypedef, ICPPTemplateInstance {
 	/**
 	 * Returns the alias template specialized by this instance.
 	 */
+	@Override
 	public ICPPAliasTemplate getTemplateDefinition();
 }

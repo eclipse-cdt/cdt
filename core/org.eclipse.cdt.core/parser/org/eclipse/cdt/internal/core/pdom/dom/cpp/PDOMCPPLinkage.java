@@ -515,6 +515,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fTemplate.initData(fOriginalAliasedType);
 		}
 	}
+	
+	class ConfigureAliasTemplateInstance implements Runnable {
+		PDOMCPPAliasTemplateInstance fAliasInstance;
+		
+		public ConfigureAliasTemplateInstance(PDOMCPPAliasTemplateInstance aliasInstance) {
+			fAliasInstance = aliasInstance;
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fAliasInstance.storeTemplateArguments();
+		}
+	}
 
 	class ConfigureInstance implements Runnable {
 		PDOMCPPSpecialization fInstance;
@@ -905,6 +919,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				result = new PDOMCPPFieldInstance(this, parent, (ICPPVariableInstance) special, orig);
 			} else if (special instanceof ICPPVariable && orig instanceof ICPPVariable) {
 				result= new PDOMCPPVariableInstance(this, parent, (ICPPVariableInstance) special, orig);
+			} else if (special instanceof ICPPAliasTemplateInstance && orig instanceof ICPPAliasTemplate) {
+				result = new PDOMCPPAliasTemplateInstance(this, parent, orig, (ICPPAliasTemplateInstance) special);
 			}
 		} else if (special instanceof ICPPField) {
 			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);

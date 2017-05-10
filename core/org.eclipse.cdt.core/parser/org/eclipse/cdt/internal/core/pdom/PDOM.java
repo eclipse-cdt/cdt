@@ -288,10 +288,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  208.0 - Trigger index rebuild to rebuild corrupted binding reference lists, bug 399147.
 	 *  209.0 - Alias templates and their instances take up more space than required, bug 516385.
 	 *  210.0 - Return type deduction, bug 408470.
+	 *  211.0 - Change representation of alias template instances, bug 516338.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(210, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(210, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(210, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(211, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(211, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(211, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

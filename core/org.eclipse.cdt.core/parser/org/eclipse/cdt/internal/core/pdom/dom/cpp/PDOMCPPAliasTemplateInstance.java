@@ -28,7 +28,7 @@ class PDOMCPPAliasTemplateInstance extends PDOMCPPTypedef implements ICPPAliasTe
 	private static final int TEMPLATE_DEFINITION_OFFSET = PDOMCPPTypedef.RECORD_SIZE;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = TEMPLATE_DEFINITION_OFFSET + Database.TYPE_SIZE;
+	protected static final int RECORD_SIZE = TEMPLATE_DEFINITION_OFFSET + Database.PTR_SIZE;
 
 	private volatile ICPPAliasTemplate fTemplateDefinition;
 

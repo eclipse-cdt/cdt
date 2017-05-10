@@ -490,6 +490,32 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
+	class ConfigureAliasTemplateSpecialization implements Runnable {
+		private final PDOMCPPAliasTemplateSpecialization fTemplate;
+		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
+		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
+		private final IType fOriginalAliasedType;
+
+		public ConfigureAliasTemplateSpecialization(ICPPAliasTemplate original, 
+				PDOMCPPAliasTemplateSpecialization template) throws DOMException {
+			fTemplate = template;
+			fTemplateParameters= template.getTemplateParameters();
+			fOriginalTemplateParameters= original.getTemplateParameters();
+			fOriginalAliasedType= original.getType();
+			postProcesses.add(this);
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < fOriginalTemplateParameters.length; i++) {
+				final IPDOMCPPTemplateParameter tp = fTemplateParameters[i];
+				if (tp != null)
+					tp.configure(fOriginalTemplateParameters[i]);
+			}
+			fTemplate.initData(fOriginalAliasedType);
+		}
+	}
+
 	class ConfigureInstance implements Runnable {
 		PDOMCPPSpecialization fInstance;
 
@@ -908,6 +934,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPClassTemplateSpecialization(this, parent, (ICPPClassTemplate) special, orig);
 		} else if (special instanceof ICPPClassType) {
 			result= new PDOMCPPClassSpecialization(this, parent, (ICPPClassType) special, orig);
+		} else if (special instanceof ICPPAliasTemplate) { 
+			result= new PDOMCPPAliasTemplateSpecialization(this, parent, (ICPPAliasTemplate) special, orig);
 		} else if (special instanceof ITypedef) {
 			result= new PDOMCPPTypedefSpecialization(this, parent, (ITypedef) special, orig);
 		} else if (special instanceof ICPPUsingDeclaration) {
@@ -998,6 +1026,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return CPP_CLASS_TEMPLATE_SPECIALIZATION;
 			} else if (binding instanceof ICPPClassType) {
 				return CPP_CLASS_SPECIALIZATION;
+			} else if (binding instanceof ICPPAliasTemplate) { 
+				return CPP_ALIAS_TEMPLATE_SPECIALIZATION;
 			} else if (binding instanceof ITypedef) {
 				return CPP_TYPEDEF_SPECIALIZATION;
 			}
@@ -1304,6 +1334,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPVariableTemplatePartialSpecialization(this, record);
 		case CPP_FIELD_TEMPLATE_PARTIAL_SPECIALIZATION:
 			return new PDOMCPPFieldTemplatePartialSpecialization(this, record);
+		case CPP_ALIAS_TEMPLATE_SPECIALIZATION:
+			return new PDOMCPPAliasTemplateSpecialization(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

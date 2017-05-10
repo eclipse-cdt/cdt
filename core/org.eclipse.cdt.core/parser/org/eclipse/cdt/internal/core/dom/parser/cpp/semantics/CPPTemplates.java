@@ -1450,9 +1450,37 @@ public class CPPTemplates {
 			return new CPPTemplateNonTypeArgument(newEval, context.getPoint());
 		}
 
-		final IType orig= arg.getTypeValue();
-		final IType inst= instantiateType(orig, context);
-		if (orig == inst)
+		// Which to instantiate, getOriginalTypeValue() or getTypeValue()?
+		//
+		// Using getOriginalTypeValue() is better for typedef preservation,
+		// and in the case of alias template instances, also necessary for 
+		// correctness (since an alias template instance could have dependent 
+		// arguments that don't appear in the resulting type, and these 
+		// arguments could SFINAE out during instantiation; the popular 
+		// "void_t" technique relies on this).
+		//
+		// However, caching of template instances is based on the normalized
+		// representation of arguments, which uses getTypeValue(). This,
+		// together with certain deficiencies in ASTTypeUtil (namely, that
+		// template parameters owned by different templates end up with the
+		// same string representation), leads to tricky bugs if we try to
+		// use getOriginalTypeValue() here all the time (observe, e.g., how
+		// IndexCPPTemplateResolutionTest.testRegression_516338 fails if we
+		// unconditionally use getOriginalTypeValue() here).
+		//
+		// As a compromise, we use getOriginalTypeValue() in the case where
+		// it's important for correctness (alias template instances), and
+		// getTypeValue() otherwise.
+		IType type;
+		final IType origType = arg.getOriginalTypeValue();
+		if (origType instanceof ICPPAliasTemplateInstance) {
+			type = origType;
+		} else {
+			type = arg.getTypeValue();
+		}
+		
+		final IType inst= instantiateType(type, context);
+		if (type == inst)
 			return arg;
 		return new CPPTemplateTypeArgument(inst);
 	}

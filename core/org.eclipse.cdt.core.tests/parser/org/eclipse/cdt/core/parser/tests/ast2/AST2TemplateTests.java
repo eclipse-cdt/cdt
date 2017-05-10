@@ -4112,7 +4112,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testTypedefPreservation_380498c() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ICPPVariable s = ba.assertNonProblem("s :", "s", ICPPVariable.class);
-		assertTrue(s.getType() instanceof ITypedef);
+		assertInstance(s.getType(), ITypedef.class);
 		assertEquals("string", ASTTypeUtil.getType(s.getType(), false));
 	}
 

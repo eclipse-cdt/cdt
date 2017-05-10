@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "479dfb6e_60885c2f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2017-05-10T07:04:20Z",
+      "side": 1,
+      "message": "too much space / ... more spacen than required",
+      "range": {
+        "startLine": 287,
+        "startChar": 57,
+        "endLine": 287,
+        "endChar": 61
+      },
+      "revId": "c14d6d25a960584e88152979540981e1f2844c1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

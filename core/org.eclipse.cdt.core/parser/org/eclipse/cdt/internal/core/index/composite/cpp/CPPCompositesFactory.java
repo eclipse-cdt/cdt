@@ -595,6 +595,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						return new CompositeCPPMethodTemplateSpecialization(this, (ICPPMethod) binding);
 					} else if (binding instanceof ICPPFunction) {
 						return new CompositeCPPFunctionTemplateSpecialization(this, (ICPPFunction) binding);
+					} else if (binding instanceof ICPPAliasTemplate) { 
+						return new CompositeCPPAliasTemplateSpecialization(this, (ICPPAliasTemplate) binding);
 					} else {
 						throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

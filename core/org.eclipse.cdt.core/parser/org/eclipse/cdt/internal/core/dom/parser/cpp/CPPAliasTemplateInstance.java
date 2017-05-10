@@ -21,27 +21,28 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.core.runtime.PlatformObject;
 
-public class CPPAliasTemplateInstance extends PlatformObject
-		implements ICPPAliasTemplateInstance, ITypeContainer, ICPPInternalBinding {
-	private final char[] name;
-	private final ICPPAliasTemplate aliasTemplate;
+public class CPPAliasTemplateInstance extends CPPSpecialization implements ICPPAliasTemplateInstance, 
+		ITypeContainer {
 	private IType aliasedType;
+	private ICPPTemplateArgument[] fArguments;
 
-	public CPPAliasTemplateInstance(char[] name, ICPPAliasTemplate aliasTemplate, IType aliasedType) {
-		this.name = name;
-		this.aliasTemplate = aliasTemplate;
+	public CPPAliasTemplateInstance(ICPPAliasTemplate aliasTemplate, IType aliasedType, IBinding owner, 
+			ICPPTemplateParameterMap argumentMap, ICPPTemplateArgument[] arguments) {
+		super(aliasTemplate, owner, argumentMap);
 		this.aliasedType = aliasedType;
+		this.fArguments = arguments;
 	}
 
 	@Override
 	public ICPPAliasTemplate getTemplateDefinition() {
-		return aliasTemplate;
+		return (ICPPAliasTemplate) super.getSpecializedBinding();
 	}
 
 	@Override
@@ -80,6 +81,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 
 	@Override
 	public char[] getNameCharArray() {
+		char[] name = getTemplateDefinition().getNameCharArray();
 		if (name != null) {
 			return name;
 		}
@@ -93,16 +95,16 @@ public class CPPAliasTemplateInstance extends PlatformObject
 
 	@Override
 	public IBinding getOwner() {
-		if (aliasTemplate != null) {
-			return aliasTemplate.getOwner();
+		if (getTemplateDefinition() != null) {
+			return getTemplateDefinition().getOwner();
 		}
 		return null;
 	}
 
 	@Override
 	public IScope getScope() throws DOMException {
-		if (aliasTemplate != null) {
-			return aliasTemplate.getScope();
+		if (getTemplateDefinition() != null) {
+			return getTemplateDefinition().getScope();
 		}
 		return null;
 	}
@@ -119,13 +121,13 @@ public class CPPAliasTemplateInstance extends PlatformObject
 
 	@Override
 	public boolean isGloballyQualified() throws DOMException {
-		return aliasTemplate.isGloballyQualified();
+		return getTemplateDefinition().isGloballyQualified();
 	}
 
 	@Override
 	public IASTNode getDefinition() {
-		if (aliasTemplate instanceof ICPPInternalBinding) {
-			return ((ICPPInternalBinding) aliasTemplate).getDefinition();
+		if (getTemplateDefinition() instanceof ICPPInternalBinding) {
+			return ((ICPPInternalBinding) getTemplateDefinition()).getDefinition();
 		}
 		return null;
 	}
@@ -149,5 +151,16 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
+	}
+
+	@Override
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return fArguments;
+	}
+
+	@Override
+	public boolean isExplicitSpecialization() {
+		// Alias templates cannot have explicit specializations.
+		return false;
 	}
 }

@@ -10147,6 +10147,22 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <typename> 
+	//	using void_t = void;
+	//
+	//	template <typename T, typename = void>
+	//	struct Waldo {
+	//	    using type = T;
+	//	};
+	//
+	//	template <typename T>
+	//	struct Waldo<T, void_t<typename T::type>> {};
+	//
+	//	Waldo<int>::type foo();
+	public void testSFINAEInAliasTemplateArgs_516338() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename, typename>
 	//	struct is_same {
 	//	    static constexpr bool value = false;

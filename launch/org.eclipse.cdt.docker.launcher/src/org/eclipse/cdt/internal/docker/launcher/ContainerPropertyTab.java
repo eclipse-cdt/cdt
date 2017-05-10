@@ -359,7 +359,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 		String enablementProperty2 = prop2
 				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-		if (!enablementProperty.equals(enablementProperty2)) {
+		if (enablementProperty != null
+				&& !enablementProperty.equals(enablementProperty2)) {
 			needToRecalculate = true;
 		}
 		prop2.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,

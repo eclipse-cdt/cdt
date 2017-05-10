@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -451,12 +450,6 @@ public class HeuristicResolver {
 						} else if (result instanceof ICPPAliasTemplate) {
 							result = (IType) CPPTemplates.instantiateAliasTemplate((ICPPAliasTemplate) result,
 									args, point);
-						} else if (result instanceof ICPPAliasTemplateInstance) {
-							// TODO(nathanridge): Remove this branch once we properly represent
-							// specializations of alias templates (which will then implement
-							// ICPPAliasTemplate and be caught by the previous branch).
-							result = (IType) CPPTemplates.instantiateAliasTemplateInstance(
-									(ICPPAliasTemplateInstance) result, args, point);
 						}
 					}
 					return result;

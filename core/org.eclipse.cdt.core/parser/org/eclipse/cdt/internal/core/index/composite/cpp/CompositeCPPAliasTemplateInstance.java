@@ -13,11 +13,13 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.index.CPPAliasTemplateInstanceClone;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPAliasTemplateInstance extends CompositeCPPTypedef implements ICPPAliasTemplateInstance {
+class CompositeCPPAliasTemplateInstance extends CompositeCPPTypedefSpecialization implements ICPPAliasTemplateInstance {
 	public CompositeCPPAliasTemplateInstance(ICompositesFactory cf, ICPPBinding delegate) {
 		super(cf, delegate);
 	}
@@ -31,5 +33,15 @@ class CompositeCPPAliasTemplateInstance extends CompositeCPPTypedef implements I
 	@Override
 	public Object clone() {
 		return new CPPAliasTemplateInstanceClone(this);
+	}
+
+	@Override
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	@Override
+	public boolean isExplicitSpecialization() {
+		return false;
 	}
 }

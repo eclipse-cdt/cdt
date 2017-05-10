@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
@@ -237,7 +238,12 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			if (aliasTemplate instanceof IIndexFragmentBinding)
 				aliasTemplate = (ICPPAliasTemplate) getCompositeBinding((IIndexFragmentBinding) aliasTemplate);
 			IType aliasedType = getCompositeType(instance.getType());
-			return new CPPAliasTemplateInstance(instance.getNameCharArray(), aliasTemplate, aliasedType);
+			IBinding owner = instance.getOwner();
+			if (owner instanceof IIndexFragmentBinding)
+				owner = getCompositeBinding((IIndexFragmentBinding) owner);
+			ICPPTemplateArgument[] args = TemplateInstanceUtil.convert(this, instance.getTemplateArguments());
+			ICPPTemplateParameterMap map = TemplateInstanceUtil.getTemplateParameterMap(this, instance);
+			return new CPPAliasTemplateInstance(aliasTemplate, aliasedType, owner, map, args);
 		}
 		if (rtype instanceof TypeOfDependentExpression) {
 			TypeOfDependentExpression type= (TypeOfDependentExpression) rtype;

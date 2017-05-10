@@ -852,7 +852,7 @@ public class CPPTemplates {
 			IBinding owner, IASTNode point) {
 		InstantiationContext context = createInstantiationContext(parameterMap, owner, point);
 		IType instantiatedType = instantiateType(aliasedType, context);
-		return new CPPAliasTemplateInstance(aliasTemplate.getNameCharArray(), aliasTemplate, instantiatedType);
+		return new CPPAliasTemplateInstance(aliasTemplate, instantiatedType, owner, parameterMap, args);
 	}
 
 	static boolean isClassTemplate(ICPPASTTemplateId id) {

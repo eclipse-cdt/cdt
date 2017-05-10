@@ -510,6 +510,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fTemplate.initData(fOriginalAliasedType);
 		}
 	}
+	
+	class ConfigureAliasTemplateInstance implements Runnable {
+		PDOMCPPAliasTemplateInstance fAliasInstance;
+		
+		public ConfigureAliasTemplateInstance(PDOMCPPAliasTemplateInstance aliasInstance) {
+			fAliasInstance = aliasInstance;
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fAliasInstance.storeTemplateArguments();
+		}
+	}
 
 	class ConfigureInstance implements Runnable {
 		PDOMCPPSpecialization fInstance;

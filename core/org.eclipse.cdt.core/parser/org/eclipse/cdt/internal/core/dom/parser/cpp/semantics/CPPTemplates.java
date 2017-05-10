@@ -1536,7 +1536,7 @@ public class CPPTemplates {
 					return type;
 				}
 			}
-
+			
 			if (type instanceof TypeOfUnknownMember) {
 				IBinding binding = resolveUnknown(((TypeOfUnknownMember) type).getUnknownMember(), context);
 				if (binding instanceof IType) {
@@ -1590,6 +1590,27 @@ public class CPPTemplates {
 						}
 					}
 				}
+			}
+
+			// An alias template instance may have dependent arguments that don't contribute 
+			// to the target type but can SFINAE out during instantiation, so it's not
+			// sufficient to handle it in the ITypeContainer case.
+			if (type instanceof ICPPAliasTemplateInstance) {
+				ICPPAliasTemplateInstance instance = (ICPPAliasTemplateInstance) type;
+				ICPPAliasTemplate template = instance.getTemplateDefinition();
+				ICPPTemplateArgument[] args = instance.getTemplateArguments();
+				ICPPTemplateArgument[] newArgs = instantiateArguments(args, context, true);
+				if (newArgs == null) {
+					return (IType) createProblem(template, 
+							IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, context.getPoint());
+				}
+				if (args != newArgs) {
+					IType target = instantiateType(instance.getType(), context);
+					CPPTemplateParameterMap map = 
+							instantiateArgumentMap(instance.getTemplateParameterMap(), context);
+					return new CPPAliasTemplateInstance(template, target, instance.getOwner(), map, newArgs);
+				}
+				return type;
 			}
 
 			if (type instanceof ITypeContainer) {

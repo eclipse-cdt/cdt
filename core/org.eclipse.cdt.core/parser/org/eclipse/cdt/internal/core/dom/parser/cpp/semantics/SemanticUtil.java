@@ -438,7 +438,8 @@ public class SemanticUtil {
 		if (!(typedefType instanceof ITypedef))
 			return null;
 		IType nestedType = type;
-		while (!nestedType.isSameType(((ITypedef) typedefType).getType())) {
+		IType typedefTarget = ((ITypedef) typedefType).getType();
+		while (!nestedType.isSameType(typedefTarget)) {
 			if (nestedType instanceof IQualifierType) {
 				nestedType = ((IQualifierType) nestedType).getType();
 			} else if (nestedType instanceof IPointerType) {
@@ -448,7 +449,9 @@ public class SemanticUtil {
 			} else if (nestedType instanceof ICPPReferenceType) {
 				nestedType = ((ICPPReferenceType) nestedType).getType();
 			} else {
-				return null;
+				// The typedef's target could itself be a (pointer or reference
+				// to, or qualified version of) a typedef. Try substituting that too.
+				return substituteTypedef(type, typedefTarget);
 			}
 		}
 

@@ -1450,7 +1450,7 @@ public class CPPTemplates {
 			return new CPPTemplateNonTypeArgument(newEval, context.getPoint());
 		}
 
-		final IType orig= arg.getTypeValue();
+		final IType orig= arg.getOriginalTypeValue();
 		final IType inst= instantiateType(orig, context);
 		if (orig == inst)
 			return arg;

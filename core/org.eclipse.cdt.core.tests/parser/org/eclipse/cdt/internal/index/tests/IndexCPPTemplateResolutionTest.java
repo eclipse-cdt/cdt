@@ -98,7 +98,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	public IndexCPPTemplateResolutionTest() {
-		setStrategy(new ReferencedProject(true));
+		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 
     // template<typename _TpAllocator>
@@ -3066,6 +3066,57 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//
 	//	typedef traits<M<int>>::type waldo;  // ERROR
 	public void testRegression_402498() throws Exception {
+		checkBindings();
+	}
+
+	//	template <typename Iterator>
+	//	struct iterator_traits {
+	//	    typedef typename Iterator::value_type value_type;
+	//	};
+	//
+	//	template <typename I>
+	//	struct normal;
+	//
+	//	template <typename T>
+	//	struct normal<T*> {
+	//	    typedef T value_type;
+	//	};
+	
+	//	template <class Iterator>
+	//	struct iterator_value {
+	//	    typedef typename iterator_traits<Iterator>::value_type type;
+	//	};
+	//
+	//	template <typename BidiIter, typename RegexTraits = typename iterator_value<BidiIter>::type>
+	//	struct regex_compiler;
+	//
+	//	typedef normal<char*> Iter;
+	//
+	//	typedef regex_compiler<Iter> sregex_compiler;
+	//
+	//	template<typename Char>
+	//	struct xpression_linker;
+	//
+	//	template<typename BidiIter>
+	//	struct matchable_ex {
+	//	    typedef BidiIter iterator_type;
+	//	    typedef typename iterator_value<iterator_type>::type char_type;
+	//
+	//	    void link(xpression_linker<char_type>);
+	//	};
+	//
+	//	template<typename BidiIter>
+	//	struct sub_match {
+	//	    typedef typename iterator_value<BidiIter>::type value_type;
+	//	    operator value_type() const;
+	//	};
+	//
+	//	void waldo(char);
+	//	        
+	//	void foo(sub_match<Iter> w) {
+	//	    waldo(w);
+	//	}
+	public void testRegression_516338() throws Exception {
 		checkBindings();
 	}
 }

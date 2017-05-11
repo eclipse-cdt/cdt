@@ -16,6 +16,7 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
@@ -49,6 +50,8 @@ import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -85,7 +88,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 import com.ibm.icu.text.MessageFormat;
@@ -216,14 +222,36 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if (element instanceof CSourceNotFoundElement)
 			return ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
 		String id = null;
-		if ( input != null ) {
-			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
-			id = CUIPlugin.EDITOR_ID;
-			if ( descriptor != null ) {
-				id = descriptor.getId();
+		if (input != null) {
+			IEditorDescriptor descriptor = null;
+			if (input instanceof IFileEditorInput) {
+				IFileEditorInput fileEditorInput = (IFileEditorInput) input;
+				IFile file = fileEditorInput.getFile();
+				descriptor = IDE.getDefaultEditor(file);
+			} else if (input instanceof IURIEditorInput) {
+				IURIEditorInput uriEditorInput = (IURIEditorInput) input;
+				URI uri = uriEditorInput.getURI();
+				try {
+					IFileStore fileStore = EFS.getStore(uri);
+					id = CDebugUIUtils.getEditorId(fileStore);
+				} catch (CoreException e) {
+					// fallback to default case
+				}
 			}
-			else if ( element instanceof ICBreakpoint ) {
+			if (id == null) {
+				if (descriptor == null) {
+					IEditorRegistry registry = PlatformUI.getWorkbench()
+							.getEditorRegistry();
+					descriptor = registry.getDefaultEditor(input.getName());
+				}
+
+				id = CUIPlugin.EDITOR_ID;
+				if (descriptor != null) {
+					id = descriptor.getId();
+				}
+			}
+
+			if (id == null && element instanceof ICBreakpoint) {
 				// There is no associated editor ID for this breakpoint, see if an alternative can be supplied from an adapter.
 				ISourcePresentation sourcePres = Platform.getAdapterManager().getAdapter(element, ISourcePresentation.class);
 				if ( sourcePres != null ) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2006 - 2015 Wind River Systems, Inc. and others.
+     Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
          Uwe Stieber (Wind River) - Bug 434937 - Releng: The Terminal Features have an incorrect license 
  -->
 <feature
-      id="org.eclipse.tm.terminal.connector.serial.feature"
+      id="org.eclipse.tm.terminal.connector.cdtserial.sdk.feature"
       label="%featureName"
-      version="4.2.1.qualifier"
+      version="4.3.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -34,17 +34,16 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.2"/>
    </url>
 
+   <includes
+         id="org.eclipse.tm.terminal.connector.cdtserial.feature"
+         version="0.0.0"/>
+
    <requires>
-      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.security" version="1.1.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.control.sdk.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tm.terminal.connector.serial"
+         id="org.eclipse.tm.terminal.connector.cdtserial.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

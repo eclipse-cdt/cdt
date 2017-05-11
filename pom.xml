@@ -28,6 +28,7 @@
         <module>plugins/org.eclipse.tm.terminal.connector.local</module>
         <module>plugins/org.eclipse.tm.terminal.connector.process</module>
         <module>plugins/org.eclipse.tm.terminal.connector.remote</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.cdtserial</module>
         <module>plugins/org.eclipse.tm.terminal.connector.serial</module>
         <module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
         <module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
@@ -36,6 +37,8 @@
         <module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.cdtserial.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>

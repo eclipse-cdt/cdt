@@ -15,6 +15,12 @@
    <feature url="features/org.eclipse.tm.terminal.connector.local.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.local.sdk.feature" version="0.0.0">
       <category name="terminal_main"/>
    </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.cdtserial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.cdtserial.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.cdtserial.sdk.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
    <feature url="features/org.eclipse.tm.terminal.connector.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.serial.feature" version="0.0.0">
       <category name="terminal_main"/>
    </feature>

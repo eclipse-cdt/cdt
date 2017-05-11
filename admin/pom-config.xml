@@ -37,8 +37,8 @@
     
     <properties>
         <!-- Define version id's to be used in the plugins section -->
-        <tycho-version>0.22.0</tycho-version>
-        <tycho-extras-version>0.22.0</tycho-extras-version>
+        <tycho-version>1.0.0</tycho-version>
+        <tycho-extras-version>1.0.0</tycho-extras-version>
         <maven-resources-version>2.7</maven-resources-version>
         <maven-antrun-version>1.8</maven-antrun-version>
         <gmaven-version>1.5</gmaven-version>

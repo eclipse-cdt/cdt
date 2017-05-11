@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 
@@ -22,6 +24,8 @@ import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointPropertyDialogAction;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -29,7 +33,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -53,12 +59,20 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.FileStoreEditorInput;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -347,4 +361,124 @@ public class CDebugUIUtils {
         return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick; 
     }
 
+	/**
+	 * Returns an editor id appropriate for opening the given file
+	 * store.
+	 * <p>
+	 * The editor descriptor is determined using a multi-step process. This
+	 * method will attempt to resolve the editor based on content-type bindings
+	 * as well as traditional name/extension bindings.
+	 * </p>
+	 * <ol>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the
+	 * default text editor is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param fileStore 
+	 *            the file store
+	 * @return the id of an editor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 * @todo The IDE class has this method as a private, copied here so that it can be
+	 * exposed. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
+	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
+	 */
+	@Deprecated
+	public static String getEditorId(IFileStore fileStore) throws PartInitException {
+		String name = fileStore.fetchInfo().getName();
+		if (name == null) {
+			throw new IllegalArgumentException();
+		}
+
+		IContentType contentType = null;
+		try {
+			InputStream is = null;
+			try {
+				is = fileStore.openInputStream(EFS.NONE, null);
+				contentType = Platform.getContentTypeManager().findContentTypeFor(is, name);
+			} finally {
+				if (is != null) {
+					is.close();
+				}
+			}
+		} catch (CoreException ex) {
+			// continue without content type
+		} catch (IOException ex) {
+			// continue without content type
+		}
+
+		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+
+		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
+		defaultEditor = IDE.overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType, defaultEditor);
+		return getEditorDescriptor(name, editorReg, defaultEditor).getId();
+	}
+
+	/**
+	 * Get the editor descriptor for a given name using the editorDescriptor
+	 * passed in as a default as a starting point.
+	 * 
+	 * @param name
+	 *            The name of the element to open.
+	 * @param editorReg
+	 *            The editor registry to do the lookups from.
+	 * @param defaultDescriptor
+	 *            IEditorDescriptor or <code>null</code>
+	 * @return IEditorDescriptor
+	 * @throws PartInitException
+	 *             if no valid editor can be found
+	 * 
+	 * @todo The IDE class has this method as a private, copied here so that it can be
+	 * exposed via getEditorId. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
+	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
+	 */
+	@Deprecated
+	private static IEditorDescriptor getEditorDescriptor(String name,
+			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor)
+			throws PartInitException {
+
+		if (defaultDescriptor != null) {
+			return defaultDescriptor;
+		}
+
+		IEditorDescriptor editorDesc = defaultDescriptor;
+
+		// next check the OS for in-place editor (OLE on Win32)
+		if (editorReg.isSystemInPlaceEditorAvailable(name)) {
+			editorDesc = editorReg
+					.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+		}
+
+		// next check with the OS for an external editor
+		if (editorDesc == null
+				&& editorReg.isSystemExternalEditorAvailable(name)) {
+			editorDesc = editorReg
+					.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		}
+
+		// next lookup the default text editor
+		if (editorDesc == null) {
+			editorDesc = editorReg
+					.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		}
+
+		// if no valid editor found, bail out
+		if (editorDesc == null) {
+			throw new PartInitException(
+					IDEWorkbenchMessages.IDE_noFileEditorFound);
+		}
+
+		return editorDesc;
+	}
+    
+    
 }

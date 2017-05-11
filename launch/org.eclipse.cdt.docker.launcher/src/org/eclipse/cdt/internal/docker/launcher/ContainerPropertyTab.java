@@ -503,7 +503,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	}
 
 	@Override
-	public void changeEvent(int type) {
+	public void changeEvent(IDockerConnection changedConnection, int type) {
 		String currUri = null;
 		int currIndex = 0;
 		connections = DockerConnectionManager.getInstance().getConnections();

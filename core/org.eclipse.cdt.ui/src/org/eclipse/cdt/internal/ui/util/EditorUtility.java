@@ -600,17 +600,11 @@ public class EditorUtility {
 			IFileEditorInput editorInput = (IFileEditorInput)input;
 			IFile file = editorInput.getFile();
 			// Try file specific editor.
-			try {
-				String editorID = file.getPersistentProperty(IDE.EDITOR_KEY);
-				if (editorID != null) {
-					IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-					IEditorDescriptor desc = registry.findEditor(editorID);
-					if (desc != null) {
-						return editorID;
-					}
-				}
-			} catch (CoreException e) {
-				// do nothing
+			IEditorDescriptor descriptor = IDE.getDefaultEditor(file);
+			if (descriptor != null) {
+				String editorID = descriptor.getId();
+				IDE.setDefaultEditor(file, editorID);
+				return editorID;
 			}
 			cElement = CoreModel.getDefault().create(file);
 		} else if (input instanceof ITranslationUnitEditorInput) {

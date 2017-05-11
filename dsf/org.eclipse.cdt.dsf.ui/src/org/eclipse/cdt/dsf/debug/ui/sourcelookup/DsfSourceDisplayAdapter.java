@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -237,14 +238,15 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 						editorId = presentation.getEditorId(editorInput, sourceElement);
 					}
 				} else if (sourceElement instanceof IFile) {
-					editorId = getEditorIdForFilename(((IFile) sourceElement).getName());
-					editorInput = new FileEditorInput((IFile) sourceElement);
+					IFile file = (IFile) sourceElement;
+					editorId = getEditorIdForFile(file);
+					editorInput = new FileEditorInput(file);
 				} else if (sourceElement instanceof ITranslationUnit) {
 					try {
 						URI uriLocation = ((ITranslationUnit) sourceElement).getLocationURI();
 						IFileStore fileStore = EFS.getStore(uriLocation);
 						editorInput = new FileStoreEditorInput(fileStore);
-						editorId = getEditorIdForFilename(fileStore.getName());
+						editorId = getEditorIdForFileStore(fileStore);
 					} catch (CoreException e) {
 						editorInput = new CSourceNotFoundEditorInput(new CSourceNotFoundElement(dmc,
 								fSourceLookup.getLaunchConfiguration(), fFrameData.fFile));
@@ -254,7 +256,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 					File file = ((LocalFileStorage) sourceElement).getFile();
 					IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(file);
 					editorInput = new FileStoreEditorInput(fileStore);
-					editorId = getEditorIdForFilename(file.getName());
+					editorId = getEditorIdForFileStore(fileStore); // NOT RIGHT?
 				}
 			}
 			result.setEditorInput(editorInput);
@@ -264,10 +266,19 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			return result;
 		}
 
-		private String getEditorIdForFilename(String filename) {
+		private String getEditorIdForFile(IFile file) {
 			try {
-				IEditorDescriptor descriptor = IDE.getEditorDescriptor(filename);
+				IEditorDescriptor descriptor = IDE.getEditorDescriptor(file);
 				return descriptor.getId();
+			} catch (PartInitException exc) {
+				DsfUIPlugin.log(exc);
+			}
+			return "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+		}
+
+		private String getEditorIdForFileStore(IFileStore fileStore) {
+			try {
+				return CDebugUIUtils.getEditorId(fileStore);
 			} catch (PartInitException exc) {
 				DsfUIPlugin.log(exc);
 			}

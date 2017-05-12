@@ -26,11 +26,11 @@ import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
  */
 public class BuildOutputStream extends ConsoleOutputStream implements IErrorMarkeredOutputStream {
 
-	final BuildConsoleStreamDecorator fStream;
+	final IBuildConsoleStreamDecorator fStream;
 	private BuildConsolePartitioner fPartitioner;
 
 	public BuildOutputStream(BuildConsolePartitioner partitioner,
-			BuildConsoleStreamDecorator stream) {
+			IBuildConsoleStreamDecorator stream) {
 		fPartitioner = partitioner;
 		if (fPartitioner.getProject() == null)
 			// Note: The global console log stream should have been

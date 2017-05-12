@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ * Jonah Graham (Kichwa Coders) - Significant rewrite, changed model (Bug 314428)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -18,10 +19,13 @@ import org.eclipse.jface.text.TypedRegion;
 public class BuildConsolePartition extends TypedRegion {
 
 	/** Associated stream */
-	private BuildConsoleStreamDecorator fStream;
+	private IBuildConsoleStreamDecorator fStream;
 
 	/** Marker associated with this partition if any */
 	private ProblemMarkerInfo fMarker;
+
+	/** Number of newlines in this region */
+	private int fNewlines;
 
 	/** Partition type */
 	public static final String CONSOLE_PARTITION_TYPE = CUIPlugin.getPluginId() + ".CONSOLE_PARTITION_TYPE"; //$NON-NLS-1$
@@ -31,16 +35,12 @@ public class BuildConsolePartition extends TypedRegion {
 	public static final String INFO_PARTITION_TYPE = CUIPlugin.getPluginId() + ".INFO_PARTITION_TYPE"; //$NON-NLS-1$
 	public static final String WARNING_PARTITION_TYPE = CUIPlugin.getPluginId() + ".WARNING_PARTITION_TYPE"; //$NON-NLS-1$
 
-	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type) {
-		super(offset, length, type);
-		fStream = stream;
-	}
-
-	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type,
-			ProblemMarkerInfo marker) {
+	public BuildConsolePartition(IBuildConsoleStreamDecorator stream, int offset, int length, String type,
+			ProblemMarkerInfo marker, int newlines) {
 		super(offset, length, type);
 		fStream = stream;
 		fMarker = marker;
+		fNewlines = newlines;
 	}
 
 	/**
@@ -67,64 +67,21 @@ public class BuildConsolePartition extends TypedRegion {
 	 *
 	 * @return this partition's stream
 	 */
-	public BuildConsoleStreamDecorator getStream() {
+	public IBuildConsoleStreamDecorator getStream() {
 		return fStream;
-	}
-
-	/**
-	 * Returns whether this partition is allowed to be combined with the given
-	 * partition.
-	 *
-	 * @param partition
-	 * @return boolean
-	 */
-	public boolean canBeCombinedWith(BuildConsolePartition partition) {
-		// Error partitions never can be combined together
-		String type = getType();
-		if (isProblemPartitionType(type)) {
-			return false;
-		}
-
-		int start = getOffset();
-		int end = start + getLength();
-		int otherStart = partition.getOffset();
-		int otherEnd = otherStart + partition.getLength();
-		boolean overlap = (otherStart >= start && otherStart <= end)
-				|| (start >= otherStart && start <= otherEnd);
-		return getStream() != null && overlap && type.equals(partition.getType())
-				&& getStream().equals(partition.getStream());
-	}
-
-	/**
-	 * Returns a new partition representing this and the given parition
-	 * combined.
-	 *
-	 * @param partition
-	 * @return partition
-	 */
-	public BuildConsolePartition combineWith(BuildConsolePartition partition) {
-		int start = getOffset();
-		int end = start + getLength();
-		int otherStart = partition.getOffset();
-		int otherEnd = otherStart + partition.getLength();
-		int theStart = Math.min(start, otherStart);
-		int theEnd = Math.max(end, otherEnd);
-		return createNewPartition(theStart, theEnd - theStart, CONSOLE_PARTITION_TYPE);
-	}
-
-	/**
-	 * Creates a new partition of this type with the given offset, and length.
-	 *
-	 * @param offset
-	 * @param length
-	 * @return a new partition with the given range
-	 */
-	public BuildConsolePartition createNewPartition(int offset, int length, String type) {
-		return new BuildConsolePartition(getStream(), offset, length, type, getMarker());
 	}
 
 	public ProblemMarkerInfo getMarker() {
 		return fMarker;
+	}
+
+	/**
+	 * Return number of newlines represented in this partition.
+	 *
+	 * @return number of newlines
+	 */
+	public int getNewlines() {
+		return fNewlines;
 	}
 
 	public static boolean isProblemPartitionType(String type) {

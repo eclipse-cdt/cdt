@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 QNX Software Systems and others.
+ * Copyright (c) 2002, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -280,8 +280,8 @@ public class BuildConsolePage extends Page
 		final Object source = event.getSource();
 		final String property = event.getProperty();
 
-		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStreamDecorator) {
-			BuildConsoleStreamDecorator stream = (BuildConsoleStreamDecorator)source;
+		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof IBuildConsoleStreamDecorator) {
+			IBuildConsoleStreamDecorator stream = (IBuildConsoleStreamDecorator)source;
 			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
 				Display display = getControl().getDisplay();
 				display.asyncExec(new Runnable() {

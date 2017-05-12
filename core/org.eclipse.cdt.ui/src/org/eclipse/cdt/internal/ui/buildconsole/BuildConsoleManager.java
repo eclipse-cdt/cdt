@@ -373,7 +373,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		});
 	}
 
-	public BuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {
+	public IBuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {
 		switch (type) {
 			case BUILD_STREAM_TYPE_ERROR :
 				return errorStream;

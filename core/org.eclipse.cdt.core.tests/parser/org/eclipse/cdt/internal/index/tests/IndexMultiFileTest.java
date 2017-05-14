@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+
 import junit.framework.TestSuite;
 
 /**
@@ -299,6 +307,48 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	  waldo(a);
 	//	}
 	public void testFriendFunctionDeclarationInNamespace_513681() throws Exception {
+		checkBindings();
+	}
+
+	// test.hpp
+	// #ifndef test_hpp
+	// #define test_hpp
+	//
+	// struct S {
+	//   const S* x;
+	// };
+	//
+	// struct Base {
+	//   static const S field;
+	// };
+	// struct Conjugate {
+	//   static const S field;
+	// };
+	//
+	// #endif
+
+	//test1.cpp
+	//# include "test.hpp"
+	//
+	// const S Base::field = {
+	//   &Conjugate::field
+	// };
+	//
+	// const S Conjugate::field = {
+	//   &Base::field
+	// };
+
+	//test2.cpp
+	// #include "test.hpp"
+	//
+	// struct Waldo {
+	//   static const S s;
+	// };
+	//
+	// const S Waldo::s = {
+	//   &Base::field
+	// };
+	public void testStackOverflow_514459() throws Exception {
 		checkBindings();
 	}
 }

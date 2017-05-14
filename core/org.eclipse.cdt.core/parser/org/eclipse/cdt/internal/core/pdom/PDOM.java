@@ -17,6 +17,7 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -396,6 +398,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private final IIndexLocationConverter locationConverter;
 	private final Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache;
 	private final HashMap<Object, Object> fResultCache= new HashMap<>();
+	private final Map<Long, WeakReference<IValue>> fVariableResultCache= new HashMap<>();
 	private List<IListener> listeners;
 	protected ChangeEvent fEvent= new ChangeEvent();
 
@@ -1494,6 +1497,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		synchronized (fResultCache) {
 			fResultCache.clear();
 		}
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.clear();
+		}
 	}
 
 	@Override
@@ -1541,6 +1547,28 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public void removeCachedResult(Object key) {
 		synchronized (fResultCache) {
 			fResultCache.remove(key);
+		}
+	}
+
+	public IValue getCachedVariableResult(Long key) {
+		synchronized (fVariableResultCache) {
+			WeakReference<IValue> variableResult = fVariableResultCache.get(key);
+			if (variableResult != null) {
+				return variableResult.get();
+			}
+			return null;
+		}
+	}
+
+	public void removeCachedVariableResult(Long key) {
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.remove(key);
+		}
+	}
+
+	public void putCachedVariableResult(Long key, IValue result) {
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.put(key, new WeakReference<IValue>(result));
 		}
 	}
 

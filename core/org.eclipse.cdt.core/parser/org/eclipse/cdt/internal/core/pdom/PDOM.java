@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -395,6 +396,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private final IIndexLocationConverter locationConverter;
 	private final Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache;
 	private final HashMap<Object, Object> fResultCache= new HashMap<>();
+	private final Map<Object, Object> fVariableResultCache= new WeakHashMap<>();
 	private List<IListener> listeners;
 	protected ChangeEvent fEvent= new ChangeEvent();
 
@@ -1493,6 +1495,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		synchronized (fResultCache) {
 			fResultCache.clear();
 		}
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.clear();
+		}
 	}
 
 	@Override
@@ -1540,6 +1545,24 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public void removeCachedResult(Object key) {
 		synchronized (fResultCache) {
 			fResultCache.remove(key);
+		}
+	}
+
+	public Object getCachedVariableResult(Object key) {
+		synchronized (fVariableResultCache) {
+			return fVariableResultCache.get(key);
+		}
+	}
+
+	public void removeCachedVariableResult(Object key) {
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.remove(key);
+		}
+	}
+
+	public void putCachedVariableResult(Object key, Object result) {
+		synchronized (fVariableResultCache) {
+			fVariableResultCache.put(key, result);
 		}
 	}
 

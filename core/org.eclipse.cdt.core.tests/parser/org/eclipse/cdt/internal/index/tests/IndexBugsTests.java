@@ -2615,4 +2615,58 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	// #ifndef test_hpp
+	// #define test_hpp
+	//
+	// struct S {
+	//   const S* x;
+	// };
+	//
+	// struct Base {
+	//   static const S field;
+	// };
+	// struct Conjugate {
+	//   static const S field;
+	// };
+	//
+	// #endif
+
+	//# include "test.hpp"
+	//
+	// const S Base::field = {
+	//   &Conjugate::field
+	// };
+	//
+	// const S Conjugate::field = {
+	//   &Base::field
+	// };
+
+	// #include "test.hpp"
+	//
+	// struct Waldo {
+	//   static const S s;
+	// };
+	//
+	// const S Waldo::s = {
+	//   &Base::field
+	// };
+	public void test514459StackOverflow() throws Exception {
+
+		String[] contents = getContentsForTest(3);
+		ICProject p1 = CProjectHelper.createCCProject("p1", "bin", IPDOMManager.ID_FAST_INDEXER);
+		try {
+			IProjectDescription desc = fCProject.getProject().getDescription();
+			desc.setReferencedProjects(new IProject[] { p1.getProject() });
+			fCProject.getProject().setDescription(desc,  npm());
+
+			TestSourceReader.createFile(p1.getProject(), "test.hpp", contents[0]);
+			TestSourceReader.createFile(fCProject.getProject(), "test1.cpp", contents[1]);
+			TestSourceReader.createFile(fCProject.getProject(), "test2.cpp", contents[2]);
+			CCorePlugin.getIndexManager().reindex(fCProject);
+			waitForIndexer(fCProject);
+		} finally {
+			CProjectHelper.delete(p1);
+		}
+	}
+
 }

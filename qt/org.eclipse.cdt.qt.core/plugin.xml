@@ -5,22 +5,6 @@
    <extension-point id="qtToolChainMapper" name="Qt ToolChain Mapper" schema="schema/qtToolChainMapper.exsd"/>
 
    <extension
-         point="org.eclipse.cdt.core.templates">
-      <template
-            filterPattern=".*g\+\+"
-            id="org.eclipse.cdt.qt.core.template.helloWorld.Qt5"
-            location="templates/project/Qt5/template.xml"
-            projectType="org.eclipse.cdt.build.makefile.projectType"/>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.templateAssociations">
-      <template id="org.eclipse.cdt.qt.core.template.helloWorld.Qt5">
-         <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
-         <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
-         <toolChain id="cdt.managedbuild.toolchain.llvm.clang.macosx.base"/>
-      </template>
-   </extension>
-   <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.eclipse.core.runtime.text"

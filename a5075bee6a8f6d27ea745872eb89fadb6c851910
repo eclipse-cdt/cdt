@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "479dfb6e_b32ff211",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexBugsTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2653,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-05-15T02:43:15Z",
+      "side": 1,
+      "message": "It would probably be easier to put this test into IndexMultiFileTest.",
+      "revId": "a5075bee6a8f6d27ea745872eb89fadb6c851910",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "479dfb6e_53db269b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-05-15T02:43:15Z",
+      "side": 1,
+      "message": "I don\u0027t think WeakHashMap will work for this use case.\n\nThe documentation of WeakHashMap says that it keeps weak references to the keys, and strong references to the values.\n\nIn this case, the keys are Long objects storing PDOM record numbers, and the values are IValue objects.\n\nSince the map keeps weak references to keys, in order for a mapping to remain in the map, code elsewhere needs to keep a strong reference to the Long object used as the key. However, that won\u0027t happen - no one keeps a strong reference to the Long object created in PDOMLinkage.loadValue().\n\nEven if we were to, say, store the Long object in PDOMCPPVariable to keep it alive, different PDOMCPPVariable instances will store different Long objects (since Long does not guarantee that every instance representing the same value is the same object), and only one of them (the first one to add the mapping to the cache, I guess) would keep the value alive, defeating the purpose of the cache.\n\nI think what would work instead, is a class that\u0027s similar to WeakHashMap, but that stores weak references to the values and strong references to the keys. That way, the value is kept alive as long as at least one PDOMCPPVariable refers to it.",
+      "revId": "a5075bee6a8f6d27ea745872eb89fadb6c851910",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

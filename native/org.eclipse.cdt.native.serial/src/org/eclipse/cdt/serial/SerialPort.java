@@ -15,8 +15,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.serial.internal.Messages;
@@ -37,6 +42,8 @@ public class SerialPort {
 	private long handle;
 
 	private static final String PORT_OPEN = Messages.getString("SerialPort.PortIsOpen"); //$NON-NLS-1$
+
+	private static final Map<String, LinkedList<WeakReference<SerialPort>>> openPorts = new HashMap<>();
 
 	static {
 		try {
@@ -251,6 +258,36 @@ public class SerialPort {
 	}
 
 	/**
+	 * Return an the SerialPort with the given name or null if it hasn't been allocated yet. This
+	 * would be used by components that need to pause and resume a serial port.
+	 * 
+	 * @param portName
+	 * @return
+	 * @since 1.1
+	 */
+	public static SerialPort get(String portName) {
+		synchronized (openPorts) {
+			LinkedList<WeakReference<SerialPort>> list = openPorts.get(portName);
+			if (list == null) {
+				return null;
+			}
+
+			Iterator<WeakReference<SerialPort>> i = list.iterator();
+			while (i.hasNext()) {
+				WeakReference<SerialPort> ref = i.next();
+				SerialPort port = ref.get();
+				if (port == null) {
+					i.remove();
+				} else {
+					return port;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	/**
 	 * Return the name for this serial port.
 	 * 
 	 * @return serial port name
@@ -270,6 +307,15 @@ public class SerialPort {
 	public void open() throws IOException {
 		handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
 		isOpen = true;
+
+		synchronized (openPorts) {
+			LinkedList<WeakReference<SerialPort>> list = openPorts.get(portName);
+			if (list == null) {
+				list = new LinkedList<>();
+				openPorts.put(portName, list);
+			}
+			list.addFirst(new WeakReference<>(this));
+		}
 	}
 
 	public synchronized void close() throws IOException {
@@ -277,6 +323,21 @@ public class SerialPort {
 			isOpen = false;
 			close0(handle);
 			handle = 0;
+
+			synchronized (openPorts) {
+				LinkedList<WeakReference<SerialPort>> list = openPorts.get(portName);
+				if (list != null) {
+					Iterator<WeakReference<SerialPort>> i = list.iterator();
+					while (i.hasNext()) {
+						WeakReference<SerialPort> ref = i.next();
+						SerialPort port = ref.get();
+						if (port == null || port.equals(this)) {
+							i.remove();
+						}
+					}
+				}
+			}
+
 			try {
 				// Sleep for a second since some serial ports take a while to actually close
 				Thread.sleep(500);

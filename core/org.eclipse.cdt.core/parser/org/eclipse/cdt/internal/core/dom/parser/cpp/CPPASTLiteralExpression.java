@@ -121,7 +121,13 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return fSuffix;
 	}
 
-	public void setSuffix(char[] suffix) {
+    public void addSuffix(char[] suffix) {
+    	setSuffix(suffix);
+    	// Make sure fValue reflects the added suffix.
+    	fValue = CharArrayUtils.concat(fValue, suffix);
+    }
+    
+	private void setSuffix(char[] suffix) {
 		this.fSuffix = suffix;
 	}
 

@@ -10,19 +10,14 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
-public class ReturnTypeDeductionTests extends AST2TestBase {
-	private BindingAssertionHelper getAssertionHelper() throws Exception {
-		return getAssertionHelper(ParserLanguage.CPP);
-	}
-	
+public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	private void assertReturnType(String functionName, IType returnType) throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPFunction f = bh.assertNonProblem(functionName);

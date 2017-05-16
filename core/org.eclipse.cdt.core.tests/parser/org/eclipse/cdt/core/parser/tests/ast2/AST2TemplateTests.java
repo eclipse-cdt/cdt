@@ -24,8 +24,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -103,11 +101,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
-import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import junit.framework.TestSuite;
 
-public class AST2TemplateTests extends AST2TestBase {
+public class AST2TemplateTests extends AST2CPPTestBase {
 
 	public AST2TemplateTests() {
 	}
@@ -118,19 +115,6 @@ public class AST2TemplateTests extends AST2TestBase {
 
 	public static TestSuite suite() {
 		return suite(AST2TemplateTests.class);
-	}
-
-	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
-		return parseAndCheckBindings(getAboveComment());
-	}
-
-	private IASTTranslationUnit parseAndCheckBindings(final String code) throws Exception {
-		return parseAndCheckBindings(code, CPP);
-	}
-
-	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
-		return new AST2AssertionHelper(code, true);
 	}
 
 	private NameCollector getNameCollector(IASTTranslationUnit ast) {

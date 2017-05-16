@@ -170,6 +170,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.util.ReturnStatementVisitor;
 import org.eclipse.cdt.core.index.IIndex;
@@ -195,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
@@ -1887,10 +1889,17 @@ public class CPPVisitor extends ASTQueries {
 	public static IType createType(final ICPPASTParameterDeclaration pdecl, boolean forFuncType) {
 		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
 		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
-		IType pt = createType(pDeclSpec);
-		if (pDtor != null) {
-			pt = createType(pt, pDtor);
+		IType pt;
+		PlaceholderKind placeholder = usesAuto(pDeclSpec);
+		if (placeholder != null) {
+			pt = createAutoType(pDeclSpec, pDtor, 0, placeholder);
+		} else {
+			pt = createType(pDeclSpec);
+			if (pDtor != null) {
+				pt = createType(pt, pDtor);
+			}
 		}
+		
 		pt= adjustParameterType(pt, forFuncType);
 
 		if (pDtor != null && findInnermostDeclarator(pDtor).declaresParameterPack()) {
@@ -2118,6 +2127,40 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
+	private static IType createAutoParameterType(IASTDeclSpecifier declSpec, IASTDeclarator declarator,
+			ICPPASTParameterDeclaration declaration, PlaceholderKind placeholder) {
+		// decltype(auto) is not allowed in parameters.
+		if (placeholder == PlaceholderKind.DecltypeAuto) {
+			return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+		}
+		
+		// In C++14, auto is only allowed in lambda parameters.
+		// In the Concepts TS (not implemented yet), this restriction is removed.
+		ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) declaration.getParent();
+		if (functionDeclarator.getParent() instanceof ICPPASTLambdaExpression) {
+			ICPPASTLambdaExpression lambda = (ICPPASTLambdaExpression) functionDeclarator.getParent();
+			CPPClosureType closure = (CPPClosureType) lambda.getExpressionType();
+			ICPPTemplateParameter[] templateParameters = closure.getInventedTemplateParameterList();
+			
+			// Find the invented template parameter corresponding to this 'auto'.
+			int templateParameterIndex = -1;
+			for (ICPPASTParameterDeclaration parameter : functionDeclarator.getParameters()) {
+				if (usesAuto(parameter.getDeclSpecifier()) != null) {
+					++templateParameterIndex;
+				}
+				if (parameter == declaration)
+					break;
+			}
+			if (templateParameterIndex >= 0 && templateParameterIndex < templateParameters.length) {
+				ICPPTemplateParameter templateParameter = templateParameters[templateParameterIndex];
+				if (templateParameter instanceof ICPPTemplateTypeParameter) {
+					return createType((ICPPTemplateTypeParameter) templateParameter, declarator);
+				}
+			}
+		}
+		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+	}
+	
 	private static IType createAutoType(final IASTDeclSpecifier declSpec, IASTDeclarator declarator, 
 			int flags, PlaceholderKind placeholderKind) {
 		IType cannotDeduce = placeholderKind == PlaceholderKind.Auto ? 
@@ -2133,6 +2176,10 @@ public class CPPVisitor extends ASTQueries {
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator, flags,
 						placeholderKind);
+			}
+			if (declarator.getParent() instanceof ICPPASTParameterDeclaration) {
+				return createAutoParameterType(declSpec, declarator, 
+						(ICPPASTParameterDeclaration) declarator.getParent(), placeholderKind);
 			}
 			ICPPASTInitializerClause autoInitClause= null;
 			IASTNode parent = declarator.getParent().getParent();

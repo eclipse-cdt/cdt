@@ -40,6 +40,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 
 	private IASTImplicitName fClosureTypeName;
 	private IASTImplicitName fImplicitFunctionCallName;
+	private IASTImplicitName fImplicitConversionOperatorName;
 
 	private ICPPEvaluation fEvaluation;
 
@@ -105,10 +106,32 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
     	}
 		return fImplicitFunctionCallName;
 	}
+	
+	private IASTImplicitName getConversionOperatorName() {
+		if (fImplicitConversionOperatorName == null) {
+			final CPPClosureType closureType = getExpressionType();
+			ICPPFunction conversionOperator = closureType.getConversionOperator();
+			if (conversionOperator != null) {
+				CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
+				name.setBinding(conversionOperator);
+				name.setIsDefinition(true);
+				
+				if (fBody instanceof ASTNode) {
+					name.setOffsetAndLength(((ASTNode) fBody).getOffset(), 1);
+				}
+				fImplicitConversionOperatorName = name;
+			}
+		}
+		return fImplicitConversionOperatorName;
+	}
 
     @Override
 	public IASTImplicitName[] getImplicitNames() {
-    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
+    	IASTImplicitName conversionOperatorName = getConversionOperatorName();
+    	if (conversionOperatorName == null) {
+    		return new IASTImplicitName[] { getFunctionCallOperatorName() };
+    	}
+    	return new IASTImplicitName[] { getFunctionCallOperatorName(), getConversionOperatorName() }; 
     }
 
 	@Override
@@ -138,8 +161,13 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		if (fDeclarator != null && !fDeclarator.accept(visitor))
 			return false;
 
-		if (visitor.shouldVisitImplicitNames && !getFunctionCallOperatorName().accept(visitor))
-			return false;
+		if (visitor.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(visitor)) {
+					return false;
+				}
+			}
+		}
 
 		if (fBody != null && !fBody.accept(visitor))
 			return false;

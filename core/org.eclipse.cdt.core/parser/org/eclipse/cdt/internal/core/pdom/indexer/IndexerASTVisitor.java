@@ -262,14 +262,16 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		final IASTName closureName = lambdaExpr.getClosureTypeName();
 		visit(closureName, fDefinitionName);
 
-		// Definition of call operator
-		IASTName callOp= lambdaExpr.getFunctionCallOperatorName();
-		visit(callOp, closureName);
-
 		IBinding owner = CPPVisitor.findDeclarationOwner(lambdaExpr, true);
 		boolean localToFunction = owner instanceof IFunction;
-		if (!localToFunction)
-			push(callOp, lambdaExpr); // Local closures don't appear in the index, so don't refer to them.
+		
+		// Definition of call operator and conversion operator (if applicable)
+		IASTName[] ops = lambdaExpr.getImplicitNames();
+		for (IASTName op : ops) {
+			visit(op, closureName);
+			if (!localToFunction)
+				push(op, lambdaExpr); // Local closures don't appear in the index, so don't refer to them.
+		}
 
 		ICPPASTFunctionDeclarator dtor = lambdaExpr.getDeclarator();
 		if (dtor != null && !dtor.accept(this))

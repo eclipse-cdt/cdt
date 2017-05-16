@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.VariableTemplateTests;
 import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
@@ -59,8 +60,10 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(AccessControlTests.suite());
 		suite.addTest(VariableReadWriteFlagsTest.suite());
 		suite.addTest(AST2CPPAttributeTests.suite());
+		// C++14 tests
 		suite.addTest(VariableTemplateTests.suite());
 		suite.addTestSuite(ReturnTypeDeductionTests.class);
+		suite.addTestSuite(GenericLambdaTests.class);
 		return suite;
 	}
 }

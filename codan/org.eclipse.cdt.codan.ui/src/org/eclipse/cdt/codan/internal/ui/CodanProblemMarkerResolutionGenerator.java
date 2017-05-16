@@ -31,9 +31,11 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
 public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
+	private static final String QUICKFIX_SUPPRESS = "org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixSuppressProblem"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
 	private static final Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
 	private static boolean resolutionsLoaded;
+	private static IMarkerResolution suppressMarkerResolution;
 
 	static class ConditionalResolution {
 		IMarkerResolution res;
@@ -55,8 +57,9 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 			return new IMarkerResolution[0];
 		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 		Collection<ConditionalResolution> collection = resolutions.get(id);
+		ArrayList<IMarkerResolution> list = new ArrayList<IMarkerResolution>();
+		list.add(suppressMarkerResolution);
 		if (collection != null) {
-			ArrayList<IMarkerResolution> list = new ArrayList<IMarkerResolution>();
 			for (Iterator<ConditionalResolution> iterator = collection.iterator(); iterator.hasNext();) {
 				ConditionalResolution res = iterator.next();
 				if (res.messagePattern != null) {
@@ -79,10 +82,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 				}
 				list.add(res.res);
 			}
-			if (list.size() > 0)
-				return list.toArray(new IMarkerResolution[list.size()]);
 		}
-		return new IMarkerResolution[0];
+		return list.toArray(new IMarkerResolution[list.size()]);
 	}
 
 	/**
@@ -152,8 +153,12 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 					return;
 				}
 			}
-			ConditionalResolution co = new ConditionalResolution(res, messagePattern);
-			addResolution(id, co);
+			if (configurationElement.getAttribute("class").equals(QUICKFIX_SUPPRESS)) { //$NON-NLS-1$
+				suppressMarkerResolution = res;
+			} else {
+				ConditionalResolution co = new ConditionalResolution(res, messagePattern);
+				addResolution(id, co);
+			}
 		}
 	}
 

@@ -25,7 +25,6 @@ import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibili
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -159,7 +158,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import junit.framework.TestSuite;
 
-public class AST2CPPTests extends AST2TestBase {
+public class AST2CPPTests extends AST2CPPTestBase {
 
 	public AST2CPPTests() {
 	}
@@ -170,19 +169,6 @@ public class AST2CPPTests extends AST2TestBase {
 
 	public static TestSuite suite() {
 		return suite(AST2CPPTests.class);
-	}
-
-	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
-		return parseAndCheckBindings(code, CPP);
-	}
-
-	protected IASTTranslationUnit parseAndCheckBindings() throws Exception {
-		String code= getAboveComment();
-		return parseAndCheckBindings(code);
-	}
-
-	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		return getAssertionHelper(CPP);
 	}
 
 	private void assertProblemBinding(int id, IBinding b) {

@@ -19,6 +19,7 @@
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="resolution"/>
+            <element ref="universalResolution"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -82,6 +83,26 @@ If this is not codan problem (for example gcc error), it can be ommitted. Messag
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="universalResolution">
+      <annotation>
+         <documentation>
+            A resolution that is applicable to all markers
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A class that implements IMarkerResolution, providing a fix applicable to any problem
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IMarkerResolution"/>
                </appinfo>
             </annotation>
          </attribute>

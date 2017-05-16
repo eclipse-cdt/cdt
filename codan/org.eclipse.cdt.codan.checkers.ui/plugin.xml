@@ -79,5 +79,8 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixFallthroughAttribute"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
        </resolution>
+       <universalResolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixSuppressProblem">
+       </universalResolution>
     </extension>
 </plugin>

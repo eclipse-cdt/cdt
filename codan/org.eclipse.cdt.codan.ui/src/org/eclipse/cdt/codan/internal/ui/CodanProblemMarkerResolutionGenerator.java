@@ -14,14 +14,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.ui.ICodanMarkerResolution;
+import org.eclipse.cdt.codan.ui.ICodanMarkerResolutionExtension;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -32,16 +34,68 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 
 public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
-	private static final Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
+	private static final Map<String, Collection<ConditionalResolution>> conditionalResolutions = new HashMap<>();
+	private static final List<IMarkerResolution> universalResolutions = new ArrayList<>();
 	private static boolean resolutionsLoaded;
 
 	static class ConditionalResolution {
-		IMarkerResolution res;
-		String messagePattern;
+		private final Pattern messagePattern;
+		private final IMarkerResolution dummy;
 
-		public ConditionalResolution(IMarkerResolution res, String messagePattern) {
-			this.res = res;
+		public static ConditionalResolution createFrom(IConfigurationElement configurationElement) {
+			String rawPattern = configurationElement.getAttribute("messagePattern"); //$NON-NLS-1$
+			try {
+				return new ConditionalResolution(configurationElement, rawPattern != null ? Pattern.compile(rawPattern) : null);
+			} catch (PatternSyntaxException e) {
+				CodanUIActivator.log("Invalid message pattern: " + rawPattern); //$NON-NLS-1$
+			}
+			return null;
+		}
+
+		private ConditionalResolution(IConfigurationElement resolutionElement, Pattern messagePattern) {
 			this.messagePattern = messagePattern;
+			this.dummy = instantiateResolution(resolutionElement);
+		}
+
+		public boolean isApplicableFor(IMarker marker) {
+			if (dummy instanceof ICodanMarkerResolution) {
+				if(!((ICodanMarkerResolution) dummy).isApplicable(marker)) {
+					return false;
+				}
+			}
+
+			return messagePattern == null || messagePattern.matcher(marker.getAttribute(IMarker.MESSAGE, "")).matches(); //$NON-NLS-1$
+		}
+
+		public IMarkerResolution getResolution() {
+			return dummy;
+		}
+
+		public Pattern getMessagePattern() {
+			return messagePattern;
+		}
+
+		public void setMarkerArguments(IMarker marker) {
+			if (messagePattern == null) {
+				return;
+			}
+			String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+			Matcher matcher = messagePattern.matcher(message);
+			int n = matcher.groupCount();
+			if (n == 0)
+				return;
+			String[] res = new String[n];
+			for (int i = 0; i < n; i++) {
+				res[i] = matcher.group(i + 1);
+			}
+			String[] old = CodanProblemMarker.getProblemArguments(marker);
+			if (!Arrays.deepEquals(res, old)) {
+				try {
+					CodanProblemMarker.setProblemArguments(marker, res);
+				} catch (CoreException e) {
+					CodanUIActivator.log(e);
+				}
+			}
 		}
 	}
 
@@ -51,61 +105,35 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 			readExtensions();
 		}
 		String id = marker.getAttribute(ICodanProblemMarker.ID, null);
-		if (id == null && resolutions.get(null) == null)
+		if (id == null && conditionalResolutions.get(id) == null)
 			return new IMarkerResolution[0];
-		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
-		Collection<ConditionalResolution> collection = resolutions.get(id);
-		if (collection != null) {
-			ArrayList<IMarkerResolution> list = new ArrayList<IMarkerResolution>();
-			for (Iterator<ConditionalResolution> iterator = collection.iterator(); iterator.hasNext();) {
-				ConditionalResolution res = iterator.next();
-				if (res.messagePattern != null) {
-					try {
-						Pattern pattern = Pattern.compile(res.messagePattern);
-						Matcher matcher = pattern.matcher(message);
-						if (!matcher.matches())
-							continue;
-						if (id == null) {
-							setArgumentsFromPattern(matcher, marker);
-						}
-					} catch (Exception e) {
-						CodanUIActivator.log("Cannot compile regex: " + res.messagePattern); //$NON-NLS-1$
-						continue;
-					}
-				}
-				if (res.res instanceof ICodanMarkerResolution) {
-					if (!((ICodanMarkerResolution) res.res).isApplicable(marker))
-						continue;
-				}
-				list.add(res.res);
-			}
-			if (list.size() > 0)
-				return list.toArray(new IMarkerResolution[list.size()]);
+
+		Collection<ConditionalResolution> candidates = conditionalResolutions.get(id);
+		ArrayList<IMarkerResolution> resolutions = new ArrayList<IMarkerResolution>();
+
+		if (candidates != null) {
+			candidates.stream()
+				.filter(candidate -> candidate.isApplicableFor(marker))
+				.peek(candidate -> candidate.setMarkerArguments(marker))
+				.map(ConditionalResolution::getResolution)
+				.forEach(resolutions::add);
 		}
-		return new IMarkerResolution[0];
+
+		universalResolutions.stream()
+			.filter(res -> !(res instanceof ICodanMarkerResolution) || ((ICodanMarkerResolution) res).isApplicable(marker))
+			.forEach(resolutions::add);
+
+		return resolutions.stream().peek(res -> {
+			if(res instanceof ICodanMarkerResolutionExtension) {
+				((ICodanMarkerResolutionExtension) res).prepareFor(marker);
+			}
+		}).toArray(IMarkerResolution[]::new);
 	}
 
 	/**
 	 * @param matcher
 	 * @param marker
 	 */
-	private void setArgumentsFromPattern(Matcher matcher, IMarker marker) {
-		int n = matcher.groupCount();
-		if (n == 0)
-			return;
-		String[] res = new String[n];
-		for (int i = 0; i < n; i++) {
-			res[i] = matcher.group(i + 1);
-		}
-		String[] old = CodanProblemMarker.getProblemArguments(marker);
-		if (!Arrays.deepEquals(res, old)) {
-			try {
-				CodanProblemMarker.setProblemArguments(marker, res);
-			} catch (CoreException e) {
-				CodanUIActivator.log(e);
-			}
-		}
-	}
 
 	private static synchronized void readExtensions() {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
@@ -127,7 +155,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 	 * @param configurationElement
 	 */
 	private static void processResolution(IConfigurationElement configurationElement) {
-		if (configurationElement.getName().equals("resolution")) { //$NON-NLS-1$
+		final String elementName = configurationElement.getName();
+		if (elementName.equals("resolution")) { //$NON-NLS-1$
 			String id = configurationElement.getAttribute("problemId"); //$NON-NLS-1$
 			String messagePattern = configurationElement.getAttribute("messagePattern"); //$NON-NLS-1$
 			if (id == null && messagePattern == null) {
@@ -135,38 +164,32 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 						+ " problemId is not defined"); //$NON-NLS-1$
 				return;
 			}
-			IMarkerResolution res;
-			try {
-				res = (IMarkerResolution) configurationElement.createExecutableExtension("class");//$NON-NLS-1$
-			} catch (CoreException e) {
-				CodanUIActivator.log(e);
+			ConditionalResolution candidate = ConditionalResolution.createFrom(configurationElement);
+			if (candidate == null) {
 				return;
 			}
-			if (messagePattern != null) {
-				try {
-					Pattern.compile(messagePattern);
-				} catch (Exception e) {
-					// bad pattern log and ignore
-					CodanUIActivator.log("Extension for " //$NON-NLS-1$
-							+ EXTENSION_POINT_NAME + " messagePattern is invalid: " + e.getMessage()); //$NON-NLS-1$
-					return;
-				}
-			}
-			ConditionalResolution co = new ConditionalResolution(res, messagePattern);
-			addResolution(id, co);
+			addResolution(id, candidate);
+		}
+		else if (elementName.equals("universalResolution")) { //$NON-NLS-1$
+			universalResolutions.add(instantiateResolution(configurationElement));
 		}
 	}
 
-	public static void addResolution(String id, IMarkerResolution res, String messagePattern) {
-		addResolution(id, new ConditionalResolution(res, messagePattern));
+	private static IMarkerResolution instantiateResolution(IConfigurationElement element) {
+		try {
+			return  (IMarkerResolution) element.createExecutableExtension("class");//$NON-NLS-1$
+		} catch (CoreException e) {
+			CodanUIActivator.log(e);
+		}
+		return null;
 	}
 
 	private static void addResolution(String id, ConditionalResolution res) {
-		Collection<ConditionalResolution> collection = resolutions.get(id);
-		if (collection == null) {
-			collection = new ArrayList<ConditionalResolution>();
-			resolutions.put(id, collection);
+		Collection<ConditionalResolution> candidates = conditionalResolutions.get(id);
+		if (candidates == null) {
+			candidates = new ArrayList<ConditionalResolution>();
+			conditionalResolutions.put(id, candidates);
 		}
-		collection.add(res);
+		candidates.add(res);
 	}
 }

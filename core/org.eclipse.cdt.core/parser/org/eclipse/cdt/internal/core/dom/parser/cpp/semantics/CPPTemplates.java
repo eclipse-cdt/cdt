@@ -954,7 +954,7 @@ public class CPPTemplates {
 
 			IValue value;
 			ICPPASTDeclarator decl = ASTQueries.findAncestorWithType(point, ICPPASTDeclarator.class);
-			if (((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition
+			if (point instanceof IASTName && ((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition
 					&& decl != null && decl.getInitializer() != null) {
 				// Explicit specialization.
 				value = SemanticUtil.getValueOfInitializer(decl.getInitializer(), type);

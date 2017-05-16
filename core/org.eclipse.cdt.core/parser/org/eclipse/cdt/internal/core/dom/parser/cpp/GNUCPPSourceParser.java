@@ -2005,7 +2005,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					return literalExprWithRange;
 				}
 				IToken opName = consume(IToken.tIDENTIFIER);
-				((CPPASTLiteralExpression) literalExprWithRange).setSuffix(opName.getCharImage());
+				((CPPASTLiteralExpression) literalExprWithRange).addSuffix(opName.getCharImage());
 				setRange(literalExprWithRange, offset, opName.getEndOffset());
 			}
 		}

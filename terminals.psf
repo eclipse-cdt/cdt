@@ -11,6 +11,9 @@
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.local.feature"/>
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.local.sdk.feature"/>
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,plugins/org.eclipse.tm.terminal.connector.process"/>
+<project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,plugins/org.eclipse.tm.terminal.connector.cdtserial"/>
+<project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.cdtserial.feature"/>
+<project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature"/>
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,plugins/org.eclipse.tm.terminal.connector.serial"/>
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.serial.feature"/>
 <project reference="1.0,https://git.eclipse.org/r/tm/org.eclipse.tm.terminal,master,features/org.eclipse.tm.terminal.connector.serial.sdk.feature"/>
@@ -53,6 +56,7 @@
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1429252903893_9" label="Terminal Connectors" name="Terminal Connectors">
 <item elementID="=org.eclipse.tm.terminal.connector.remote" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.tm.terminal.connector.cdtserial" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.tm.terminal.connector.serial" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.tm.terminal.connector.telnet" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.tm.terminal.connector.process" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -60,16 +64,18 @@
 <item elementID="=org.eclipse.tm.terminal.connector.local" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1429252914126_10" label="Terminal Connectors (Features)" name="Terminal Connectors (Features)">
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.telnet.sdk.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.ssh.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.ssh.sdk.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.remote.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.remote.sdk.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.cdtserial.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.serial.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.serial.sdk.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.local.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.local.sdk.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.telnet.feature" type="4"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.serial.sdk.feature" type="4"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.remote.sdk.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.tm.terminal.connector.telnet.sdk.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1424167614352_4" label="Terminal Control" name="Terminal Control">
 <item elementID="=org.eclipse.tm.terminal.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>

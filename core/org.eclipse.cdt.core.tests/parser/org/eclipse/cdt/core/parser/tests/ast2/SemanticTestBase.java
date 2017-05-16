@@ -66,10 +66,13 @@ public class SemanticTestBase extends BaseTestCase {
     }
     
     protected static class CommonCPPTypes {
+    	public static IType char_ = CPPBasicType.CHAR;
     	public static IType int_ = CPPBasicType.INT;
     	public static IType void_ = CPPBasicType.VOID;
+    	public static IType constChar = constOf(char_);
     	public static IType constInt = constOf(int_);
     	public static IType pointerToInt = pointerTo(int_);
+    	public static IType pointerToConstChar = pointerTo(constChar);
     	public static IType pointerToConstInt = pointerTo(constInt);
     	public static IType referenceToInt = referenceTo(int_);
     	public static IType referenceToConstInt = referenceTo(constInt);

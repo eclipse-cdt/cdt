@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -45,9 +47,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -65,6 +69,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	private final ICPPASTLambdaExpression fLambdaExpression;
 	private ICPPMethod[] fMethods;
 	private ClassScope fScope;
+	// Used for generic lambdas; null otherwise.
+	private ICPPTemplateParameter[] fInventedTemplateParameters;
 
 	public CPPClosureType(ICPPASTLambdaExpression lambdaExpr) {
 		fLambdaExpression= lambdaExpr;
@@ -111,17 +117,32 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		for (int i = 0; i < params.length; i++) {
 			params[i]= new CPPParameter(parameterTypes[i], i);
 		}
-		m= new CPPImplicitMethod(scope, OverloadableOperator.PAREN.toCharArray(), ft, params, false) {
-			@Override
-			public boolean isImplicit() { return false; }
-		};
+		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
+		if (isGeneric()) {
+			m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, operatorParensName,
+					ft, params, false) {
+				@Override
+				public boolean isImplicit() { return false; }
+			};
+		} else {
+			m= new CPPImplicitMethod(scope, operatorParensName, ft, params, false) {
+				@Override
+				public boolean isImplicit() { return false; }
+			};
+		}
 		result[4]= m;
 
 		// Conversion operator
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
 			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
-			m= new CPPImplicitMethod(scope, CPPASTConversionName.createName(conversionTarget, null), ft, params, false);
+			char[] conversionOperatorName = CPPASTConversionName.createName(conversionTarget, null);
+			if (isGeneric()) {
+				m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, 
+						conversionOperatorName, ft, params, false);
+			} else {
+				m= new CPPImplicitMethod(scope, conversionOperatorName, ft, params, false);
+			}
 			result[5]= m;
 		}
 		return result;
@@ -167,6 +188,38 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 	}
 
+	public boolean isGeneric() {
+		return getInventedTemplateParameterList().length > 0;
+	}
+	
+	public ICPPTemplateParameter[] getInventedTemplateParameterList() {
+		if (fInventedTemplateParameters == null) {
+			fInventedTemplateParameters = computeInventedTemplateParameterList();
+		}
+		return fInventedTemplateParameters;
+	}
+	
+	public ICPPTemplateParameter[] computeInventedTemplateParameterList() {
+		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
+		ICPPTemplateParameter[] result = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
+		if (lambdaDtor != null) {
+			// Create an invented template parameter for every "auto" in the lambda's
+			// function parameter list.
+			ICPPASTParameterDeclaration[] params = lambdaDtor.getParameters();
+			for (ICPPASTParameterDeclaration param : params) {
+				IASTDeclSpecifier declSpec = param.getDeclSpecifier();
+				if (declSpec instanceof IASTSimpleDeclSpecifier) {
+					if (((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
+						IASTName name = new CPPASTImplicitName(CharArrayUtils.EMPTY, fLambdaExpression);
+						boolean isPack = param.getDeclarator().declaresParameterPack();
+						result = ArrayUtil.append(result, new CPPTemplateTypeParameter(name, isPack));
+					}
+				}
+			}
+		}
+		return ArrayUtil.trim(result);
+	}
+	
 	private IType[] getParameterTypes() {
 		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
 		if (lambdaDtor != null) {

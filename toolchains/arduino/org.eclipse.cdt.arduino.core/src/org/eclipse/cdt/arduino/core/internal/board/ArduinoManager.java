@@ -200,11 +200,15 @@ public class ArduinoManager {
 			Path packagePath = ArduinoPreferences.getArduinoHome().resolve(Paths.get(url.getPath()).getFileName());
 			try {
 				Files.createDirectories(ArduinoPreferences.getArduinoHome());
-				try (InputStream in = url.openStream()) {
+				URLConnection connection = url.openConnection();
+				connection.setRequestProperty("User-Agent", //$NON-NLS-1$
+						"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2"); //$NON-NLS-1$
+				try (InputStream in = connection.getInputStream()) {
 					Files.copy(in, packagePath, StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (IOException e) {
-				throw Activator.coreException(String.format("Error loading %s", url.toString()), e); //$NON-NLS-1$
+				// Log and continue, URLs sometimes come and go
+				Activator.log(e);
 			}
 			sub.worked(1);
 		}

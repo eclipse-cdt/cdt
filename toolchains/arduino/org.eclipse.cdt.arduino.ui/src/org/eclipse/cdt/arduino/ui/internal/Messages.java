@@ -30,6 +30,13 @@ public class Messages extends NLS {
 	public static String ArduinoPreferencePage_desc;
 	public static String PlatformDetailsDialog_0;
 	public static String PlatformDetailsDialog_1;
+	public static String ArduinoTerminalSettingsPage_BoardName;
+	public static String ArduinoTerminalSettingsPage_SerialPort;
+	public static String ArduinoTerminalSettingsPage_BaudRate;
+	public static String ArduinoTerminalSettingsPage_DataSize;
+	public static String ArduinoTerminalSettingsPage_Parity;
+	public static String ArduinoTerminalSettingsPage_StopBits;
+	public static String ArduinoTerminalSettingsPage_UnknownPort;
 
 	static {
 		// initialize resource bundle

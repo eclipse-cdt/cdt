@@ -7,7 +7,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.launch;
 
+import java.io.IOException;
+
+import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
+import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -33,7 +37,14 @@ public class ArduinoLaunch extends TargetedLaunch {
 	public void start() {
 		this.wasOpen = remote.getRemoteConnection().isOpen();
 		if (wasOpen) {
-			remote.pause();
+			SerialPort port = SerialPort.get(remote.getPortName());
+			if (port != null) {
+				try {
+					port.pause();
+				} catch (IOException e) {
+					Activator.log(e);
+				}
+			}
 		}
 	}
 
@@ -41,7 +52,14 @@ public class ArduinoLaunch extends TargetedLaunch {
 	public void handleDebugEvents(DebugEvent[] events) {
 		super.handleDebugEvents(events);
 		if (isTerminated() && wasOpen) {
-			remote.resume();
+			SerialPort port = SerialPort.get(remote.getPortName());
+			if (port != null) {
+				try {
+					port.resume();
+				} catch (IOException e) {
+					Activator.log(e);
+				}
+			}
 			wasOpen = false;
 		}
 	}

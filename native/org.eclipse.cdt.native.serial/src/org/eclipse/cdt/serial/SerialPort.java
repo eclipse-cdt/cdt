@@ -365,7 +365,8 @@ public class SerialPort {
 	public void resume() throws IOException {
 		synchronized (pauseMutex) {
 			isPaused = false;
-			open();
+			handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
+			isOpen = true;
 			pauseMutex.notifyAll();
 		}
 	}

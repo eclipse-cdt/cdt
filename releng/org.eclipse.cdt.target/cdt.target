@@ -65,6 +65,11 @@
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/webtools/downloads/drops/R3.9.0/S-3.9.0M5-20170201000249/repository/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.tm.terminal.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/tm/terminal/updates/4.3milestones/"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>

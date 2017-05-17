@@ -174,4 +174,11 @@
             name="%arduinoDownloadsManager">
       </command>
    </extension>
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.cdt.arduino.ui.internal.terminal.ArduinoTerminalLauncher"
+            id="org.eclipse.cdt.arduino.terminalLauncher"
+            label="%arduinoTerminalLauncher">
+      </delegate>
+   </extension>
 </plugin>

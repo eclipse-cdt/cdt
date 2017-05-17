@@ -54,6 +54,5 @@ clean:
 secondary-outputs: $(TEST30_1_GNU_SO_CJPEG_OUTPUT_OUTPUTS)
 
 .PHONY: all clean dependents
-.SECONDARY:
 
 -include ../makefile.targets

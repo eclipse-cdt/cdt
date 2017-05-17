@@ -65,7 +65,6 @@ post-build:
 	-echo 'executing Post-Build Step'
 	-@echo ' '
 
-.PHONY: all clean dependents
-.SECONDARY: main-build pre-build post-build
+.PHONY: all clean dependents main-build pre-build post-build
 
 -include ../makefile.targets

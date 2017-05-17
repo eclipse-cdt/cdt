@@ -1510,8 +1510,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Add all the needed dummy and phony targets
-		buffer.append(".PHONY: all clean dependents").append(NEWLINE); //$NON-NLS-1$
-		buffer.append(".SECONDARY:"); //$NON-NLS-1$
+		buffer.append(".PHONY: all clean dependents"); //$NON-NLS-1$
 		if (prebuildStep.length() > 0) {
 			buffer.append(WHITESPACE).append(MAINBUILD).append(WHITESPACE).append(PREBUILD);
 		}

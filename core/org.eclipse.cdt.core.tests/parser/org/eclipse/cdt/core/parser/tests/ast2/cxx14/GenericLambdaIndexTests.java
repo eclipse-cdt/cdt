@@ -72,8 +72,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//	    waldo(foo(L(42, 'x')));
 	//	    waldo(bar(L(42, 'x', 42.0f)));
 	//	}
-	public void _testVariadicAutoParameter() throws Exception {
-		// TODO: To pass this test, we need to store lambda parameters in the index.
+	public void testVariadicAutoParameter() throws Exception {
 		checkBindings();
 	}
 	

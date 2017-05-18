@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -277,6 +278,10 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 				ASTQueries.findAncestorWithType(fDeclarations[0], IASTFunctionDeclarator.class);
 		if (decl == null)
 			return null;
+		if (decl.getParent() instanceof ICPPASTLambdaExpression) {
+			CPPClosureType closure = (CPPClosureType) ((ICPPASTLambdaExpression) decl.getParent()).getExpressionType();
+			return closure.getFunctionCallOperator();
+		}
 		IASTName name= decl.getName();
 		return name != null ? name.resolveBinding() : null;
 	}
@@ -299,9 +304,11 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
 		if (node instanceof IASTFunctionDeclarator) {
 			IASTName funcName= ASTQueries.findInnermostDeclarator((IASTFunctionDeclarator) node).getName();
-			IBinding b= funcName.resolvePreBinding();
-			if (b instanceof ICPPInternalFunction) {
-				return ((ICPPInternalFunction) b).resolveParameter(this);
+			if (funcName != null) {  // will be null for lambda declarator
+				IBinding b= funcName.resolvePreBinding();
+				if (b instanceof ICPPInternalFunction) {
+					return ((ICPPInternalFunction) b).resolveParameter(this);
+				}
 			}
 		}
 		return this;

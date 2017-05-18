@@ -22,6 +22,30 @@
       "revId": "d70f1ccdfc8608aae826a5882ac3208065f386e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87bd33cc_0574a7be",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/Database.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 113702
+      },
+      "writtenOn": "2017-05-18T13:34:22Z",
+      "side": 1,
+      "message": "That\u0027s true, although the size of all keys is negligible compared to the size of cached values (in our project, it\u0027s around 60.000 keys and some string values have length \u003e70.000 characters).\nI\u0027ve built a better caching mechanism (patch set 2) that also disposes the keys.",
+      "parentUuid": "87bd33cc_02cbc296",
+      "range": {
+        "startLine": 117,
+        "startChar": 49,
+        "endLine": 117,
+        "endChar": 60
+      },
+      "revId": "d70f1ccdfc8608aae826a5882ac3208065f386e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -163,6 +163,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -207,7 +208,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLabel;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLambdaExpressionParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
@@ -744,6 +744,15 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
+	private static int findParameterIndex(IASTParameterDeclaration param, IASTParameterDeclaration[] params) {
+		int i= 0;
+		for (; i < params.length; i++) {
+			if (params[i] == param)
+				return i;
+		}
+		return -1;
+	}
+	
 	private static IBinding createBinding(IASTDeclarator declarator) {
 		IASTNode parent = findOutermostDeclarator(declarator).getParent();
 		declarator= findInnermostDeclarator(declarator);
@@ -796,17 +805,18 @@ public class CPPVisitor extends ASTQueries {
 
 				final IASTNode dtorParent= findOutermostDeclarator(fdtor).getParent();
 				if (dtorParent instanceof ICPPASTLambdaExpression) {
-					return new CPPLambdaExpressionParameter(name);
+					CPPClosureType closure = (CPPClosureType) 
+							((ICPPASTLambdaExpression) dtorParent).getExpressionType();
+					ICPPParameter[] paramBindings = closure.getParameters();
+					int index = findParameterIndex(param, fdtor.getParameters());
+					if (index >= 0 && index < paramBindings.length) {
+						return paramBindings[index];
+					}
 				}
 
 				if (dtorParent instanceof IASTDeclaration) {
-					IASTParameterDeclaration[] params = fdtor.getParameters();
-					int i= 0;
-					for (; i < params.length; i++) {
-						if (params[i] == param)
-							break;
-					}
-					return new CPPParameter(name, i);
+					int index = findParameterIndex(param, fdtor.getParameters());
+					return new CPPParameter(name, index);
 				}
 				return null;
 			} else if (parent instanceof ICPPASTTemplateDeclaration) {

@@ -67,6 +67,8 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPClosureType extends PlatformObject implements ICPPClassType, ICPPInternalBinding {
 	private final ICPPASTLambdaExpression fLambdaExpression;
+	private IType[] fParameterTypes;
+	private ICPPParameter[] fParameters;
 	private ICPPMethod[] fMethods;
 	private ClassScope fScope;
 	// Used for generic lambdas; null otherwise.
@@ -113,10 +115,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		final IType[] parameterTypes= getParameterTypes();
 		ft= new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
 
-		ICPPParameter[] params = new ICPPParameter[parameterTypes.length];
-		for (int i = 0; i < params.length; i++) {
-			params[i]= new CPPParameter(parameterTypes[i], i);
-		}
+		ICPPParameter[] params = getParameters();
 		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
 		if (isGeneric()) {
 			m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, operatorParensName,
@@ -136,7 +135,10 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
 			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
-			char[] conversionOperatorName = CPPASTConversionName.createName(conversionTarget, null);
+            // Calling CPPASTConversionName.createName(IType) would try to stringize the type to
+            // construct a name, which is unnecessary work (not to mention prone to recursion with
+            // dependent types). Since the name doesn't matter anyways, just make one up.
+            char[] conversionOperatorName = CPPASTConversionName.createName("__fptr");  //$NON-NLS-1$
 			if (isGeneric()) {
 				ICPPTemplateParameter[] templateParams = getInventedTemplateParameterList();
 				// Clone the template parameters, since they are used by the function call operator,
@@ -236,11 +238,32 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	}
 	
 	private IType[] getParameterTypes() {
-		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
-		if (lambdaDtor != null) {
-			return CPPVisitor.createParameterTypes(lambdaDtor);
+		if (fParameterTypes == null) {
+			ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
+			if (lambdaDtor != null) {
+				fParameterTypes = CPPVisitor.createParameterTypes(lambdaDtor);
+			} else {
+				fParameterTypes = IType.EMPTY_TYPE_ARRAY;
+			}
 		}
-		return IType.EMPTY_TYPE_ARRAY;
+		return fParameterTypes;
+	}
+	
+	public ICPPParameter[] getParameters() {
+		if (fParameters == null) {
+			final IType[] parameterTypes= getParameterTypes();
+			fParameters = new ICPPParameter[parameterTypes.length];
+			ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
+			if (lambdaDtor != null) {
+				ICPPASTParameterDeclaration[] paramDecls = lambdaDtor.getParameters();
+				for (int i = 0; i < fParameters.length; i++) {
+					CPPParameter param = new CPPParameter(parameterTypes[i], i);
+					param.addDeclaration(paramDecls[i].getDeclarator().getName());
+					fParameters[i] = param;
+				}
+			}
+		}
+		return fParameters;
 	}
 
 	@Override

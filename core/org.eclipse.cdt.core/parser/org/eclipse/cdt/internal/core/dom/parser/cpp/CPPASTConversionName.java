@@ -109,6 +109,17 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		return fName;
 	}
 
+	public static char[] createName(String targetName) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(Keywords.cOPERATOR);
+		buf.append(' ');
+		buf.append(targetName);
+		final int len= buf.length();
+		char[] name= new char[len];
+		buf.getChars(0, len, name, 0);
+		return name;
+	}
+	
 	public static char[] createName(IType t, IASTNode typeId) {
 		StringBuilder buf= new StringBuilder();
 		buf.append(Keywords.cOPERATOR);

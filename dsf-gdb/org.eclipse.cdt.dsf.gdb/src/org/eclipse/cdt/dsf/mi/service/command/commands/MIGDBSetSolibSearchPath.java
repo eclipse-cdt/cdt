@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Ericsson and others.
+ * Copyright (c) 2009, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Ingenico	- solib-search-path with space fails (Bug 516227)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -23,9 +24,12 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet
      * @since 1.1
      */
 	public MIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
-		super(ctx, null);
-		// Overload the parameter
-		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
+		super(ctx,
+			new String[] {"solib-search-path", concat(paths, System.getProperty("path.separator", ":"))}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			x-> new MINoChangeAdjustable(x));
+	}
+
+	private static String concat(String[] paths, String sep) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < paths.length; i++) {
 			if (buffer.length() == 0) {
@@ -34,7 +38,7 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet
 				buffer.append(sep).append(paths[i]);
 			}
 		}
-		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
-		setParameters(p);
+
+		return buffer.toString();
 	}
 }

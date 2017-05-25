@@ -112,6 +112,10 @@ public class LaunchBarControl implements ILaunchBarListener {
 	}
 
 	private void createTargetSelector() {
+		if (container.isDisposed()) {
+			return;
+		}
+
 		onLabel = new Label(container, SWT.NONE);
 		onLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		onLabel.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$

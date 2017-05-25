@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_cd430915",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-05-25T06:05:25Z",
+      "side": 1,
+      "message": "Yes, I think this will work, thanks!\n\nA couple of questions:\n\n  1) Should we periodically iterate over the map and\n     remove mappings where the value has become null?\n\n  2) Is there any reason to prefer making the key and\n     value types Object and Object, instead of Long\n     and IValue? Perhaps the idea is that later, this\n     cache can be re-used for other purposes besides\n     storing values? (In that case, could we name it\n     something more general, like fWeakResultCache?)",
+      "range": {
+        "startLine": 401,
+        "startChar": 1,
+        "endLine": 401,
+        "endChar": 8
+      },
+      "revId": "2cdde372a1454b8857d24975387c601a94b36202",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

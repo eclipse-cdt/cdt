@@ -595,6 +595,9 @@
 							<goal>eclipse-run</goal>
 						</goals>
 						<phase>compile</phase>
+						<configuration>
+							<executionEnvironment>JavaSE-1.8</executionEnvironment>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

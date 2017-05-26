@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_d6c8fa4c",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/Startup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-05-26T13:55:46Z",
+      "side": 1,
+      "message": "I think this needs to be on all windows. Otherwise, if I quit Eclipse with multiple windows opened, when it is restarted, only one of the window will have the listener (the one that has first focus).\n1. Open a source file in the first window\n2. Open a second window and open the same file\n3. Exit Eclipse (File \u003e Exit)\n4. Start it again\n5. Close the window that has first focus\n6. Start typing errors in the remaining window: they are not reported",
+      "revId": "ff4c986d5d3e363fbdfbbe7dfba9a264645454d9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

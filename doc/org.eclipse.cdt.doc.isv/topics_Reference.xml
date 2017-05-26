@@ -12,10 +12,6 @@
        	<topic label="org.eclipse.cdt.core.dom.ast.gnu" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/package-summary.html"/>
        	<topic label="org.eclipse.cdt.core.dom.ast.gnu.c" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/c/package-summary.html"/>
        	<topic label="org.eclipse.cdt.core.dom.ast.gnu.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/cpp/package-summary.html"/>
-       	<topic label="org.eclipse.cdt.debug.core.cdi" href="reference/api/org/eclipse/cdt/debug/core/cdi/package-summary.html"/>
-       	<topic label="org.eclipse.cdt.debug.core.cdi.event" href="reference/api/org/eclipse/cdt/debug/core/cdi/event/package-summary.html"/>
-       	<topic label="org.eclipse.cdt.debug.core.cdi.model" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/package-summary.html"/>
-       	<topic label="org.eclipse.cdt.debug.core.cdi.model.type" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/type/package-summary.html"/>
        	<topic label="org.eclipse.cdt.utils.pty" href="reference/api/org/eclipse/cdt/utils/pty/package-summary.html"/>
        	<topic label="org.eclipse.cdt.utils.spawner" href="reference/api/org/eclipse/cdt/utils/spawner/package-summary.html"/>
 	</topic>
@@ -36,7 +32,6 @@
        	<topic label="org.eclipse.cdt.core.templates" href="reference/extension-points/org_eclipse_cdt_core_templates.html"/>
        	<topic href="reference/extension-points/org_eclipse_cdt_debug_core_BreakpointActionType.html" label="org.eclipse.cdt.debug.core.BreakpointActionType"/>
        	<topic href="reference/extension-points/org_eclipse_cdt_debug_core_BreakpointExtension.html" label="org.eclipse.cdt.debug.core.BreakpointExtension"/>
-       	<topic label="org.eclipse.cdt.debug.core.CDebugger" href="reference/extension-points/org_eclipse_cdt_debug_core_CDebugger.html"/>
 		<topic label="org.eclipse.cdt.make.core.MakeTargetBuilder" href="reference/extension-points/org_eclipse_cdt_make_core_MakeTargetBuilder.html"/>
 		<topic label="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile" href="reference/extension-points/org_eclipse_cdt_make_core_ScannerConfigurationDiscoveryProfile.html"/>
 		<topic label="org.eclipse.cdt.make.ui.DiscoveryProfilePage" href="reference/extension-points/org_eclipse_cdt_make_ui_DiscoveryProfilePage.html"/>

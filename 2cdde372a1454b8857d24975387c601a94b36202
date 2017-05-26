@@ -46,6 +46,30 @@
       "revId": "2cdde372a1454b8857d24975387c601a94b36202",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_13cb744e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-05-26T04:18:15Z",
+      "side": 1,
+      "message": "Yes, I think clearResultCache is a good place. Thanks!",
+      "parentUuid": "c7880b39_930cc44a",
+      "range": {
+        "startLine": 401,
+        "startChar": 1,
+        "endLine": 401,
+        "endChar": 8
+      },
+      "revId": "2cdde372a1454b8857d24975387c601a94b36202",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

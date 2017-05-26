@@ -22,6 +22,30 @@
       "revId": "2cdde372a1454b8857d24975387c601a94b36202",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_930cc44a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-05-26T03:32:14Z",
+      "side": 1,
+      "message": "\"1) Should we periodically iterate over the map and\n     remove mappings where the value has become null?\"\n\nI was thinking about that too. But I\u0027m not sure what\u0027s the best spot to do this without affecting performance too much. I was also worried that the IValue getting nulled out while in the StackOverflow situation that we\u0027re trying to prevent, but I can see that the stack still refers to the IValue so it will not be garbage collected.\n\nPerhaps when calling putCachedVariableResult? But this is a high traffic method and if the map is has a ton of non-null values, it will degenerate into iterating through the map every time. We could only do it when the map gets to a certain size, but again it could be contain a high number of non-null values and iterate through the map every time putCachedVariableResult is called.\n\nOn the other hand, clearResultCache is called pretty often: at the end of parsing a file (AbstractIndexerTask.parseFile) and releaseReadLock, for example.\nWhat do you think?\n\n\"2) Is there any reason to prefer making the key and\n     value types Object and Object, instead of Long\n     and IValue? Perhaps the idea is that later, this\n     cache can be re-used for other purposes besides\n     storing values? (In that case, could we name it\n     something more general, like fWeakResultCache?)\"\n\nI actually think it\u0027s better to make it IValue for now and generalize later if necessary.",
+      "parentUuid": "c7880b39_cd430915",
+      "range": {
+        "startLine": 401,
+        "startChar": 1,
+        "endLine": 401,
+        "endChar": 8
+      },
+      "revId": "2cdde372a1454b8857d24975387c601a94b36202",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

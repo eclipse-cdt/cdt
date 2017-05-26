@@ -1,0 +1,7 @@
+Verified+1: Hudson CI
+Code-Review+2: Alexander Kurtakov <akurtako@redhat.com>
+Submitted-by: Alexander Kurtakov <akurtako@redhat.com>
+Submitted-at: Fri, 26 May 2017 15:02:13 -0400
+Reviewed-on: https://git.eclipse.org/r/98074
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

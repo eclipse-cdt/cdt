@@ -1,0 +1,7 @@
+Verified+1: Hudson CI
+Code-Review+2: Marc-André Laperle <marc-andre.laperle@ericsson.com>
+Submitted-by: Alexander Kurtakov <akurtako@redhat.com>
+Submitted-at: Fri, 26 May 2017 09:01:24 -0400
+Reviewed-on: https://git.eclipse.org/r/98019
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

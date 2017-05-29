@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -36,16 +34,14 @@ public class Startup implements IStartup {
 		workbench.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
-				if (active == null)
-					return;  // The workbench is shutting down.
-				final IWorkbenchPage page = active.getActivePage();
-				CodanPartListener partListener = new CodanPartListener();
-				page.addPartListener(partListener);
-				// Check current open editors.
-				for (IEditorReference ref : page.getEditorReferences()) {
-					partListener.partOpened(ref);
+				// Install a part listener on currenly open workbench windows.
+				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+					CodanPartListener.installOnWindow(window);
 				}
+				
+				// Install a window listener which will be notified of
+				// new windows opening, and install a part listener on them.
+				workbench.addWindowListener(new CodanWindowListener());
 			}
 		});
 	}

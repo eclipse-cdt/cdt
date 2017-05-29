@@ -1484,7 +1484,7 @@ public class CPPTemplates {
 	public static IType instantiateType(final IType type, InstantiationContext context) {
 		if (context.getParameterMap() == null)
 			return type;
-
+		
 		TypeInstantiationRequest instantiationRequest = new TypeInstantiationRequest(type, context);
 		if (!instantiationsInProgress.get().add(instantiationRequest)) {
 			return type instanceof ICPPFunctionType ?
@@ -1573,21 +1573,6 @@ public class CPPTemplates {
 
 					if (newOwner != owner && newOwner instanceof ICPPClassSpecialization) {
 						return (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding, context.getPoint());
-					}
-				}
-
-				if (unwound instanceof ICPPTemplateInstance && !(unwound instanceof ICPPDeferredClassInstance)) {
-					// Argument of a class specialization can be a nested class subject to specialization.
-					final ICPPTemplateInstance classInstance = (ICPPTemplateInstance) unwound;
-					final IBinding origClass = classInstance.getSpecializedBinding();
-					if (origClass instanceof ICPPClassType) {
-						ICPPTemplateArgument[] args = classInstance.getTemplateArguments();
-						ICPPTemplateArgument[] newArgs = instantiateArguments(args, context, false);
-						if (newArgs != args) {
-							CPPTemplateParameterMap tparMap =
-									instantiateArgumentMap(classInstance.getTemplateParameterMap(), context);
-							return new CPPClassInstance((ICPPClassType) origClass, classInstance.getOwner(), tparMap, args);
-						}
 					}
 				}
 			}

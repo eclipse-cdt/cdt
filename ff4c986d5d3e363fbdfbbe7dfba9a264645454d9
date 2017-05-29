@@ -16,6 +16,24 @@
       "revId": "ff4c986d5d3e363fbdfbbe7dfba9a264645454d9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7c4ba502",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/Startup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-05-29T05:46:17Z",
+      "side": 1,
+      "message": "Good catch, thanks!",
+      "parentUuid": "c7880b39_d6c8fa4c",
+      "revId": "ff4c986d5d3e363fbdfbbe7dfba9a264645454d9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

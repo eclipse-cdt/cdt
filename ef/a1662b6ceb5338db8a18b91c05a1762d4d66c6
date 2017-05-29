@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: Jonah Graham <jonah@kichwacoders.com>
+Code-Review+1: Doug Schaefer <dschaefer@blackberry.com>
+Submitted-by: Jonah Graham <jonah@kichwacoders.com>
+Submitted-at: Mon, 29 May 2017 10:36:49 -0400
+Reviewed-on: https://git.eclipse.org/r/88596
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

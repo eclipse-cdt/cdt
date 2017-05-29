@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_a74336c7",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-05-29T13:31:13Z",
+      "side": 0,
+      "message": "\u003e Assuming the code in GDBLaunch is correct, I\u0027m OK with it. I was\n \u003e just wondering if you it dealt with prepends, appends, and removes\n \u003e correctly.\n\nIt behaves as correctly in this regard as the code it is replacing. Note that this line returns fully resolved variables, e.g. it will not remove one with IEnvironmentVariable.ENVVAR_REMOVE as they will have been filtered by the call.\n\nThe reality is that both versions are incorrect as, for example, an \u003cUNDEFINED\u003e variable in build setting will be undefined in the build, but still defined in the launch. However, this bug has been there for a long time (forever? I tested back to Helios and the bug was there in CDI and DSF debug as well as Run launch).\n\nAt the moment I am trying to resolve the regression in Neon. Ideally before Oxygen.",
+      "revId": "aab8c277ac393673ee566b790d766d87c566b77e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.StandardAttributes;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -31,8 +32,8 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 		RootProblemPreference map = (RootProblemPreference) problem.getPreference();
 		boolean enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX);
 		boolean last_case_enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_LAST_CASE);
-		ITranslationUnit tu = getTranslationUnitViaEditor(marker);
-		return enabled && tu.isCXXLanguage() && (!last_case_enabled || validPositionForFallthrough(marker));
+		ITranslationUnit tu = getTranslationUnitViaWorkspace(marker);
+		return enabled && tu != null && tu.isCXXLanguage() && (!last_case_enabled || validPositionForFallthrough(tu, marker));
 	}
 
 	@Override
@@ -53,9 +54,9 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 		}
 	}
 
-	private boolean validPositionForFallthrough(IMarker marker) {
+	private boolean validPositionForFallthrough(ITranslationUnit tu, IMarker marker) {
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = CModelUtil.toWorkingCopy(tu).getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTStatement beforeCaseEnd = getStmtBeforeCaseEnd(marker, ast);
 			if (getNextStatement(beforeCaseEnd) == null)
 				return false;

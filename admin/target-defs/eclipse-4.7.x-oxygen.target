@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Terminals Eclipse 4.7.x (Oxygen)" sequenceNumber="4">
+<?pde version="3.8"?><target name="Terminals Eclipse 4.7.x (Oxygen)" sequenceNumber="5">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
@@ -10,8 +10,8 @@
 <repository location="http://archive.eclipse.org/tm/updates/rxtx"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.test.feature.group" version="3.7.100.v20160912-1145"/>
-<unit id="org.eclipse.sdk.ide" version="4.7.0.I20160915-0230"/>
+<unit id="org.eclipse.sdk.ide" version="4.7.0.I20170524-2000"/>
+<unit id="org.eclipse.test.feature.group" version="3.7.200.v20170511-1043"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.7milestones"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
@@ -19,10 +19,10 @@
 <repository location="http://download.eclipse.org/tm/updates/4.1milestones"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.jgit.feature.group" version="4.4.1.201607150455-r"/>
-<unit id="org.eclipse.egit.feature.group" version="4.4.1.201607150455-r"/>
-<unit id="org.eclipse.cdt.sdk.feature.group" version="9.0.0.201606062011"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20160526-0356"/>
+<unit id="org.eclipse.cdt.sdk.feature.group" version="9.3.0.201705232201"/>
+<unit id="org.eclipse.egit.feature.group" version="4.8.0.201705170830-rc1"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170504-0807"/>
+<unit id="org.eclipse.jgit.feature.group" version="4.8.0.201705170830-rc1"/>
 <repository location="http://download.eclipse.org/staging/oxygen"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">

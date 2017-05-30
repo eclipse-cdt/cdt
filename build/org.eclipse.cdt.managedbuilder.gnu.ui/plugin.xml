@@ -2064,7 +2064,91 @@
 			    </outputType>
                   </tool>                  
 
-               </toolChain>                                   
+               </toolChain>
+      <toolChain
+            archList="all"
+            configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.msys2.MSYS2EnvironmentVariableSupplier"
+            id="cdt.managedbuild.toolchain.gnu.msys2.base"
+            isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.msys2.MSYS2IsToolChainSupported"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
+            name="%ToolChainName.MSYS2"
+            osList="win32"
+            targetTool="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base;cdt.managedbuild.tool.gnu.c.linker.mingw.base;cdt.managedbuild.tool.gnu.archiver">
+         <targetPlatform
+               archList="all"
+               binaryParser="org.eclipse.cdt.core.PE"
+               id="org.eclipse.cdt.managedbuilder.gnu.ui.debug.platform.msys2"
+               isAbstract="false"
+               name="Debug Platform"
+               osList="win32"
+               superClass="%PlatformName.Dbg">
+         </targetPlatform>
+         <builder
+                        id="cdt.managedbuild.tool.gnu.builder.mingw.base"
+                        isAbstract="false"
+                        isVariableCaseSensitive="false"
+                        superClass="org.eclipse.cdt.build.core.internal.builder">
+                  </builder>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.mingw.base"
+					  superClass="cdt.managedbuild.tool.gnu.assembler">
+				  </tool> 		               		         
+			      <tool
+		    		  id="cdt.managedbuild.tool.gnu.archiver.mingw.base"
+			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			  <enablement 
+              	type="ALL">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+				  </tool>                 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.linker.mingw.base"
+                      name="%ToolName.linker.mingw.gnu.c"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+               <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+			  <outputType
+                   id="cdt.managedbuild.tool.gnu.c.linker.mingw.so.output.base"
+                   superClass="cdt.managedbuild.tool.gnu.c.linker.output.so"
+                   outputs="dll">
+			    </outputType>
+			  
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base"
+                      name="%ToolName.linker.mingw.gnu.cpp"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+               <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+			  	<outputType
+                   id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base"
+                   superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so"
+                   outputs="dll">
+			    </outputType>
+                  </tool> 
+      </toolChain>                                  
 
                <toolChain
                      archList="all"
@@ -3047,6 +3131,28 @@
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  </enablement>
 		</configuration>
+		<configuration
+            artifactExtension="exe"
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.msys2.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="dll"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="a"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+		</configuration>
 
       <projectType
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
@@ -3153,6 +3259,115 @@
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.mingw.exe.release"
 					  superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
+				  </tool>   
+               </toolChain>                                                     
+         </configuration>
+      </projectType>
+      <projectType
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
+            id="cdt.managedbuild.target.gnu.msys2.exe"
+            isAbstract="false"
+            isTest="false"
+            >                                  
+         <configuration
+               name="%ConfigName.Dbg"
+               cleanCommand="rm -rf"
+               id="cdt.managedbuild.config.gnu.msys2.exe.debug"
+               parent="cdt.managedbuild.config.gnu.msys2.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug">
+               <toolChain
+               		 superClass="cdt.managedbuild.toolchain.gnu.msys2.base"
+                     id="cdt.managedbuild.toolchain.gnu.msys2.exe.debug">
+                  <targetPlatform
+					  id="cdt.managedbuild.target.gnu.platform.msys2.exe.debug"
+					  superClass="cdt.managedbuild.target.gnu.platform.msys2.base">
+				  </targetPlatform>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.msys2.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.msys2.base">
+                      <option
+                          id="gnu.cpp.compiler.msys2.exe.debug.option.optimization.level"
+                          superClass="gnu.cpp.compiler.option.optimization.level">
+                      </option>
+                      <option
+						  id="gnu.cpp.compiler.msys2.exe.debug.option.debugging.level"
+                          superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.msys2.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.msys2.base">
+					  <option
+						  id="gnu.c.compiler.msys2.exe.debug.option.optimization.level"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+						  id="gnu.c.compiler.msys2.exe.debug.option.debugging.level"
+						  superClass="gnu.c.compiler.option.debugging.level">
+					  </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.linker.msys2.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.msys2.base">
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.linker.msys2.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.msys2.base">
+                  </tool>                  
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.msys2.exe.debug"
+					  superClass="cdt.managedbuild.tool.gnu.assembler.msys2.base">
+				  </tool>   
+               </toolChain>                                   
+         </configuration>
+         <configuration
+               name="%ConfigName.Rel"
+               cleanCommand="rm -rf"
+               id="cdt.managedbuild.config.gnu.msys2.exe.release"
+               parent="cdt.managedbuild.config.gnu.msys2.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release">
+               <toolChain
+                     superClass="cdt.managedbuild.toolchain.gnu.msys2.base"
+                     id="cdt.managedbuild.toolchain.gnu.msys2.exe.release">
+                  <targetPlatform
+					  id="cdt.managedbuild.target.gnu.platform.msys2.exe.release"
+					  superClass="cdt.managedbuild.target.gnu.platform.msys2.base">
+				  </targetPlatform>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.msys2.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.msys2.base">
+                      <option
+                          id="gnu.cpp.compiler.msys2.exe.release.option.optimization.level"
+                          superClass="gnu.cpp.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.cpp.compiler.msys2.exe.release.option.debugging.level"
+                          superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>                      
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.msys2.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.msys2.base">
+                      <option
+                          id="gnu.c.compiler.msys2.exe.release.option.optimization.level"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.msys2.exe.release.option.debugging.level"
+                          superClass="gnu.c.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.linker.msys2.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.msys2.base">
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.linker.msys2.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.msys2.base">
+                  </tool>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.msys2.exe.release"
+					  superClass="cdt.managedbuild.tool.gnu.assembler.msys2.base">
 				  </tool>   
                </toolChain>                                                     
          </configuration>

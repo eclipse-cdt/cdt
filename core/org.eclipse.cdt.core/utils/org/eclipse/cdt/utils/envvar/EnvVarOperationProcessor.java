@@ -51,16 +51,20 @@ public class EnvVarOperationProcessor {
 		case IEnvironmentVariable.ENVVAR_APPEND:{
 				String delimiter = added.getDelimiter();
 				return new EnvironmentVariable(name,
-						performAppend(initial.getValue(),added.getValue(),delimiter),
-//						IEnvironmentVariable.ENVVAR_APPEND,
-						delimiter);
+					performAppend(initial.getValue(), added.getValue(), delimiter),
+					initial.getOperation() == IEnvironmentVariable.ENVVAR_APPEND
+							? IEnvironmentVariable.ENVVAR_APPEND
+							: IEnvironmentVariable.ENVVAR_REPLACE,
+					delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_PREPEND:{
 				String delimiter = added.getDelimiter();
 				return new EnvironmentVariable(name,
-						performPrepend(initial.getValue(),added.getValue(),delimiter),
-//						IEnvironmentVariable.ENVVAR_PREPEND,
-						delimiter);
+					performPrepend(initial.getValue(), added.getValue(), delimiter),
+					initial.getOperation() == IEnvironmentVariable.ENVVAR_PREPEND
+							? IEnvironmentVariable.ENVVAR_PREPEND
+							: IEnvironmentVariable.ENVVAR_REPLACE,
+					delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_REPLACE:
 		default:
@@ -155,7 +159,7 @@ public class EnvVarOperationProcessor {
 	static public List<String> convertToList(String value, String delimiter){
 		if (value == null)
 			value = ""; //$NON-NLS-1$
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 
@@ -182,7 +186,7 @@ public class EnvVarOperationProcessor {
 	 * removes duplicates
 	 */
 	static public List<String> removeDuplicates(List<String> value, List<String> duplicates){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		Iterator<String> valueIter = value.iterator();
 		while(valueIter.hasNext()){
 			String curVal = valueIter.next();

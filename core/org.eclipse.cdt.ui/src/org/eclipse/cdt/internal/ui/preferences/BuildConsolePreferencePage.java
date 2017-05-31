@@ -166,7 +166,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		if(!prefs.contains(PREF_AUTO_OPEN_CONSOLE))
 			prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
 		if(!prefs.contains(PREF_CONSOLE_ON_TOP))
-			prefs.setDefault(PREF_CONSOLE_ON_TOP, false);
+			prefs.setDefault(PREF_CONSOLE_ON_TOP, true);
 		if(!prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
 		if(!prefs.contains(PREF_BUILDCONSOLE_LINES))

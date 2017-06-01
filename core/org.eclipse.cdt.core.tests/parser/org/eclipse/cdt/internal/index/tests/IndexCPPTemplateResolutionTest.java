@@ -2832,6 +2832,27 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testInfiniteRecursionMarshallingTemplateDefinition_439923() throws Exception {
 		checkBindings();
 	}
+	
+	//  template<typename T> struct Constraint {
+	//    typedef T Type;
+	//    static const int Scale = 1;
+	//  };
+	//
+	//  template<int N> struct Operations {
+	//    template<typename T> void operation(typename Constraint<T>::Type);
+	//    template<typename T> void value(T) {
+	//    }
+	//  };
+	//
+	//  template<> template<typename Q>
+	//  void Operations<4>::operation(typename Constraint<Q>::Type) {
+	//    value<Q>(Constraint<Q>::Scale);
+	//  }
+	
+	//	// empty source file
+	public void testInfiniteRecursion_516648() throws Exception {
+		checkBindings();
+	}
 
 	//	// Empty header file
 
@@ -3068,4 +3089,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testRegression_402498() throws Exception {
 		checkBindings();
 	}
+	
+	
 }

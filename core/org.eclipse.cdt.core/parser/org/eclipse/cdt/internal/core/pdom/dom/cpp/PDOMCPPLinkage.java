@@ -333,17 +333,42 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	class ConfigureFunctionSpecialization implements Runnable {
 		private final PDOMCPPFunctionSpecialization fSpec;
+		private final PDOMBinding fSpecialized;
+		private final ICPPFunctionType fType;
+		private final ICPPFunctionType fDeclaredType;
+		private final ICPPParameter[] fAstParams;
+		private final ICPPParameter[] fOrigAstParams;
+		private final IType[] fExceptionSpec;
 		private final ICPPExecution fFunctionBody;
 		
-		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec, IASTNode point) {
+		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec, 
+				PDOMBinding specialized, IASTNode point) {
 			fSpec = spec;
-			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
+			fSpecialized = specialized;
+			fType = original.getType();
+			fDeclaredType = original.getDeclaredType();
+			fAstParams = original.getParameters();
+			ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization) original).getSpecializedBinding();
+			fOrigAstParams = origAstFunc.getParameters();
+			if (original instanceof ICPPMethod && ((ICPPMethod) original).isImplicit()) {
+				// Don't store the exception specification, it is computed on demand.
+				fExceptionSpec = null;
+			} else {
+				fExceptionSpec = original.getExceptionSpecification();
+			}
+			if (!(original instanceof ICPPTemplateInstance)
+					|| ((ICPPTemplateInstance) original).isExplicitSpecialization()) {
+				fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
+			} else {
+				fFunctionBody = null;  // will be instantiated on request
+			}
 			postProcesses.add(this);
 		}
 
 		@Override
 		public void run() {
-			fSpec.initData(fFunctionBody);
+			fSpec.initData(fSpecialized, fType, fDeclaredType, fAstParams, fOrigAstParams, fExceptionSpec, 
+					fFunctionBody);
 		}
 	}
 	

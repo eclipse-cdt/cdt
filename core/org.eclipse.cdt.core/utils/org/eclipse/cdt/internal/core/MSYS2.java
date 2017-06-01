@@ -1,14 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2012, 2013 Andrew Gvozdev and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Andrew Gvozdev - Initial API and implementation
- *******************************************************************************/
 package org.eclipse.cdt.internal.core;
+
+/*******************************************************************************
+	 * Copyright (c) 2012, 2013 Andrew Gvozdev and others.
+	 * All rights reserved. This program and the accompanying materials
+	 * are made available under the terms of the Eclipse Public License v1.0
+	 * which accompanies this distribution, and is available at
+	 * http://www.eclipse.org/legal/epl-v10.html
+	 *
+	 * Contributors:
+	 *     Andrew Gvozdev - Initial API and implementation
+	 *******************************************************************************/
 
 import java.io.File;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * A collection of MinGW-related utility methods.
  */
-public class MinGW {
+public class MSYS2 {
 	public static final String ENV_MINGW_HOME = "MINGW_HOME"; //$NON-NLS-1$
 	public static final String ENV_MSYS_HOME = "MSYS_HOME"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
@@ -53,34 +54,67 @@ public class MinGW {
 	 */
 	private static String findMinGWRoot(String envPathValue, String envMinGWHomeValue) {
 		String rootValue = null;
-
-		// Check $MINGW_HOME
-		if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
-			IPath mingwBinDir = new Path(envMinGWHomeValue + "\\bin"); //$NON-NLS-1$
-			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
-			}
-		}
-
-		// Try the mingw directory in the platform install directory
-		// CDT distributions like Wascana may distribute MinGW like that
+		// Look in MSYS2
 		if (rootValue == null) {
-			IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
-			IPath mingwBinDir = installPath.append("mingw\\bin"); //$NON-NLS-1$
-			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
+			WindowsRegistry registry = WindowsRegistry.getRegistry();
+			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
+			String subkey;
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			String key32bit = null;
+			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
+				String compKey = uninstallKey + '\\' + subkey;
+				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if (on64bit) {
+					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
+						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+						if (gccFile.canExecute()) {
+							rootValue = mingwLocation;
+							break;
+						} else {
+							mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+							gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+							if (gccFile.canExecute()) {
+								rootValue = mingwLocation;
+								break;
+							}
+						}
+					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						key32bit = compKey;
+					}
+				} else {
+					if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						String mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+						if (gccFile.canExecute()) {
+							rootValue = mingwLocation;
+							break;
+						}
+					}
+				}
 			}
-		}
 
-		// Look in PATH values. Look for mingw32-gcc.exe or
-		// x86_64-w64-mingw32-gcc.exe
-		if (rootValue == null) {
-			rootValue = findMingwInPath(envPathValue);
+			if (on64bit && key32bit != null) {
+				String installLocation = registry.getCurrentUserValue(key32bit, "InstallLocation"); //$NON-NLS-1$
+				String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
+				File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+				if (gccFile.canExecute()) {
+					rootValue = mingwLocation;
+				} else {
+					mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
+					gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+					if (gccFile.canExecute()) {
+						rootValue = mingwLocation;
+					}
+				}
+			}
 		}
 
 		// Try the default MinGW install dir
 		if (rootValue == null) {
-			IPath mingwBinDir = new Path("C:\\MinGW"); //$NON-NLS-1$
+			IPath mingwBinDir = new Path("C:\\msys64\\mingw64"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
 				rootValue = mingwBinDir.toOSString();
 			}
@@ -127,36 +161,44 @@ public class MinGW {
 	private static String findMSysRoot(String envMinGWHomeValue) {
 		String msysHome = null;
 
-		// Look in the install location parent dir
-		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
-		IPath installMsysBin = installPath.append("msys\\bin"); //$NON-NLS-1$
-		if (installMsysBin.toFile().isDirectory()) {
-			msysHome = installMsysBin.removeLastSegments(1).toOSString();
-		}
-
-		// Look under $MINGW_HOME
+		// Try under MSYS2
 		if (msysHome == null) {
-			if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
-				IPath minGwMsysBin = new Path(envMinGWHomeValue + "\\msys\\1.0\\bin"); //$NON-NLS-1$
-				if (minGwMsysBin.toFile().isDirectory()) {
-					msysHome = minGwMsysBin.removeLastSegments(1).toOSString();
+			// Give preference to msys64 on 64-bit platforms and ignore 64 on
+			// 32-bit platforms
+			WindowsRegistry registry = WindowsRegistry.getRegistry();
+			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
+			String subkey;
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			String key32bit = null;
+			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
+				String compKey = uninstallKey + '\\' + subkey;
+				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if (on64bit) {
+					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						if (new File(home).isDirectory()) {
+							msysHome = home;
+							break;
+						}
+					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						key32bit = compKey;
+					}
+				} else {
+					if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
+						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
+						if (new File(home).isDirectory()) {
+							msysHome = home;
+							break;
+						}
+					}
 				}
 			}
-		}
 
-		// Try under default MinGW dir
-		if (msysHome == null) {
-			IPath minGwMsysBin = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$
-			if (minGwMsysBin.toFile().isDirectory()) {
-				msysHome = minGwMsysBin.removeLastSegments(1).toOSString();
-			}
-		}
-
-		// Try in default MSYS root folder
-		if (msysHome == null) {
-			IPath defaultMsysBin = new Path("C:\\msys\\1.0\\bin"); //$NON-NLS-1$
-			if (defaultMsysBin.toFile().isDirectory()) {
-				msysHome = defaultMsysBin.removeLastSegments(1).toOSString();
+			if (on64bit && key32bit != null) {
+				String home = registry.getCurrentUserValue(key32bit, "InstallLocation"); //$NON-NLS-1$
+				if (new File(home).isDirectory()) {
+					msysHome = home;
+				}
 			}
 		}
 		return msysHome;

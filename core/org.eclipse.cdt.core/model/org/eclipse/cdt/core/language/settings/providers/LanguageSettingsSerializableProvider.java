@@ -147,7 +147,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			List<? extends ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
-		CommandLauncherManager.getInstance().setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+		if (cfgDescription != null) {
+			CommandLauncherManager.getInstance().setLanguageSettingEntries(cfgDescription.getProjectDescription().getProject(), entries);
+		}
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,18 @@ import org.osgi.service.prefs.Preferences;
 public class ContainerCommandLauncher
 		implements ICommandLauncher, IErrorMessageHolder {
 
-	public final static String CONTAINER_BUILD_ENABLED = "org.eclipse.cdt.docker.launcher.containerbuild.property.enablement"; // $NON-NLS-0$
-	public final static String CONNECTION_ID = "org.eclipse.cdt.docker.launcher.containerbuild.property.connection"; // $NON-NLS-0$
-	public final static String IMAGE_ID = "org.eclipse.cdt.docker.launcher.containerbuild.property.image"; // $NON-NLS-0$
+	public final static String CONTAINER_BUILD_ENABLED = DockerLaunchUIPlugin.PLUGIN_ID
+			+ ".containerbuild.property.enablement"; //$NON-NLS-1$
+	public final static String CONNECTION_ID = DockerLaunchUIPlugin.PLUGIN_ID
+			+ ".containerbuild.property.connection"; //$NON-NLS-1$
+	public final static String IMAGE_ID = DockerLaunchUIPlugin.PLUGIN_ID
+			+ ".containerbuild.property.image"; //$NON-NLS-1$
+	public final static String VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
+			+ ".containerbuild.property.volumes"; //$NON-NLS-1$
+	public final static String SELECTED_VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
+			+ ".containerbuild.property.selectedvolumes"; //$NON-NLS-1$
+
+	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
 
 	private IProject fProject;
 	private Process fProcess;
@@ -189,6 +199,15 @@ public class ContainerCommandLauncher
 			return null;
 		}
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+
+		// Add any specified volumes to additional dir list
+		String selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
+		if (selectedVolumeString != null && !selectedVolumeString.isEmpty()) {
+			String[] selectedVolumes = selectedVolumeString
+					.split(VOLUME_SEPARATOR_REGEX);
+			additionalDirs.addAll(Arrays.asList(selectedVolumes));
+		}
+
 		String connectionName = props
 				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 		if (connectionName == null) {

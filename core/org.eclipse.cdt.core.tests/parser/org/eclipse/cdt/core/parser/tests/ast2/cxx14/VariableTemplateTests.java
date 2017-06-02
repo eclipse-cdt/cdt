@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -23,13 +22,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplateSpecialization;
 
 import junit.framework.TestSuite;
 
-public class VariableTemplateTests extends AST2TestBase {
+public class VariableTemplateTests extends AST2CPPTestBase {
 
 	public static TestSuite suite() {
 		return suite(VariableTemplateTests.class);
@@ -362,8 +361,13 @@ public class VariableTemplateTests extends AST2TestBase {
 		ICPPVariable waldo2 = ah.assertNonProblem("waldo2");
 		assertVariableValue(waldo2, 0);
 	}
-
-	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
-		return parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	
+	//	template <typename R>
+	//	auto L = []{ return R{}; };
+	//
+	//	decltype(L<int>()) waldo;
+	public void testLambdaValue_517670() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
 }

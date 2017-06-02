@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import org.eclipse.cdt.ui.CDTSharedImages;
@@ -67,6 +68,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	private Composite right;
 	private Button showSup;
 	private Label rightLabel;
+	private Button showPref;
 
 	public CWizardHandler h_selected;
 	private Label categorySelectedLabel;
@@ -147,6 +149,15 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 
 		// restore settings from preferences
 		showSup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
+		showPref = new Button(c, SWT.PUSH);
+		showPref.setText("Preference"); //$NON-NLS-1$
+		showPref.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), "org.eclipse.cdt.managedbuilder.ui.PreferredToolchainsTab", null, null) //$NON-NLS-1$
+				.open();
+			}
+		});
 	}
 
 	@Override

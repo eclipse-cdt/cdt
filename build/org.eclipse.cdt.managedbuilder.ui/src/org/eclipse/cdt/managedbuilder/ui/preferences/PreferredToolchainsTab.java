@@ -11,10 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.core.MinGW;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
@@ -25,12 +29,15 @@ import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
@@ -55,6 +62,8 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
     private Button pref0;
     
     private Label preferredTCsLabel;
+    
+    private static Combo comboMinGWChains;
 
 	@Override
 	public void createControls(Composite parent) {
@@ -94,7 +103,25 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         GridData gd = new GridData(GridData.CENTER);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
-
+        
+        comboMinGWChains = new Combo(c, SWT.READ_ONLY);
+        comboMinGWChains.setBounds(50, 50, 150, 65);
+        comboMinGWChains.setEnabled(false);
+        comboMinGWChains.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String minGwLocation = comboMinGWChains.getItem(comboMinGWChains.getSelectionIndex()).toString();
+				MinGW.changeMinGWDefaultLocation(minGwLocation);				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1 = new Button(c, SWT.PUSH);
         pref1.setText(Messages.PreferredToolchainsTab_1); 
@@ -140,6 +167,43 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         
         updatePreferredTCsLabel();
     }
+        
+    /**
+	 * @since 9.1
+	 */
+	public static void showMinGwToolchains(boolean wantToDisplay)
+	{
+        comboMinGWChains.setEnabled(wantToDisplay);
+        if(wantToDisplay)
+        {
+        	ArrayList<String> linksMinGWArray;
+    	    linksMinGWArray = MinGW.getAllMinGWHome();
+	        int size = linksMinGWArray.size();
+	        String[] linksMinGW = new String[size];
+	        for(int i =0; i< size; i++)
+	        {
+	        	linksMinGW[i] = linksMinGWArray.get(i);
+	        }
+	        comboMinGWChains.setItems(linksMinGW);
+	        String minGWLocation = Platform.getPreferencesService().getString(CCorePlugin.PLUGIN_ID,
+					CCorePreferenceConstants.MINGW_LOCATION,
+					null, null);
+	        if(minGWLocation != null)
+	        {
+	        	for(int i = 0; i< comboMinGWChains.getItemCount(); i++)
+	        	{
+	        		if(comboMinGWChains.getItem(i).equals(minGWLocation))
+	        		{
+	    		        comboMinGWChains.select(i);
+	    		        return;
+	        		}
+	        	}
+	        }
+	        else{
+		        comboMinGWChains.select(0);
+	        }
+        }
+	}
 
 	private void setPref(boolean set) {
 		if (h_selected == null || !h_selected.supportsPreferred()) 

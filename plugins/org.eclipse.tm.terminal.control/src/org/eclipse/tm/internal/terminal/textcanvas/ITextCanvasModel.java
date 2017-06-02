@@ -81,4 +81,15 @@ public interface ITextCanvasModel {
 	boolean hasLineSelection(int line);
 
 	String getSelectedText();
+
+	/**
+	 * Collect and return all text present in the model.
+	 *
+	 * <p>Individual lines of the returned text are separated by '\n'.
+	 *
+	 * <p>The method is primarily designed for test automation.
+	 *
+	 * @since 4.3
+	 */
+	String getAllText();
 }

@@ -141,6 +141,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.Recur
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplateSpecialization;
@@ -1639,6 +1640,10 @@ public class CPPTemplates {
 					case underlying_type: return TypeTraits.underlyingType(operand);
 					default:              return null;  // shouldn't happen
 				}
+			}
+			
+			if (type instanceof CPPClosureType) {
+				return ((CPPClosureType) type).instantiate(context);
 			}
 
 			return type;

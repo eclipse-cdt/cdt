@@ -67,7 +67,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPClosureType extends PlatformObject implements ICPPClassType, ICPPInternalBinding {
 	private final ICPPASTLambdaExpression fLambdaExpression;
-	private ICPPMethod[] fMethods;
+	protected ICPPMethod[] fMethods;
 	private ClassScope fScope;
 	// Used for generic lambdas; null otherwise.
 	private ICPPTemplateParameter[] fInventedTemplateParameters;
@@ -75,7 +75,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public CPPClosureType(ICPPASTLambdaExpression lambdaExpr) {
 		fLambdaExpression= lambdaExpr;
 	}
-
+	
 	private ICPPMethod[] createMethods() {
 		boolean needConversionOperator=
 			fLambdaExpression.getCaptureDefault() == CaptureDefault.UNSPECIFIED &&
@@ -427,6 +427,12 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 		throw new IllegalArgumentException(member.getName() + " is not a member of closure type '" //$NON-NLS-1$
 				+ fLambdaExpression.getRawSignature() + "'"); //$NON-NLS-1$
+	}
+	
+	// A lambda expression can appear in a dependent context, such as in the value of
+	// a variable template, so it needs to be instantiable.
+	public CPPClosureType instantiate(InstantiationContext context) {
+		return new CPPClosureSpecialization(fLambdaExpression, this, context);
 	}
 
 	private final class ClassScope implements ICPPClassScope {

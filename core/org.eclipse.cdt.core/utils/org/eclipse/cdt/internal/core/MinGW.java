@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -38,10 +39,12 @@ public class MinGW {
 	private static String envPathValueCached = null;
 	private static String envMinGWHomeValueCached = null;
 	private static String minGWLocation = null;
+	private static ArrayList<String> allMinGWLocations = null;
 	private static boolean isMinGWLocationCached = false;
 
 	private static String envMinGWHomeValueCached_msys = null;
 	private static String mSysLocation = null;
+	private static ArrayList<String> allmSysLocations = null;
 	private static boolean isMSysLocationCached = false;
 
 	private final static Map<String/* envPath */, String/* mingwLocation */> mingwLocationCache = Collections
@@ -51,35 +54,35 @@ public class MinGW {
 	 * @return The absolute path to MinGW root folder or {@code null} if not
 	 *         found
 	 */
-	private static String findMinGWRoot(String envPathValue, String envMinGWHomeValue) {
-		String rootValue = null;
+	private static ArrayList<String> findMinGWRoot(String envPathValue, String envMinGWHomeValue) {
+		ArrayList<String> rootValue = new ArrayList<String>();
 
 		// Check $MINGW_HOME
 		if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
 			IPath mingwBinDir = new Path(envMinGWHomeValue + "\\bin"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
+				rootValue.add(mingwBinDir.removeLastSegments(1).toOSString());
 			}
 		}
 
 		// Try the mingw directory in the platform install directory
 		// CDT distributions like Wascana may distribute MinGW like that
-		if (rootValue == null) {
+		{
 			IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 			IPath mingwBinDir = installPath.append("mingw\\bin"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
+				rootValue.add(mingwBinDir.removeLastSegments(1).toOSString());
 			}
 		}
 
 		// Look in PATH values. Look for mingw32-gcc.exe or
 		// x86_64-w64-mingw32-gcc.exe
-		if (rootValue == null) {
-			rootValue = findMingwInPath(envPathValue);
+		{
+			rootValue.add(findMingwInPath(envPathValue));
 		}
 
 		// Look in MSYS2
-		if (rootValue == null) {
+		{
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
 			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
 			String subkey;
@@ -94,13 +97,13 @@ public class MinGW {
 						String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
 						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 						if (gccFile.canExecute()) {
-							rootValue = mingwLocation;
+							rootValue.add(mingwLocation);
 							break;
 						} else {
 							mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
 							gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 							if (gccFile.canExecute()) {
-								rootValue = mingwLocation;
+								rootValue.add(mingwLocation);
 								break;
 							}
 						}
@@ -113,7 +116,7 @@ public class MinGW {
 						String mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
 						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 						if (gccFile.canExecute()) {
-							rootValue = mingwLocation;
+							rootValue.add(mingwLocation);
 							break;
 						}
 					}
@@ -125,22 +128,22 @@ public class MinGW {
 				String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
 				File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 				if (gccFile.canExecute()) {
-					rootValue = mingwLocation;
+					rootValue.add(mingwLocation);
 				} else {
 					mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
 					gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 					if (gccFile.canExecute()) {
-						rootValue = mingwLocation;
+						rootValue.add(mingwLocation);
 					}
 				}
 			}
 		}
 
 		// Try the default MinGW install dir
-		if (rootValue == null) {
+		{
 			IPath mingwBinDir = new Path("C:\\MinGW"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.toOSString();
+				rootValue.add(mingwBinDir.toOSString());
 			}
 		}
 
@@ -182,28 +185,30 @@ public class MinGW {
 		return mingwLocation;
 	}
 
-	private static String findMSysRoot(String envMinGWHomeValue) {
-		String msysHome = null;
+	private static ArrayList<String> findMSysRoot(ArrayList<String> envMinGWHomeValue) {
+		ArrayList<String> msysHome = new ArrayList<String>();
 
 		// Look in the install location parent dir
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		IPath installMsysBin = installPath.append("msys\\bin"); //$NON-NLS-1$
 		if (installMsysBin.toFile().isDirectory()) {
-			msysHome = installMsysBin.removeLastSegments(1).toOSString();
+			msysHome.add(installMsysBin.removeLastSegments(1).toOSString());
 		}
 
 		// Look under $MINGW_HOME
-		if (msysHome == null) {
-			if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
-				IPath minGwMsysBin = new Path(envMinGWHomeValue + "\\msys\\1.0\\bin"); //$NON-NLS-1$
-				if (minGwMsysBin.toFile().isDirectory()) {
-					msysHome = minGwMsysBin.removeLastSegments(1).toOSString();
+		{
+			if (allMinGWLocations.size() > 0) {
+				for (String string : envMinGWHomeValue) {
+					IPath minGwMsysBin = new Path(envMinGWHomeValue + "\\msys\\1.0\\bin"); //$NON-NLS-1$
+					if (minGwMsysBin.toFile().isDirectory()) {
+						msysHome.add(minGwMsysBin.removeLastSegments(1).toOSString());
+					}
 				}
 			}
 		}
 
 		// Try under MSYS2
-		if (msysHome == null) {
+		{
 			// Give preference to msys64 on 64-bit platforms and ignore 64 on
 			// 32-bit platforms
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
@@ -218,7 +223,7 @@ public class MinGW {
 					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
 						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 						if (new File(home).isDirectory()) {
-							msysHome = home;
+							msysHome.add(home);
 							break;
 						}
 					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
@@ -228,7 +233,7 @@ public class MinGW {
 					if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
 						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 						if (new File(home).isDirectory()) {
-							msysHome = home;
+							msysHome.add(home);
 							break;
 						}
 					}
@@ -238,24 +243,24 @@ public class MinGW {
 			if (on64bit && key32bit != null) {
 				String home = registry.getCurrentUserValue(key32bit, "InstallLocation"); //$NON-NLS-1$
 				if (new File(home).isDirectory()) {
-					msysHome = home;
+					msysHome.add(home);
 				}
 			}
 		}
 
 		// Try under default MinGW dir
-		if (msysHome == null) {
+		{
 			IPath minGwMsysBin = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$
 			if (minGwMsysBin.toFile().isDirectory()) {
-				msysHome = minGwMsysBin.removeLastSegments(1).toOSString();
+				msysHome.add(minGwMsysBin.removeLastSegments(1).toOSString());
 			}
 		}
 
 		// Try in default MSYS root folder
-		if (msysHome == null) {
+		{
 			IPath defaultMsysBin = new Path("C:\\msys\\1.0\\bin"); //$NON-NLS-1$
 			if (defaultMsysBin.toFile().isDirectory()) {
-				msysHome = defaultMsysBin.removeLastSegments(1).toOSString();
+				msysHome.add(defaultMsysBin.removeLastSegments(1).toOSString());
 			}
 		}
 		return msysHome;
@@ -272,10 +277,14 @@ public class MinGW {
 	 * @return MinGW root ("/") path in Windows format.
 	 */
 	public static String getMinGWHome() {
+		return minGWLocation;
+	}
+	
+	public static ArrayList<String> GetAllMinGWHome() {
 		if (!isWindowsPlatform) {
 			return null;
 		}
-
+		
 		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager()
 				.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
@@ -283,19 +292,20 @@ public class MinGW {
 				.getVariable(ENV_MINGW_HOME, (ICConfigurationDescription) null, true);
 		String envMinGWHomeValue = varMinGWHome != null ? varMinGWHome.getValue() : null;
 
-		// isMinGWLocationCached is used to figure fact of caching when all
-		// cached objects are null
 		if (isMinGWLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached)
 				&& CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached)) {
-			return minGWLocation;
+			return allMinGWLocations;
 		}
 
-		minGWLocation = findMinGWRoot(envPathValue, envMinGWHomeValue);
+		allMinGWLocations = findMinGWRoot(envPathValue, envMinGWHomeValue);
+		if(allMinGWLocations.size()>0)
+			minGWLocation = allMinGWLocations.get(0);
+		else minGWLocation = null;
 		envPathValueCached = envPathValue;
 		envMinGWHomeValueCached = envMinGWHomeValue;
 		isMinGWLocationCached = true;
 
-		return minGWLocation;
+		return allMinGWLocations;
 	}
 
 	/**
@@ -308,6 +318,10 @@ public class MinGW {
 	 * @return MSys root ("/") path in Windows format.
 	 */
 	public static String getMSysHome() {
+		return mSysLocation;
+	}
+	
+	public static ArrayList<String> getAllMsysHomes() {
 		if (!isWindowsPlatform) {
 			return null;
 		}
@@ -315,7 +329,8 @@ public class MinGW {
 		// Use $MSYS_HOME if defined
 		IEnvironmentVariable varMsysHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
 				.getVariable(ENV_MSYS_HOME, (ICConfigurationDescription) null, true);
-		String msysHomeValue = varMsysHome != null ? varMsysHome.getValue() : null;
+		ArrayList<String> msysHomeValue = new ArrayList<String>();
+		msysHomeValue.add(varMsysHome != null ? varMsysHome.getValue() : null);
 		if (msysHomeValue != null) {
 			return msysHomeValue;
 		}
@@ -325,14 +340,17 @@ public class MinGW {
 		// isMSysLocationCached is used to figure whether it was cached when all
 		// cached objects are null
 		if (isMSysLocationCached && CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached_msys)) {
-			return mSysLocation;
+			return allmSysLocations;
 		}
 
-		mSysLocation = findMSysRoot(envMinGWHomeValue);
+		allmSysLocations = findMSysRoot(allMinGWLocations);
+		if(allmSysLocations.size()>0)
+			mSysLocation = allmSysLocations.get(0);
+		else minGWLocation = null;
 		envMinGWHomeValueCached_msys = envMinGWHomeValue;
 		isMSysLocationCached = true;
 
-		return mSysLocation;
+		return allmSysLocations;
 	}
 
 	/**

@@ -117,4 +117,11 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(2, ProblemBindingChecker.ERR_ID_InvalidArguments);
 	}
+
+	//	template <typename> class Waldo {};
+	//	Waldo w;
+	public void testInvalidTypeError_486082() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(2, ProblemBindingChecker.ERR_ID_TypeResolutionProblem);
+	}
 }

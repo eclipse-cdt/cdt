@@ -143,6 +143,10 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								reportProblem(ERR_ID_InvalidTemplateArgumentsProblem, templateName, contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
+							if (id == IProblemBinding.SEMANTIC_INVALID_TYPE) {
+								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(), contextFlagsString);
+								return PROCESS_CONTINUE;
+							}
 							// From this point, we'll deal only with NAME_NOT_FOUND problems. 
 							// If it's something else continue because we don't want to give bad messages.
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {

@@ -64,7 +64,9 @@ import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * Dialog to select launch configuration(s)
+ * @deprecated See Bug 517722, Launch Groups are now part of Platform.
  */
+@Deprecated
 public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog implements ISelectionChangedListener {
 	private ViewerFilter[] fFilters = null;
 	private ISelection fSelection;

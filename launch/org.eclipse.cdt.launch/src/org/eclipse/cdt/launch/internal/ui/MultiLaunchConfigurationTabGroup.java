@@ -59,7 +59,9 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab group for Launch Group.
+ * @deprecated See Bug 517722, Launch Groups are now part of Platform.
  */
+@Deprecated
 public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		protected List<LaunchElement> input;

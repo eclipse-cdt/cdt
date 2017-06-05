@@ -49,7 +49,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Group Launch delegate. Launches each configuration in the user selected mode
+ * @deprecated See Bug 517722, Launch Groups are now part of Platform.
  */
+@Deprecated
 public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements
 		ILaunchConfigurationDelegate2 {
 	public static final String DEFAULT_MODE = "default"; //$NON-NLS-1$

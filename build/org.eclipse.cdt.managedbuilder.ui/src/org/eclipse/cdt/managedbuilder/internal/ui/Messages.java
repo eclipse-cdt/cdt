@@ -184,6 +184,7 @@ public class Messages extends NLS {
 	public static String PreferredToolchainsTab_1;
 	public static String PreferredToolchainsTab_2;
 	public static String PreferredToolchainsTab_3;
+	public static String PreferredToolchainsTab_4;
 	public static String PrefPage_NewCDTWizard_0;
 	public static String PrefPage_PropertyPage_0;
 	public static String PropertyMultiCfgTab_10;

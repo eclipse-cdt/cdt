@@ -42,6 +42,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.preferences.PreferredToolchainsTab;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
@@ -67,6 +68,8 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
@@ -420,6 +423,20 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+			table.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					if(table.getSelection()[0].getText().equals("MinGW GCC"))
+					{
+						PreferredToolchainsTab.showMinGwToolchains(true);
+					}
+					else
+					{
+						PreferredToolchainsTab.showMinGwToolchains(false);
+					}
+					
+				}
+			});
 			table.getAccessible().addAccessibleListener(
 					new AccessibleAdapter() {
 						@Override

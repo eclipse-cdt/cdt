@@ -80,6 +80,11 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 			return makeList(line);
 		}
 
+		// never process #undef, see Bug 517908
+		if (line.startsWith("#undef")) {
+			return null;
+		}
+		
 		// contribution of includes
 		if (line.equals("#include \"...\" search starts here:")) {
 			state = State.EXPECTING_LOCAL_INCLUDE;

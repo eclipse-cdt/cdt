@@ -373,12 +373,16 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.startupForLanguage(null);
 
 		detector.processLine(" "+loc+"/misplaced/include1");
+		detector.processLine("#undef BEFORE_INCLUDES");
 		detector.processLine("#include \"...\" search starts here:");
+		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_0");
 		detector.processLine(" "+loc+"/local/include");
 		detector.processLine("#include <...> search starts here:");
 		detector.processLine(" "+loc+"/usr/include");
 		detector.processLine(" "+loc+"/usr/include/../include2");
+		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_1");
 		detector.processLine(" "+loc+"/missing/folder");
+		detector.processLine("#undef IN_THE_MIDDLE_OF_INCLUDES_2");
 		detector.processLine(" "+loc+"/Library/Frameworks (framework directory)");
 		detector.processLine("End of search list.");
 		detector.processLine(" "+loc+"/misplaced/include2");
@@ -386,6 +390,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.processLine(" "+loc+"/System/Library/Frameworks");
 		detector.processLine("End of framework search list.");
 		detector.processLine(" "+loc+"/misplaced/include3");
+		detector.processLine("#undef AFTER_INCLUDES");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 

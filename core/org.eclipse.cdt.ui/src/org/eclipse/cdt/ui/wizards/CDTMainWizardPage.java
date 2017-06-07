@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import org.eclipse.cdt.ui.CDTSharedImages;
@@ -67,6 +68,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	private Composite right;
 	private Button showSup;
 	private Label rightLabel;
+	private Button showPref;
 
 	public CWizardHandler h_selected;
 	private Label categorySelectedLabel;
@@ -74,7 +76,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	/**
 	 * Creates a new project creation wizard page.
 	 *
-	 * @param pageName the name of this page
+	 * @param pageName
+	 *            the name of this page
 	 */
 	public CDTMainWizardPage(String pageName) {
 		super(pageName);
@@ -85,9 +88,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
-		createDynamicGroup((Composite)getControl());
-		switchTo(updateData(tree, right, showSup, CDTMainWizardPage.this, getWizard()),
-				getDescriptor(tree));
+		createDynamicGroup((Composite) getControl());
+		switchTo(updateData(tree, right, showSup, CDTMainWizardPage.this, getWizard()), getDescriptor(tree));
 
 		setPageComplete(validatePage());
 		setErrorMessage(null);
@@ -114,10 +116,12 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] tis = tree.getSelection();
-				if (tis == null || tis.length == 0) return;
-				switchTo((CWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(DESC));
+				if (tis == null || tis.length == 0)
+					return;
+				switchTo((CWizardHandler) tis[0].getData(), (EntryDescriptor) tis[0].getData(DESC));
 				setPageComplete(validatePage());
-			}});
+			}
+		});
 		tree.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
@@ -126,7 +130,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 						return;
 				}
 				e.result = Messages.CMainWizardPage_0;
-			}});
+			}
+		});
 		right = new Composite(c, SWT.NONE);
 		right.setLayoutData(new GridData(GridData.FILL_BOTH));
 		right.setLayout(new PageLayout());
@@ -143,10 +148,21 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 					h_selected.setSupportedOnly(showSup.getSelection());
 				switchTo(updateData(tree, right, showSup, CDTMainWizardPage.this, getWizard()),
 						getDescriptor(tree));
-			}});
+			}
+		});
 
 		// restore settings from preferences
 		showSup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
+		showPref = new Button(c, SWT.PUSH);
+		showPref.setText(Messages.CDTMainWizardPage_2);
+		showPref.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(parent.getShell(),
+						"org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard", null, null) //$NON-NLS-1$
+						.open();
+			}
+		});
 	}
 
 	@Override
@@ -159,11 +175,10 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	}
 
 	/**
-	 * Returns whether this page's controls currently all contain valid
-	 * values.
+	 * Returns whether this page's controls currently all contain valid values.
 	 *
 	 * @return <code>true</code> if all controls are valid, and
-	 *   <code>false</code> if at least one is invalid
+	 *         <code>false</code> if at least one is invalid
 	 */
 	@Override
 	protected boolean validatePage() {
@@ -181,7 +196,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		IProject handle = getProjectHandle();
 		if (handle.exists()) {
 			if (getWizard() instanceof IWizardWithMemory) {
-				IWizardWithMemory w = (IWizardWithMemory)getWizard();
+				IWizardWithMemory w = (IWizardWithMemory) getWizard();
 				if (w.getLastProjectName() != null && w.getLastProjectName().equals(getProjectName()))
 					bad = false;
 			}
@@ -206,8 +221,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 						if (f.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 							setErrorMessage(Messages.CMainWizardPage_DirReadOnlyError);
 							return false;
-						}
-						else
+						} else
 							setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING);
 					} else {
 						setErrorMessage(Messages.CMainWizardPage_6);
@@ -220,8 +234,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		}
 
 		if (!useDefaults()) {
-			IStatus locationStatus =
-					ResourcesPlugin.getWorkspace().validateProjectLocationURI(handle, getLocationURI());
+			IStatus locationStatus = ResourcesPlugin.getWorkspace().validateProjectLocationURI(handle,
+					getLocationURI());
 			if (!locationStatus.isOK()) {
 				setErrorMessage(locationStatus.getMessage());
 				return false;
@@ -267,14 +281,16 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		String savedParentLabel = getParentText(selectedItem);
 
 		tree.removeAll();
-		IExtensionPoint extensionPoint =
-				Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if (extensionPoint == null) return null;
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(EXTENSION_POINT_ID);
+		if (extensionPoint == null)
+			return null;
 		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions == null) return null;
+		if (extensions == null)
+			return null;
 
 		List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
-		for (int i = 0; i < extensions.length; ++i)	{
+		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				if (element.getName().equals(ELEMENT_NAME)) {
@@ -293,7 +309,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 				}
 			}
 		}
-		// If there is a EntryDescriptor which is default for category, make sure it
+		// If there is a EntryDescriptor which is default for category, make
+		// sure it
 		// is in the front of the list.
 		for (int i = 0; i < items.size(); ++i) {
 			EntryDescriptor ed = items.get(i);
@@ -344,7 +361,9 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 				target = findItem(tree, savedLabel, savedParentLabel);
 			}
 			if (target == null) {
-				// Default selection associated with "org.eclipse.cdt.build.core.buildArtefactType.exe" project type
+				// Default selection associated with
+				// "org.eclipse.cdt.build.core.buildArtefactType.exe" project
+				// type
 				target = findItem(tree, Messages.CDTMainWizardPage_DefaultProjectType,
 						Messages.CDTMainWizardPage_DefaultProjectCategory);
 				if (target == null) {
@@ -358,7 +377,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 					target = target.getItem(0);
 			}
 			tree.setSelection(target);
-			return (CWizardHandler)target.getData();
+			return (CWizardHandler) target.getData();
 		}
 		return null;
 	}
@@ -372,7 +391,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	private static TreeItem findItem(Tree tree, String label, String parentLabel) {
 		for (TreeItem item : tree.getItems()) {
 			TreeItem foundItem = findTreeItem(item, label, parentLabel);
-			if (foundItem!=null)
+			if (foundItem != null)
 				return foundItem;
 		}
 		return null;
@@ -384,15 +403,15 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 
 		for (TreeItem child : item.getItems()) {
 			TreeItem foundItem = findTreeItem(child, label, parentLabel);
-			if (foundItem!=null)
+			if (foundItem != null)
 				return foundItem;
 		}
 		return null;
 	}
 
 	private static void addItemsToTree(Tree tree, List<EntryDescriptor> items) {
-		//  Sorting is disabled because of users requests
-		//	Collections.sort(items, CDTListComparator.getInstance());
+		// Sorting is disabled because of users requests
+		// Collections.sort(items, CDTListComparator.getInstance());
 
 		ArrayList<TreeItem> placedTreeItemsList = new ArrayList<TreeItem>(items.size());
 		ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<EntryDescriptor>(items.size());
@@ -413,17 +432,20 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 			Iterator<EntryDescriptor> it2 = items.iterator();
 			while (it2.hasNext()) {
 				EntryDescriptor wd1 = it2.next();
-				if (wd1.getParentId() == null) continue;
+				if (wd1.getParentId() == null)
+					continue;
 				for (int i = 0; i < placedEntryDescriptorsList.size(); i++) {
 					EntryDescriptor wd2 = placedEntryDescriptorsList.get(i);
 					if (wd2.getId().equals(wd1.getParentId())) {
 						found = true;
 						wd1.setParentId(null);
 						CWizardHandler h = wd2.getHandler();
-						/* If neither wd1 itself, nor its parent (wd2) have a handler
-						 * associated with them, and the item is not a category,
-						 * then skip it. If it's category, then it's possible that
-						 * children will have a handler associated with them.
+						/*
+						 * If neither wd1 itself, nor its parent (wd2) have a
+						 * handler associated with them, and the item is not a
+						 * category, then skip it. If it's category, then it's
+						 * possible that children will have a handler associated
+						 * with them.
 						 */
 						if (h == null && wd1.getHandler() == null && !wd1.isCategory())
 							break;
@@ -432,7 +454,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 						wd1.setParent(wd2);
 						if (h != null) {
 							if (wd1.getHandler() == null && !wd1.isCategory())
-								wd1.setHandler((CWizardHandler)h.clone());
+								wd1.setHandler((CWizardHandler) h.clone());
 							if (!h.isApplicable(wd1))
 								break;
 						}
@@ -450,7 +472,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 				}
 			}
 			// repeat iterations until all items are placed.
-			if (!found) break;
+			if (!found)
+				break;
 		}
 		// orphan elements (with not-existing parentId) are ignored
 	}

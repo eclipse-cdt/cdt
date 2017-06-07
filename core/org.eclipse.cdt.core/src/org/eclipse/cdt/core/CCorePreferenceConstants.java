@@ -364,6 +364,12 @@ public class CCorePreferenceConstants {
 	 */
 	public static final boolean DEFAULT_PLACE_CONST_RIGHT_OF_TYPE = false;
 
+	/**
+	 * Use to display all the time the source not found editor
+	 * @since 6.3
+	 */
+	public static final String MINGW_LOCATION = CCorePlugin.PLUGIN_ID + ".mingwlocation"; //$NON-NLS-1$
+	
     /**
      * Returns the node in the preference in the given context.
      *

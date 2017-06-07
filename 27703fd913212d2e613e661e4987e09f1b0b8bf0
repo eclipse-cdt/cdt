@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_aec138cb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/preferences/PreferredToolchainsTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "Does perform defaults restore the MinGW default too?",
+      "range": {
+        "startLine": 292,
+        "startChar": 3,
+        "endLine": 295,
+        "endChar": 2
+      },
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_0e76cc49",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/MinGW.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "Is getAllMinGWHome guaranteed to return a collection with at least one element?",
+      "range": {
+        "startLine": 287,
+        "startChar": 15,
+        "endLine": 287,
+        "endChar": 34
+      },
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_ce4be400",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/MinGW.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "with preferences, there is no guarantee that when it is changed that changeMinGWDefaultLocation is called.\n\nThe correct way to handle this would be to have the preference page store to the instance scope and then in the  getMinGWHome check if the preference had a value.\n\nThe alternative is to add a preference listener, but that is more complicated than you need in this case.",
+      "range": {
+        "startLine": 292,
+        "startChar": 2,
+        "endLine": 293,
+        "endChar": 14
+      },
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_2e5aa8c9",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/MinGW.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "Use the Diamond operator:\n\nhttps://sonar.eclipse.org/coding_rules#rule_key\u003dsquid:S2293",
+      "range": {
+        "startLine": 347,
+        "startChar": 49,
+        "endLine": 347,
+        "endChar": 57
+      },
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_ee78a038",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/newui/Messages.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "Good externalization",
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_ce74c445",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/newui/Messages.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T08:57:20Z",
+      "side": 1,
+      "message": "This is a constant, not a value to be translated, therefore it should not be in the .properties file.",
+      "revId": "27703fd913212d2e613e661e4987e09f1b0b8bf0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

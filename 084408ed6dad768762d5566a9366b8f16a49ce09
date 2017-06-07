@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_4eb2947c",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T09:01:00Z",
+      "side": 1,
+      "message": "Do not reformat this file, your change in 98630 was good as it did not corrupt whole file.",
+      "revId": "084408ed6dad768762d5566a9366b8f16a49ce09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_6e9e70ed",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-06-07T09:01:00Z",
+      "side": 1,
+      "message": "This comment box has been corrupted in form due to reformatting.",
+      "revId": "084408ed6dad768762d5566a9366b8f16a49ce09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

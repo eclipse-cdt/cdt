@@ -54,6 +54,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistMessages;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
@@ -155,6 +156,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				(Object[]) processor.computeContextInformation(sourceViewer, offset);
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
+		// Make sure no exception was thrown during content assist invocation.
+		assertTrue(processor.getErrorMessage() == null || 
+				   processor.getErrorMessage().equals(ContentAssistMessages.ContentAssistProcessor_no_completions));
 
 		if (filterResults) {
 			if (isTemplate) {

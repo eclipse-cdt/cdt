@@ -1529,7 +1529,15 @@ public class CVisitor extends ASTQueries {
         IBinding[] result = null;
 
         if (prop == IASTFieldReference.FIELD_NAME) {
-            result = (IBinding[]) findBinding((IASTFieldReference) name.getParent(), isPrefix);
+        	Object res = findBinding((IASTFieldReference) name.getParent(), isPrefix);
+        	if (isPrefix) {
+        		result = (IBinding[]) res; 
+        	} else {
+        		IBinding binding = (IBinding) res;
+        		if (binding != null) {
+        			result = new IBinding[] { binding };
+        		}
+        	}
         } else if (prop == ICASTFieldDesignator.FIELD_NAME) {
             result = findBindingForContentAssist((ICASTFieldDesignator) name.getParent(), isPrefix);
         } else {

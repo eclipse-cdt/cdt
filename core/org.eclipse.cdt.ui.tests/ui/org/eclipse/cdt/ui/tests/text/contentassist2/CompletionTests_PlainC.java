@@ -976,4 +976,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected= {"_f204758(_e204758)"};
 		assertCompletionResults(expected);
 	}
+	
+	//	int main(void) {
+	//		struct {
+	//		    void (*bar)(p1, p2, p3...);
+	//		} foo;
+	//		foo.bar(/*cursor*/
+	public void testClassCastException_Bug517954() throws Exception {
+		// Just check that no exception is thrown while invoking completion.
+		assertContentAssistResults(fCursorOffset, new String[]{}, DEFAULT_FLAGS | ALLOW_EXTRA_RESULTS, CompareType.ID);		
+	}
 }

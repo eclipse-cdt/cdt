@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Helper class to get NLSed messages.
  */
-final class ContentAssistMessages extends NLS {
+public final class ContentAssistMessages extends NLS {
 
 	private static final String BUNDLE_NAME= ContentAssistMessages.class.getName();
 

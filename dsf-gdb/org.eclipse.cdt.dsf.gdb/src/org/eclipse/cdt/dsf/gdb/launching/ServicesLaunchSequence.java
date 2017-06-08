@@ -131,7 +131,13 @@ public class ServicesLaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IGDBFocusSynchronizer.class, fSession).initialize(requestMonitor); 
+        	IGDBFocusSynchronizer service = fLaunch.getServiceFactory().createService(IGDBFocusSynchronizer.class, fSession);
+        	// The focus synchronizer is a new service, don't require it to exist/be supported by a backend.
+        	if (service != null) {
+        		service.initialize(requestMonitor);
+        	} else {
+        		requestMonitor.done();
+        	}
         }},
     };
     

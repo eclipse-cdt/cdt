@@ -410,7 +410,15 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testMatchRegWithStar() throws Throwable {
 		final String exprString = "=$f*";
-		final String[] children = new String[] { "$fctrl", "$fioff", "$fiseg", "$fooff", "$fop", "$foseg", "$fs", "$fstat", "$ftag" };
+		final String[] children;
+		if (isGdbVersionAtLeast("7.12.50")) {
+			// Starting in GDB 8.0 FS_BASE and GS_BASE are exposed
+			// See GDB commit 2735833: amd64-linux: expose system register FS_BASE and GS_BASE for Linux.
+			// Ubuntu is shipping pre-release GDB 8.0, which is versioned as 7.12.50.
+			children = new String[] { "$fctrl", "$fioff", "$fiseg", "$fooff", "$fop", "$foseg", "$fs", "$fs_base", "$fstat", "$ftag" };
+		} else {
+			children = new String[] { "$fctrl", "$fioff", "$fiseg", "$fooff", "$fop", "$foseg", "$fs", "$fstat", "$ftag" };
+		}
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);

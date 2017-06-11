@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -32,8 +31,8 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
 	
 	public PDOMCPPMethodInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, 
-			PDOMBinding instantiated, IASTNode point) throws CoreException {
-		super(linkage, parent, method, instantiated, point);
+			PDOMBinding instantiated) throws CoreException {
+		super(linkage, parent, method, instantiated);
 	}
 	
 	public PDOMCPPMethodInstance(PDOMLinkage linkage, long bindingRecord) {

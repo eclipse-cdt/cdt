@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.parser.scanner.ASTPreprocessorName;
 
@@ -218,26 +219,31 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 		
 		private boolean visitNode(IASTNode node) {
-			boolean consumed= false;
-			fToken.update(node);
-			for (int i= 0, n= fHighlightings.length; i < n; ++i) {
-				SemanticHighlighting semanticHighlighting= fHighlightings[i];
-				// If the semantic highlighting doesn't color expressions, don't bother
-				// passing it one to begin with.
-				if (node instanceof IASTExpression && !semanticHighlighting.requiresExpressions()) {
-					continue;
-				}
-				if (fHighlightingStyles[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					IASTNodeLocation location = getLocationToHighlight(node);
-					if (location != null) {
-						highlightLocation(location, fHighlightingStyles[i]);
+			try {
+				CPPSemantics.pushLookupPoint(node);
+				boolean consumed= false;
+				fToken.update(node);
+				for (int i= 0, n= fHighlightings.length; i < n; ++i) {
+					SemanticHighlighting semanticHighlighting= fHighlightings[i];
+					// If the semantic highlighting doesn't color expressions, don't bother
+					// passing it one to begin with.
+					if (node instanceof IASTExpression && !semanticHighlighting.requiresExpressions()) {
+						continue;
 					}
-					consumed= true;
-					break;
+					if (fHighlightingStyles[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
+						IASTNodeLocation location = getLocationToHighlight(node);
+						if (location != null) {
+							highlightLocation(location, fHighlightingStyles[i]);
+						}
+						consumed= true;
+						break;
+					}
 				}
+				fToken.clear();
+				return consumed;
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
-			fToken.clear();
-			return consumed;
 		}
 
 		/**

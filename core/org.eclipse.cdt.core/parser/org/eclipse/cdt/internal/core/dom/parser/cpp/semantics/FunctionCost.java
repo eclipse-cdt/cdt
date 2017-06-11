@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -43,21 +42,18 @@ class FunctionCost {
 	private final ICPPFunction fFunction;
 	private final Cost[] fCosts;
 	private final ValueCategory[] fValueCategories;
-	private final IASTNode fPoint;
 	private boolean fIsDirectCopyCtor;
 
-	public FunctionCost(ICPPFunction fn, int paramCount, IASTNode point) {
+	public FunctionCost(ICPPFunction fn, int paramCount) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
 		fValueCategories= new ValueCategory[paramCount];
-		fPoint = point;
 	}
 
-	public FunctionCost(ICPPFunction fn, Cost cost, IASTNode point) {
+	public FunctionCost(ICPPFunction fn, Cost cost) {
 		fFunction= fn;
 		fCosts= new Cost[] {cost};
 		fValueCategories= null; // no udc will be performed
-		fPoint = point;
 	}
 
 	public int getLength() {
@@ -95,7 +91,7 @@ class FunctionCost {
 		return false;
 	}
 
-	public boolean performUDC(IASTNode point) throws DOMException {
+	public boolean performUDC() throws DOMException {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			Cost udcCost= null;
@@ -104,20 +100,20 @@ class FunctionCost {
 				continue;
 			case COPY_INIT_OF_CLASS:
 				udcCost = Conversions.copyInitializationOfClass(fValueCategories[i], cost.source,
-						(ICPPClassType) cost.target, false, point);
+						(ICPPClassType) cost.target, false);
 				break;
 			case INIT_BY_CONVERSION:
 				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false, point, allowsContextualBooleanConversion());
+						(ICPPClassType) uqSource, cost.target, false, allowsContextualBooleanConversion());
 				break;
 			case LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(),
-						(ICPPClassType) cost.target, false, false, point);
+						(ICPPClassType) cost.target, false, false);
 				break;
 			case DIRECT_LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(),
-						(ICPPClassType) cost.target, true, false, point);
+						(ICPPClassType) cost.target, true, false);
 				break;
 			default:
 				return false;
@@ -181,7 +177,7 @@ class FunctionCost {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
 				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
- 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, fPoint);
+ 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
 				if (order < 0) {
 					haveBetter= true;
 				} else if (order > 0) {
@@ -227,10 +223,10 @@ class FunctionCost {
 		if (!parameterTypesMatch(ft1, ft2))
 			return 0;
 
-		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1, fPoint);
+		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1);
 		if (diff >= 0)
 			return diff;
-		return -SemanticUtil.calculateInheritanceDepth(o1, o2, fPoint);
+		return -SemanticUtil.calculateInheritanceDepth(o1, o2);
 	}
 
 	private boolean parameterTypesMatch(final ICPPFunctionType ft1, final ICPPFunctionType ft2) {

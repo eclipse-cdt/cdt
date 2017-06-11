@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
@@ -127,7 +128,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
 	}
 
 	@Override

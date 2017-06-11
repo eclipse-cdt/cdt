@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
@@ -179,8 +181,14 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     @Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
-		if (eval instanceof EvalUnary)
-			return ((EvalUnary) eval).getOverload(this);
+		if (eval instanceof EvalUnary) {
+			CPPSemantics.pushLookupPoint(this);
+			try {
+				return ((EvalUnary) eval).getOverload();
+			} finally {
+				CPPSemantics.popLookupPoint();
+			}
+		}
 		return null;
     }
 
@@ -218,7 +226,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
     @Override
 	public IType getExpressionType() {
-		IType type= getEvaluation().getType(this);
+		IType type= CPPEvaluation.getType(this);
 		if (type instanceof FunctionSetType) {
 			type= fOperand.getExpressionType();
 			if (fOperator == op_amper) {
@@ -243,7 +251,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

@@ -51,7 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -90,14 +90,19 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				Set<IField> fieldsInConstructor = constructorsStack.push(new HashSet<IField>());
 				
 				// Add all class fields
-				for (IField field : ClassTypeHelper.getDeclaredFields(constructor.getClassOwner(), declaration)) {
-					if (isSimpleType(field.getType()) && !field.isStatic()) {
-						// In C++11, a field may have an initial value specified at its declaration.
-						// Such a field does not need to be initialized in the constructor as well.
-						if (field.getInitialValue() == null) {
-							fieldsInConstructor.add(field);
+				try {
+					CPPSemantics.pushLookupPoint(declaration);
+					for (IField field : constructor.getClassOwner().getDeclaredFields()) {
+						if (isSimpleType(field.getType()) && !field.isStatic()) {
+							// In C++11, a field may have an initial value specified at its declaration.
+							// Such a field does not need to be initialized in the constructor as well.
+							if (field.getInitialValue() == null) {
+								fieldsInConstructor.add(field);
+							}
 						}
 					}
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
 			}
 			return PROCESS_CONTINUE;

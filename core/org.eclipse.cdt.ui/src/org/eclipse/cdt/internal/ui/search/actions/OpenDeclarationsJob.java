@@ -286,11 +286,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					// To try to do something useful anyways, we try to heuristically
 					// resolve the unknown binding to one or more concrete bindings,
 					// and use those instead.
-					IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(
-							(ICPPUnknownBinding) binding, sourceName);
-					if (resolved.length > 0) {
-						bindings = ArrayUtil.addAll(bindings, resolved);
-						continue;
+					try {
+						CPPSemantics.pushLookupPoint(sourceName);
+						IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(
+								(ICPPUnknownBinding) binding);
+						if (resolved.length > 0) {
+							bindings = ArrayUtil.addAll(bindings, resolved);
+							continue;
+						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 				if (binding instanceof ICPPUsingDeclaration) {
@@ -479,19 +484,24 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 		} else if (SemanticUtil.isAutoOrDecltype(fSelectedText)) {
 			IASTNode enclosingNode = nodeSelector.findEnclosingNode(offset, length);
-			IType type = CPPSemantics.resolveDecltypeOrAutoType(enclosingNode);
-			if (type instanceof ICPPUnknownType) {
-				IType hType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) type, enclosingNode);
-				if (hType != null)
-					type = hType;
-			}
-			// Strip qualifiers, references, and pointers, but NOT
-			// typedefs, since for typedefs we want to refer to the
-			// typedef declaration.
-			type = SemanticUtil.getNestedType(type, CVTYPE | REF | PTR);
-			if (type instanceof IBinding) {
-				IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, (IBinding) type);
-				definitions = ArrayUtil.addAll(definitions, declNames);
+			try {
+				CPPSemantics.pushLookupPoint(enclosingNode);
+				IType type = CPPSemantics.resolveDecltypeOrAutoType(enclosingNode);
+				if (type instanceof ICPPUnknownType) {
+					IType hType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) type);
+					if (hType != null)
+						type = hType;
+				}
+				// Strip qualifiers, references, and pointers, but NOT
+				// typedefs, since for typedefs we want to refer to the
+				// typedef declaration.
+				type = SemanticUtil.getNestedType(type, CVTYPE | REF | PTR);
+				if (type instanceof IBinding) {
+					IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, (IBinding) type);
+					definitions = ArrayUtil.addAll(definitions, declNames);
+				}
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
 		}
 		return ArrayUtil.trim(definitions);

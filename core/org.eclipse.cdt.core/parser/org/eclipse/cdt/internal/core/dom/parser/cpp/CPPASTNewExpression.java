@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
@@ -304,7 +305,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override

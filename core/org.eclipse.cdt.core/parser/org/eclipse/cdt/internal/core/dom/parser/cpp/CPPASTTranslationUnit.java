@@ -191,12 +191,11 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	 * Maps a class type to the AST.
 	 *
 	 * @param binding a class type, possibly from index
-	 * @param point a lookup point in the AST
 	 * @return the corresponding class in the AST, or the original class type if it doesn't have
 	 *     a counterpart in the AST.
 	 */
-	public ICPPClassType mapToAST(ICPPClassType binding, IASTNode point) {
-		return fScopeMapper.mapToAST(binding, point);
+	public ICPPClassType mapToAST(ICPPClassType binding) {
+		return fScopeMapper.mapToAST(binding);
 	}
 
 	/**

@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -68,7 +67,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		storeProperties((ICPPEnumeration) newBinding);
 	}
 

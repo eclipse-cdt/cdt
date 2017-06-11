@@ -101,35 +101,35 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		return fConstructor.isConstexpr() && areAllConstantExpressions(fArguments, point);
+	private boolean computeIsConstantExpression() {
+		return fConstructor.isConstexpr() && areAllConstantExpressions(fArguments);
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		return fType;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		ICPPEvaluation computed =
-				computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext(point));
+				computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext());
 		if (computed == this)
 			return IntegralValue.ERROR;
 
-		return computed.getValue(point);
+		return computed.getValue();
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return null;
 	}
 
@@ -141,17 +141,16 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 			return this;
 		}
 		final ICPPClassType classType = (ICPPClassType) unwrappedType; 
-		final CompositeValue compositeValue = CompositeValue.create(classType, context.getPoint());
+		final CompositeValue compositeValue = CompositeValue.create(classType);
 		ICPPEvaluation[] argList = evaluateArguments(fArguments, callSiteRecord, context);
 		EvalFixed constructedObject = new EvalFixed(fType, ValueCategory.PRVALUE, compositeValue);
 		CPPVariable binding = new CPPVariable(TEMP_NAME);
 
-		IASTNode point = context.getPoint();
-		ActivationRecord localRecord = EvalFunctionCall.createActivationRecord(
-				fConstructor.getParameters(), argList, constructedObject, point);
+		ActivationRecord localRecord = EvalFunctionCall.createActivationRecord(fConstructor.getParameters(), 
+				argList, constructedObject);
 		localRecord.update(binding, constructedObject);
 
-		ICPPExecution exec = fConstructor.getConstructorChainExecution(point);
+		ICPPExecution exec = fConstructor.getConstructorChainExecution();
 		if (exec instanceof ExecConstructorChain) {
 			ExecConstructorChain memberInitList = (ExecConstructorChain) exec;
 			Map<IBinding, ICPPEvaluation> ccInitializers = memberInitList.getConstructorChainInitializers();
@@ -161,21 +160,21 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 					final ICPPEvaluation memberEval = ccInitializer.getValue();
 					ICPPEvaluation memberValue =
 							memberEval.computeForFunctionCall(localRecord, context.recordStep());
-					ICPPEvaluation[] baseClassValues = memberValue.getValue(point).getAllSubValues();
+					ICPPEvaluation[] baseClassValues = memberValue.getValue().getAllSubValues();
 
-					ICPPField[] baseFields = ClassTypeHelper.getFields(baseClassType, point);
+					ICPPField[] baseFields = ClassTypeHelper.getFields(baseClassType);
 					for (ICPPField baseField : baseFields) {
 						// TODO: This has the same problem with multiple inheritance as
 						//       CompositeValue.create(ICPPClassType).
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
-						constructedObject.getValue(point).setSubValue(fieldPos, baseClassValues[fieldPos]);
+						constructedObject.getValue().setSubValue(fieldPos, baseClassValues[fieldPos]);
 					}
 				}
 			}
 		}
 
 
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			final Map.Entry<IBinding, ICPPEvaluation> initializer =
 					getInitializerFromMemberInitializerList(field, exec);
@@ -185,7 +184,7 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 				ExecDeclarator declaratorExec = getDeclaratorExecutionFromMemberInitializerList(initializer);
 				value = getFieldValue(declaratorExec, classType, localRecord, context);
 			} else {
-				value = EvalUtil.getVariableValue(field, localRecord, point);
+				value = EvalUtil.getVariableValue(field, localRecord);
 			}
 			final int fieldPos = CPPASTFieldReference.getFieldPosition(field);
 			compositeValue.setSubValue(fieldPos, value);
@@ -195,8 +194,8 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 		//    - evaluate the arguments again
 		//    - create another ActivationRecord (inside evaluateFunctionBody())
 		// Are these necessary?
-		new EvalFunctionCall(argList, constructedObject, point).computeForFunctionCall(
-				localRecord, context.recordStep());
+		new EvalFunctionCall(argList, constructedObject, CPPSemantics.getCurrentLookupPoint())
+				.computeForFunctionCall(localRecord, context.recordStep());
 		return localRecord.getVariable(binding);
 	}
 
@@ -349,8 +348,9 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 					CPPFunctionSet functionSet =
 							new CPPFunctionSet(candidates, new ICPPTemplateArgument[]{}, null);
 					EvalFunctionSet evalFunctionSet =
-							new EvalFunctionSet(functionSet, false, false, newType, context.getPoint());
-					ICPPEvaluation resolved = evalFunctionSet.resolveFunction(newArguments, context.getPoint());
+							new EvalFunctionSet(functionSet, false, false, newType, 
+									CPPSemantics.getCurrentLookupPoint());
+					ICPPEvaluation resolved = evalFunctionSet.resolveFunction(newArguments);
 					if (resolved instanceof EvalBinding) {
 						EvalBinding evalBinding = (EvalBinding) resolved;
 						newConstructor = (ICPPConstructor) evalBinding.getBinding();

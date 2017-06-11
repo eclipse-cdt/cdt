@@ -13,7 +13,6 @@ import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -80,12 +79,12 @@ public final class CompositeValue implements IValue {
 		return 0 <= index && index < values.length;
 	}
 
-	public static IValue create(EvalInitList initList, IASTNode point) {
+	public static IValue create(EvalInitList initList) {
 		ICPPEvaluation[] clauses = initList.getClauses();
 		ICPPEvaluation[] values = new ICPPEvaluation[clauses.length];
 		for (int i = 0; i < clauses.length; i++) {
 			ICPPEvaluation eval = clauses[i];
-			values[i] = new EvalFixed(eval.getType(point), eval.getValueCategory(point), eval.getValue(point));
+			values[i] = new EvalFixed(eval.getType(), eval.getValueCategory(), eval.getValue());
 		}
 		return new CompositeValue(initList, values);
 	}
@@ -94,7 +93,7 @@ public final class CompositeValue implements IValue {
 	 * Creates a value representing an instance of the given array type initialized with
 	 * the elements of the given initializer list.
 	 */
-	public static IValue create(EvalInitList initList, IArrayType type, IASTNode point) {
+	public static IValue create(EvalInitList initList, IArrayType type) {
 		Number arraySize = type.getSize().numberValue();
 		if (arraySize == null) {
 			// Array size is dependent. TODO: Handle this?
@@ -108,8 +107,8 @@ public final class CompositeValue implements IValue {
 		ICPPEvaluation[] values = new ICPPEvaluation[arraySize.intValue()];
 		for (int i = 0; i < initList.getClauses().length; i++) {
 			ICPPEvaluation eval = initList.getClauses()[i];
-			IValue value = getValue(elementType, eval, point);
-			values[i] = new EvalFixed(elementType, eval.getValueCategory(point), value);
+			IValue value = getValue(elementType, eval);
+			values[i] = new EvalFixed(elementType, eval.getValueCategory(), value);
 		}
 		return new CompositeValue(initList, values);
 	}
@@ -117,16 +116,16 @@ public final class CompositeValue implements IValue {
 	/**
 	 * Gets the value of an evaluation, interpreted as a value of the given type.
 	 */
-	private static IValue getValue(IType type, ICPPEvaluation eval, IASTNode point) {
+	private static IValue getValue(IType type, ICPPEvaluation eval) {
 		IValue value;
 		if (type instanceof IArrayType && eval instanceof EvalInitList) {
-			value = CompositeValue.create((EvalInitList) eval, (IArrayType) type, point);
+			value = CompositeValue.create((EvalInitList) eval, (IArrayType) type);
 		} else if (type instanceof ICompositeType && eval instanceof EvalInitList) {
-			value = CompositeValue.create((EvalInitList) eval, (ICompositeType) type, point);
+			value = CompositeValue.create((EvalInitList) eval, (ICompositeType) type);
 		} else if (eval instanceof EvalInitList) {
 			value = IntegralValue.UNKNOWN;
 		} else {
-			value = eval.getValue(null);
+			value = eval.getValue();
 		}
 		return value;
 	}
@@ -135,10 +134,10 @@ public final class CompositeValue implements IValue {
 	 * Creates a value representing an instance of the given composite type initialized with
 	 * the elements of the given initializer list.
 	 */
-	public static IValue create(EvalInitList initList, ICompositeType type, IASTNode point) {
+	public static IValue create(EvalInitList initList, ICompositeType type) {
 		IField[] fields;
 		if (type instanceof ICPPClassType) {
-			fields = ClassTypeHelper.getFields((ICPPClassType) type, point);
+			fields = ClassTypeHelper.getFields((ICPPClassType) type);
 		} else {
 			fields = type.getFields();
 		}
@@ -150,8 +149,8 @@ public final class CompositeValue implements IValue {
 			IField field = fields[i];
 			ICPPEvaluation eval = clauses[i];
 			IType fieldType = field.getType();
-			IValue value = getValue(fieldType, eval, point);
-			values[i] = new EvalFixed(fieldType, eval.getValueCategory(null), value);
+			IValue value = getValue(fieldType, eval);
+			values[i] = new EvalFixed(fieldType, eval.getValueCategory(), value);
 		}
 		return new CompositeValue(initList, values);
 	}
@@ -175,8 +174,8 @@ public final class CompositeValue implements IValue {
 	 * determined by the default member initializers only. Constructors are not considered
 	 * when determining the values of the fields.
 	 */
-	public static CompositeValue create(ICPPClassType classType, IASTNode point) {
-		return create(classType, point, 0);
+	public static CompositeValue create(ICPPClassType classType) {
+		return create(classType, 0);
 	}
 
 	/**
@@ -184,7 +183,7 @@ public final class CompositeValue implements IValue {
 	 * determined by the default member initializers only. Constructors are not considered
 	 * when determining the values of the fields.
 	 */
-	public static CompositeValue create(ICPPClassType classType, IASTNode point, int nestingLevel) {
+	public static CompositeValue create(ICPPClassType classType, int nestingLevel) {
 		Set<ICPPClassType> recursionProtectionSet = fCreateInProgress.get();
 		if (!recursionProtectionSet.add(classType)) {
 			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
@@ -195,16 +194,16 @@ public final class CompositeValue implements IValue {
 				System.out.flush();
 			}
 			ActivationRecord record = new ActivationRecord();
-			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType, point).length];
+			ICPPEvaluation[] values = new ICPPEvaluation[ClassTypeHelper.getFields(classType).length];
 
 			// Recursively create all the base class member variables.
-			ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);
+			ICPPBase[] bases = classType.getBases();
 			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();
 				if (baseClass instanceof ICPPClassType) {
 					ICPPClassType baseClassType = (ICPPClassType) baseClass;
-					ICPPField[] baseFields = ClassTypeHelper.getDeclaredFields(baseClassType, point);
-					IValue compValue = CompositeValue.create(baseClassType, point, nestingLevel + 1);
+					ICPPField[] baseFields = baseClassType.getDeclaredFields();
+					IValue compValue = CompositeValue.create(baseClassType, nestingLevel + 1);
 					for (ICPPField baseField : baseFields) {
 						int fieldPos = CPPASTFieldReference.getFieldPosition(baseField);
 						if (fieldPos == -1) {
@@ -219,11 +218,11 @@ public final class CompositeValue implements IValue {
 				}
 			}
 
-			ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+			ICPPField[] fields = classType.getDeclaredFields();
 			for (ICPPField field : fields) {
 				if (field.isStatic())
 					continue;
-				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record, point);
+				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record);
 				int fieldPos = CPPASTFieldReference.getFieldPosition(field);
 				if (fieldPos == -1) {
 					continue;
@@ -274,8 +273,8 @@ public final class CompositeValue implements IValue {
 			if (eval == EvalFixed.INCOMPLETE) {
 				newValues[i] = eval;
 			} else {
-				IValue newValue = eval.getValue(null).clone();
-				newValues[i] = new EvalFixed(eval.getType(null), eval.getValueCategory(null), newValue);
+				IValue newValue = eval.getValue().clone();
+				newValues[i] = new EvalFixed(eval.getType(), eval.getValueCategory(), newValue);
 			}
 		}
 		return new CompositeValue(evaluation, newValues);

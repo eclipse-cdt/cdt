@@ -26,8 +26,6 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -112,13 +110,12 @@ public class ParameterGuesser {
 		}
 	}
 
-	private Collection<Variable> evaluateVisibleMatches(IType expectedType, List<IBinding> suggestions,
-			IASTTranslationUnit ast)
+	private Collection<Variable> evaluateVisibleMatches(IType expectedType, List<IBinding> suggestions)
 			throws CModelException {
 		Set<Variable> res = new HashSet<>();
 		int size = suggestions.size();
 		for (int i = 0; i < size; i++) {
-			Variable variable = createVariable(suggestions.get(i), expectedType, i, ast);
+			Variable variable = createVariable(suggestions.get(i), expectedType, i);
 			if (variable != null) {
 				if (fAlreadyMatchedNames.contains(variable.name)) {
 					variable.alreadyMatched = true;
@@ -140,15 +137,14 @@ public class ParameterGuesser {
 		return null;
 	}
 
-	private Variable createVariable(IBinding element, IType enclosingType, int positionScore,
-			IASTTranslationUnit ast)
+	private Variable createVariable(IBinding element, IType enclosingType, int positionScore)
 			throws CModelException {
 		IType elementType = getType(element);
 		String elementName = element.getName();
 		if (elementType != null
 				&& (elementType.toString().equals(enclosingType.toString())
 						|| elementType.isSameType(enclosingType)
-						|| isImplicitlyConvertible(enclosingType, elementType, ast)
+						|| isImplicitlyConvertible(enclosingType, elementType)
 						|| isParent(elementType, enclosingType)
 						|| isReferenceTo(enclosingType, elementType) 
 						|| isReferenceTo(elementType, enclosingType))) {
@@ -187,10 +183,10 @@ public class ParameterGuesser {
 		return false;
 	}
 	
-	private boolean isImplicitlyConvertible(IType orginType, IType candidateType, IASTNode point) {
+	private boolean isImplicitlyConvertible(IType orginType, IType candidateType) {
 		try {
 			Cost cost = Conversions.checkImplicitConversionSequence(orginType, candidateType,
-					ValueCategory.LVALUE, UDCMode.ALLOWED, Context.ORDINARY, point);
+					ValueCategory.LVALUE, UDCMode.ALLOWED, Context.ORDINARY);
 			if (cost.converts())
 				return true;
 		} catch (DOMException e) {
@@ -290,9 +286,9 @@ public class ParameterGuesser {
 	 * @return returns the name of the best match, or <code>null</code> if no match found
 	 */
 	public ICompletionProposal[] parameterProposals(IType expectedType, String paramName, Position pos,
-			List<IBinding> suggestions, boolean isLastParameter, IASTTranslationUnit ast)
+			List<IBinding> suggestions, boolean isLastParameter)
 			throws CModelException {
-		List<Variable> typeMatches = new ArrayList<>(evaluateVisibleMatches(expectedType, suggestions, ast));
+		List<Variable> typeMatches = new ArrayList<>(evaluateVisibleMatches(expectedType, suggestions));
 		orderMatches(typeMatches, paramName);
 
 		ICompletionProposal[] ret = new ICompletionProposal[typeMatches.size()];

@@ -227,7 +227,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
         ICPPSpecialization inst= ct.getInstance(new ICPPTemplateArgument[]{new CPPTemplateTypeArgument((IType)b0)});
         assertInstance(inst, ICPPClassType.class);
         ICPPClassType c2t= (ICPPClassType) inst;
-        ICPPBase[] bases= ClassTypeHelper.getBases(c2t, null);
+        ICPPBase[] bases= c2t.getBases();
         assertEquals(1, bases.length);
         assertInstance(bases[0].getBaseClass(), ICPPClassType.class);
     }
@@ -973,74 +973,74 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// class template instance
 		ct= getBindingFromASTName("CT<int>", 7);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"B"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"CT", "CT"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"g"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"n", "CT"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"O"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"B"}, ct.getBases());
+		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"CT", "CT"}, ct.getConstructors());
+		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"n", "CT"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"O"}, ct.getNestedClasses());
 
 		// explicit class template instance
 		ct= getBindingFromASTName("CT<char>", 8);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"A"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"CT", "CT", "CT"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"h"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"o", "CT", "CT"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"P"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"A"}, ct.getBases());
+		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"CT", "CT", "CT"}, ct.getConstructors());
+		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"o", "CT", "CT"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"P"}, ct.getNestedClasses());
 
 		// class specialization
 		ct= getBindingFromASTName("C spec", 1);
 		assertInstance(ct, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"B"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"n", "m", "B", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"C", "C"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"g"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"n", "C"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"O"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"B"}, ct.getBases());
+		assertBindings(new String[] {"n", "m", "B", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"C", "C"}, ct.getConstructors());
+		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"n", "C"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"m", "n", "C", "C", "~C", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"O"}, ct.getNestedClasses());
 
 		// class template specialization
 		ct= getBindingFromASTName("CT<int> spect", 2);
 		assertInstance(ct, ICPPClassTemplate.class, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"B"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"CT", "CT"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"g"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"n", "CT"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"O"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"B"}, ct.getBases());
+		assertBindings(new String[] {"n", "m", "B", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"CT", "CT"}, ct.getConstructors());
+		assertBindings(new String[] {"g"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"n", "CT"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"f", "g"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"m", "n", "CT", "CT", "~CT", "B", "B", "~B", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"O"}, ct.getNestedClasses());
 
 		// explicit class specialization
 		ct= getBindingFromASTName("C espec", 1);
 		assertInstance(ct, ICPPClassSpecialization.class);
-		assertBindings(new String[] {"A"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"o", "l", "A", "C", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"C", "C", "C"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"h"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"o", "C", "C"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"l", "o", "C", "C", "C", "~C", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"P"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"A"}, ct.getBases());
+		assertBindings(new String[] {"o", "l", "A", "C", "C"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"C", "C", "C"}, ct.getConstructors());
+		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"o", "C", "C"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"l", "o", "C", "C", "C", "~C", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"P"}, ct.getNestedClasses());
 
 		// explicit class template specialization
 		ct= getBindingFromASTName("CT<int> espect", 7);
 		assertInstance(ct, ICPPTemplateInstance.class);
-		assertBindings(new String[] {"A"}, ClassTypeHelper.getBases(ct, null));
-		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct, null));
-		assertBindings(new String[] {"CT", "CT", "CT"}, ClassTypeHelper.getConstructors(ct, null));
-		assertBindings(new String[] {"h"}, ClassTypeHelper.getDeclaredFields(ct, null));
-		assertBindings(new String[] {"o", "CT", "CT"}, ClassTypeHelper.getDeclaredMethods(ct, null));
-		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct, null));
-		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct, null));
-		assertBindings(new String[] {"P"}, ClassTypeHelper.getNestedClasses(ct, null));
+		assertBindings(new String[] {"A"}, ct.getBases());
+		assertBindings(new String[] {"o", "l", "A", "CT", "CT"}, ClassTypeHelper.getAllDeclaredMethods(ct));
+		assertBindings(new String[] {"CT", "CT", "CT"}, ct.getConstructors());
+		assertBindings(new String[] {"h"}, ct.getDeclaredFields());
+		assertBindings(new String[] {"o", "CT", "CT"}, ct.getDeclaredMethods());
+		assertBindings(new String[] {"e", "h"}, ClassTypeHelper.getFields(ct));
+		assertBindings(new String[] {"l", "o", "CT", "CT", "CT", "~CT", "A", "A", "~A", "operator =", "operator ="}, ClassTypeHelper.getMethods(ct));
+		assertBindings(new String[] {"P"}, ct.getNestedClasses());
 	}
 
 	//	void func(const int* x) {}

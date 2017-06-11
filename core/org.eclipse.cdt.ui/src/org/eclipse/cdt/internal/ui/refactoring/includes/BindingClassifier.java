@@ -247,36 +247,41 @@ public class BindingClassifier {
 					IFunction function = (IFunction) binding;
 
 					IFunctionType functionType = function.getType();
-					if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR ||
-							declarator.getPropertyInParent() == ICPPASTLambdaExpression.DECLARATOR) {
-						// Define the return type if necessary.
-						IType returnType = functionType.getReturnType();
-						if (!(returnType instanceof IPointerType || returnType instanceof ICPPReferenceType)) {
-							defineTypeExceptTypedefOrNonFixedEnum(returnType);
-						}
-
-						// Define parameter types if necessary.
-						IType[] parameterTypes = functionType.getParameterTypes();
-						for (IType type : parameterTypes) {
-							if (!(type instanceof IPointerType)) {
-								if (!(type instanceof ICPPReferenceType) ||
-										isTypeWithConvertingConstructor(type, declarator)) {
-									defineTypeExceptTypedefOrNonFixedEnum(type);
+					try {
+						CPPSemantics.pushLookupPoint(declarator);
+						if (declarator.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR ||
+								declarator.getPropertyInParent() == ICPPASTLambdaExpression.DECLARATOR) {
+							// Define the return type if necessary.
+							IType returnType = functionType.getReturnType();
+							if (!(returnType instanceof IPointerType || returnType instanceof ICPPReferenceType)) {
+								defineTypeExceptTypedefOrNonFixedEnum(returnType);
+							}
+							
+							// Define parameter types if necessary.
+							IType[] parameterTypes = functionType.getParameterTypes();
+							for (IType type : parameterTypes) {
+								if (!(type instanceof IPointerType)) {
+									if (!(type instanceof ICPPReferenceType) ||
+											isTypeWithConvertingConstructor(type)) {
+										defineTypeExceptTypedefOrNonFixedEnum(type);
+									}
+								}
+							}
+						} else {
+							// As a matter of policy, a function declaration is responsible for
+							// providing definitions of parameter types that have implicit
+							// converting constructors.
+							IType[] parameterTypes = functionType.getParameterTypes();
+							for (IType type : parameterTypes) {
+								if (!(type instanceof IPointerType)) {
+									if (isTypeWithConvertingConstructor(type)) {
+										defineTypeExceptTypedefOrNonFixedEnum(type);
+									}
 								}
 							}
 						}
-					} else {
-						// As a matter of policy, a function declaration is responsible for
-						// providing definitions of parameter types that have implicit
-						// converting constructors.
-						IType[] parameterTypes = functionType.getParameterTypes();
-						for (IType type : parameterTypes) {
-							if (!(type instanceof IPointerType)) {
-								if (isTypeWithConvertingConstructor(type, declarator)) {
-									defineTypeExceptTypedefOrNonFixedEnum(type);
-								}
-							}
-						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 			}
@@ -508,341 +513,346 @@ public class BindingClassifier {
 			if (isPartOfExternalMacroDefinition(expression))
 				return PROCESS_CONTINUE;
 
-			ASTNodeProperty propertyInParent = expression.getPropertyInParent();
-			if (propertyInParent == IASTIfStatement.CONDITION
-					|| propertyInParent == IASTForStatement.CONDITION
-					|| propertyInParent == IASTWhileStatement.CONDITIONEXPRESSION
-					|| propertyInParent == IASTDoStatement.CONDITION
-					|| propertyInParent == IASTConditionalExpression.LOGICAL_CONDITION) {
-				/*
-				 * The type of the condition expression doesn't need to be defined if it's
-				 * a pointer type.
-				 *
-				 * Example:
-				 * 	void foo(X* x) {
-				 * 		if (x) { }				// definition of typeof(x) is not required here
-				 * 	}
-				 */
-				IType conditionExpressionType = expression.getExpressionType();
-				if (!(conditionExpressionType instanceof IPointerType)) {
-					defineTypeExceptTypedefOrNonFixedEnum(conditionExpressionType);
+			try {
+				CPPSemantics.pushLookupPoint(expression);
+				ASTNodeProperty propertyInParent = expression.getPropertyInParent();
+				if (propertyInParent == IASTIfStatement.CONDITION
+						|| propertyInParent == IASTForStatement.CONDITION
+						|| propertyInParent == IASTWhileStatement.CONDITIONEXPRESSION
+						|| propertyInParent == IASTDoStatement.CONDITION
+						|| propertyInParent == IASTConditionalExpression.LOGICAL_CONDITION) {
+					/*
+					 * The type of the condition expression doesn't need to be defined if it's
+					 * a pointer type.
+					 *
+					 * Example:
+					 * 	void foo(X* x) {
+					 * 		if (x) { }				// definition of typeof(x) is not required here
+					 * 	}
+					 */
+					IType conditionExpressionType = expression.getExpressionType();
+					if (!(conditionExpressionType instanceof IPointerType)) {
+						defineTypeExceptTypedefOrNonFixedEnum(conditionExpressionType);
+					}
 				}
-			}
-
-			if (expression instanceof IASTIdExpression) {
-				/*
-				 * The type of an identifier expression doesn't need to be defined if it's a pointer
-				 * or a reference type.
-				 *
-				 * Example:
-				 * 	void foo(X& x) {
-				 * 		x;				// definition of typeof(x) is not required here
-				 * 	}
-				 */
-				IASTIdExpression idExpression = (IASTIdExpression) expression;
-
-				IBinding binding = idExpression.getName().resolveBinding();
-				if (binding instanceof IVariable) {
-					// Get the declared type.
-					IType variableType = ((IVariable) binding).getType();
-					defineTypeForBinding(binding, variableType);
-				}
-			} else if (expression instanceof IASTUnaryExpression) {
-				/*
-				 * The type of the operand of an unary expression doesn't need to be defined if
-				 * the operator is the ampersand operator:
-				 *
-				 * Example:
-				 * 	void foo(X& x) {
-				 * 		&x;						// ampersand operator
-				 * 	}
-				 *
-				 * If the operand is a pointer type, the following operators also don't require
-				 * a definition:
-				 *
-				 * Example:
-				 * 	void foo(X* x) {
-				 * 		__alignof(x);			// alignof operator
-				 * 		!x;						// not operator
-				 * 		+x;						// unary plus operator
-				 * 		sizeof(x);				// sizeof operator
-				 * 		typeid(x);				// typeid operator
-				 * 	}
-				 */
-				IASTUnaryExpression unaryExpression = (IASTUnaryExpression) expression;
-				IASTExpression operand = unaryExpression.getOperand();
-				if (operand != null) {  // A throw expression may have no operand.
-					if (unaryExpression instanceof ICPPASTUnaryExpression) {
-						ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
+	
+				if (expression instanceof IASTIdExpression) {
+					/*
+					 * The type of an identifier expression doesn't need to be defined if it's a pointer
+					 * or a reference type.
+					 *
+					 * Example:
+					 * 	void foo(X& x) {
+					 * 		x;				// definition of typeof(x) is not required here
+					 * 	}
+					 */
+					IASTIdExpression idExpression = (IASTIdExpression) expression;
+	
+					IBinding binding = idExpression.getName().resolveBinding();
+					if (binding instanceof IVariable) {
+						// Get the declared type.
+						IType variableType = ((IVariable) binding).getType();
+						defineTypeForBinding(binding, variableType);
+					}
+				} else if (expression instanceof IASTUnaryExpression) {
+					/*
+					 * The type of the operand of an unary expression doesn't need to be defined if
+					 * the operator is the ampersand operator:
+					 *
+					 * Example:
+					 * 	void foo(X& x) {
+					 * 		&x;						// ampersand operator
+					 * 	}
+					 *
+					 * If the operand is a pointer type, the following operators also don't require
+					 * a definition:
+					 *
+					 * Example:
+					 * 	void foo(X* x) {
+					 * 		__alignof(x);			// alignof operator
+					 * 		!x;						// not operator
+					 * 		+x;						// unary plus operator
+					 * 		sizeof(x);				// sizeof operator
+					 * 		typeid(x);				// typeid operator
+					 * 	}
+					 */
+					IASTUnaryExpression unaryExpression = (IASTUnaryExpression) expression;
+					IASTExpression operand = unaryExpression.getOperand();
+					if (operand != null) {  // A throw expression may have no operand.
+						if (unaryExpression instanceof ICPPASTUnaryExpression) {
+							ICPPFunction overload = ((ICPPASTUnaryExpression) unaryExpression).getOverload();
+							if (overload != null) {
+								defineForFunctionCall(overload, true, new IASTInitializerClause[] { operand });
+								return PROCESS_CONTINUE;
+							}
+						}
+	
+						boolean expressionDefinitionRequired = true;
+						switch (unaryExpression.getOperator()) {
+						case IASTUnaryExpression.op_amper:
+						case IASTUnaryExpression.op_bracketedPrimary:
+							// The ampersand operator as well as brackets never require a definition.
+							expressionDefinitionRequired = false;
+							break;
+						case IASTUnaryExpression.op_star:
+							if (expression.getParent() instanceof IASTExpression)
+								break;
+							//$FALL-THROUGH$
+						case IASTUnaryExpression.op_alignOf:
+						case IASTUnaryExpression.op_not:
+						case IASTUnaryExpression.op_plus:
+						case IASTUnaryExpression.op_sizeof:
+						case IASTUnaryExpression.op_typeid:
+							// If the operand is a pointer type, then it doesn't need to be defined.
+							if (operand.getExpressionType() instanceof IPointerType) {
+								expressionDefinitionRequired = false;
+							}
+							break;
+						}
+	
+						if (expressionDefinitionRequired) {
+							defineTypeExceptTypedefOrNonFixedEnum(operand.getExpressionType());
+						}
+					}
+				} else if (expression instanceof IASTBinaryExpression) {
+					/*
+					 * The types of the operands of a binary expression don't need to be defined for
+					 * the following operators if the operands are pointer types:
+					 *
+					 * Example:
+					 * 	void foo(X* x) {
+					 * 		x = x;			// assignment operator
+					 * 		x == x;			// equals operator
+					 * 		x != x;			// not equals operator
+					 * 		x >= x;			// greater equal operator
+					 * 		x > x;			// greater operator
+					 * 		x <= x;			// less equal operator
+					 * 		x < x;			// less operator
+					 * 		x && x;			// logical and operator
+					 * 		x || x;			// logical or operator
+					 * 	}
+					 *
+					 * However, note that if both operands are pointers of different types, then only
+					 * the following operators don't require a definition of the types of the operands:
+					 *
+					 * 	void foo(X* x, Y* y) {
+					 * 		x && y;			// logical and operator
+					 * 		x || y;			// logical or operator
+					 * 	}
+					 */
+					IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
+					if (binaryExpression instanceof ICPPASTBinaryExpression) {
+						ICPPFunction overload = ((ICPPASTBinaryExpression) binaryExpression).getOverload();
 						if (overload != null) {
-							defineForFunctionCall(overload, true, new IASTInitializerClause[] { operand });
+							IASTInitializerClause[] arguments =	new IASTInitializerClause[]
+									{ binaryExpression.getOperand1(), binaryExpression.getOperand2() };
+							defineForFunctionCall(overload, true, arguments);
 							return PROCESS_CONTINUE;
 						}
 					}
-
-					boolean expressionDefinitionRequired = true;
-					switch (unaryExpression.getOperator()) {
-					case IASTUnaryExpression.op_amper:
-					case IASTUnaryExpression.op_bracketedPrimary:
-						// The ampersand operator as well as brackets never require a definition.
-						expressionDefinitionRequired = false;
-						break;
-					case IASTUnaryExpression.op_star:
-						if (expression.getParent() instanceof IASTExpression)
-							break;
-						//$FALL-THROUGH$
-					case IASTUnaryExpression.op_alignOf:
-					case IASTUnaryExpression.op_not:
-					case IASTUnaryExpression.op_plus:
-					case IASTUnaryExpression.op_sizeof:
-					case IASTUnaryExpression.op_typeid:
-						// If the operand is a pointer type, then it doesn't need to be defined.
-						if (operand.getExpressionType() instanceof IPointerType) {
-							expressionDefinitionRequired = false;
-						}
-						break;
-					}
-
-					if (expressionDefinitionRequired) {
-						defineTypeExceptTypedefOrNonFixedEnum(operand.getExpressionType());
-					}
-				}
-			} else if (expression instanceof IASTBinaryExpression) {
-				/*
-				 * The types of the operands of a binary expression don't need to be defined for
-				 * the following operators if the operands are pointer types:
-				 *
-				 * Example:
-				 * 	void foo(X* x) {
-				 * 		x = x;			// assignment operator
-				 * 		x == x;			// equals operator
-				 * 		x != x;			// not equals operator
-				 * 		x >= x;			// greater equal operator
-				 * 		x > x;			// greater operator
-				 * 		x <= x;			// less equal operator
-				 * 		x < x;			// less operator
-				 * 		x && x;			// logical and operator
-				 * 		x || x;			// logical or operator
-				 * 	}
-				 *
-				 * However, note that if both operands are pointers of different types, then only
-				 * the following operators don't require a definition of the types of the operands:
-				 *
-				 * 	void foo(X* x, Y* y) {
-				 * 		x && y;			// logical and operator
-				 * 		x || y;			// logical or operator
-				 * 	}
-				 */
-				IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
-				if (binaryExpression instanceof ICPPASTBinaryExpression) {
-					ICPPFunction overload = ((ICPPASTBinaryExpression) binaryExpression).getOverload();
-					if (overload != null) {
-						IASTInitializerClause[] arguments =	new IASTInitializerClause[]
-								{ binaryExpression.getOperand1(), binaryExpression.getOperand2() };
-						defineForFunctionCall(overload, true, arguments);
-						return PROCESS_CONTINUE;
-					}
-				}
-
-				IType operand1Type = binaryExpression.getOperand1().getExpressionType();
-				IASTInitializerClause operand2 = binaryExpression.getInitOperand2();
-				IType operand2Type;
-				if (operand2 instanceof IASTExpression) {
-					operand2Type = ((IASTExpression) operand2).getExpressionType();
-				} else if (operand2 instanceof ICPPASTInitializerList) {
-					ICPPASTInitializerList initializerList = (ICPPASTInitializerList) operand2;
-					if (binaryExpression.getOperator() == IASTBinaryExpression.op_assign
-							&& initializerList.getSize() == 1) {
-						IASTInitializerClause element = initializerList.getClauses()[0];
-						if (element instanceof IASTExpression) {
-							operand2Type = ((IASTExpression) element).getExpressionType();
-						} else {
-							operand2Type = initializerList.getEvaluation().getType(operand2);
-						}
-					} else {
-						operand2Type = initializerList.getEvaluation().getType(operand2);
-					}
-				} else {
-					operand2Type = operand1Type;
-				}
-
-				boolean expression1DefinitionRequired = true;
-				boolean expression2DefinitionRequired = true;
-
-				switch (binaryExpression.getOperator()) {
-				case IASTBinaryExpression.op_logicalAnd:
-				case IASTBinaryExpression.op_logicalOr:
-					// Pointer types don't need to be defined for logical operations.
-					if (operand1Type instanceof IPointerType) {
-						expression1DefinitionRequired = false;
-					}
-					if (operand2Type instanceof IPointerType) {
-						expression2DefinitionRequired = false;
-					}
-					break;
-				case IASTBinaryExpression.op_assign:
-				case IASTBinaryExpression.op_equals:
-				case IASTBinaryExpression.op_notequals:
-				case IASTBinaryExpression.op_greaterEqual:
-				case IASTBinaryExpression.op_greaterThan:
-				case IASTBinaryExpression.op_lessEqual:
-				case IASTBinaryExpression.op_lessThan:
-					// If both operands are identical pointer types, then they don't need to be defined.
-					if (operand1Type instanceof IPointerType && operand2Type instanceof IPointerType) {
-						if (!isTypeDefinitionRequiredForConversion(operand2Type, operand1Type)) {
-							expression1DefinitionRequired = false;
-							expression2DefinitionRequired = false;
-						}
-					} else if (operand1Type instanceof IPointerType) {
-						// Only the first operand is a pointer type. It doesn't have to be defined.
-						expression1DefinitionRequired = false;
-					} else if (operand2Type instanceof IPointerType) {
-						// Only the second operand is a pointer type. It doesn't have to be defined.
-						expression2DefinitionRequired = false;
-					}
-				}
-
-				if (expression1DefinitionRequired) {
-					defineTypeExceptTypedefOrNonFixedEnum(operand1Type);
-				}
-				if (expression2DefinitionRequired) {
-					defineTypeExceptTypedefOrNonFixedEnum(operand2Type);
-				}
-			} else if (expression instanceof IASTFunctionCallExpression) {
-				/*
-				 * The return type and argument types of a function call expression don't need to be
-				 * defined if they're pointer or reference types. The declared and actual types of
-				 * the arguments must further be identical, since implicit type conversions require
-				 * a definition of both the source and the target type.
-				 *
-				 * Example:
-				 * 	X& foo(X& x);
-				 * 	void bar(X& x) {
-				 * 		foo(x);			// definition of typeof(foo) and typeof(x) is not required here
-				 * 	}
-				 *
-				 * Also note that the function call itself doesn't require a definition as long as
-				 * it's not a constructor call:
-				 *
-				 * Example 1:
-				 * 	void foo() {
-				 * 		bar();		// definition of bar() is not required here (assuming bar is a function)
-				 * 	}
-				 *
-				 * Example 2:
-				 * 	void foo() {
-				 * 		X();		// definition of X is required here (assuming X is a composite type)
-				 * 	}
-				 */
-				IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
-				IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
-				if (isPartOfExternalMacroDefinition(functionNameExpression))
-					return PROCESS_CONTINUE;
-
-				IASTInitializerClause[] arguments = functionCallExpression.getArguments();
-				IASTName functionName = getNameOfIdOrFieldReferenceExpression(functionNameExpression);
-				if (functionName != null) {
-					IBinding function = functionName.resolveBinding();
-					if (function instanceof IProblemBinding) {
-						IBinding[] candidates = ((IProblemBinding) function).getCandidateBindings();
-						if (candidates.length != 0) {
-							for (IBinding candidate : candidates) {
-								defineBindingForFunctionCall(candidate, true, arguments);
+	
+					IType operand1Type = binaryExpression.getOperand1().getExpressionType();
+					IASTInitializerClause operand2 = binaryExpression.getInitOperand2();
+					IType operand2Type;
+					if (operand2 instanceof IASTExpression) {
+						operand2Type = ((IASTExpression) operand2).getExpressionType();
+					} else if (operand2 instanceof ICPPASTInitializerList) {
+						ICPPASTInitializerList initializerList = (ICPPASTInitializerList) operand2;
+						if (binaryExpression.getOperator() == IASTBinaryExpression.op_assign
+								&& initializerList.getSize() == 1) {
+							IASTInitializerClause element = initializerList.getClauses()[0];
+							if (element instanceof IASTExpression) {
+								operand2Type = ((IASTExpression) element).getExpressionType();
+							} else {
+								operand2Type = initializerList.getEvaluation().getType();
 							}
 						} else {
-							defineBinding(function);
+							operand2Type = initializerList.getEvaluation().getType();
 						}
 					} else {
-						IASTName name = functionName;
-						if (functionName instanceof ICPPASTTemplateId) {
-							name = ((ICPPASTTemplateId) functionName).getTemplateName();
-						}
-						boolean defineFunction = !isPartOfExternalMacroDefinition(name);
-
-						if (defineFunction) {
-							LookupData data = new LookupData(functionName);
-							IType impliedObjectType = data.getImpliedObjectType();
-							if (impliedObjectType != null)
-								defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
-						}
-
-						defineBindingForFunctionCall(function, defineFunction, arguments);
+						operand2Type = operand1Type;
 					}
-				}
-
-				if (functionCallExpression instanceof IASTImplicitNameOwner) {
-					IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
-					for (IASTName name : implicitNames) {
+	
+					boolean expression1DefinitionRequired = true;
+					boolean expression2DefinitionRequired = true;
+	
+					switch (binaryExpression.getOperator()) {
+					case IASTBinaryExpression.op_logicalAnd:
+					case IASTBinaryExpression.op_logicalOr:
+						// Pointer types don't need to be defined for logical operations.
+						if (operand1Type instanceof IPointerType) {
+							expression1DefinitionRequired = false;
+						}
+						if (operand2Type instanceof IPointerType) {
+							expression2DefinitionRequired = false;
+						}
+						break;
+					case IASTBinaryExpression.op_assign:
+					case IASTBinaryExpression.op_equals:
+					case IASTBinaryExpression.op_notequals:
+					case IASTBinaryExpression.op_greaterEqual:
+					case IASTBinaryExpression.op_greaterThan:
+					case IASTBinaryExpression.op_lessEqual:
+					case IASTBinaryExpression.op_lessThan:
+						// If both operands are identical pointer types, then they don't need to be defined.
+						if (operand1Type instanceof IPointerType && operand2Type instanceof IPointerType) {
+							if (!isTypeDefinitionRequiredForConversion(operand2Type, operand1Type)) {
+								expression1DefinitionRequired = false;
+								expression2DefinitionRequired = false;
+							}
+						} else if (operand1Type instanceof IPointerType) {
+							// Only the first operand is a pointer type. It doesn't have to be defined.
+							expression1DefinitionRequired = false;
+						} else if (operand2Type instanceof IPointerType) {
+							// Only the second operand is a pointer type. It doesn't have to be defined.
+							expression2DefinitionRequired = false;
+						}
+					}
+	
+					if (expression1DefinitionRequired) {
+						defineTypeExceptTypedefOrNonFixedEnum(operand1Type);
+					}
+					if (expression2DefinitionRequired) {
+						defineTypeExceptTypedefOrNonFixedEnum(operand2Type);
+					}
+				} else if (expression instanceof IASTFunctionCallExpression) {
+					/*
+					 * The return type and argument types of a function call expression don't need to be
+					 * defined if they're pointer or reference types. The declared and actual types of
+					 * the arguments must further be identical, since implicit type conversions require
+					 * a definition of both the source and the target type.
+					 *
+					 * Example:
+					 * 	X& foo(X& x);
+					 * 	void bar(X& x) {
+					 * 		foo(x);			// definition of typeof(foo) and typeof(x) is not required here
+					 * 	}
+					 *
+					 * Also note that the function call itself doesn't require a definition as long as
+					 * it's not a constructor call:
+					 *
+					 * Example 1:
+					 * 	void foo() {
+					 * 		bar();		// definition of bar() is not required here (assuming bar is a function)
+					 * 	}
+					 *
+					 * Example 2:
+					 * 	void foo() {
+					 * 		X();		// definition of X is required here (assuming X is a composite type)
+					 * 	}
+					 */
+					IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
+					IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
+					if (isPartOfExternalMacroDefinition(functionNameExpression))
+						return PROCESS_CONTINUE;
+	
+					IASTInitializerClause[] arguments = functionCallExpression.getArguments();
+					IASTName functionName = getNameOfIdOrFieldReferenceExpression(functionNameExpression);
+					if (functionName != null) {
+						IBinding function = functionName.resolveBinding();
+						if (function instanceof IProblemBinding) {
+							IBinding[] candidates = ((IProblemBinding) function).getCandidateBindings();
+							if (candidates.length != 0) {
+								for (IBinding candidate : candidates) {
+									defineBindingForFunctionCall(candidate, true, arguments);
+								}
+							} else {
+								defineBinding(function);
+							}
+						} else {
+							IASTName name = functionName;
+							if (functionName instanceof ICPPASTTemplateId) {
+								name = ((ICPPASTTemplateId) functionName).getTemplateName();
+							}
+							boolean defineFunction = !isPartOfExternalMacroDefinition(name);
+	
+							if (defineFunction) {
+								LookupData data = new LookupData(functionName);
+								IType impliedObjectType = data.getImpliedObjectType();
+								if (impliedObjectType != null)
+									defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
+							}
+	
+							defineBindingForFunctionCall(function, defineFunction, arguments);
+						}
+					}
+	
+					if (functionCallExpression instanceof IASTImplicitNameOwner) {
+						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) functionCallExpression).getImplicitNames();
+						for (IASTName name : implicitNames) {
+							IBinding binding = name.resolveBinding();
+							if (binding instanceof IFunction) {
+								defineForFunctionCall((IFunction) binding, true, arguments);
+							}
+						}
+					}
+				} else if (expression instanceof IASTFieldReference) {
+					/*
+					 * The type of the expression part of a field reference always requires a definition.
+					 *
+					 * Example:
+					 * 	void foo(X& x1, X* x2) {
+					 * 		x1.bar();			// definition of typeof(x1) is required here
+					 * 		x2->bar();			// definition of typeof(x2) is required here
+					 * 	}
+					 */
+	
+					IASTExpression fieldOwner = ((IASTFieldReference) expression).getFieldOwner();
+					IType expressionType = fieldOwner.getExpressionType();
+					defineIndirectTypes(expressionType);
+					IASTName name = getNameOfIdOrFieldReferenceExpression(fieldOwner);
+					if (name != null) {
 						IBinding binding = name.resolveBinding();
-						if (binding instanceof IFunction) {
-							defineForFunctionCall((IFunction) binding, true, arguments);
-						}
+						defineTypeForBinding(binding, expressionType);
+					}
+				} else if (expression instanceof ICPPASTNewExpression) {
+					/*
+					 * The type specifier of a "new" expression always requires a definition.
+					 *
+					 * Example:
+					 * 	void foo() {
+					 * 		new X();			// definition of X is required here
+					 * 	}
+					 */
+					defineTypeExceptTypedefOrNonFixedEnum(((ICPPASTNewExpression) expression).getExpressionType());
+				} else if (expression instanceof ICPPASTDeleteExpression) {
+					/*
+					 * The expression type of a "delete" expression always requires a full definition.
+					 * This is necessary because the compiler needs to be able to call the destructor.
+					 *
+					 * Example:
+					 * 	void foo(X* x) {
+					 * 		delete x;			// definition of typeof(x) is required here
+					 * 	}
+					 */
+					defineTypeExceptTypedefOrNonFixedEnum(((ICPPASTDeleteExpression) expression).getOperand().getExpressionType());
+				} else if (expression instanceof IASTCastExpression) {
+					/*
+					 * Explicit type casts always need the definition of the underlying types.
+					 *
+					 * Example:
+					 * 	void foo(X* x) {
+					 * 		(Y*) x;				// definition of both Y and typeof(x) is required here
+					 * 	}
+					 */
+					IASTCastExpression castExpression = (IASTCastExpression) expression;
+					IType targetType = castExpression.getExpressionType();
+					IType sourceType = castExpression.getOperand().getExpressionType();
+	
+					if (isTypeDefinitionRequiredForConversion(sourceType, targetType)) {
+						// Source and target types of the cast expression are different.
+						// We need to define both types, even if they're pointers.
+						defineTypeExceptTypedefOrNonFixedEnum(targetType);
+						defineTypeExceptTypedefOrNonFixedEnum(sourceType);
+					} else if (!(targetType instanceof IPointerType || targetType instanceof ICPPReferenceType)) {
+						// Define the target type if it's not a pointer or reference type.
+						defineTypeExceptTypedefOrNonFixedEnum(targetType);
 					}
 				}
-			} else if (expression instanceof IASTFieldReference) {
-				/*
-				 * The type of the expression part of a field reference always requires a definition.
-				 *
-				 * Example:
-				 * 	void foo(X& x1, X* x2) {
-				 * 		x1.bar();			// definition of typeof(x1) is required here
-				 * 		x2->bar();			// definition of typeof(x2) is required here
-				 * 	}
-				 */
-
-				IASTExpression fieldOwner = ((IASTFieldReference) expression).getFieldOwner();
-				IType expressionType = fieldOwner.getExpressionType();
-				defineIndirectTypes(expressionType);
-				IASTName name = getNameOfIdOrFieldReferenceExpression(fieldOwner);
-				if (name != null) {
-					IBinding binding = name.resolveBinding();
-					defineTypeForBinding(binding, expressionType);
-				}
-			} else if (expression instanceof ICPPASTNewExpression) {
-				/*
-				 * The type specifier of a "new" expression always requires a definition.
-				 *
-				 * Example:
-				 * 	void foo() {
-				 * 		new X();			// definition of X is required here
-				 * 	}
-				 */
-				defineTypeExceptTypedefOrNonFixedEnum(((ICPPASTNewExpression) expression).getExpressionType());
-			} else if (expression instanceof ICPPASTDeleteExpression) {
-				/*
-				 * The expression type of a "delete" expression always requires a full definition.
-				 * This is necessary because the compiler needs to be able to call the destructor.
-				 *
-				 * Example:
-				 * 	void foo(X* x) {
-				 * 		delete x;			// definition of typeof(x) is required here
-				 * 	}
-				 */
-				defineTypeExceptTypedefOrNonFixedEnum(((ICPPASTDeleteExpression) expression).getOperand().getExpressionType());
-			} else if (expression instanceof IASTCastExpression) {
-				/*
-				 * Explicit type casts always need the definition of the underlying types.
-				 *
-				 * Example:
-				 * 	void foo(X* x) {
-				 * 		(Y*) x;				// definition of both Y and typeof(x) is required here
-				 * 	}
-				 */
-				IASTCastExpression castExpression = (IASTCastExpression) expression;
-				IType targetType = castExpression.getExpressionType();
-				IType sourceType = castExpression.getOperand().getExpressionType();
-
-				if (isTypeDefinitionRequiredForConversion(sourceType, targetType)) {
-					// Source and target types of the cast expression are different.
-					// We need to define both types, even if they're pointers.
-					defineTypeExceptTypedefOrNonFixedEnum(targetType);
-					defineTypeExceptTypedefOrNonFixedEnum(sourceType);
-				} else if (!(targetType instanceof IPointerType || targetType instanceof ICPPReferenceType)) {
-					// Define the target type if it's not a pointer or reference type.
-					defineTypeExceptTypedefOrNonFixedEnum(targetType);
-				}
+				return PROCESS_CONTINUE;
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
-			return PROCESS_CONTINUE;
 		}
 
 		protected void defineBindingForFunctionCall(IBinding binding, boolean defineFunction,
@@ -984,6 +994,7 @@ public class BindingClassifier {
 			fAst = node.getTranslationUnit();
 		}
 		try {
+			CPPSemantics.pushLookupPoint(fAst);
 			// Enable promiscuous binding resolution for this AST traversal,
 			// to allow names to be resolved even if the declarations of their
 			// target bindings are in a header not reachable via includes.
@@ -992,6 +1003,7 @@ public class BindingClassifier {
 			postprocessTemplates();
 		} finally {
 			CPPSemantics.disablePromiscuousBindingResolution();
+			CPPSemantics.popLookupPoint();
 		}
 	}
 
@@ -1119,7 +1131,7 @@ public class BindingClassifier {
 		lookupData.setFunctionArguments(false, new IASTInitializerClause[] { argument });
 		lookupData.qualified = true;
 		try {
-			IBinding constructor = CPPSemantics.resolveFunction(lookupData, ClassTypeHelper.getConstructors(classType, argument), false, false);
+			IBinding constructor = CPPSemantics.resolveFunction(lookupData, classType.getConstructors(), false, false);
 			if (constructor instanceof ICPPConstructor && !((ICPPConstructor) constructor).isExplicit())
 				return true;
 		} catch (DOMException e) {
@@ -1132,8 +1144,8 @@ public class BindingClassifier {
 	 * Returns {@code true} if {@code classType} has a constructor that can be used for
 	 * implicit conversion from some other type.
 	 */
-	private boolean hasConvertingConstructor(ICPPClassType classType, IASTNode point) {
-		ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+	private boolean hasConvertingConstructor(ICPPClassType classType) {
+		ICPPConstructor[] constructors = classType.getConstructors();
 		for (ICPPConstructor constructor : constructors) {
 			if (!constructor.isExplicit()) {
 				ICPPParameter[] parameters = constructor.getParameters();
@@ -1150,9 +1162,9 @@ public class BindingClassifier {
 		return false;
 	}
 
-	private boolean isTypeWithConvertingConstructor(IType type, IASTNode point) {
+	private boolean isTypeWithConvertingConstructor(IType type) {
 		type = getNestedType(type, REF | ALLCVQ);
-		return type instanceof ICPPClassType && hasConvertingConstructor((ICPPClassType) type, point);
+		return type instanceof ICPPClassType && hasConvertingConstructor((ICPPClassType) type);
 	}
 
 	/**
@@ -1432,7 +1444,7 @@ public class BindingClassifier {
 			}
 		} else if (binding instanceof ICPPClassType && fAst.getDefinitionsInAST(binding).length == 0) {
 			// The header that defines a class must provide definitions of all its base classes.
-			ICPPClassType[] bases = ClassTypeHelper.getAllBases((ICPPClassType) binding, fAst);
+			ICPPClassType[] bases = ClassTypeHelper.getAllBases((ICPPClassType) binding);
 			for (ICPPClassType base : bases) {
 				fProcessedDefinedBindings.add(base);
 				fBindingsToDefine.remove(base);
@@ -1629,10 +1641,15 @@ public class BindingClassifier {
 			return true;
 		ICPPClassScope classScope = ((ICPPASTCompositeTypeSpecifier) parent).getScope();
 		ICPPClassType classType = classScope.getClassType();
-		ICPPMethod destructor = ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR, parent);
-		if (destructor != null && fAst.getDefinitionsInAST(destructor).length != 0)
-			return true;
-		return false;
+		try {
+			CPPSemantics.pushLookupPoint(parent);
+			ICPPMethod destructor = ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR);
+			if (destructor != null && fAst.getDefinitionsInAST(destructor).length != 0)
+				return true;
+			return false;
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	private static boolean isEnumerationWithoutFixedUnderlyingType(IBinding typeBinding) {

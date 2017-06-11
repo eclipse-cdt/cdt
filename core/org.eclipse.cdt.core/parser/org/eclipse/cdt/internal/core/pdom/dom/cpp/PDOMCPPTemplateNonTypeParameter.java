@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -82,7 +81,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	}
 	
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPTemplateNonTypeParameter) {
 			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());

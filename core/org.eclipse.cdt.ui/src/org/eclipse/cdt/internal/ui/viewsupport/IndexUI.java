@@ -581,7 +581,7 @@ public class IndexUI {
 	/**
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
-	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding, IASTNode point)
+	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding)
 			throws CoreException {
 		List<IBinding> result= null;
 
@@ -600,11 +600,11 @@ public class IndexUI {
 		// Check for specializations of the owner.
 		IBinding owner = binding.getOwner();
 		if (owner != null) {
-			List<? extends IBinding> specializations = findSpecializations(index, owner, point);
+			List<? extends IBinding> specializations = findSpecializations(index, owner);
 			for (IBinding specOwner : specializations) {
 				if (specOwner instanceof ICPPClassSpecialization) {
 					// Add the specialized member.
-					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding, point);
+					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding);
 					specializedMember= index.adaptBinding(specializedMember);
 					if (specializedMember != null) {
 						if (result == null)

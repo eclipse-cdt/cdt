@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -63,7 +62,7 @@ public class PDOMCPPVariableTemplate extends PDOMCPPVariable implements ICPPVari
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding name, IASTNode point) {
+	public void update(PDOMLinkage linkage, IBinding name) {
 		// No support for updating templates, yet.
 	}
 

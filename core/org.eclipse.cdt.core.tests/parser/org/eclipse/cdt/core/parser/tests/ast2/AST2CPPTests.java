@@ -141,7 +141,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
@@ -6469,20 +6468,20 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertFalse(ClassTypeHelper.isOverrider(m5, m2));
 		assertTrue(ClassTypeHelper.isOverrider(m4, m2));
 
-		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m1, null);
+		ors= ClassTypeHelper.findOverridden(m1);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m2, null);
+		ors= ClassTypeHelper.findOverridden(m2);
 		assertEquals(1, ors.length);
 		assertEquals(ors[0], m1);
-		ors= ClassTypeHelper.findOverridden(m3, null);
+		ors= ClassTypeHelper.findOverridden(m3);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m4, null);
+		ors= ClassTypeHelper.findOverridden(m4);
 		assertEquals(2, ors.length);
 		assertEquals(ors[0], m2);
 		assertEquals(ors[1], m1);
-		ors= ClassTypeHelper.findOverridden(m5, null);
+		ors= ClassTypeHelper.findOverridden(m5);
 		assertEquals(1, ors.length);
 		assertEquals(ors[0], m1);
 	}
@@ -9254,8 +9253,8 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		IASTName namep = bh.findName("p");
 		ICPPClassType B = (ICPPClassType) nameB.resolveBinding();
 		IPointerType ptrToA = (IPointerType) ((ICPPVariable) namep.resolveBinding()).getType();
-		long pointerSize = SizeofCalculator.getSizeAndAlignment(ptrToA, namep).size;
-		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
+		long pointerSize = getSizeAndAlignment(ptrToA, namep).size;
+		long BSize = getSizeAndAlignment(B, nameB).size;
 		assertEquals(pointerSize, BSize);
 	}
 	
@@ -9264,7 +9263,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		IASTName nameWaldo = bh.findName("waldo");
 		ICPPClassType waldo = (ICPPClassType) nameWaldo.resolveBinding();
-		long waldoSize = SizeofCalculator.getSizeAndAlignment(waldo, nameWaldo).size;
+		long waldoSize = getSizeAndAlignment(waldo, nameWaldo).size;
 		assertNotEquals(0, waldoSize);
 	}
 
@@ -9389,14 +9388,14 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertFalse(ClassTypeHelper.isOverrider(m3, m0));
 		assertFalse(ClassTypeHelper.isOverrider(m3, m1));
 
-		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m1, null);
+		ors= ClassTypeHelper.findOverridden(m1);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m2, null);
+		ors= ClassTypeHelper.findOverridden(m2);
 		assertEquals(1, ors.length);
 		assertSame(ors[0], m0);
-		ors= ClassTypeHelper.findOverridden(m3, null);
+		ors= ClassTypeHelper.findOverridden(m3);
 		assertEquals(0, ors.length);
 	}
 

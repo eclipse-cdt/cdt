@@ -31,7 +31,7 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 		super(orig, owner, argMap, type, exceptionSpecs);
 	}
 	static <T extends ICPPConstructorSpecialization & ICPPInternalBinding> ICPPExecution 
-			getConstructorChainExecution(T functionSpec, IASTNode point) {
+			getConstructorChainExecution(T functionSpec) {
 		if (!functionSpec.isConstexpr()) {
 			return null;
 		}
@@ -40,11 +40,16 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 		if (def != null) {
 			return CPPConstructor.computeConstructorChainExecution(def);
 		}
-		return CPPTemplates.instantiateConstructorChain(functionSpec, point);
+		return CPPTemplates.instantiateConstructorChain(functionSpec);
 	}
 
 	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return getConstructorChainExecution(this);
+	}
+	
+	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return getConstructorChainExecution(this, point);
+		return getConstructorChainExecution();
 	}
 }

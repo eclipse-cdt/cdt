@@ -16,7 +16,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -70,18 +69,6 @@ public final class EvalFixed extends CPPEvaluation {
 		fValue= value;
 	}
 
-	public IType getType() {
-		return fType;
-	}
-
-	public IValue getValue() {
-		return fValue;
-	}
-
-	public ValueCategory getValueCategory() {
-		return fValueCategory;
-	}
-
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -111,31 +98,31 @@ public final class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType, point))
-				|| isConstexprValue(fValue, point);
+	private boolean computeIsConstantExpression() {
+		return (fType instanceof ICPPClassType && TypeTraits.isEmpty(fType))
+				|| isConstexprValue(fValue);
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		return fType;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		return fValue;
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return fValueCategory;
 	}
 

@@ -31,7 +31,12 @@ public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpeci
 	}
 
 	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return CPPConstructorSpecialization.getConstructorChainExecution(this);
+	}
+
+	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return CPPConstructorSpecialization.getConstructorChainExecution(this, point);
+		return getConstructorChainExecution();
 	}
 }

@@ -13,7 +13,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -47,7 +46,7 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	public void update(ICPPEvaluation newValue) {
-		parent.getValue(null).setSubValue(elementId, newValue);
+		parent.getValue().setSubValue(elementId, newValue);
 	}
 
 	@Override
@@ -56,7 +55,7 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	private ICPPEvaluation getTargetEvaluation() {
-		return parent.getValue(null).getSubValue(elementId);
+		return parent.getValue().getSubValue(elementId);
 	}
 
 	@Override
@@ -75,13 +74,13 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
-		return getTargetEvaluation().isConstantExpression(point);
+	public boolean isConstantExpression() {
+		return getTargetEvaluation().isConstantExpression();
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
-		IType type = getParent().getType(point);
+	public IType getType() {
+		IType type = getParent().getType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 
 		if (type instanceof IArrayType) {
@@ -91,13 +90,13 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 			InitializerListType initListType = (InitializerListType) type;
 			ICPPEvaluation[] clauses = initListType.getEvaluation().getClauses();
 			if (elementId >= 0 && elementId < clauses.length) {
-				return clauses[elementId].getType(point);
+				return clauses[elementId].getType();
 			} else {
 				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			}
 		} else if (type instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) type;
-			IField[] fields = ClassTypeHelper.getFields(classType, point);
+			IField[] fields = ClassTypeHelper.getFields(classType);
 			if (elementId >= 0 && elementId < fields.length) {
 				return fields[elementId].getType();
 			} else {
@@ -113,13 +112,13 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		return getTargetEvaluation().getValue(point);
+	public IValue getValue() {
+		return getTargetEvaluation().getValue();
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		return getTargetEvaluation().getValueCategory(point);
+	public ValueCategory getValueCategory() {
+		return getTargetEvaluation().getValueCategory();
 	}
 
 	@Override
@@ -133,7 +132,7 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 			return getTargetEvaluation().computeForFunctionCall(record, context);
 		} else {
 			ICPPEvaluation evaluatedComposite = parent.computeForFunctionCall(record, context);
-			return evaluatedComposite.getValue(context.getPoint()).getSubValue(elementId).computeForFunctionCall(record, context);
+			return evaluatedComposite.getValue().getSubValue(elementId).computeForFunctionCall(record, context);
 		}
 	}
 

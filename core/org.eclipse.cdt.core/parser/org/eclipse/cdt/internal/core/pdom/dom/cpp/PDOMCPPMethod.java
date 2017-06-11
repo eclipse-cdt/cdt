@@ -49,9 +49,9 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	private byte methodAnnotation= -1;
 
-	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, IASTNode point) 
+	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
 			throws CoreException, DOMException {
-		super(linkage, parent, method, true, point);
+		super(linkage, parent, method, true);
 		methodAnnotation= PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 		getDB().putByte(record + METHOD_ANNOTATION, methodAnnotation);
 	}
@@ -61,10 +61,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public final void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public final void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPMethod) {
 			ICPPMethod method= (ICPPMethod) newBinding;
-			super.update(linkage, newBinding, point);
+			super.update(linkage, newBinding);
 			methodAnnotation= -1;
 			byte annot = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 			getDB().putByte(record + METHOD_ANNOTATION, annot);
@@ -221,7 +221,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	@Override
 	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {
-			return ClassTypeHelper.getInheritedExceptionSpecification(this, null);
+			return ClassTypeHelper.getInheritedExceptionSpecification(this);
 		}
 		return super.getExceptionSpecification();
 	}

@@ -33,9 +33,9 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 	
-	public PDOMCPPConstructor(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method, IASTNode point)
+	public PDOMCPPConstructor(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method)
 			throws CoreException, DOMException {
-		super(linkage, parent, method, point);
+		super(linkage, parent, method);
 		linkage.new ConfigureConstructor(method, this);
 	}
 
@@ -67,7 +67,13 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 	}
 	
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())
 			return null;
 

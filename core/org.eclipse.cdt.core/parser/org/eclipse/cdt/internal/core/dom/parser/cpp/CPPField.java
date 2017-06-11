@@ -105,7 +105,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 	}
 
 	public static int getFieldPosition(String fieldName, ICPPClassType classOwner) {
-		IField[] fields = ClassTypeHelper.getDeclaredFields(classOwner, null);
+		IField[] fields = classOwner.getDeclaredFields();
 		for (int fieldPos = 0; fieldPos < fields.length; fieldPos++) {
 			if (fields[fieldPos].getName().equals(fieldName)) {
 				return fieldPos;

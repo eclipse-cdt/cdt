@@ -50,7 +50,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this, null);
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	private class CPPBaseDelegate implements ICPPBase {
@@ -154,7 +154,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	@Override
 	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this, null);
+		return ClassTypeHelper.getFields(this);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this, null);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	@Override

@@ -74,33 +74,33 @@ public class EvalInitList extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		return areAllConstantExpressions(fClauses, point);
+	private boolean computeIsConstantExpression() {
+		return areAllConstantExpressions(fClauses);
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		return new InitializerListType(this);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (isValueDependent()) {
 			return DependentValue.create(this);
 		}
-		return CompositeValue.create(this, point);
+		return CompositeValue.create(this);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
 

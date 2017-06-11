@@ -59,7 +59,12 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 
 	@Override
 	protected IBinding createIntermediateBinding() {
-		return CPPVisitor.createBinding(this);
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			return CPPVisitor.createBinding(this);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
     @Override

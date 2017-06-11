@@ -38,9 +38,9 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 	
 	public PDOMCPPConstructorInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method,
-			PDOMBinding instantiated, IASTNode point) throws CoreException {
-		super(linkage, parent, method, instantiated, point);
-		linkage.new ConfigureConstructorInstance(method, this, point);
+			PDOMBinding instantiated) throws CoreException {
+		super(linkage, parent, method, instantiated);
+		linkage.new ConfigureConstructorInstance(method, this);
 	}
 	
 	public PDOMCPPConstructorInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -68,14 +68,20 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance
 	}
 
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())
 			return null;
 
 		try {
 			ICPPExecution exec = getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 			if (exec == null) {
-				exec = CPPTemplates.instantiateConstructorChain(this, point);
+				exec = CPPTemplates.instantiateConstructorChain(this);
 			}
 			return exec;
 		} catch (CoreException e) {

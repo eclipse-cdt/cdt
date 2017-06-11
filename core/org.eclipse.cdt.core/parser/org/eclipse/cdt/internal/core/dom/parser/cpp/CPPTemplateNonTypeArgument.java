@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -30,18 +29,18 @@ import org.eclipse.core.runtime.Assert;
 public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	private final ICPPEvaluation fEvaluation;
 
-	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation, IASTNode point) {
+	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation) {
 		Assert.isNotNull(evaluation);
-		if (evaluation instanceof EvalFixed || point == null ||
+		if (evaluation instanceof EvalFixed || 
 				evaluation.isTypeDependent() || evaluation.isValueDependent()) {
 			fEvaluation= evaluation;
 		} else {
-			IValue value = evaluation.getValue(point);
+			IValue value = evaluation.getValue();
 			if (value == IntegralValue.ERROR) {
 				fEvaluation = EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalFixed(evaluation.getType(point),
-						evaluation.getValueCategory(point), value);
+				fEvaluation= new EvalFixed(evaluation.getType(),
+						evaluation.getValueCategory(), value);
 			}
 		}
 	}
@@ -77,22 +76,22 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 
 	@Override
 	public IValue getNonTypeValue() {
-		return fEvaluation.getValue(null);
+		return fEvaluation.getValue();
 	}
 
 	@Override
 	public IType getTypeOfNonTypeValue() {
-		return fEvaluation.getType(null);
+		return fEvaluation.getType();
 	}
 
 	@Override
 	public boolean isPackExpansion() {
-		return fEvaluation.getType(null) instanceof ICPPParameterPackType;
+		return fEvaluation.getType() instanceof ICPPParameterPackType;
 	}
 
 	@Override
 	public ICPPTemplateArgument getExpansionPattern() {
-		IType type = fEvaluation.getType(null);
+		IType type = fEvaluation.getType();
 		if (type instanceof ICPPParameterPackType) {
 			IType t= ((ICPPParameterPackType) type).getType();
 			if (t != null) {
@@ -102,7 +101,7 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				} else {
 					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), false, false, fEvaluation);
 				}
-				return new CPPTemplateNonTypeArgument(evaluation, null);
+				return new CPPTemplateNonTypeArgument(evaluation);
 			}
 		}
 		return null;

@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -146,7 +145,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
-		return CPPFunction.getFunctionBodyExecution((ICPPFunction) rbinding, point);
+	public ICPPExecution getFunctionBodyExecution() {
+		return CPPFunction.getFunctionBodyExecution((ICPPFunction) rbinding);
 	}
 }

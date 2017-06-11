@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Checker to find that class has virtual method and non virtual destructor
@@ -47,8 +48,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		ast.accept(new OnEachClass());
 	}
 
-	private static ICPPMethod getDestructor(ICPPClassType classType, IASTNode point) {
-		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
+	private static ICPPMethod getDestructor(ICPPClassType classType) {
+		for (ICPPMethod method : classType.getDeclaredMethods()) {
 			if (method.isDestructor()) {
 				return method;
 			}
@@ -56,18 +57,18 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		return null;
 	}
 
-	private static boolean hasVirtualDestructor(ICPPClassType classType, IASTNode point) {
+	private static boolean hasVirtualDestructor(ICPPClassType classType) {
 		checkedClassTypes.add(classType);
-		ICPPMethod destructor = getDestructor(classType, point);
+		ICPPMethod destructor = getDestructor(classType);
 		if (destructor != null && destructor.isVirtual()) {
 			return true;
 		}
-		ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);   
+		ICPPBase[] bases = classType.getBases();   
 		for (ICPPBase base : bases) {
 			IBinding baseClass = base.getBaseClass();
 			if (baseClass instanceof ICPPClassType) {
 				ICPPClassType cppClassType = (ICPPClassType) baseClass;
-				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType, point)) {
+				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType)) {
 					return true;
 				}
 			}
@@ -89,39 +90,44 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				if (!(binding instanceof ICPPClassType)) {
 					return PROCESS_SKIP;
 				}
-				ICPPClassType classType = (ICPPClassType) binding;
-				boolean hasVirtualDestructor = hasVirtualDestructor(classType, className);
-				checkedClassTypes.clear();
-				if (hasVirtualDestructor) {
-					return PROCESS_SKIP;
-				}
-				ICPPMethod virtualMethod = null;
-				for (ICPPMethod method : ClassTypeHelper.getAllDeclaredMethods(classType, className)) {
-					if (!method.isDestructor() && method.isVirtual()) {
-						virtualMethod = method;
+				try {
+					CPPSemantics.pushLookupPoint(className);
+					ICPPClassType classType = (ICPPClassType) binding;
+					boolean hasVirtualDestructor = hasVirtualDestructor(classType);
+					checkedClassTypes.clear();
+					if (hasVirtualDestructor) {
+						return PROCESS_SKIP;
 					}
-				}
-				if (virtualMethod == null) {
-					return PROCESS_SKIP;
-				}
-				ICPPMethod destructor = getDestructor(classType, className);
-				if (destructor != null &&
-						destructor.getVisibility() != ICPPASTVisibilityLabel.v_public &&
-						classType.getFriends().length == 0) {
-					// No error if the destructor is protected or private and there are no friends.
-					return PROCESS_SKIP;
-				}
-
-				IASTNode node = decl;
-				if (destructor instanceof ICPPInternalBinding) {
-					IASTNode[] decls = ((ICPPInternalBinding) destructor).getDeclarations();
-					if (decls != null && decls.length > 0) {
-						node = decls[0];
+					ICPPMethod virtualMethod = null;
+					for (ICPPMethod method : ClassTypeHelper.getAllDeclaredMethods(classType)) {
+						if (!method.isDestructor() && method.isVirtual()) {
+							virtualMethod = method;
+						}
 					}
+					if (virtualMethod == null) {
+						return PROCESS_SKIP;
+					}
+					ICPPMethod destructor = getDestructor(classType);
+					if (destructor != null &&
+							destructor.getVisibility() != ICPPASTVisibilityLabel.v_public &&
+							classType.getFriends().length == 0) {
+						// No error if the destructor is protected or private and there are no friends.
+						return PROCESS_SKIP;
+					}
+	
+					IASTNode node = decl;
+					if (destructor instanceof ICPPInternalBinding) {
+						IASTNode[] decls = ((ICPPInternalBinding) destructor).getDeclarations();
+						if (decls != null && decls.length > 0) {
+							node = decls[0];
+						}
+					}
+					reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()),
+							virtualMethod.getName());
+					return PROCESS_SKIP;
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
-				reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()),
-						virtualMethod.getName());
-				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}

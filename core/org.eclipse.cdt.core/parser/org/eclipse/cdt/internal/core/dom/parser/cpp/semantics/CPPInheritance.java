@@ -121,12 +121,11 @@ public class CPPInheritance {
 	 * Final overrider maps are cached in the AST.
 	 *
 	 * @param classType the root of the class hierarchy
-	 * @param point The point of template instantiation, if applicable.
-	 *              Also used to access the cache in the AST.
 	 * @return the computed final overrider map
 	 */
-	public static FinalOverriderMap getFinalOverriderMap(ICPPClassType classType, IASTNode point) {
+	public static FinalOverriderMap getFinalOverriderMap(ICPPClassType classType) {
 		Map<ICPPClassType, FinalOverriderMap> cache = null;
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (point != null && point.getTranslationUnit() instanceof CPPASTTranslationUnit) {
 			cache = ((CPPASTTranslationUnit) point.getTranslationUnit()).getFinalOverriderMapCache();
 		}
@@ -135,7 +134,7 @@ public class CPPInheritance {
 			result = cache.get(classType);
 		}
 		if (result == null) {
-			result = FinalOverriderAnalysis.computeFinalOverriderMap(classType, point);
+			result = FinalOverriderAnalysis.computeFinalOverriderMap(classType);
 		}
 		if (cache != null) {
 			cache.put(classType, result);
@@ -146,13 +145,9 @@ public class CPPInheritance {
 	/**
 	 * If a given virtual method has a unique final overrider in the class hierarchy rooted at the
 	 * given class, returns that final overrider. Otherwise, returns null.
-
-	 * @param point The point of template instantiation, if applicable.
-	 *              Also used to access the final overrider map cache in the AST.
 	 */
-	public static ICPPMethod getFinalOverrider(ICPPMethod method, ICPPClassType hierarchyRoot,
-			IASTNode point) {
-		FinalOverriderMap map = getFinalOverriderMap(hierarchyRoot, point);
+	public static ICPPMethod getFinalOverrider(ICPPMethod method, ICPPClassType hierarchyRoot) {
+		FinalOverriderMap map = getFinalOverriderMap(hierarchyRoot);
 		Map<Integer, List<ICPPMethod>> finalOverriders = map.getMap().get(method);
 		if (finalOverriders != null && finalOverriders.size() == 1) {
 			for (Integer subobjectNumber : finalOverriders.keySet()) {
@@ -170,12 +165,11 @@ public class CPPInheritance {
 		 * Computes the final overrider map for a class hierarchy.
 		 *
 		 * @param classType the root of the class hierarchy
-		 * @param point the point of template instantiation, if applicable
 		 * @return the computed final overrider map
 		 */
-		public static FinalOverriderMap computeFinalOverriderMap(ICPPClassType classType, IASTNode point) {
+		public static FinalOverriderMap computeFinalOverriderMap(ICPPClassType classType) {
 			return new FinalOverriderAnalysis().collectFinalOverriders(classType, false,
-					new HashSet<ICPPClassType>(), CPPSemantics.MAX_INHERITANCE_DEPTH, point);
+					new HashSet<ICPPClassType>(), CPPSemantics.MAX_INHERITANCE_DEPTH);
 		}
 
 		// The last subobject number used for each type in the hierarchy. This is used to
@@ -196,11 +190,10 @@ public class CPPInheritance {
 		 * @param isVirtualBase whether 'classType' is inherited virtually
 		 * @param inheritanceChain the chain of classes from the entire hierarchy's root to 'classType'.
 		 *                         This is used to guard against circular inheritance.
-		 * @param point the point of template instantiation, if applicable
 		 * @return the computed final overrider map for the subtree
 		 */
 		private FinalOverriderMap collectFinalOverriders(ICPPClassType classType, boolean isVirtualBase,
-				Set<ICPPClassType> inheritanceChain, int maxdepth, IASTNode point) {
+				Set<ICPPClassType> inheritanceChain, int maxdepth) {
 			FinalOverriderMap result = new FinalOverriderMap();
 
 			inheritanceChain.add(classType);
@@ -214,7 +207,7 @@ public class CPPInheritance {
 			}
 
 			// Go through our base classes.
-			for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
+			for (ICPPBase base : classType.getBases()) {
 				IBinding baseClass = base.getBaseClass();
 				if (!(baseClass instanceof ICPPClassType))
 					continue;
@@ -237,11 +230,11 @@ public class CPPInheritance {
 				if (base.isVirtual()) {
 					baseOverriderMap = virtualBaseCache.get(baseType);
 					if (baseOverriderMap == null) {
-						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, maxdepth - 1, point);
+						baseOverriderMap = collectFinalOverriders(baseType, true, inheritanceChain, maxdepth - 1);
 						virtualBaseCache.put(baseType, baseOverriderMap);
 					}
 				} else {
-					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, maxdepth - 1, point);
+					baseOverriderMap = collectFinalOverriders(baseType, false, inheritanceChain, maxdepth - 1);
 				}
 
 				// Merge final overrider information from base class into this class.
@@ -249,7 +242,7 @@ public class CPPInheritance {
 			}
 
 			// Go through our own methods.
-			for (ICPPMethod method : ClassTypeHelper.getOwnMethods(classType, point)) {
+			for (ICPPMethod method : ClassTypeHelper.getOwnMethods(classType)) {
 				// Skip methods that don't actually belong to us, such as methods brought
 				// into scope via a using-declaration.
 				if (!(method.getOwner() instanceof ICPPClassType &&
@@ -263,7 +256,7 @@ public class CPPInheritance {
 
 				// Find all methods overridden by this method, and set their final overrider
 				// to be this method.
-				ICPPMethod[] overriddenMethods = ClassTypeHelper.findOverridden(method, point);
+				ICPPMethod[] overriddenMethods = ClassTypeHelper.findOverridden(method);
 				for (ICPPMethod overriddenMethod : overriddenMethods)
 					result.replaceForAllSubobjects(overriddenMethod, method);
 			}

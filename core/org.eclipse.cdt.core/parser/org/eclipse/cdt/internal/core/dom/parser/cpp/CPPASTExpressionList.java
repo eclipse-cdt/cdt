@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
@@ -156,7 +158,12 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     private ICPPFunction[] getOverloads() {
     	ICPPEvaluation eval = getEvaluation();
     	if (eval instanceof EvalComma) {
-    		return ((EvalComma) eval).getOverloads(this);
+    		CPPSemantics.pushLookupPoint(this);
+    		try {
+    			return ((EvalComma) eval).getOverloads();
+    		} finally {
+    			CPPSemantics.popLookupPoint();
+    		}
     	}
     	return null;
     }
@@ -195,12 +202,12 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return getEvaluation().getValueCategory(this);
+    	return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

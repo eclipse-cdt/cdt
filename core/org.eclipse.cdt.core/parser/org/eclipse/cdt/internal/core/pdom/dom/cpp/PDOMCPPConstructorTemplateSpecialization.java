@@ -36,9 +36,9 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPConstructor constructor, PDOMBinding specialized, IASTNode point) throws CoreException {
-		super(linkage, parent, constructor, specialized, point);
-		linkage.new ConfigureConstructorTemplateSpecialization(constructor, this, point);
+			ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, constructor, specialized);
+		linkage.new ConfigureConstructorTemplateSpecialization(constructor, this);
 	}
 
 	public PDOMCPPConstructorTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -66,14 +66,20 @@ class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpec
 	}
 
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())
 			return null;
 
 		try {
 			ICPPExecution exec = getLinkage().loadExecution(record + CONSTRUCTOR_CHAIN);
 			if (exec == null) {
-				exec = CPPTemplates.instantiateConstructorChain(this, point);
+				exec = CPPTemplates.instantiateConstructorChain(this);
 			}
 			return exec;
 		} catch (CoreException e) {

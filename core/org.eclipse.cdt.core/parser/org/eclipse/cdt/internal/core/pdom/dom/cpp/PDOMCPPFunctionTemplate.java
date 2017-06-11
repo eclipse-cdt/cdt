@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -43,15 +42,15 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	
 	private volatile IPDOMCPPTemplateParameter[] params;  // Cached template parameters.
 
-	public PDOMCPPFunctionTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template,
-			IASTNode point) throws CoreException, DOMException {
-		super(linkage, parent, template, false, point);
+	public PDOMCPPFunctionTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template) 
+			throws CoreException, DOMException {
+		super(linkage, parent, template, false);
 		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
 		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		final Database db = getDB();
 		long rec= PDOMTemplateParameterArray.putArray(db, params);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
-		linkage.new ConfigureFunctionTemplate(template, this, point);
+		linkage.new ConfigureFunctionTemplate(template, this);
 	}
 
 	public PDOMCPPFunctionTemplate(PDOMLinkage linkage, long bindingRecord) {
@@ -59,7 +58,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding name, IASTNode point) {
+	public void update(PDOMLinkage linkage, IBinding name) {
 		// no support for updating templates, yet.
 	}
 	

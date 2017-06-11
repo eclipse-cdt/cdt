@@ -15,16 +15,20 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
 public class CPPConstructorTemplate extends CPPMethodTemplate implements ICPPConstructor {
-
 	public CPPConstructorTemplate(IASTName name) {
 		super(name);
 	}
 
 	@Override
-	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr()) {
 			return null;
 		}
 		return CPPConstructor.computeConstructorChainExecution(getDefinition());
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
 	}
 }

@@ -63,16 +63,15 @@ class BuiltinOperators {
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
 	public static ICPPFunction[] create(OverloadableOperator operator, ICPPEvaluation[] args,
-			IASTNode point, Object[] globCandidates) {
+			Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
 
-		return new BuiltinOperators(operator, args, point, globCandidates).create();
+		return new BuiltinOperators(operator, args, globCandidates).create();
 	}
 
 	private final OverloadableOperator fOperator;
 	private final boolean fUnary;
-	private final IASTNode fPoint;
 	private IType fType1;
 	private IType fType2;
 	private IType[][] fClassConversionTypes= { null, null };
@@ -82,22 +81,22 @@ class BuiltinOperators {
 	private Set<String> fSignatures;
 	private Object[] fGlobalCandidates;
 
-	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, IASTNode point,
+	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args,
 			Object[] globCandidates) {
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		fFileScope= point == null ?
 				new CPPScope.CPPScopeProblem(null, IProblemBinding.SEMANTIC_BAD_SCOPE) :
 				point.getTranslationUnit().getScope();
 		fOperator= operator;
-		fPoint = point;
 		fUnary= args.length < 2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
-			IType type= args[0].getType(point);
+			IType type= args[0].getType();
 			if (!(type instanceof ISemanticProblem))
 				fType1= type;
 		}
 		if (args.length > 1) {
-			IType type= args[1].getType(point);
+			IType type= args[1].getType();
 			if (!(type instanceof ISemanticProblem))
 				fType2= type;
 		}
@@ -360,7 +359,7 @@ class BuiltinOperators {
 				IType t2= SemanticUtil.getNestedType(memPtr.getMemberOfClass(), TDEF);
 				if (t2 instanceof ICPPClassType) {
 					ICPPClassType c2= (ICPPClassType) t2;
-					if (SemanticUtil.calculateInheritanceDepth(c1, c2, fPoint) >= 0) {
+					if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
 						IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
 						IType rt= new CPPReferenceType(
 								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile(), cv1.isRestrict()), false);
@@ -684,7 +683,7 @@ class BuiltinOperators {
 				if (type instanceof ICPPClassType) {
 					fIsClass[idx]= true;
 					try {
-						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type, fPoint);
+						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type);
 						result= new IType[ops.length];
 						int j= -1;
 						for (ICPPMethod op : ops) {

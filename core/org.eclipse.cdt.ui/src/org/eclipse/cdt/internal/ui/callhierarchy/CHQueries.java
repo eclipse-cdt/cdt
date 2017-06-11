@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -99,7 +98,7 @@ public class CHQueries {
 		if (calleeBinding != null) {
 			findCalledBy1(index, calleeBinding, true, project, result);
 			if (calleeBinding instanceof ICPPMethod) {
-				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding, null);
+				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
 				for (IBinding overriddenBinding : overriddenBindings) {
 					findCalledBy1(index, overriddenBinding, false, project, result);
 				}
@@ -110,8 +109,7 @@ public class CHQueries {
 	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
 			ICProject project, CalledByResult result) throws CoreException {
 		findCalledBy2(index, callee, includeOrdinaryCalls, project, result);
-		IASTNode point= null; // Instantiation of dependent expressions may not work.
-		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee, point);
+		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee);
 		for (IBinding spec : specializations) {
 			findCalledBy2(index, spec, includeOrdinaryCalls, project, result);
 		}
@@ -177,7 +175,7 @@ public class CHQueries {
 	 * if there are none.
 	 */
 	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
-		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding, null);
+		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
 		if (virtualOverriders.length > 0) {
 			ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
 			list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));

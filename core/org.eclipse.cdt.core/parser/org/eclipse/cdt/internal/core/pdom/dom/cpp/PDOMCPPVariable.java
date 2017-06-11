@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -66,7 +65,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			ICPPVariable var= (ICPPVariable) newBinding;

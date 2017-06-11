@@ -24,14 +24,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  * Instantiation of a constructor template
  */
 public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructorSpecialization {
-
 	public CPPConstructorInstance(ICPPConstructor orig, ICPPClassType owner, ICPPTemplateParameterMap tpmap,
 			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
 		super(orig, owner, tpmap, args, type, exceptionSpec);
 	}
 
 	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return CPPConstructorSpecialization.getConstructorChainExecution(this);
+	}
+
+	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return CPPConstructorSpecialization.getConstructorChainExecution(this, point);
+		return getConstructorChainExecution();
 	}
 }

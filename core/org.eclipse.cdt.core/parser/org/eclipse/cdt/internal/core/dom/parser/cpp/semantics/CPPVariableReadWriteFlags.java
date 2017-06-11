@@ -47,7 +47,12 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	private static CPPVariableReadWriteFlags INSTANCE= new CPPVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {
-		return INSTANCE.rwAnyNode(variable, 0);
+		CPPSemantics.pushLookupPoint(variable);
+		try {
+			return INSTANCE.rwAnyNode(variable, 0);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		IType type = CPPVisitor.createType(parent);
 		if (type instanceof ICPPUnknownType ||
 				type instanceof ICPPClassType &&
-				!TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, parent, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
+				!TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
 			return WRITE;
 		}
 		return super.rwInDeclarator(parent, indirection);

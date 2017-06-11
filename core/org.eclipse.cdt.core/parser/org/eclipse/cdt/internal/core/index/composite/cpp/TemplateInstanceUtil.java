@@ -104,7 +104,7 @@ public class TemplateInstanceUtil {
 			ICPPEvaluation eval = arg.getNonTypeEvaluation();
 			ICPPEvaluation eval2 = ((CPPCompositesFactory) cf).getCompositeEvaluation(eval);
 			if (eval2 != eval) {
-				return new CPPTemplateNonTypeArgument(eval2, null);
+				return new CPPTemplateNonTypeArgument(eval2);
 			}
 		}
 		return arg;

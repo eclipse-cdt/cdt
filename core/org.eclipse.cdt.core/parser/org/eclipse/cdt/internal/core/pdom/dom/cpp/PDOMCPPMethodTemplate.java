@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -34,9 +33,9 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	
 	private byte methodAnnotation= -1;
 	
-	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, IASTNode point) 
+	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
 			throws CoreException, DOMException {
-		super(linkage, parent, (ICPPFunctionTemplate) method, point);
+		super(linkage, parent, (ICPPFunctionTemplate) method);
 		methodAnnotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
 		getDB().putByte(record + METHOD_ANNOTATION, methodAnnotation);
 	}

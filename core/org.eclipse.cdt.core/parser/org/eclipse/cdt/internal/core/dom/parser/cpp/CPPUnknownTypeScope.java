@@ -156,8 +156,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     	if (lookup.isPrefixLookup()) {
 			// If name lookup is performed for the purpose of code completion in a dependent context,
 			// try to give some useful results heuristically.
-			IScope scope = HeuristicResolver.findConcreteScopeForType(fScopeType,
-					lookup.getLookupPoint());
+			IScope scope = HeuristicResolver.findConcreteScopeForType(fScopeType);
 			if (scope != null) {
 				return scope.getBindings(lookup);
 			}

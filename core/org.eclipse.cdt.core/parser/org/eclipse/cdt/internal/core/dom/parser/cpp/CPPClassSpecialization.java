@@ -17,7 +17,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -49,6 +48,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.core.runtime.Assert;
 
@@ -59,7 +59,8 @@ public class CPPClassSpecialization extends CPPSpecialization
 		implements ICPPClassSpecialization, ICPPInternalClassTypeMixinHost {
 
 	public static class RecursionResolvingBinding extends ProblemBinding implements ICPPMember, IRecursionResolvingBinding {
-		public static RecursionResolvingBinding createFor(IBinding original, IASTNode point) {
+		public static RecursionResolvingBinding createFor(IBinding original) {
+			IASTNode point = CPPSemantics.getCurrentLookupPoint();
 			if (original instanceof ICPPMethod)
 				return new RecursionResolvingMethod(point, original.getNameCharArray());
 			if (original instanceof ICPPField)
@@ -177,11 +178,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public IBinding specializeMember(IBinding original) {
-		return specializeMember(original, null);
-	}
-
-	@Override
-	public IBinding specializeMember(IBinding original, IASTNode point) {
 		synchronized (this) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null)
@@ -191,10 +187,10 @@ public class CPPClassSpecialization extends CPPSpecialization
 		IBinding result;
 		Set<IBinding> recursionProtectionSet= fInProgress.get();
 		if (!recursionProtectionSet.add(original))
-			return RecursionResolvingBinding.createFor(original, point);
+			return RecursionResolvingBinding.createFor(original);
 
 		try {
-			result= CPPTemplates.createSpecialization(this, original, point);
+			result= CPPTemplates.createSpecialization(this, original);
 		} finally {
 			recursionProtectionSet.remove(original);
 		}
@@ -208,6 +204,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 			specializationMap.put(original, result);
 			return result;
 		}
+	}
+
+	@Override
+	public IBinding specializeMember(IBinding original, IASTNode point) {
+		return specializeMember(original);
 	}
 
 	@Override
@@ -230,12 +231,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPBase[] getBases() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getBases(null);
-	}
-
-	@Override
-	public ICPPBase[] getBases(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null) {
 			if (bases == null) {
@@ -244,108 +239,114 @@ public class CPPClassSpecialization extends CPPSpecialization
 			return bases;
 		}
 
-		return scope.getBases(point);
+		return scope.getBases();
+	}
+
+	@Override
+	@Deprecated
+	public ICPPBase[] getBases(IASTNode point) {
+		return getBases();
 	}
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getDeclaredFields(null);
-	}
-
-	@Override
-	public ICPPField[] getDeclaredFields(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredFields(this);
 
-		return scope.getDeclaredFields(point);
+		return scope.getDeclaredFields();
+	}
+
+	@Override
+	@Deprecated
+	public ICPPField[] getDeclaredFields(IASTNode point) {
+		return getDeclaredFields();
 	}
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getDeclaredMethods(null);
-	}
-
-	@Override
-	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredMethods(this);
 
-		return scope.getDeclaredMethods(point);
+		return scope.getDeclaredMethods();
+	}
+
+	@Override
+	@Deprecated
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
+		return getDeclaredMethods();
 	}
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getConstructors(null);
-	}
-
-	@Override
-	public ICPPConstructor[] getConstructors(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getConstructors(this);
 
-		return scope.getConstructors(point);
+		return scope.getConstructors();
+	}
+
+	@Override
+	@Deprecated
+	public ICPPConstructor[] getConstructors(IASTNode point) {
+		return getConstructors();
 	}
 
 	@Override
 	public IBinding[] getFriends() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getFriends(null);
-	}
-
-	@Override
-	public IBinding[] getFriends(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getFriends(this);
 
-		return scope.getFriends(point);
+		return scope.getFriends();
+	}
+
+	@Override
+	@Deprecated
+	public IBinding[] getFriends(IASTNode point) {
+		return getFriends();
 	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getNestedClasses(null);
-	}
-
-	@Override
-	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getNestedClasses(this);
 
-		return scope.getNestedClasses(point);
+		return scope.getNestedClasses();
+	}
+
+	@Override
+	@Deprecated
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
+		return getNestedClasses();
 	}
 	
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getUsingDeclarations(null);
-	}
-	
-	@Override
-	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
 		ICPPClassSpecializationScope scope = getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getUsingDeclarations(this);
 		
-		return scope.getUsingDeclarations(point);
+		return scope.getUsingDeclarations();
+	}
+	
+	@Override
+	@Deprecated
+	public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+		return getUsingDeclarations();
 	}
 
 	@Override
 	public IField[] getFields() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getFields(null);
+		return ClassTypeHelper.getFields(this);
 	}
 
 	@Override
+	@Deprecated
 	public IField[] getFields(IASTNode point) {
-		return ClassTypeHelper.getFields(this, point);
+		return getFields();
 	}
 
 	@Override
@@ -355,24 +356,24 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getMethods(null);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	@Override
+	@Deprecated
 	public ICPPMethod[] getMethods(IASTNode point) {
-		return ClassTypeHelper.getMethods(this, point);
+		return getMethods();
 	}
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
-		return getAllDeclaredMethods(null);
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	@Override
+	@Deprecated
 	public ICPPMethod[] getAllDeclaredMethods(IASTNode point) {
-		return ClassTypeHelper.getAllDeclaredMethods(this, point);
+		return getAllDeclaredMethods();
 	}
 
 	@Override

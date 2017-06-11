@@ -53,7 +53,12 @@ public class AccessContext {
 	 * @return {@code true} if the binding is accessible.
 	 */
 	public static boolean isAccessible(IBinding binding, IASTName from) {
-		return new AccessContext(from).isAccessible(binding);
+		CPPSemantics.pushLookupPoint(from);
+		try {
+			return new AccessContext(from).isAccessible(binding);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	/**
@@ -66,7 +71,12 @@ public class AccessContext {
 	 * @return {@code true} if the binding is accessible.
 	 */
 	public static boolean isAccessible(IBinding binding, int bindingVisibility, IASTName from) {
-		return new AccessContext(from).isAccessible(binding, bindingVisibility);
+		CPPSemantics.pushLookupPoint(from);
+		try {
+			return new AccessContext(from).isAccessible(binding, bindingVisibility);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	private final IASTName name;
@@ -201,7 +211,7 @@ public class AccessContext {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 
-		ICPPUsingDeclaration[] usingDecls = ClassTypeHelper.getUsingDeclarations(derivedClass, name);
+		ICPPUsingDeclaration[] usingDecls = derivedClass.getUsingDeclarations();
 		for (ICPPUsingDeclaration decl : usingDecls) {
 			for (IBinding delegate : decl.getDelegates()) {
 				if (delegate.equals(binding)) {
@@ -211,7 +221,7 @@ public class AccessContext {
 			}
 		}
 		
-		ICPPBase[] bases = ClassTypeHelper.getBases(derivedClass, name);
+		ICPPBase[] bases = derivedClass.getBases();
 		if (bases != null) {
 			for (ICPPBase base : bases) {
 				IBinding baseBinding = base.getBaseClass();
@@ -264,7 +274,7 @@ public class AccessContext {
 		if (derived.isSameType(classType))
 			return true;
 
-		ICPPBase[] bases = ClassTypeHelper.getBases(derived, name);
+		ICPPBase[] bases = derived.getBases();
 		if (bases != null) {
 			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();
@@ -325,7 +335,7 @@ public class AccessContext {
 			return true;
 		}
 		if (maxdepth > 0) {
-			for (ICPPBase cppBase : ClassTypeHelper.getBases(derived, point)) {
+			for (ICPPBase cppBase : derived.getBases()) {
 				IBinding base = cppBase.getBaseClass();
 				if (!(target instanceof ICPPSpecialization)) {
 					while (base instanceof ICPPSpecialization) {

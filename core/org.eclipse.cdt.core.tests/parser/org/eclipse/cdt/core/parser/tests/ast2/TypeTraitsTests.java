@@ -61,11 +61,11 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testHasTrivialCopyCtor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertFalse(TypeTraits.hasTrivialCopyCtor(classA, null));
+		assertFalse(TypeTraits.hasTrivialCopyCtor(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B {");
-		assertTrue(TypeTraits.hasTrivialCopyCtor(classB, null));
+		assertTrue(TypeTraits.hasTrivialCopyCtor(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C {");
-		assertFalse(TypeTraits.hasTrivialCopyCtor(classC, null));
+		assertFalse(TypeTraits.hasTrivialCopyCtor(classC));
 	}
 
 	//	struct A {
@@ -89,11 +89,11 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testHasTrivialDestructor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertFalse(TypeTraits.hasTrivialDestructor(classA, null));
+		assertFalse(TypeTraits.hasTrivialDestructor(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B {");
-		assertTrue(TypeTraits.hasTrivialDestructor(classB, null));
+		assertTrue(TypeTraits.hasTrivialDestructor(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C {");
-		assertFalse(TypeTraits.hasTrivialDestructor(classC, null));
+		assertFalse(TypeTraits.hasTrivialDestructor(classC));
 	}
 
 	//	struct A {
@@ -130,25 +130,25 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testIsEmpty() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertTrue(TypeTraits.isEmpty(classA, null));
+		assertTrue(TypeTraits.isEmpty(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B :");
-		assertTrue(TypeTraits.isEmpty(classB, null));
+		assertTrue(TypeTraits.isEmpty(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C {");
-		assertFalse(TypeTraits.isEmpty(classC, null));
+		assertFalse(TypeTraits.isEmpty(classC));
 		ICPPClassType classD = helper.assertNonProblemOnFirstIdentifier("D :");
-		assertFalse(TypeTraits.isEmpty(classD, null));
+		assertFalse(TypeTraits.isEmpty(classD));
 		ICPPClassType classE = helper.assertNonProblemOnFirstIdentifier("E {");
-		assertFalse(TypeTraits.isEmpty(classE, null));
+		assertFalse(TypeTraits.isEmpty(classE));
 		ICPPClassType classF = helper.assertNonProblemOnFirstIdentifier("F {");
-		assertFalse(TypeTraits.isEmpty(classF, null));
+		assertFalse(TypeTraits.isEmpty(classF));
 		ICPPClassType classG = helper.assertNonProblemOnFirstIdentifier("G :");
-		assertFalse(TypeTraits.isEmpty(classG, null));
+		assertFalse(TypeTraits.isEmpty(classG));
 		IType typeH = helper.assertNonProblemOnFirstIdentifier("H;");
-		assertTrue(TypeTraits.isEmpty(typeH, null));
+		assertTrue(TypeTraits.isEmpty(typeH));
 		IType typeI = helper.assertNonProblemOnFirstIdentifier("I;");
-		assertFalse(TypeTraits.isEmpty(typeI, null));
+		assertFalse(TypeTraits.isEmpty(typeI));
 		IType typeJ = helper.assertNonProblemOnFirstIdentifier("J[");
-		assertFalse(TypeTraits.isEmpty(typeJ, null));
+		assertFalse(TypeTraits.isEmpty(typeJ));
 	}
 
 	//	struct A {
@@ -170,11 +170,11 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testIsPolymorphic() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertTrue(TypeTraits.isPolymorphic(classA, null));
+		assertTrue(TypeTraits.isPolymorphic(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B {");
-		assertFalse(TypeTraits.isPolymorphic(classB, null));
+		assertFalse(TypeTraits.isPolymorphic(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C");
-		assertTrue(TypeTraits.isPolymorphic(classC, null));
+		assertTrue(TypeTraits.isPolymorphic(classC));
 	}
 
 	//	struct A {
@@ -217,21 +217,21 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testIsStandardLayout() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertTrue(TypeTraits.isStandardLayout(classA, null));
+		assertTrue(TypeTraits.isStandardLayout(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B {");
-		assertTrue(TypeTraits.isStandardLayout(classB, null));
+		assertTrue(TypeTraits.isStandardLayout(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C :");
-		assertFalse(TypeTraits.isStandardLayout(classC, null));
+		assertFalse(TypeTraits.isStandardLayout(classC));
 		ICPPClassType classD = helper.assertNonProblemOnFirstIdentifier("D {");
-		assertFalse(TypeTraits.isStandardLayout(classD, null));
+		assertFalse(TypeTraits.isStandardLayout(classD));
 		ICPPClassType classE = helper.assertNonProblemOnFirstIdentifier("E :");
-		assertFalse(TypeTraits.isStandardLayout(classE, null));
+		assertFalse(TypeTraits.isStandardLayout(classE));
 		ICPPClassType classF = helper.assertNonProblemOnFirstIdentifier("F :");
-		assertFalse(TypeTraits.isStandardLayout(classF, null));
+		assertFalse(TypeTraits.isStandardLayout(classF));
 		ICPPClassType classG = helper.assertNonProblemOnFirstIdentifier("G {");
-		assertFalse(TypeTraits.isStandardLayout(classG, null));
+		assertFalse(TypeTraits.isStandardLayout(classG));
 		ICPPClassType classH = helper.assertNonProblemOnFirstIdentifier("H {");
-		assertFalse(TypeTraits.isStandardLayout(classH, null));
+		assertFalse(TypeTraits.isStandardLayout(classH));
 	}
 
 	//	struct A {
@@ -275,23 +275,23 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testIsTrivial() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
-		assertTrue(TypeTraits.isTrivial(classA, null));
+		assertTrue(TypeTraits.isTrivial(classA));
 		ICPPClassType classB = helper.assertNonProblemOnFirstIdentifier("B :");
-		assertTrue(TypeTraits.isTrivial(classB, null));
+		assertTrue(TypeTraits.isTrivial(classB));
 		ICPPClassType classC = helper.assertNonProblemOnFirstIdentifier("C {");
-		assertFalse(TypeTraits.isTrivial(classC, null));
+		assertFalse(TypeTraits.isTrivial(classC));
 		ICPPClassType classD = helper.assertNonProblemOnFirstIdentifier("D {");
-		assertFalse(TypeTraits.isTrivial(classD, null));
+		assertFalse(TypeTraits.isTrivial(classD));
 		ICPPClassType classE = helper.assertNonProblemOnFirstIdentifier("E {");
-		assertFalse(TypeTraits.isTrivial(classE, null));
+		assertFalse(TypeTraits.isTrivial(classE));
 		ICPPClassType classF = helper.assertNonProblemOnFirstIdentifier("F {");
-		assertFalse(TypeTraits.isTrivial(classF, null));
+		assertFalse(TypeTraits.isTrivial(classF));
 		ICPPClassType classG = helper.assertNonProblemOnFirstIdentifier("G {");
-		assertFalse(TypeTraits.isTrivial(classG, null));
+		assertFalse(TypeTraits.isTrivial(classG));
 		ICPPClassType classH = helper.assertNonProblemOnFirstIdentifier("H :");
-		assertFalse(TypeTraits.isTrivial(classH, null));
+		assertFalse(TypeTraits.isTrivial(classH));
 		ICPPClassType classI = helper.assertNonProblemOnFirstIdentifier("I {");
-		assertFalse(TypeTraits.isTrivial(classI, null));
+		assertFalse(TypeTraits.isTrivial(classI));
 	}
 
 	//	int a;
@@ -311,18 +311,18 @@ public class TypeTraitsTests extends AST2TestBase {
 	public void testIsTriviallyCopyable() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable a = helper.assertNonProblemOnFirstIdentifier("a;");
-		assertTrue(TypeTraits.isTriviallyCopyable(a.getType(), null));
+		assertTrue(TypeTraits.isTriviallyCopyable(a.getType()));
 		IVariable b = helper.assertNonProblemOnFirstIdentifier("b;");
-		assertTrue(TypeTraits.isTriviallyCopyable(b.getType(), null));
+		assertTrue(TypeTraits.isTriviallyCopyable(b.getType()));
 		IVariable c = helper.assertNonProblemOnFirstIdentifier("c;");
-		assertFalse(TypeTraits.isTriviallyCopyable(c.getType(), null));
+		assertFalse(TypeTraits.isTriviallyCopyable(c.getType()));
 		IVariable d = helper.assertNonProblemOnFirstIdentifier("d[");
-		assertTrue(TypeTraits.isTriviallyCopyable(d.getType(), null));
+		assertTrue(TypeTraits.isTriviallyCopyable(d.getType()));
 		IVariable e = helper.assertNonProblemOnFirstIdentifier("e;");
-		assertTrue(TypeTraits.isTriviallyCopyable(e.getType(), null));
+		assertTrue(TypeTraits.isTriviallyCopyable(e.getType()));
 		IVariable f = helper.assertNonProblemOnFirstIdentifier("f;");
-		assertTrue(TypeTraits.isTriviallyCopyable(f.getType(), null));
+		assertTrue(TypeTraits.isTriviallyCopyable(f.getType()));
 		IVariable g = helper.assertNonProblemOnFirstIdentifier("g;");
-		assertFalse(TypeTraits.isTriviallyCopyable(g.getType(), null));
+		assertFalse(TypeTraits.isTriviallyCopyable(g.getType()));
 	}
 }

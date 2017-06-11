@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
@@ -32,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Common base class for AST2 and index tests.
@@ -103,6 +106,15 @@ public class SemanticTestBase extends BaseTestCase {
 		assertTrue("Expected same types, but the types were: '" +
 				ASTTypeUtil.getType(expected, false) + "' and '" + ASTTypeUtil.getType(actual, false) + "'",
 				expected.isSameType(actual));
+	}
+	
+	protected static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode lookupPoint) {
+		try {
+			CPPSemantics.pushLookupPoint(lookupPoint);
+			return SizeofCalculator.getSizeAndAlignment(type);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	protected class BindingAssertionHelper {

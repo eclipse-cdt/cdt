@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -43,6 +42,7 @@ import org.eclipse.cdt.ui.CDTUITools;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
@@ -132,7 +132,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 					if (binding instanceof ICPPMethod) {
 						ICPPMethod method = (ICPPMethod) binding;
 						try {
-							ICPPMethod overriddenMethod = testForOverride(method, declarator);
+							CPPSemantics.pushLookupPoint(declarator);
+							ICPPMethod overriddenMethod = testForOverride(method);
 							if (overriddenMethod != null) {
 								try {
 									ICElementHandle baseDeclaration = IndexUI.findAnyDeclaration(index, null, overriddenMethod);
@@ -152,6 +153,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 								}
 							}
 						} catch (DOMException e) {
+						} finally {
+							CPPSemantics.popLookupPoint();
 						}
 					}
 				}
@@ -181,18 +184,18 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		}
 	}
 	
-	private ICPPMethod testForOverride(ICPPMethod method, IASTNode point) throws DOMException {
+	private ICPPMethod testForOverride(ICPPMethod method) throws DOMException {
 		if (method.isDestructor() || method.isPureVirtual()) {
 			return null;
 		}
 		
-		ICPPBase[] bases = ClassTypeHelper.getBases(method.getClassOwner(), point);
+		ICPPBase[] bases = method.getClassOwner().getBases();
 		if (bases.length == 0) {
 			return null;
 		}
 				
 		ICPPClassType owningClass = method.getClassOwner();
-		ICPPMethod overriddenMethod = getOverriddenMethodInBaseClass(owningClass, method, point);
+		ICPPMethod overriddenMethod = getOverriddenMethodInBaseClass(owningClass, method);
 		
 		if (overriddenMethod != null) {
 			StringBuilder sb = new StringBuilder();
@@ -221,7 +224,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 						IBinding baseClass = base.getBaseClass();
 						if (baseClass instanceof ICPPClassType) {
 							indirectingClass = (ICPPClassType) baseClass;
-							if (getOverriddenMethodInBaseClass(indirectingClass, method, point) != null)
+							if (getOverriddenMethodInBaseClass(indirectingClass, method) != null)
 								break;
 						}
 					}
@@ -240,8 +243,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		return null;
 	}
 
-	private ICPPMethod getOverriddenMethodInBaseClass(ICPPClassType aClass, ICPPMethod testedMethod,
-			IASTNode point) throws DOMException {
+	private ICPPMethod getOverriddenMethodInBaseClass(ICPPClassType aClass, ICPPMethod testedMethod) throws DOMException {
 		final String testedMethodName = testedMethod.getName();
 
 		ICPPMethod[] allInheritedMethods;
@@ -249,10 +251,10 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			allInheritedMethods = methodsCache.get(aClass);
 		} else {
 			ICPPMethod[] inheritedMethods = null;
-			ICPPClassType[] bases= ClassTypeHelper.getAllBases(aClass, point);
+			ICPPClassType[] bases= ClassTypeHelper.getAllBases(aClass);
 			for (ICPPClassType base : bases) {
 				inheritedMethods = ArrayUtil.addAll(ICPPMethod.class, inheritedMethods, 
-						ClassTypeHelper.getDeclaredMethods(base, point));
+						base.getDeclaredMethods());
 			}
 			allInheritedMethods = ArrayUtil.trim(ICPPMethod.class, inheritedMethods);
 			methodsCache.put(aClass, allInheritedMethods);

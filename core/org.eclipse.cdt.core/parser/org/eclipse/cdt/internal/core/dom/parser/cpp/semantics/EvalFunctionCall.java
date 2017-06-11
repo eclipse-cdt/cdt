@@ -109,58 +109,58 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	@Override
 	public boolean isValueDependent() {
 		return containsDependentValue(fArguments) || 
-			   !CPPTemplates.isFullyInstantiated(resolveFunctionBinding(null));
+			   !CPPTemplates.isFullyInstantiated(resolveFunctionBinding());
 	}
 	
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		return areAllConstantExpressions(fArguments, point) && isNullOrConstexprFunc(getOverload(point));
+	private boolean computeIsConstantExpression() {
+		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
+	public ICPPFunction getOverload() {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload = computeOverload(point);
+			fOverload = computeOverload();
 		}
 		return fOverload;
 	}
 
-	private ICPPFunction computeOverload(IASTNode point) {
+	private ICPPFunction computeOverload() {
 		if (isTypeDependent())
 			return null;
 
-		IType t= SemanticUtil.getNestedType(fArguments[0].getType(point), TDEF | REF | CVTYPE);
+		IType t= SemanticUtil.getNestedType(fArguments[0].getType(), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
-	    	return CPPSemantics.findOverloadedOperator(point, getTemplateDefinitionScope(), fArguments, t,
+	    	return CPPSemantics.findOverloadedOperator(getTemplateDefinitionScope(), fArguments, t,
 	    			OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
 		return null;
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null)
-			fType = computeType(point);
+			fType = computeType();
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType() {
 		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
 
-		ICPPFunction overload = getOverload(point);
+		ICPPFunction overload = getOverload();
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
 		ICPPEvaluation function = fArguments[0];
-		IType result = ExpressionTypes.typeFromFunctionCall(function.getType(point));
+		IType result = ExpressionTypes.typeFromFunctionCall(function.getType());
 		if (function instanceof EvalMemberAccess) {
 			result = ExpressionTypes.restoreTypedefs(result, ((EvalMemberAccess) function).getOwnerType());
 		}
@@ -168,21 +168,21 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		ICPPEvaluation eval = evaluateFunctionBody(new ConstexprEvaluationContext(point));
+	public IValue getValue() {
+		ICPPEvaluation eval = evaluateFunctionBody(new ConstexprEvaluationContext());
 		if (eval == this) {
 			return DependentValue.create(eval);
 		}
-		return eval.getValue(point);
+		return eval.getValue();
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		ICPPFunction overload = getOverload(point);
+	public ValueCategory getValueCategory() {
+		ICPPFunction overload = getOverload();
 		if (overload != null)
 			return valueCategoryFromFunctionCall(overload);
 
-		IType t= fArguments[0].getType(point);
+		IType t= fArguments[0].getType();
 		if (t instanceof IPointerType) {
 			t = SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
@@ -221,10 +221,10 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (args == fArguments)
 			return this;
 
-		if (args[0] instanceof EvalFunctionSet && getOverload(context.getPoint()) == null) {
+		if (args[0] instanceof EvalFunctionSet && getOverload() == null) {
 			// Resolve the function using the parameters of the function call.
 			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
-			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length), context.getPoint());
+			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length));
 
 			// Propagate instantiation errors for SFINAE purposes.
 			if (args[0] == EvalFixed.INCOMPLETE) {
@@ -242,7 +242,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			return EvalFixed.INCOMPLETE;
 		}
 
-		ICPPFunction functionBinding = resolveFunctionBinding(context.getPoint());
+		ICPPFunction functionBinding = resolveFunctionBinding();
 		if (functionBinding == null)
 			return EvalFixed.INCOMPLETE;
 
@@ -261,8 +261,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
             		return EvalFixed.INCOMPLETE;
             	arg = new EvalReference(record, binding, evalBinding.getTemplateDefinition());
             } else if (0 < i && i <= parameters.length && !isReference(parameters[i - 1])) {
-            	IValue copiedValue = arg.getValue(context.getPoint()).clone();
-            	arg = new EvalFixed(arg.getType(context.getPoint()), arg.getValueCategory(context.getPoint()), copiedValue);
+            	IValue copiedValue = arg.getValue().clone();
+            	arg = new EvalFixed(arg.getType(), arg.getValueCategory(), copiedValue);
             }
             if (arg == EvalFixed.INCOMPLETE)
         		return EvalFixed.INCOMPLETE;
@@ -296,10 +296,10 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 
 		// If the arguments are not all constant expressions, there is
 		// no point trying to substitute them into the return expression.
-		if (!areAllConstantExpressions(fArguments, 1, fArguments.length, context.getPoint()))
+		if (!areAllConstantExpressions(fArguments, 1, fArguments.length))
 			return EvalFixed.INCOMPLETE;
 
-		ICPPFunction function = resolveFunctionBinding(context.getPoint());
+		ICPPFunction function = resolveFunctionBinding();
 		if (function == null)
 			return this;
 		
@@ -307,8 +307,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			return EvalFixed.INCOMPLETE;
 
 		ActivationRecord record = createActivationRecord(function.getParameters(), fArguments, 
-				getImplicitThis(), context.getPoint());
-		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, context.getPoint());
+				getImplicitThis());
+		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function);
 		if (bodyExec == null) {
 			if (!(function instanceof ICPPTemplateInstance)
 					|| ((ICPPTemplateInstance) function).isExplicitSpecialization()) {
@@ -318,7 +318,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			IBinding specialized = functionInstance.getSpecializedBinding();
 			if (!(specialized instanceof ICPPFunction))
 				return this;
-			bodyExec = CPPFunction.getFunctionBodyExecution((ICPPFunction) specialized, context.getPoint());
+			bodyExec = CPPFunction.getFunctionBodyExecution((ICPPFunction) specialized);
 		}
 		if (bodyExec != null) {
 			bodyExec = bodyExec.executeForFunctionCall(record, context.recordStep());
@@ -346,13 +346,13 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		return EvalFixed.INCOMPLETE;
 	}
 
-	private ICPPFunction resolveFunctionBinding(IASTNode point) {
-		ICPPFunction function = getOverload(point);
+	private ICPPFunction resolveFunctionBinding() {
+		ICPPFunction function = getOverload();
 		if (function == null) {
 			ICPPEvaluation funcEval = fArguments[0];
 			if (funcEval instanceof EvalFunctionSet) {
 				EvalFunctionSet funcEvalFunctionSet = (EvalFunctionSet) funcEval;
-				funcEval = funcEvalFunctionSet.resolveFunction(Arrays.copyOfRange(fArguments, 1, fArguments.length), point);
+				funcEval = funcEvalFunctionSet.resolveFunction(Arrays.copyOfRange(fArguments, 1, fArguments.length));
 			}
 
 			IBinding binding = null;
@@ -377,7 +377,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 						.getType() instanceof IPointerType);
 	}
 
-	public static ActivationRecord createActivationRecord(ICPPParameter[] parameters, ICPPEvaluation[] arguments, ICPPEvaluation implicitThis, IASTNode point) {
+	public static ActivationRecord createActivationRecord(ICPPParameter[] parameters, ICPPEvaluation[] arguments, ICPPEvaluation implicitThis) {
 		ActivationRecord record = new ActivationRecord(parameters, implicitThis);
 
 		// We start at arguments[1] because arguments[0] is the function's evaluation.
@@ -391,7 +391,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				for (int i = 0; i < paramPackLen; i++) {
 					ICPPEvaluation arg = arguments[j+i];
 					values[i] = arg;
-					types[i] = arg.getType(null);
+					types[i] = arg.getType();
 				}
 
 				IValue paramPackValue = new CompositeValue(null, values);
@@ -401,7 +401,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				break;
 			} else {
 				if (j < arguments.length) {
-					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), point, false);
+					ICPPEvaluation argument = maybeApplyConversion(arguments[j++], param.getType(), false);
 					record.update(param, argument);
 				} else if (param.hasDefaultValue()) {
 					IValue value = param.getDefaultValue();

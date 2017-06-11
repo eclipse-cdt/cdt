@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -41,8 +40,8 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	private volatile IPDOMCPPTemplateParameter[] fTemplateParameters;
 
 	public PDOMCPPMethodTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPMethod method, PDOMBinding specialized, IASTNode point) throws CoreException {
-		super(linkage, parent, (ICPPFunctionTemplate) method, specialized, point);
+			ICPPMethod method, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, (ICPPFunctionTemplate) method, specialized);
 		computeTemplateParameters((ICPPFunctionTemplate) method);  // Sets fTemplateParameters
 		final Database db = getDB();
 		long rec = PDOMTemplateParameterArray.putArray(db, fTemplateParameters);

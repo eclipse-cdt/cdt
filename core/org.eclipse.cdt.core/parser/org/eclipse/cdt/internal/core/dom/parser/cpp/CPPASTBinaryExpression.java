@@ -31,6 +31,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
@@ -263,8 +265,14 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     @Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
-		if (eval instanceof EvalBinary)
-			return ((EvalBinary) eval).getOverload(this);
+		if (eval instanceof EvalBinary) {
+			CPPSemantics.pushLookupPoint(this);
+			try {
+				return ((EvalBinary) eval).getOverload();
+			} finally {
+				CPPSemantics.popLookupPoint();
+			}
+		}
 		return null;
     }
 
@@ -287,12 +295,12 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

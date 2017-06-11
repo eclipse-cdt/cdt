@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -253,9 +252,9 @@ class THGraph {
 			ArrayList<ICElement> memberList= new ArrayList<>();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType ct= (ICPPClassType) binding;
-				IBinding[] members= ClassTypeHelper.getDeclaredFields(ct, null);
+				IBinding[] members= ct.getDeclaredFields();
 				addMemberElements(index, members, memberList);
-				members= ClassTypeHelper.getDeclaredMethods(ct, null);
+				members= ct.getDeclaredMethods();
 				addMemberElements(index, members, memberList);
 			} else if (binding instanceof ICompositeType) {
 				ICompositeType ct= (ICompositeType) binding;

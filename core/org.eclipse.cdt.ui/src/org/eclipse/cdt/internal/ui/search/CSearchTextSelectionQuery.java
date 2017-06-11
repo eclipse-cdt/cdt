@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
@@ -59,27 +60,32 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 				if (ast != null) {
 					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
 					if (searchName != null) {
-						label= searchName.toString();
-						IBinding binding= searchName.resolveBinding();
-						if (!(binding instanceof IProblemBinding)) {
-							if (binding != null) {
-								IScope scope= null;
-								try {
-									scope = binding.getScope();
-								} catch (DOMException e) {
+						try {
+							CPPSemantics.pushLookupPoint(searchName);
+							label= searchName.toString();
+							IBinding binding= searchName.resolveBinding();
+							if (!(binding instanceof IProblemBinding)) {
+								if (binding != null) {
+									IScope scope= null;
+									try {
+										scope = binding.getScope();
+									} catch (DOMException e) {
+									}
+									if (scope != null && scope.getKind() == EScopeKind.eLocal) {
+										createLocalMatches(ast, binding);
+										return Status.OK_STATUS;
+									}
 								}
-								if (scope != null && scope.getKind() == EScopeKind.eLocal) {
-									createLocalMatches(ast, binding);
+								binding = index.findBinding(searchName);
+								binding= CPPTemplates.findDeclarationForSpecialization(binding);
+								if (binding != null) {
+									label= labelForBinding(index, binding, label);
+									createMatches(index, binding);
 									return Status.OK_STATUS;
 								}
 							}
-							binding = index.findBinding(searchName);
-							binding= CPPTemplates.findDeclarationForSpecialization(binding);
-							if (binding != null) {
-								label= labelForBinding(index, binding, label);
-								createMatches(index, binding, searchName);
-								return Status.OK_STATUS;
-							}
+						} finally {
+							CPPSemantics.popLookupPoint();
 						}
 					}
 				}

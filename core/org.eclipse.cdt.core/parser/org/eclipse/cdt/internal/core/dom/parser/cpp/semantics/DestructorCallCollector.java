@@ -101,8 +101,8 @@ public class DestructorCallCollector {
 			return destructorNames;
 		}
 
-		static ICPPMethod findDestructor(ICPPClassType classType, IASTNode point) {
-			return ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR, point);
+		static ICPPMethod findDestructor(ICPPClassType classType) {
+			return ClassTypeHelper.getMethodInClass(classType, MethodKind.DTOR);
 		}
 
 		protected void addDestructorCall(IASTName name, ICPPMethod destructor) {
@@ -129,10 +129,15 @@ public class DestructorCallCollector {
 			if (name instanceof IASTImplicitName && !(name.getParent() instanceof ICPPASTNewExpression)) {
 				IBinding binding = name.resolveBinding();
 				if (binding instanceof ICPPConstructor) {
-					ICPPClassType classType = ((ICPPConstructor) binding).getClassOwner();
-					ICPPMethod destructor = findDestructor(classType, name);
-					if (destructor != null && !isBoundToVariable(name)) {
-						addDestructorCall(name, destructor);
+					CPPSemantics.pushLookupPoint(name);
+					try {
+						ICPPClassType classType = ((ICPPConstructor) binding).getClassOwner();
+						ICPPMethod destructor = findDestructor(classType);
+						if (destructor != null && !isBoundToVariable(name)) {
+							addDestructorCall(name, destructor);
+						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 			}
@@ -183,14 +188,19 @@ public class DestructorCallCollector {
 							IASTNode scopeNode = ((ICPPASTInternalScope) scope).getPhysicalNode();
 							if (scopeNode.equals(owner)) {
 								IType type = SemanticUtil.getNestedType(var.getType(), TDEF | CVTYPE);
-								if (type instanceof ICPPClassType) {
-									ICPPMethod destructor = findDestructor((ICPPClassType) type, name);
-									if (destructor != null) {
-										addDestructorCall(name, destructor);
+								CPPSemantics.pushLookupPoint(name);
+								try {
+									if (type instanceof ICPPClassType) {
+										ICPPMethod destructor = findDestructor((ICPPClassType) type);
+										if (destructor != null) {
+											addDestructorCall(name, destructor);
+										}
+									} else if (type instanceof ICPPReferenceType) {
+										IASTDeclarator decl = (IASTDeclarator) name.getParent();
+										addDestructorCallForTemporaryBoundToReference(decl);
 									}
-								} else if (type instanceof ICPPReferenceType) {
-									IASTDeclarator decl = (IASTDeclarator) name.getParent();
-									addDestructorCallForTemporaryBoundToReference(decl);
+								} finally {
+									CPPSemantics.popLookupPoint();
 								}
 							}
 						}
@@ -213,7 +223,7 @@ public class DestructorCallCollector {
 						IBinding binding = name.resolveBinding();
 						if (binding instanceof ICPPConstructor) {
 							ICPPClassType classType = ((ICPPConstructor) binding).getClassOwner();
-							ICPPMethod destructor = findDestructor(classType, name);
+							ICPPMethod destructor = findDestructor(classType);
 							if (destructor != null) {
 								addDestructorCall(name, destructor);
 							}

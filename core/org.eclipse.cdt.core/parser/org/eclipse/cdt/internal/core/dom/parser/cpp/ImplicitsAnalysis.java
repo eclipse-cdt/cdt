@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -45,7 +44,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 final class ImplicitsAnalysis {
 	private final ICPPClassType classType;
-	private final ICPPASTCompositeTypeSpecifier compositeTypeSpecifier;
 	private boolean hasConstructor;
 	private boolean hasCopyConstructor;
 	private boolean hasCopyAssignmentOperator;
@@ -54,7 +52,6 @@ final class ImplicitsAnalysis {
 
 	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compositeTypeSpecifier, ICPPClassType classType) {
 		this.classType = classType;
-		this.compositeTypeSpecifier = compositeTypeSpecifier;
 		analyzeMembers(compositeTypeSpecifier);
 	}
 
@@ -162,15 +159,15 @@ final class ImplicitsAnalysis {
 		if (hasNonStaticFields)
 			return false;
 
-		ICPPBase[] bases = ClassTypeHelper.getBases(classType, compositeTypeSpecifier);
+		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
 			if (base.isVirtual())
 				return false;
 		}
 
-		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, compositeTypeSpecifier);
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType);
 		for (ICPPClassType baseClass : baseClasses) {
-			ICPPConstructor ctor = getDefaultConstructor(baseClass, compositeTypeSpecifier);
+			ICPPConstructor ctor = getDefaultConstructor(baseClass);
 			if (ctor == null || !ctor.isConstexpr())
 				return false;
 		}
@@ -180,8 +177,8 @@ final class ImplicitsAnalysis {
 	/**
 	 * Returns a user-defined or implicit default constructor for the given class.
 	 */
-	private static ICPPConstructor getDefaultConstructor(ICPPClassType classType, IASTNode point) {
-		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
+	private static ICPPConstructor getDefaultConstructor(ICPPClassType classType) {
+		for (ICPPConstructor ctor : classType.getConstructors()) {
 			if (ClassTypeHelper.getMethodKind(classType, ctor) == ClassTypeHelper.MethodKind.DEFAULT_CTOR)
 				return ctor;
 		}

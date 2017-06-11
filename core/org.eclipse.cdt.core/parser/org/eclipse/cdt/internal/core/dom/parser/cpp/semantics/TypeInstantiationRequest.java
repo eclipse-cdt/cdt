@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -30,7 +29,6 @@ public class TypeInstantiationRequest {
 	private final ICPPTemplateParameterMap parameterMap;
 	private final int packOffset;
 	private final ICPPTypeSpecialization contextTypeSpecialization;
-	private final IASTNode point;
 	private int hashCode;
 
 	public TypeInstantiationRequest(IType type, InstantiationContext context) {
@@ -38,7 +36,6 @@ public class TypeInstantiationRequest {
 		this.parameterMap = context.getParameterMap();
 		this.packOffset = context.getPackOffset();
 		this.contextTypeSpecialization = context.getContextTypeSpecialization();
-		this.point = context.getPoint();
 	}
 
 	@Override
@@ -71,8 +68,6 @@ public class TypeInstantiationRequest {
 		if (!equals(parameterMap, other.parameterMap))
 			return false;
 		if (packOffset != other.packOffset)
-			return false;
-		if (point != other.point)
 			return false;
 		return true;
 	}

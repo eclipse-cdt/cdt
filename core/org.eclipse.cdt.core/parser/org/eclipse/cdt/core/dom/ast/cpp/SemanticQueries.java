@@ -92,12 +92,11 @@ public class SemanticQueries {
 	 * template parameters.
 	 *
 	 * @param classType the class whose pure virtual methods should be returned
-	 * @param point the point of template instantiation, if applicable
 	 * @return an array containing all pure virtual methods of the class
-	 * @since 5.6
+	 * @since 6.3
 	 */
-	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
-		FinalOverriderMap finalOverriderMap = CPPInheritance.getFinalOverriderMap(classType, point);
+	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType) {
+		FinalOverriderMap finalOverriderMap = CPPInheritance.getFinalOverriderMap(classType);
 		List<ICPPMethod> pureVirtualMethods = new ArrayList<>();
 		for (ICPPMethod method : finalOverriderMap.getMap().keySet()) {
 			if (method.isPureVirtual()) {
@@ -111,6 +110,15 @@ public class SemanticQueries {
 			}
 		}
 		return pureVirtualMethods.toArray(new ICPPMethod[pureVirtualMethods.size()]);
+	}
+	
+	/**
+	 * @deprecated Use {@link SemanticQueries}{@link #getPureVirtualMethods(ICPPClassType)} instead.
+	 * @since 5.6
+	 */
+	@Deprecated
+	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
+		return getPureVirtualMethods(classType);
 	}
 	
 	/**

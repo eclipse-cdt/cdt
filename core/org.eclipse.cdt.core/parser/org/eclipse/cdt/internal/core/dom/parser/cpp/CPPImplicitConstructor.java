@@ -27,14 +27,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
  * Binding for implicit constructors (default and copy constructor).
  */
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
-
-	IASTNode fPoint;  // point of instantiation, if applicable
-
 	public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params, IASTNode point) {
 		// Note: the value passed for the 'isConstexpr' parameter of the CPPImplicitMethod constructor
 		// is irrelevant, as CPPImplicitConstructor overrides isConstexpr().
         super(scope, name, createFunctionType(params), params, false);
-        fPoint = point;
     }
 
 	private static ICPPFunctionType createFunctionType(IParameter[] params) {
@@ -53,11 +49,16 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
 	*/
 	@Override
 	public boolean isConstexpr() {
-		return TypeTraits.isLiteralClass(getClassOwner(), fPoint);
+		return TypeTraits.isLiteralClass(getClassOwner());
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return CPPConstructor.getConstructorChainExecution(this);
 	}
 
 	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return CPPConstructor.getConstructorChainExecution(this);
+		return getConstructorChainExecution();
 	}
 }

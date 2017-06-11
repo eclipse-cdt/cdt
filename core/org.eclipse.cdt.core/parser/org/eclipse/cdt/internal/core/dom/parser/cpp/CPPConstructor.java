@@ -34,14 +34,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecConstructorChain;
 
 public class CPPConstructor extends CPPMethod implements ICPPConstructor {
-
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
 	}
 
 	@Override
-	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+	public ICPPExecution getConstructorChainExecution() {
 		return getConstructorChainExecution(this);
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
 	}
 
 	private static ICPPEvaluation getMemberEvaluation(ICPPField member, ICPPASTConstructorChainInitializer chainInitializer, IASTNode point) {

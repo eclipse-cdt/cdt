@@ -262,7 +262,12 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 				}
 				if (!initEval.isValueDependent() ) {
 					IASTNode point = fDefinition != null ? fDefinition : fDeclarations[0];
-					return initEval.getValue(point);
+					CPPSemantics.pushLookupPoint(point);
+					try {
+						return initEval.getValue();
+					} finally {
+						CPPSemantics.popLookupPoint();
+					}
 				}
 				return DependentValue.create(initEval);
 			}

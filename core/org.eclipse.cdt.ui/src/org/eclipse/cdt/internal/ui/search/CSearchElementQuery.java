@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
@@ -47,8 +46,9 @@ public class CSearchElementQuery extends CSearchQuery {
 				IBinding binding= IndexUI.elementToBinding(index, (ICElement) element);
 				if (binding != null) {
 					label= labelForBinding(index, binding, label);
-					IASTNode point= null; // Instantiation of dependent expressions may not work.
-					createMatches(index, binding, point);
+					// We should call CPPSemantics.pushLookupPoint() here.
+					// Until we do, instantiation of dependent expressions may not work.
+					createMatches(index, binding);
 				}
 			}
 			return Status.OK_STATUS;

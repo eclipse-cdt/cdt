@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -182,13 +181,12 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		IASTNode point= null; // Instantiation of dependent expressions may not work.
 		ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 		ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 		ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
 		ICPPClassSpecialization owner = (ICPPClassSpecialization) getOwner();
 		for (int i = 0; i < orig.length; i++) {
-			spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i], point);
+			spec[i]= (ICPPClassTemplatePartialSpecialization) owner.specializeMember(orig[i]);
 		}
 		return spec;
 	}

@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
@@ -40,8 +39,8 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPFunctionInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function, 
-			PDOMBinding orig, IASTNode point) throws CoreException {
-		super(linkage, parent, function, orig, point);
+			PDOMBinding orig) throws CoreException {
+		super(linkage, parent, function, orig);
 
 		final Database db = getDB();
 		long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());

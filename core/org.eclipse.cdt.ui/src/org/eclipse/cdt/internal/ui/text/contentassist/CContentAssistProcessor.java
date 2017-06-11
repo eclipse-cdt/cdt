@@ -45,6 +45,7 @@ import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -277,8 +278,12 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 						IASTExpression ownerExpr = ref.getFieldOwner();
 						IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(), SemanticUtil.TDEF);
 						if (ownerExprType instanceof ICPPUnknownType) {
-							ownerExprType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) ownerExprType, 
-									names[0]);
+							try {
+								CPPSemantics.pushLookupPoint(names[0]);
+								ownerExprType = HeuristicResolver.resolveUnknownType((ICPPUnknownType) ownerExprType);
+							} finally {
+								CPPSemantics.popLookupPoint();
+							}
 						}
 						if (ownerExprType instanceof IPointerType) {
 							context = replaceDotWithArrow(viewer, offset, isCompletion, context, activationChar);

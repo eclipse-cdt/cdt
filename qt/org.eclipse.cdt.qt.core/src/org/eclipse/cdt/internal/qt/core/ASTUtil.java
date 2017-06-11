@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.qt.core.index.IQMethod;
 import org.eclipse.cdt.internal.qt.core.index.IQObject;
@@ -142,7 +143,12 @@ public class ASTUtil {
 
 		ICPPASTInitializerClause cppInit = (ICPPASTInitializerClause) init;
 		ICPPEvaluation eval = cppInit.getEvaluation();
-		return eval == null ? null : getBaseType(eval.getType(cppInit));
+		try {
+			CPPSemantics.pushLookupPoint(cppInit);
+			return eval == null ? null : getBaseType(eval.getType());
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	public static ICPPClassType getReceiverType(IASTFunctionCallExpression fncall) {

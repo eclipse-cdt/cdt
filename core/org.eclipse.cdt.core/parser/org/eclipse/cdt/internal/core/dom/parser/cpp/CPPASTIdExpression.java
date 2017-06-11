@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
@@ -137,15 +138,20 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public IType getExpressionType() {
-		IType type= getEvaluation().getType(this);
-		if (type instanceof FunctionSetType) {
-			IBinding binding= fName.resolveBinding();
-			if (binding instanceof IFunction) {
-				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			IType type= getEvaluation().getType();
+			if (type instanceof FunctionSetType) {
+				IBinding binding= fName.resolveBinding();
+				if (binding instanceof IFunction) {
+					return SemanticUtil.mapToAST(((IFunction) binding).getType());
+				}
+				return ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
-			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+			return type;
+		} finally {
+			CPPSemantics.popLookupPoint();
 		}
-		return type;
 	}
 
 	@Override
@@ -155,6 +161,6 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+    	return CPPEvaluation.getValueCategory(this);
 	}
 }

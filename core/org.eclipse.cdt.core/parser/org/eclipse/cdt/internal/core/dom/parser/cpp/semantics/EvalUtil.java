@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -46,14 +45,14 @@ public class EvalUtil {
 
 	public static IValue getConditionExprValue(ICPPEvaluation conditionExprEval, ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		return conditionExprEval.computeForFunctionCall(record, context.recordStep()).getValue(context.getPoint());
+		return conditionExprEval.computeForFunctionCall(record, context.recordStep()).getValue();
 	}
 
 	public static IValue getConditionDeclValue(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record,
 			ConstexprEvaluationContext context) {
 		ICPPBinding declaredBinding = ((ExecDeclarator) conditionDeclExec.getDeclaratorExecutions()[0]).getDeclaredBinding();
 		conditionDeclExec.executeForFunctionCall(record, context.recordStep());
-		return record.getVariable(declaredBinding).computeForFunctionCall(record, context).getValue(context.getPoint());
+		return record.getVariable(declaredBinding).computeForFunctionCall(record, context).getValue();
 	}
 
 	public static boolean conditionExprSatisfied(ICPPEvaluation conditionExprEval, ActivationRecord record,
@@ -160,8 +159,7 @@ public class EvalUtil {
 	 * Returns the initial value of the given variable, evaluated in the context of
 	 * the given activation record.
 	 */
-	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record,
-			IASTNode point) {
+	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record) {
 		Set<ICPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
 		if (!recursionProtectionSet.add(variable)) {
 			return EvalFixed.INCOMPLETE;
@@ -180,7 +178,7 @@ public class EvalUtil {
 				}
 				ExecDeclarator declaratorExec = new ExecDeclarator(variable, initializerEval);
 	
-				ConstexprEvaluationContext context = new ConstexprEvaluationContext(point);
+				ConstexprEvaluationContext context = new ConstexprEvaluationContext();
 				if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
 					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
 				}
@@ -189,7 +187,7 @@ public class EvalUtil {
 			}
 
 			if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
-					valueEval.getValue(point) == IntegralValue.UNKNOWN)) {
+					valueEval.getValue() == IntegralValue.UNKNOWN)) {
 				return null;
 			}
 			return valueEval;

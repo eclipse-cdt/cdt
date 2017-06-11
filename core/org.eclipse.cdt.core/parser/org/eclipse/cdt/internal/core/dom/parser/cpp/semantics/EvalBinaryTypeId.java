@@ -73,7 +73,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		switch (fOperator) {
 		case __is_base_of:
 		case __is_trivially_assignable:
@@ -83,11 +83,11 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (isValueDependent())
 			return DependentValue.create(this);
 
-		return ValueFactory.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2, point);
+		return ValueFactory.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2);
 	}
 
 	@Override
@@ -105,12 +105,12 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		return true;
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
 

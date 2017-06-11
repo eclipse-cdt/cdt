@@ -24,9 +24,15 @@ public class CompositeCPPConstructorTemplateSpecialization
 			ICPPFunction ft) {
 		super(cf, ft);
 	}
-
+	
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return ((ICPPConstructor) rbinding).getConstructorChainExecution(point);
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return ((ICPPConstructor) rbinding).getConstructorChainExecution();
 	}
 }

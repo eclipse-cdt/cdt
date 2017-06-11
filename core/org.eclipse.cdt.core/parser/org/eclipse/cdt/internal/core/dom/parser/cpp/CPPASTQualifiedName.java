@@ -323,7 +323,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			List<IBinding> filtered = filterClassScopeBindings(classQualifier, bindings, isDeclaration);
 			if ((isDeclaration || isUsingDecl) && nameMatches(classQualifier.getNameCharArray(),
 					n.getLookupKey(), isPrefix)) {
-				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classQualifier, n);
+				ICPPConstructor[] constructors = classQualifier.getConstructors();
 				for (int i = 0; i < constructors.length; i++) {
 					if (!constructors[i].isImplicit()) {
 						filtered.add(constructors[i]);
@@ -359,7 +359,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				while (scope != null) {
 					if (scope instanceof ICPPClassScope) {
 						ICPPClassType classType = ((ICPPClassScope) scope).getClassType();
-						if (SemanticUtil.calculateInheritanceDepth(classType, baseClass, this) >= 0) {
+						if (SemanticUtil.calculateInheritanceDepth(classType, baseClass) >= 0) {
 							return true;
 						}
 					}

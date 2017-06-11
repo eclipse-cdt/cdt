@@ -77,7 +77,12 @@ public class CPPDeferredConstructor extends CPPDeferredFunction implements ICPPC
 	}
 
 	@Override
-	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+	public ICPPExecution getConstructorChainExecution() {
 		return null;
+	}
+
+	@Override
+	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
 	}
 }

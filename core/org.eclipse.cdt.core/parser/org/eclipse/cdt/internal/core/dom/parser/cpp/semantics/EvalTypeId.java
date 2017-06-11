@@ -120,7 +120,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fOutputType == null) {
 			fOutputType= computeType();
 		}
@@ -138,7 +138,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (isValueDependent())
 			return DependentValue.create(this);
 		if (isTypeDependent())
@@ -149,17 +149,17 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		IType inputType = SemanticUtil.getNestedType(fInputType, CVTYPE);
 		if (inputType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) inputType;
-			IBinding ctor = getConstructor(point);
+			IBinding ctor = getConstructor();
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
-				return CompositeValue.create(classType, point);
+				return CompositeValue.create(classType);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
 				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), 
-						classType, point);
+						classType);
 			} else if (ctor != null) {
 				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor,
 						fArguments, getTemplateDefinition());
-				ICPPEvaluation computedEvalCtor = evalCtor.computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext(point));
-				return computedEvalCtor.getValue(point);
+				ICPPEvaluation computedEvalCtor = evalCtor.computeForFunctionCall(new ActivationRecord(), new ConstexprEvaluationContext());
+				return computedEvalCtor.getValue();
 			} else {
 				return IntegralValue.ERROR;
 			}
@@ -187,7 +187,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			}
 		}
 		if (fArguments.length == 1) {
-			return fArguments[0].getValue(point);
+			return fArguments[0].getValue();
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -217,28 +217,28 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
+	private boolean computeIsConstantExpression() {
 		return !fRepresentsNewExpression
-				&& areAllConstantExpressions(fArguments, point)
-				&& isNullOrConstexprFunc(getConstructor(point));
+				&& areAllConstantExpressions(fArguments)
+				&& isNullOrConstexprFunc(getConstructor());
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return valueCategoryFromReturnType(fInputType);
 	}
 
-	public ICPPFunction getConstructor(IASTNode point) {
+	public ICPPFunction getConstructor() {
 		if (fConstructor == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fConstructor = computeConstructor(point);
+			fConstructor = computeConstructor();
 		}
 		return fConstructor;
 	}
@@ -251,7 +251,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		return true;
 	}
 
-	private ICPPFunction computeConstructor(IASTNode point) {
+	private ICPPFunction computeConstructor() {
 		if (isTypeDependent())
 			return null;
 
@@ -259,10 +259,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (simplifiedType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
 			ICPPEvaluation[] arguments = fArguments;
-			ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, point);
+			ICPPConstructor[] constructors = classType.getConstructors();
 			if (arguments.length == 1 && arguments[0] instanceof EvalInitList) {
 				// List-initialization of a class (dcl.init.list-3).
-				if (TypeTraits.isAggregateClass(classType, point)) {
+				if (TypeTraits.isAggregateClass(classType)) {
 					// Pretend that aggregate initialization is calling the default constructor.
 					return findDefaultConstructor(classType, constructors);
 				}
@@ -271,7 +271,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 					if (ctor != null)
 						return ctor;
 				}
-				ICPPConstructor[] ctors = getInitializerListConstructors(constructors, point);
+				ICPPConstructor[] ctors = getInitializerListConstructors(constructors);
 				if (ctors.length != 0) {
 					constructors = ctors;
 				} else {
@@ -279,7 +279,8 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				}
 			}
 
-			LookupData data = new LookupData(classType.getNameCharArray(), null, point);
+			LookupData data = new LookupData(classType.getNameCharArray(), null, 
+					CPPSemantics.getCurrentLookupPoint());
 			data.foundItems = constructors;
 			data.setFunctionArguments(false, arguments);
 			try {
@@ -310,9 +311,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	 * Returns constructors that can be called by passing a single {@code std::initializer_list}
 	 * as an argument.
 	 */
-	private ICPPConstructor[] getInitializerListConstructors(ICPPConstructor[] constructors, IASTNode point) {
+	private ICPPConstructor[] getInitializerListConstructors(ICPPConstructor[] constructors) {
 		ICPPConstructor[] result = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-		ICPPClassTemplate template = CPPVisitor.get_initializer_list(point);
+		ICPPClassTemplate template = CPPVisitor.get_initializer_list();
 		if (template == null)
 			return result;
 
@@ -383,7 +384,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			if (simplifiedType instanceof ICPPClassType) {
 				// Check the constructor call and return EvalFixed.INCOMPLETE to indicate a substitution
 				// failure if the call cannot be resolved.
-				ICPPFunction constructor = result.getConstructor(context.getPoint());
+				ICPPFunction constructor = result.getConstructor();
 				if (constructor == null || constructor instanceof IProblemBinding || constructor.isDeleted()) {
 					return EvalFixed.INCOMPLETE;
 				}
@@ -396,7 +397,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation computeForFunctionCall(ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		ICPPFunction constructor = getConstructor(context.getPoint());
+		ICPPFunction constructor = getConstructor();
 		if (constructor != null && constructor instanceof ICPPConstructor) {
 			return new EvalConstructor(fInputType, (ICPPConstructor) constructor, fArguments,
 					getTemplateDefinition()).computeForFunctionCall(record, context);

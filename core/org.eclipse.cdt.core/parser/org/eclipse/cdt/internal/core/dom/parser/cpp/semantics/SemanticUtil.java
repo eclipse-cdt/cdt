@@ -122,7 +122,7 @@ public class SemanticUtil {
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
-	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz, IASTNode point) throws DOMException {
+	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
 		ICPPMethod[] conversionOps= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		if (clazz instanceof ICPPDeferredClassInstance) {
 			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
@@ -134,9 +134,9 @@ public class SemanticUtil {
 		// A new API ICPPClosureType.getNoninheritedMethods() might be more
 		// appropriate here.
 		if (clazz instanceof CPPClosureType) {
-			methods = ClassTypeHelper.getMethods(clazz, point);
+			methods = ClassTypeHelper.getMethods(clazz);
 		} else {
-			methods = ClassTypeHelper.getDeclaredMethods(clazz, point);
+			methods = clazz.getDeclaredMethods();
 		}
 		if (methods != null) {
 			for (ICPPMethod method : methods) {
@@ -156,11 +156,11 @@ public class SemanticUtil {
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
-	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz, IASTNode point) throws DOMException {
+	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
 		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz, point);
+		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
 		for (int i = 0; i < ancestry.size(); i++) {
-			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i), point));
+			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
 		}
 		return methods;
 	}
@@ -170,7 +170,7 @@ public class SemanticUtil {
 	 * @return the root and all its ancestor classes
 	 * @throws DOMException
 	 */
-	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root, IASTNode point) throws DOMException {
+	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root) throws DOMException {
 		ObjectSet<ICPPClassType> done= new ObjectSet<>(2);
 		ObjectSet<ICPPClassType> current= new ObjectSet<>(2);
 		current.put(root);
@@ -182,7 +182,7 @@ public class SemanticUtil {
 				ICPPClassType clazz= current.keyAt(i);
 				done.put(clazz);
 
-				for (ICPPBase base : ClassTypeHelper.getBases(clazz, point)) {
+				for (ICPPBase base : clazz.getBases()) {
 					IBinding binding= base.getBaseClass();
 					if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 						ICPPClassType ct= (ICPPClassType) binding;
@@ -499,18 +499,19 @@ public class SemanticUtil {
 		}
 	}
 
-	public static IType mapToAST(IType type, IASTNode point) {
+	public static IType mapToAST(IType type) {
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (point != null && type instanceof IIndexBinding && type instanceof ICPPClassType) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
 			if (ast instanceof CPPASTTranslationUnit) {
-				return ((CPPASTTranslationUnit) ast).mapToAST((ICPPClassType) type, point);
+				return ((CPPASTTranslationUnit) ast).mapToAST((ICPPClassType) type);
 			}
 		}
 		return type;
 	}
 
-	public static ICPPTemplateArgument[] mapToAST(ICPPTemplateArgument[] args, IASTNode point) {
-		if (point == null)
+	public static ICPPTemplateArgument[] mapToAST(ICPPTemplateArgument[] args) {
+		if (CPPSemantics.getCurrentLookupPoint() == null)
 			return args;
 
 		// Don't create a new array until it's really needed.
@@ -519,7 +520,7 @@ public class SemanticUtil {
 			final ICPPTemplateArgument arg = args[i];
 			ICPPTemplateArgument newArg = arg;
 			if (arg != null) {
-				newArg = mapToAST(arg, point);
+				newArg = mapToAST(arg);
 				if (result != args) {
 					result[i] = newArg;
 				} else if (arg != newArg) {
@@ -534,12 +535,12 @@ public class SemanticUtil {
 		return result;
 	}
 
-	public static ICPPTemplateArgument mapToAST(ICPPTemplateArgument arg, IASTNode point) {
+	public static ICPPTemplateArgument mapToAST(ICPPTemplateArgument arg) {
 		IType type = arg.getTypeValue();
 		if (type != null) {
-			IType mappedType = mapToAST(type, point);
+			IType mappedType = mapToAST(type);
 			IType originalType = arg.getOriginalTypeValue();
-			IType mappedOriginalType = originalType == type ? mappedType : mapToAST(originalType, point);
+			IType mappedOriginalType = originalType == type ? mappedType : mapToAST(originalType);
 			if (mappedType != type || mappedOriginalType != originalType) {
 				return new CPPTemplateTypeArgument(mappedType, mappedOriginalType);
 			}
@@ -573,7 +574,8 @@ public class SemanticUtil {
 	}
 	
 	public static ICPPClassTemplatePartialSpecialization mapToAST(
-			ICPPClassTemplatePartialSpecialization indexSpec, IASTNode point) {
+			ICPPClassTemplatePartialSpecialization indexSpec) {
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (point != null) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
 			if (ast instanceof CPPASTTranslationUnit) {
@@ -762,11 +764,11 @@ public class SemanticUtil {
 	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
 	 * 	   no inheritance relation
 	 */
-	public static final int calculateInheritanceDepth(IType type, IType baseClass, IASTNode point) {
-		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<>(), type, baseClass, point);
+	public static final int calculateInheritanceDepth(IType type, IType baseClass) {
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<>(), type, baseClass);
 	}
 
-	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass, IASTNode point) {
+	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass) {
 		if (type == baseClass || type.isSameType(baseClass)) {
 			return 0;
 		}
@@ -778,9 +780,9 @@ public class SemanticUtil {
 			}
 
 			// The base classes may have changed since the definition of clazz was indexed.
-			clazz = (ICPPClassType) mapToAST(clazz, point);
+			clazz = (ICPPClassType) mapToAST(clazz);
 
-			for (ICPPBase cppBase : ClassTypeHelper.getBases(clazz, point)) {
+			for (ICPPBase cppBase : clazz.getBases()) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
@@ -791,7 +793,7 @@ public class SemanticUtil {
 					}
 
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass, point);
+						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
 						if (n > 0)
 							return n + 1;
 					}
@@ -861,37 +863,42 @@ public class SemanticUtil {
 	 */
 	public static IValue getValueOfInitializer(IASTInitializer init, IType type) {
 		IASTInitializerClause clause= null;
-		if (init instanceof IASTEqualsInitializer) {
-			clause= ((IASTEqualsInitializer) init).getInitializerClause();
-		} else if (init instanceof ICPPASTConstructorInitializer) {
-			IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
-			if (args.length == 1 && args[0] instanceof IASTExpression) {
-				IType typeUpToPointers= SemanticUtil.getUltimateTypeUptoPointers(type);
-				if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
-					clause= args[0];
+		CPPSemantics.pushLookupPoint(init);
+		try {
+			if (init instanceof IASTEqualsInitializer) {
+				clause= ((IASTEqualsInitializer) init).getInitializerClause();
+			} else if (init instanceof ICPPASTConstructorInitializer) {
+				IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
+				if (args.length == 1 && args[0] instanceof IASTExpression) {
+					IType typeUpToPointers= SemanticUtil.getUltimateTypeUptoPointers(type);
+					if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
+						clause= args[0];
+					}
+				}
+			} else if (init instanceof ICPPASTInitializerList) {
+				ICPPASTInitializerList list= (ICPPASTInitializerList) init;
+				switch (list.getSize()) {
+				case 0:
+					return IntegralValue.create(0);
+				case 1:
+					clause= list.getClauses()[0];
+					break;
+				default:
+					return ((ICPPASTInitializerList) init).getEvaluation().getValue();
+	
 				}
 			}
-		} else if (init instanceof ICPPASTInitializerList) {
-			ICPPASTInitializerList list= (ICPPASTInitializerList) init;
-			switch (list.getSize()) {
-			case 0:
-				return IntegralValue.create(0);
-			case 1:
-				clause= list.getClauses()[0];
-				break;
-			default:
-				return ((ICPPASTInitializerList) init).getEvaluation().getValue(init);
-
+			if (clause instanceof IASTExpression) {
+				return ValueFactory.create((IASTExpression) clause);
 			}
+	
+			if (clause instanceof ICPPASTInitializerList) {
+				return ((ICPPASTInitializerList) clause).getEvaluation().getValue();
+			}
+			return IntegralValue.UNKNOWN;
+		} finally {
+			CPPSemantics.popLookupPoint();
 		}
-		if (clause instanceof IASTExpression) {
-			return ValueFactory.create((IASTExpression) clause);
-		}
-
-		if (clause instanceof ICPPASTInitializerList) {
-			return ((ICPPASTInitializerList) clause).getEvaluation().getValue(clause);
-		}
-		return IntegralValue.UNKNOWN;
 	}
 
 	/**

@@ -115,6 +115,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
@@ -192,13 +193,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	// Only used when writing to database, which is single-threaded
 	private final LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
 	
-	// The point of instantiation for name lookups.
-	// This is set by onCreateName() and the top-level addBinding() call for 
-	// their duration, and picked up by nested addBinding() calls. This avoids 
-	// having to pass it around to every function that is called between
-	// (which is a lot of functions).
-	private IASTName pointOfInstantiation = null;  
-
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
 	}
@@ -297,14 +291,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPExecution fFunctionBody;
 
-		public ConfigureFunction(ICPPFunction original, PDOMCPPFunction function, IASTNode point) 
+		public ConfigureFunction(ICPPFunction original, PDOMCPPFunction function) 
 				throws DOMException {
 			fFunction = function;
 			fOriginalFunctionType= original.getType();
 			fDeclaredType = original.getDeclaredType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= function.extractExceptionSpec(original);
-			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
+			fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
 			postProcesses.add(this);
 		}
 
@@ -321,7 +315,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		public ConfigureConstructor(ICPPConstructor original, PDOMCPPConstructor constructor) {
 			fConstructor = constructor;
-			fConstructorChain = original.getConstructorChainExecution(null);
+			fConstructorChain = original.getConstructorChainExecution();
 			postProcesses.add(this);
 		}
 		
@@ -342,7 +336,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPExecution fFunctionBody;
 		
 		public ConfigureFunctionSpecialization(ICPPFunction original, PDOMCPPFunctionSpecialization spec, 
-				PDOMBinding specialized, IASTNode point) {
+				PDOMBinding specialized) {
 			fSpec = spec;
 			fSpecialized = specialized;
 			fType = original.getType();
@@ -358,7 +352,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 			if (!(original instanceof ICPPTemplateInstance)
 					|| ((ICPPTemplateInstance) original).isExplicitSpecialization()) {
-				fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
+				fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
 			} else {
 				fFunctionBody = null;  // will be instantiated on request
 			}
@@ -377,9 +371,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPExecution fConstructorChain;
 
 		public ConfigureConstructorSpecialization(ICPPConstructor original, 
-				PDOMCPPConstructorSpecialization constructor, IASTNode point) {
+				PDOMCPPConstructorSpecialization constructor) {
 			fConstructor = constructor;
-			fConstructorChain = original.getConstructorChainExecution(point);
+			fConstructorChain = original.getConstructorChainExecution();
 			postProcesses.add(this);
 		}
 		
@@ -409,10 +403,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final PDOMCPPConstructorInstance fConstructor;
 		private final ICPPExecution fConstructorChain;
 
-		public ConfigureConstructorInstance(ICPPConstructor original, PDOMCPPConstructorInstance constructor,
-				IASTNode point) {
+		public ConfigureConstructorInstance(ICPPConstructor original, PDOMCPPConstructorInstance constructor) {
 			fConstructor = constructor;
-			fConstructorChain = original.getConstructorChainExecution(point);
+			fConstructorChain = original.getConstructorChainExecution();
 			postProcesses.add(this);
 		}
 		
@@ -432,8 +425,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final IType[] fOriginalExceptionSpec;
 		private final ICPPExecution fFunctionBody;
 
-		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template,
-				IASTNode point) throws DOMException {
+		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template) 
+				throws DOMException {
 			fTemplate = template;
 			fTemplateParameters= template.getTemplateParameters();
 			fOriginalTemplateParameters= original.getTemplateParameters();
@@ -441,7 +434,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fDeclaredType = original.getDeclaredType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= template.extractExceptionSpec(original);
-			fFunctionBody = CPPFunction.getFunctionBodyExecution(original, point);
+			fFunctionBody = CPPFunction.getFunctionBodyExecution(original);
 			postProcesses.add(this);
 		}
 
@@ -463,7 +456,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		public ConfigureConstructorTemplate(ICPPConstructor original, PDOMCPPConstructorTemplate constructor) {
 			fConstructor = constructor;
-			fConstructorChain = original.getConstructorChainExecution(null);
+			fConstructorChain = original.getConstructorChainExecution();
 			postProcesses.add(this);
 		}
 		
@@ -478,9 +471,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPExecution fConstructorChain;
 
 		public ConfigureConstructorTemplateSpecialization(ICPPConstructor original, 
-				PDOMCPPConstructorTemplateSpecialization constructor, IASTNode point) {
+				PDOMCPPConstructorTemplateSpecialization constructor) {
 			fConstructor = constructor;
-			fConstructorChain = original.getConstructorChainExecution(point);
+			fConstructorChain = original.getConstructorChainExecution();
 			postProcesses.add(this);
 		}
 		
@@ -623,7 +616,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		try {
 			// For the duration of this call, record the name being added 
 			// to the index as the point of instantiation for name lookups.
-			pointOfInstantiation = name;
+			CPPSemantics.pushLookupPoint(name);
 			
 			PDOMBinding pdomBinding = addBinding(binding, name);
 	
@@ -637,7 +630,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
 			if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
 				if (binding instanceof ICPPClassType && name.isDefinition()) {
-					addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
+					addImplicitMethods(pdomBinding, (ICPPClassType) binding);
 				}
 			}
 	
@@ -648,7 +641,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 			return pdomBinding;
 		} finally {
-			pointOfInstantiation = null;
+			CPPSemantics.popLookupPoint();
 		}
 	}
 
@@ -657,63 +650,71 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 * then an existing binding is updated with the properties of the name.
 	 */
 	private PDOMBinding addBinding(IBinding inputBinding, IASTName fromName) throws CoreException {
-		IASTNode point = fromName != null ? fromName : pointOfInstantiation;
-		
-		if (inputBinding instanceof CompositeIndexBinding) {
-			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
-		}
-
-		if (cannotAdapt(inputBinding)) {
-			return null;
-		}
-
-		PDOMBinding pdomBinding= attemptFastAdaptBinding(inputBinding);
-		if (pdomBinding == null) {
-			// Assign names to anonymous types.
-			IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
-			if (binding == null)
-				return null;
-
-			final PDOMNode parent= adaptOrAddParent(true, binding);
-			if (parent == null)
-				return null;
-
-			long fileLocalRec[]= {0};
-			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
-			if (pdomBinding == null) {
-				try {
-					pdomBinding = createBinding(parent, binding, fileLocalRec[0], point);
-					if (pdomBinding != null) {
-						getPDOM().putCachedResult(inputBinding, pdomBinding);
-						if (inputBinding instanceof CPPClosureType) {
-							addImplicitMethods(pdomBinding, (ICPPClassType) binding, point);
-						}
-
-						// Synchronize the tags associated with the persistent binding to match
-						// the set that is associated with the input binding.
-						TagManager.getInstance().syncTags(pdomBinding, inputBinding);
-					}
-				} catch (DOMException e) {
-					throw new CoreException(Util.createStatus(e));
-				}
-				return pdomBinding;
+		try {
+			if (fromName != null) {
+				CPPSemantics.pushLookupPoint(fromName);
 			}
-
-			getPDOM().putCachedResult(inputBinding, pdomBinding);
+			
+			if (inputBinding instanceof CompositeIndexBinding) {
+				inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
+			}
+	
+			if (cannotAdapt(inputBinding)) {
+				return null;
+			}
+	
+			PDOMBinding pdomBinding= attemptFastAdaptBinding(inputBinding);
+			if (pdomBinding == null) {
+				// Assign names to anonymous types.
+				IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
+				if (binding == null)
+					return null;
+	
+				final PDOMNode parent= adaptOrAddParent(true, binding);
+				if (parent == null)
+					return null;
+	
+				long fileLocalRec[]= {0};
+				pdomBinding = adaptBinding(parent, binding, fileLocalRec);
+				if (pdomBinding == null) {
+					try {
+						pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
+						if (pdomBinding != null) {
+							getPDOM().putCachedResult(inputBinding, pdomBinding);
+							if (inputBinding instanceof CPPClosureType) {
+								addImplicitMethods(pdomBinding, (ICPPClassType) binding);
+							}
+	
+							// Synchronize the tags associated with the persistent binding to match
+							// the set that is associated with the input binding.
+							TagManager.getInstance().syncTags(pdomBinding, inputBinding);
+						}
+					} catch (DOMException e) {
+						throw new CoreException(Util.createStatus(e));
+					}
+					return pdomBinding;
+				}
+	
+				getPDOM().putCachedResult(inputBinding, pdomBinding);
+			}
+	
+			if (fromName != null && shouldUpdate(pdomBinding, fromName)) {
+				IBinding fromBinding = fromName.getBinding();
+	
+				pdomBinding.update(this, fromBinding);
+	
+				// Update the tags based on the tags from the new binding.  This cannot be done in
+				// PDOMBinding.update, because not all subclasses (e.g., PDOMCPPFunction) call
+				// the superclass implementation.
+				TagManager.getInstance().syncTags(pdomBinding, fromBinding);
+			}
+	
+			return pdomBinding;
+		} finally {
+			if (fromName != null) {
+				CPPSemantics.popLookupPoint();
+			}
 		}
-
-		if (fromName != null && shouldUpdate(pdomBinding, fromName)) {
-			IBinding fromBinding = fromName.getBinding();
-
-			pdomBinding.update(this, fromBinding, fromName);
-
-			// Update the tags based on the tags from the new binding.  This cannot be done in
-			// PDOMBinding.update, because not all subclasses (e.g., PDOMCPPFunction) call
-			// the superclass implementation.
-			TagManager.getInstance().syncTags(pdomBinding, fromBinding);
-		}
-
-		return pdomBinding;
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
@@ -742,7 +743,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return !getPDOM().hasLastingDefinition(pdomBinding);
 	}
 
-	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec, IASTNode point) 
+	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec) 
 			throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 		PDOMNode parent2= null;
@@ -759,7 +760,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (pdomSpecialized == null)
 				return null;
 
-			pdomBinding = createSpecialization(parent, pdomSpecialized, binding, point);
+			pdomBinding = createSpecialization(parent, pdomSpecialized, binding);
 		} else if (binding instanceof ICPPPartialSpecialization) {
 			ICPPTemplateDefinition primary = ((ICPPPartialSpecialization) binding).getPrimaryTemplate();
 			PDOMBinding pdomPrimary = addBinding(primary, null);
@@ -810,22 +811,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = new PDOMCPPVariable(this, parent, var, true);
 		} else if (binding instanceof ICPPFunctionTemplate) {
 			if (binding instanceof ICPPConstructor) {
-				pdomBinding= new PDOMCPPConstructorTemplate(this, parent, (ICPPConstructor) binding, point);
+				pdomBinding= new PDOMCPPConstructorTemplate(this, parent, (ICPPConstructor) binding);
 			} else if (binding instanceof ICPPMethod) {
-				pdomBinding= new PDOMCPPMethodTemplate(this, parent, (ICPPMethod) binding, point);
+				pdomBinding= new PDOMCPPMethodTemplate(this, parent, (ICPPMethod) binding);
 			} else if (binding instanceof ICPPFunction) {
-				pdomBinding= new PDOMCPPFunctionTemplate(this, parent, (ICPPFunctionTemplate) binding, point);
+				pdomBinding= new PDOMCPPFunctionTemplate(this, parent, (ICPPFunctionTemplate) binding);
 			}
 		} else if (binding instanceof ICPPConstructor) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPConstructor(this, parent, (ICPPConstructor) binding, point);
+				pdomBinding = new PDOMCPPConstructor(this, parent, (ICPPConstructor) binding);
 			}
 		} else if (binding instanceof ICPPMethod) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPMethod(this, parent, (ICPPMethod) binding, point);
+				pdomBinding = new PDOMCPPMethod(this, parent, (ICPPMethod) binding);
 			}
 		} else if (binding instanceof ICPPFunction) {
-			pdomBinding = new PDOMCPPFunction(this, parent, (ICPPFunction) binding, true, point);
+			pdomBinding = new PDOMCPPFunction(this, parent, (ICPPFunction) binding, true);
 		} else if (binding instanceof ICPPNamespaceAlias) {
 			pdomBinding = new PDOMCPPNamespaceAlias(this, parent, (ICPPNamespaceAlias) binding);
 		} else if (binding instanceof ICPPNamespace) {
@@ -928,16 +929,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
-	private PDOMBinding createSpecialization(PDOMNode parent, PDOMBinding orig, IBinding special, 
-			IASTNode point) throws CoreException, DOMException {
+	private PDOMBinding createSpecialization(PDOMNode parent, PDOMBinding orig, IBinding special) 
+			throws CoreException, DOMException {
 		PDOMBinding result= null;
 		if (special instanceof ICPPTemplateInstance) {
 			if (special instanceof ICPPConstructor && orig instanceof ICPPConstructor) {
-				result= new PDOMCPPConstructorInstance(this, parent, (ICPPConstructor) special, orig, point);
+				result= new PDOMCPPConstructorInstance(this, parent, (ICPPConstructor) special, orig);
 			} else if (special instanceof ICPPMethod && orig instanceof ICPPMethod) {
-				result= new PDOMCPPMethodInstance(this, parent, (ICPPMethod) special, orig, point);
+				result= new PDOMCPPMethodInstance(this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction && orig instanceof ICPPFunction) {
-				result= new PDOMCPPFunctionInstance(this, parent, (ICPPFunction) special, orig, point);
+				result= new PDOMCPPFunctionInstance(this, parent, (ICPPFunction) special, orig);
 			} else if (special instanceof ICPPClassType && orig instanceof ICPPClassType) {
 				result= new PDOMCPPClassInstance(this, parent, (ICPPClassType) special, orig);
 			} else if (special instanceof ICPPField && orig instanceof ICPPField) {
@@ -951,11 +952,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);
 		} else if (special instanceof ICPPFunctionTemplate) {
 			if (special instanceof ICPPConstructor) {
-				result= new PDOMCPPConstructorTemplateSpecialization(this, parent, (ICPPConstructor) special, orig, point);
+				result= new PDOMCPPConstructorTemplateSpecialization(this, parent, (ICPPConstructor) special, orig);
 			} else if (special instanceof ICPPMethod) {
-				result= new PDOMCPPMethodTemplateSpecialization(this, parent, (ICPPMethod) special, orig, point);
+				result= new PDOMCPPMethodTemplateSpecialization(this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction) {
-				result= new PDOMCPPFunctionTemplateSpecialization(this, parent, (ICPPFunctionTemplate) special, orig, point);
+				result= new PDOMCPPFunctionTemplateSpecialization(this, parent, (ICPPFunctionTemplate) special, orig);
 			}
 		} else if (special instanceof ICPPClassTemplatePartialSpecialization) {
 			ICPPClassTemplatePartialSpecialization partialSpecSpec = (ICPPClassTemplatePartialSpecialization) special;
@@ -966,11 +967,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						partialSpecSpec, (PDOMCPPClassTemplateSpecialization) pdomPrimarySpec);
 			}
 		} else if (special instanceof ICPPConstructor) {
-			result= new PDOMCPPConstructorSpecialization(this, parent, (ICPPConstructor) special, orig, point);
+			result= new PDOMCPPConstructorSpecialization(this, parent, (ICPPConstructor) special, orig);
 		} else if (special instanceof ICPPMethod) {
-			result= new PDOMCPPMethodSpecialization(this, parent, (ICPPMethod) special, orig, point);
+			result= new PDOMCPPMethodSpecialization(this, parent, (ICPPMethod) special, orig);
 		} else if (special instanceof ICPPFunction) {
-			result= new PDOMCPPFunctionSpecialization(this, parent, (ICPPFunction) special, orig, point);
+			result= new PDOMCPPFunctionSpecialization(this, parent, (ICPPFunction) special, orig);
 		} else if (special instanceof ICPPClassTemplate) {
 			result= new PDOMCPPClassTemplateSpecialization(this, parent, (ICPPClassTemplate) special, orig);
 		} else if (special instanceof ICPPClassType) {
@@ -990,23 +991,23 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return result;
 	}
 
-	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding, IASTNode point) throws CoreException {
+	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding) throws CoreException {
 		try {
 			final long fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
 				List<ICPPMethod> old= new ArrayList<>();
 				if (type instanceof ICPPClassType) {
-					ArrayUtil.addAll(old, ClassTypeHelper.getImplicitMethods((ICPPClassType) type, point));
+					ArrayUtil.addAll(old, ClassTypeHelper.getImplicitMethods((ICPPClassType) type));
 				}
-				ICPPMethod[] implicit= ClassTypeHelper.getImplicitMethods(scope, point);
+				ICPPMethod[] implicit= ClassTypeHelper.getImplicitMethods(scope);
 				for (ICPPMethod method : implicit) {
 					if (!(method instanceof IProblemBinding)) {
 						PDOMBinding pdomBinding= adaptBinding(method);
 						if (pdomBinding == null) {
-							pdomBinding = createBinding(type, method, fileLocalRec, point);
+							pdomBinding = createBinding(type, method, fileLocalRec);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
-							pdomBinding.update(this, method, point);
+							pdomBinding.update(this, method);
 							old.remove(pdomBinding);
 
 							// Update the tags based on the tags from the new binding.  This was in
@@ -1018,7 +1019,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 				for (ICPPMethod method : old) {
 					if (method instanceof PDOMBinding)
-						((PDOMBinding) method).update(this, null, null);
+						((PDOMBinding) method).update(this, null);
 				}
 			}
 		} catch (DOMException e) {
@@ -1397,10 +1398,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		super.onCreateName(file, name, pdomName);
 		
 		try {
-			pointOfInstantiation = name;
+			CPPSemantics.pushLookupPoint(name);
 			onCreateNameHelper(file, name, pdomName);
 		} finally {
-			pointOfInstantiation = null;
+			CPPSemantics.popLookupPoint();
 		}
 	}
 
@@ -1476,7 +1477,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (parentNode instanceof ICPPASTCompositeTypeSpecifier) {
 			IBinding classBinding = name.resolveBinding();
 			if (classBinding instanceof ICPPClassType) {
-				ICPPBase[] bases = ClassTypeHelper.getBases((ICPPClassType)classBinding, name);
+				ICPPBase[] bases = ((ICPPClassType) classBinding).getBases();
 				if (bases.length > 0) {
 					PDOMBinding pdomBinding = pdomName.getBinding();
 					if (pdomBinding instanceof PDOMCPPClassType) {

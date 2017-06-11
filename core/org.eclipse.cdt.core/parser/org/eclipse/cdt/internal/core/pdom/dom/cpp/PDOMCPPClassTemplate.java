@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -117,8 +116,8 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
-		super.update(linkage, newBinding, point);
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		super.update(linkage, newBinding);
 		if (newBinding instanceof ICPPClassTemplate) {
 			ICPPClassTemplate ct= (ICPPClassTemplate) newBinding;
 			try {
@@ -158,7 +157,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 					// Reuse param
 					result[i]= j;
 					props[j]= -1;
-					allParams[j].update(linkage, newPar, null);
+					allParams[j].update(linkage, newPar);
 					if (j != i)
 						reorder= true;
 					continue outer;

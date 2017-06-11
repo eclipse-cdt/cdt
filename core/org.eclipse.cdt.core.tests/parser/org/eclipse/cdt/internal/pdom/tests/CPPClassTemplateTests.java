@@ -209,7 +209,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		ICPPVariable var= (ICPPVariable) bs[0];
 		assertInstance(var.getType(), ICPPClassType.class);
 		ICPPClassType ct= (ICPPClassType) var.getType();
-		IField[] fields = ClassTypeHelper.getFields(ct, null);
+		IField[] fields = ClassTypeHelper.getFields(ct);
 		assertEquals(1, fields.length);
 		assertInstance(fields[0].getType(), IPointerType.class);
 		IPointerType pt= (IPointerType) fields[0].getType();

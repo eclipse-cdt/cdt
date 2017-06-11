@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -421,10 +420,9 @@ public abstract class ArithmeticConversion {
 	 *
 	 * @param target the target integral type
 	 * @param source the source integral type
-	 * @param point point for sizeof lookup
 	 * @return whether the target integral type can represent all values of the source integral type
 	 */
-	public static boolean fitsIntoType(IBasicType target, IBasicType source, IASTNode point) {
+	public static boolean fitsIntoType(IBasicType target, IBasicType source) {
 		// A boolean cannot represent any other type.
 		if (target.getKind() == Kind.eBoolean && source.getKind() != Kind.eBoolean)
 			return false;
@@ -437,8 +435,8 @@ public abstract class ArithmeticConversion {
 			return false;
 
 		// Otherwise, go by the size and signedness of the type.
-		SizeAndAlignment sourceSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(source, point);
-		SizeAndAlignment targetSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(target, point);
+		SizeAndAlignment sourceSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(source);
+		SizeAndAlignment targetSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(target);
 		long sizeofSource = sourceSizeAndAlignment == null ? getApproximateSize(source) : sourceSizeAndAlignment.size;
 		long sizeofTarget = targetSizeAndAlignment == null ? getApproximateSize(target) : targetSizeAndAlignment.size;
 

@@ -340,11 +340,11 @@ public abstract class CSearchQuery implements ISearchQuery {
 		}
 	}
 
-	protected void createMatches(IIndex index, IBinding binding, IASTNode point) throws CoreException {
-		createMatches(index, new IBinding[] { binding }, point);
+	protected void createMatches(IIndex index, IBinding binding) throws CoreException {
+		createMatches(index, new IBinding[] { binding });
 	}
 
-	protected void createMatches(IIndex index, IBinding[] bindings, IASTNode point) throws CoreException {
+	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
 		if (bindings == null)
 			return;
 		List<IIndexName> names= new ArrayList<>();
@@ -360,7 +360,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 		if ((flags & FIND_REFERENCES) != 0) {
 			for (IBinding binding : bindings) {
 				if (binding != null) {
-					List<? extends IBinding> specializations = IndexUI.findSpecializations(index, binding, point);
+					List<? extends IBinding> specializations = IndexUI.findSpecializations(index, binding);
 					for (IBinding spec : specializations) {
 						if (spec != null && handled.add(spec)) {
 							createMatches1(index, spec, names);
@@ -369,7 +369,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 
 					if (binding instanceof ICPPMethod) {
 						ICPPMethod m= (ICPPMethod) binding;
-						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m, point);
+						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
 						if (msInBases.length > 0) {
 							if (polymorphicNames == null) {
 								polymorphicNames= new ArrayList<>();

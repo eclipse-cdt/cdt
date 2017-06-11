@@ -184,9 +184,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 				if (bindings != null) {
 					AccessContext accessibilityContext = new AccessContext(name, true);
-					for (IBinding binding : bindings) {
-						if (accessibilityContext.isAccessible(binding))
-							handleBinding(binding, context, prefix, astContext, proposals);
+					try {
+						CPPSemantics.pushLookupPoint(completionNode.getTranslationUnit());
+						for (IBinding binding : bindings) {
+							if (accessibilityContext.isAccessible(binding))
+								handleBinding(binding, context, prefix, astContext, proposals);
+						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 			}
@@ -742,8 +747,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		if (method.isVirtual()) {
 			return true;
 		}
-		ICPPMethod[] overridden = ClassTypeHelper.findOverridden(method, 
-				context.getCompletionNode().getTranslationUnit());
+
+		ICPPMethod[] overridden = ClassTypeHelper.findOverridden(method);
 		for (ICPPMethod m : overridden) {
 			if (m.isVirtual()) {
 				return true;
@@ -879,8 +884,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			t= unwindTypedefs(t);
 			if (t instanceof ICPPClassType) {
 				ICPPClassType classType= (ICPPClassType) t;
-				IASTTranslationUnit ast = cContext.getCompletionNode().getTranslationUnit();
-				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, ast);
+				ICPPConstructor[] constructors = classType.getConstructors();
 				for (ICPPConstructor constructor : constructors) {
 					handleFunction(constructor, astContext, cContext, baseRelevance, proposals);
 				}

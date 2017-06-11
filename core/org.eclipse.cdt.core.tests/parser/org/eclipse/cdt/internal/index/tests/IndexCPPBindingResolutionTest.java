@@ -2071,20 +2071,20 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		assertFalse(ClassTypeHelper.isOverrider(m5, m2));
 		assertTrue(ClassTypeHelper.isOverrider(m4, m2));
 
-		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m1, null);
+		ors= ClassTypeHelper.findOverridden(m1);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m2, null);
+		ors= ClassTypeHelper.findOverridden(m2);
 		assertEquals(1, ors.length);
 		assertEquals(ors[0], m1);
-		ors= ClassTypeHelper.findOverridden(m3, null);
+		ors= ClassTypeHelper.findOverridden(m3);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m4, null);
+		ors= ClassTypeHelper.findOverridden(m4);
 		assertEquals(2, ors.length);
 		assertEquals(ors[0], m2);
 		assertEquals(ors[1], m1);
-		ors= ClassTypeHelper.findOverridden(m5, null);
+		ors= ClassTypeHelper.findOverridden(m5);
 		assertEquals(1, ors.length);
 		assertEquals(ors[0], m1);
 	}

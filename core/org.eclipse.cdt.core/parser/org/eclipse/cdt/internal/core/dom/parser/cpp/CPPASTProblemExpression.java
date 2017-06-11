@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression, ICPPASTExpression {
@@ -75,7 +76,7 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
@@ -85,6 +86,6 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return getEvaluation().getValueCategory(this);
+    	return CPPEvaluation.getValueCategory(this);
 	}
 }

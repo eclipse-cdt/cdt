@@ -90,16 +90,16 @@ public class TypeTraits {
 	 *		- all of its non-static data members and base classes are of non-volatile literal types
 	 *  TODO: The last property isn't being checked.
 	*/
-	public static boolean isLiteralClass(ICPPClassType classType, IASTNode point) {
-		if (!hasTrivialDestructor(classType, point)) {
+	public static boolean isLiteralClass(ICPPClassType classType) {
+		if (!hasTrivialDestructor(classType)) {
 			return false;
 		}
 
-		if (isAggregateClass(classType, point)) {
+		if (isAggregateClass(classType)) {
 			return true;
 		}
 
-		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, point);
+		ICPPConstructor[] ctors = classType.getConstructors();
 		for (ICPPConstructor ctor : ctors) {
 			MethodKind methodKind = ClassTypeHelper.getMethodKind(classType, ctor);
 			if (methodKind == MethodKind.COPY_CTOR || methodKind == MethodKind.MOVE_CTOR) {
@@ -118,13 +118,12 @@ public class TypeTraits {
 	/**
 	 * C++11: 9-6
 	 */
-	public static boolean isTrivial(ICPPClassType classType, IASTNode point) {
-		return isTrivialImpl(classType, point, true);
+	public static boolean isTrivial(ICPPClassType classType) {
+		return isTrivialImpl(classType, true);
 	}
 
-	private static boolean isTrivialImpl(ICPPClassType classType, IASTNode point,
-			boolean checkDefaultConstructors) {
-		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
+	private static boolean isTrivialImpl(ICPPClassType classType, boolean checkDefaultConstructors) {
+		for (ICPPMethod method : classType.getDeclaredMethods()) {
 			if (method.isVirtual())
 				return false;
 			switch (ClassTypeHelper.getMethodKind(classType, method)) {
@@ -143,21 +142,21 @@ public class TypeTraits {
 				break;
 			}
 		}
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			if (!field.isStatic()) {
 				IType fieldType = SemanticUtil.getNestedType(field.getType(), TDEF);
-				if (fieldType instanceof ICPPClassType && !isTrivial((ICPPClassType) fieldType, point))
+				if (fieldType instanceof ICPPClassType && !isTrivial((ICPPClassType) fieldType))
 					return false;
 			}
 		}
-		for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
+		for (ICPPBase base : classType.getBases()) {
 			if (base.isVirtual())
 				return false;
 		}
-		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, point);
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType);
 		for (ICPPClassType baseClass : baseClasses) {
-			if (!isTrivial(baseClass, point))
+			if (!isTrivial(baseClass))
 				return false;
 		}
 		return true;
@@ -166,7 +165,7 @@ public class TypeTraits {
 	/**
 	 * C++11: 9-7
 	 */
-	public static boolean isStandardLayout(IType type, IASTNode point) {
+	public static boolean isStandardLayout(IType type) {
 		type = SemanticUtil.getNestedType(type, ARRAY | CVTYPE | TDEF);
 		if (type instanceof ICPPReferenceType)
 			return false;
@@ -175,10 +174,10 @@ public class TypeTraits {
 		ICPPClassType classType = (ICPPClassType) type;
 		int visibility = 0;
 		ICPPField firstNonStaticField = null;
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			if (!field.isStatic()) {
-				if (!isStandardLayout(field.getType(), point))
+				if (!isStandardLayout(field.getType()))
 					return false;
 				int vis = field.getVisibility();
 				if (visibility == 0) {
@@ -190,18 +189,18 @@ public class TypeTraits {
 					firstNonStaticField = field;
 			}
 		}
-		if (hasDeclaredVirtualMethod(classType, point))
+		if (hasDeclaredVirtualMethod(classType))
 			return false;
-		for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
+		for (ICPPBase base : classType.getBases()) {
 			if (base.isVirtual())
 				return false;
 		}
-		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, point);
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType);
 		for (ICPPClassType baseClass : baseClasses) {
-			if (!isStandardLayout(baseClass, point))
+			if (!isStandardLayout(baseClass))
 				return false;
 			if (firstNonStaticField != null) {
-				if (TypeTraits.hasNonStaticFields(baseClass, point))
+				if (TypeTraits.hasNonStaticFields(baseClass))
 					return false;
 				if (firstNonStaticField.getType().isSameType(baseClass))
 					return false;
@@ -213,13 +212,13 @@ public class TypeTraits {
 	/**
 	 * C++11: 9-10
 	 */
-	public static boolean isPOD(IType type, IASTNode point) {
-		if (!isStandardLayout(type, point))
+	public static boolean isPOD(IType type) {
+		if (!isStandardLayout(type))
 			return false;
 		type = SemanticUtil.getNestedType(type, ARRAY | CVTYPE | TDEF);
 		if (!(type instanceof ICPPClassType))
 			return true;
-		return isTrivial((ICPPClassType) type, point);
+		return isTrivial((ICPPClassType) type);
 	}
 
 	/**
@@ -227,35 +226,35 @@ public class TypeTraits {
 	 * data members other than bit-fields of length 0, no virtual member functions, no virtual
 	 * base classes, and no base class for which isEmpty is false. [meta.unary.prop]
 	 */
-	public static boolean isEmpty(IType type, IASTNode point) {
+	public static boolean isEmpty(IType type) {
 		type = SemanticUtil.getNestedType(type, CVTYPE | TDEF);
 		if (!(type instanceof ICPPClassType))
 			return false;
 		ICPPClassType classType = (ICPPClassType) type;
-		if (!isItselfEmpty(classType, point))
+		if (!isItselfEmpty(classType))
 			return false;
-		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType, point);
+		ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(classType);
 		for (ICPPClassType baseClass : baseClasses) {
-			if (!isItselfEmpty(baseClass, point))
+			if (!isItselfEmpty(baseClass))
 				return false;
 		}
 		return true;
 	}
 
-	private static boolean isItselfEmpty(ICPPClassType classType, IASTNode point) {
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+	private static boolean isItselfEmpty(ICPPClassType classType) {
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			if (!field.isStatic()) {
 				// TODO(sprigogin): Check for empty bit fields when bit field size becomes available.
 				return false;
 			}
 		}
-		ICPPMethod[] methods = ClassTypeHelper.getDeclaredMethods(classType, point);
+		ICPPMethod[] methods = classType.getDeclaredMethods();
 		for (ICPPMethod method : methods) {
 			if (method.isVirtual())
 				return false;
 		}
-		ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);
+		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
 			if (base.isVirtual())
 				return false;
@@ -269,10 +268,10 @@ public class TypeTraits {
 	 * no private or protected non-static data members (Clause 11),
 	 * no base classes (Clause 10), and no virtual functions (10.3).
 	 */
-	public static boolean isAggregateClass(ICPPClassType classType, IASTNode point) {
-		if (ClassTypeHelper.getBases(classType, point).length > 0)
+	public static boolean isAggregateClass(ICPPClassType classType) {
+		if (classType.getBases().length > 0)
 			return false;
-		ICPPMethod[] methods = ClassTypeHelper.getDeclaredMethods(classType, point);
+		ICPPMethod[] methods = classType.getDeclaredMethods();
 		for (ICPPMethod m : methods) {
 			if (m instanceof ICPPConstructor)
 				return false;
@@ -280,7 +279,7 @@ public class TypeTraits {
 				return false;
 			}
 		}
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			if (!(field.getVisibility() == ICPPMember.v_public || field.isStatic())) {
 				return false;
@@ -305,25 +304,25 @@ public class TypeTraits {
 	 * @param classType the class to check
 	 * @return {@code true} if the class has a trivial copy constructor
 	 */
-	public static boolean hasTrivialCopyCtor(ICPPClassType classType, IASTNode point) {
-		if (getImplicitCopyCtor(classType, point) == null)
+	public static boolean hasTrivialCopyCtor(ICPPClassType classType) {
+		if (getImplicitCopyCtor(classType) == null)
 			return false;
-		if (isPolymorphic(classType, point))
+		if (isPolymorphic(classType))
 			return false;
-		for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
+		for (ICPPBase base : classType.getBases()) {
 			if (base.isVirtual())
 				return false;
 		}
-		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, point)) {
-			if (!classType.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass, point))
+		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType)) {
+			if (!classType.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass))
 				return false;
 		}
-		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
+		for (ICPPField field : classType.getDeclaredFields()) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialCopyCtor((ICPPClassType) type, point)) {
+						!hasTrivialCopyCtor((ICPPClassType) type)) {
 					return false;
 				}
 			}
@@ -343,27 +342,26 @@ public class TypeTraits {
 	 * Similar to {@code std::tr1::has_trivial_default_constructor}.
 	 *
 	 * @param classType the class to check
-	 * @param point
 	 * @return {@code true} if the class has a trivial default constructor
 	 */
-	public static boolean hasTrivialDefaultConstructor(ICPPClassType classType, IASTNode point, int maxdepth) {
+	public static boolean hasTrivialDefaultConstructor(ICPPClassType classType, int maxdepth) {
 		if (maxdepth <= 0) {
 			return false;
 		}
-		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
+		for (ICPPConstructor ctor : classType.getConstructors()) {
 			if (!ctor.isImplicit() && ctor.getParameters().length == 0)
 				return false;
 		}
-		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, null)) {
-			if (!classType.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass, point, maxdepth - 1))
+		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType)) {
+			if (!classType.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass, maxdepth - 1))
 				return false;
 		}
-		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
+		for (ICPPField field : classType.getDeclaredFields()) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classType.isSameType(type) &&
-						!hasTrivialDefaultConstructor((ICPPClassType) type, point, maxdepth - 1)) {
+						!hasTrivialDefaultConstructor((ICPPClassType) type, maxdepth - 1)) {
 					return false;
 				}
 			}
@@ -385,29 +383,28 @@ public class TypeTraits {
 	 * @param classType the class to check
 	 * @return {@code true} if the class has a trivial destructor
 	 */
-	public static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point) {
-		return hasTrivialDestructor(classType, point, new HashSet<>());
+	public static boolean hasTrivialDestructor(ICPPClassType classType) {
+		return hasTrivialDestructor(classType, new HashSet<>());
 	}
 
-	private static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point,
-			Set<ICPPClassType> checkedClasses) {
+	private static boolean hasTrivialDestructor(ICPPClassType classType, Set<ICPPClassType> checkedClasses) {
 		if (!checkedClasses.add(classType))
 			return true;  // Checked already.
 
-		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
+		for (ICPPMethod method : classType.getDeclaredMethods()) {
 			if (method.isDestructor() && !isDefaultedMethod(method))
 				return false;
 		}
-		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, point)) {
-			if (!hasTrivialDestructor(baseClass, point, checkedClasses))
+		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType)) {
+			if (!hasTrivialDestructor(baseClass, checkedClasses))
 				return false;
 		}
-		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
+		for (ICPPField field : classType.getDeclaredFields()) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType &&
-						!hasTrivialDestructor((ICPPClassType) type, point, checkedClasses)) {
+						!hasTrivialDestructor((ICPPClassType) type, checkedClasses)) {
 					return false;
 				}
 			}
@@ -422,18 +419,18 @@ public class TypeTraits {
 	 * @param classType the class to check
 	 * @return {@code true} if the class declares or inherits a virtual function.
 	 */
-	public static boolean isPolymorphic(ICPPClassType classType, IASTNode point) {
-		if (hasDeclaredVirtualMethod(classType, point))
+	public static boolean isPolymorphic(ICPPClassType classType) {
+		if (hasDeclaredVirtualMethod(classType))
 			return true;
-		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType, point)) {
-			if (hasDeclaredVirtualMethod(baseClass, point))
+		for (ICPPClassType baseClass : ClassTypeHelper.getAllBases(classType)) {
+			if (hasDeclaredVirtualMethod(baseClass))
 				return true;
 		}
 		return false;
 	}
 
-	private static boolean hasNonStaticFields(ICPPClassType classType, IASTNode point) {
-		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classType, point);
+	private static boolean hasNonStaticFields(ICPPClassType classType) {
+		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
 			if (!field.isStatic())
 				return true;
@@ -441,8 +438,8 @@ public class TypeTraits {
 		return false;
 	}
 
-	public static boolean isAbstract(ICPPClassType classType, IASTNode point) {
-		return SemanticQueries.getPureVirtualMethods(classType, point).length != 0;
+	public static boolean isAbstract(ICPPClassType classType) {
+		return SemanticQueries.getPureVirtualMethods(classType).length != 0;
 	}
 
 	/**
@@ -453,16 +450,16 @@ public class TypeTraits {
 	 * @return the compiler-generated copy constructor, or {@code null} if the class doesn't
 	 *     have a compiler-generated copy constructor.
 	 */
-	private static ICPPConstructor getImplicitCopyCtor(ICPPClassType classType, IASTNode point) {
-		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
+	private static ICPPConstructor getImplicitCopyCtor(ICPPClassType classType) {
+		for (ICPPConstructor ctor : classType.getConstructors()) {
 			if (ctor.isImplicit() && ClassTypeHelper.getMethodKind(classType, ctor) == MethodKind.COPY_CTOR)
 				return ctor;
 		}
 		return null;
 	}
 
-	private static boolean hasDeclaredVirtualMethod(ICPPClassType classType, IASTNode point) {
-		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
+	private static boolean hasDeclaredVirtualMethod(ICPPClassType classType) {
+		for (ICPPMethod method : classType.getDeclaredMethods()) {
 			if (method.isVirtual()) {
 				return true;
 			}
@@ -536,8 +533,8 @@ public class TypeTraits {
 	 *    - has no non-trivial move assignment operators, and
 	 *    - has a trivial destructor."
 	 */
-	private static boolean isTriviallyCopyableClass(ICPPClassType type, IASTNode point) {
-		return isTrivialImpl(type, point, false);
+	private static boolean isTriviallyCopyableClass(ICPPClassType type) {
+		return isTrivialImpl(type, false);
 	}
 
 	/**
@@ -547,17 +544,17 @@ public class TypeTraits {
 	 * of such types, and non-volatile const-qualified versions of these
 	 * types are collectively called trivially copyable types."
 	 */
-	public static boolean isTriviallyCopyable(IType type, IASTNode point) {
+	public static boolean isTriviallyCopyable(IType type) {
 		type = SemanticUtil.getSimplifiedType(type);
 		CVQualifier qualifier = SemanticUtil.getCVQualifier(type);
 		if (qualifier.isVolatile()) {
 			return false;
 		} else if (qualifier.isConst()) {
-			return isTriviallyCopyable(SemanticUtil.getNestedType(type, SemanticUtil.ALLCVQ), point);
+			return isTriviallyCopyable(SemanticUtil.getNestedType(type, SemanticUtil.ALLCVQ));
 		} else if (type instanceof IArrayType) {
-			return isTriviallyCopyable(((IArrayType) type).getType(), point);
+			return isTriviallyCopyable(((IArrayType) type).getType());
 		} else if (type instanceof ICPPClassType) {
-			return isTriviallyCopyableClass((ICPPClassType) type, point);
+			return isTriviallyCopyableClass((ICPPClassType) type);
 		} else {
 			return isScalar(type);
 		}

@@ -442,7 +442,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		if (!isConstexpr()) {
 			return null;
 		}

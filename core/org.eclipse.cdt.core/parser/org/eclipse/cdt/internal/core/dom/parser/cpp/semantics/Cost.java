@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -305,7 +304,7 @@ public class Cost {
 		return buf.toString();
 	}
 
-	public boolean isNarrowingConversion(IASTNode point) {
+	public boolean isNarrowingConversion() {
 		if (!fCouldNarrow)
 			return false;
 
@@ -356,7 +355,7 @@ public class Cost {
 			constantExprExceptionApplies = true;
 		} else if (BuiltinOperators.isIntegral(basicSource)
 				 && BuiltinOperators.isIntegral(basicTarget)
-				 && !ArithmeticConversion.fitsIntoType(basicTarget, basicSource, point)) {
+				 && !ArithmeticConversion.fitsIntoType(basicTarget, basicSource)) {
 			// From an integer type or unscoped enumeration type to an integer type that
 			// cannot represent all the values of the original type
 			constantExprExceptionApplies = true;

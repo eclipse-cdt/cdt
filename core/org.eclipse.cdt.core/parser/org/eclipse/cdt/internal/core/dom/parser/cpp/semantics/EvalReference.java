@@ -69,18 +69,18 @@ public class EvalReference extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public final boolean isConstantExpression(IASTNode point) {
-		return getTargetEvaluation().isConstantExpression(point);
+	public final boolean isConstantExpression() {
+		return getTargetEvaluation().isConstantExpression();
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
-		return getTargetEvaluation().getType(point);
+	public IType getType() {
+		return getTargetEvaluation().getType();
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		return getTargetEvaluation().getValue(point);
+	public IValue getValue() {
+		return getTargetEvaluation().getValue();
 	}
 
 	public final ICPPEvaluation getTargetEvaluation() {
@@ -109,7 +109,7 @@ public class EvalReference extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		// An EvalReference always refers to a named variable, so its value category is lvalue.
 		return ValueCategory.LVALUE;
 	}

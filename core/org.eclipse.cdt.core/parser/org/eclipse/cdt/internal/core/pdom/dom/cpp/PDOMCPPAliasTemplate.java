@@ -70,7 +70,7 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	}
 	
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (!(newBinding instanceof ICPPAliasTemplate)) {
 			return;
 		}

@@ -21,9 +21,15 @@ public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpe
 	public CompositeCPPConstructorSpecialization(ICompositesFactory cf, ICPPConstructor cons) {
 		super(cf, cons);
 	}
-
+	
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
-		return ((ICPPConstructor) rbinding).getConstructorChainExecution(point);
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
+		return ((ICPPConstructor) rbinding).getConstructorChainExecution();
 	}
 }

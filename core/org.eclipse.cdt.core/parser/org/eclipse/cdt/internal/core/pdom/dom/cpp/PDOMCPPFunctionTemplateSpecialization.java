@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -33,8 +32,8 @@ class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecializatio
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
 	
 	public PDOMCPPFunctionTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPFunctionTemplate template, PDOMBinding specialized, IASTNode point) throws CoreException {
-		super(linkage, parent, template, specialized, point);
+			ICPPFunctionTemplate template, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, template, specialized);
 	}
 
 	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {

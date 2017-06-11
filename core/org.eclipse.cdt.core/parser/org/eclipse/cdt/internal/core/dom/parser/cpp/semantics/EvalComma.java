@@ -76,16 +76,16 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		if (!areAllConstantExpressions(fArguments, point)) {
+	private boolean computeIsConstantExpression() {
+		if (!areAllConstantExpressions(fArguments)) {
 			return false;
 		}
 		for (ICPPFunction overload : fOverloads) {
@@ -96,14 +96,14 @@ public class EvalComma extends CPPDependentEvaluation {
 		return true;
 	}
 
-	public ICPPFunction[] getOverloads(IASTNode point) {
+	public ICPPFunction[] getOverloads() {
 		if (fOverloads == null) {
-			fOverloads= computeOverloads(point);
+			fOverloads= computeOverloads();
 		}
 		return fOverloads;
 	}
 
-	private ICPPFunction[] computeOverloads(IASTNode point) {
+	private ICPPFunction[] computeOverloads() {
 		if (fArguments.length < 2)
 			return NO_FUNCTIONS;
 
@@ -114,13 +114,13 @@ public class EvalComma extends CPPDependentEvaluation {
 		ICPPEvaluation e1= fArguments[0];
 		for (int i = 1; i < fArguments.length; i++) {
 			ICPPEvaluation e2 = fArguments[i];
-			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(point, getTemplateDefinitionScope(), e1, e2);
+			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(getTemplateDefinitionScope(), e1, e2);
 			if (overload == null) {
 				e1= e2;
 			} else {
 				overloads[i - 1] = overload;
 				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), IntegralValue.UNKNOWN);
-				if (e1.getType(point) instanceof ISemanticProblem) {
+				if (e1.getType() instanceof ISemanticProblem) {
 					e1= e2;
 				}
 			}
@@ -129,48 +129,48 @@ public class EvalComma extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null) {
-			fType= computeType(point);
+			fType= computeType();
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType() {
 		if (isTypeDependent()) {
 			return new TypeOfDependentExpression(this);
 		}
-		ICPPFunction[] overloads = getOverloads(point);
+		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
 				return typeFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length - 1].getType(point);
+		return fArguments[fArguments.length - 1].getType();
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		ICPPFunction[] overloads = getOverloads(point);
+	public IValue getValue() {
+		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return DependentValue.create(this);
 		}
 
-		return fArguments[fArguments.length - 1].getValue(point);
+		return fArguments[fArguments.length - 1].getValue();
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		ICPPFunction[] overloads = getOverloads(point);
+	public ValueCategory getValueCategory() {
+		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
 				return valueCategoryFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length - 1].getValueCategory(point);
+		return fArguments[fArguments.length - 1].getValueCategory();
 	}
 
 	@Override

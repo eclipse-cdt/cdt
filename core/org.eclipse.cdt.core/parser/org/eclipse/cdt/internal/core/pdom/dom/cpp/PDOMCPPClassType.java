@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -86,13 +85,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) newBinding;
 			setKind(ct);
 			setAnonymous(ct);
 			setFinal(ct);
-			super.update(linkage, newBinding, point);
+			super.update(linkage, newBinding);
 		}
 	}
 
@@ -332,7 +331,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		try {
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 			ICPPConstructor[] constructors = visitor.getConstructors();
-	    	return ClassTypeHelper.getAllConstructors(this, constructors, null);
+	    	return ClassTypeHelper.getAllConstructors(this, constructors);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
@@ -404,17 +403,17 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this, null);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this, null);
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	@Override
 	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this, null);
+		return ClassTypeHelper.getFields(this);
 	}
 
 	@Override

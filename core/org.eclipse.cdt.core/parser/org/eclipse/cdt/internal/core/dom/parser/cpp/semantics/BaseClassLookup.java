@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -215,7 +214,7 @@ class BaseClassLookup {
 		// its base classes.
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) {
-			ICPPBase[] grandBases= ClassTypeHelper.getBases(baseClass, data.getLookupPoint());
+			ICPPBase[] grandBases= baseClass.getBases();
 			if (grandBases != null && grandBases.length > 0) {
 				HashSet<IBinding> grandBaseBindings= null;
 				BitSet selectedBases= null;
@@ -318,7 +317,7 @@ class BaseClassLookup {
 
 		if (fClassType != null) {
 			ICPPBase[] bases= null;
-			bases= ClassTypeHelper.getBases(fClassType, fLookupPoint);
+			bases= fClassType.getBases();
 			if (bases != null && bases.length > 0) {
 				for (ICPPBase base : bases) {
 					IBinding baseBinding = base.getBaseClass();

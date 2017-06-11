@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -398,14 +397,14 @@ public class CPPScopeMapper {
 		return scope;
 	}
 
-	public ICPPClassType mapToAST(ICPPClassType type, IASTNode point) {
+	public ICPPClassType mapToAST(ICPPClassType type) {
 		if (type instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst= (ICPPTemplateInstance) type;
 			ICPPTemplateDefinition template= inst.getTemplateDefinition();
 			if (template instanceof IIndexBinding && template instanceof ICPPClassType) {
-				IBinding mapped= mapToAST((ICPPClassType) template, point);
+				IBinding mapped= mapToAST((ICPPClassType) template);
 				if (mapped != template && mapped instanceof ICPPClassType) {
-					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments(), point);
+					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments());
 					if (mapped instanceof ICPPClassType)
 						return (ICPPClassType) mapped;
 				}

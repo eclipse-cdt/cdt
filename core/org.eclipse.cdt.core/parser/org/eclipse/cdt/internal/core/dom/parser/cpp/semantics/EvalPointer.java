@@ -51,8 +51,8 @@ public final class EvalPointer extends EvalReference {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
-		IType valueType = getTargetEvaluation().getType(point);
+	public IType getType() {
+		IType valueType = getTargetEvaluation().getType();
 		return new CPPPointerType(valueType, false, false, false);
 	}
 
@@ -77,11 +77,11 @@ public final class EvalPointer extends EvalReference {
 	}
 
 	private boolean subValuePositionOutOfrange() {
-		return referredSubValue != null && (position - referredSubValue.getParent().getValue(null).numberOfSubValues() > 0 || position < 0);
+		return referredSubValue != null && (position - referredSubValue.getParent().getValue().numberOfSubValues() > 0 || position < 0);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		// TODO(nathanridge): Why does it make sense to consider a pointer's value to be its offset
 		// into the underlying array?
 		return IntegralValue.create(position);

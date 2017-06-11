@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
@@ -109,12 +111,12 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
 	public ValueCategory getValueCategory() {
-    	return getEvaluation().getValueCategory(this);
+    	return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override
@@ -277,12 +279,17 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 			fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			ICPPEvaluation eval = getEvaluation();
 			if (eval instanceof EvalTypeId) {
-				ICPPFunction constructor = ((EvalTypeId) eval).getConstructor(this);
-				if (constructor != null && constructor != EvalTypeId.AGGREGATE_INITIALIZATION) {
-					CPPASTImplicitName name = new CPPASTImplicitName(constructor.getNameCharArray(), this);
-					name.setOffsetAndLength((ASTNode) fDeclSpec);
-					name.setBinding(constructor);
-					fImplicitNames = new IASTImplicitName[] { name };
+				CPPSemantics.pushLookupPoint(this);
+				try {
+					ICPPFunction constructor = ((EvalTypeId) eval).getConstructor();
+					if (constructor != null && constructor != EvalTypeId.AGGREGATE_INITIALIZATION) {
+						CPPASTImplicitName name = new CPPASTImplicitName(constructor.getNameCharArray(), this);
+						name.setOffsetAndLength((ASTNode) fDeclSpec);
+						name.setBinding(constructor);
+						fImplicitNames = new IASTImplicitName[] { name };
+					}
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
 			}
 		}

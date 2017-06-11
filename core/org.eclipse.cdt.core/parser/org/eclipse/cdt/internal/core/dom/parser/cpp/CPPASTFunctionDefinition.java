@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Models a function definition without a try-block. If used for a constructor definition
@@ -255,36 +256,41 @@ public class CPPASTFunctionDefinition extends CPPASTAttributeOwner
 			IASTName functionName = ASTQueries.findInnermostDeclarator(declarator).getName();
 			IBinding function = functionName.resolveBinding();
 			if (function instanceof ICPPConstructor) {
-				ICPPClassType classOwner = ((ICPPConstructor) function).getClassOwner();
-
-				// Determine the bases of 'classOwner' that need to be initialized by this constructor.
-				Set<ICPPClassType> basesThatNeedInitialization = new HashSet<>();
-				for (ICPPBase base : ClassTypeHelper.getBases(classOwner, this)) {
-					IType baseType = base.getBaseClassType();
-					if (baseType instanceof ICPPClassType) {
-						basesThatNeedInitialization.add((ICPPClassType) baseType);
+				CPPSemantics.pushLookupPoint(this);
+				try {
+					ICPPClassType classOwner = ((ICPPConstructor) function).getClassOwner();
+	
+					// Determine the bases of 'classOwner' that need to be initialized by this constructor.
+					Set<ICPPClassType> basesThatNeedInitialization = new HashSet<>();
+					for (ICPPBase base : classOwner.getBases()) {
+						IType baseType = base.getBaseClassType();
+						if (baseType instanceof ICPPClassType) {
+							basesThatNeedInitialization.add((ICPPClassType) baseType);
+						}
 					}
-				}
-				for (ICPPClassType virtualBase : ClassTypeHelper.getVirtualBases(classOwner, this)) {
-					basesThatNeedInitialization.add(virtualBase);
-				}
-
-				// Go through the bases determined above, and see which ones aren't initialized
-				// explicitly in the mem-initializer list.
-				for (ICPPClassType base : basesThatNeedInitialization) {
-					if (!isInitializedExplicitly(base)) {
-						// Try to find a default constructor to create an implicit name for.
-						for (ICPPConstructor constructor : ClassTypeHelper.getConstructors(base, this)) {
-							if (constructor.getRequiredArgumentCount() == 0) {  // default constructor
-								CPPASTImplicitName ctorName = new CPPASTImplicitName(
-										constructor.getNameCharArray(), this);
-								ctorName.setBinding(constructor);
-								ctorName.setOffsetAndLength((ASTNode) functionName);
-								implicitNames = ArrayUtil.append(implicitNames, ctorName);
-								break;
+					for (ICPPClassType virtualBase : ClassTypeHelper.getVirtualBases(classOwner)) {
+						basesThatNeedInitialization.add(virtualBase);
+					}
+	
+					// Go through the bases determined above, and see which ones aren't initialized
+					// explicitly in the mem-initializer list.
+					for (ICPPClassType base : basesThatNeedInitialization) {
+						if (!isInitializedExplicitly(base)) {
+							// Try to find a default constructor to create an implicit name for.
+							for (ICPPConstructor constructor : base.getConstructors()) {
+								if (constructor.getRequiredArgumentCount() == 0) {  // default constructor
+									CPPASTImplicitName ctorName = new CPPASTImplicitName(
+											constructor.getNameCharArray(), this);
+									ctorName.setBinding(constructor);
+									ctorName.setOffsetAndLength((ASTNode) functionName);
+									implicitNames = ArrayUtil.append(implicitNames, ctorName);
+									break;
+								}
 							}
 						}
 					}
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
 			}
 			implicitNames = ArrayUtil.trim(implicitNames);

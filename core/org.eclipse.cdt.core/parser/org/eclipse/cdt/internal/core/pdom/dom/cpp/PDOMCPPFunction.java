@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -93,7 +92,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	private ICPPFunctionType fDeclaredType;
 
 	public PDOMCPPFunction(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction function,
-			boolean setTypes, IASTNode point) throws CoreException, DOMException {
+			boolean setTypes) throws CoreException, DOMException {
 		super(linkage, parent, function.getNameCharArray());
 		Database db = getDB();
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
@@ -101,7 +100,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		db.putShort(record + ANNOTATION, getAnnotations(function));
 		db.putShort(record + REQUIRED_ARG_COUNT, (short) function.getRequiredArgumentCount());
 		if (setTypes) {
-			linkage.new ConfigureFunction(function, this, point);
+			linkage.new ConfigureFunction(function, this);
 		}
 	}
 
@@ -123,7 +122,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (!(newBinding instanceof ICPPFunction))
 			return;
 
@@ -180,7 +179,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		if (oldRec != 0) {
 			PDOMCPPTypeList.clearTypes(this, oldRec);
 		}
-		linkage.storeExecution(record + FUNCTION_BODY, CPPFunction.getFunctionBodyExecution(func, point));
+		linkage.storeExecution(record + FUNCTION_BODY, CPPFunction.getFunctionBodyExecution(func));
 	}
 
 	private void storeExceptionSpec(IType[] exceptionSpec) throws CoreException {
@@ -429,7 +428,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		if (!isConstexpr())
 			return null;
 

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
@@ -30,7 +29,6 @@ public final class InstantiationContext {
 	private CPPTemplateParameterMap parameterMap;
 	private int packOffset;
 	private final ICPPSpecialization contextSpecialization;
-	private final IASTNode point;
 	private boolean expandPack;
 	private boolean packExpanded;
 
@@ -45,42 +43,37 @@ public final class InstantiationContext {
 	 * @param packOffset parameter pack offset, or -1 if expansion of a parameter pack is not desired pack.
 	 * @param contextSpecialization the specialization if instantiation happens inside a specialized
 	 *     type or function, otherwise {@code null}.
-	 * @param point the point of instantiation
 	 */
 	public InstantiationContext(ICPPTemplateParameterMap parameterMap, int packOffset,
-			ICPPSpecialization contextSpecialization, IASTNode point) {
+			ICPPSpecialization contextSpecialization) {
 		this.parameterMap = (CPPTemplateParameterMap) parameterMap;
 		this.packOffset = packOffset;
 		this.contextSpecialization = contextSpecialization;
-		this.point = point;
 	}
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
 	 * @param contextSpecialization the specialization if instantiation happens inside a specialized
 	 *     type or function, otherwise {@code null}.
-	 * @param point the point of instantiation
 	 */
 	public InstantiationContext(ICPPTemplateParameterMap parameterMap,
-			ICPPSpecialization contextSpecialization, IASTNode point) {
-		this(parameterMap, -1, contextSpecialization, point);
+			ICPPSpecialization contextSpecialization) {
+		this(parameterMap, -1, contextSpecialization);
 	}
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
 	 * @param packOffset parameter pack offset, or -1 if not known
-	 * @param point the point of instantiation
 	 */
-	public InstantiationContext(ICPPTemplateParameterMap parameterMap, int packOffset, IASTNode point) {
-		this(parameterMap, packOffset, null, point);
+	public InstantiationContext(ICPPTemplateParameterMap parameterMap, int packOffset) {
+		this(parameterMap, packOffset, null);
 	}
 
 	/**
 	 * @param parameterMap mapping of template parameters to arguments, may be {@code null}.
-	 * @param point the point of instantiation
 	 */
-	public InstantiationContext(ICPPTemplateParameterMap parameterMap, IASTNode point) {
-		this(parameterMap, -1, null, point);
+	public InstantiationContext(ICPPTemplateParameterMap parameterMap) {
+		this(parameterMap, -1, null);
 	}
 
 	/**
@@ -144,13 +137,6 @@ public final class InstantiationContext {
 	 */
 	public ICPPClassSpecialization getContextClassSpecialization() {
 		return getContextClassSpecialization(contextSpecialization);
-	}
-
-	/**
-	 * Returns the point of instantiation
-	 */
-	public final IASTNode getPoint() {
-		return point;
 	}
 
 	/**

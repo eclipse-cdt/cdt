@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Finds locations of linked names. Used by Rename in File and Rename in Workspace.
@@ -59,19 +60,22 @@ public class LinkedNamesFinder {
 		if (target == null) {
 			return EMPTY_LOCATIONS_ARRAY;
 		}
-		BindingFinder bindingFinder = new BindingFinder(root, name);
-		bindingFinder.find(target);
-		return bindingFinder.getLocations();
+		try {
+			CPPSemantics.pushLookupPoint(name);
+			BindingFinder bindingFinder = new BindingFinder(root, name);
+			bindingFinder.find(target);
+			return bindingFinder.getLocations();
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	private static class BindingFinder {
 		private final IASTTranslationUnit root;
 		private final List<IRegion> locations;
-		private final IASTNode point;
 
 		public BindingFinder(IASTTranslationUnit root, IASTNode point) {
 			this.root = root;
-			this.point = point;
 			locations = new ArrayList<IRegion>();
 		}
 
@@ -102,7 +106,7 @@ public class LinkedNamesFinder {
 				}
 			} else if (target instanceof ICPPMethod) {
 	        	ICPPMethod method= (ICPPMethod) target;
-        		for (ICPPMethod m : ClassTypeHelper.findOverridden(method, root)) {
+        		for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
 					findBinding(m);
 				}
         		try {
@@ -125,7 +129,7 @@ public class LinkedNamesFinder {
 
 			SubclassFinder subclassFinder = new SubclassFinder(ownerClass);
 			root.accept(subclassFinder);
-			return ClassTypeHelper.findOverriders(subclassFinder.getSubclasses(), method, point);
+			return ClassTypeHelper.findOverriders(subclassFinder.getSubclasses(), method);
 		}
 
 		public IRegion[] getLocations() {
@@ -316,9 +320,14 @@ public class LinkedNamesFinder {
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof ICPPClassType) {
 				if (seenClasses.add(binding)) {
-					ICPPClassType candidate = (ICPPClassType) binding;
-					if (ClassTypeHelper.isSubclass(candidate, baseClass, name)) {
-						subclasses.add(candidate);
+					try {
+						CPPSemantics.pushLookupPoint(name);
+						ICPPClassType candidate = (ICPPClassType) binding;
+						if (ClassTypeHelper.isSubclass(candidate, baseClass)) {
+							subclasses.add(candidate);
+						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 			}

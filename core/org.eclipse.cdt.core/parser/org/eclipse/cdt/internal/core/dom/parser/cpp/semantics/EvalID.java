@@ -148,23 +148,23 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		return false;
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		return new TypeOfDependentExpression(this);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		// Name lookup is not needed here because it was already done in the "instantiate" method.
 		return DependentValue.create(this);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
 
@@ -380,7 +380,7 @@ public class EvalID extends CPPDependentEvaluation {
 
 		boolean nameOwnerStillDependent = false;
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName(name, (ICPPClassType) nameOwner, null, templateArgs, null, context.getPoint());
+			ICPPEvaluation eval = resolveName(name, (ICPPClassType) nameOwner, null, templateArgs, null);
 			if (eval != null)
 				return eval;
 			if (CPPTemplates.isDependentType((ICPPClassType) nameOwner)) {
@@ -391,7 +391,7 @@ public class EvalID extends CPPDependentEvaluation {
 		}
 
 		if (!nameOwnerStillDependent && fieldOwner != null && !fieldOwner.isTypeDependent()) {
-			IType fieldOwnerType = fieldOwner.getType(context.getPoint());
+			IType fieldOwnerType = fieldOwner.getType();
 			if (fIsPointerDeref) {
 				fieldOwnerType = SemanticUtil.getSimplifiedType(fieldOwnerType);
 				if (fieldOwnerType instanceof IPointerType) {
@@ -404,7 +404,7 @@ public class EvalID extends CPPDependentEvaluation {
 			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
 			if (fieldOwnerClassType instanceof ICPPClassType) {
 				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerClassType, fieldOwner, 
-						templateArgs, fieldOwnerClassTypeCV, context.getPoint());
+						templateArgs, fieldOwnerClassTypeCV);
 				if (eval != null)
 					return eval;
 				if (!CPPTemplates.isDependentType(fieldOwnerClassType)) 
@@ -430,7 +430,8 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	private ICPPEvaluation resolveName(char[] name, ICPPClassType nameOwner, ICPPEvaluation ownerEval, 
-			ICPPTemplateArgument[] templateArgs, IType impliedObjectType, IASTNode point) {
+			ICPPTemplateArgument[] templateArgs, IType impliedObjectType) {
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		LookupData data = new LookupData(name, templateArgs, point);
 		data.qualified = fQualified;
 		try {
@@ -459,7 +460,7 @@ public class EvalID extends CPPDependentEvaluation {
 					return new EvalBinding(binding, null, getTemplateDefinition());
 				}
 				if (ownerEval != null) {
-					return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(point), binding, ownerEval, false, point);
+					return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(), binding, ownerEval, false, point);
 				} else {
 					return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
 				}

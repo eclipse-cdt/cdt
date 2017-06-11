@@ -333,7 +333,7 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof IField) {
 					if (binding instanceof ICPPUnknownBinding) {
-						if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding, node)) {
+						if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding)) {
 							return false;
 						}
 					}
@@ -1050,7 +1050,7 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof ICompositeType && !(binding instanceof ICPPTemplateParameter)) {
 					if (binding instanceof ICPPUnknownBinding) {
-						if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding, node)) {
+						if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding)) {
 							return false;
 						}
 					}
@@ -1107,7 +1107,7 @@ public class SemanticHighlightings {
 					return true;
 				}
 				if (binding instanceof ICPPUnknownBinding) {
-					if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding, node)) {
+					if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding)) {
 						return true;
 					}
 				}
@@ -1408,7 +1408,7 @@ public class SemanticHighlightings {
 					return true;
 				}
 				if (binding instanceof ICPPUnknownBinding) {
-					if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding, node)) {
+					if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding)) {
 						return true;
 					}
 				}
@@ -1783,13 +1783,13 @@ public class SemanticHighlightings {
 		}
 	}
 	
-	private static boolean heuristicallyResolvesToEnumeration(ICPPUnknownBinding binding, IASTNode point) {
-		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding, point);
+	private static boolean heuristicallyResolvesToEnumeration(ICPPUnknownBinding binding) {
+		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding);
 		return resolved.length == 1 && resolved[0] instanceof IEnumeration;
 	}
 	
-	private static boolean heuristicallyResolvesToEnumerator(ICPPUnknownBinding binding, IASTNode point) {
-		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding, point);
+	private static boolean heuristicallyResolvesToEnumerator(ICPPUnknownBinding binding) {
+		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding);
 		return resolved.length == 1 && resolved[0] instanceof IEnumerator;
 	}
 	

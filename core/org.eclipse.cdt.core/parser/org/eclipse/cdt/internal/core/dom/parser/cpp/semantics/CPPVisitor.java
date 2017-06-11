@@ -491,7 +491,7 @@ public class CPPVisitor extends ASTQueries {
 	    	binding = CPPSemantics.resolveBinding(elabType.getName());
 	    }
 	    if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
-	    	binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, elabType);
+	    	binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding);
 	    	ASTInternal.addDeclaration(binding, elabType);
 	    }
 
@@ -1289,7 +1289,7 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, name);
+						binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding);
 						scope= ((ICPPClassType) binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace) binding).getNamespaceScope();
@@ -1320,7 +1320,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 				type= getUltimateTypeUptoPointers(type);
 				if (type instanceof ICPPClassType) {
-					type= SemanticUtil.mapToAST(type, fieldReference);
+					type= SemanticUtil.mapToAST(type);
 					return ((ICPPClassType) type).getCompositeScope();
 				} else if (type instanceof ICPPUnknownBinding) {
 					return ((ICPPUnknownBinding) type).asScope();
@@ -1346,7 +1346,7 @@ public class CPPVisitor extends ASTQueries {
 				if (type != null) {
 					type= getNestedType(type, TDEF | CVTYPE);
 					if (type instanceof ICPPClassType) {
-						type= SemanticUtil.mapToAST(type, name);
+						type= SemanticUtil.mapToAST(type);
 						return ((ICPPClassType) type).getCompositeScope();
 					}
 				}
@@ -2045,7 +2045,7 @@ public class CPPVisitor extends ASTQueries {
 	        			sizeValue = IntegralValue.create(clauses.length);
 	        		} else if (clause instanceof ICPPASTLiteralExpression) {
 	        			ICPPEvaluation value = ((ICPPASTExpression) clause).getEvaluation();
-	        			IType valueType = value.getType(clause);
+	        			IType valueType = value.getType();
 	        			if (valueType instanceof IArrayType) {
 	        				sizeValue = ((IArrayType) valueType).getSize();
 	        			}
@@ -2071,7 +2071,12 @@ public class CPPVisitor extends ASTQueries {
 	
 	public static IType createType(IASTDeclarator declarator) {
 		// Resolve placeholders by default.
-		return createType(declarator, RESOLVE_PLACEHOLDERS);
+		try {
+			CPPSemantics.pushLookupPoint(declarator);
+			return createType(declarator, RESOLVE_PLACEHOLDERS);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 	
 	public static IType createType(IASTDeclarator declarator, int flags) {
@@ -2259,7 +2264,7 @@ public class CPPVisitor extends ASTQueries {
 				return cannotDeduce;
 			}
 			if (placeholderKind == PlaceholderKind.Auto) {
-				return createAutoType(autoInitClause.getEvaluation(), declSpec, declarator, autoInitClause);
+				return createAutoType(autoInitClause.getEvaluation(), declSpec, declarator);
 			} else /* decltype(auto) */ {
 				if (declarator.getPointerOperators().length > 0) {
 					// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
@@ -2277,24 +2282,24 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType createAutoType(final ICPPEvaluation evaluation, IASTDeclSpecifier declSpec,
-			IASTDeclarator declarator, IASTNode point) {
+			IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
 		IType type = AutoTypeResolver.AUTO_TYPE;
 		IType initType = null;
 		ValueCategory valueCat= null;
-		initType = evaluation.getType(declarator);
-		valueCat = evaluation.getValueCategory(declarator);
+		initType = evaluation.getType();
+		valueCat = evaluation.getValueCategory();
 		if (initType == null || initType instanceof ISemanticProblem) {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 		ICPPClassTemplate initializer_list_template = null;
 		if (evaluation instanceof EvalInitList) {
-			initializer_list_template = get_initializer_list(declSpec);
+			initializer_list_template = get_initializer_list();
 			if (initializer_list_template == null) {
 				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, point);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) });
 			if (type instanceof IProblemBinding) {
 				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
@@ -2303,7 +2308,7 @@ public class CPPVisitor extends ASTQueries {
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
 		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),
-				Collections.singletonList(valueCat), paramMap, point);
+				Collections.singletonList(valueCat), paramMap);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
@@ -2320,7 +2325,7 @@ public class CPPVisitor extends ASTQueries {
 			type = t;
 		if (evaluation instanceof EvalInitList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, point);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) });
 		}
 		return decorateType(type, declSpec, declarator);
 	}
@@ -2347,7 +2352,7 @@ public class CPPVisitor extends ASTQueries {
 				
 				returnEval = ((ICPPASTInitializerClause) returnExpression).getEvaluation();
 			}
-			IType returnType = returnEval.getType(stmt);
+			IType returnType = returnEval.getType();
 			if (returnType instanceof ISemanticProblem) {
 				// If a function makes a recursive call in some of its return statements,
 				// the type those return expressions will be a problem type. We ignore 
@@ -2360,7 +2365,7 @@ public class CPPVisitor extends ASTQueries {
 			
 			if (fReturnEval == null) {
 				fReturnEval = returnEval;
-			} else if (!fReturnEval.getType(stmt).isSameType(returnType)) {
+			} else if (!fReturnEval.getType().isSameType(returnType)) {
 				fReturnEval = EvalFixed.INCOMPLETE;
 			}
 		}
@@ -2400,12 +2405,12 @@ public class CPPVisitor extends ASTQueries {
 				// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
 				return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 			}
-			return CPPSemantics.getDeclTypeForEvaluation(returnEval, point);
+			return CPPSemantics.getDeclTypeForEvaluation(returnEval);
 		} else /* auto */ {
 			if (autoDeclSpec == null || autoDeclarator == null) {
-				return returnEval.getType(point);
+				return returnEval.getType();
 			} else {
-				return createAutoType(returnEval, autoDeclSpec, autoDeclarator, autoDeclarator);
+				return createAutoType(returnEval, autoDeclSpec, autoDeclarator);
 			}
 		}
 	}
@@ -2666,12 +2671,13 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
-	public static IType getPointerDiffType(final IASTNode point) {
-		IType t= getStdType(point, PTRDIFF_T);
+	public static IType getPointerDiffType() {
+		IType t= getStdType(PTRDIFF_T);
 		return t != null ? t : CPPBasicType.LONG;
 	}
 
-	private static IType getStdType(final IASTNode node, char[] name) {
+	private static IType getStdType(char[] name) {
+		IASTNode node = CPPSemantics.getCurrentLookupPoint();
 		if (node == null)
 			return null;
 		ASTTranslationUnit ast = (ASTTranslationUnit) node.getTranslationUnit();
@@ -2692,18 +2698,18 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
-	public static IType get_type_info(IASTNode point) {
-		IType t= getStdType(point, TYPE_INFO);
+	public static IType get_type_info() {
+		IType t= getStdType(TYPE_INFO);
 		return t != null ? t : CPPBasicType.INT;
 	}
 
-	public static IType get_SIZE_T(IASTNode sizeofExpr) {
-		IType t= getStdType(sizeofExpr, SIZE_T);
+	public static IType get_SIZE_T() {
+		IType t= getStdType(SIZE_T);
 		return t != null ? t : CPPBasicType.UNSIGNED_LONG;
 	}
 
-	public static ICPPClassTemplate get_initializer_list(IASTNode node) {
-		IType t= getStdType(node, INITIALIZER_LIST);
+	public static ICPPClassTemplate get_initializer_list() {
+		IType t= getStdType(INITIALIZER_LIST);
 		if (t instanceof ICPPClassTemplate)
 			return (ICPPClassTemplate) t;
 		return null;
@@ -2875,7 +2881,7 @@ public class CPPVisitor extends ASTQueries {
 					break;
 				IBinding binding = segments[i].resolveBinding();
 				if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
-					binding = (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, name);
+					binding = (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding);
 				}
 				return bindingToOwner(binding);
 			}

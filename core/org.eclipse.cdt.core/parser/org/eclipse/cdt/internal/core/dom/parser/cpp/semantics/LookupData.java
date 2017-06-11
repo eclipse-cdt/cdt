@@ -539,7 +539,7 @@ public class LookupData extends ScopeLookupData {
 			functionArgTypes= new IType[functionArgs.length];
 			for (int i = 0; i < functionArgs.length; i++) {
 				ICPPEvaluation e = functionArgs[i];
-				functionArgTypes[i]= getSimplifiedType(e.getType(getLookupPoint()));
+				functionArgTypes[i]= getSimplifiedType(e.getType());
 			}
 		}
 		return functionArgTypes;
@@ -552,7 +552,7 @@ public class LookupData extends ScopeLookupData {
 				functionArgValueCategories= new ValueCategory[args.length];
 				for (int i = 0; i < args.length; i++) {
 					final ICPPEvaluation arg = args[i];
-					functionArgValueCategories[i] = arg.getValueCategory(getLookupPoint());
+					functionArgValueCategories[i] = arg.getValueCategory();
 				}
 			}
 		}

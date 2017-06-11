@@ -165,7 +165,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 
 	@Override
 	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this, null);
+		return ClassTypeHelper.getFields(this);
 	}
 
 	@Override
@@ -175,12 +175,12 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this, null);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this, null);
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	@Override

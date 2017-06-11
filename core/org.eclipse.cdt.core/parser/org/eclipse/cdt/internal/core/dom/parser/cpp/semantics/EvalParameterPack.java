@@ -65,14 +65,14 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		return false;
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null) {
-			IType type = fExpansionPattern.getType(point);
+			IType type = fExpansionPattern.getType();
 			if (type == null) {
 				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 			} else {
@@ -83,12 +83,12 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		return DependentValue.create(fExpansionPattern);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}
 

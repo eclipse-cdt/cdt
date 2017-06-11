@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
@@ -46,19 +47,24 @@ public class TypeHelper {
 	public static boolean shouldBePassedByReference(IType type, IASTTranslationUnit ast) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
 		if (type instanceof ICompositeType) {
-			if (type instanceof ICPPClassType) {
-				ICPPClassType classType = ((ICPPClassType) type);
-				if (!TypeTraits.hasTrivialCopyCtor(classType, ast) ||
-						!TypeTraits.hasTrivialDestructor(classType, ast)) {
-					return true;
+			try {
+				CPPSemantics.pushLookupPoint(ast);
+				if (type instanceof ICPPClassType) {
+					ICPPClassType classType = ((ICPPClassType) type);
+					if (!TypeTraits.hasTrivialCopyCtor(classType) ||
+							!TypeTraits.hasTrivialDestructor(classType)) {
+						return true;
+					}
 				}
+				SizeofCalculator calc = ((ASTTranslationUnit) ast).getSizeofCalculator();
+				SizeAndAlignment sizeofPointer = calc.sizeAndAlignmentOfPointer();
+				long maxSize = sizeofPointer != null ? sizeofPointer.size : 4;
+				SizeAndAlignment sizeofType = calc.sizeAndAlignment(type);
+				if (sizeofType == null || sizeofType.size > maxSize)
+					return true;
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
-			SizeofCalculator calc = ((ASTTranslationUnit) ast).getSizeofCalculator();
-			SizeAndAlignment sizeofPointer = calc.sizeAndAlignmentOfPointer();
-			long maxSize = sizeofPointer != null ? sizeofPointer.size : 4;
-			SizeAndAlignment sizeofType = calc.sizeAndAlignment(type);
-			if (sizeofType == null || sizeofType.size > maxSize)
-				return true;
 		}
 		return false;
 	}

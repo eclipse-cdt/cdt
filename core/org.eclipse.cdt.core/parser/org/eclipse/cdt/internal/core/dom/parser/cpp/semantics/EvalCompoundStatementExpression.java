@@ -69,22 +69,22 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
-		return fDelegate.isConstantExpression(point);
+	public boolean isConstantExpression() {
+		return fDelegate.isConstantExpression();
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
-		return fDelegate.getType(point);
+	public IType getType() {
+		return fDelegate.getType();
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		return fDelegate.getValue(point);
+	public IValue getValue() {
+		return fDelegate.getValue();
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
 

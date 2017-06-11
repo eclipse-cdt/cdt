@@ -104,36 +104,36 @@ public class EvalConditional extends CPPDependentEvaluation {
 		return false;
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
-		evaluate(point);
+	public ICPPFunction getOverload() {
+		evaluate();
 		return fOverload;
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
-		evaluate(point);
+	public IType getType() {
+		evaluate();
 		return fType;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		IValue condValue = fCondition.getValue(point);
+	public IValue getValue() {
+		IValue condValue = fCondition.getValue();
 		if (condValue == IntegralValue.UNKNOWN)
 			return IntegralValue.UNKNOWN;
 		Number cond = condValue.numberValue();
 		if (cond != null) {
 			if (cond.longValue() != 0) {
-				return fPositive == null ? condValue : fPositive.getValue(point);
+				return fPositive == null ? condValue : fPositive.getValue();
 			} else {
-				return fNegative.getValue(point);
+				return fNegative.getValue();
 			}
 		}
 		return DependentValue.create(this);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		evaluate(point);
+	public ValueCategory getValueCategory() {
+		evaluate();
 		return fValueCategory;
 	}
 
@@ -150,21 +150,21 @@ public class EvalConditional extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
-		return fCondition.isConstantExpression(point)
-			&& (fPositive == null || fPositive.isConstantExpression(point))
-			&& fNegative.isConstantExpression(point);
+	private boolean computeIsConstantExpression() {
+		return fCondition.isConstantExpression()
+			&& (fPositive == null || fPositive.isConstantExpression())
+			&& fNegative.isConstantExpression();
 	}
 
-	private void evaluate(IASTNode point) {
+	private void evaluate() {
     	if (fValueCategory != null)
     		return;
 
@@ -172,8 +172,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
 
-		IType t2 = positive.getType(point);
-		IType t3 = fNegative.getType(point);
+		IType t2 = positive.getType();
+		IType t3 = fNegative.getType();
 
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
@@ -203,8 +203,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 			return;
 		}
 
-		final ValueCategory vcat2= positive.getValueCategory(point);
-		final ValueCategory vcat3= fNegative.getValueCategory(point);
+		final ValueCategory vcat2= positive.getValueCategory();
+		final ValueCategory vcat3= fNegative.getValueCategory();
 
 		// Same type
 		if (t2.isSameType(t3)) {
@@ -223,8 +223,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		// Different types with at least one class type
 		if (isClassType2 || isClassType3) {
-			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3, point); // sets fType and fValueCategory
-			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2, point); // sets fType and fValueCategory
+			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3); // sets fType and fValueCategory
+			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2); // sets fType and fValueCategory
 			if (cost2.converts() || cost3.converts()) {
 				if (cost2.converts()) {
 					if (cost3.converts() || cost2.isAmbiguousUDC()) {
@@ -253,7 +253,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, getTemplateDefinitionScope(), positive, fNegative);
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(getTemplateDefinitionScope(), positive, fNegative);
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
@@ -270,7 +270,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 		} else {
 	    	fType= CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t2, t3);
 	    	if (fType == null) {
-	    		fType= Conversions.compositePointerType(t2, t3, point);
+	    		fType= Conversions.compositePointerType(t2, t3);
 		    	if (fType == null) {
 					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 		    	}
@@ -278,12 +278,12 @@ public class EvalConditional extends CPPDependentEvaluation {
 		}
     }
 
-    private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2, IASTNode point) {
+    private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2) {
 		// E2 is an lvalue or E2 is an xvalue
 		try {
 			if (vcat2.isGLValue()) {
 				IType target= new CPPReferenceType(t2, vcat2 == XVALUE);
-				Cost c= Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED, Context.REQUIRE_DIRECT_BINDING, point);
+				Cost c= Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED, Context.REQUIRE_DIRECT_BINDING);
 				if (c.converts()) {
 					fType= t2;
 					fValueCategory= vcat2;
@@ -292,7 +292,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 			}
 			// Both are class types and one derives from the other
 			if (uqt1 instanceof ICPPClassType && uqt2 instanceof ICPPClassType) {
-				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2, point);
+				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2);
 				if (dist >= 0) {
 					CVQualifier cv1 = SemanticUtil.getCVQualifier(t1);
 					CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
@@ -303,14 +303,14 @@ public class EvalConditional extends CPPDependentEvaluation {
 					}
 					return Cost.NO_CONVERSION;
 				}
-				if (SemanticUtil.calculateInheritanceDepth(uqt2, uqt1, point) >= 0)
+				if (SemanticUtil.calculateInheritanceDepth(uqt2, uqt1) >= 0)
 					return Cost.NO_CONVERSION;
 			}
 			// Unrelated class types or just one class:
 			if (vcat2 != PRVALUE) {
 				t2= Conversions.lvalue_to_rvalue(t2, false);
 			}
-			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY, point);
+			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY);
 			if (c.converts()) {
 				fType= t2;
 				fValueCategory= PRVALUE;
@@ -368,7 +368,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 		// just the branch that is taken. This avoids infinite recursion
 		// when computing a recursive constexpr function where the base
 		// case of the recursion is one of the branches of the conditional.
-		Number conditionValue = condition.getValue(context.getPoint()).numberValue();
+		Number conditionValue = condition.getValue().numberValue();
 		if (conditionValue != null) {
 			if (conditionValue.longValue() != 0) {
 				return fPositive == null ? null : fPositive.computeForFunctionCall(record, context.recordStep());

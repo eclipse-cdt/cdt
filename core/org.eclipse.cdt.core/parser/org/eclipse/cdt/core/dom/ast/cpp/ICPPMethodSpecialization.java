@@ -22,8 +22,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public interface ICPPMethodSpecialization extends ICPPSpecialization, ICPPMethod {
 	/**
-	 * Similar to {@link ICPPFunction#getExceptionSpecification()} but a accepts a starting point
-	 * for template instantiation.
+	 * @deprecated Use {@link ICPPFunction#getExceptionSpecification()} instead.
 	 */
+	@Deprecated
 	IType[] getExceptionSpecification(IASTNode point);
 }

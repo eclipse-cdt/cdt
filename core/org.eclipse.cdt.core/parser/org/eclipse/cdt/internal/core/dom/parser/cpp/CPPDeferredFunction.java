@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -173,7 +172,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		return null;
 	}
 

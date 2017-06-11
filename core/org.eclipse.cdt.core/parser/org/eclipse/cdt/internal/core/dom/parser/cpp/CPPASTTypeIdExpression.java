@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
@@ -117,12 +118,12 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

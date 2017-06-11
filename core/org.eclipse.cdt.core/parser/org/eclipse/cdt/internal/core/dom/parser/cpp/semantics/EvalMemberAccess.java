@@ -181,14 +181,14 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (fOwnerEval != null) {
-			return fOwnerEval.isConstantExpression(point);
+			return fOwnerEval.isConstantExpression();
 		}
 		return false;
 	}
 
-	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref, IASTNode point,
+	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref,
 			Collection<ICPPFunction> functionBindings, boolean returnDependent) {
     	IType type= fieldOwnerExpressionType;
     	if (!isDeref)
@@ -214,7 +214,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
     		 */
 
     		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN) };
-			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, null, args, classType,
+			ICPPFunction op= CPPSemantics.findOverloadedOperator(null, args, classType,
 					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
 			if (op == null)
 				break;
@@ -223,7 +223,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 				functionBindings.add(op);
 
 			type = typeFromFunctionCall(op);
-			type = SemanticUtil.mapToAST(type, point);
+			type = SemanticUtil.mapToAST(type);
 		}
 
 		IType prValue = prvalueTypeWithResolvedTypedefs(type);
@@ -235,7 +235,8 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			return returnDependent
 					  // The type resulting from dereferecing 'type'
 					? new TypeOfDependentExpression(new EvalUnary(IASTUnaryExpression.op_star,
-							new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN), null, point))
+							new EvalFixed(type, LVALUE, IntegralValue.UNKNOWN), null, 
+							CPPSemantics.getCurrentLookupPoint()))
 					: null;
 		}
 
@@ -243,14 +244,14 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null) {
-			fType = computeType(point);
+			fType = computeType();
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType() {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return new TypeOfDependentExpression(this);
 		}
@@ -265,10 +266,10 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			} else if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {
 				e2 = addQualifiersForAccess((ICPPField) fMember, e2, fOwnerType);
 			}
-			return SemanticUtil.mapToAST(e2, point);
+			return SemanticUtil.mapToAST(e2);
 		}
 		if (fMember instanceof IFunction) {
-			return SemanticUtil.mapToAST(((IFunction) fMember).getType(), point);
+			return SemanticUtil.mapToAST(((IFunction) fMember).getType());
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
@@ -291,15 +292,15 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (fOwnerEval != null) {
 			int fieldPos = CPPASTFieldReference.getFieldPosition(fMember, fOwnerType);
-			IValue ownerValue = fOwnerEval.getValue(point);
+			IValue ownerValue = fOwnerEval.getValue();
 			if (ownerValue instanceof CompositeValue) {
 				CompositeValue compValue = (CompositeValue) ownerValue;
 				ICPPEvaluation field = compValue.getSubValue(fieldPos);
 				if (field != null) {
-					return field.getValue(point);
+					return field.getValue();
 				}
 			} else {
 				return IntegralValue.UNKNOWN;
@@ -320,7 +321,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		if (fMember instanceof IVariable) {
 			IType e2 = ((IVariable) fMember).getType();
 			e2 = SemanticUtil.getNestedType(e2, TDEF);
@@ -387,7 +388,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		IBinding member = fMember;
 		IType ownerClass = SemanticUtil.getNestedType(ownerType, ALLCVQ);
 		if (ownerClass instanceof ICPPClassSpecialization) {
-			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember, context.getPoint());
+			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember);
 		}
 		ICPPEvaluation ownerEval = fOwnerEval;
 		if (ownerEval != null) {

@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
@@ -115,7 +116,12 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
-			pdomBinding.update(this, fromBinding, fromName);
+			try {
+				CPPSemantics.pushLookupPoint(fromName);
+				pdomBinding.update(this, fromBinding);
+			} finally {
+				CPPSemantics.popLookupPoint();
+			}
 
 			// Update the tags based on the tags from the new binding.  This cannot be done in
 			// PDOMBinding.update, because not all subclasses (e.g., PDOMCFunction) call

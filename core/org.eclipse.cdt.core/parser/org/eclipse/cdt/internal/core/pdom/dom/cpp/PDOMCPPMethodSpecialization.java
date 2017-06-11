@@ -42,8 +42,8 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 1;
 	
 	public PDOMCPPMethodSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, 
-			PDOMBinding specialized, IASTNode point) throws CoreException {
-		super(linkage, parent, method, specialized, point);		
+			PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, method, specialized);		
 		Database db = getDB();
 
 		byte annotation = PDOMCPPAnnotations.encodeExtraMethodAnnotations(method);
@@ -113,7 +113,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization implemen
 	@Override
 	public IType[] getExceptionSpecification(IASTNode point) {
 		if (isImplicit()) {
-			return ClassTypeHelper.getInheritedExceptionSpecification(this, point);
+			return ClassTypeHelper.getInheritedExceptionSpecification(this);
 		}
 		return super.getExceptionSpecification();
 	}

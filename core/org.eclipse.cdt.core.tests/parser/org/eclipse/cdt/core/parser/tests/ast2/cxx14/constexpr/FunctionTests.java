@@ -242,7 +242,7 @@ public class FunctionTests extends TestBase {
 		IASTFunctionCallExpression funcExpr = (IASTFunctionCallExpression)clause;
 		IASTIdExpression idExpr = (IASTIdExpression)funcExpr.getFunctionNameExpression();
 		ICPPFunction function = (ICPPFunction)idExpr.getName().resolveBinding();
-		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function, clause);
+		ICPPExecution bodyExec = CPPFunction.getFunctionBodyExecution(function);
 		assertNull(bodyExec);
 	}
 

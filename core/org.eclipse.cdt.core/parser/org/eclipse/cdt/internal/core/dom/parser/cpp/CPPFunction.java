@@ -703,15 +703,15 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return false;
 	}
 
-	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function, IASTNode point) {
+	public static ICPPExecution getFunctionBodyExecution(ICPPFunction function) {
 		if (function instanceof ICPPComputableFunction) {
-			return ((ICPPComputableFunction) function).getFunctionBodyExecution(point);
+			return ((ICPPComputableFunction) function).getFunctionBodyExecution();
 		}
 		return null;
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		if (!isConstexpr())
 			return null;
 		if (getDefinition() == null) {

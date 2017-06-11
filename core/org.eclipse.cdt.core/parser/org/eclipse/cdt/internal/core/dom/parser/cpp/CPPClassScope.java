@@ -151,7 +151,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * Marks bases that serve as sources of inherited constructors.
 	 */
 	private void markInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
-		ICPPBase[] bases = ClassTypeHelper.getBases(getClassType(), compositeTypeSpec);
+		ICPPBase[] bases = getClassType().getBases();
 		if (bases.length == 0)
 			return;
 		IASTDeclaration[] members = compositeTypeSpec.getMembers();

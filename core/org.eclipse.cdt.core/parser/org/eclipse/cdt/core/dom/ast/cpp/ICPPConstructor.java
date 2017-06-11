@@ -21,11 +21,18 @@ public interface ICPPConstructor extends ICPPMethod {
 	public static final ICPPConstructor[] EMPTY_CONSTRUCTOR_ARRAY = {};
 	
 	/**
-	 * For a constexpr constructor returns the ICPPExecution for its constructor chain. Otherwise returns
-	 * {@code null}.
-	 * @param point The point of instantiation for name lookups.
 	 * @since 6.0
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated use {@link ICPPConstructor#getConstructorChainExecution()} instead.
 	 */
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point);
+
+	/**
+	 * For a constexpr constructor returns the ICPPExecution for its constructor chain. Otherwise returns
+	 * {@code null}.
+	 * @since 6.3
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ICPPExecution getConstructorChainExecution();
 }

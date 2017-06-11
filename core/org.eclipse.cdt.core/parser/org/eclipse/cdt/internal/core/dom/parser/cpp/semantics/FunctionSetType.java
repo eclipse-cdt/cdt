@@ -14,7 +14,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -47,8 +46,8 @@ public class FunctionSetType implements IType {
 		return fPointerType ? PRVALUE : LVALUE;
 	}
 
-	public Cost costForTarget(IType paramType, IASTNode point) {
-		IBinding result = CPPSemantics.resolveTargetedFunction(paramType, fFunctionSet, point);
+	public Cost costForTarget(IType paramType) {
+		IBinding result = CPPSemantics.resolveTargetedFunction(paramType, fFunctionSet);
 		if (result instanceof ICPPFunction && !(result instanceof IProblemBinding)) {
 			Cost c= new Cost(paramType, paramType, Rank.IDENTITY);
 			c.setSelectedFunction((ICPPFunction) result);

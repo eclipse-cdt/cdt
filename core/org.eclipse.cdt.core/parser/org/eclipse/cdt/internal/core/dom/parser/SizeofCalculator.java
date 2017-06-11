@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 
@@ -86,11 +86,10 @@ public class SizeofCalculator {
 	 * Calculates size and alignment for the given type.
 	 *
 	 * @param type the type to get size and alignment for.
-	 * @param point a node belonging to the AST of the translation unit defining context for
-	 *     the size calculation.
 	 * @return size and alignment, or {@code null} if could not be calculated.
 	 */
-	public static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) {
+	public static SizeAndAlignment getSizeAndAlignment(IType type) {
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		SizeofCalculator calc = point == null ?
 				getDefault() : ((ASTTranslationUnit) point.getTranslationUnit()).getSizeofCalculator();
 		return calc.sizeAndAlignment(type);
@@ -292,27 +291,32 @@ public class SizeofCalculator {
 		int maxAlignment = 1;
 		IField[] fields;
 		if (type instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType) type;
-			for (ICPPBase base : ClassTypeHelper.getBases(classType, ast)) {
-				if (base.isVirtual())
-					return null;  // Don't know how to calculate size when there are virtual bases.
-				IBinding baseClass = base.getBaseClass();
-				if (!(baseClass instanceof IType))
-					return null;
-				SizeAndAlignment info = sizeAndAlignment((IType) baseClass);
-				if (info == null)
-					return null;
-				size += info.alignment - (size - 1) % info.alignment - 1 + info.size;
-				if (maxAlignment < info.alignment)
-					maxAlignment = info.alignment;
-				for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, ast)) {
-					if (method.isVirtual()) {
-						// Don't know how to calculate size when there are virtual functions.
+			CPPSemantics.pushLookupPoint(ast);
+			try {
+				ICPPClassType classType = (ICPPClassType) type;
+				for (ICPPBase base : classType.getBases()) {
+					if (base.isVirtual())
+						return null;  // Don't know how to calculate size when there are virtual bases.
+					IBinding baseClass = base.getBaseClass();
+					if (!(baseClass instanceof IType))
 						return null;
+					SizeAndAlignment info = sizeAndAlignment((IType) baseClass);
+					if (info == null)
+						return null;
+					size += info.alignment - (size - 1) % info.alignment - 1 + info.size;
+					if (maxAlignment < info.alignment)
+						maxAlignment = info.alignment;
+					for (ICPPMethod method : classType.getDeclaredMethods()) {
+						if (method.isVirtual()) {
+							// Don't know how to calculate size when there are virtual functions.
+							return null;
+						}
 					}
 				}
+				fields = classType.getDeclaredFields();
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
-			fields = ClassTypeHelper.getDeclaredFields(classType, ast);
 		} else {
 			fields = type.getFields();
 		}

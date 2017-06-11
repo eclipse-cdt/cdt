@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
@@ -242,27 +243,32 @@ public class CPPASTFunctionCallExpression extends ASTNode
 
 	@Override
 	public ICPPFunction getOverload() {
-		ICPPEvaluation eval = getEvaluation();
-		if (eval instanceof EvalFunctionCall)
-			return ((EvalFunctionCall) eval).getOverload(this);
-
-		if (eval instanceof EvalTypeId) {
-			if (!eval.isTypeDependent()) {
-				IType t= getNestedType(((EvalTypeId) eval).getInputType(), TDEF | CVTYPE | REF);
-				if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownBinding)) {
-					ICPPClassType cls= (ICPPClassType) t;
-					LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) fFunctionName).getName());
-					try {
-						ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(cls, data.getLookupPoint());
-						IBinding b= CPPSemantics.resolveFunction(data, constructors, true, false);
-						if (b instanceof ICPPFunction)
-							return (ICPPFunction) b;
-					} catch (DOMException e) {
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			ICPPEvaluation eval = getEvaluation();
+			if (eval instanceof EvalFunctionCall)
+				return ((EvalFunctionCall) eval).getOverload();
+	
+			if (eval instanceof EvalTypeId) {
+				if (!eval.isTypeDependent()) {
+					IType t= getNestedType(((EvalTypeId) eval).getInputType(), TDEF | CVTYPE | REF);
+					if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownBinding)) {
+						ICPPClassType cls= (ICPPClassType) t;
+						LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) fFunctionName).getName());
+						try {
+							ICPPConstructor[] constructors = cls.getConstructors();
+							IBinding b= CPPSemantics.resolveFunction(data, constructors, true, false);
+							if (b instanceof ICPPFunction)
+								return (ICPPFunction) b;
+						} catch (DOMException e) {
+						}
 					}
 				}
 			}
+			return null;
+		} finally {
+			CPPSemantics.popLookupPoint();
 		}
-		return null;
     }
 
 	@Override
@@ -313,12 +319,12 @@ public class CPPASTFunctionCallExpression extends ASTNode
 
     @Override
 	public IType getExpressionType() {
-    	return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
     }
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 
 	@Override

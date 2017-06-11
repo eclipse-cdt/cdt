@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
 
 /**
@@ -71,7 +72,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
 	}
 
 	@Override

@@ -18,10 +18,10 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -53,6 +53,24 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			return new char[] { '?' };
 		}
 		return buf.getSignature();
+	}
+	
+	public static IType getType(ICPPASTExpression expr) {
+		CPPSemantics.pushLookupPoint(expr);
+		try {
+			return expr.getEvaluation().getType();
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
+	}
+	
+	public static ValueCategory getValueCategory(ICPPASTExpression expr) {
+		CPPSemantics.pushLookupPoint(expr);
+		try {
+			return expr.getEvaluation().getValueCategory();
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	protected static IBinding resolveUnknown(ICPPUnknownBinding unknown, InstantiationContext context) {
@@ -103,10 +121,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * Checks if all evaluations contained in the given array are constant expressions.
 	 *
 	 * @param evaluations the evaluations to check
-	 * @param point the point of instantiation
      */
-	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, IASTNode point) {
-		return areAllConstantExpressions(evaluations, 0, evaluations.length, point);
+	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations) {
+		return areAllConstantExpressions(evaluations, 0, evaluations.length);
 	}
 
 	/**
@@ -115,19 +132,17 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * @param evaluations the evaluations to check
      * @param from the initial index of the range to be checked, inclusive
      * @param to the final index of the range to be checked, exclusive
-	 * @param point the point of instantiation
      */
-	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, int from, int to,
-			IASTNode point) {
+	protected static boolean areAllConstantExpressions(ICPPEvaluation[] evaluations, int from, int to) {
 		for (int i = from; i < to; i++) {
-			if (!evaluations[i].isConstantExpression(point)) {
+			if (!evaluations[i].isConstantExpression()) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	protected static boolean isConstexprValue(IValue value, IASTNode point) {
+	protected static boolean isConstexprValue(IValue value) {
 		if (value == null) {
 			return false;
 		}
@@ -139,7 +154,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 				return true;
 			}
 		}
-		return innerEval.isConstantExpression(point);
+		return innerEval.isConstantExpression();
 	}
 
 	protected static boolean isNullOrConstexprFunc(ICPPFunction function) {
@@ -153,12 +168,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 *
 	 * @param argument the evaluation to convert
 	 * @param targetType the type to convert to
-	 * @param point point of instantiation for name lookups
 	 * @param allowContextualConversion enable/disable explicit contextual conversion
 	 */
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
-			IASTNode point, boolean allowContextualConversion) {
-		IType type = argument.getType(point);
+			boolean allowContextualConversion) {
+		IType type = argument.getType();
 		
 		// Types match - don't bother to check for conversions.
 		if (targetType.isSameType(type)) {
@@ -168,16 +182,17 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		try {
 			// Source type is class type - check for conversion operator.
 			IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-			ValueCategory valueCategory = argument.getValueCategory(point);
+			ValueCategory valueCategory = argument.getValueCategory();
 			if (uqType instanceof ICPPClassType) {
 				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) uqType,
-						targetType, false, point, allowContextualConversion);
+						targetType, false, allowContextualConversion);
 				ICPPFunction conversion = cost.getUserDefinedConversion();
 				if (conversion != null) {
 					if (!conversion.isConstexpr()) {
 						return EvalFixed.INCOMPLETE;
 					}
-					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false, point);
+					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, 
+							false, CPPSemantics.getCurrentLookupPoint());
 					return new EvalFunctionCall(new ICPPEvaluation[] { eval }, null, (IBinding) null);
 				}
 			}
@@ -185,7 +200,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			// Source type is not a class type, or is but a conversion operator wasn't used.
 			// Check for standard conversions.
 			if (!Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN, 
-					Context.ORDINARY, point).converts()) {
+					Context.ORDINARY).converts()) {
 				return EvalFixed.INCOMPLETE;
 			}
 		} catch (DOMException e) {

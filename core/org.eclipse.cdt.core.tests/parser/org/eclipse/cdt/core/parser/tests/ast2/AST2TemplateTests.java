@@ -353,7 +353,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType B = helper.assertNonProblem("A<B>", 4);
 		// Check that this line does not cause a StackOverflowError.
-		ClassTypeHelper.getBases(B, null);
+		B.getBases();
 	}
 
 	// template < class T > class A {
@@ -1897,7 +1897,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
 		ICPPClassType A = (ICPPClassType) col.getName(6).resolveBinding();
 
-		ICPPBase[] bases = ClassTypeHelper.getBases(A, tu);
+		ICPPBase[] bases = A.getBases();
 		assertEquals(bases.length, 1);
 		assertSame(bases[0].getBaseClass(), B);
 	}
@@ -4918,7 +4918,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh= new AST2AssertionHelper(code, CPP);
 
 		ICPPClassType type= bh.assertNonProblem("X<int&>", 7);
-		ICPPMethod[] ms= ClassTypeHelper.getMethods(type, null);
+		ICPPMethod[] ms= ClassTypeHelper.getMethods(type);
 		int i= ms[0].getName().equals("f") ? 0 : 1;
 		ICPPMethod m= ms[i];
 		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
@@ -4926,7 +4926,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
 
 		type= bh.assertNonProblem("X<const int&&>", 14);
-		ms= ClassTypeHelper.getMethods(type, null);
+		ms= ClassTypeHelper.getMethods(type);
 		i= ms[0].getName().equals("f") ? 0 : 1;
 		m= ms[i];
 		assertEquals("const int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));

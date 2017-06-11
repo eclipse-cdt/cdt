@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
@@ -260,10 +261,13 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 				if (astRoot == null)
 					return Status.CANCEL_STATUS;
 				try {
-					guessParameters(astRoot);
+					CPPSemantics.pushLookupPoint(astRoot);
+					guessParameters();
 				} catch (Exception e) {
 					CUIPlugin.log(e);
 					return Status.CANCEL_STATUS;
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
 				return Status.OK_STATUS;
 			}
@@ -272,7 +276,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			return;
 	}
 
-	void guessParameters(IASTTranslationUnit ast) throws CModelException {
+	void guessParameters() throws CModelException {
 		// Initialize necessary fields.
 		fParametersNames = getFunctionParametersNames(fFunctionParameters);
 		fParametersTypes = getFunctionParametersTypes(fFunctionParameters);
@@ -290,7 +294,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			boolean isLastParameter = i == count - 1;
 			ArrayList<ICompletionProposal> allProposals = new ArrayList<>();
 			ICompletionProposal[] argumentProposals = guesser.parameterProposals(fParametersTypes[i],
-					paramName, position, fAssignableElements, isLastParameter, ast);
+					paramName, position, fAssignableElements, isLastParameter);
 			allProposals.addAll(Arrays.asList(argumentProposals));
 			fPositions[i] = position;
 			fChoices[i] = argumentProposals;

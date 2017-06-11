@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -44,8 +43,8 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	}
 	
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
-		super.update(linkage, newBinding, point);
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		super.update(linkage, newBinding);
 		if (newBinding instanceof ICPPField) {
 			setFieldPosition((ICPPField)newBinding);
 		}

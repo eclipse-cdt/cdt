@@ -27,86 +27,85 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 	ICPPClassType getSpecializedBinding();
 
 	/**
-	 * @deprecated Specializing a member may require a point of instantiation.
-	 * @noreference This method is not intended to be referenced by clients.
+	 * Creates a specialized binding for a member of the original class. The result is 
+	 * a member of this class specialization.
 	 */
-	@Deprecated
 	IBinding specializeMember(IBinding binding);
 
 	/**
-	 * Creates a specialized binding for a member of the original class. The result is 
-	 * a member of this class specialization.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassSpecialization#specializeMember(IBinding)} instead.
 	 */
+	@Deprecated
 	IBinding specializeMember(IBinding binding, IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getBases()} but a accepts a starting point for template
-	 * instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getBases()} instead.
 	 */
+	@Deprecated
 	ICPPBase[] getBases(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getConstructors()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getConstructors()} instead.
 	 */
+	@Deprecated
 	ICPPConstructor[] getConstructors(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getDeclaredFields()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getDeclaredFields()} instead.
 	 */
+	@Deprecated
 	ICPPField[] getDeclaredFields(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getMethods()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getMethods()} instead.
 	 */
+	@Deprecated
 	ICPPMethod[] getMethods(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getAllDeclaredMethods()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getAllDeclaredMethods()} instead.
 	 */
+	@Deprecated
 	ICPPMethod[] getAllDeclaredMethods(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getDeclaredMethods()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getDeclaredMethods()} instead.
 	 */
+	@Deprecated
 	ICPPMethod[] getDeclaredMethods(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getFriends()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getFriends()} instead.
 	 */
+	@Deprecated
 	IBinding[] getFriends(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getFields()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getFields()} instead.
 	 */
+	@Deprecated
 	IField[] getFields(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getNestedClasses()} but a accepts a starting point
-	 * for template instantiation.
 	 * @since 5.5
+	 * @deprecated Use {@link ICPPClassType#getNestedClasses()} instead.
 	 */
+	@Deprecated
 	ICPPClassType[] getNestedClasses(IASTNode point);
 
 	/**
-	 * Similar to {@link ICPPClassType#getUsingDeclarations()} but accepts a starting point
-	 * for template instantiation.
 	 * @since 6.3
+	 * @deprecated Use {@link ICPPClassType#getUsingDeclarations()} instead.
 	 */
+	@Deprecated
 	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);
 }

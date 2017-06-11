@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -46,31 +45,25 @@ public interface ICPPEvaluation {
 	 *
 	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
-	boolean isConstantExpression(IASTNode point);
+	boolean isConstantExpression();
 
 	/**
 	 * Returns the type of the expression.
 	 *
 	 * If the expression evaluates to a function set, a {@code FunctionSetType} is returned.
-	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
-	IType getType(IASTNode point);
+	IType getType();
 
 	/**
 	 * Returns the value of the expression.
-	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
-	IValue getValue(IASTNode point);
+	IValue getValue();
 
 	/**
 	 * Returns the category of the expression value.
 	 * @see ValueCategory
-	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
-	ValueCategory getValueCategory(IASTNode point);
+	ValueCategory getValueCategory();
 
 	/**
 	 * Returns a signature uniquely identifying the evaluation. Two evaluations with identical
@@ -98,15 +91,12 @@ public interface ICPPEvaluation {
 		public static final int MAX_CONSTEXPR_EVALUATION_STEPS = 1024;
 
 		private int fStepsPerformed;
-		private IASTNode fPoint;
 
 		/**
 		 * Constructs a ConstexprEvaluationContext for a new constexpr evaluation.
-		 * @param point the point of instantiation, determines the scope for name lookups
 		 */
-		public ConstexprEvaluationContext(IASTNode point) {
+		public ConstexprEvaluationContext() {
 			fStepsPerformed = 0;
-			fPoint = point;
 		}
 
 		/**
@@ -124,13 +114,6 @@ public interface ICPPEvaluation {
 		 */
 		public int getStepsPerformed() {
 			return fStepsPerformed;
-		}
-
-		/**
-		 * Returns the point of instantiation.
-		 */
-		public IASTNode getPoint() {
-			return fPoint;
 		}
 	}
 

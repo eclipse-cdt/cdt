@@ -237,7 +237,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		int oldPos = fPos;
 		short firstBytes = getShort();
 		if (firstBytes == VALUE) {
-			return new CPPTemplateNonTypeArgument(unmarshalEvaluation(), null);
+			return new CPPTemplateNonTypeArgument(unmarshalEvaluation());
 		} else {
 			fPos = oldPos;
 			IType type = unmarshalType();

@@ -130,25 +130,25 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		return true;
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null)
-			fType= computeType(point);
+			fType= computeType();
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType() {
 		switch (fOperator) {
 		case op_sizeof:
 		case op_sizeofParameterPack:
 		case op_alignof:
-			return CPPVisitor.get_SIZE_T(point);
+			return CPPVisitor.get_SIZE_T();
 		case op_typeid:
-			return CPPVisitor.get_type_info(point);
+			return CPPVisitor.get_type_info();
 		case op_has_nothrow_copy:
 		case op_has_nothrow_constructor:
 		case op_has_trivial_assign:
@@ -178,15 +178,15 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (isValueDependent())
 			return DependentValue.create(this);
 
-		return ValueFactory.evaluateUnaryTypeIdExpression(fOperator, fOrigType, point);
+		return ValueFactory.evaluateUnaryTypeIdExpression(fOperator, fOrigType);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return fOperator == op_typeid ? LVALUE : PRVALUE;
     }
 
@@ -212,8 +212,7 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 			if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 				return EvalFixed.INCOMPLETE;
 			} else if (packSize != CPPTemplates.PACK_SIZE_DEFER) {
-				IASTNode point = context.getPoint();
-				return new EvalFixed(getType(point), getValueCategory(point), IntegralValue.create(packSize));
+				return new EvalFixed(getType(), getValueCategory(), IntegralValue.create(packSize));
 			}
 		}
 		IType type = CPPTemplates.instantiateType(fOrigType, context);

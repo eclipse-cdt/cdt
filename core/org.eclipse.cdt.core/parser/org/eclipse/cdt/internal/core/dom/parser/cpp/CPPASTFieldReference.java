@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -146,25 +147,30 @@ public class CPPASTFieldReference extends ASTNode
     		if (!fIsDeref)
     			return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 
-    		// Collect the function bindings
-			List<ICPPFunction> functionBindings = new ArrayList<>();
-			EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, functionBindings, false);
-			if (functionBindings.isEmpty())
-				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-
-			// Create a name to wrap each binding
-			fImplicitNames = new IASTImplicitName[functionBindings.size()];
-			int i = -1;
-			for (ICPPFunction op : functionBindings) {
-				if (op != null && !(op instanceof CPPImplicitFunction)) {
-					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW,
-							this);
-					operatorName.setBinding(op);
-					operatorName.computeOperatorOffsets(fOwner, true);
-					fImplicitNames[++i] = operatorName;
+    		CPPSemantics.pushLookupPoint(this);
+    		try {
+	    		// Collect the function bindings
+				List<ICPPFunction> functionBindings = new ArrayList<>();
+				EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, functionBindings, false);
+				if (functionBindings.isEmpty())
+					return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+	
+				// Create a name to wrap each binding
+				fImplicitNames = new IASTImplicitName[functionBindings.size()];
+				int i = -1;
+				for (ICPPFunction op : functionBindings) {
+					if (op != null && !(op instanceof CPPImplicitFunction)) {
+						CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW,
+								this);
+						operatorName.setBinding(op);
+						operatorName.computeOperatorOffsets(fOwner, true);
+						fImplicitNames[++i] = operatorName;
+					}
 				}
-			}
-			fImplicitNames = ArrayUtil.trimAt(IASTImplicitName.class, fImplicitNames, i);
+				fImplicitNames = ArrayUtil.trimAt(IASTImplicitName.class, fImplicitNames, i);
+    		} finally {
+    			CPPSemantics.popLookupPoint();
+    		}
 		}
 
 		return fImplicitNames;
@@ -269,7 +275,7 @@ public class CPPASTFieldReference extends ASTNode
 	 */
 	@Override
 	public IType getFieldOwnerType() {
-		return EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, null, true);
+		return EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, null, true);
 	}
 
 	@Override
@@ -283,7 +289,7 @@ public class CPPASTFieldReference extends ASTNode
 	private ICPPEvaluation createEvaluation() {
 		ICPPEvaluation ownerEval = fOwner.getEvaluation();
 		if (!ownerEval.isTypeDependent()) {
-			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(this), fIsDeref, this, null, false);
+			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(), fIsDeref, null, false);
 			if (ownerType != null) {
 				IBinding binding = fName.resolvePreBinding();
 				if (binding instanceof CPPFunctionSet)
@@ -293,7 +299,7 @@ public class CPPASTFieldReference extends ASTNode
 					return EvalFixed.INCOMPLETE;
 				}
 
-				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, ownerEval, fIsDeref, this);
+				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(), binding, ownerEval, fIsDeref, this);
 			}
 		}
 
@@ -325,10 +331,10 @@ public class CPPASTFieldReference extends ASTNode
 		if (ownerType == null) {
 			return -1;
 		}
-		final ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(ownerType, null);
+		final ICPPClassType[] baseClasses = ClassTypeHelper.getAllBases(ownerType);
 		int baseFields = 0;
 		for (ICPPClassType baseClass : baseClasses) {
-			baseFields += ClassTypeHelper.getDeclaredFields(baseClass, null).length;
+			baseFields += baseClass.getDeclaredFields().length;
 		}
 		return baseFields + field.getFieldPosition();
 	}
@@ -344,7 +350,7 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
 	}
 
 	@Override
@@ -354,6 +360,6 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+		return CPPEvaluation.getValueCategory(this);
 	}
 }

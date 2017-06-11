@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.DeclaredBindingsFilter;
@@ -164,7 +163,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			if (!lookup.isPrefixLookup()) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
 			        if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)){
-			        	return ClassTypeHelper.getConstructors(fBinding, lookup.getLookupPoint());
+			        	return fBinding.getConstructors();
 			        }
 			        return new IBinding[] { getClassNameBinding() };
 				}

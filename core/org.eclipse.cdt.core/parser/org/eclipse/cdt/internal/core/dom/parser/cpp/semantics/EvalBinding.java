@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -244,29 +243,29 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
+	private boolean computeIsConstantExpression() {
 		return fBinding instanceof IEnumerator
 			|| fBinding instanceof ICPPFunction
-			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue(), point));
+			|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue()));
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		if (fType == null) {
-			fType= computeType(point);
+			fType= computeType();
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType() {
 		IBinding binding = getBinding();
 		if (binding instanceof IEnumerator) {
 			return ((IEnumerator) binding).getType();
@@ -283,6 +282,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 		}
 		if (binding instanceof IVariable) {
 			IType type = ((IVariable) binding).getType();
+			IASTNode point = CPPSemantics.getCurrentLookupPoint();
 			if (type instanceof IArrayType && ((IArrayType) type).getSize() == null &&
 					binding instanceof IIndexBinding && point != null) {
 				// Refine the type of the array variable by filling in missing size information.
@@ -313,17 +313,17 @@ public class EvalBinding extends CPPDependentEvaluation {
 					}
 				}
 			}
-			return SemanticUtil.mapToAST(glvalueType(type), point);
+			return SemanticUtil.mapToAST(ExpressionTypes.glvalueType(type));
 		}
 		if (binding instanceof IFunction) {
 			final IFunctionType type = ((IFunction) binding).getType();
-			return SemanticUtil.mapToAST(type, point);
+			return SemanticUtil.mapToAST(type);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		if (isValueDependent())
 			return DependentValue.create(this);
 
@@ -331,9 +331,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 		if (fBinding instanceof ICPPVariable) {
 			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding,
-					new ActivationRecord(), point);
+					new ActivationRecord());
 			if (valueEval != null) {
-				value = valueEval.getValue(point);
+				value = valueEval.getValue();
 			}
 		} else if (fBinding instanceof IEnumerator) {
 			value= ((IEnumerator) fBinding).getValue();
@@ -345,7 +345,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
         if (fBinding instanceof ICPPTemplateNonTypeParameter)
         	return ValueCategory.PRVALUE;
 

@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-
 /**
  * Represents a function whose executing may be simulated at parsing time.
  */
 public interface ICPPComputableFunction {
 	/**
-	 * For a constexpr function returns the ICPPExecution for its body. Otherwise returns
 	 * {@code null}.
-	 * @param point the point of instantiation for name lookups
+	 * For a constexpr function returns the ICPPExecution for its body. Otherwise returns
 	 */
-	public ICPPExecution getFunctionBodyExecution(IASTNode point);
+	public ICPPExecution getFunctionBodyExecution();
 }

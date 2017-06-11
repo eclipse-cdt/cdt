@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -72,12 +71,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 	
 	@Override
-	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICompositeType) {
 			ICompositeType ct= (ICompositeType) newBinding;
 			setKind(ct);
 			setAnonymous(ct);
-			super.update(linkage, newBinding, point);
+			super.update(linkage, newBinding);
 		}
 	}
 

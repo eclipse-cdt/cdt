@@ -11,13 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -43,42 +41,30 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	/**
 	 * Computes the bases via the original class.
 	 */
-	ICPPBase[] getBases(IASTNode point);
-
-	/**
-	 * Similar to {@link ICPPClassScope#getConstructors()} but a accepts a starting point
-	 * for template instantiation.
-	 */
-	ICPPConstructor[] getConstructors(IASTNode point);
-
-	/**
-	 * Similar to {@link ICPPClassScope#getImplicitMethods()} but a accepts a starting point
-	 * for template instantiation.
-	 */
-	ICPPMethod[] getImplicitMethods(IASTNode point);
+	ICPPBase[] getBases();
 
 	/**
 	 * Computes the methods via the original class.
 	 */
-	ICPPMethod[] getDeclaredMethods(IASTNode point);
+	ICPPMethod[] getDeclaredMethods();
 
 	/**
 	 * Computes the fields via the original class.
 	 */
-	ICPPField[] getDeclaredFields(IASTNode point);
+	ICPPField[] getDeclaredFields();
 
 	/**
 	 * Computes the friends via the original class.
 	 */
-	IBinding[] getFriends(IASTNode point);
+	IBinding[] getFriends();
 
 	/**
 	 * Computes the nested classes via the original class.
 	 */
-	ICPPClassType[] getNestedClasses(IASTNode point);
+	ICPPClassType[] getNestedClasses();
 
 	/**
 	 * Computes the using declarations via the original class.
 	 */
-	ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point);
+	ICPPUsingDeclaration[] getUsingDeclarations();
 }

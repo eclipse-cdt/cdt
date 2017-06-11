@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -74,14 +73,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private int fRequiredArgCount= -1;
 
 	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
-			PDOMBinding specialized, IASTNode point) throws CoreException {
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 
 		Database db = getDB();
 		fAnnotations = PDOMCPPAnnotations.encodeFunctionAnnotations(astFunction);
 		db.putShort(record + ANNOTATION, fAnnotations);
 		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
-		linkage.new ConfigureFunctionSpecialization(astFunction, this, specialized, point);
+		linkage.new ConfigureFunctionSpecialization(astFunction, this, specialized);
 	}
 	
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -326,14 +325,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		if (!isConstexpr())
 			return null;
 
 		try {
 			ICPPExecution exec = getLinkage().loadExecution(record + FUNCTION_BODY);
 			if (exec == null) {
-				exec = CPPTemplates.instantiateFunctionBody(this, point);
+				exec = CPPTemplates.instantiateFunctionBody(this);
 			}
 			return exec;
 		} catch (CoreException e) {

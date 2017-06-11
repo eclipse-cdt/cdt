@@ -35,9 +35,9 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = CONSTRUCTOR_CHAIN + Database.EXECUTION_SIZE;
 	
-	public PDOMCPPConstructorTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method,
-			IASTNode point) throws CoreException, DOMException {
-		super(linkage, parent, method, point);
+	public PDOMCPPConstructorTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method) 
+			throws CoreException, DOMException {
+		super(linkage, parent, method);
 		linkage.new ConfigureConstructorTemplate(method, this);
 	}
 
@@ -64,7 +64,13 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 	}
 	
 	@Override
+	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
+		return getConstructorChainExecution();
+	}
+	
+	@Override
+	public ICPPExecution getConstructorChainExecution() {
 		if (!isConstexpr())
 			return null;
 

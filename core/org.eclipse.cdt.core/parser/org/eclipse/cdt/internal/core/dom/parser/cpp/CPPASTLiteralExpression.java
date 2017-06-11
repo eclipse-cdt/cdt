@@ -38,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
@@ -749,7 +750,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	@Override
 	public IType getExpressionType() {
-		return getEvaluation().getType(this);
+    	return CPPEvaluation.getType(this);
 	}
 
 	@Override

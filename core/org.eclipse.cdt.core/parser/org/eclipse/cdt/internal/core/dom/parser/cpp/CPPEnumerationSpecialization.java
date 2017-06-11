@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -39,16 +38,16 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 	private boolean fInitializationComplete;
 
 	public static IBinding createInstance(ICPPEnumeration enumeration,
-			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpMap, IASTNode point) {
+			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpMap) {
 		IType fixedType = enumeration.getFixedType();
 		if (fixedType != null) {
 			ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(owner);
-			InstantiationContext context = new InstantiationContext(tpMap, within, point);
+			InstantiationContext context = new InstantiationContext(tpMap, within);
 			fixedType = CPPTemplates.instantiateType(fixedType, context);
 		}
 		CPPEnumerationSpecialization specializedEnumeration =
 				new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
-		specializedEnumeration.initialize(point);
+		specializedEnumeration.initialize();
 		return specializedEnumeration;
 	}
 
@@ -59,13 +58,13 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 		fEnumerators = new IEnumerator[specialized.getEnumerators().length];
 	}
 
-	private void initialize(IASTNode point) {
+	private void initialize() {
 		ICPPTemplateParameterMap tpMap = getTemplateParameterMap();
 		IEnumerator[] enumerators = getSpecializedBinding().getEnumerators();
 		IType previousInternalType = CPPBasicType.INT;
 		for (int i = 0; i < enumerators.length; ++i) {
 			IEnumerator enumerator = enumerators[i];
-			InstantiationContext context = new InstantiationContext(tpMap, this, point);
+			InstantiationContext context = new InstantiationContext(tpMap, this);
 			IValue specializedValue =
 					CPPTemplates.instantiateValue(enumerator.getValue(), context, IntegralValue.MAX_RECURSION_DEPTH);
 			IType internalType = null;

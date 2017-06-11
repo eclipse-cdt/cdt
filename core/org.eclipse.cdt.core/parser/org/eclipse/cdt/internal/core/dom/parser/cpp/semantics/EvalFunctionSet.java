@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
@@ -140,15 +139,15 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public boolean isConstantExpression(IASTNode point) {
+	public boolean isConstantExpression() {
 		if (!fCheckedIsConstantExpression) {
 			fCheckedIsConstantExpression = true;
-			fIsConstantExpression = computeIsConstantExpression(point);
+			fIsConstantExpression = computeIsConstantExpression();
 		}
 		return fIsConstantExpression;
 	}
 
-	private boolean computeIsConstantExpression(IASTNode point) {
+	private boolean computeIsConstantExpression() {
 		if (fFunctionSet == null)
 			return false;
 		for (ICPPFunction f : fFunctionSet.getBindings()) {
@@ -160,17 +159,17 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	@Override
-	public IType getType(IASTNode point) {
+	public IType getType() {
 		return new FunctionSetType(fFunctionSet, fAddressOf);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue() {
 		return IntegralValue.UNKNOWN;
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
 
@@ -268,7 +267,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			functions = new ICPPFunction[originalFunctions.length];
 			for (int i = 0; i < originalFunctions.length; i++) {
 				functions[i] = (ICPPFunction) CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						originalFunctions[i], context.getPoint());
+						originalFunctions[i]);
 			}
 		}
 		// No need to instantiate the implied object type. An EvalFunctioNSet should only be created
@@ -288,14 +287,14 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	 * Attempts to resolve the function using the parameters of a function call.
 	 *
 	 * @param args the arguments of a function call
-	 * @param point the name lookup context
 	 * @return the resolved or the original evaluation depending on whether function resolution
 	 *     succeeded or not
 	 */
-	public ICPPEvaluation resolveFunction(ICPPEvaluation[] args, IASTNode point) {
+	public ICPPEvaluation resolveFunction(ICPPEvaluation[] args) {
 		// Set up the LookupData.
 		LookupData data;
 		ICPPFunction[] functions = null;
+		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (fFunctionSet == null) {
 			data = new LookupData(fName, null, point);
 		} else {
@@ -323,7 +322,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 							functions = ArrayUtil.append(ICPPFunction.class, functions, (ICPPFunction) obj);
 						} else if (obj instanceof ICPPClassType) {
 							functions = ArrayUtil.addAll(ICPPFunction.class, functions,
-									ClassTypeHelper.getConstructors((ICPPClassType) obj, point));
+									((ICPPClassType) obj).getConstructors());
 						}
 					}
 

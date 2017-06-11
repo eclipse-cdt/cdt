@@ -327,7 +327,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	@Override
-	public ICPPExecution getFunctionBodyExecution(IASTNode point) {
+	public ICPPExecution getFunctionBodyExecution() {
 		if (!isConstexpr()) {
 			return null;
 		}
@@ -336,6 +336,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (def != null) {
 			return CPPFunction.computeFunctionBodyExecution(def);
 		}
-		return CPPTemplates.instantiateFunctionBody(this, point);
+		return CPPTemplates.instantiateFunctionBody(this);
 	}
 }

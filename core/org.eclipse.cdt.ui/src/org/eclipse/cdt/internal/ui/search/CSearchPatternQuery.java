@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -188,8 +187,9 @@ public class CSearchPatternQuery extends CSearchQuery {
 					matchedBindings.add(indexBinding);
 				}
 			}
-			IASTNode point= null; // Instantiation of dependent expressions may not work.
-			createMatches(index, matchedBindings.toArray(new IIndexBinding[matchedBindings.size()]), point);
+			// We should call CPPSemantics.pushLookupPoint() here.
+			// Until we do, instantiation of dependent expressions may not work.
+			createMatches(index, matchedBindings.toArray(new IIndexBinding[matchedBindings.size()]));
 		} catch (CoreException e) {
 			return e.getStatus();
 		}

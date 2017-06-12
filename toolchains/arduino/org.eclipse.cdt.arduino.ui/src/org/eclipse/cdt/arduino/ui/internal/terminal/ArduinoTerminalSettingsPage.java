@@ -263,6 +263,10 @@ public class ArduinoTerminalSettingsPage extends AbstractSettingsPage {
 
 	@Override
 	public void saveSettings() {
+		if (boardCombo.getSelectionIndex() < 0) {
+			return;
+		}
+
 		settings.setBoardName(boardCombo.getItem(boardCombo.getSelectionIndex()));
 		settings.setPortName(portNameLabel.getText());
 		settings.setBaudRate(BaudRate.fromStringIndex(baudRateCombo.getSelectionIndex()));

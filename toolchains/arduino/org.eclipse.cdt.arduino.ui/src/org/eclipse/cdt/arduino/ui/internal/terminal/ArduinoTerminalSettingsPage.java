@@ -199,6 +199,10 @@ public class ArduinoTerminalSettingsPage extends AbstractSettingsPage {
 	}
 
 	void updatePortLabel() {
+		if (boardCombo.getSelectionIndex() < 0) {
+			return;
+		}
+
 		String boardName = boardCombo.getItem(boardCombo.getSelectionIndex());
 		IRemoteConnection connection = arduinoType.getConnection(boardName);
 		if (connection != null) {

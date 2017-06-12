@@ -610,11 +610,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchDescriptorChanged() {
 		if (!initialized)
 			return;
-		for (ILaunchBarListener listener : listeners) {
-			try {
-				listener.activeLaunchDescriptorChanged(activeLaunchDesc);
-			} catch (Exception e) {
-				Activator.log(e);
+		synchronized (listeners) {
+			for (ILaunchBarListener listener : listeners) {
+				try {
+					listener.activeLaunchDescriptorChanged(activeLaunchDesc);
+				} catch (Exception e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
@@ -673,11 +675,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchModeChanged() {
 		if (!initialized)
 			return;
-		for (ILaunchBarListener listener : listeners) {
-			try {
-				listener.activeLaunchModeChanged(activeLaunchMode);
-			} catch (Exception e) {
-				Activator.log(e);
+		synchronized (listeners) {
+			for (ILaunchBarListener listener : listeners) {
+				try {
+					listener.activeLaunchModeChanged(activeLaunchMode);
+				} catch (Exception e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
@@ -764,11 +768,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireActiveLaunchTargetChanged() {
 		if (!initialized)
 			return;
-		for (ILaunchBarListener listener : listeners) {
-			try {
-				listener.activeLaunchTargetChanged(activeLaunchTarget);
-			} catch (Exception e) {
-				Activator.log(e);
+		synchronized (listeners) {
+			for (ILaunchBarListener listener : listeners) {
+				try {
+					listener.activeLaunchTargetChanged(activeLaunchTarget);
+				} catch (Exception e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}
@@ -823,15 +829,19 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	public void addListener(ILaunchBarListener listener) {
 		if (listener == null)
 			return;
-		if (!listeners.contains(listener)) // cannot add duplicates
-			listeners.add(listener);
+		synchronized (listeners) {
+			if (!listeners.contains(listener)) // cannot add duplicates
+				listeners.add(listener);
+		}
 	}
 
 	@Override
 	public void removeListener(ILaunchBarListener listener) {
 		if (listener == null)
 			return;
-		listeners.remove(listener);
+		synchronized (listener) {
+			listeners.remove(listener);
+		}
 	}
 
 	@Override
@@ -912,11 +922,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private void fireLaunchTargetsChanged() {
 		if (!initialized)
 			return;
-		for (ILaunchBarListener listener : listeners) {
-			try {
-				listener.launchTargetsChanged();
-			} catch (Exception e) {
-				Activator.log(e);
+		synchronized (listeners) {
+			for (ILaunchBarListener listener : listeners) {
+				try {
+					listener.launchTargetsChanged();
+				} catch (Exception e) {
+					Activator.log(e);
+				}
 			}
 		}
 	}

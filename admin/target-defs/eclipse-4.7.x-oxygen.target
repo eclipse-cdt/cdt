@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Terminals Eclipse 4.7.x (Oxygen)" sequenceNumber="9">
+<?pde version="3.8"?><target name="Terminals Eclipse 4.7.x (Oxygen)" sequenceNumber="13">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="gnu.io.rxtx.sdk.feature.group" version="2.1.7.4_v20071016-417C7DP1Bh_eEaQJBrHBHg"/>
 <repository location="http://archive.eclipse.org/tm/updates/rxtx"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.7.0.I20170524-2000"/>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.platform.ide" version="4.7.0.I20170608-0530"/>
 <unit id="org.eclipse.test.feature.group" version="3.7.200.v20170511-1043"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.7milestones"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.egit.feature.group" version="4.8.0.201705170830-rc1"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170504-0807"/>
-<unit id="org.eclipse.jgit.feature.group" version="4.8.0.201705170830-rc1"/>
 <repository location="http://download.eclipse.org/staging/oxygen"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.rse.sdk.feature.group" version="3.7.3.201704251225"/>
 <repository location="http://download.eclipse.org/tm/updates/4.3milestones"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.native.feature.group" version="9.3.0.201706051601"/>
 <unit id="org.eclipse.cdt.native.source.feature.group" version="9.3.0.201706051601"/>
 <repository location="http://download.eclipse.org/tools/cdt/builds/oxygen/milestones"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.net" version="3.2.0.v201305141515"/>
 <unit id="org.apache.commons.net.source" version="3.2.0.v201305141515"/>
+<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
 <repository location="http://download.eclipse.org/tools/orbit/R-builds/R20170516192513/repository"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.remote.feature.group" version="3.0.0.201706052031"/>
 <unit id="org.eclipse.remote.source.feature.group" version="3.0.0.201706052031"/>
 <repository location="http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones"/>

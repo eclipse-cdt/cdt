@@ -127,7 +127,7 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 		Label portLabel = new Label(comp, SWT.NONE);
 		portLabel.setText(Messages.SerialTerminalSettingsPage_SerialPort);
 
-		portCombo = new Combo(comp, SWT.READ_ONLY);
+		portCombo = new Combo(comp, SWT.NONE);
 		portCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] portNames = new String[0];
 		try {

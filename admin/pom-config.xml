@@ -78,7 +78,8 @@
         <tm-site>http://download.eclipse.org/tm/updates/4.0</tm-site>
         <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
-        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository</orbit-site>
+        <!--  SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer -->
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/</orbit-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
       </properties>
 
@@ -161,7 +162,9 @@
                 <sdk-version>3.8</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/3.8</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/juno</platform-release-site>
+                <!--  SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer
                 <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/</orbit-site>
+                -->
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
@@ -174,7 +177,9 @@
                 <sdk-version>4.3</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/4.3</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/kepler</platform-release-site>
+                <!--  SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer
                 <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</orbit-site>
+                -->
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
@@ -187,7 +192,9 @@
                 <sdk-version>4.4</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/4.4</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/luna</platform-release-site>
+                <!--  SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer
                 <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
+                -->
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
             </properties>
         </profile>

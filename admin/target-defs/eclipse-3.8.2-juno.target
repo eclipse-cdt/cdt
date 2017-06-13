@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Terminals Eclipse 4.4.x (Luna)" sequenceNumber="76">
+<?pde version="3.8"?><target name="Eclipse 3.8.x (Juno)" sequenceNumber="41">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="gnu.io.rxtx.sdk.feature.group" version="2.1.7.4_v20071016-417C7DP1Bh_eEaQJBrHBHg"/>
@@ -10,13 +10,13 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.platform.ide" version="4.4.2.M20150204-1700"/>
-<unit id="org.eclipse.test.feature.group" version="3.6.101.v20150202-1306"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
+<unit id="org.eclipse.platform.ide" version="3.8.2.M20130131-0800"/>
+<unit id="org.eclipse.test.feature.group" version="3.5.100.v20120528-1717-7R7dBhBgLiCViQnG8ITHM73701A1"/>
+<repository location="http://download.eclipse.org/eclipse/updates/3.8"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.egit.feature.group" version="3.4.2.201412180340-r"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
+<unit id="org.eclipse.egit.feature.group" version="2.2.0.201212191850-r"/>
+<repository location="http://download.eclipse.org/releases/juno"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.log4j" version="1.2.15.v201012070815"/>
@@ -29,12 +29,12 @@
 <repository location="http://download.eclipse.org/technology/swtbot/releases/2.5.0"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.rse.feature.group" version="3.5.0.201406091451"/>
-<repository location="http://download.eclipse.org/tm/updates/3.6"/>
+<unit id="org.eclipse.rse.feature.group" version="3.4.1.201302122026"/>
+<repository location="http://download.eclipse.org/tm/updates/3.4"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.cdt.native.feature.group" version="8.6.0.201502131403"/>
-<repository location="http://download.eclipse.org/tools/cdt/releases/8.6"/>
+<unit id="org.eclipse.cdt.feature.group" version="8.3.0.201402142303"/>
+<repository location="http://download.eclipse.org/tools/cdt/releases/kepler"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.net" version="3.2.0.v201305141515"/>

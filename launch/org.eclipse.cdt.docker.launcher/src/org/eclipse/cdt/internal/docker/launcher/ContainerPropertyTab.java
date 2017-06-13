@@ -705,8 +705,11 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	private void initializeVolumesTable() {
 		model.clearDataVolumes();
-		model.setSelectedImage(
-				displayedImages.get(imageCombo.getSelectionIndex()));
+		int imageSelectionIndex = imageCombo.getSelectionIndex();
+		if (imageSelectionIndex >= 0
+				&& imageSelectionIndex < displayedImages.size()) {
+			model.setSelectedImage(displayedImages.get(imageSelectionIndex));
+		}
 
 		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
 		initialVolumes = properties

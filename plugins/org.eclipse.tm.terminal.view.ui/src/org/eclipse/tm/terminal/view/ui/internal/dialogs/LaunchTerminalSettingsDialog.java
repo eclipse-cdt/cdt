@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2017 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -87,138 +87,138 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		/**
 		 * Constructor.
 		 */
-        public SettingsPanelControl() {
-	        setPanelIsGroup(true);
-        }
+		public SettingsPanelControl() {
+			setPanelIsGroup(true);
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#getGroupLabel()
-         */
-        @Override
-        public String getGroupLabel() {
-            return Messages.LaunchTerminalSettingsDialog_group_label;
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#getGroupLabel()
+		 */
+		@Override
+		public String getGroupLabel() {
+			return Messages.LaunchTerminalSettingsDialog_group_label;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#showConfigurationPanel(java.lang.String)
-         */
-        @Override
-        public void showConfigurationPanel(String key) {
-        	// Check if we have to create the panel first
-    		IConfigurationPanel configPanel = getConfigurationPanel(key);
-    		if (isEmptyConfigurationPanel(configPanel)) {
-           		// Get the corresponding delegate
-           		ILauncherDelegate delegate = label2delegate.get(key);
-           		Assert.isNotNull(delegate);
-           		// Create the wizard configuration panel instance
-           		configPanel = delegate.getPanel(this);
-           		if (configPanel != null) {
-           			// Add it to the settings panel control
-               		settings.addConfigurationPanel(key, configPanel);
-                	// Push the selection to the configuration panel
-                	configPanel.setSelection(getSelection());
-                	// Create the panel controls
-                	configPanel.setupPanel(getPanel());
-                	// Restore widget values
-                	IDialogSettings dialogSettings = LaunchTerminalSettingsDialog.this.settings.getDialogSettings(LaunchTerminalSettingsDialog.this.getDialogSettings());
-                	IDialogSettings configPanelSettings = dialogSettings != null ? dialogSettings.getSection(key) : null;
-                	if (configPanelSettings != null) configPanel.doRestoreWidgetValues(configPanelSettings, null);
-           		}
-    		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#showConfigurationPanel(java.lang.String)
+		 */
+		@Override
+		public void showConfigurationPanel(String key) {
+			// Check if we have to create the panel first
+			IConfigurationPanel configPanel = getConfigurationPanel(key);
+			if (isEmptyConfigurationPanel(configPanel)) {
+				// Get the corresponding delegate
+				ILauncherDelegate delegate = label2delegate.get(key);
+				Assert.isNotNull(delegate);
+				// Create the wizard configuration panel instance
+				configPanel = delegate.getPanel(this);
+				if (configPanel != null) {
+					// Add it to the settings panel control
+					settings.addConfigurationPanel(key, configPanel);
+					// Push the selection to the configuration panel
+					configPanel.setSelection(getSelection());
+					// Create the panel controls
+					configPanel.setupPanel(getPanel());
+					// Restore widget values
+					IDialogSettings dialogSettings = LaunchTerminalSettingsDialog.this.settings.getDialogSettings(LaunchTerminalSettingsDialog.this.getDialogSettings());
+					IDialogSettings configPanelSettings = dialogSettings != null ? dialogSettings.getSection(key) : null;
+					if (configPanelSettings != null) configPanel.doRestoreWidgetValues(configPanelSettings, null);
+				}
+			}
 
-            super.showConfigurationPanel(key);
-        }
+			super.showConfigurationPanel(key);
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer#validate()
-         */
-        @Override
-        public void validate() {
-        	LaunchTerminalSettingsDialog.this.validate();
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer#validate()
+		 */
+		@Override
+		public void validate() {
+			LaunchTerminalSettingsDialog.this.validate();
+		}
 	}
 
 	/**
-     * Constructor.
-     *
+	 * Constructor.
+	 *
 	 * @param shell The parent shell or <code>null</code>.
-     */
-    public LaunchTerminalSettingsDialog(Shell shell) {
-	    this(shell, 0);
-    }
+	 */
+	public LaunchTerminalSettingsDialog(Shell shell) {
+		this(shell, 0);
+	}
 
-    private long start = 0;
+	private long start = 0;
 
 	/**
-     * Constructor.
-     *
+	 * Constructor.
+	 *
 	 * @param shell The parent shell or <code>null</code>.
-     */
-    public LaunchTerminalSettingsDialog(Shell shell, long start) {
-	    super(shell);
-	    this.start = start;
+	 */
+	public LaunchTerminalSettingsDialog(Shell shell, long start) {
+		super(shell);
+		this.start = start;
 
-	    initializeDialogSettings();
+		initializeDialogSettings();
 
 		this.contextHelpId = IContextHelpIds.LAUNCH_TERMINAL_SETTINGS_DIALOG;
 		setHelpAvailable(true);
-    }
+	}
 
-    /**
-     * Sets the parent selection.
-     *
-     * @param selection The parent selection or <code>null</code>.
-     */
-    public void setSelection(ISelection selection) {
-    	this.selection = selection;
-    }
+	/**
+	 * Sets the parent selection.
+	 *
+	 * @param selection The parent selection or <code>null</code>.
+	 */
+	public void setSelection(ISelection selection) {
+		this.selection = selection;
+	}
 
-    /**
-     * Returns the parent selection.
-     *
-     * @return The parent selection or <code>null</code>.
-     */
-    public ISelection getSelection() {
-    	return selection;
-    }
+	/**
+	 * Returns the parent selection.
+	 *
+	 * @return The parent selection or <code>null</code>.
+	 */
+	public ISelection getSelection() {
+		return selection;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#close()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
 	@Override
 	public boolean close() {
 		dispose();
 		return super.close();
 	}
 
-    /**
-     * Dispose the dialog resources.
-     */
-    protected void dispose() {
-    	if (settings != null) { settings.dispose(); settings = null; }
-    	dialogSettings = null;
-    }
+	/**
+	 * Dispose the dialog resources.
+	 */
+	protected void dispose() {
+		if (settings != null) { settings.dispose(); settings = null; }
+		dialogSettings = null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
-    @Override
-    protected boolean isResizable() {
-        return true;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
-    protected Control createContents(Composite parent) {
-        Control composite = super.createContents(parent);
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createContents(Composite parent) {
+		Control composite = super.createContents(parent);
 
-        // Validate the dialog after having created all the content
-        validate();
+		// Validate the dialog after having created all the content
+		validate();
 
-        return composite;
-    }
+		return composite;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -277,83 +277,83 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	 *
 	 * @param parent The parent composite. Must not be <code>null</code>.
 	 */
-    protected void createDialogAreaContent(Composite parent) {
-    	Assert.isNotNull(parent);
+	protected void createDialogAreaContent(Composite parent) {
+		Assert.isNotNull(parent);
 
-        if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
+		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
 			UIPlugin.getTraceHandler().trace("Creating dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 
-    	setDialogTitle(Messages.LaunchTerminalSettingsDialog_title);
+		setDialogTitle(Messages.LaunchTerminalSettingsDialog_title);
 
-    	final List<String> items = getTerminals();
+		final List<String> items = getTerminals();
 
-        Composite panel = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0; layout.marginWidth = 0;
-        panel.setLayout(layout);
-        panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		Composite panel = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0; layout.marginWidth = 0;
+		panel.setLayout(layout);
+		panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-        if (items.size() != 1) {
-        	Label label = new Label(panel, SWT.HORIZONTAL);
-        	label.setText(Messages.LaunchTerminalSettingsDialog_combo_label);
+		if (items.size() != 1) {
+			Label label = new Label(panel, SWT.HORIZONTAL);
+			label.setText(Messages.LaunchTerminalSettingsDialog_combo_label);
 
-        	terminals = new Combo(panel, SWT.READ_ONLY);
-        	terminals.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        	terminals.addSelectionListener(new SelectionAdapter() {
-        		@Override
-        		public void widgetSelected(SelectionEvent e) {
-        			// Get the old panel
-        			IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
-        			// Extract the current settings in an special properties container
-        			Map<String, Object> data = new HashMap<String, Object>();
-        			if (oldPanel != null) oldPanel.extractData(data);
-        			// Clean out settings which are never passed between the panels
-        			data.remove(ITerminalsConnectorConstants.PROP_IP_PORT);
-        			data.remove(ITerminalsConnectorConstants.PROP_TIMEOUT);
-        			data.remove(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-        			data.remove(ITerminalsConnectorConstants.PROP_ENCODING);
-        			// Switch to the new panel
-        			settings.showConfigurationPanel(terminals.getText());
-        			// Get the new panel
-        			IConfigurationPanel newPanel = settings.getActiveConfigurationPanel();
-        			// Re-setup the relevant data
-        			if (newPanel != null) newPanel.setupData(data);
+			terminals = new Combo(panel, SWT.READ_ONLY);
+			terminals.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			terminals.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					// Get the old panel
+					IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
+					// Extract the current settings in an special properties container
+					Map<String, Object> data = new HashMap<String, Object>();
+					if (oldPanel != null) oldPanel.extractData(data);
+					// Clean out settings which are never passed between the panels
+					data.remove(ITerminalsConnectorConstants.PROP_IP_PORT);
+					data.remove(ITerminalsConnectorConstants.PROP_TIMEOUT);
+					data.remove(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+					data.remove(ITerminalsConnectorConstants.PROP_ENCODING);
+					// Switch to the new panel
+					settings.showConfigurationPanel(terminals.getText());
+					// Get the new panel
+					IConfigurationPanel newPanel = settings.getActiveConfigurationPanel();
+					// Re-setup the relevant data
+					if (newPanel != null) newPanel.setupData(data);
 
-        			// resize the dialog if needed to show the complete panel
-        			getShell().pack();
-        			// validate the settings dialog
-        			validate();
-        		}
-        	});
+					// resize the dialog if needed to show the complete panel
+					getShell().pack();
+					// validate the settings dialog
+					validate();
+				}
+			});
 
-            // fill the combo with content
-            fillCombo(terminals, items);
-        } else {
-        	Assert.isTrue(items.size() == 1);
-        	singleDelegateLabel = items.get(0);
-        }
+			// fill the combo with content
+			fillCombo(terminals, items);
+		} else {
+			Assert.isTrue(items.size() == 1);
+			singleDelegateLabel = items.get(0);
+		}
 
-        // Create the settings panel control
-        settings = new SettingsPanelControl();
+		// Create the settings panel control
+		settings = new SettingsPanelControl();
 
 		// Create, initialize and add the first visible panel. All
-        // other panels are created on demand only.
-        String terminalLabel = terminals != null ? terminals.getItem(0) : singleDelegateLabel;
-        if (terminalLabel != null) {
-       		// Get the corresponding delegate
-       		ILauncherDelegate delegate = label2delegate.get(terminalLabel);
-       		Assert.isNotNull(delegate);
-       		// Create the wizard configuration panel instance
-       		IConfigurationPanel configPanel = delegate.getPanel(settings);
-       		if (configPanel != null) {
-       			// Add it to the settings panel control
-           		settings.addConfigurationPanel(terminalLabel, configPanel);
-            	// Push the selection to the configuration panel
-            	configPanel.setSelection(getSelection());
-       		}
-        }
+		// other panels are created on demand only.
+		String terminalLabel = terminals != null ? terminals.getItem(0) : singleDelegateLabel;
+		if (terminalLabel != null) {
+			// Get the corresponding delegate
+			ILauncherDelegate delegate = label2delegate.get(terminalLabel);
+			Assert.isNotNull(delegate);
+			// Create the wizard configuration panel instance
+			IConfigurationPanel configPanel = delegate.getPanel(settings);
+			if (configPanel != null) {
+				// Add it to the settings panel control
+				settings.addConfigurationPanel(terminalLabel, configPanel);
+				// Push the selection to the configuration panel
+				configPanel.setSelection(getSelection());
+			}
+		}
 
 		// Setup the panel control
 		settings.setupPanel(panel, terminals != null ? terminals.getItems() : new String[] { singleDelegateLabel });
@@ -373,96 +373,96 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
 		restoreWidgetValues();
 
-        applyDialogFont(panel);
+		applyDialogFont(panel);
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
 			UIPlugin.getTraceHandler().trace("Created dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
-    }
+	}
 
-    /**
-     * Fill the given combo with the given list of terminal launcher delegate labels.
-     *
-     * @param combo The combo. Must not be <code>null</code>.
-     * @param items The list of terminal launcher delegates. Must not be <code>null</code>.
-     */
-    protected void fillCombo(Combo combo, List<String> items) {
-    	Assert.isNotNull(combo);
-    	Assert.isNotNull(items);
+	/**
+	 * Fill the given combo with the given list of terminal launcher delegate labels.
+	 *
+	 * @param combo The combo. Must not be <code>null</code>.
+	 * @param items The list of terminal launcher delegates. Must not be <code>null</code>.
+	 */
+	protected void fillCombo(Combo combo, List<String> items) {
+		Assert.isNotNull(combo);
+		Assert.isNotNull(items);
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
 			UIPlugin.getTraceHandler().trace("Filling combo after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 
-    	Collections.sort(items);
-    	combo.setItems(items.toArray(new String[items.size()]));
-    }
+		Collections.sort(items);
+		combo.setItems(items.toArray(new String[items.size()]));
+	}
 
-    /**
-     * Returns the list of terminal launcher delegate labels. The method queries the
-     * terminal launcher delegates and initialize the <code>label2delegate</code> map.
-     *
-     * @return The list of terminal launcher delegate labels or an empty list.
-     */
-    protected List<String> getTerminals() {
-    	List<String> items = new ArrayList<String>();
+	/**
+	 * Returns the list of terminal launcher delegate labels. The method queries the
+	 * terminal launcher delegates and initialize the <code>label2delegate</code> map.
+	 *
+	 * @return The list of terminal launcher delegate labels or an empty list.
+	 */
+	protected List<String> getTerminals() {
+		List<String> items = new ArrayList<String>();
 
-    	ILauncherDelegate localLauncher = null;
+		ILauncherDelegate localLauncher = null;
 
-    	if(selection==null || selection.isEmpty()){
-    		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-    			UIPlugin.getTraceHandler().trace("Getting launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-    												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
-    		}
+		if(selection==null || selection.isEmpty()){
+			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
+				UIPlugin.getTraceHandler().trace("Getting launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			}
 
 			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getLauncherDelegates(false);
 
-    		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-    			UIPlugin.getTraceHandler().trace("Got launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-    												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
-    		}
+			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
+				UIPlugin.getTraceHandler().trace("Got launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			}
 
-    		for (ILauncherDelegate delegate : delegates) {
-    			if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
-    			String label = delegate.getLabel();
-    			if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
-    			label2delegate.put(label, delegate);
-    			items.add(label);
+			for (ILauncherDelegate delegate : delegates) {
+				if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
+				String label = delegate.getLabel();
+				if (label == null || "".equals(label.trim()) || label2delegate.containsKey(label)) label = delegate.getId(); //$NON-NLS-1$
+				label2delegate.put(label, delegate);
+				items.add(label);
 
-    			if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
-    				localLauncher = delegate;
-    			}
-    		}
-    	} else {
-    		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-    			UIPlugin.getTraceHandler().trace("Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-    												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
-    		}
+				if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
+					localLauncher = delegate;
+				}
+			}
+		} else {
+			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
+				UIPlugin.getTraceHandler().trace("Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			}
 
-    		ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection);
+			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection);
 
-    		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-    			UIPlugin.getTraceHandler().trace("Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-    												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
-    		}
+			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
+				UIPlugin.getTraceHandler().trace("Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			}
 
-    		for (ILauncherDelegate delegate : delegates) {
-    			if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
-    			String label = delegate.getLabel();
-    			if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
-    			label2delegate.put(label, delegate);
-    			items.add(label);
+			for (ILauncherDelegate delegate : delegates) {
+				if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
+				String label = delegate.getLabel();
+				if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
+				label2delegate.put(label, delegate);
+				items.add(label);
 
-    			if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
-    				localLauncher = delegate;
-    			}
-    		}
-    	}
+				if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(delegate.getId())) { //$NON-NLS-1$
+					localLauncher = delegate;
+				}
+			}
+		}
 
-    	// if the local launcher was found, check for configured external executables
-    	if (localLauncher != null) {
+		// if the local launcher was found, check for configured external executables
+		if (localLauncher != null) {
 			List<Map<String, String>> l = ExternalExecutablesManager.load();
 			if (l != null && !l.isEmpty()) {
 				for (Map<String, String> executableData : l) {
@@ -479,135 +479,135 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 						if (selection != null && selection.isEmpty()) selection = null;
 
 						Map<String, Object> properties = new HashMap<String, Object>();
-				    	properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
-				    	properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
-				    	properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE, Boolean.valueOf(translate));
+						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
+						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
+						properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE, Boolean.valueOf(translate));
 
-				    	// store external executable and properties
-		    			label2delegate.put(name, localLauncher);
-		    			label2properties.put(name, properties);
-		    			items.add(name);
+						// store external executable and properties
+						label2delegate.put(name, localLauncher);
+						label2properties.put(name, properties);
+						items.add(name);
 					}
 				}
 			}
 
-    	}
+		}
 
-    	return items;
-    }
+		return items;
+	}
 
-    /**
-     * Hook to allow additional filtering of the applicable launcher delegates.
-     * <p>
-     * <b>Note:</b> The default implementation always returns <code>false</code>.
-     *
-     * @param selection The selection or <code>null</code>.
-     * @param delegate The launcher delegate. Must not be <code>null</code>.
-     *
-     * @return <code>True</code> if the launcher delegate is filtered based on the given selection, <code>false</code> otherwise.
-     */
-    protected boolean isFiltered(ISelection selection, ILauncherDelegate delegate) {
-    	return false;
-    }
+	/**
+	 * Hook to allow additional filtering of the applicable launcher delegates.
+	 * <p>
+	 * <b>Note:</b> The default implementation always returns <code>false</code>.
+	 *
+	 * @param selection The selection or <code>null</code>.
+	 * @param delegate The launcher delegate. Must not be <code>null</code>.
+	 *
+	 * @return <code>True</code> if the launcher delegate is filtered based on the given selection, <code>false</code> otherwise.
+	 */
+	protected boolean isFiltered(ISelection selection, ILauncherDelegate delegate) {
+		return false;
+	}
 
-    /**
-     * Validate the dialog.
-     */
-    public void validate() {
-    	IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
-    	Button okButton = getButton(IDialogConstants.OK_ID);
-    	if (okButton != null) okButton.setEnabled(panel.isValid());
-    }
+	/**
+	 * Validate the dialog.
+	 */
+	public void validate() {
+		IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
+		Button okButton = getButton(IDialogConstants.OK_ID);
+		if (okButton != null) okButton.setEnabled(panel.isValid());
+	}
 
-    /**
-     * Set the given message and message type.
-     *
-     * @param message The message or <code>null</code>.
-     * @param messageType The message type or <code>IMessageProvider.NONE</code>.
-     */
-    public void setMessage(String message, int messageType) {
-    	if (settings != null) {
-    		settings.setMessage(message, messageType);
-    	}
-    }
+	/**
+	 * Set the given message and message type.
+	 *
+	 * @param message The message or <code>null</code>.
+	 * @param messageType The message type or <code>IMessageProvider.NONE</code>.
+	 */
+	public void setMessage(String message, int messageType) {
+		if (settings != null) {
+			settings.setMessage(message, messageType);
+		}
+	}
 
-    /**
-     * Save the dialog's widget values.
-     */
-    protected void saveWidgetValues() {
-    	IDialogSettings settings = getDialogSettings();
-    	if (settings != null && terminals != null) {
-    		settings.put("terminalLabel", terminals.getText()); //$NON-NLS-1$
-    		this.settings.saveWidgetValues(settings, null);
-    	}
-    }
+	/**
+	 * Save the dialog's widget values.
+	 */
+	protected void saveWidgetValues() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null && terminals != null) {
+			settings.put("terminalLabel", terminals.getText()); //$NON-NLS-1$
+			this.settings.saveWidgetValues(settings, null);
+		}
+	}
 
-    /**
-     * Restore the dialog's widget values.
-     */
-    protected void restoreWidgetValues() {
-    	IDialogSettings settings = getDialogSettings();
-    	if (settings != null) {
-    		String terminalLabel = settings.get("terminalLabel"); //$NON-NLS-1$
-    		int index = terminalLabel != null && terminals != null ? Arrays.asList(terminals.getItems()).indexOf(terminalLabel) : -1;
-    		if (index != -1) {
-    			terminals.select(index);
-    			this.settings.showConfigurationPanel(terminals.getText());
-    		}
+	/**
+	 * Restore the dialog's widget values.
+	 */
+	protected void restoreWidgetValues() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String terminalLabel = settings.get("terminalLabel"); //$NON-NLS-1$
+			int index = terminalLabel != null && terminals != null ? Arrays.asList(terminals.getItems()).indexOf(terminalLabel) : -1;
+			if (index != -1) {
+				terminals.select(index);
+				this.settings.showConfigurationPanel(terminals.getText());
+			}
 
-    		this.settings.restoreWidgetValues(settings, null);
-    	}
-    }
+			this.settings.restoreWidgetValues(settings, null);
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-     */
-    @Override
-    protected void okPressed() {
-    	IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
-    	Assert.isNotNull(panel);
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	@Override
+	protected void okPressed() {
+		IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
+		Assert.isNotNull(panel);
 
-    	if (!panel.isValid()) {
+		if (!panel.isValid()) {
 			MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
 			mb.setText(Messages.LaunchTerminalSettingsDialog_error_title);
 			mb.setMessage(NLS.bind(Messages.LaunchTerminalSettingsDialog_error_invalidSettings, panel.getMessage() != null ? panel.getMessage() : Messages.LaunchTerminalSettingsDialog_error_unknownReason));
 			mb.open();
 			return;
-    	}
-    	data = new HashMap<String, Object>();
+		}
+		data = new HashMap<String, Object>();
 
-    	// Store the id of the selected delegate
-    	String terminalLabel = terminals != null ? terminals.getText() : singleDelegateLabel;
-    	String delegateId = terminalLabel != null ? label2delegate.get(terminalLabel).getId() : null;
-    	if (delegateId != null) data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
-    	// Store the selection
-    	data.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
+		// Store the id of the selected delegate
+		String terminalLabel = terminals != null ? terminals.getText() : singleDelegateLabel;
+		String delegateId = terminalLabel != null ? label2delegate.get(terminalLabel).getId() : null;
+		if (delegateId != null) data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
+		// Store the selection
+		data.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
 
-    	// Add the properties for external executables if there are any
-    	if (label2properties.containsKey(terminalLabel)) {
-    		data.putAll(label2properties.get(terminalLabel));
-    	}
+		// Add the properties for external executables if there are any
+		if (label2properties.containsKey(terminalLabel)) {
+			data.putAll(label2properties.get(terminalLabel));
+		}
 
-    	// Store the delegate specific settings
-   		panel.extractData(data);
+		// Store the delegate specific settings
+		panel.extractData(data);
 
-   		// Save the current widget values
+		// Save the current widget values
 		saveWidgetValues();
 
 		super.okPressed();
-    }
+	}
 
-    /**
-     * Returns the configured terminal launcher settings.
-     * <p>
-     * The settings are extracted from the UI widgets once
-     * OK got pressed.
-     *
-     * @return The configured terminal launcher settings or <code>null</code>.
-     */
-    public Map<String, Object> getSettings() {
-    	return data;
-    }
+	/**
+	 * Returns the configured terminal launcher settings.
+	 * <p>
+	 * The settings are extracted from the UI widgets once
+	 * OK got pressed.
+	 *
+	 * @return The configured terminal launcher settings or <code>null</code>.
+	 */
+	public Map<String, Object> getSettings() {
+		return data;
+	}
 
 	/**
 	 * Initialize the dialog settings storage.

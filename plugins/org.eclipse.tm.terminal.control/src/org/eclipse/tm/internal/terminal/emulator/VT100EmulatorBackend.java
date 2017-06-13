@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -18,6 +18,9 @@ import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.Style;
 
 /**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class not intended to be referenced by clients.
+ *      It used to be package protected, and it is public only for Unit Tests.
  *
  */
 public class VT100EmulatorBackend implements IVT100EmulatorBackend {
@@ -137,8 +140,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			setCursor(cl, cc);
 		}
 	}
-	
-	int toAbsoluteLine(int line) {
+
+	/**
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *      It used to be package protected, and it is public only for Unit Tests.
+	 */
+	public int toAbsoluteLine(int line) {
 		synchronized (fTerminal) {
 			return fTerminal.getHeight()-fLines+line;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,10 @@ import org.eclipse.tm.terminal.model.ITerminalTextData;
 /**
  * Collects the changes of the {@link ITerminalTextData}
  *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ *     This class used to be package-protected. It is public only for access by the Unit Tests.
  */
 public class SnapshotChanges implements ISnapshotChanges {
 	/**
@@ -71,8 +75,11 @@ public class SnapshotChanges implements ISnapshotChanges {
 	 * @param line
 	 * @param size
 	 * @return true if the range overlaps with the interest window
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *      It used to be package protected, and it is public only for Unit Tests.
 	 */
-	boolean isInInterestWindow(int line, int size) {
+	public boolean isInInterestWindow(int line, int size) {
 		if(fInterestWindowSize<=0)
 			return true;
 		if(line+size<=fInterestWindowStartLine || line>=fInterestWindowStartLine+fInterestWindowSize)
@@ -82,8 +89,11 @@ public class SnapshotChanges implements ISnapshotChanges {
 	/**
 	 * @param line
 	 * @return true if the line is within the interest window
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *      It used to be package protected, and it is public only for Unit Tests.
 	 */
-	boolean isInInterestWindow(int line) {
+	public boolean isInInterestWindow(int line) {
 		if(fInterestWindowSize<=0)
 			return true;
 		if(line<fInterestWindowStartLine || line>=fInterestWindowStartLine+fInterestWindowSize)
@@ -93,8 +103,11 @@ public class SnapshotChanges implements ISnapshotChanges {
 	/**
 	 * @param line
 	 * @return the line within the window
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *      It used to be package protected, and it is public only for Unit Tests.
 	 */
-	int fitLineToWindow(int line) {
+	public int fitLineToWindow(int line) {
 		if(fInterestWindowSize<=0)
 			return line;
 		if(line<fInterestWindowStartLine)
@@ -106,10 +119,14 @@ public class SnapshotChanges implements ISnapshotChanges {
 	 * @param line the line <b>before</b> {@link #fitLineToWindow(int)} has been called!
 	 * @param size
 	 * @return the adjusted size. 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *      It used to be package protected, and it is public only for Unit Tests.
+	 *
 	 * <p>Note:</p> {@link #fitLineToWindow(int)} has to be called on the line to
 	 * move the window correctly!
 	 */
-	int fitSizeToWindow(int line, int size) {
+	public int fitSizeToWindow(int line, int size) {
 		if(fInterestWindowSize<=0)
 			return size;
 		if(line<fInterestWindowStartLine) {

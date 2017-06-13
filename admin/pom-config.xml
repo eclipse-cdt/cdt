@@ -40,17 +40,26 @@
         <!-- We stick to tycho-0.22 since it supports Java 7 for building -->
         <!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=518104 for reference -->
         <tycho-version>0.22.0</tycho-version>
-        <tycho-extras-version>0.22.0</tycho-extras-version>
+        <tycho-extras-version>${tycho-version}</tycho-extras-version>
         <maven-resources-version>2.7</maven-resources-version>
         <maven-antrun-version>1.8</maven-antrun-version>
         <gmaven-version>1.5</gmaven-version>
         <!-- Stick to Findbugs 2.5.2 until newer versions are supported by hudson.eclipse.org -->
         <findbugs-version>2.5.2</findbugs-version>
+		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
+		<jacoco-version>0.7.4.201502262128</jacoco-version>
+		<!-- Needed by Jacoco, see http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
+		<tycho.testArgLine></tycho.testArgLine>
         <eclipse-jarsigner-version>1.1.2</eclipse-jarsigner-version>
 
         <!-- Common global properties -->
         <adminDir>${env.WORKSPACE}/admin</adminDir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- JaCoCo global properties -->
+        <jacoco.skip>false</jacoco.skip>
+        <jacoco.output>file</jacoco.output>
+        <jacoco.dumpOnExit>true</jacoco.dumpOnExit>
 
         <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
 
@@ -62,15 +71,15 @@
         <!-- Set up Mars as the default target platform to build against, -->
         <!-- Because it supports Java 7, but also already has the cdt.native.serial plugin. -->
         <!-- Also, PTP o.e.remote-2.0 from Mars is the oldes remote version that we can support. -->
-        <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/4.5</platform-site>
         <platform-release-site>http://download.eclipse.org/releases/mars</platform-release-site>
-        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository</orbit-site>
+        <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.8.1</cdt-site>
-        <rse-site>http://download.eclipse.org/tm/updates/4.0</rse-site>
-        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones</remote-site>
-        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
+        <tm-site>http://download.eclipse.org/tm/updates/4.0</tm-site>
+        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository</orbit-site>
+        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
       </properties>
 
     <repositories>
@@ -100,18 +109,18 @@
             <layout>p2</layout>
         </repository>
         <repository>
-            <id>rse</id>
-            <url>${rse-site}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>remote</id>
-            <url>${remote-site}</url>
+            <id>tm</id>
+            <url>${tm-site}</url>
             <layout>p2</layout>
         </repository>
         <repository>
             <id>swtbot</id>
             <url>${swtbot-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>remote</id>
+            <url>${remote-site}</url>
             <layout>p2</layout>
         </repository>
         <repository>
@@ -205,7 +214,7 @@
                 <platform-site>http://download.eclipse.org/eclipse/updates/4.6</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/neon</platform-release-site>
                 <orbit-site>http://download.eclipse.org/tools/orbit/R-builds/R20170307180635/repository</orbit-site>
-                <rse-site>http://download.eclipse.org/tm/updates/4.2</rse-site>
+                <tm-site>http://download.eclipse.org/tm/updates/4.2</tm-site>
                 <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/neon/milestones</remote-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/9.2</cdt-site>
             </properties>
@@ -220,7 +229,7 @@
                 <platform-site>http://download.eclipse.org/eclipse/updates/4.7</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/oxygen</platform-release-site>
                 <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository</orbit-site>
-                <rse-site>http://download.eclipse.org/tm/updates/4.3milestones</rse-site>
+                <tm-site>http://download.eclipse.org/tm/updates/4.3milestones</tm-site>
                 <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones</remote-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/builds/oxygen/milestones</cdt-site>
             </properties>

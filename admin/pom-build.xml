@@ -82,6 +82,64 @@
                 <plugins>
                     <plugin>
                         <groupId>org.eclipse.tycho</groupId>
+                        <artifactId>target-platform-configuration</artifactId>
+                        <configuration>
+                            <dependency-resolution>
+                                <extraRequirements>
+                                    <!-- product IU under test -->
+                                    <requirement>
+                                        <type>p2-installable-unit</type>
+                                        <id>org.eclipse.platform.ide</id>
+                                        <versionRange>0.0.0</versionRange>
+                                    </requirement>
+                                    <requirement>
+                                        <type>eclipse-feature</type>
+                                        <id>org.eclipse.sdk</id>
+                                        <versionRange>0.0.0</versionRange>
+                                    </requirement>
+                                    <requirement>
+                                        <type>eclipse-feature</type>
+                                        <id>org.eclipse.cdt.platform</id>
+                                        <versionRange>0.0.0</versionRange>
+                                    </requirement>
+                                    <requirement>
+                                        <type>eclipse-feature</type>
+                                        <id>org.eclipse.remote</id>
+                                        <versionRange>0.0.0</versionRange>
+                                    </requirement>
+                                    <requirement>
+                                        <type>eclipse-feature</type>
+                                        <id>org.eclipse.swtbot.eclipse</id>
+                                        <versionRange>0.0.0</versionRange>
+                                    </requirement>
+                                </extraRequirements>
+                            </dependency-resolution>
+                        </configuration>
+                    </plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>org.eclipse.tm.terminal*</include>
+									</includes>
+									<!--
+									<excludes>
+										<exclude>org.eclipse.tm.terminal.test.*</exclude>
+									</excludes>
+									-->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!--
+                    <plugin>
+                        <groupId>org.eclipse.tycho</groupId>
                         <artifactId>tycho-surefire-plugin</artifactId>
                         <version>${tycho-version}</version>
                         <configuration>
@@ -91,14 +149,15 @@
                             <dependencies>
                                 <dependency>
                                     <type>p2-installable-unit</type>
-                                    <artifactId>org.eclipse.sdk.feature.group</artifactId>
+                                    <artifactId>org.eclipse.platform.feature.group</artifactId>
                                     <version>${sdk-version}</version>
                                 </dependency>
                             </dependencies>
-                            <product>org.eclipse.sdk.ide</product>
+                            <product>org.eclipse.platform.ide</product>
                             <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</argLine>
                         </configuration>
                     </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>

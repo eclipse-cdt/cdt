@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2017 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,13 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ *     This class used to be package-protected. It is public only for access by the Unit Tests.
+ */
+public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 	/**
 	 * This class handles bytes written to the {@link TerminalToRemoteInjectionOutputStream}.
 	 */

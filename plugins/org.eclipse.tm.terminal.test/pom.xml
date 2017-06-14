@@ -34,7 +34,8 @@
 							<useUIHarness>true</useUIHarness>
 							<useUIThread>false</useUIThread>
 							<product>org.eclipse.platform.ide</product>
-							<!-- For Jacoco, see http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
+							<!-- tycho.testArgLine is filled by Jacoco prepare-agent -->
+							<!-- see http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
 							<argLine>${tycho.testArgLine} ${ui.test.vmargs}</argLine>
 							<application>org.eclipse.ui.ide.workbench</application>
 							<testFailureIgnore>true</testFailureIgnore>

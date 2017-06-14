@@ -47,9 +47,8 @@
         <findbugs-version>3.0.4</findbugs-version>
         <!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
         <jacoco-version>0.7.9</jacoco-version>
-        <!-- Needed by Jacoco, see http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
-        <tycho.testArgLine></tycho.testArgLine>
-        <eclipse-jarsigner-version>1.1.4</eclipse-jarsigner-version>
+        <!-- Note: jarsigner-1.1.4 fails with Java 7 so stick to 1.1.2 -->
+        <eclipse-jarsigner-version>1.1.2</eclipse-jarsigner-version>
 
         <!-- Common global properties -->
         <adminDir>${env.WORKSPACE}/admin</adminDir>

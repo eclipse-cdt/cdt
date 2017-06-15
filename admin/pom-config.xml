@@ -37,9 +37,11 @@
     
     <properties>
         <!-- Define version id's to be used in the plugins section -->
-        <!-- We stick to tycho-0.22 since it supports Java 7 for building -->
+        <!-- We use tycho-0.23 for https://bugs.eclipse.org/bugs/show_bug.cgi?id=459873 -->
+        <!-- We cannot use tycho-0.25 or later since it doesn't support Java 7 for building -->
+        <!-- Using Java 8 for Tycho with a Java 7 target should be possible but takes some config -->
         <!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=518104 for reference -->
-        <tycho-version>0.22.0</tycho-version>
+        <tycho-version>0.23.1</tycho-version>
         <tycho-extras-version>${tycho-version}</tycho-extras-version>
         <maven-resources-version>2.7</maven-resources-version>
         <maven-antrun-version>1.8</maven-antrun-version>
@@ -59,11 +61,11 @@
         <jacoco.output>file</jacoco.output>
         <jacoco.dumpOnExit>true</jacoco.dumpOnExit>
 
-        <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
-
         <terminal-stream>development</terminal-stream>
         <terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
         <terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
+        <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
+
         <sdk-version>4.7</sdk-version>
         
         <!-- Set up Mars as the default target platform to build against, -->
@@ -76,10 +78,13 @@
         <tm-site>http://download.eclipse.org/tm/updates/4.0</tm-site>
         <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
-        <!--  SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer -->
-        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/</orbit-site>
-        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/2.5.0/</swtbot-site>
-      </properties>
+        <!-- TCF needs gson-2.2.4 which was added to Orbit in Luna SR2 -->
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
+        <!-- SWTBot-2.4 and later require an e4-based Eclipse eg Juno or later: -->
+        <!-- See http://wiki.eclipse.org/SWTBot/Releases -->
+        <!-- Also, newer SWTBot needs JUnit 4.12 which is only in Orbit Mars and newer -->
+        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/2.2.1/</swtbot-site>
+    </properties>
 
     <repositories>
         <repository>

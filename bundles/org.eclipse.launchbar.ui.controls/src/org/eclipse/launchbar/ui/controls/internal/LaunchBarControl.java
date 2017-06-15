@@ -182,7 +182,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 
 	@Override
 	public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
-		container.getDisplay().syncExec(() -> {
+		container.getDisplay().asyncExec(() -> {
 			if (configSelector != null) {
 				configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
 			}

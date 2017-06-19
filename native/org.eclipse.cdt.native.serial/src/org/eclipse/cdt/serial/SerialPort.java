@@ -179,6 +179,14 @@ public class SerialPort {
 		}
 	};
 
+	private static String adjustPortName(String portName) {
+		if (System.getProperty("os.name").startsWith("Windows") && !portName.startsWith("\\\\.\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return "\\\\.\\" + portName; //$NON-NLS-1$
+		} else {
+			return portName;
+		}
+	}
+
 	/**
 	 * Create a serial port that connect to the given serial device.
 	 * 
@@ -186,11 +194,7 @@ public class SerialPort {
 	 *            name for the serial device.
 	 */
 	public SerialPort(String portName) {
-		if (System.getProperty("os.name").startsWith("Windows") && !portName.startsWith("\\\\.\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			this.portName = "\\\\.\\" + portName; //$NON-NLS-1$
-		} else {
-			this.portName = portName;
-		}
+		this.portName = adjustPortName(portName);
 	}
 
 	private native long open0(String portName, int baudRate, int byteSize, int parity, int stopBits) throws IOException;
@@ -267,7 +271,7 @@ public class SerialPort {
 	 */
 	public static SerialPort get(String portName) {
 		synchronized (openPorts) {
-			LinkedList<WeakReference<SerialPort>> list = openPorts.get(portName);
+			LinkedList<WeakReference<SerialPort>> list = openPorts.get(adjustPortName(portName));
 			if (list == null) {
 				return null;
 			}

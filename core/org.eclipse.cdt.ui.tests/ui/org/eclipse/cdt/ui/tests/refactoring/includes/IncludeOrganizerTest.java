@@ -716,6 +716,25 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	}
 
 	//h1.h
+	//void x(int n, ...);
+
+	//source.cpp
+	//void method(void) {
+	//  x(1, 2, 3);
+	//}
+	//====================
+	//void x(int n, ...);
+	//
+	//void method(void) {
+	//  x(1, 2, 3);
+	//}
+	public void testForwardDeclarationsVarargs() throws Exception {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
+		assertExpectedResults();
+	}
+
+	//h1.h
 	//class A;
 	//
 	//A& f();

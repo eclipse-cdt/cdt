@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_2428df0d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPAliasTemplateInstance.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-06-21T16:08:59Z",
+      "side": 1,
+      "message": "I\u0027m getting a missing @since here, do you? (maybe needs a Project \u003e Clean)",
+      "revId": "66b7cfe572a7150dbd758a4cdf7795837bdf04dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

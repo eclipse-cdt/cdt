@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.docker.launcher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -129,10 +130,16 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 			labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
 				String commandDir = commandPath.removeLastSegments(1)
-						.toString();
+						.toPortableString();
+				String commandString = commandPath.toPortableString();
+
+				if (commandPath.getDevice() != null) {
+					commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
+					commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
+				}
 
 				StringBuilder b = new StringBuilder();
-				b.append(commandPath.toString().trim());
+				b.append(commandString);
 
 				String arguments = getProgramArguments(configuration);
 				if (arguments.trim().length() > 0) {
@@ -146,6 +153,13 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						.getAttribute(
 								ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 								(String) null);
+				if (workingDir != null) {
+					IPath workingPath = new Path(workingDir);
+					if (workingPath.getDevice() != null) {
+						workingDir = "/" + workingPath.toPortableString() //$NON-NLS-1$
+								.replace(':', '/');
+					}
+				}
 				Map<String, String> envMap = configuration.getAttribute(
 						ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
 						(Map<String, String>) null);
@@ -160,6 +174,18 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				List<String> additionalDirs = configuration.getAttribute(
 						ILaunchConstants.ATTR_ADDITIONAL_DIRS,
 						(List<String>) null);
+				if (additionalDirs != null) {
+					List<String> dirs = new ArrayList<>();
+					for (String additionalDir : additionalDirs) {
+						IPath path = new Path(additionalDir);
+						String dir = path.toPortableString();
+						if (path.getDevice() != null) {
+							dir = "/" + dir.replace(':', '/');
+						}
+						dirs.add(dir);
+					}
+					additionalDirs = dirs;
+				}
 				String image = configuration.getAttribute(
 						ILaunchConstants.ATTR_IMAGE, (String) null);
 				String connectionUri = configuration.getAttribute(
@@ -188,11 +214,18 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				String gdbserverCommand = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_COMMAND,
 						ILaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-				String commandArguments = ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
-						+ spaceEscapify(commandPath.toString());
 
+				String commandString = commandPath.toPortableString();
 				String commandDir = commandPath.removeLastSegments(1)
-						.toString();
+						.toPortableString();
+
+				if (commandPath.getDevice() != null) {
+					commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
+					commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
+				}
+
+				String commandArguments = ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
+						+ spaceEscapify(commandString);
 
 				StringBuilder b = new StringBuilder();
 
@@ -209,6 +242,14 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						.getAttribute(
 								ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 								(String) null);
+				if (workingDir != null) {
+					IPath workingPath = new Path(workingDir);
+					if (workingPath.getDevice() != null) {
+						workingDir = "/" + workingPath.toPortableString() //$NON-NLS-1$
+								.replace(':', '/');
+					}
+				}
+
 				Map<String, String> envMap = configuration.getAttribute(
 						ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
 						(Map<String, String>) null);
@@ -223,6 +264,19 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 				List<String> additionalDirs = configuration.getAttribute(
 						ILaunchConstants.ATTR_ADDITIONAL_DIRS,
 						(List<String>) null);
+				if (additionalDirs != null) {
+					List<String> dirs = new ArrayList<>();
+					for (String additionalDir : additionalDirs) {
+						IPath path = new Path(additionalDir);
+						String dir = path.toPortableString();
+						if (path.getDevice() != null) {
+							dir = "/" + dir.replace(':', '/');
+						}
+						dirs.add(dir);
+					}
+					additionalDirs = dirs;
+				}
+
 				String image = configuration.getAttribute(
 						ILaunchConstants.ATTR_IMAGE, (String) null);
 				String connectionUri = configuration.getAttribute(

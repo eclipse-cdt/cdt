@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
@@ -131,32 +132,61 @@ public class ContainerCommandLauncher
 		List<String> additionalDirs = new ArrayList<>();
 
 		//
-		additionalDirs.add(fProject.getLocation().toPortableString());
+		IPath projectLocation = fProject.getLocation();
+		String projectPath = projectLocation.toPortableString();
+		if (projectLocation.getDevice() != null) {
+			projectPath = "/" + projectPath.replace(':', '/'); //$NON-NLS-1$
+		}
+		additionalDirs.add(projectPath);
 
 		ArrayList<String> commandSegments = new ArrayList<>();
 
 		StringBuilder b = new StringBuilder();
-		b.append(commandPath.toString().trim());
-		commandSegments.add(commandPath.toString().trim());
+		String commandString = commandPath.toPortableString();
+		if (commandPath.getDevice() != null) {
+			commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
+		}
+		b.append(commandString);
+		commandSegments.add(commandString);
 		for (String arg : args) {
 			b.append(" "); //$NON-NLS-1$
 			String realArg = VariablesPlugin.getDefault()
 					.getStringVariableManager().performStringSubstitution(arg);
-			b.append(realArg);
-			if (realArg.startsWith("/")) { //$NON-NLS-1$
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				// check if file exists and if so, add an additional directory
 				IPath p = new Path(realArg);
-				if (p.isValidPath(realArg)) {
-					p = p.makeAbsolute();
+				if (p.isValidPath(realArg) && p.getDevice() != null) {
 					File f = p.toFile();
-					if (f.exists()) {
-						if (f.isFile()) {
-							p = p.removeLastSegments(1);
-						}
-						additionalDirs.add(p.toPortableString());
+					String modifiedArg = realArg;
+					// if the directory of the arg as a file exists, we mount it
+					// and modify the argument to be unix-style
+					if (f.isFile()) {
+						f = f.getParentFile();
+						modifiedArg = "/" //$NON-NLS-1$
+								+ p.toPortableString().replace(':', '/');
+						p = p.removeLastSegments(1);
+					}
+					if (f != null && f.exists()) {
+						additionalDirs.add(
+								"/" + p.toPortableString().replace(':', '/')); //$NON-NLS-1$
+						realArg = modifiedArg;
+					}
+				}
+			} else if (realArg.startsWith("/")) { //$NON-NLS-1$
+				// check if file directory exists and if so, add an additional
+				// directory
+				IPath p = new Path(realArg);
+				if (p.isValidPath(realArg)) {
+					File f = p.toFile();
+					if (f.isFile()) {
+						f = f.getParentFile();
+					}
+					if (f != null && f.exists()) {
+						additionalDirs.add(f.getAbsolutePath());
 					}
 				}
 			}
+			b.append(realArg);
 			commandSegments.add(realArg);
 		}
 		
@@ -165,17 +195,30 @@ public class ContainerCommandLauncher
 		String commandDir = commandPath.removeLastSegments(1).toString();
 		if (commandDir.isEmpty()) {
 			commandDir = null;
+		} else if (commandPath.getDevice() != null) {
+			commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
 		}
 
 		IProject[] referencedProjects = fProject.getReferencedProjects();
 		for (IProject referencedProject : referencedProjects) {
+			String referencedProjectPath = referencedProject.getLocation()
+					.toPortableString();
+			if (referencedProject.getLocation().getDevice() != null) {
+				referencedProjectPath = "/" //$NON-NLS-1$
+						+ referencedProjectPath.replace(':', '/');
+			}
 			additionalDirs
-					.add(referencedProject.getLocation().toPortableString());
+					.add(referencedProjectPath);
 		}
 
 		String command = b.toString();
 
-		String workingDir = workingDirectory.toPortableString();
+		String workingDir = workingDirectory.makeAbsolute().toPortableString();
+		if (workingDirectory.toPortableString().equals(".")) { //$NON-NLS-1$
+			workingDir = "/tmp"; //$NON-NLS-1$
+		} else if (workingDirectory.getDevice() != null) {
+			workingDir = "/" + workingDir.replace(':', '/'); //$NON-NLS-1$
+		}
 		parseEnvironment(env);
 		Map<String, String> origEnv = null;
 
@@ -205,7 +248,18 @@ public class ContainerCommandLauncher
 		if (selectedVolumeString != null && !selectedVolumeString.isEmpty()) {
 			String[] selectedVolumes = selectedVolumeString
 					.split(VOLUME_SEPARATOR_REGEX);
-			additionalDirs.addAll(Arrays.asList(selectedVolumes));
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				for (String selectedVolume : selectedVolumes) {
+					IPath path = new Path(selectedVolume);
+					String selectedPath = path.toPortableString();
+					if (path.getDevice() != null) {
+						selectedPath = "/" + selectedPath.replace(':', '/'); //$NON-NLS-1$
+					}
+					additionalDirs.add(selectedPath);
+				}
+			} else {
+				additionalDirs.addAll(Arrays.asList(selectedVolumes));
+			}
 		}
 
 		String connectionName = props

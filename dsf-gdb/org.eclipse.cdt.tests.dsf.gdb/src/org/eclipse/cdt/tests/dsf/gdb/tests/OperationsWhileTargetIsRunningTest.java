@@ -203,7 +203,8 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// The shutdown must happen quickly, which will confirm that it was
 		// our own terminate that did it.  If it take longer, it indicates
 		// that the program terminated on its own, which is not what we want.
-        shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
+        // See Bug 518643 for details as to length of this delay
+        shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
         
         // Now make sure GDB is dead
         Assert.assertTrue("GDB should have been terminated", !fControl.isActive());
@@ -286,7 +287,8 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// The shutdown must happen quickly, which will confirm that it was
 		// our own terminate that did it.  If it take longer, it indicates
 		// that the program terminated on its own, which is not what we want.
-        shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(500));
+        // See Bug 518643 for details as to length of this delay
+        shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
         
         // Now make sure GDB is dead
         Assert.assertTrue("GDB should have been terminated", !fControl.isActive());

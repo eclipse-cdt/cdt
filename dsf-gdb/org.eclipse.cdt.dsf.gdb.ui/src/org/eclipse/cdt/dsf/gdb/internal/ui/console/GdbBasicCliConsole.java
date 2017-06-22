@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleView;
@@ -145,7 +146,14 @@ public class GdbBasicCliConsole extends IOConsole implements IGDBDebuggerConsole
     	String newName = computeName();
     	String name = getName();
     	if (!name.equals(newName)) {
-    		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
+    		try {
+	    		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
+			} catch (SWTException e) {
+				// display may be disposed, so ignore the exception
+				if (e.code != SWT.ERROR_WIDGET_DISPOSED) {
+					throw e;
+				}
+			}
     	}
     }
 	

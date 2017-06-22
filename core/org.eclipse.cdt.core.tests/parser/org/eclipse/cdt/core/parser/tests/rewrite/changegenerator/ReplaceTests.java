@@ -979,4 +979,43 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			}
 		});
 	}
+
+	//struct B {
+	//	virtual void func1();
+	//	virtual void func2();
+	//	virtual void func3();
+	//	virtual void func4();
+	//};
+	//struct S : B{
+	//	void func1() final;
+	//	void func2() override;
+	//	void func3() override final;
+	//	void func4() final override;
+	//};
+
+	//struct B {
+	//	virtual void func1();
+	//	virtual void func2();
+	//	virtual void func3();
+	//	virtual void func4();
+	//};
+	//struct S : B{
+	//	void func1() final;
+	//	void func2() override;
+	//	void func3() override final;
+	//	void func4() final override;
+	//};
+	public void testReplaceFunctionDeclaratorWithVirtualSpecifier_Bug518628() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarators = true;
+			}
+
+			@Override
+			public int visit(IASTDeclarator declarator) {
+				addModification(null, ModificationKind.REPLACE, declarator, declarator.copy());
+				return PROCESS_SKIP;
+			}
+		});
+	}
 }

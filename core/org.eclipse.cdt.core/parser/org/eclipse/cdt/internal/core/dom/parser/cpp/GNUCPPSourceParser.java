@@ -143,6 +143,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
@@ -3862,21 +3863,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		while (true) {
 			IToken token = LAcatchEOF(1);
 			ContextSensitiveTokenType contextSensitiveType = getContextSensitiveType(token);
+			if (contextSensitiveType == null) {
+				break;
+			}
+			consume();
+			SpecifierKind specifierKind;
 			if (contextSensitiveType == ContextSensitiveTokenType.OVERRIDE) {
-				consume();
-				ICPPASTVirtSpecifier spec = getNodeFactory().newVirtSpecifier(
-						ICPPASTVirtSpecifier.SpecifierKind.Override);
-				setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
-				typeRelevantDtor.addVirtSpecifier(spec);
+				specifierKind = ICPPASTVirtSpecifier.SpecifierKind.Override;
 			} else if (contextSensitiveType == ContextSensitiveTokenType.FINAL) {
-				consume();
-				ICPPASTVirtSpecifier spec = getNodeFactory().newVirtSpecifier(
-						ICPPASTVirtSpecifier.SpecifierKind.Final);
-				setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
-				typeRelevantDtor.addVirtSpecifier(spec);
+				specifierKind = ICPPASTVirtSpecifier.SpecifierKind.Final;
 			} else {
 				break;
 			}
+			ICPPASTVirtSpecifier spec = getNodeFactory().newVirtSpecifier(specifierKind);
+			int endOffset = token.getOffset() + token.getLength();
+			setRange(spec, token.getOffset(), endOffset);
+			typeRelevantDtor.addVirtSpecifier(spec);
+			adjustEndOffset(typeRelevantDtor, endOffset);
 		}
 	}
 

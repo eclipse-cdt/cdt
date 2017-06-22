@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -673,5 +675,27 @@ public class DOMLocationTests extends AST2TestBase {
 		
 		assertEquals("test", templateIdName.getRawSignature()); //$NON-NLS-1$
 	}
-	
+
+	// struct Base {
+	//   virtual void func1();
+	//   virtual void func2();
+	//   virtual void func3();
+	//   virtual void func4();
+	// };
+	// struct Sub : Base {
+	//   void func1() final;
+	//   void func2() override;
+	//   void func3() final override;
+	//   void func4() override final;
+	// };
+	public void testFunctionDeclaratorLocationContainsVirtualSpecifiers_Bug518628() throws Exception {
+		String testCode = getAboveComment();
+		BindingAssertionHelper assertionHelper = getAssertionHelper(ParserLanguage.CPP);
+		String[] funcDeclaratorSignatures = new String[]{"func1() final", "func2() override", "func3() final override", "func4() override final"};
+		Arrays.stream(funcDeclaratorSignatures).forEach(signature -> {
+			IASTNode func1Declarator = assertionHelper.assertNode(signature, ICPPASTFunctionDeclarator.class);
+			assertFileLocation(func1Declarator, testCode, signature);
+			
+		});
+	}
 }

@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -161,14 +163,7 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);
 		}
-		if (funcDec.isOverride()) {
-			scribe.printSpace();
-			scribe.print(Keywords.cOVERRIDE);
-		}
-		if (funcDec.isFinal()) {
-			scribe.printSpace();
-			scribe.print(Keywords.cFINAL);
-		}
+		writeVirtualSpecifiers(funcDec);
 		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
 		}
@@ -179,6 +174,19 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(ARROW_OPERATOR);
 			scribe.printSpace();
 			funcDec.getTrailingReturnType().accept(visitor);
+		}
+	}
+
+	public void writeVirtualSpecifiers(ICPPASTFunctionDeclarator funcDec) {
+		for (ICPPASTVirtSpecifier virtSpecifier : funcDec.getVirtSpecifiers()) {
+			scribe.printSpace();
+			SpecifierKind specifierKind = virtSpecifier.getKind();
+			if (specifierKind == SpecifierKind.Override) {
+				scribe.print(Keywords.cOVERRIDE);
+			}
+			if (specifierKind == SpecifierKind.Final) {
+				scribe.print(Keywords.cFINAL);
+			}
 		}
 	}
 

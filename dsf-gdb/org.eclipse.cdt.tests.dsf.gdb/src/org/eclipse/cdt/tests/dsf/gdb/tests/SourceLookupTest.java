@@ -226,10 +226,8 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
+		removeAllPlatformBreakpoints();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints = manager.getBreakpoints();
-		manager.removeBreakpoints(breakpoints, true);
-
 		manager.removeBreakpointListener(fBreakpointListener);
 	}
 

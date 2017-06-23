@@ -50,6 +50,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -81,6 +82,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	private IGDBTraceControl fTraceService;
 	private IBreakpointsTargetDMContext fBreakpointsDmc;
 	private ITraceTargetDMContext fTraceTargetDmc;
+	private boolean suppressRemoveAllPlatformBreakpoints;
 
 
     @Override
@@ -101,6 +103,18 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		} catch (Throwable e) {
 			System.out.println("ERROR: Failed to delete all breakpoints");
 		}
+    }
+    
+	/**
+	 * Some tests call doBefore/After in the middle of their test and rely on
+	 * platform breakpoints to survive that step. So override with the ability
+	 * to disable.
+	 */
+	@Override
+    public void removeAllPlatformBreakpoints() throws CoreException {
+    	if (!suppressRemoveAllPlatformBreakpoints) {
+    		super.removeAllPlatformBreakpoints();
+    	}
     }
 
 	@Override
@@ -176,10 +190,15 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
 		try {
     		createTraceFile();
-    		// Cleanup the interim launch that we just caused
-    		doAfterTest();
-    		// Setup for the upcoming launch
-    		doBeforeTest();
+    		suppressRemoveAllPlatformBreakpoints = true;
+    		try {
+	    		// Cleanup the interim launch that we just caused
+	    		doAfterTest();
+	    		// Setup for the upcoming launch
+	    		doBeforeTest();
+    		} finally {
+    			suppressRemoveAllPlatformBreakpoints = false;
+    		}
     	} catch (Throwable t) {
     		// If we cannot create the trace file, ignore the test using the
     		// assume check below.  The reason for the failure could be a missing
@@ -214,10 +233,15 @@ public class TraceFileTest extends BaseParametrizedTestCase {
     	// the required test ourselves.
     	try {
     		testTraceFile();
-    		// Cleanup the interim launch that we just caused
-    		doAfterTest();
-    		// Setup for the upcoming launch
-    		doBeforeTest();
+    		suppressRemoveAllPlatformBreakpoints = true;
+    		try {
+	    		// Cleanup the interim launch that we just caused
+	    		doAfterTest();
+	    		// Setup for the upcoming launch
+	    		doBeforeTest();
+    		} finally {
+    			suppressRemoveAllPlatformBreakpoints = false;
+    		}
     	} catch (Throwable t) {
     		// If we cannot setup properly, ignore the test using the
     		// assume check below.  The reason for the failure could be a missing

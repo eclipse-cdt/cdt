@@ -54,11 +54,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -291,6 +293,16 @@ public class BaseTestCase {
 
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
+	 * platform breakpoints that will be automatically installed.
+	 */
+	public void removeAllPlatformBreakpoints() throws CoreException {
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints();
+		manager.removeBreakpoints(breakpoints, true);
+	}
+	
+	/**
+	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launches.
 	 */
 	public void removeTeminatedLaunchesBeforeTest() throws CoreException {
@@ -327,6 +339,7 @@ public class BaseTestCase {
 	@Before
 	public void doBeforeTest() throws Exception {
 		removeTeminatedLaunchesBeforeTest();
+		removeAllPlatformBreakpoints();
 		setLaunchAttributes();
 		doLaunch();
 	}
@@ -591,6 +604,7 @@ public class BaseTestCase {
 			assertLaunchTerminates();
 			fLaunch = null;
 		}
+		removeAllPlatformBreakpoints();
 	}
 
  	/**

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_dc8c4bc1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-06-26T04:17:07Z",
+      "side": 1,
+      "message": "Stack extends Vector and is therefore synchronized. Javadoc of Stack says:\nA more complete and consistent set of LIFO stack operations is\nprovided by the {@link Deque} interface and its implementations, which should be used in preference to this class.  For example:\n\u003cpre\u003e   {@code Deque\u003cInteger\u003e stack \u003d new ArrayDeque\u003cInteger\u003e();}\u003c/pre\u003e",
+      "range": {
+        "startLine": 297,
+        "startChar": 83,
+        "endLine": 297,
+        "endChar": 88
+      },
+      "revId": "64bce160bac219b433daaaa6d821a570bc606f93",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -143,7 +143,8 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 				configControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 				if (lastSelection == null) {
-					// Assuming the first one ends up selected
+					// Select the first tab by default
+					tabFolder.setSelection(tabItem);
 					lastSelection = tabItem;
 				}
 			}

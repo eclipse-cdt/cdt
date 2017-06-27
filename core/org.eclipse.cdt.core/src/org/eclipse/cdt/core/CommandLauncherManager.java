@@ -166,11 +166,11 @@ public class CommandLauncherManager {
 	 * @param project - optional input to determine launcher.
 	 * @return an ICommandLauncher for running commands
 	 */
-	public ICommandLauncher getCommandLauncher(IProject project) {
+	public ICommandLauncher getCommandLauncher(Object object) {
 		// loop through list of factories and return first launcher
 		// returned
 		for (ICommandLauncherFactory factory : factories) {
-			ICommandLauncher launcher = factory.getCommandLauncher(project);
+			ICommandLauncher launcher = factory.getCommandLauncher(object);
 			if (launcher != null) {
 				return launcher;
 			}

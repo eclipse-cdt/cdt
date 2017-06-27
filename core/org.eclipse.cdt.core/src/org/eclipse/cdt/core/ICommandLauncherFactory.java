@@ -21,11 +21,11 @@ import org.eclipse.core.resources.IProject;
 public interface ICommandLauncherFactory {
 	
 	/**
-	 * Get a Command Launcher for a project (optional)
-	 * @param project - optional parameter to help determine appropriate launcher
-	 * @return ICommandLauncher or null if not appropriate for project
+	 * Get a Command Launcher for an object (IProject or IConfiguration) (optional)
+	 * @param object - optional parameter to help determine appropriate launcher
+	 * @return ICommandLauncher or null if not appropriate for object
 	 */
-	public ICommandLauncher getCommandLauncher(IProject project);
+	public ICommandLauncher getCommandLauncher(Object object);
 
 	/**
 	 * Register language setting entries for a project

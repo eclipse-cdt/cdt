@@ -657,7 +657,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			console.start(currentProject);
 
-			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(currentCfgDescription);
 			launcher.setProject(currentProject);
 
 			IPath program = new Path(""); //$NON-NLS-1$
@@ -766,7 +766,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// so collect them to save later when output finishes
 		if (entries != null) {
 			for (ICLanguageSettingEntry entry : entries) {
-				if (!detectedSettingEntries.contains(entry)) {
+				if (detectedSettingEntries != null && !detectedSettingEntries.contains(entry)) {
 					detectedSettingEntries.add(entry);
 				}
 			}

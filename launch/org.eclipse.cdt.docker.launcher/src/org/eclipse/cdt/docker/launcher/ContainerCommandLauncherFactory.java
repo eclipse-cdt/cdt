@@ -39,24 +39,34 @@ public class ContainerCommandLauncherFactory
 		implements ICommandLauncherFactory {
 
 	@Override
-	public ICommandLauncher getCommandLauncher(Object object) {
+	public ICommandLauncher getCommandLauncher(IProject project) {
 		// check if container build enablement has been checked
-		ICConfigurationDescription cfgd = null;
-		// We use an object because it could be an IProject, implying the
-		// active configuration, but it could be an ICConfigurationDescription
-		// as is used when computing specs for non-active configurations. We
-		// don't want to force callers to have to declare
-		// ICConfigurationDescription
-		// which is part of Managed build.
-		if (object instanceof IProject) {
-			IProject project = (IProject) object;
-			cfgd = CoreModel.getDefault().getProjectDescription(project)
+		ICConfigurationDescription cfgd = CoreModel.getDefault()
+				.getProjectDescription(project)
 					.getActiveConfiguration();
-		} else if (object instanceof ICConfigurationDescription) {
-			cfgd = (ICConfigurationDescription) object;
-		} else {
-			return null;
+		IConfiguration cfg = ManagedBuildManager
+				.getConfigurationForDescription(cfgd);
+		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+		if (props != null) {
+			String enablementProperty = props.getProperty(
+					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			if (enablementProperty != null) {
+				boolean enableContainer = Boolean
+						.parseBoolean(enablementProperty);
+				// enablement has occurred, we can return a
+				// ContainerCommandLauncher
+				if (enableContainer) {
+					return new ContainerCommandLauncher();
+				}
+			}
 		}
+		return null;
+	}
+
+	@Override
+	public ICommandLauncher getCommandLauncher(
+			ICConfigurationDescription cfgd) {
+		// check if container build enablement has been checked
 		IConfiguration cfg = ManagedBuildManager
 				.getConfigurationForDescription(cfgd);
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();

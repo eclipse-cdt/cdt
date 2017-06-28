@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.docker.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,9 +22,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.internal.docker.launcher.ContainerPropertyVolumesModel.MountType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -82,6 +85,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	public final static String VOLUME_SEPARATOR = "|"; //$NON-NLS-1$
 
+	private final static String GNU_ELF_PARSER_ID = "org.eclipse.cdt.core.GNU_ELF"; //$NON-NLS-1$
+	private final static String ELF_PARSER_ID = "org.eclipse.cdt.core.ELF"; //$NON-NLS-1$
+
 	private Combo imageCombo;
 	private Combo connectionSelector;
 	private Button enableButton;
@@ -104,6 +110,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private List<IDockerImage> displayedImages = new ArrayList<>();
 
 	private IConfiguration iCfg;
+	private ICConfigurationDescription iCfgd;
 
 	private final DataBindingContext dbc = new DataBindingContext();
 	private final ContainerPropertyVolumesModel model;
@@ -156,6 +163,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
 
 		iCfg = getCfg();
+		iCfgd = getResDesc().getConfiguration();
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 5;
@@ -572,6 +580,20 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
 					Boolean.toString(enableButton.getSelection()));
 		}
+		// if enabled, make sure we have ELF binary parsers specified
+		if (enabled) {
+			String[] ids = CoreModelUtil
+					.getBinaryParserIds(page.getCfgsEditable());
+			List<String> idList = new ArrayList<>(Arrays.asList(ids));
+			if (!idList.contains(GNU_ELF_PARSER_ID)) {
+				idList.add(GNU_ELF_PARSER_ID);
+			}
+			if (!idList.contains(ELF_PARSER_ID)) {
+				idList.add(ELF_PARSER_ID);
+			}
+			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(),
+					idList.toArray(new String[0]));
+		}
 	}
 
 	private void setImageId(String imageId) {
@@ -783,6 +805,12 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		IOptionalBuildProperties prop1 = cfg01.getOptionalBuildProperties();
 		IOptionalBuildProperties prop2 = cfg02.getOptionalBuildProperties();
 		boolean needToRecalculate = false;
+
+		ICTargetPlatformSetting tps = c1.getTargetPlatformSetting();
+		String[] pids = tps.getBinaryParserIds();
+		ICTargetPlatformSetting tps2 = c2.getTargetPlatformSetting();
+		tps2.setBinaryParserIds(pids);
+
 		String enablementProperty = prop1
 				.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 		String enablementProperty2 = prop2
@@ -816,13 +844,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		String volumesProperty = prop1
 				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
-		String volumesProperty2 = prop2
-				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
 		prop2.setProperty(ContainerCommandLauncher.VOLUMES_ID, volumesProperty);
 
 		String selectedVolumesProperty = prop1
-				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
-		String selectedVolumesProperty2 = prop2
 				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
 		prop2.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID,
 				selectedVolumesProperty);
@@ -944,6 +968,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		if (cfgd == null)
 			return;
 		iCfg = getCfg(cfgd.getConfiguration());
+		iCfgd = cfgd.getConfiguration();
 
 		multiChange = false;
 

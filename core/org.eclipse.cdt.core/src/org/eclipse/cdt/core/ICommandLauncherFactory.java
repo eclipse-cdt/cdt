@@ -12,6 +12,7 @@ package org.eclipse.cdt.core;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
 
@@ -21,11 +22,18 @@ import org.eclipse.core.resources.IProject;
 public interface ICommandLauncherFactory {
 	
 	/**
-	 * Get a Command Launcher for an object (IProject or IConfiguration) (optional)
-	 * @param object - optional parameter to help determine appropriate launcher
-	 * @return ICommandLauncher or null if not appropriate for object
+	 * Get a Command Launcher for a project (based on active configuration)
+	 * @param project - IProject to get command launcher for
+	 * @return ICommandLauncher
 	 */
-	public ICommandLauncher getCommandLauncher(Object object);
+	public ICommandLauncher getCommandLauncher(IProject project);
+	
+	/**
+	 * Get a Command Launcher for a build configuration descriptor
+	 * @param cfgd - ICConfigurationDescription to get command launcher for
+	 * @return ICommandLauncher
+	 */
+	public ICommandLauncher getCommandLauncher(ICConfigurationDescription cfgd);
 
 	/**
 	 * Register language setting entries for a project

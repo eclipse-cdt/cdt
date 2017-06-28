@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -160,17 +161,37 @@ public class CommandLauncherManager {
 		}
 		
 	}
+	
 	/**
 	 * Get a command launcher.
 	 * 
-	 * @param project - optional input to determine launcher.
+	 * @param project - IProject to determine launcher for.
 	 * @return an ICommandLauncher for running commands
 	 */
-	public ICommandLauncher getCommandLauncher(Object object) {
+	public ICommandLauncher getCommandLauncher(IProject project) {
 		// loop through list of factories and return first launcher
 		// returned
 		for (ICommandLauncherFactory factory : factories) {
-			ICommandLauncher launcher = factory.getCommandLauncher(object);
+			ICommandLauncher launcher = factory.getCommandLauncher(project);
+			if (launcher != null) {
+				return launcher;
+			}
+		}
+		// default to local CommandLauncher
+		return new CommandLauncher();
+	}
+	
+	/**
+	 * Get a command launcher.
+	 * 
+	 * @param cfgd - ICConfigurationDescription to get command launcher for.
+	 * @return an ICommandLauncher for running commands
+	 */
+	public ICommandLauncher getCommandLauncher(ICConfigurationDescription cfgd) {
+		// loop through list of factories and return first launcher
+		// returned
+		for (ICommandLauncherFactory factory : factories) {
+			ICommandLauncher launcher = factory.getCommandLauncher(cfgd);
 			if (launcher != null) {
 				return launcher;
 			}

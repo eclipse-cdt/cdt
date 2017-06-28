@@ -71,8 +71,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.registry.SystemEditorOrTextEditorStrategy;
+import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -393,7 +396,7 @@ public class CDebugUIUtils {
 	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
 	 */
 	@Deprecated
-	public static String getEditorId(IFileStore fileStore) throws PartInitException {
+	public static String getEditorId(IFileStore fileStore, boolean allowInteractive) throws PartInitException {
 		String name = fileStore.fetchInfo().getName();
 		if (name == null) {
 			throw new IllegalArgumentException();
@@ -420,7 +423,7 @@ public class CDebugUIUtils {
 
 		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
 		defaultEditor = IDE.overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType, defaultEditor);
-		return getEditorDescriptor(name, editorReg, defaultEditor).getId();
+		return getEditorDescriptor(name, editorReg, defaultEditor, allowInteractive).getId();
 	}
 
 	/**
@@ -443,32 +446,19 @@ public class CDebugUIUtils {
 	 */
 	@Deprecated
 	private static IEditorDescriptor getEditorDescriptor(String name,
-			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor)
+			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor, boolean allowInteractive)
 			throws PartInitException {
 
 		if (defaultDescriptor != null) {
 			return defaultDescriptor;
 		}
 
-		IEditorDescriptor editorDesc = defaultDescriptor;
-
-		// next check the OS for in-place editor (OLE on Win32)
-		if (editorReg.isSystemInPlaceEditorAvailable(name)) {
-			editorDesc = editorReg
-					.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
-		}
-
-		// next check with the OS for an external editor
-		if (editorDesc == null
-				&& editorReg.isSystemExternalEditorAvailable(name)) {
-			editorDesc = editorReg
-					.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-		}
-
-		// next lookup the default text editor
-		if (editorDesc == null) {
-			editorDesc = editorReg
-					.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		IUnassociatedEditorStrategy strategy = getUnassociatedEditorStrategy(allowInteractive);
+		IEditorDescriptor editorDesc;
+		try {
+			editorDesc = strategy.getEditorDescriptor(name, editorReg);
+		} catch (CoreException e) {
+			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound, e);
 		}
 
 		// if no valid editor found, bail out
@@ -479,6 +469,32 @@ public class CDebugUIUtils {
 
 		return editorDesc;
 	}
-    
+
+	/**
+	 * @param allowInteractive
+	 *            Whether interactive strategies are considered
+	 * @return The strategy to use in order to open unknown file. Either as set
+	 *         by preference, or a {@link SystemEditorOrTextEditorStrategy} if
+	 *         none is explicitly configured. Never returns {@code null}.
+	 * 
+	 * @todo The IDE class has this method as a private, copied here so that it can be
+	 * exposed via getEditorId. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
+	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
+	 */
+	private static IUnassociatedEditorStrategy getUnassociatedEditorStrategy(boolean allowInteractive) {
+		String preferedStrategy = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.getString(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY);
+		IUnassociatedEditorStrategy res = null;
+		UnassociatedEditorStrategyRegistry registry = IDEWorkbenchPlugin.getDefault()
+				.getUnassociatedEditorStrategyRegistry();
+		if (allowInteractive || !registry.isInteractive(preferedStrategy)) {
+			res = registry.getStrategy(preferedStrategy);
+		}
+		if (res == null) {
+			res = new SystemEditorOrTextEditorStrategy();
+		}
+		return res;
+	}
+
     
 }

@@ -268,7 +268,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 
 		private String getEditorIdForFile(IFile file) {
 			try {
-				IEditorDescriptor descriptor = IDE.getEditorDescriptor(file);
+				IEditorDescriptor descriptor = IDE.getEditorDescriptor(file, true, false);
 				return descriptor.getId();
 			} catch (PartInitException exc) {
 				DsfUIPlugin.log(exc);
@@ -278,7 +278,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 
 		private String getEditorIdForFileStore(IFileStore fileStore) {
 			try {
-				return CDebugUIUtils.getEditorId(fileStore);
+				return CDebugUIUtils.getEditorId(fileStore, false);
 			} catch (PartInitException exc) {
 				DsfUIPlugin.log(exc);
 			}

@@ -233,7 +233,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				URI uri = uriEditorInput.getURI();
 				try {
 					IFileStore fileStore = EFS.getStore(uri);
-					id = CDebugUIUtils.getEditorId(fileStore);
+					id = CDebugUIUtils.getEditorId(fileStore, false);
 				} catch (CoreException e) {
 					// fallback to default case
 				}

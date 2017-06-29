@@ -876,6 +876,13 @@
       </factory>
    </extension>
    <extension
+         id="CodeFormatter"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="org.eclipse.cdt.core.formatter.CodeFormatterApplication"/>
+      </application>
+   </extension>
+   <extension
          id="cBuilder"
          point="org.eclipse.core.resources.builders">
       <builder

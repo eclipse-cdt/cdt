@@ -46,6 +46,10 @@ public class ContainerCommandLauncherFactory
 					.getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager
 				.getConfigurationForDescription(cfgd);
+		// TODO: figure out why this occurs
+		if (cfg == null) {
+			return null;
+		}
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
 			String enablementProperty = props.getProperty(
@@ -69,6 +73,10 @@ public class ContainerCommandLauncherFactory
 		// check if container build enablement has been checked
 		IConfiguration cfg = ManagedBuildManager
 				.getConfigurationForDescription(cfgd);
+		// TODO: figure out why this occurs
+		if (cfg == null) {
+			return null;
+		}
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
 			String enablementProperty = props.getProperty(

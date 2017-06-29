@@ -550,10 +550,6 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}
 
-	public void changeEvent(IDockerConnection connection, int event) {
-		changeEvent(event);
-	}
-
 	public void listChanged(IDockerConnection c,
 			java.util.List<IDockerImage> list) {
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);

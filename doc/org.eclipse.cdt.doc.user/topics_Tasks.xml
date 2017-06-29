@@ -93,4 +93,9 @@
 		</topic>
 		
 		<topic label="Include paths and macros for C/C++ indexer" href="tasks/cdt_t_sd.htm"/>
+
+		<topic label="Using the Formatter Application" href="tasks/cdt_t_format_app.htm">
+			<topic label="Running the Formatter Application" href="tasks/cdt_t_format_app_run.htm"/>
+			<topic label="Generating a Config File for the Formatter Application" href="tasks/cdt_t_format_app_gen_config.htm"/>
+		</topic>
 </toc>

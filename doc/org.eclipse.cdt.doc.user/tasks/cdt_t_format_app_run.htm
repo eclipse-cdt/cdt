@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta name="copyright" content=
+    "Copyright (c) Red Hat Incorporated 2006, 2017. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>
+      Running the Formatter Application
+    </title>
+    <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type=
+    "text/css" />
+  </head>
+
+  <body>
+    <h1>
+      Running the Formatter Application
+    </h1>
+    <p>
+      Running the formatter application is as simple as running the
+      org.eclipse.cdt.core.CodeFormatter application from the commandline:
+    </p>
+<pre>
+    eclipse -application org.eclipse.cdt.core.CodeFormatter [ OPTIONS ] [ -config &lt;configFile&gt; ] &lt;files&gt;
+</pre>
+<p>When invoked on MacOS, the paths to point to the configuration file or the source files can be relative, but they will be computed
+from the location of the eclipse.ini file. This is a limitation of the Eclipse launcher on MacOS. On all other platforms, the relative paths
+are computed relative to the current user directory.</p>
+    <table border="1" cellspacing="0" cellpadding="5" width="600" summary="">
+      <tr>
+        <td width="25%">
+          &lt;files&gt;
+        </td>
+        <td>
+          C/C++ source/header files and/or directories to format. Only source/header file endings 
+          (like .c .cpp or .h) will be formatted in the given directory.
+        </td>
+      </tr>
+      <tr>
+        <td width="25%">
+          -config &lt;configFile&gt;
+        </td>
+        <td>
+          Use the formatting style from the specified properties file.
+          Refer to <a href="cdt_t_format_app_gen_config.htm">Generating a Config File for the
+          Formatter Application</a> for details.
+        </td>
+      </tr>
+    </table>
+    <table border="1" cellspacing="0" cellpadding="5" width="600" summary="">
+      <thead>
+        <tr>
+          <th>
+            <p>
+              OPTIONS
+            </p>
+          </th>
+          <th>
+            <p>
+              Description
+            </p>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td valign="top" width="25%">
+            <p>
+              -help
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Display the help message.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" width="25%">
+            <p>
+              -quiet
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Only print error messages.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" width="25%">
+            <p>
+              -verbose
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Be verbose about the formatting job.
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -102,6 +102,8 @@ public class BuildConsolePartitioner
 	 */
 	private LogFile fLogFile = new LogFile();
 
+	private int fUpdateDelay = BuildConsolePreferencePage.DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS;
+
 	/**
 	 * Construct a partitioner that is not associated with a specific project
 	 */
@@ -116,6 +118,7 @@ public class BuildConsolePartitioner
 		fDocument = new BuildConsoleDocument();
 		fDocument.setDocumentPartitioner(this);
 		fDocumentMarkerManager = new DocumentMarkerManager(fDocument, this);
+		fUpdateDelay = BuildConsolePreferencePage.buildConsoleUpdateDelayMs();
 		connect(fDocument);
 	}
 
@@ -206,27 +209,12 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Update the UI after a short delay. The reason for a short delay is to try
-	 * and reduce the "frame rate" of the build console updates, this reduces
-	 * the total load on the main thread. User's won't be able to tell that
-	 * there is an extra delay.
-	 *
-	 * A too short time has little effect and a too long time starts to be
-	 * visible to the user. With my experiments to get under 50% CPU utilization
-	 * on the main thread requires at least 35 msec delay between updates. 250
-	 * msec leads to visible delay to user and ~20% utilization. And finally the
-	 * chosen value, 75 msec leads to ~35% utilization and no user visible
-	 * delay.
-	 */
-	private static final int UDPATE_DELAY_MS = 75;
-
-	/**
-	 * @see #UDPATE_DELAY_MS
+	 * @see BuildConsolePreferencePage#DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS
 	 */
 	private void scheduleUpdate() {
 		Display display = CUIPlugin.getStandardDisplay();
 		if (display != null) {
-			display.timerExec(UDPATE_DELAY_MS, this::updateUI);
+			display.timerExec(fUpdateDelay, this::updateUI);
 		}
 	}
 
@@ -434,6 +422,9 @@ public class BuildConsolePartitioner
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty() == BuildConsolePreferencePage.PREF_BUILDCONSOLE_LINES) {
 			setDocumentSize(BuildConsolePreferencePage.buildConsoleLines());
+		}
+		if (event.getProperty() == BuildConsolePreferencePage.PREF_BUILDCONSOLE_UPDATE_DELAY_MS) {
+			fUpdateDelay = BuildConsolePreferencePage.buildConsoleUpdateDelayMs();
 		}
 	}
 

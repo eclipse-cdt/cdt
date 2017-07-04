@@ -42,6 +42,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 
 	public static final String PREF_BUILDCONSOLE_TAB_WIDTH = "buildConsoleTabWith"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_UPDATE_DELAY_MS = "buildConsoleUpdateDelayMs"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_INFO_COLOR = "buildConsoleInfoStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_OUTPUT_COLOR = "buildConsoleOutputStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_ERROR_COLOR = "buildConsoleErrorStreamColor"; //$NON-NLS-1$
@@ -51,6 +52,22 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static final String PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR = "buildConsoleProblemInfoBackgroundColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR = "buildConsoleProblemHighlightedColor"; //$NON-NLS-1$
 
+	/**
+	 * Update the UI after a short delay. The reason for a short delay is to try
+	 * and reduce the "frame rate" of the build console updates, this reduces
+	 * the total load on the main thread. User's won't be able to tell that
+	 * there is an extra delay.
+	 *
+	 * A too short time has little effect and a too long time starts to be
+	 * visible to the user. With my experiments to get under 50% CPU utilization
+	 * on the main thread requires at least 35 msec delay between updates. 250
+	 * msec leads to visible delay to user and ~20% utilization. And finally the
+	 * chosen value, 75 msec leads to ~35% utilization and no user visible
+	 * delay.
+	 */
+	public static final int DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS = 75;
+
+	
 	public BuildConsolePreferencePage() {
 		super(GRID);
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -86,6 +103,14 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		buildCount.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.errorMessage")); //$NON-NLS-1$
 		buildCount.setValidRange(10, Integer.MAX_VALUE);
 		addField(buildCount);
+
+		IntegerFieldEditor updateDelay = new IntegerFieldEditor(PREF_BUILDCONSOLE_UPDATE_DELAY_MS,
+				CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.label"), parent); //$NON-NLS-1$
+		updateDelay.getLabelControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
+		updateDelay.getTextControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.tooltip")); //$NON-NLS-1$
+		updateDelay.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.errorMessage")); //$NON-NLS-1$
+		updateDelay.setValidRange(0, Integer.MAX_VALUE);
+		addField(updateDelay);
 
 		IntegerFieldEditor tabSize = new IntegerFieldEditor(PREF_BUILDCONSOLE_TAB_WIDTH,
 				CUIPlugin.getResourceString("ConsolePreferencePage.tabWidth.label"), parent); //$NON-NLS-1$
@@ -155,6 +180,10 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static int buildConsoleLines() {
 		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_LINES);
 	}
+	
+	public static int buildConsoleUpdateDelayMs() {
+		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_UPDATE_DELAY_MS);
+	}
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -171,6 +200,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
 		if(!prefs.contains(PREF_BUILDCONSOLE_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
+		if(!prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
+			prefs.setDefault(PREF_BUILDCONSOLE_UPDATE_DELAY_MS, DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS);
 		if(!prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
 			prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
 		if(!prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))

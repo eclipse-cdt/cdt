@@ -326,6 +326,9 @@ public class IndexUI {
 				IFile file= (IFile) tu.getResource();
 				long timestamp= file != null ? file.getLocalTimeStamp() : 0;
 				IASTFileLocation loc= declName.getFileLocation();
+				if (loc == null) {
+					return null;
+				}
 				IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
 				IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, timestamp);
 				if (converter != null) {

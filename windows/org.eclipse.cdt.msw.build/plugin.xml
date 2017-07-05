@@ -735,5 +735,12 @@
          </toolChain>
       </template>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.msw.build.core.MSVCToolChainProvider"
+            id="org.eclipse.cdt.msw.build">
+      </provider>
+   </extension>
 
 </plugin>

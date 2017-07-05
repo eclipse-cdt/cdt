@@ -435,7 +435,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 		Map<String, String> env = new HashMap<>(System.getenv());
 		setBuildEnvironment(env);
 
-		String[] path = env.get("PATH").split(File.pathSeparator); //$NON-NLS-1$
+		String pathStr = env.get("PATH"); //$NON-NLS-1$
+		if (pathStr == null) {
+			pathStr = env.get("Path"); // for Windows //$NON-NLS-1$
+			if (pathStr == null) {
+				return null; // no idea
+			}
+		}
+		String[] path = pathStr.split(File.pathSeparator);
 		for (String dir : path) {
 			Path commandPath = Paths.get(dir, command);
 			if (Files.exists(commandPath)) {
@@ -635,6 +642,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		String[] compileCommands = toolChain.getCompileCommands();
 		loop:
 		for (String arg : command) {
+			// TODO we should really ask the toolchain, not all args start with '-'
 			if (arg.startsWith("-")) { //$NON-NLS-1$
 				// option found, missed our command
 				return false;

@@ -206,6 +206,8 @@ public class FilterControl extends Composite {
 					listViewer.setHistorySupported(patternText == null || patternText.isEmpty());
 					listViewer.refresh(true);
 					updateListSelection(false);
+					// re-focus filterText in case it lost the focus
+					filterText.setFocus();
 				} finally {
 					redrawControl.setRedraw(true);
 				}

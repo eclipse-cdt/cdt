@@ -629,6 +629,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private void setControlsEnabled(boolean enabled) {
 		imageCombo.setEnabled(enabled);
 		connectionSelector.setEnabled(enabled);
+		setVolumeControlsEnabled(new Button[] { addButton }, enabled);
 	}
 
 	private void initializeEnablementButton() {

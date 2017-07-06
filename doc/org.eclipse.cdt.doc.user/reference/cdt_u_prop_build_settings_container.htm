@@ -3,23 +3,42 @@
 <head>
   <meta http-equiv="Content-Language" content="en-us">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>C/C++ Project Properties, Build, Settings, Binary Parser</title>
+  <title>C/C++ Project Properties, Build, Settings, Container Settings</title>
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<div role="main"><h1>C/C++ Project Properties, Build, Settings, Binary Parser</h1>
-<p>Use the <strong>Binary Parsers</strong> properties tab to
-ensure the accuracy of the <a href="cdt_u_project_explorer_view.htm">Project Explorer</a> and <a href="cdt_u_cproj_view.htm">C/C++ Projects</a> views, and to successfully run
-and debug your programs. After you select the correct parser for your
-development environment and build your project, you can view the
-symbols of the object file using the C/C++ Projects view.</p>
+<div role="main"><h1>C/C++ Project Properties, Build, Settings, Container Settings</h1>
+<p>Use the <strong>Container Settings</strong> properties tab to
+specify options for building the project in a Docker Container.  This properties tab is
+provided with the optional Docker C/C++ Launch feature.  By default,
+project configurations will build locally, however, if you want to have a particular
+configuration build the project in a Container, use the enablement check-box.
+After enabling building in a Container, you need to select an active Docker Connection and
+a down-loaded Image in that Connection to run the build in.  The Image must have whatever
+tools are necessary to perform the build already installed.  Docker Images will be linux-based so the build
+will use linux appropriate toolsets and create a linux-compatible executable.</p>
+<p>By default, the C/C++ project and all dependent project contents will be mounted
+into the Container where the build is occurring.  This allows the build to find project source and
+header files.  If additional host directories are needed to
+build the project (e.g. a local header file directory that is not part of an
+installed package in the Docker Image), such directories can be added to the Data Volumes table and they
+will be mounted in the Container before the build occurs.  If the Docker daemon is running locally, this
+will be a simple mount.  If the Docker daemon is remote,
+mounting will involve automatically copying the directory contents over to the Container since system mounting cannot
+occur across machines.</p>
+<p>To accommodate indexing, build-specs discovery will be performed in the Docker Container.  Directories found
+by specs detection will be copied locally for use by the indexer.  This copying process also occurs for any
+header file directories discovered while building.  The
+header files are stored within the workspace and are only uploaded once per Docker Image.  These header files
+can be removed from the Preferences page if, for example, the project no longer needs to build/index for that
+particular Docker Image.</p>
 
-<p><img img="" src="../images/prop_bin.png"
- alt="C/C++ Project Properties, Build, Settings, Binary Parser"></p>
+<p><img img="" src="../images/prop_container.png"
+ alt="C/C++ Project Properties, Build, Settings, Container Settings"></p>
 
 
 <table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
-	<caption><strong>Binary parser options</strong></caption>
+	<caption><strong>Container settings options</strong></caption>
 	<colgroup>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
@@ -38,20 +57,37 @@ symbols of the object file using the C/C++ Projects view.</p>
 			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td headers="group"><strong>Binary Parser</strong> (top pane)</td>
-			<td headers="description">Lists all of the binary parsers currently known to CDT. Select the parsers that you want to use, and select the corresponding line to edit parser's options, if required.</td>
+			<td headers="group"><strong>Build inside Docker Image</strong> (check-box)</td>
+			<td headers="description">Enables the build to occur inside a Container.</td>
 			</tr>		
 		<tr>
-			<td headers="group"><strong>Binary Parser Option</strong></td>
-			<td headers="description">Shows the parameters for the currently selected parser in the list above. Depending on the parser you select, the options in the list will be different (in particular, some may have no options at all).</td>
+			<td headers="group"><strong>Connection</strong></td>
+			<td headers="description">Pull-down that contains a list of known Docker daemon connections to run the build in if enablement button is checked.</td>
 			</tr>	
 		<tr>
-			<td headers="group"><strong>Move Up</strong></td>
-			<td headers="description">Moves the selected parser higher in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			<td headers="group"><strong>Image</strong></td>
+			<td headers="description">Pull-down that contains Docker Image names to use to create the Container the build will run in.  This list is enabled by
+			a Docker Connection selection and the enablement check-box.</td>
 			</tr>		
 		<tr>
-			<td headers="group"><strong>Move Down</strong></td>
-			<td headers="description">Move the selected parser lower in list. <strong>Note:</strong> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			<td headers="group"><strong>Data Volumes</strong></td>
+			<td headers="description">Optional list of directories to mount into the Container prior to building.  By default, the C/C++ project and any refererenced
+			projects are mounted automatically in the Container.  Directories can be added, edited, or removed using the buttons to the
+			right of the list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Add...</strong></td>
+			<td headers="description">Button to bring up the <a href="cdt_u_prop_data_volumes.htm">Data Volume</a> dialog for specifying a
+			data volume to mount in the Docker Container.  This usually involves selecting a directory from the local system.  Once finished,
+			the mount will be shown in the Data Volumes list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Edit...</strong></td>
+			<td headers="description">Button to edit the currently selected data volume in the Data Volumes list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Remove</strong></td>
+			<td headers="description">Button to remove the currently selected data volume(s) in the Data Volumes list.</td>
 			</tr>		
 	</tbody>
 </table>
@@ -61,7 +97,7 @@ symbols of the object file using the C/C++ Projects view.</p>
 <p><img src="../images/ngtasks.gif" alt="Related tasks"
  width="143" height="21">
 <br>
-<a href="../tasks/cdt_t_proj_parser.htm">Selecting a binary parser</a></p>
+</p>
 
 
 <p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
@@ -85,7 +121,7 @@ symbols of the object file using the C/C++ Projects view.</p>
    <li>Settings page
        <ul> 
        <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
-       <li><a href="cdt_u_prop_build_settings_container.htm">Container Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_container.htm">ContainerSettings tab</a>
        <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
        <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
        <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>

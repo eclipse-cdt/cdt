@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_9d78e19c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/LongString.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 113702
+      },
+      "writtenOn": "2017-07-06T07:02:15Z",
+      "side": 1,
+      "message": "What do you think? Should we document this fact as a comment in the constructor or should we set the cachedChars variable anyway? It shouldn\u0027t make any difference since the object will eventually be garbage collected anyway in all current cases after getRecord() has been called.",
+      "parentUuid": "c7880b39_5d975951",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 1
+      },
+      "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_dd40a960",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/ShortString.java",
         "patchSetId": 4

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_5d975951",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/LongString.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 113702
+      },
+      "writtenOn": "2017-07-06T06:57:05Z",
+      "side": 1,
+      "message": "I agree that it looks reasonable to already chache the char array in the constructor. However, it does not have any effect at all. If you open the call hierarchy of this constructor, then the only (!) use case is to insert a string and call getRecord() on the resulting IString. This means that the only information of interest is the field \u0027record\u0027.\nThe same applies to the equivalent ShortString constructor.",
+      "parentUuid": "c7880b39_bd3d9dec",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 1
+      },
+      "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_dd40a960",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/ShortString.java",
         "patchSetId": 4
@@ -36,6 +60,24 @@
       "writtenOn": "2017-07-06T06:46:11Z",
       "side": 1,
       "message": "Likewise here, why not populate \u0027cachedChars\u0027?",
+      "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7da6d5c3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/ShortString.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 113702
+      },
+      "writtenOn": "2017-07-06T06:57:05Z",
+      "side": 1,
+      "message": "See my comment in LongString.",
+      "parentUuid": "c7880b39_dd40a960",
       "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

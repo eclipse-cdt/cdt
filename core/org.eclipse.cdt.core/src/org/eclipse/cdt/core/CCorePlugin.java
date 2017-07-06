@@ -1542,7 +1542,15 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static void log(Throwable e) {
 		if (e instanceof CoreException) {
-			log(((CoreException) e).getStatus());
+			// If the CoreException doesn't have a nested exception, wrap it 
+			// into another Status object. This ensures that we can see its
+			// stack trace.
+			IStatus status = ((CoreException) e).getStatus();
+			if (status.getException() != null) {
+				log(status);
+			} else {
+				log(createStatus("Error", e));  //$NON-NLS-1$
+			}
 		} else {
 			String msg = e.getMessage();
 			if (msg == null) {

@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_bd3d9dec",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/LongString.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-07-06T06:46:11Z",
+      "side": 1,
+      "message": "Why not save the chars in \u0027cachedChars\u0027 in this constructor?",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 1
+      },
+      "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_dd40a960",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/db/ShortString.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-07-06T06:46:11Z",
+      "side": 1,
+      "message": "Likewise here, why not populate \u0027cachedChars\u0027?",
+      "revId": "17b3a93a8067c326d537964849cfb1bae6a33e00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

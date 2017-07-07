@@ -162,6 +162,17 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 						}
 					}
 				});
+				
+				//Check if the "Listening on port" message is not already present in the monitor stream
+				//In some cases the remote debugger starts before the listener is added to the 
+				//monitor stream and for this reason the "Listening on port" message is not processed.
+				//In this case the connection with the remote machine is blocked waiting for the message. During testing this 
+				//happened when I tried to run the remote debugger for the first time.
+				if (monitorStream.getContents().contains("Listening on port")) {synchronized (lock) {
+					gdbServerReady[0] = true;
+					lock.notifyAll();
+					}};
+				
 				// Now wait until gdbserver is up and running on the remote host
 				synchronized (lock) {
 					while (gdbServerReady[0] == false) {

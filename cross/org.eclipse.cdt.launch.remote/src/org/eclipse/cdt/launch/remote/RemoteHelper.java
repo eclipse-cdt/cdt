@@ -10,10 +10,15 @@
  * Anna Dushistova (Mentor Graphics) - changed spaceEscapify visibility
  * Anna Dushistova (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  * Wainer Moschetta(IBM)             - [452356] replace RSE with org.eclipse.remote
+ * Furis Mihai (NXP Semiconductors)  - [489677] [remote debug] error when using remote application launch/debug 
  ********************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
 
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -49,6 +54,9 @@ public class RemoteHelper {
 
 	private final static String EXIT_CMD = "exit"; //$NON-NLS-1$
 	private final static String CMD_DELIMITER = ";"; //$NON-NLS-1$
+	private static final int SHELL_READY_TIMEOUT = 10000; 
+	private static final int PING_TIME = 200; 
+	private static final String ECLIPSE_TEST_KEY = "_ping"; //$NON-NLS-1$
 
 	public static IRemoteConnection getRemoteConnectionByName(String remoteConnection) {
 		if (remoteConnection == null)
@@ -182,6 +190,8 @@ public class RemoteHelper {
 			remoteProcess = shellService.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 			p = new RemoteProcessAdapter(remoteProcess);
 			OutputStream os = remoteProcess.getOutputStream();
+			InputStream is = remoteProcess.getInputStream(); 
+			waitForShellPrompt(is,os);
 			os.write(remoteCommand.getBytes());
 			os.flush();
 		} catch (IOException e) {
@@ -219,6 +229,8 @@ public class RemoteHelper {
 		IRemoteProcess p = null;
 		p = shellService.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 		OutputStream os = p.getOutputStream();
+		InputStream is = p.getInputStream(); 
+		waitForShellPrompt(is,os);
 		os.write(remoteCommand.getBytes());
 		os.flush();
 		monitor.done();
@@ -255,6 +267,63 @@ public class RemoteHelper {
 			status= new Status(IStatus.ERROR, Activator.PLUGIN_ID, code, message, null);
 		}
 		throw new CoreException(status);
+	}
+	
+	/**
+	 * Performs a test to check if remote shell can execute commands. Will send echo _ping commands to remote machine for execution
+	 * until an echo is successfully executed. Ping commands will be sent only for a limited 
+	 * period of time (SHELL_READY_TIMEOUT). To make sure the remote machine is not spammed will wait (PING_TIME) between pings.
+	 *
+	 * @param is -input stream with the remote machine
+	 * @param os - output stream with the remote machine
+	 *
+	 * @return void if expected response has been received or IOException if we cannot successfully obtain the shell prompt 
+	 * in SHELL_READY_TIMEOUT ms.
+	 */
+
+	private static void waitForShellPrompt( InputStream is, OutputStream os) throws IOException{
+		String echoMessage = null, shellPrompt = null;
+		long startTime;
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	    startTime = System.currentTimeMillis();
+		//wait for reader. 
+	    while(!reader.ready() && (System.currentTimeMillis()-startTime < SHELL_READY_TIMEOUT)){
+	    	try{
+		    	Thread.sleep(PING_TIME);
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				    throw new IOException();
+				}
+		}	
+			
+		while(System.currentTimeMillis()-startTime < SHELL_READY_TIMEOUT){ 
+			    //sleep time between echo messages to make sure the remote machine is not spammed
+			try{
+		    	Thread.sleep(PING_TIME);
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				    throw new IOException();
+				}
+			    
+			    //send echo command
+				String remoteCommand = "echo "+ECLIPSE_TEST_KEY +"\r\n";//$NON-NLS-1$ //$NON-NLS-2$
+				os.write(remoteCommand.getBytes());
+				os.flush();
+				//wait for the echoed message to arrive.
+			    echoMessage = reader.readLine();
+				echoMessage = echoMessage.trim();
+			
+				/* If the echoed message is received then read one more line 
+			      that should contain the shell prompt an return. If not continue sending echo messages
+			      until an echo command is successfully executed. */
+				if(echoMessage.equals(ECLIPSE_TEST_KEY)) {
+				   shellPrompt = reader.readLine();
+				   return;
+				}
+		 } 
+		//if an echo command cannot be executed for SHELL_READY_TIMEOUT ms then an IOException is thrown.
+		 throw new IOException();
 	}
 
 }

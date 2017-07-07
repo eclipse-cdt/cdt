@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_ece6915d",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2017-07-07T11:02:17Z",
+      "side": 1,
+      "message": "As it is more of the exception of SW/HW ssh stack it should be possible to disable/optionally enable this behavior. Something similar as in \nBug 467833, where the ping would be enabled only if RSE_SHELL_READY_PING env property is defined",
+      "revId": "aefc1a024b83826724687733c1fc25415946833e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_ccdf1585",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2017-07-07T11:02:17Z",
+      "side": 1,
+      "message": "Add ProgressMonitor and check if it was cancel while looping",
+      "revId": "aefc1a024b83826724687733c1fc25415946833e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_acdc8993",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2017-07-07T11:02:17Z",
+      "side": 1,
+      "message": "I am not ok with throwing the exception on timeout. Better return true/false if wait succeeded or failed.",
+      "range": {
+        "startLine": 326,
+        "startChar": 12,
+        "endLine": 326,
+        "endChar": 23
+      },
+      "revId": "aefc1a024b83826724687733c1fc25415946833e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

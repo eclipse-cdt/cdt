@@ -26,6 +26,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -249,21 +250,17 @@ public class BuildConsolePartitioner
 
 		if (update.needsClearDocumentMarkerManager()) {
 			fDocumentMarkerManager.clear();
+			fDocument.set(update.getNewContents());
+		} else {
+			int length = fDocument.getLength();
+			String newContents = update.getNewContents();
+			String appendContents = newContents.substring(length);
+			try {
+				fDocument.replace(length, 0, appendContents);
+			} catch (BadLocationException e) {
+				fDocument.set(update.getNewContents());
+			}
 		}
-
-		/*
-		 * This call is slow, it updates the UI as a side effect.
-		 *
-		 * XXX: Doing a set on the whole document means that all the line
-		 * numbers need to be recalculated. This can be optimized further by
-		 * keeping track of what needs to be edited. However, for now this
-		 * optimization has not been done because although this leads to
-		 * increased CPU usage, it does not lead to a delay in total processing
-		 * time, but rather to a decrease in frame rate. Furthermore, if the
-		 * document overflows, the document's line numbers need to be
-		 * recalculated anyway, so little benefit.
-		 */
-		fDocument.set(update.getNewContents());
 	}
 
 	/**

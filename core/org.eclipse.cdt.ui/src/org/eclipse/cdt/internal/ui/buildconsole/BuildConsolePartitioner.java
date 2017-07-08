@@ -26,6 +26,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -103,6 +104,8 @@ public class BuildConsolePartitioner
 	private LogFile fLogFile = new LogFile();
 
 	private int fUpdateDelay = BuildConsolePreferencePage.DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS;
+
+	private long fOffset;
 
 	/**
 	 * Construct a partitioner that is not associated with a specific project
@@ -251,19 +254,23 @@ public class BuildConsolePartitioner
 			fDocumentMarkerManager.clear();
 		}
 
-		/*
-		 * This call is slow, it updates the UI as a side effect.
-		 *
-		 * XXX: Doing a set on the whole document means that all the line
-		 * numbers need to be recalculated. This can be optimized further by
-		 * keeping track of what needs to be edited. However, for now this
-		 * optimization has not been done because although this leads to
-		 * increased CPU usage, it does not lead to a delay in total processing
-		 * time, but rather to a decrease in frame rate. Furthermore, if the
-		 * document overflows, the document's line numbers need to be
-		 * recalculated anyway, so little benefit.
-		 */
-		fDocument.set(update.getNewContents());
+		try {
+			long offsetChangeSinceLastUpdate = update.getOffset() - fOffset;
+			int toTrim = (int) Math.min(offsetChangeSinceLastUpdate, fDocument.getLength());
+
+			int length = fDocument.getLength();
+			String newContents = update.getNewContents();
+			String appendContents = newContents.substring(length - toTrim);
+			// The append has to be done before the delete from head
+			// to avoid document becoming 0 length and therefore the
+			// listeners assume the document has been cleared
+			fDocument.replace(length + toTrim, 0, appendContents);
+			fDocument.replace(0, toTrim, ""); //$NON-NLS-1$
+		} catch (BadLocationException e) {
+			fDocument.set(update.getNewContents());
+		}
+
+		fOffset = update.getOffset();
 	}
 
 	/**

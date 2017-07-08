@@ -37,6 +37,11 @@ public class BuildConsolePartitionerEditData {
 		boolean needsClearDocumentMarkerManager();
 
 		/**
+		 * The content's offset since beginning of time.
+		 */
+		long getOffset();
+
+		/**
 		 * New contents for the build console.
 		 */
 		String getNewContents();
@@ -71,6 +76,11 @@ public class BuildConsolePartitionerEditData {
 	private boolean fClearDocumentMarkerManager = false;
 
 	/**
+	 * Offset of the start of the document since the beginning of time.
+	 */
+	private long fOffset = 0;
+
+	/**
 	 * Editable document, all modifications are made to this copy of the
 	 * document, then the UI thread occasionally gets these updates
 	 */
@@ -85,6 +95,7 @@ public class BuildConsolePartitionerEditData {
 	 * Set of streams that have been updated since the last UI update.
 	 */
 	private Set<IBuildConsoleStreamDecorator> fEditStreams = new HashSet<>();
+
 
 	public BuildConsolePartitionerEditData(int maxLines) {
 		fMaxLines = maxLines;
@@ -105,6 +116,7 @@ public class BuildConsolePartitionerEditData {
 		synchronized (this) {
 			fEditPartitions.clear();
 			fClearDocumentMarkerManager = true;
+			fOffset += fEditStringBuilder.length();
 			fEditStringBuilder.setLength(0);
 			fEditLineCount = 0;
 		}
@@ -239,6 +251,7 @@ public class BuildConsolePartitionerEditData {
 			fEditPartitions = newParitions;
 			fClearDocumentMarkerManager = true;
 
+			fOffset += offsetToOffset;
 			fEditStringBuilder.delete(0, offsetToOffset);
 			fEditLineCount = newNewlineCount;
 
@@ -287,11 +300,13 @@ public class BuildConsolePartitionerEditData {
 	 */
 	public UpdateUIData getUpdate() {
 		boolean clearDocumentMarkerManager;
+		long newOffset;
 		String newConents;
 		List<ITypedRegion> newPartitions;
 		List<IBuildConsoleStreamDecorator> streamsNeedingNotifcation;
 
 		synchronized (this) {
+			newOffset = fOffset;
 			newConents = fEditStringBuilder.toString();
 			newPartitions = new ArrayList<>(fEditPartitions);
 			clearDocumentMarkerManager = fClearDocumentMarkerManager;
@@ -320,6 +335,11 @@ public class BuildConsolePartitionerEditData {
 			@Override
 			public String getNewContents() {
 				return newConents;
+			}
+
+			@Override
+			public long getOffset() {
+				return newOffset;
 			}
 		};
 	}

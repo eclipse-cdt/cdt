@@ -53,24 +53,30 @@ public class BuildConsolePartitionerEditDataTest {
 		assertThat(update0.getNewContents(), is(""));
 		assertThat(update0.getStreamsNeedingNotifcation(), is(empty()));
 		assertThat(update0.needsClearDocumentMarkerManager(), is(true));
+		assertThat(update0.getOffset(), is(0L));
 
 		data.append("Line of text\n", stream1, null);
 		UpdateUIData update1 = data.getUpdate();
 		assertThat(update1.getNewContents(), is("Line of text\n"));
 		assertThat(update1.getStreamsNeedingNotifcation(), is(Arrays.asList(stream1)));
 		assertThat(update1.needsClearDocumentMarkerManager(), is(false));
+		assertThat(update1.getOffset(), is(0L));
 
 		data.append("Another line of text\n", stream2, null);
 		UpdateUIData update2 = data.getUpdate();
 		assertThat(update2.getNewContents(), is("Line of text\nAnother line of text\n"));
 		assertThat(update2.getStreamsNeedingNotifcation(), is(Arrays.asList(stream2)));
 		assertThat(update2.needsClearDocumentMarkerManager(), is(false));
+		assertThat(update2.getOffset(), is(0L));
 	}
 
 	@Test
 	public void testOverflow() {
+		StringBuilder all = new StringBuilder();
 		for (int i = 0; i < DEFAULT_MAX_LINES * 4; i++) {
-			data.append("Line " + i + "\n", stream1, null);
+			String text = "Line " + i + "\n";
+			data.append(text, stream1, null);
+			all.append(text);
 		}
 
 		UpdateUIData update = data.getUpdate();
@@ -86,6 +92,9 @@ public class BuildConsolePartitionerEditDataTest {
 		assertThat(contents, endsWith("Line " + lastLine + "\n"));
 		int firstLine = lastLine - newlines + 1;
 		assertThat(contents, startsWith("Line " + firstLine + "\n"));
+
+		long expectedOffset = all.indexOf(contents);
+		assertThat(update.getOffset(), is(expectedOffset));
 	}
 
 	@Test

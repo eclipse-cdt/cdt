@@ -69,12 +69,17 @@ public abstract class CSelector extends Composite {
 	private MouseListener mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent event) {
+			Activator.log(new Throwable(getClass().getName() + " mouse up"));
 			if (popup == null || popup.isDisposed()) {
 				setFocus();
 				openPopup();
 			} else {
 				closePopup();
 			}
+		}
+		
+		public void mouseDown(MouseEvent e) {
+			Activator.log(new Throwable(getClass().getName() + " mouse down"));
 		}
 	};
 
@@ -137,7 +142,7 @@ public abstract class CSelector extends Composite {
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
-		Activator.log(new Throwable(getClass().getName() + " created"));
+		Activator.log(new Throwable(getClass().getName() + ':' + Integer.toHexString(hashCode()) + " created"));
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout mainButtonLayout = new GridLayout();
@@ -170,6 +175,7 @@ public abstract class CSelector extends Composite {
 		super.dispose();
 		if (popup != null)
 			popup.dispose();
+		Activator.log(new Throwable(getClass().getName() + ':' + Integer.toHexString(hashCode()) + " disposed"));
 	}
 
 	public void setDelayedSelection(final Object element, long millis) {

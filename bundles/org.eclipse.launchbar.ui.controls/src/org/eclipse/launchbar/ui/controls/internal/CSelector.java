@@ -137,6 +137,7 @@ public abstract class CSelector extends Composite {
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
+		Activator.log(new Throwable(getClass().getName() + " created"));
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout mainButtonLayout = new GridLayout();

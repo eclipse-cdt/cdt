@@ -295,6 +295,7 @@ public abstract class CSelector extends Composite {
 	}
 
 	protected void openPopup() {
+		Activator.log(CSelector.this.getClass().getName() + " opening");
 		Object[] elements = contentProvider.getElements(input);
 		if (elements.length == 0 && !hasActionArea())
 			return;
@@ -342,6 +343,7 @@ public abstract class CSelector extends Composite {
 				saveShellSize();
 			}
 		});
+		Activator.log(CSelector.this.getClass().getName() + " openned");
 	}
 
 	protected String getDialogPreferencePrefix() {
@@ -382,14 +384,18 @@ public abstract class CSelector extends Composite {
 	}
 
 	private void closePopup() {
+		Activator.log(new Throwable(CSelector.this.getClass().getName() + " close requested"));
 		getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (popup == null || popup.isDisposed())
+				if (popup == null || popup.isDisposed()) {
+					Activator.log(CSelector.this.getClass().getName() + " close aborted");
 					return;
+				}
 				arrowTransition.to(arrowMax);
 				popup.setVisible(false);
 				popup.dispose();
+				Activator.log(CSelector.this.getClass().getName() + " closed");
 			}
 		});
 	}

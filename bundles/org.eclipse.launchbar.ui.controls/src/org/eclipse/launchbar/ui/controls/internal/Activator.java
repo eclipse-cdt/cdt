@@ -80,4 +80,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin.getLog().log(status);
 	}
 
+	public static void log(String msg) {
+		plugin.getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, msg));
+	}
 }

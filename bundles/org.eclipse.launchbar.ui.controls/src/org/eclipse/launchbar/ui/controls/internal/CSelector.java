@@ -69,17 +69,12 @@ public abstract class CSelector extends Composite {
 	private MouseListener mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent event) {
-			Activator.log(new Throwable(getClass().getName() + " mouse up"));
 			if (popup == null || popup.isDisposed()) {
 				setFocus();
 				openPopup();
 			} else {
 				closePopup();
 			}
-		}
-		
-		public void mouseDown(MouseEvent e) {
-			Activator.log(new Throwable(getClass().getName() + " mouse down"));
 		}
 	};
 
@@ -142,7 +137,6 @@ public abstract class CSelector extends Composite {
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
-		Activator.log(new Throwable(getClass().getName() + ':' + Integer.toHexString(hashCode()) + " created"));
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout mainButtonLayout = new GridLayout();
@@ -175,7 +169,6 @@ public abstract class CSelector extends Composite {
 		super.dispose();
 		if (popup != null)
 			popup.dispose();
-		Activator.log(new Throwable(getClass().getName() + ':' + Integer.toHexString(hashCode()) + " disposed"));
 	}
 
 	public void setDelayedSelection(final Object element, long millis) {
@@ -302,7 +295,6 @@ public abstract class CSelector extends Composite {
 	}
 
 	protected void openPopup() {
-		Activator.log(CSelector.this.getClass().getName() + " opening");
 		Object[] elements = contentProvider.getElements(input);
 		if (elements.length == 0 && !hasActionArea())
 			return;
@@ -350,7 +342,6 @@ public abstract class CSelector extends Composite {
 				saveShellSize();
 			}
 		});
-		Activator.log(CSelector.this.getClass().getName() + " openned");
 	}
 
 	protected String getDialogPreferencePrefix() {
@@ -391,18 +382,15 @@ public abstract class CSelector extends Composite {
 	}
 
 	private void closePopup() {
-		Activator.log(new Throwable(CSelector.this.getClass().getName() + " close requested"));
 		getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if (popup == null || popup.isDisposed()) {
-					Activator.log(CSelector.this.getClass().getName() + " close aborted");
 					return;
 				}
 				arrowTransition.to(arrowMax);
 				popup.setVisible(false);
 				popup.dispose();
-				Activator.log(CSelector.this.getClass().getName() + " closed");
 			}
 		});
 	}

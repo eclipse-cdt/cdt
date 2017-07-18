@@ -498,10 +498,13 @@ public class CPPSemantics {
 			name= (ICPPASTTemplateId) nameParent;
 			nameParent= name.getParent();
 		}
+		boolean isNestedNameSpecifier = false;
 		if (nameParent instanceof ICPPASTQualifiedName) {
 			if (name == ((ICPPASTQualifiedName) nameParent).getLastName()) {
 				name= (IASTName) nameParent;
 				nameParent= name.getParent();
+			} else {
+				isNestedNameSpecifier = true;
 			}
 		}
 
@@ -509,7 +512,7 @@ public class CPPSemantics {
 		// binding.
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
-			if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
+			if (isNestedNameSpecifier || namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
 				binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
 			} else if (data.isFunctionCall()) {
 				binding= new CPPUnknownMethod(data.skippedScope, name.getSimpleID());

@@ -10328,4 +10328,21 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		// Check that the TypeOfDependentExpression instantiated to the correct type.
 		helper.assertVariableValue("waldo", 42);
 	}
+	
+	//	template <class>
+	//	struct A {
+	//	    template <class>
+	//	    struct B {
+	//	        enum { val = 0 };
+	//	    };
+	//	};
+	//
+	//	template <class X>
+	//	struct C {
+	//	    struct D : A<X> {};
+	//	    enum { val = D::template B<X>::val };
+	//	};
+	public void testMemberOfUnknownMemberClass_519819() throws Exception {
+		parseAndCheckBindings();
+	}
 }

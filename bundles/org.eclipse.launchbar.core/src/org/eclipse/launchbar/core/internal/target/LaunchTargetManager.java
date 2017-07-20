@@ -8,6 +8,7 @@
 package org.eclipse.launchbar.core.internal.target;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	private Map<String, Map<String, ILaunchTarget>> targets;
 	private Map<String, IConfigurationElement> typeElements;
 	private Map<String, ILaunchTargetProvider> typeProviders = new LinkedHashMap<>();
-	private List<ILaunchTargetListener> listeners = new LinkedList<>();
+	private List<ILaunchTargetListener> listeners = Collections.synchronizedList(new LinkedList<>());
 
 	private static final String DELIMETER1 = ","; //$NON-NLS-1$
 	private static final String DELIMETER2 = ":"; //$NON-NLS-1$
@@ -201,8 +202,10 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			Activator.log(e);
 		}
 
-		for (ILaunchTargetListener listener : listeners) {
-			listener.launchTargetAdded(target);
+		synchronized (listeners) {
+			for (ILaunchTargetListener listener : listeners) {
+				listener.launchTargetAdded(target);
+			}
 		}
 
 		return target;
@@ -226,16 +229,20 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 				Activator.log(e);
 			}
 			
-			for (ILaunchTargetListener listener : listeners) {
-				listener.launchTargetRemoved(target);
+			synchronized (listeners) {
+				for (ILaunchTargetListener listener : listeners) {
+					listener.launchTargetRemoved(target);
+				}
 			}
 		}
 	}
 
 	@Override
 	public void targetStatusChanged(ILaunchTarget target) {
-		for (ILaunchTargetListener listener : listeners) {
-			listener.launchTargetStatusChanged(target);
+		synchronized (listeners) {
+			for (ILaunchTargetListener listener : listeners) {
+				listener.launchTargetStatusChanged(target);
+			}
 		}
 	}
 

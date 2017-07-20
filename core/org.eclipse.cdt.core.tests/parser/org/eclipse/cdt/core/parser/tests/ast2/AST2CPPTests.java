@@ -12323,4 +12323,42 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testSizeofArrayField_512932() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//void ns2 ();
+	//
+	//namespace ns1 {
+	//namespace ns2 {
+	//class TestNameSpace {
+	//public:
+	//	TestNameSpace();
+	//};
+	//}
+	//}
+	//
+	//using namespace ns1;
+	//using namespace ns2; //ns2 shouldn't be ambiguous because only namespace names should be considered.
+	//
+	//TestNameSpace::TestNameSpace() {
+	//}
+	public void testUsingDirectiveNamespaceWithPreviousFunctionName_517402() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//void ns2 ();
+	//namespace ns1 {
+	//namespace ns2 {
+	//class TestNameSpace {
+	//public:
+	//	TestNameSpace();
+	//};
+	//}
+	//}
+	//
+	//using namespace ns1;
+	//namespace ns12 = ns2;
+	//ns12::TestNameSpace::TestNameSpace() {
+	//}
+	public void testNamespaceAliasNamespaceWithPreviousFunctionName_517402() throws Exception {
+		parseAndCheckBindings();
+	}
 }

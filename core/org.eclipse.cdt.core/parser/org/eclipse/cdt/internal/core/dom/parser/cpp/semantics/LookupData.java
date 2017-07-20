@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -97,6 +98,7 @@ public class LookupData extends ScopeLookupData {
 	public boolean qualified;
 
 	public boolean forUsingDeclaration;
+	public boolean namespacesOnly;
 
     /** When computing the cost of a method call, treat the first argument as the implied object. */
 	public boolean argsContainImpliedObject;
@@ -174,6 +176,9 @@ public class LookupData extends ScopeLookupData {
 			typesOnly= true;
 		} else if (nameParent instanceof ICPPASTUsingDeclaration) {
 			forUsingDeclaration= true;
+		} else if (nameParent instanceof ICPPASTUsingDirective || nameParent instanceof ICPPASTNamespaceAlias) {
+			// [basic.lookup.udir]: Only namespace names are considered
+			namespacesOnly= true;
 		} else if (nameParent instanceof IASTDeclarator) {
 			fDeclarator= (IASTDeclarator) nameParent;
 		} else if (nameParent instanceof IASTFieldReference) {

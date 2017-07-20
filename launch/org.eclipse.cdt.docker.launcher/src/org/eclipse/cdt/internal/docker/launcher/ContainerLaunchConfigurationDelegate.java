@@ -37,6 +37,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.linuxtools.docker.core.IDockerContainerInfo;
 import org.eclipse.linuxtools.docker.core.IDockerNetworkSettings;
+import org.eclipse.linuxtools.docker.core.IDockerPortBinding;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 import org.eclipse.linuxtools.docker.ui.launch.IContainerLaunchListener;
 
@@ -89,6 +90,14 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 			if (info != null) {
 				IDockerNetworkSettings networkSettings = info.networkSettings();
 				return networkSettings.ipAddress();
+			}
+			return null;
+		}
+
+		public Map<String, List<IDockerPortBinding>> getPorts() {
+			if (info != null) {
+				IDockerNetworkSettings networkSettings = info.networkSettings();
+				return networkSettings.ports();
 			}
 			return null;
 		}
@@ -268,10 +277,29 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 					wc.setAttribute(
 							ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 							IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-					wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST,
-							job.getIpAddress());
-					wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT,
-							gdbserverPortNumber);
+					if (job.getPorts() != null) {
+						Map<String, List<IDockerPortBinding>> hostPorts = job
+								.getPorts();
+						List<IDockerPortBinding> bindingList = hostPorts
+								.get(gdbserverPortNumber + "/tcp"); //$NON-NLS-1$
+						if (bindingList != null && !bindingList.isEmpty()) {
+							IDockerPortBinding firstBinding = bindingList
+									.get(0);
+							wc.setAttribute(
+									IGDBLaunchConfigurationConstants.ATTR_HOST,
+									"localhost"); //$NON-NLS-1$
+							wc.setAttribute(
+									IGDBLaunchConfigurationConstants.ATTR_PORT,
+									firstBinding.hostPort());
+						}
+					} else {
+						wc.setAttribute(
+								IGDBLaunchConfigurationConstants.ATTR_HOST,
+								job.getIpAddress());
+						wc.setAttribute(
+								IGDBLaunchConfigurationConstants.ATTR_PORT,
+								gdbserverPortNumber);
+					}
 					wc.doSave();
 					try {
 						super.launch(configuration, mode, launch, monitor);

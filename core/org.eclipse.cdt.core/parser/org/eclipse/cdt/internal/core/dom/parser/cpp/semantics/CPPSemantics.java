@@ -1365,6 +1365,12 @@ public class CPPSemantics {
 			bindings = ArrayUtil.filter(bindings, new RecursionResolvingBindingFilter());
 		}
 
+		if (data.namespacesOnly) {
+			bindings = ArrayUtil.filter(bindings, (argument) -> {
+				return argument instanceof ICPPNamespace;
+			});
+		}
+
 		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
 	}
 

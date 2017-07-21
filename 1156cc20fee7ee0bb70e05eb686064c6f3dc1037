@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_e8dbb809",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2484,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-07-21T03:19:12Z",
+      "side": 1,
+      "message": "For false-positive syntax or semantic errors, I generally use the following strategy:\n\n  - If the bug requires more than two files\n    to reproduce, I use IndexMultiFileTest.\n\n  - If the bug requires two files (source and \n    header) to reproduce, I use \n    IndexCPP{Binding,Template}ResolutionTest.\n\n  - If the bug reproduces with a single file,\n    I use one of the AST2 tests.",
+      "parentUuid": "c7880b39_08f56479",
+      "range": {
+        "startLine": 2484,
+        "startChar": 3,
+        "endLine": 2484,
+        "endChar": 4
+      },
+      "revId": "1156cc20fee7ee0bb70e05eb686064c6f3dc1037",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_a868d0e7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 1

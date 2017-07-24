@@ -215,8 +215,6 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return EvalFixed.INCOMPLETE;
 
 		final ICPPEvaluation nestedEval = fOperand.getEvaluation();
-		if (fOperator == op_bracketedPrimary)
-			return nestedEval;
 
 		if (nestedEval.isFunctionSet() && fOperator == op_amper) {
 			return nestedEval;

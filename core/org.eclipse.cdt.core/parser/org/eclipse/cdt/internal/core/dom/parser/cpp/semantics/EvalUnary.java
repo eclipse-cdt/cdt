@@ -18,6 +18,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_alignOf;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_amper;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_bracketedPrimary;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_minus;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_noexcept;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_not;
@@ -362,6 +363,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 		case op_prefixDecr:
 		case op_prefixIncr:
 			return LVALUE;
+		case op_bracketedPrimary:
+			return fArgument.getValueCategory();
 		default:
 			return PRVALUE;
 		}

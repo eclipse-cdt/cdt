@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description>
+      Update site for LSP4E C/C++ Support.
+   </description>
+   <feature url="features/org.eclipse.lsp4e.cpp_0.0.0.qualifier.jar" id="org.eclipse.lsp4e.cpp" version="0.0.0">
+      <category name="LSP4E C/C++ Support"/>
+   </feature>
+   <category-def name="LSP4E C/C++ Support" label="LSP4E C/C++ Support Main Features"/>
+</site>

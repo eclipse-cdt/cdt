@@ -812,7 +812,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//	    Iter it;                                     //$class,localVariableDeclaration
 	//      // TODO: The fact that the opening parenthesis gets its own overloadedOperator
 	//      //       semantic highlighting is an (unrelated) bug.
-	//	    1 + (*it).waldo;                             //$overloadedOperator,overloadedOperator,localVariable,field
+	//	    1 + (*it).waldo;                             //$overloadedOperator,localVariable,field
 	//	}
 	public void testOverloadedOperatorStar_539535() throws Exception {
 		makeAssertions();

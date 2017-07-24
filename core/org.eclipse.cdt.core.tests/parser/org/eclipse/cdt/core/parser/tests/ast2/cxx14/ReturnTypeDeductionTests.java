@@ -313,4 +313,21 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
+
+	// struct A {
+	//     decltype(auto) f() { return (var); }
+	//     int var{};
+	// };
+	public void testParenthesizedIdIsLValueReference_520117() throws Exception {
+		assertReturnType("f", CommonCPPTypes.referenceToInt);
+	}
+
+	//	struct s{ int v{}; };
+	//
+	//	decltype(auto) f() {
+	//	    return (s{}.v);
+	//	}
+	public void testParenthesizedXValueIsRValueReference_520117() throws Exception {
+		assertReturnType("f", CommonCPPTypes.rvalueReferenceToInt);
+	}
 }

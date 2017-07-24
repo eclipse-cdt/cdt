@@ -148,6 +148,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -2424,6 +2425,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 			return ArrayUtil.trim(fReturnEvals);
 		}
+
 	}
 
 	private static IType deduceTypeFromReturnEvaluation(ICPPEvaluation returnEval, IASTDeclSpecifier autoDeclSpec,

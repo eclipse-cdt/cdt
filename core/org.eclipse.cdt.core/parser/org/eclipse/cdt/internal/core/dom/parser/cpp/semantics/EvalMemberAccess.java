@@ -343,8 +343,9 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {
 				if (fIsPointerDeref)
 					return LVALUE;
-
-				return fOwnerValueCategory;
+				// Since C++11 (DR616), E1.E2 is an xvalue iff. E1 is not an lvalue and E2
+				// has non reference type and designates a non-static data-member.
+				return fOwnerValueCategory == LVALUE ? LVALUE : XVALUE;
 			}
 			return LVALUE;
 		}

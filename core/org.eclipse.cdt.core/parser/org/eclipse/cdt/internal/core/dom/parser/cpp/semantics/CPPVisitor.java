@@ -144,6 +144,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -2323,6 +2324,7 @@ public class CPPVisitor extends ASTQueries {
 				CPPSemantics.VOID_TYPE, ValueCategory.PRVALUE, IntegralValue.UNKNOWN);
 		
 		private ICPPEvaluation fReturnEval = null;
+		private ICPPASTInitializerClause fReturnExpr = null;
 		private boolean fEncounteredReturnStatement = false;
 		
 		protected ReturnTypeDeducer(IASTFunctionDefinition func) {
@@ -2337,8 +2339,8 @@ public class CPPVisitor extends ASTQueries {
 			if (returnExpression == null) {
 				returnEval = voidEval;
 			} else {
-				
-				returnEval = ((ICPPASTInitializerClause) returnExpression).getEvaluation();
+				fReturnExpr = ((ICPPASTInitializerClause) returnExpression);
+				returnEval = fReturnExpr.getEvaluation();
 			}
 			IType returnType = returnEval.getType(stmt);
 			if (returnType instanceof ISemanticProblem) {
@@ -2367,13 +2369,17 @@ public class CPPVisitor extends ASTQueries {
 			}
 			return fReturnEval;
 		}
+
+		public ICPPASTExpression getReturnExpression() {
+			return (ICPPASTExpression)fReturnExpr;
+		}
 	}
 
 	public static IType deduceReturnType(IASTStatement functionBody, IASTDeclSpecifier autoDeclSpec, 
 			IASTDeclarator autoDeclarator, PlaceholderKind placeholder, IASTNode point) {
 		ICPPEvaluation returnEval = null;
+		ReturnTypeDeducer deducer = new ReturnTypeDeducer(null);
 		if (functionBody != null) {
-			ReturnTypeDeducer deducer = new ReturnTypeDeducer(null);
 			functionBody.accept(deducer);
 			returnEval = deducer.getReturnEvaluation();
 		}
@@ -2393,7 +2399,24 @@ public class CPPVisitor extends ASTQueries {
 				// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
 				return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 			}
-			return CPPSemantics.getDeclTypeForEvaluation(returnEval, point);
+			IType returnType = CPPSemantics.getDeclTypeForEvaluation(returnEval, point);
+			ICPPASTExpression returnExpr = deducer.getReturnExpression();
+			if (returnExpr instanceof ICPPASTUnaryExpression) {
+				ICPPASTUnaryExpression unary = (ICPPASTUnaryExpression) returnExpr;
+				if (unary.getOperator() == ICPPASTUnaryExpression.op_bracketedPrimary) {
+					switch (returnEval.getValueCategory(point)) {
+					case LVALUE:
+						returnType = new CPPReferenceType(returnType, false);
+						break;
+					case XVALUE:
+						returnType = new CPPReferenceType(returnType, true);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			return returnType;
 		} else /* auto */ {
 			if (autoDeclSpec == null || autoDeclarator == null) {
 				return returnEval.getType(point);

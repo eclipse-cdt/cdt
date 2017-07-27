@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -97,6 +98,12 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Prepend to a tool option value:         -Tp         {toolid} {optionid=value}
  *   - Remove a tool option:                   -Tr         {toolid} {optionid=value}
  *   - Disable indexer:                        -no-indexer
+ *   - Error marker types to consider:         -marker-type {all | cdt | marker_id}
+ *        where:
+ *           all is all markers -- default
+ *           cdt is C/C++ Problem markers
+ *           marker_id, e.g. org.eclipse.cdt.core.problem
+ *   - Display all error markers:              -printErrorMarkers
  *
  * Build output is automatically sent to stdout.
  * @since 6.0
@@ -182,6 +189,10 @@ public class HeadlessBuilder implements IApplication {
 	private List<ToolOption> toolOptions = new ArrayList<ToolOption>();
 	/** Map from configuration ID -> Set of SavedToolOptions */
 	private Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<String, Set<SavedToolOption>>();
+	private boolean markerTypesDefault = true;
+	private boolean markerTypesAll = false;
+	private Set<String> markerTypes = new HashSet<>();
+	private boolean printErrorMarkers = false;
 
 	private static final String MATCH_ALL_CONFIGS = ".*"; //$NON-NLS-1$
 
@@ -387,19 +398,43 @@ public class HeadlessBuilder implements IApplication {
 	}
 
 	private boolean isProjectSuccesfullyBuild(IProject project) {
-		boolean result = false;
 		try {
-			result = project.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE) < IMarker.SEVERITY_ERROR;
+			for (String markerType : markerTypes) {
+				int findMaxProblemSeverity = project.findMaxProblemSeverity(markerType, true, IResource.DEPTH_INFINITE);
+				if (findMaxProblemSeverity >= IMarker.SEVERITY_ERROR) {
+					return false;
+				}
+			}
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+			return false;
+		}
+		return true;
+	}
+
+	private void accumulateErrorMarkers(IProject project, List<String> allBuildErrors) {
+		try {
+			for (String markerType : markerTypes) {
+				IMarker[] findMarkers = project.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+				for (IMarker marker : findMarkers) {
+					int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+					if (severity >= IMarker.SEVERITY_ERROR) {
+						// the string format of Markers is not API and recommended only for debugging, but
+						// it suits our purpose here.
+						allBuildErrors.add(marker.toString());
+					}
+				}
+			}
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
-		return result;
 	}
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// Build result: whether projects were built successfully
 		boolean buildSuccessful = true;
+		List<String> allBuildErrors = new ArrayList<>();
 
 		// Check its OK to use this workspace as IDEApplication does
 		if (!checkInstanceLocation())
@@ -425,6 +460,11 @@ public class HeadlessBuilder implements IApplication {
 			// Handle user provided arguments
 			if (!getArguments((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
 				return ERROR;
+
+			if (markerTypesDefault || markerTypesAll) {
+				markerTypes.clear();
+				markerTypes.add(IMarker.PROBLEM);
+			}
 
 			if (disableIndexer) {
 				CCorePlugin.getIndexManager().setDefaultIndexerId(IPDOMManager.ID_NO_INDEXER);
@@ -513,16 +553,24 @@ public class HeadlessBuilder implements IApplication {
 
 					System.out.println(HeadlessBuildMessages.HeadlessBuilder_building_all);
 					root.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-					for(IProject p : root.getProjects())
+					for(IProject p : root.getProjects()) {
 						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
+						if (printErrorMarkers) {
+							accumulateErrorMarkers(p, allBuildErrors);
+						}
+					}
 				} else {
 					// Resolve the regular expression project names to build configurations
 					for (String regEx : projectRegExToBuild)
 						matchConfigurations(regEx, allProjects, configsToBuild);
 					// Build the list of configurations
 					buildConfigurations(configsToBuild, monitor, IncrementalProjectBuilder.FULL_BUILD);
-					for(IProject p : configsToBuild.keySet())
+					for(IProject p : configsToBuild.keySet()) {
 						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
+						if (printErrorMarkers) {
+							accumulateErrorMarkers(p, allBuildErrors);
+						}
+					}
 				}
 			} finally {
 				// Reset the tool options
@@ -555,41 +603,48 @@ public class HeadlessBuilder implements IApplication {
 			// Save modified workspace (bug 513763)
 			root.getWorkspace().save(true, monitor);
 		}
-
+		if (printErrorMarkers) {
+			if (buildSuccessful) {
+				System.out.println(HeadlessBuildMessages.HeadlessBuilder_completed_successfully);
+			} else {
+				System.out.println(HeadlessBuildMessages.HeadlessBuilder_encountered_errors);
+				for (String buildError : allBuildErrors) {
+					System.err.println(buildError);
+				}
+			}
+		}
 		return buildSuccessful ? OK : ERROR;
 	}
 
-    /**
-     * Verify that it's safe to use the specified workspace. i.e. that
-     * we can write to it and that it's not already locked / in-use.
-     *
-     * Return true if a valid workspace path has been set and false otherwise.
-     *
-     * @return true if a valid instance location has been set and false
-     *         otherwise
-     */
-    private boolean checkInstanceLocation() {
-        // -data @none was specified but an ide requires workspace
-        Location instanceLoc = Platform.getInstanceLocation();
-        if (instanceLoc == null || !instanceLoc.isSet()) {
-        	System.err.println(HeadlessBuildMessages.HeadlessBuilder_MustSpecifyWorkspace);
-            return false;
-        }
+	/**
+	 * Verify that it's safe to use the specified workspace. i.e. that we can write to it and that it's not
+	 * already locked / in-use.
+	 *
+	 * Return true if a valid workspace path has been set and false otherwise.
+	 *
+	 * @return true if a valid instance location has been set and false otherwise
+	 */
+	private boolean checkInstanceLocation() {
+		// -data @none was specified but an ide requires workspace
+		Location instanceLoc = Platform.getInstanceLocation();
+		if (instanceLoc == null || !instanceLoc.isSet()) {
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_MustSpecifyWorkspace);
+			return false;
+		}
 
-        // -data "/valid/path", workspace already set
-        try {
-            // at this point its valid, so try to lock it to prevent concurrent use
-            if (!instanceLoc.lock()) {
-            	System.err.println(HeadlessBuildMessages.HeadlessBuilder_WorkspaceInUse);
-                return false;
-            }
-            return true;
-        } catch (IOException e) {
-        	System.err.println(HeadlessBuildMessages.HeadlessBuilder_CouldntLockWorkspace);
-        }
-        return false;
-    }
-
+		// -data "/valid/path", workspace already set
+		try {
+			// at this point its valid, so try to lock it to prevent concurrent use
+			if (!instanceLoc.lock()) {
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_WorkspaceInUse);
+				return false;
+			}
+			return true;
+		} catch (IOException e) {
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_CouldntLockWorkspace);
+		}
+		return false;
+	}
 
 	/**
 	 * Helper method to process expected arguments
@@ -611,6 +666,8 @@ public class HeadlessBuilder implements IApplication {
 	 *   -Tp         {toolid} {optionid=value} prepend to a tool option value
 	 *   -Tr         {toolid} {optionid=value} remove a tool option value
 	 *   -no-indexer Disable indexer
+	 *   -marker-types Which markers to consider
+	 *   -printErrorMarkers Print all error markers that caused build to fail
 	 *
 	 * Each argument may be specified more than once
 	 * @param args String[] of arguments to parse
@@ -621,7 +678,9 @@ public class HeadlessBuilder implements IApplication {
 			if (args == null || args.length == 0)
 				throw new Exception(HeadlessBuildMessages.HeadlessBuilder_no_arguments);
 			for (int i = 0; i < args.length; i++) {
-				if ("-import".equals(args[i])) { //$NON-NLS-1$
+				if ("-help".equals(args[i])) { //$NON-NLS-1$
+					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_help_requested);
+				} else if ("-import".equals(args[i])) { //$NON-NLS-1$
 					projectsToImport.add(args[++i]);
 				} else if ("-importAll".equals(args[i])) { //$NON-NLS-1$
 					projectTreeToImport.add(args[++i]);
@@ -667,6 +726,10 @@ public class HeadlessBuilder implements IApplication {
 					addToolOption(toolId, option, ToolOption.REMOVE);
 				} else if ("-no-indexer".equals(args[i])) { //$NON-NLS-1$
 					disableIndexer = true;
+				} else if ("-marker-type".equals(args[i])) { //$NON-NLS-1$
+					addMarkerType(args[++i]);
+				} else if ("-printErrorMarkers".equals(args[i])) { //$NON-NLS-1$
+					printErrorMarkers = true;
 				} else {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_unknown_argument + args[i]);
 				}
@@ -681,6 +744,8 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_clean_build);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_no_indexer);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_marker_type);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_print_all_error_markers);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_InlucdePath);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_IncludeFile);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_PreprocessorDefine);
@@ -728,6 +793,17 @@ public class HeadlessBuilder implements IApplication {
 			optionId = option.substring(0, option.indexOf('='));
 		}
 		toolOptions.add(new ToolOption(toolId, optionId, value, operation));
+	}
+
+	private void addMarkerType(String markerType) {
+		markerTypesDefault = false;
+		if ("all".equals(markerType)) { //$NON-NLS-1$
+			markerTypesAll = true;
+		} else if ("cdt".equals(markerType)) { //$NON-NLS-1$
+			markerTypes.add(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+		} else {
+			markerTypes.add(markerType);
+		}
 	}
 
 	/**

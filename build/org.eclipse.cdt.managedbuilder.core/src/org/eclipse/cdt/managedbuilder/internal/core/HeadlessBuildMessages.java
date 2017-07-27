@@ -21,13 +21,16 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_cant_be_found;
 	public static String HeadlessBuilder_clean_failed;
 	public static String HeadlessBuilder_cleaning_all_projects;
+	public static String HeadlessBuilder_completed_successfully;
 	public static String HeadlessBuilder_CouldntLockWorkspace;
 	public static String HeadlessBuilder_Directory;
+	public static String HeadlessBuilder_encountered_errors;
 	public static String HeadlessBuilder_EnvVar_Append;
 	public static String HeadlessBuilder_EnvVar_Prepend;
 	public static String HeadlessBuilder_EnvVar_Remove;
 	public static String HeadlessBuilder_EnvVar_Replace;
 	public static String HeadlessBuilder_Error;
+	public static String HeadlessBuilder_help_requested;
 	public static String HeadlessBuilder_importAll;
 	public static String HeadlessBuilder_IncludeFile;
 	public static String HeadlessBuilder_InlucdePath;
@@ -57,7 +60,9 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_invalid_uri;
 	public static String HeadlessBuilder_PreprocessorDefine;
 	public static String HeadlessBuilder_usage_import;
+	public static String HeadlessBuilder_usage_marker_type;
 	public static String HeadlessBuilder_usage_no_indexer;
+	public static String HeadlessBuilder_usage_print_all_error_markers;
 	public static String HeadlessBuilder_Workspace;
 	public static String HeadlessBuilder_WorkspaceInUse;
 	static {

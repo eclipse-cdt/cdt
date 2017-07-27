@@ -98,7 +98,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Prepend to a tool option value:         -Tp         {toolid} {optionid=value}
  *   - Remove a tool option:                   -Tr         {toolid} {optionid=value}
  *   - Disable indexer:                        -no-indexer
- *   - Error marker types to consider:         -marker-type {all | cdt | marker_id}
+ *   - Error marker types to consider:         -markerType {all | cdt | marker_id}
  *        where:
  *           all is all markers -- default
  *           cdt is C/C++ Problem markers
@@ -666,7 +666,7 @@ public class HeadlessBuilder implements IApplication {
 	 *   -Tp         {toolid} {optionid=value} prepend to a tool option value
 	 *   -Tr         {toolid} {optionid=value} remove a tool option value
 	 *   -no-indexer Disable indexer
-	 *   -marker-types Which markers to consider
+	 *   -markerType Which markers to consider
 	 *   -printErrorMarkers Print all error markers that caused build to fail
 	 *
 	 * Each argument may be specified more than once
@@ -726,7 +726,7 @@ public class HeadlessBuilder implements IApplication {
 					addToolOption(toolId, option, ToolOption.REMOVE);
 				} else if ("-no-indexer".equals(args[i])) { //$NON-NLS-1$
 					disableIndexer = true;
-				} else if ("-marker-type".equals(args[i])) { //$NON-NLS-1$
+				} else if ("-markerType".equals(args[i])) { //$NON-NLS-1$
 					addMarkerType(args[++i]);
 				} else if ("-printErrorMarkers".equals(args[i])) { //$NON-NLS-1$
 					printErrorMarkers = true;

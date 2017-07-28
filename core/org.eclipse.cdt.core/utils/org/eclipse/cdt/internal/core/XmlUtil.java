@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -384,14 +385,40 @@ public class XmlUtil {
 			String utfString = new String(toByteArray(doc), ENCODING_UTF_8);
 			String lineSeparator = Util.getLineSeparator(file);
 			utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
-			InputStream input = new ByteArrayInputStream(utfString.getBytes(ENCODING_UTF_8));
+			byte[] newContents = utfString.getBytes(ENCODING_UTF_8);
+			InputStream input = new ByteArrayInputStream(newContents);
 
 			if (file.exists()) {
-				file.setContents(input, IResource.FORCE, null);
+				byte[] existingContents = readFile(file);
+				if (!Arrays.equals(existingContents, newContents)) {
+					file.setContents(input, IResource.FORCE, null);
+				}
 			} else {
 				file.create(input, IResource.FORCE, null);
 			}
 		} catch (UnsupportedEncodingException e) {
+		}
+	}
+
+	/**
+	 * Read whole file, returning null on any error.
+	 */
+	private static byte[] readFile(IFile file) {
+		try (InputStream is = file.getContents(true)) {
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+			int nRead;
+			byte[] data = new byte[4096];
+
+			while ((nRead = is.read(data)) != -1) {
+				buffer.write(data, 0, nRead);
+			}
+
+			buffer.flush();
+
+			return buffer.toByteArray();
+		} catch (IOException | CoreException e) {
+			return null;
 		}
 	}
 

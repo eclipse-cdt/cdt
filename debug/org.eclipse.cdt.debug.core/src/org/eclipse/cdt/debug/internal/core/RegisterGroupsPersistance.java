@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -32,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class RegisterGroupsPersistance {
-	private static final String BLANK_STRING = ""; //$NON-NLS-1$
+	private static final String DEFAULT_ATTR_DEBUGGER_REGISTER_GROUPS_VALUE = ""; //$NON-NLS-1$
 	private static final String DEFAULT_LAUNCH_CONFIGURATION_TARGET_ATTRIBUTE = ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_REGISTER_GROUPS;
 	private static final String ELEMENT_REGISTER_GROUP_LIST = "registerGroups"; //$NON-NLS-1$
 	private static final String ATTR_REGISTER_GROUP_MEMENTO = "memento"; //$NON-NLS-1$
@@ -166,7 +167,8 @@ public class RegisterGroupsPersistance {
 		List<IRegisterGroupDescriptor> groups = new ArrayList<IRegisterGroupDescriptor>();
 		String memento;
 		
-			memento = fLaunchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_REGISTER_GROUPS, BLANK_STRING);
+		memento = fLaunchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_REGISTER_GROUPS,
+				DEFAULT_ATTR_DEBUGGER_REGISTER_GROUPS_VALUE);
 
 			if (memento != null && memento.length() > 0) {
 				Node node = DebugPlugin.parseDocument(memento);
@@ -207,9 +209,19 @@ public class RegisterGroupsPersistance {
 		try {
 			ILaunchConfigurationWorkingCopy wc = fLaunchConfig.getWorkingCopy();
 
-			//if no groups present, save to a blank string, i.e. expected by CDI and handled by DSF
-			wc.setAttribute(fLaunchConfigTargetAttribute, (groups.length > 0) ? getMemento(groups) : BLANK_STRING);
-			wc.doSave();
+			// if no groups present, save to a blank string, i.e. expected by CDI and
+			// handled by DSF
+			String newValue = (groups.length > 0) ? getMemento(groups) : DEFAULT_ATTR_DEBUGGER_REGISTER_GROUPS_VALUE;
+			String oldValue = DEFAULT_ATTR_DEBUGGER_REGISTER_GROUPS_VALUE;
+			try {
+				oldValue = wc.getAttribute(fLaunchConfigTargetAttribute, DEFAULT_ATTR_DEBUGGER_REGISTER_GROUPS_VALUE);
+			} catch (CoreException e) {
+				// ignored, treat as default
+			}
+			if (!Objects.equals(oldValue, newValue)) {
+				wc.setAttribute(fLaunchConfigTargetAttribute, newValue);
+				wc.doSave();
+			}
 		} catch (CoreException e) {
 			abort(e.getMessage() + ", cause: " + e.getCause(), e); //$NON-NLS-1$
 		}

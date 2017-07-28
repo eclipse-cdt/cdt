@@ -17,6 +17,7 @@ package org.eclipse.cdt.dsf.debug.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -77,6 +78,7 @@ import org.w3c.dom.NodeList;
  */
 public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension
 {
+	private static final String DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE = ""; //$NON-NLS-1$
 	private final String           fModelId;
 	private final DsfSession       fSession;
     private final DsfExecutor      fExecutor;
@@ -213,7 +215,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
      */
     public void initialize(final IMemoryDMContext memoryCtx) {
         try {
-            final String memento = fLaunchConfig.getAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS, ""); //$NON-NLS-1$
+			final String memento = fLaunchConfig.getAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS,
+					DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE);
             if (memento != null && memento.trim().length() != 0) {
                 // Submit the runnable to install the monitors on dispatch thread.
                 getExecutor().submit(new Runnable() {
@@ -281,11 +284,19 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	public void saveMemoryBlocks() {
 		try {
 			ILaunchConfigurationWorkingCopy wc = fLaunchConfig.getWorkingCopy();
-			wc.setAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS, getMemento());
-			wc.doSave();
-		}
-		catch( CoreException e ) {
-            DsfPlugin.getDefault().getLog().log(e.getStatus());
+			String newValue = getMemento();
+			String oldValue = DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE;
+			try {
+				oldValue = wc.getAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS, DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE);
+			} catch (CoreException e) {
+				// ignored, treat as default
+			}
+			if (!Objects.equals(oldValue, newValue)) {
+				wc.setAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS, newValue);
+				wc.doSave();
+			}
+		} catch (CoreException e) {
+			DsfPlugin.getDefault().getLog().log(e.getStatus());
 		}
 	}
 

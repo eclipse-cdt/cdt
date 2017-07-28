@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_7eddab8d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "2017?",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_5e39cf55",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "Why so many contributors if this is new file? Was it copied from somewhere?",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_bee3934c",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "Messages class should be in separate file",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_fed0bb72",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "realloc in java, nice. We don\u0027t do that use ArrayList class.",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_5ed46f62",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "use java 8 io try block\ntry (BufferedInputStream stream \u003d ...) {\n}",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7e04cb8b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "should not be hardcoded, see my comment in help messages",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_befab3e6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "If they provided file in command line, why do need to check extension?",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_be28f30a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "don\u0027t hardcode \u0027eclipse\u0027 as launcher name, it may vary, there is a way to retrieve it but I would just drop it from usage line",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_9e37b768",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "you have to used default extension set, or provide option to specify extra extensions.\nAlso if file specified explicitly it should just format it.\nI am not sure exactly were have default extension but it will minim include .C .cc .cxx .hh and .hpp files.",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_de2dbf1a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "In English there is no space between last letter and first :\nI.e. {0}:",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_fe451bcc",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "path: {0}",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_3e3c0348",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-07-28T21:41:13Z",
+      "side": 1,
+      "message": "Skipping the file.",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

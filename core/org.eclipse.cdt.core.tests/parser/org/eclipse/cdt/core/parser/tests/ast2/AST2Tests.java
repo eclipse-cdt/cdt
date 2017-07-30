@@ -7658,4 +7658,15 @@ public class AST2Tests extends AST2TestBase {
     	labelResolutionHelper(getAssertionHelper(C));
     	labelResolutionHelper(getAssertionHelper(CPP));
     }
+    
+    //	int arr1[5];
+    //	int arr2[5];
+    //	void foo(bool cond) {
+    //		cond ? arr1 : arr2;
+    //	}
+    public void testArrayTypesInConditionalExpression_520049() throws Exception {
+    	BindingAssertionHelper helper = getAssertionHelper(C);
+    	IASTConditionalExpression expr = helper.assertNode("cond ? arr1 : arr2");
+    	assertSameType(expr.getExpressionType(), CommonCTypes.pointerToInt);
+    }
 }

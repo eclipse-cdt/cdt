@@ -232,11 +232,11 @@ public class CASTBinaryExpression extends ASTNode
 
         case IASTBinaryExpression.op_plus:
         	if (type1 instanceof IArrayType) {
-        		return arrayTypeToPointerType((ICArrayType) type1);
+        		return Conversions.arrayTypeToPointerType((ICArrayType) type1);
         	} else if (type2 instanceof IPointerType) {
         		return restoreTypedefs(type2, originalType2);
         	} else if (type2 instanceof IArrayType) {
-        		return arrayTypeToPointerType((ICArrayType) type2);
+        		return Conversions.arrayTypeToPointerType((ICArrayType) type2);
         	}
         	break;
 
@@ -251,13 +251,6 @@ public class CASTBinaryExpression extends ASTNode
 		}
 		return restoreTypedefs(type1, originalType1);
     }
-
-	private IType arrayTypeToPointerType(ICArrayType type) {
-		return new CPointerType(type.getType(),
-				(type.isConst() ? CPointerType.IS_CONST : 0) |
-				(type.isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-				(type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
-	}
 
 	@Override
 	public boolean isLValue() {

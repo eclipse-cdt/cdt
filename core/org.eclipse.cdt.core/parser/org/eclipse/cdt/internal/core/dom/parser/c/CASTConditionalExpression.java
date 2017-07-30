@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -197,6 +198,14 @@ public class CASTConditionalExpression extends ASTNode implements
 			if (positiveType.isSameType(negativeType)) {
 				return positiveType;
 			}
+		}
+		
+		// Perform array-to-pointer decay on the operand types.
+		if (positiveType instanceof ICArrayType) {
+			positiveType = Conversions.arrayTypeToPointerType(((ICArrayType) positiveType));
+		}
+		if (negativeType instanceof ICArrayType) {
+			negativeType = Conversions.arrayTypeToPointerType(((ICArrayType) negativeType));
 		}
 
 		// [6.5.15] p6: If both the second and third operands are pointers or one is a null pointer

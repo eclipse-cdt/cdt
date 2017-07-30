@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_698df308",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2404,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-07-30T00:34:54Z",
+      "side": 1,
+      "message": "There are two issues with this solution approach:\n\n  - We are duplicating much of the logic inside\n    CPPSemantics.getDeclTypeForEvaluation().\n\n  - Other call sites of CPPSemantics.getDeclTypeForEvaluation()\n    (there is currently just one other, in \n    CPPTemplates.instantiateType()) are prone to the same issue\n    and are not fixed by this patch.\n\nI think a better solution would be to ensure that CPPSemantics.getDeclTypeForEvaluation() itself handles this case correctly, by making sure that the \u0027namedEntity\u0027 variable inside that function becomes false for parenthesized expressions.\n\nOne approach to achieve this would be to create an EvalUnary for parenthesized expressions, instead of just using the evaluation for the expression inside the parenthesis.",
+      "revId": "80256557366fb724b132aee17b97b567d77dba75",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

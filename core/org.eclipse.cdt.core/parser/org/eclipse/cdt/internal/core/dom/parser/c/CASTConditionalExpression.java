@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -198,6 +199,14 @@ public class CASTConditionalExpression extends ASTNode implements
 				return positiveType;
 			}
 		}
+		
+		// Perform array-to-pointer decay on the operand types.
+		if (positiveType instanceof ICArrayType) {
+			positiveType = Conversions.arrayTypeToPointerType(((ICArrayType) positiveType));
+		}
+		if (negativeType instanceof ICArrayType) {
+			negativeType = Conversions.arrayTypeToPointerType(((ICArrayType) negativeType));
+		}
 
 		// [6.5.15] p6: If both the second and third operands are pointers or one is a null pointer
 		// constant and the other is a pointer, the result type is a pointer to a type qualified with
@@ -217,11 +226,12 @@ public class CASTConditionalExpression extends ASTNode implements
 			IType positivePointee = CVisitor.unwrapCV(positivePointeeCV);
 			IType negativePointee = CVisitor.unwrapCV(negativePointeeCV);
 			IType resultPointee;
-			if (positivePointee.isSameType(CBasicType.VOID) || negativePointee.isSameType(CBasicType.VOID)) {
-				resultPointee = CBasicType.VOID;
-			} else {
-				// TODO: Implement checking for compatible types and computing the composite type.
+			if (positivePointee.isSameType(negativePointee)) {
 				resultPointee = negativePointee;
+			} else if (positivePointee.isSameType(CBasicType.VOID) || negativePointee.isSameType(CBasicType.VOID)) {
+				resultPointee = CBasicType.VOID;
+			} else  {
+				return ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return new CPointerType(
 					ExpressionTypes.restoreCV(resultPointee, positivePointeeCV, negativePointeeCV), 0);

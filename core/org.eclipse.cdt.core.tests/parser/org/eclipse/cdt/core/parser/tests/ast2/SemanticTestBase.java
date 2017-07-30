@@ -47,6 +47,7 @@ public class SemanticTestBase extends BaseTestCase {
     protected static class CommonCTypes {
     	public static IType pointerToVoid = pointerTo(CBasicType.VOID);
     	public static IType pointerToConstVoid = pointerTo(constOf(CBasicType.VOID));
+    	public static IType pointerToInt = pointerTo(CBasicType.INT);
     	public static IType pointerToConstInt = pointerTo(constOf(CBasicType.INT));
     	public static IType pointerToVolatileInt = pointerTo(volatileOf(CBasicType.INT));
     	public static IType pointerToConstVolatileInt = pointerTo(constVolatileOf(CBasicType.INT));

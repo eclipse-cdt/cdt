@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="CommandLauncherFactory" name="CommandLauncherFactory"/>
       </appInfo>
       <documentation>
-         This extension point is used to contribute a Command Launcher factory to CDT.  A Command Launcher factory creates a Command Launcher for running commands. 
+         This extension point is used to contribute a Command Launcher factory to CDT.  A Command Launcher factory creates a Command Launcher for running commands.
       </documentation>
    </annotation>
 
@@ -17,8 +17,8 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="cextension"/>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="factory"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,17 +47,23 @@
       </complexType>
    </element>
 
-   <element name="cextension">
+   <element name="factory">
       <complexType>
-         <sequence>
-            <element ref="run"/>
-         </sequence>
-      </complexType>
-   </element>
-
-   <element name="run">
-      <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="default" value="0">
+            <annotation>
+               <documentation>
+                  Integer priority of factory.  Default is 0.  Use higher values if you want to override an existing factory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
                   Command Launcher factory class that implements org.eclipse.cdt.core.ICommandLauncherFactory.
@@ -75,7 +81,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         CDT 9.3.0
+         CDT 9.4.0
       </documentation>
    </annotation>
 

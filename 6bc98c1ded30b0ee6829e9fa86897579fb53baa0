@@ -84,6 +84,23 @@
       "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_87376368",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T17:08:50Z",
+      "side": 1,
+      "message": "Either the help needs to be inlined here, or it needs to be provided.",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

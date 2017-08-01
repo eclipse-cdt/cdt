@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_27586fcf",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/MakeContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T16:47:56Z",
+      "side": 1,
+      "message": "Please update copyright year too:\n\n\n * Copyright (c) 2000, 2017 QNX Software Systems and others.",
+      "revId": "b4e285d1f0b2c636cafbd3d2e8a8a0d28e4815f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_477e5b21",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/MakeContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T16:47:56Z",
+      "side": 1,
+      "message": "This seems wrong here, the project is not in the table, only make targets in this case. So the whole viewer should be refreshed.\n\nIf I test this change as is, the table still isn\u0027t updated, but if I change it to viewer.refresh() the table does update.",
+      "revId": "b4e285d1f0b2c636cafbd3d2e8a8a0d28e4815f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -12,7 +12,9 @@ package org.eclipse.cdt.core;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -35,6 +37,7 @@ public class CommandLauncherManager {
 	private static CommandLauncherManager instance;
 	
 	private List<ICommandLauncherFactory> factories = new ArrayList<>();
+	private Map<ICommandLauncherFactory, Integer> priorityMapping = new HashMap<>();
 	
 	private CommandLauncherManager() {
 		loadCommandLauncherFactoryExtensions();
@@ -169,13 +172,20 @@ public class CommandLauncherManager {
 	 * @return an ICommandLauncher for running commands
 	 */
 	public ICommandLauncher getCommandLauncher(IProject project) {
-		// loop through list of factories and return first launcher
-		// returned
+		// loop through list of factories and return launcher returned with
+		// highest priority
+		int highestPriority = -1;
+		ICommandLauncher bestLauncher = null;
 		for (ICommandLauncherFactory factory : factories) {
 			ICommandLauncher launcher = factory.getCommandLauncher(project);
 			if (launcher != null) {
-				return launcher;
+				if (priorityMapping.get(factory) > highestPriority) {
+				   bestLauncher = launcher;
+				}
 			}
+		}
+		if (bestLauncher != null) {
+			return bestLauncher;
 		}
 		// default to local CommandLauncher
 		return new CommandLauncher();
@@ -188,13 +198,20 @@ public class CommandLauncherManager {
 	 * @return an ICommandLauncher for running commands
 	 */
 	public ICommandLauncher getCommandLauncher(ICConfigurationDescription cfgd) {
-		// loop through list of factories and return first launcher
-		// returned
+		// loop through list of factories and return launcher returned with
+		// highest priority
+		int highestPriority = -1;
+		ICommandLauncher bestLauncher = null;
 		for (ICommandLauncherFactory factory : factories) {
 			ICommandLauncher launcher = factory.getCommandLauncher(cfgd);
 			if (launcher != null) {
-				return launcher;
+				if (priorityMapping.get(factory) > highestPriority) {
+				   bestLauncher = launcher;
+				}
 			}
+		}
+		if (bestLauncher != null) {
+			return bestLauncher;
 		}
 		// default to local CommandLauncher
 		return new CommandLauncher();
@@ -213,9 +230,19 @@ public class CommandLauncherManager {
 				try {
 					IConfigurationElement element[] = extension.getConfigurationElements();
 					for (IConfigurationElement element2 : element) {
-						if (element2.getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
-							ICommandLauncherFactory factory = (ICommandLauncherFactory) element2.createExecutableExtension("run"); //$NON-NLS-1$
+						if (element2.getName().equalsIgnoreCase("factory")) { //$NON-NLS-1$
+							ICommandLauncherFactory factory = (ICommandLauncherFactory) element2.createExecutableExtension("class"); //$NON-NLS-1$
+							String priorityAttr = element2.getAttribute("priority"); //$NON-NLS-1$
+							int priority = Integer.valueOf(0);
+							if (priorityAttr != null) {
+								try {
+									priority = Integer.valueOf(priorityAttr);
+								} catch (NumberFormatException e) {
+									CCorePlugin.log(e);
+								}
+							}
 							factories.add(factory);
+							priorityMapping.put(factory, priority);
 						}
 					}
 				} catch (Exception e) {

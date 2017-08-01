@@ -95,14 +95,13 @@
        </launchConfigurationTypeImage>
    </extension>
    <extension
-       id="ContainerCommandLauncherFactory"
+       id="CommandLauncherFactories"
        name="%ContainerCommandLauncherFactory.name"
        point="org.eclipse.cdt.core.CommandLauncherFactory">
-       <cextension>
-          <run
-               class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory">
-          </run>
-      </cextension>
+       <factory
+          id="ContainerCommandLauncherFactory"
+          class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory">
+      </factory>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.cPropertyTab">

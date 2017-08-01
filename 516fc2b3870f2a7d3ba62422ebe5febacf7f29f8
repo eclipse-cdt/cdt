@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_a9e27b48",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "Bug 520340 - enable ...",
+      "revId": "516fc2b3870f2a7d3ba62422ebe5febacf7f29f8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_c9018712",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "maybe I could call here file.isFile()...",
+      "revId": "516fc2b3870f2a7d3ba62422ebe5febacf7f29f8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_e9064328",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "typo: \"file endings (like\"",
+      "range": {
+        "startLine": 22,
+        "startChar": 33,
+        "endLine": 22,
+        "endChar": 52
+      },
+      "revId": "516fc2b3870f2a7d3ba62422ebe5febacf7f29f8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

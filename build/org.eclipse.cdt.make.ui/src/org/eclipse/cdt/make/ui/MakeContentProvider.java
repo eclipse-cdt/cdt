@@ -252,21 +252,23 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 					return;
 
-				int itemCount = 0;
-				if (viewer instanceof TreeViewer) {
-					itemCount = ((TreeViewer) viewer).getTree().getItemCount();
-				} else if (viewer instanceof TableViewer) {
-					itemCount = ((TableViewer) viewer).getTable().getItemCount();
-				}
-				if (itemCount <= 0) {
-					return;
-				}
-
+				// Get first item of the viewer
 				Object firstItem = null;
 				if (viewer instanceof TreeViewer) {
-					firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
+					if( ((TreeViewer) viewer).getTree().getItemCount() <= 0) {
+						// No items yet, no refresh needed
+						return;
+					} else {
+						firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
+					}
 				} else if (viewer instanceof TableViewer) {
-					firstItem = ((TableViewer) viewer).getTable().getItem(0).getData();
+					if( ((TableViewer) viewer).getTable().getItemCount() <= 0) {
+						// No items yet => Refresh project
+						viewer.refresh(project);
+						return;
+					} else {
+						firstItem = ((TableViewer) viewer).getTable().getItem(0).getData();
+					}
 				}
 
 				IContainer parentContainer = null;

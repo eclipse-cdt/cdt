@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "c7880b39_993d4ced",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "typo: org.eclipse.cdt.core.CoreFormatter",
+      "range": {
+        "startLine": 10,
+        "startChar": 31,
+        "endLine": 10,
+        "endChar": 72
+      },
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_94035383",
+        "filename": "core/org.eclipse.cdt.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "replace tab to space",
+      "range": {
+        "startLine": 882,
+        "startChar": 6,
+        "endLine": 882,
+        "endChar": 7
+      },
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_7eddab8d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
         "patchSetId": 1
@@ -36,6 +82,47 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_6945f367",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "as stated in the commit message I copied the code from JDT, so I leaved the contributors as is",
+      "parentUuid": "c7880b39_5e39cf55",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_d425dbe2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "add myself as contributor",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 16
+      },
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_bee3934c",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
         "patchSetId": 1
@@ -47,6 +134,24 @@
       "writtenOn": "2017-07-28T21:41:13Z",
       "side": 1,
       "message": "Messages class should be in separate file",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_89a93f9a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "how shall I name the new class? Messages or CodeFormatterApplicationMessages?\n\nI tend to Messages, then I would do the same as in the resources subdirectory. Or shall I move this stuff to org.eclipse.cdt.core.resources.Messages?",
+      "parentUuid": "c7880b39_bee3934c",
       "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +175,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_c9afc799",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "nice catch. I was not looking really deeply to the copied code as long it was doing the job. Wondering how this could pass the review in JDT...",
+      "parentUuid": "c7880b39_fed0bb72",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_5ed46f62",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
         "patchSetId": 1
@@ -81,6 +204,24 @@
       "writtenOn": "2017-07-28T21:41:13Z",
       "side": 1,
       "message": "use java 8 io try block\ntry (BufferedInputStream stream \u003d ...) {\n}",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_a9aefb9d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "I guess you speak here about try-with-resource? nice, something new learned...",
+      "parentUuid": "c7880b39_5ed46f62",
       "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +245,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_e9b483ec",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "I found now cSource etc. in plugin.xml, try to use these...",
+      "parentUuid": "c7880b39_7e04cb8b",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_befab3e6",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
         "patchSetId": 1
@@ -115,6 +274,29 @@
       "writtenOn": "2017-07-28T21:41:13Z",
       "side": 1,
       "message": "If they provided file in command line, why do need to check extension?",
+      "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_b42e8fc6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "add myself as contributor",
+      "range": {
+        "startLine": 8,
+        "startChar": 2,
+        "endLine": 8,
+        "endChar": 14
+      },
       "revId": "d860db26755d3bbce2f9b66180db6d3872e3a1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

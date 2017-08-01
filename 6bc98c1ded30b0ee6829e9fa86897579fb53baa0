@@ -101,6 +101,24 @@
       "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_429d69b6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-01T23:01:45Z",
+      "side": 1,
+      "message": "In my opinion this line can be deleted, in most cases the properties file already exists. I could also mention that the default filename for the properties file is org.eclipse.cdt.core.prefs",
+      "parentUuid": "c7880b39_87376368",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

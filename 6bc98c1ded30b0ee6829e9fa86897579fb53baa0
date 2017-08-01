@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_d1ff6dd6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T10:07:11Z",
+      "side": 1,
+      "message": "I added the cross reference to the bug for you.",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_d1e84d2b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T10:07:11Z",
+      "side": 1,
+      "message": "Should be Copyright (c) 2005, 2017 IBM Corporation and others.\n\nhttps://eclipse.org/legal/copyrightandlicensenotice.php",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_51d45d62",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T10:07:11Z",
+      "side": 1,
+      "message": "I suspect Elena meant it should be something like:\n\n *  Contributors:\n *   Mustafa Yuecel \u003cmustafa.yuecel@siemens.com\u003e - initial implementation - adapted from \u003cname of file in JDT\u003e\n *******************************************************************************/",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_31d7d169",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T10:07:11Z",
+      "side": 1,
+      "message": "same comment on copyright year",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_11ce55d8",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-01T10:07:11Z",
+      "side": 1,
+      "message": "Update copyright year here too s/2011/2017/",
+      "revId": "6bc98c1ded30b0ee6829e9fa86897579fb53baa0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

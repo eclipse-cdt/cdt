@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_1d2ca499",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-02T08:29:43Z",
+      "side": 1,
+      "message": "Please refer to the JDT version of the documentation for what I think a minimum requirement is: https://help.eclipse.org/oxygen/topic/org.eclipse.jdt.doc.user/tasks/tasks-232.htm?cp\u003d1_3_10_1 (Steps 1 to 5)\n\nI don\u0027t mind inlining it here, but you can not simply remove that line as that would require users to know internals of how CDT stores its settings.\n\nAdditionally, the formatter, if passed a file that does not contain formatting properties appears to default back to workspace settings.",
+      "revId": "3ceac61192a9e22af634115ff4521b93ef7f6fcc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

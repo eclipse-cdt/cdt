@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -266,6 +268,10 @@ public class HeuristicResolver {
 			isPointerDeref = false;
 		}
 
+		if (ownerType instanceof IQualifierType) {
+			ownerType = ((IQualifierType) ownerType).getType();
+		}
+
 		IType lookupType = ownerType;
 		ICPPClassSpecialization specializationContext = null;
 		if (lookupType instanceof ICPPUnknownType) {
@@ -286,6 +292,25 @@ public class HeuristicResolver {
 				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, lookupSet,
 						point);
 				resolvedType = SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.REF);
+
+				// If this is a pointer dereference, and the pointer type wasn't outside the
+				// dependent type, it might be inside the dependent type.
+				if (isPointerDeref) {
+					if (resolvedType instanceof IPointerType) {
+						resolvedType = ((IPointerType) resolvedType).getType();
+					} else {
+						resolvedType = null;
+					}
+				}
+
+				if (resolvedType instanceof IQualifierType) {
+					resolvedType = ((IQualifierType) resolvedType).getType();
+				}
+
+				while (resolvedType instanceof ITypedef) {
+					resolvedType = ((ITypedef) resolvedType).getType();
+				}
+
 				if (resolvedType == lookupType || !(resolvedType instanceof ICPPUnknownType)) {
 					lookupType = resolvedType;
 					break;
@@ -295,15 +320,6 @@ public class HeuristicResolver {
 				}
 			}
 
-			// If this is a pointer dereference, and the pointer type wasn't outside the
-			// dependent type, it might be inside the dependent type.
-			if (isPointerDeref) {
-				if (lookupType instanceof IPointerType) {
-					lookupType = ((IPointerType) lookupType).getType();
-				} else {
-					lookupType = null;
-				}
-			}
 		}
 
 		IScope lookupScope = null;
@@ -378,6 +394,11 @@ public class HeuristicResolver {
 			Set<HeuristicLookup> lookupSet = new HashSet<>();
 			IType resolvedType = resolveUnknownTypeOnce(type, lookupSet, point);
 			resolvedType = SemanticUtil.getNestedType(resolvedType, unwrapOptions);
+
+			if (resolvedType instanceof IQualifierType) {
+				resolvedType = ((IQualifierType) resolvedType).getType();
+			}
+
 			if (resolvedType != type && resolvedType instanceof ICPPUnknownType) {
 				type = (ICPPUnknownType) resolvedType;
 				continue;

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -266,6 +267,10 @@ public class HeuristicResolver {
 			isPointerDeref = false;
 		}
 
+		if (ownerType instanceof IQualifierType) {
+			ownerType = ((IQualifierType) ownerType).getType();
+		}
+
 		IType lookupType = ownerType;
 		ICPPClassSpecialization specializationContext = null;
 		if (lookupType instanceof ICPPUnknownType) {
@@ -378,6 +383,11 @@ public class HeuristicResolver {
 			Set<HeuristicLookup> lookupSet = new HashSet<>();
 			IType resolvedType = resolveUnknownTypeOnce(type, lookupSet, point);
 			resolvedType = SemanticUtil.getNestedType(resolvedType, unwrapOptions);
+			
+			if (resolvedType instanceof IQualifierType) {
+				resolvedType = ((IQualifierType) resolvedType).getType();
+			}
+			
 			if (resolvedType != type && resolvedType instanceof ICPPUnknownType) {
 				type = (ICPPUnknownType) resolvedType;
 				continue;

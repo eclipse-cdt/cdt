@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -264,6 +265,10 @@ public class HeuristicResolver {
 		if (isPointerDeref && ownerType instanceof IPointerType) {
 			ownerType = ((IPointerType) ownerType).getType();
 			isPointerDeref = false;
+		}
+
+		if (ownerType instanceof IQualifierType) {
+			ownerType = ((IQualifierType) ownerType).getType();
 		}
 
 		IType lookupType = ownerType;

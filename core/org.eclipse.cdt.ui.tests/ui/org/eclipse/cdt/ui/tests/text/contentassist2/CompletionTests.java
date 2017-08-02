@@ -1126,6 +1126,28 @@ public class CompletionTests extends CompletionTestBase {
 		final String[] expected= { "add(tOther)" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
+	
+	// template <typename TPA>
+	// struct A {
+	//   struct {
+	//     int i;
+	//   } test;
+	// };
+	//
+	// template <typename TPB>
+	// struct B {
+	//
+	// A<TPB> const* a;
+	//
+	// void
+	// test()
+	// {
+	//   a->test./*cursor*/
+	// }
+	// };
+	public void testHeuristicTypeResolution_520470() throws Exception {
+		assertCompletionResults(new String[] { "i" });
+	}
 
 	//namespace ns {
 	//  template<class T>

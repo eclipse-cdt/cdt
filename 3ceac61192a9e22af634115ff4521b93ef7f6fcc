@@ -34,6 +34,24 @@
       "revId": "3ceac61192a9e22af634115ff4521b93ef7f6fcc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_d82dc9cd",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-03T09:29:46Z",
+      "side": 1,
+      "message": "The docs are stored in git too, so can be part of this gerrit: https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt/+/master/doc/\n\nI would simply document the behaviour, i.e document that if formatting settings are not found then the defaults will be used. That is unless you have a reasonable way to tell that the properties file does/does not contain appropriate settings.",
+      "parentUuid": "c7880b39_18bbd10d",
+      "revId": "3ceac61192a9e22af634115ff4521b93ef7f6fcc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

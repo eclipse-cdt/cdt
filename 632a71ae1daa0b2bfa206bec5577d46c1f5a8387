@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_ca3ec78f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-04T05:05:22Z",
+      "side": 1,
+      "message": "Not having another test is fine, but please remove the \"I hope...\" comment from the commit message :)",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_aa433b14",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-04T05:05:22Z",
+      "side": 1,
+      "message": "This branch should set isPointerDeref to false, to ensure that we only remove a total of one level of pointer in this function.",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_8a483f34",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-04T05:05:22Z",
+      "side": 1,
+      "message": "Please do:\n\n resolvedType \u003d SemanticUtil.getNestedType(resolvedType, SemanticUtil.TDEF | SemanticUtil.CVTYPE);\n\ninstead of this if statement and while loop.",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_6a4dd343",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-04T05:05:22Z",
+      "side": 1,
+      "message": "Unwrapping of qualifiers is already done by SemanticUtil.getNestedType(), if \"unwrapOptions\" contains \"SemanticUtil.CVTYPE\". So, rather than adding this separate check, I would prefer that the relevant callers include CVTYPE in the unwrapOptions.",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

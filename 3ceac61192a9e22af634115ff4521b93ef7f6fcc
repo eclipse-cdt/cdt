@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "c7880b39_77ef7bf9",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-06T23:34:31Z",
+      "side": 1,
+      "message": "PDE_LAUNCH seems unused and undocumented, removed it...",
+      "range": {
+        "startLine": 168,
+        "startChar": 9,
+        "endLine": 168,
+        "endChar": 19
+      },
+      "revId": "3ceac61192a9e22af634115ff4521b93ef7f6fcc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_97ea27e6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/CodeFormatterApplication.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-06T23:34:31Z",
+      "side": 1,
+      "message": "I made the config parameter optional",
+      "revId": "3ceac61192a9e22af634115ff4521b93ef7f6fcc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_1d2ca499",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
         "patchSetId": 4

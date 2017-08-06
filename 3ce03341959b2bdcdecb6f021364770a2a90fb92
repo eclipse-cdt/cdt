@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_17df174f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-06T23:34:31Z",
+      "side": 1,
+      "message": "sadly context.getArguments() (and other variants) does not contain the -data parameter.\n\nAn alternative would be:\nIPath workspace \u003d ResourcesPlugin.getWorkspace().getRoot().getLocation();\nif (workspace.isPrefixOf(Path.fromOSString(file.getAbsolutePath()))) {\n        displayHelp(Messages.CommandLineErrorData);\n        return null;\n}",
+      "revId": "3ce03341959b2bdcdecb6f021364770a2a90fb92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_57d51f29",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_format_app_run.htm",
+        "patchSetId": 5
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-06T23:34:31Z",
+      "side": 1,
+      "message": "I corrected this already, fix will come with the next commit",
+      "range": {
+        "startLine": 22,
+        "startChar": 27,
+        "endLine": 22,
+        "endChar": 31
+      },
+      "revId": "3ce03341959b2bdcdecb6f021364770a2a90fb92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_37d25344",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_format_app_run.htm",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 126214
+      },
+      "writtenOn": "2017-08-06T23:34:31Z",
+      "side": 1,
+      "message": "I will move this section to the table with \u003cfiles\u003e in the next commit...",
+      "revId": "3ce03341959b2bdcdecb6f021364770a2a90fb92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

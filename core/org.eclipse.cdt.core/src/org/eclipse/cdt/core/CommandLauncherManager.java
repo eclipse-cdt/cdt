@@ -165,6 +165,7 @@ public class CommandLauncherManager {
 		
 	}
 	
+	
 	/**
 	 * Get a command launcher.
 	 * 
@@ -228,7 +229,7 @@ public class CommandLauncherManager {
 			IExtension[] extensions = extension.getExtensions();
 			for (IExtension ext : extensions) {
 				try {
-					IConfigurationElement element[] = extension.getConfigurationElements();
+					IConfigurationElement element[] = ext.getConfigurationElements();
 					for (IConfigurationElement element2 : element) {
 						if (element2.getName().equalsIgnoreCase("factory")) { //$NON-NLS-1$
 							ICommandLauncherFactory factory = (ICommandLauncherFactory) element2.createExecutableExtension("class"); //$NON-NLS-1$
@@ -252,26 +253,36 @@ public class CommandLauncherManager {
 		}
 	}
 
-	public void setLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries) {
+	private ICommandLauncherFactory getBestFactory(IProject project) {
+		// loop through list of factories and return launcher returned with
+		// highest priority
+		int highestPriority = -1;
+		ICommandLauncherFactory bestLauncherFactory = null;
 		for (ICommandLauncherFactory factory : factories) {
 			ICommandLauncher launcher = factory.getCommandLauncher(project);
 			if (launcher != null) {
-				factory.registerLanguageSettingEntries(project, entries);
+				if (priorityMapping.get(factory) > highestPriority) {
+					bestLauncherFactory = factory;
+				}
 			}
 		}
-
+		return bestLauncherFactory;
+	}
+	
+	public void setLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries) {
+		ICommandLauncherFactory factory = getBestFactory(project);
+		if (factory != null) {
+			factory.registerLanguageSettingEntries(project, entries);
+		}
 	}
 	
 	public List<ICLanguageSettingEntry> getLanguageSettingEntries(IProject project, List<ICLanguageSettingEntry> entries) {
 		List<ICLanguageSettingEntry> verifiedEntries = entries;
-		for (ICommandLauncherFactory factory : factories) {
-			ICommandLauncher launcher = factory.getCommandLauncher(project);
-			if (launcher != null) {
-				verifiedEntries = factory.verifyLanguageSettingEntries(project, entries);
-			}
+		ICommandLauncherFactory factory = getBestFactory(project);
+		if (factory != null) {
+			verifiedEntries = factory.verifyLanguageSettingEntries(project, entries);
 		}
 		return verifiedEntries;
 	}
-
 
 }

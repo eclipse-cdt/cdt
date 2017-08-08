@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_c8108a09",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-08T05:02:13Z",
+      "side": 1,
+      "message": "If you invoke content assist after \"ptr-\u003e\" where \"ptr\" has type A** for some class type A, we should not offer the members of A as completion proposals.",
+      "parentUuid": "c7880b39_3e1a3075",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_8a483f34",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
         "patchSetId": 3
@@ -83,6 +101,24 @@
       "side": 1,
       "message": "the qualifierType can be a result of the pointer dereferencing",
       "parentUuid": "c7880b39_8a483f34",
+      "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_e80b86db",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-08T05:02:13Z",
+      "side": 1,
+      "message": "I understand that. I was asking to add a new call to SemanticUtil.getNestedType, in this place (i.e. after the pointer check).",
+      "parentUuid": "c7880b39_5e1d3c6a",
       "revId": "632a71ae1daa0b2bfa206bec5577d46c1f5a8387",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_e8af0614",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/Messages.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-08T07:57:54Z",
+      "side": 1,
+      "message": "I think you have a good heuristic to detect if the config file is valid. However your error message makes that too hard to see.\n\nHow about:\n\n    A problem occurred while reading the config file {0}. Expected at least one property name to start with org.eclipse.cdt.core.formatter.",
+      "revId": "1cd5d41ca00057850b2c587a18fe6e67fed62a13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

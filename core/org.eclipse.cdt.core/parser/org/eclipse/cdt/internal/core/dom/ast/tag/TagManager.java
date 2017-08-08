@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 public class TagManager {
@@ -47,11 +48,14 @@ public class TagManager {
 		Map<String, TaggerDescriptor> taggers = new HashMap<String, TaggerDescriptor>();
 
 		// Load the extensions
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
-		for (IConfigurationElement element : elements) {
-			TaggerDescriptor desc = new TaggerDescriptor(element);
-			taggers.put(desc.getId(), desc);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		if (registry != null) {
+		    IConfigurationElement[] elements = registry
+				  .getConfigurationElementsFor(CCorePlugin.PLUGIN_ID, EXTENSION_POINT);
+		    for (IConfigurationElement element : elements) {
+			    TaggerDescriptor desc = new TaggerDescriptor(element);
+			    taggers.put(desc.getId(), desc);
+		    }
 		}
 
 		return taggers;

@@ -183,7 +183,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				IBinding[] bindings = astContext.findBindings(name, !context.isContextInformationStyle());
 
 				if (bindings != null) {
-					AccessContext accessibilityContext = new AccessContext(name);
+					AccessContext accessibilityContext = new AccessContext(name, true);
 					for (IBinding binding : bindings) {
 						if (accessibilityContext.isAccessible(binding))
 							handleBinding(binding, context, prefix, astContext, proposals);
@@ -844,7 +844,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		});
 
 		Map<String, IBinding> elementsMap = new HashMap<>();
-		AccessContext accessibilityContext = new AccessContext(name);
+		AccessContext accessibilityContext = new AccessContext(name, true);
 		for (IBinding binding : bindings) {
 			// Consider only fields and variables that are declared in the current translation unit.
 			if (binding instanceof IVariable

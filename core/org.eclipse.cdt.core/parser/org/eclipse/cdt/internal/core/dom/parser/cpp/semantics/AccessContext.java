@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 
 /**
  * The context that determines access to private and protected class members.
@@ -82,13 +83,19 @@ public class AccessContext {
 	 * A class through which the bindings are accessed (11.2.4).
 	 */
 	private boolean isUnqualifiedLookup;
+	private boolean isPrefixLookup;
 	private ICPPClassType namingClass;  // Depends on the binding for which we check the access.
 	// The first candidate is independent of the binding for which we do the access-check.
 	private ICPPClassType firstCandidateForNamingClass;
 	private DOMException initializationException;
 
 	public AccessContext(IASTName name) {
+		this(name, false);
+	}
+
+	public AccessContext(IASTName name, boolean prefixLookup) {
 		this.name = name;
+		this.isPrefixLookup = prefixLookup;
 	}
 
 	/**
@@ -295,6 +302,13 @@ public class AccessContext {
 				IType scopeType = ((ICPPInternalUnknownScope) scope).getScopeType();
 				if (scopeType instanceof ICPPDeferredClassInstance) {
 					return ((ICPPDeferredClassInstance) scopeType).getClassTemplate();
+				}
+				if (scopeType instanceof ICPPUnknownMemberClass && isPrefixLookup) {
+					scopeType = HeuristicResolver.resolveUnknownType((ICPPUnknownMemberClass) scopeType,
+							name.getParent());
+					if (scopeType instanceof ICPPClassType) {
+						return (ICPPClassType) scopeType;
+					}
 				}
 			}
 

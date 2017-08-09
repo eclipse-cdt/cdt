@@ -590,6 +590,22 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
+	// template <typename TPA>
+	// struct A {
+	//   struct AA {
+	//     static int i;
+	//   };
+	// };
+	//
+	// template <typename TPB>
+	// void test()
+	// {
+	//   A<TPB>::AA::/*cursor*/
+	// }
+	public void testUnknownMemberClassAccessContext_520783() throws Exception {
+		assertCompletionResults(new String[] { "i" });
+	}
+
 	//	template <typename T>
 	//	struct A {
 	//		template <typename U>
@@ -1126,51 +1142,7 @@ public class CompletionTests extends CompletionTestBase {
 		final String[] expected= { "add(tOther)" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
-	
-	// template <typename TPA>
-	// struct A {
-	//   struct {
-	//     int i;
-	//   } test;
-	// };
-	//
-	// template <typename TPB>
-	// struct B {
-	//
-	// A<TPB> const* a;
-	//
-	// void
-	// test()
-	// {
-	//   a->test./*cursor*/
-	// }
-	// };
-	public void testHeuristicTypeResolution1_520470() throws Exception {
-		assertCompletionResults(new String[] { "i" });
-	}
-	
-	// template <typename TPA>
-	// struct A {
-	//   struct {
-	//     int i;
-	//   } test;
-	// };
-	//
-	// template <typename TPB>
-	// struct B {
-	//
-	// A<TPB> const* a();
-	//
-	// void
-	// test()
-	// {
-	//   a()->t/*cursor*/
-	// }
-	// };
-	public void testHeuristicTypeResolution2_520470() throws Exception {
-		assertCompletionResults(new String[] { "test" });
-	}
-	
+
 	//namespace ns {
 	//  template<class T>
 	//  class Base {

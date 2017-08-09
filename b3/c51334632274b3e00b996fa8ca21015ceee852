@@ -1,0 +1,7 @@
+Verified+1: Hudson CI
+Code-Review+2: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Wed, 09 Aug 2017 13:48:01 -0400
+Reviewed-on: https://git.eclipse.org/r/102729
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/containerbuild

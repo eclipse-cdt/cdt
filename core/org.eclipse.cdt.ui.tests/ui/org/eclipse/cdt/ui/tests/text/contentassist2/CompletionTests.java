@@ -586,6 +586,23 @@ public class CompletionTests extends CompletionTestBase {
 	//		Parent<T>::/*cursor*/
 	//	};
 	public void testNestedBaseTemplateMembersFromUnknownScope_456752() throws Exception {
+		assertCompletionResults(new String[] { "i" });
+	}
+
+	// template <typename TPA>
+	// struct A {
+	// struct AA {
+	// static int i;
+	// };
+	// };
+	//
+	// template <typename TPB>
+	// void
+	// test()
+	// {
+	// A<TPB>::AA::/*cursor*/
+	// }
+	public void testUnknownMemberClassAccessContext_520783() throws Exception {
 		final String[] expected = { "NestedProtected", "NestedPublic" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}

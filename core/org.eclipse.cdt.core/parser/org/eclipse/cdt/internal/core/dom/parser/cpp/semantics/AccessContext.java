@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 
 /**
  * The context that determines access to private and protected class members.
@@ -296,6 +297,14 @@ public class AccessContext {
 				if (scopeType instanceof ICPPDeferredClassInstance) {
 					return ((ICPPDeferredClassInstance) scopeType).getClassTemplate();
 				}
+				if (scopeType instanceof ICPPUnknownMemberClass) {
+					scopeType = HeuristicResolver.resolveUnknownType((ICPPUnknownMemberClass) scopeType,
+							name.getParent());
+					if (scopeType instanceof ICPPClassType) {
+						return (ICPPClassType) scopeType;
+					}
+				}
+				break;
 			}
 
 			scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());

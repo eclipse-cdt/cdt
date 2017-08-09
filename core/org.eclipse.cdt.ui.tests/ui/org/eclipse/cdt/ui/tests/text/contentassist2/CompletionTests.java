@@ -590,6 +590,23 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
+	// template <typename TPA>
+	// struct A {
+	// struct AA {
+	// static int i;
+	// };
+	// };
+	//
+	// template <typename TPB>
+	// void
+	// test()
+	// {
+	// A<TPB>::AA::/*cursor*/
+	// }
+	public void testUnknownMemberClassAccessContext_520783() throws Exception {
+		assertCompletionResults(new String[] { "i" });
+	}
+
 	//	template <typename T>
 	//	struct A {
 	//		template <typename U>

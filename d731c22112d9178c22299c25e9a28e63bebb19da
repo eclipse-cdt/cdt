@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7c23755_3e0906bd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2129,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2017-08-09T15:03:27Z",
+      "side": 1,
+      "message": "I forgot to move this line :-(\nIn my code it is in addRuleForSource but looking at it again it seems more logical to replace the userOuputType\u003dnull; with this line.\nI\u0027ll look at it.",
+      "range": {
+        "startLine": 2129,
+        "startChar": 4,
+        "endLine": 2129,
+        "endChar": 15
+      },
+      "revId": "d731c22112d9178c22299c25e9a28e63bebb19da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c23755_de4012bd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2151,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2017-08-09T15:03:27Z",
+      "side": 1,
+      "message": "So yes indeed here it still does the same thing.\nSorry will fix.",
+      "range": {
+        "startLine": 2151,
+        "startChar": 22,
+        "endLine": 2151,
+        "endChar": 33
+      },
+      "revId": "d731c22112d9178c22299c25e9a28e63bebb19da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

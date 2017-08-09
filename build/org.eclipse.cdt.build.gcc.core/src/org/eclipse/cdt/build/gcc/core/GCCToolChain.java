@@ -183,6 +183,16 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			addDiscoveryOptions(commandLine);
 			commandLine.addAll(commandStrings.subList(1, commandStrings.size()));
 
+			// Strip quotes from the args on Windows
+			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+				for (int i = 0; i < commandLine.size(); i++) {
+					String arg = commandLine.get(i);
+					if (arg.contains("\"")) { //$NON-NLS-1$
+						commandLine.set(i, arg.replaceAll("\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			}
+
 			// Change output to stdout
 			boolean haveOut = false;
 			for (int i = 0; i < commandLine.size() - 1; ++i) {

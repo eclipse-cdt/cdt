@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_626169b1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-10T20:59:50Z",
+      "side": 1,
+      "message": "We can use \"name\" as the second parameter to resolveUnknownBinding. (Then the call to findEnclosingNode() can remain in the first branch.)",
+      "revId": "aee80ec7719ff2d0b09282293a9cda42552003e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

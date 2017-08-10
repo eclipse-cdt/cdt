@@ -102,7 +102,9 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
@@ -206,7 +208,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 										}
 									}
 								}
-								
+								if (binding instanceof ICPPUnknownBinding) {
+									IBinding[] resolved = HeuristicResolver
+											.resolveUnknownBinding((ICPPUnknownBinding) binding, name);
+									if (resolved.length == 1) {
+										binding = resolved[0];
+									}
+								}
 								if (binding instanceof IProblemBinding) {
 									// Report problem as source comment.
 									if (DEBUG) {

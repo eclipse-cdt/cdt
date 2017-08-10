@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_62996984",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-10T19:57:01Z",
+      "side": 1,
+      "message": "Please delegate to the other constructor using\n\n  this(name, false);\n\nin the constructor body.",
+      "revId": "37119b33763b4053f4cf264ec108c13156ce1234",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_82a495ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-10T19:57:01Z",
+      "side": 1,
+      "message": "This break shouldn\u0027t be necessary. If the parent scope is an unknown scope, the loop will exit anyways.",
+      "revId": "37119b33763b4053f4cf264ec108c13156ce1234",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_a29fd166",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-10T19:57:01Z",
+      "side": 1,
+      "message": "Please indent the test code to keep it readable.",
+      "revId": "37119b33763b4053f4cf264ec108c13156ce1234",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

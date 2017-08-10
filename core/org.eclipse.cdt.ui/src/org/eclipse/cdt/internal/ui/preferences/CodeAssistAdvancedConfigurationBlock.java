@@ -454,7 +454,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 			}
 		});
 		
-		fDefaultViewer.setContentProvider(new ArrayContentProvider());
+		fDefaultViewer.setContentProvider(ArrayContentProvider.getInstance());
 		
 		DefaultTableLabelProvider labelProvider= new DefaultTableLabelProvider();
 		fDefaultViewer.setLabelProvider(labelProvider);
@@ -526,7 +526,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		nameColumn.setText(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_separate_table_category_column_title);
 		nameColumn.setResizable(false);
 		
-		fSeparateViewer.setContentProvider(new ArrayContentProvider());
+		fSeparateViewer.setContentProvider(ArrayContentProvider.getInstance());
 		
 		ITableLabelProvider labelProvider= new SeparateTableLabelProvider();
 		fSeparateViewer.setLabelProvider(labelProvider);

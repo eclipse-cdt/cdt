@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_382cf74a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-10T09:14:42Z",
+      "side": 1,
+      "message": "Please use your full name. (matching your eclipse account if possible)",
+      "revId": "8657d7c9005f2ed8ccf57ac46646e3087458f5d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

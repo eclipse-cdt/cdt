@@ -332,7 +332,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
 		fTableViewer = new TableViewer(fTable);
 		fTableViewer.setUseHashlookup(true);
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		
 		//Bug 307542 - [Accessibility] Error Parser Options table should be accessible by keyboard
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(fTableViewer,new FocusCellOwnerDrawHighlighter(fTableViewer));

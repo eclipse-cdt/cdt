@@ -114,6 +114,8 @@ public class HeuristicResolver {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.PTR);
 		if (type instanceof ICompositeType) {
 			return ((ICompositeType) type).getCompositeScope();
+		} else if (type instanceof ICPPEnumeration) {
+			return ((ICPPEnumeration) type).asScope();
 		}
 		return null;
 	}

@@ -606,6 +606,22 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(new String[] { "i" });
 	}
 
+	// template <typename TPA>
+	// struct A {
+	//   enum class AA {
+	//     Test
+	//   };
+	// };
+	//
+	// template <typename TPB>
+	// void test()
+	// {
+	//   A<TPB>::AA::/*cursor*/
+	// }
+	public void testHeuristicEnumScopeResolution_520805() throws Exception {
+		assertCompletionResults(new String[] { "Test" });
+	}
+
 	//	template <typename T>
 	//	struct A {
 	//		template <typename U>

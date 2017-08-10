@@ -102,7 +102,9 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
@@ -159,8 +161,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			if (ast != null) {
 				try {
 					IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+					IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 					if (fSelection.equals(Keywords.AUTO)) {
-						IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 						if (node instanceof ICPPASTDeclSpecifier) {
 							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) node;
 							IASTNode parent = declSpec.getParent();
@@ -206,7 +208,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 										}
 									}
 								}
-								
+								if (binding instanceof ICPPUnknownBinding) {
+									IBinding[] resolved = HeuristicResolver
+											.resolveUnknownBinding((ICPPUnknownBinding) binding, node);
+									if (resolved.length == 1) {
+										binding = resolved[0];
+									}
+								}
 								if (binding instanceof IProblemBinding) {
 									// Report problem as source comment.
 									if (DEBUG) {

@@ -264,7 +264,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			fInnerViewer.getControl().setLayoutData(innerGd);
 			
 			fOptionsViewer= CheckboxTableViewer.newCheckList(sashForm, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
-			fOptionsViewer.setContentProvider(new ArrayContentProvider());
+			fOptionsViewer.setContentProvider(ArrayContentProvider.getInstance());
 			fOptionsViewer.setLabelProvider(new LabelProvider());
 			
 			final GridData optionsGd= createGridData(numColumns, GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL, SWT.DEFAULT);

@@ -94,7 +94,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		}
 		
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
-		fViewer.setContentProvider(new ArrayContentProvider());			
+		fViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fViewer.setSorter(new ViewerSorter());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

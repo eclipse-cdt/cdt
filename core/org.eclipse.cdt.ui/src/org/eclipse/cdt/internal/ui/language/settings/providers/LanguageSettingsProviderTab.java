@@ -426,7 +426,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			}
 		});
 		tableProvidersViewer = new CheckboxTableViewer(tableProviders);
-		tableProvidersViewer.setContentProvider(new ArrayContentProvider());
+		tableProvidersViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableProvidersViewer.setLabelProvider(new ProvidersTableLabelProvider());
 
 		tableProvidersViewer.addCheckStateListener(new ICheckStateListener() {

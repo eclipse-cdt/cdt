@@ -204,7 +204,7 @@ public class RefactoringSaveHelper {
 		dialog.setTitle(Messages.RefactoringSaveHelper_save_all_resources);
 		dialog.setLabelProvider(createDialogLabelProvider());
 		dialog.setMessage(Messages.RefactoringSaveHelper_must_save);
-		dialog.setContentProvider(new ArrayContentProvider());
+		dialog.setContentProvider(ArrayContentProvider.getInstance());
 		dialog.setInput(Arrays.asList(dirtyEditors));
 		return dialog.open() == Window.OK;
 	}

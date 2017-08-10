@@ -16,6 +16,23 @@
       "revId": "8657d7c9005f2ed8ccf57ac46646e3087458f5d0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_e294794a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-10T19:58:01Z",
+      "side": 1,
+      "message": "Please indent the test code.",
+      "revId": "8657d7c9005f2ed8ccf57ac46646e3087458f5d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

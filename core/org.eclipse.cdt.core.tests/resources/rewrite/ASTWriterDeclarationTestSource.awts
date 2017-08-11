@@ -113,3 +113,13 @@ int i = 2;
 //%CPP
 typename T::A* a6;
 
+//!Variadic Template
+//%CPP
+template<typename... T> struct Tpl
+{
+};
+
+template<typename... T> 
+void foo(Tpl<T...>)
+{
+}

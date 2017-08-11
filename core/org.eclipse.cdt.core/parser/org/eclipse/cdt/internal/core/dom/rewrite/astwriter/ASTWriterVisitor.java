@@ -32,10 +32,12 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -286,6 +288,22 @@ public class ASTWriterVisitor extends ASTVisitor {
 		writeLeadingComments(pointerOperator);
 		if (!macroHandler.checkisMacroExpansionNode(pointerOperator)) {
 			declaratorWriter.writePointerOperator(pointerOperator);
+		}
+		return ASTVisitor.PROCESS_SKIP;
+	}
+
+	@Override
+	public int visit(IASTTypeId typeId) {
+		IASTDeclSpecifier declSpecifier = typeId.getDeclSpecifier();
+		if (declSpecifier != null) declSpecifier.accept(this);
+		if (typeId instanceof ICPPASTTypeId) {
+			if (((ICPPASTTypeId) typeId).isPackExpansion()) {
+				scribe.print(Keywords.cpELLIPSIS);
+			}
+		}
+		IASTDeclarator declarator = typeId.getAbstractDeclarator();
+		if (declarator != null) {
+			declarator.accept(this);
 		}
 		return ASTVisitor.PROCESS_SKIP;
 	}

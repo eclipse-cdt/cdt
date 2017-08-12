@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -67,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -94,6 +96,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructureDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -248,7 +251,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 		IASTName sourceName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
 		IName[] implicitTargets = findImplicitTargets(ast, nodeSelector, selectionStart, selectionLength);
-		if (sourceName == null) {
+		if (fSelectedText.equals(Keywords.TYPEOF) || fSelectedText.equals(Keywords.AUTO)
+				|| fSelectedText.equals(Keywords.DECLTYPE) || sourceName == null) {
 			if (implicitTargets.length > 0) {
 				if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, implicitTargets))
 					return Status.OK_STATUS;
@@ -482,24 +486,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		} else {
 			IASTNode enclosingNode = nodeSelector.findEnclosingNode(offset, length);
 			if (enclosingNode instanceof ICPPASTSimpleDeclSpecifier) {
-				if (((ICPPASTSimpleDeclSpecifier) enclosingNode).getType() == ICPPASTSimpleDeclSpecifier.t_auto) {
-					if (enclosingNode.getParent() instanceof IASTSimpleDeclaration) {
-						IASTDeclarator[] declarators = ((IASTSimpleDeclaration) enclosingNode.getParent()).getDeclarators();
-						if (declarators.length > 0) {
-							// It's invalid for different declarators to deduce different
-							// types with 'auto', so just get the type based on the first
-							// declarator.
-							IType type = CPPVisitor.createType(declarators[0]);
-							// Strip qualifiers, references, and pointers, but NOT 
-							// typedefs, since for typedefs we want to navigate to the 
-							// typedef declaration.
-							type = SemanticUtil.getNestedType(type, CVTYPE | REF | PTR);
-							if (type instanceof IBinding) {
-								IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, (IBinding) type);
-								definitions = ArrayUtil.addAll(definitions, declNames);
-							}
-						}
-					}
+				IType type = CPPSemantics.resolveAutoType((ICPPASTSimpleDeclSpecifier) enclosingNode);
+				if (type instanceof IBinding) {
+					IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, (IBinding) type);
+					definitions = ArrayUtil.addAll(definitions, declNames);
 				}
 			}
 		}

@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
@@ -94,7 +95,6 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -103,8 +103,10 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
@@ -161,33 +163,44 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			if (ast != null) {
 				try {
 					IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-					if (fSelection.equals(Keywords.AUTO)) {
-						IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
-						if (node instanceof ICPPASTDeclSpecifier) {
-							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) node;
-							IASTNode parent = declSpec.getParent();
-							IASTDeclarator[] declarators = IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-							if (parent instanceof IASTSimpleDeclaration) {
-								declarators = ((IASTSimpleDeclaration) parent).getDeclarators();
-							} else if (parent instanceof IASTParameterDeclaration) {
-								declarators = new IASTDeclarator[] { ((IASTParameterDeclaration) parent).getDeclarator() };
-							} else if (parent instanceof ICPPASTTypeId) {
-								declarators = new IASTDeclarator[] { ((ICPPASTTypeId) parent).getAbstractDeclarator() };
-							}
-							IType type = null;
-							for (IASTDeclarator declarator : declarators) {
-								IType t = CPPVisitor.createType(declarator);
-								if (type == null) {
-									type = t;
-								} else if (!type.isSameType(t)) {
-									// Type varies between declarators - don't display anything.
-									type = null;
-									break;
-								}
-							}
-							if (type != null && !(type instanceof IProblemType))
-								fSource = ASTTypeUtil.getType(type, false);
-						}
+					IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(),
+							fTextRegion.getLength());
+					IType type = null;
+					if (node instanceof ICPPASTSimpleDeclSpecifier) {
+						type = CPPSemantics.resolveAutoType((ICPPASTSimpleDeclSpecifier)node);
+//					if (SemanticUtil.isAutoOrDecltype(fSelection)) {
+//						IType type = null;
+//						if (node instanceof ICPPASTDecltypeSpecifier) {
+//							type = ((ICPPASTDecltypeSpecifier) node).getDecltypeExpression()
+//									.getExpressionType();
+//						} else if (node instanceof ICPPASTDeclSpecifier) {
+//							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) node;
+//							IASTNode parent = declSpec.getParent();
+//							IASTDeclarator[] declarators = IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+//							if (parent instanceof IASTSimpleDeclaration) {
+//								declarators = ((IASTSimpleDeclaration) parent).getDeclarators();
+//							} else if (parent instanceof IASTParameterDeclaration) {
+//								declarators = new IASTDeclarator[] {
+//										((IASTParameterDeclaration) parent).getDeclarator() };
+//							} else if (parent instanceof ICPPASTTypeId) {
+//								declarators = new IASTDeclarator[] {
+//										((ICPPASTTypeId) parent).getAbstractDeclarator() };
+//							}
+//
+//							for (IASTDeclarator declarator : declarators) {
+//								IType t = CPPVisitor.createType(declarator);
+//								if (type == null) {
+//									type = t;
+//								} else if (!type.isSameType(t)) {
+//									// Type varies between declarators - don't
+//									// display anything.
+//									type = null;
+//									break;
+//								}
+//							}
+//						}
+						if (type != null && !(type instanceof IProblemType))
+							fSource = ASTTypeUtil.getType(type, false);
 					} else {
 						IASTName name= nodeSelector.findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
 						if (name != null) {
@@ -742,8 +755,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					return null;
 
 				// Before trying a search lets make sure that the user is not hovering
-				// over a keyword other than 'auto'.
-				if (selectionIsKeyword(expression) && !expression.equals(Keywords.AUTO))
+				// over a keyword other than 'auto', 'decltype' or 'typeof'.
+				if (selectionIsKeyword(expression) && !SemanticUtil.isAutoOrDecltype(expression))
 					return null;
 
 				// Try with the indexer.

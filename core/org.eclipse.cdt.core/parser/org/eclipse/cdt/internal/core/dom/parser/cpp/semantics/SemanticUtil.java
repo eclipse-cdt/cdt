@@ -739,6 +739,10 @@ public class SemanticUtil {
 		return false;
 	}
 
+	public static boolean isAutoOrDecltype(String name) {
+		return (name.equals(Keywords.AUTO) || name.equals(Keywords.TYPEOF) || name.equals(Keywords.DECLTYPE));
+	}
+
 	public static boolean isEmptyParameterList(IType[] parameters) {
 		if (parameters.length == 0) {
 			return true;

@@ -100,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -130,6 +131,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
@@ -139,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -4448,5 +4451,51 @@ public class CPPSemantics {
 			}
 		}
 		return expressionType;
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public static IType resolveAutoType(ICPPASTSimpleDeclSpecifier node) {
+		int builtin = node.getType();
+		if (builtin == ICPPASTSimpleDeclSpecifier.t_auto || builtin == ICPPASTSimpleDeclSpecifier.t_typeof
+				|| builtin == ICPPASTSimpleDeclSpecifier.t_decltype) {
+			IASTNode parent = node.getParent();
+			IASTDeclarator declarator = null;
+			if (parent instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) parent).getDeclarators();
+				// It's invalid for different declarators to deduce different
+				// types with 'auto', so just get the type based on the first
+				// declarator.
+				if (declarators.length > 0)
+					declarator = declarators[0];
+			} else if (parent instanceof IASTParameterDeclaration
+					&& builtin != ICPPASTSimpleDeclSpecifier.t_auto) {
+				declarator = ((IASTParameterDeclaration) parent).getDeclarator();
+			} else if (parent instanceof ICPPASTTypeId && builtin != ICPPASTSimpleDeclSpecifier.t_auto) {
+				declarator = ((ICPPASTTypeId) parent).getAbstractDeclarator();
+			} else if (parent instanceof ICPPASTFunctionDefinition) {
+				declarator = ((ICPPASTFunctionDefinition) parent).getDeclarator();
+			}
+			if (declarator != null) {
+				IType type = CPPVisitor.createType(declarator);
+				if (type instanceof ICPPFunctionType) {
+					IType rtype = ((ICPPFunctionType) type).getReturnType();
+					if (rtype instanceof TypeOfDependentExpression) {
+//						IValue val = ((TypeOfDependentExpression) type).getEvaluation().getValue(parent);
+//						CPPTemplates.instantiateValue(val, null, 1);
+					} else {
+						type = rtype;
+					}
+				}
+				// Strip qualifiers, references, and pointers, but NOT
+				// typedefs, since for typedefs we want to refer to the
+				// typedef declaration.
+				return SemanticUtil.getNestedType(type, CVTYPE | REF | PTR);
+			}
+		}
+		return null;
 	}
 }

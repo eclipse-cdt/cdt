@@ -41,6 +41,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
@@ -175,8 +176,10 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		IRegion wordRegion= CWordFinder.findWord(document, offset);
 		if (wordRegion != null && wordRegion.getLength() > 0) {
 			String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
-			if (!Character.isDigit(word.charAt(0)) && !isLanguageKeyword(language, word)) {
-				return wordRegion;
+			if (!Character.isDigit(word.charAt(0))) {
+				if (SemanticUtil.isAutoOrDecltype(word) || !isLanguageKeyword(language, word)) {
+					return wordRegion;
+				}
 			}
 		}
 		return null;

@@ -1311,4 +1311,30 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		IASTNode target = testF3(file, offset);
 		assertInstance(target, IASTName.class);
 	}
-}
+	
+	//	struct Waldo {};
+	//  template<typename T>
+	//  struct Basket{};
+	//	Waldo find();
+	//	Waldo myFriend;
+	//	int main(decltype(myFriend) p) {
+	//		auto waldo = find();
+	//      Basket<typeof(waldo)> basket;
+	//      decltype(waldo) wuff;
+	//	}
+	public void testDeclType_520913() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug520913.cpp", code);
+		
+		int offset = code.indexOf("main") + 10;
+		IASTNode target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+
+		offset = code.indexOf("typeof");
+		target = testF3(file, offset);
+		assertEquals("Waldo", ((IASTName) target).toString());
+
+		offset = code.indexOf("wuff") - 10;
+		target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+	}}

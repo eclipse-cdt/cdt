@@ -161,7 +161,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			if (ast != null) {
 				try {
 					IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-					if (fSelection.equals(Keywords.AUTO)) {
+					if (fSelection.equals(Keywords.AUTO) || fSelection.equals(Keywords.TYPEOF)
+							|| fSelection.equals(Keywords.DECLTYPE)) {
 						IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 						if (node instanceof ICPPASTDeclSpecifier) {
 							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) node;
@@ -743,7 +744,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 				// Before trying a search lets make sure that the user is not hovering
 				// over a keyword other than 'auto'.
-				if (selectionIsKeyword(expression) && !expression.equals(Keywords.AUTO))
+				if (selectionIsKeyword(expression) && !(expression.equals(Keywords.AUTO)
+						|| expression.equals(Keywords.TYPEOF) || expression.equals(Keywords.DECLTYPE)))
 					return null;
 
 				// Try with the indexer.

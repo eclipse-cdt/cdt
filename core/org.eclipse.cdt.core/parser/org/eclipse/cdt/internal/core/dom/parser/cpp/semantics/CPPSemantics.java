@@ -110,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
@@ -130,6 +131,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
@@ -139,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -4448,5 +4451,54 @@ public class CPPSemantics {
 			}
 		}
 		return expressionType;
+	}
+	
+	/**
+	 * This method performs type deduction for auto, decltype or typeof
+	 * declarations. This is used by {@code CSourceHover} and
+	 * {@code OpenDeclarationsJob} after checking (see
+	 * {@code SemanticUtil#isAutoOrDecltype(String)}) whether the selected text
+	 * equals any of the mentioned keywords.
+	 *
+	 * @param node
+	 *            The decl-specifier or decltype-specifier in which the 'auto'
+	 *            or 'decltype' occurs.
+	 * @return the deduced type or null
+	 */
+	public static IType resolveDecltypeOrAutoType(IASTNode node) {
+		IType type = null;
+		if (node instanceof ICPPASTDecltypeSpecifier) {
+			type = ((ICPPASTDecltypeSpecifier) node).getDecltypeExpression().getExpressionType();
+		}
+		if (node instanceof ICPPASTSimpleDeclSpecifier) {
+			int builtin = ((ICPPASTSimpleDeclSpecifier) node).getType();
+			if (builtin == ICPPASTSimpleDeclSpecifier.t_auto || builtin == ICPPASTSimpleDeclSpecifier.t_typeof
+					|| builtin == ICPPASTSimpleDeclSpecifier.t_decltype) {
+				IASTNode parent = node.getParent();
+				IASTDeclarator declarator = null;
+				if (parent instanceof IASTSimpleDeclaration) {
+					IASTDeclarator[] declarators = ((IASTSimpleDeclaration) parent).getDeclarators();
+					// It's invalid for different declarators to deduce
+					// different types with 'auto', so just get the type based on the
+					// first declarator.
+					if (declarators.length > 0)
+						declarator = declarators[0];
+				} else if (parent instanceof IASTParameterDeclaration
+						&& builtin != ICPPASTSimpleDeclSpecifier.t_auto) {
+					declarator = ((IASTParameterDeclaration) parent).getDeclarator();
+				} else if (parent instanceof ICPPASTTypeId && builtin != ICPPASTSimpleDeclSpecifier.t_auto) {
+					declarator = ((ICPPASTTypeId) parent).getAbstractDeclarator();
+				} else if (parent instanceof ICPPASTFunctionDefinition) {
+					declarator = ((ICPPASTFunctionDefinition) parent).getDeclarator();
+				}
+				if (declarator != null) {
+					type = CPPVisitor.createType(declarator);
+					if (type instanceof ICPPFunctionType) {
+						type = ((ICPPFunctionType) type).getReturnType();
+					}
+				}
+			}
+		}
+		return type;
 	}
 }

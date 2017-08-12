@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -41,6 +42,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
@@ -76,33 +79,10 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast == null)
 					return Status.CANCEL_STATUS;
-				final int offset= region.getOffset();
-				final int length= Math.max(1, region.getLength());
-				final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
-				IASTNode linkASTNode = null;
+				
+				IASTNode linkASTNode = getLinkASTNode(document, ast, region);
+				
 				IASTNodeLocation linkLocation = null;
-				
-				IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
-				if (selectedName != null) { // found a name
-					// Prefer include statement over the include name
-					if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
-						linkASTNode = selectedName.getParent();
-					} else {
-						linkASTNode = selectedName;
-					}
-				} else { 
-					final IASTNode implicit = nodeSelector.findEnclosingImplicitName(offset, length);
-					if (implicit != null) {
-						linkASTNode = implicit;
-					} else {
-						// Search for include statement
-						final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
-						if (cand instanceof IASTPreprocessorIncludeStatement) {
-							linkASTNode = cand;
-						}
-					}
-				}
-				
 				if (linkASTNode != null) {
 					if (linkASTNode instanceof IASTName) {
 						IASTName astName = (IASTName) linkASTNode;
@@ -167,6 +147,55 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		return new IHyperlink[] { new CElementHyperlink(hyperlinkRegion[0], openAction) };
 	}
 
+	private static IASTNode getLinkASTNode(IDocument document, IASTTranslationUnit ast, IRegion region) {
+		final int offset= region.getOffset();
+		final int length= Math.max(1, region.getLength());
+		
+		final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
+		if (isOverAutoOrDecltype(document, offset)) {
+			IASTNode node = nodeSelector.findEnclosingNode(offset, length);
+			IASTTypeId enclosingTypeId = ASTQueries.findAncestorWithType(node, IASTTypeId.class);
+			if (enclosingTypeId != null) {
+				return enclosingTypeId;
+			}
+		}
+		
+		IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
+		if (selectedName != null) { // found a name
+			// Prefer include statement over the include name
+			if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
+				return selectedName.getParent();
+			} else {
+				return selectedName;
+			}
+		} else { 
+			final IASTNode implicit = nodeSelector.findEnclosingImplicitName(offset, length);
+			if (implicit != null) {
+				return implicit;
+			} else {
+				// Search for include statement
+				final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
+				if (cand instanceof IASTPreprocessorIncludeStatement) {
+					return cand;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static boolean isOverAutoOrDecltype(IDocument document, int offset) {
+		try {
+			IRegion wordRegion = CWordFinder.findWord(document, offset);
+			if (wordRegion != null && wordRegion.getLength() > 0) {
+				String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
+				return SemanticUtil.isAutoOrDecltype(word);
+			}
+		} catch (BadLocationException e) {
+			// Fall through and return false.
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns the identifier at the given offset, or {@code null} if the there is no identifier
 	 * at the offset.
@@ -175,8 +204,10 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		IRegion wordRegion= CWordFinder.findWord(document, offset);
 		if (wordRegion != null && wordRegion.getLength() > 0) {
 			String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
-			if (!Character.isDigit(word.charAt(0)) && !isLanguageKeyword(language, word)) {
-				return wordRegion;
+			if (!Character.isDigit(word.charAt(0))) {
+				if (SemanticUtil.isAutoOrDecltype(word) || !isLanguageKeyword(language, word)) {
+					return wordRegion;
+				}
 			}
 		}
 		return null;

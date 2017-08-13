@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_b13d5d7c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-13T04:52:52Z",
+      "side": 1,
+      "message": "As this check appears in three different places (once here, and twice in CSourceHover.java), it makes sense to factor out a small static helper function, SemanticUtil.isAutoOrDecltype(String).",
+      "revId": "ec11b176dd4a165d726f67e90fcef413da9865b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_d14029f0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-13T04:52:52Z",
+      "side": 1,
+      "message": "Let\u0027s avoid the creation of dummy array objects, by storing just a single declarator here.\n\nIn the IASTSimpleDeclaration branch, we can check that there is at least one declarator, and use the first one (which we currently do below).",
+      "revId": "ec11b176dd4a165d726f67e90fcef413da9865b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_f13365a9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-13T04:52:52Z",
+      "side": 1,
+      "message": "I would prefer adding a check that disallows \u0027auto\u0027 in the parameter-declaration and type-id cases. (\u0027auto\u0027 in a parameter-declaration of a lambda has a meaning in C++14, but there is no useful navigation we can do for it, because it represents an invented template parameter.)",
+      "revId": "ec11b176dd4a165d726f67e90fcef413da9865b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_71105507",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 746,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-08-13T04:52:52Z",
+      "side": 1,
+      "message": "Please adjust the comment to reflect the code change.",
+      "revId": "ec11b176dd4a165d726f67e90fcef413da9865b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

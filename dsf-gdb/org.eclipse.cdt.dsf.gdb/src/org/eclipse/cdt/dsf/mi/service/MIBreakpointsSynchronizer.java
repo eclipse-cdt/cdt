@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.cdt.core.IAddress;
@@ -764,8 +765,30 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		}
 	}
 
+	/**
+	 * Create a new platform breakpoint for the function breakpoint. This method is
+	 * called when =breakpoint-created is received from GDB and there is not already
+	 * a matching platform breakpoint
+	 *
+	 * @param fileName
+	 *            resolved filename
+	 * @param miBpt
+	 *            breakpoint info from GDB, must be one for which
+	 *            {@link #isFunctionBreakpoint(MIBreakpoint)} returns true.
+	 * @return new platform breakpoint
+	 * @throws CoreException
+	 */
 	private ICBreakpoint createPlatformFunctionBreakpoint(String fileName, MIBreakpoint miBpt) throws CoreException {
-		IResource resource = getResource(fileName);
+		IResource resource;
+		String resolvedFileName;
+
+		if (userRequestedSpecificFile(miBpt)) {
+			resource = getResource(fileName);
+			resolvedFileName = fileName;
+		} else {
+			resource = ResourcesPlugin.getWorkspace().getRoot();
+			resolvedFileName = null;
+		}
 
 		int type = 0;
 		if (miBpt.isTemporary()) {
@@ -776,7 +799,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		}
 		
 		return CDIDebugModel.createFunctionBreakpoint(
-				fileName, 
+				resolvedFileName,
 				resource, 
 				type, 
 				getFunctionName(miBpt), 
@@ -787,6 +810,24 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 				miBpt.getIgnoreCount(), 
 				miBpt.getCondition(),
 				false);
+	}
+
+	/**
+	 * If the user inserted the breakpoint with a filename (e.g. "b main.c:main")
+	 * then create the breakpoint with that file, otherwise the function breakpoint
+	 * should be inserted in the same way as if it was done with the UI "Add
+	 * Function Breakpoint (C/C++)".
+	 * 
+	 * @param miBpt
+	 *            an MI Breakpoint that is a function breakpoint
+	 * @return true if the user specified file and function, false if just a
+	 *         function was specified.
+	 */
+	private boolean userRequestedSpecificFile(MIBreakpoint miBpt) {
+		assert isFunctionBreakpoint(miBpt);
+		String originalLocation = miBpt.getOriginalLocation();
+		boolean userRequestedSpecificFile = originalLocation != null && originalLocation.contains(":"); //$NON-NLS-1$
+		return userRequestedSpecificFile;
 	}
 
 	private ICBreakpoint createPlatformLineBreakpoint(String fileName, MIBreakpoint miBpt) throws CoreException {
@@ -1152,7 +1193,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     	}
     	if (plBpt instanceof ICFunctionBreakpoint) {
     		return isFunctionBreakpoint(miBpt) ? 
-    			isPlatformFunctionBreakpoint((ICFunctionBreakpoint)plBpt, miBpt) : false;
+    			isPlatformFunctionBreakpoint((ICFunctionBreakpoint)plBpt, miBpt, fileName) : false;
     	}
     	try {
     		if (fileName == null || plBpt.getSourceHandle() == null 
@@ -1170,15 +1211,28 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
     	return false;
     }
 
-    private boolean isPlatformFunctionBreakpoint(ICFunctionBreakpoint plBpt, MIBreakpoint miBpt) {
+	private boolean isPlatformFunctionBreakpoint(ICFunctionBreakpoint plBpt, MIBreakpoint miBpt, String fileName) {
 		try {
-			return (plBpt.getFunction() != null && plBpt.getFunction().equals(getFunctionName(miBpt)));
+			if (!Objects.equals(plBpt.getFunction(), getFunctionName(miBpt))) {
+				return false;
+			}
+			if (userRequestedSpecificFile(miBpt)) {
+				if (fileName == null || plBpt.getSourceHandle() == null
+						|| !new File(fileName).equals(new File(plBpt.getSourceHandle()))) {
+					return false;
+				}
+			} else {
+				if (plBpt.getSourceHandle() != null) {
+					return false;
+				}
+			}
+			return true;
 		}
 		catch(CoreException e) {
 			GdbPlugin.log(e.getStatus());
 		}
 		return false;
-    }
+	}
 
     private boolean isPlatformAddressBreakpoint(ICAddressBreakpoint plBpt, MIBreakpoint miBpt) {
 		try {

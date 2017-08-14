@@ -11,18 +11,26 @@
 
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -43,6 +51,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -166,10 +175,28 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	@Test
+	public void testValidFunctionNameOnlyBreakpoints() throws Throwable {
+		Map<String, Object> breakpointAttributes = getLocationBreakpointAttributes(ICFunctionBreakpoint.class, true);
+		breakpointAttributes.remove(ATTR_FILE_NAME);
+		testConsoleBreakpoint(
+				ICFunctionBreakpoint.class, 
+				breakpointAttributes);
+	}
+
+	@Test
 	public void testInvalidFunctionBreakpoints() throws Throwable {
 		testConsoleBreakpoint(
 				ICFunctionBreakpoint.class, 
 				getLocationBreakpointAttributes(ICFunctionBreakpoint.class, false));
+	}
+
+	@Test
+	public void testInvalidFunctionNameOnlyBreakpoints() throws Throwable {
+		Map<String, Object> breakpointAttributes = getLocationBreakpointAttributes(ICFunctionBreakpoint.class, false);
+		breakpointAttributes.remove(ATTR_FILE_NAME);
+		testConsoleBreakpoint(
+				ICFunctionBreakpoint.class, 
+				breakpointAttributes);
 	}
 
 	@Test
@@ -206,6 +233,220 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 				ICWatchpoint.class, 
 				getWatchpointAttributes(ICWatchpoint.class, true, true));
 	}
+	
+	/**
+	 * Shortcut to CDIDebugModel.createFunctionBreakpoint
+	 */
+	private static void createFunctionBreakpoint(String filename, String function) throws CoreException {
+		CDIDebugModel.createFunctionBreakpoint(filename, ResourcesPlugin.getWorkspace().getRoot(), 0,
+				function, -1, -1, -1, true, 0, "", true);
+	}
+
+	private List<IBreakpoint> getPlatformBreakpoints(Predicate<IBreakpoint> predicate) {
+		return Arrays.asList(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()).stream()
+				.filter(predicate).collect(Collectors.toList());
+	}
+
+	private List<IBreakpoint> getPlatformFunctionBreakpoints() {
+		return getPlatformBreakpoints(CFunctionBreakpoint.class::isInstance);
+	}
+
+	/**
+	 * Test of the tests. This test ensures that basic creating/deleting of a function breakpoint works
+	 * as expected for the other  testFunctionBreakpointsAreIndependent* tests.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent0() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		setConsoleFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		assertEquals(1, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+	/**
+	 * Check that console inserted breakpoint with explicit file does not share platform
+	 * breakpoint that is not for a file.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent1() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(null, FUNCTION_VALID);
+		bps = getPlatformFunctionBreakpoints();
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(2, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(1, getTargetBreakpoints().length);
+
+		bps.get(1).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+	/**
+	 * Check that console inserted breakpoint without explicit file does not share platform
+	 * breakpoint that is for a file.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent2() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(null, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(2, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(1, getTargetBreakpoints().length);
+
+		bps.get(1).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+	/**
+	 * Check that console inserted breakpoint with explicit file does not share platform
+	 * breakpoint that is for a different file.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent3() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(SOURCE_NAME_INVALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(2, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(1, getTargetBreakpoints().length);
+
+		bps.get(1).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+	/**
+	 * Check that console inserted breakpoint without explicit file shares platform breakpoint
+	 * without file. This means that when the 1 platform breakpoint is deleted, both
+	 * target breakpoints should be removed.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent4() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(null, FUNCTION_VALID);
+		bps = getPlatformFunctionBreakpoints();
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(null, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+
+	/**
+	 * Check that console inserted breakpoint with explicit file shares platform breakpoint
+	 * with a file. This means that when the 1 platform breakpoint is deleted, both
+	 * target breakpoints should be removed.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent5() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(SOURCE_NAME_VALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+
+	/**
+	 * Check that console inserted breakpoint with explicit (invalid) file shares platform breakpoint
+	 * with (invalid) file. This means that when the 1 platform breakpoint is deleted, both
+	 * target breakpoints should be removed.
+	 */
+	@Test
+	public void testFunctionBreakpointsAreIndependent6() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		createFunctionBreakpoint(SOURCE_NAME_INVALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		setConsoleFunctionBreakpoint(SOURCE_NAME_INVALID, FUNCTION_VALID);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		assertEquals(2, getTargetBreakpoints().length);
+
+		bps.get(0).delete();
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		assertEquals(0, getTargetBreakpoints().length);
+	}
+	
 
 	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsChangedEvent e) {
@@ -361,9 +602,13 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
   		queueConsoleCommand(String.format("break %s:%d", fileName, lineNumber));
   	}
 
-  	private void setConsoleFunctionBreakpoint(String fileName, String function) throws Throwable {
-  		queueConsoleCommand(String.format("break %s:%s", fileName, function));
-  	}
+	private void setConsoleFunctionBreakpoint(String fileName, String function) throws Throwable {
+		if (fileName == null) {
+			queueConsoleCommand(String.format("break %s", function));
+		} else {
+			queueConsoleCommand(String.format("break %s:%s", fileName, function));
+		}
+	}
 
   	private void setConsoleAddressBreakpoint(String address) throws Throwable {
   		queueConsoleCommand(String.format("break *%s", address));
@@ -407,24 +652,25 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		};
 		fSession.getExecutor().execute(query);
 		return query.get(timeout, unit).getMIBreakpoints();
-  	}
+	}
 
-  	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType) throws Exception {
-  		waitForBreakpointEvent(eventType, DEFAULT_TIMEOUT);
-  	}
+	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType) throws Exception {
+		waitForBreakpointEvent(eventType, DEFAULT_TIMEOUT);
+	}
 
-  	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType, int timeout) throws Exception {
+	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType, int timeout)
+			throws Exception {
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() <= start + timeout) {
+			if (breakpointEventReceived(eventType)) {
+				return;
+			}
+			synchronized (this) {
+				wait(timeout);
+			}
+		}
 		if (!breakpointEventReceived(eventType)) {
-			synchronized(this) {
-				try {
-					wait(timeout);
-				} 
-				catch (InterruptedException ex) {
-				}
-			}
-			if (!breakpointEventReceived(eventType)) {
-				throw new Exception(String.format("Timed out waiting for '%s' to occur.", eventType.getName()));
-			}
+			throw new Exception(String.format("Timed out waiting for '%s' to occur.", eventType.getName()));
 		}
 	}
 
@@ -461,7 +707,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
   	private ICFunctionBreakpoint findPlatformFunctionBreakpoint(String fileName, String function) throws Throwable {
   		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
   			if (b instanceof ICFunctionBreakpoint 
-  				&& fileName.equals(((ICLineBreakpoint)b).getSourceHandle()) 
+  				&& Objects.equals(fileName, ((ICLineBreakpoint)b).getSourceHandle())
   				&& function.equals(((ICLineBreakpoint)b).getFunction())) {
   				return (ICFunctionBreakpoint)b;
   			}

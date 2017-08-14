@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_598c5f0d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2109,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-14T11:20:10Z",
+      "side": 1,
+      "message": "Unused assignment to usedOutType as the assignment is replaced on line 2128",
+      "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7972fb8a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2130,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-14T11:20:10Z",
+      "side": 1,
+      "message": "This and line 2150 are the only lines to read usedOutType, but they are using the value just assigned in 2128.",
+      "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_39915323",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3098,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-14T11:20:10Z",
+      "side": 1,
+      "message": "? If that is what it should be, are you planning on changing it.",
+      "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

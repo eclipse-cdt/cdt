@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_597d3f22",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2130,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-14T14:14:01Z",
+      "side": 1,
+      "message": "OK, once you have deleted that line I will understand. However if line 2128 is deleted, won\u0027t usedOutType always be null?",
+      "parentUuid": "c7880b39_590b7fdd",
+      "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_39915323",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 5
@@ -83,6 +101,24 @@
       "side": 1,
       "message": "What I try to say is that tool.getPrimaryOutputType does not make sense because the data modal allows for more than 1 primary output type. However I think I\u0027m the first one to need multiple primary output types so for all actual implementations there is no difference.\n\ngetPrimaryOutputType is used in several locations so I assume all these cases do not cater for the multiple primary output type which is not \"strange\" as there is no unit test that does test this.\n\nAs for my purposes I do not need to change this. In other words my copy of GnuMakefileGenerator contains the same code.\n\nTherefore I consider this a none-urgent issue at the architectural level so I don\u0027t feel entitled to \"approve\" this change(or at least not approve \"how to change\" given backwards compatibility and my lack of java knowledge in this domain).",
       "parentUuid": "c7880b39_39915323",
+      "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_794f5b11",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3098,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-14T14:14:01Z",
+      "side": 1,
+      "message": "What you are saying sounds reasonable. You may very well be the most expert person in this area now, but I will review and make sure I understand your changes.\n\nUntil you are ready to do that change, please leave the commented out code out.\n\nWe will certainly need some tests that show multiple output types, perhaps that can be derived from your work?",
+      "parentUuid": "c7880b39_79683b6c",
       "revId": "d0672d6398f533f544c59bbf8764c67031b755e9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="21">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="22">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.antlr.runtime" version="0.0.0"/>
@@ -15,7 +15,7 @@
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.freemarker" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20170120205402/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>

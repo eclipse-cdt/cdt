@@ -120,6 +120,9 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	    IBinding[] bindings= classScope.getBindings(lookup);
 		IBinding[] result= IBinding.EMPTY_BINDING_ARRAY;
+		if (bindings == null) {
+			return result;
+		}
 		int n = 0;
 		for (IBinding binding : bindings) {
 			if (binding == specialized ||

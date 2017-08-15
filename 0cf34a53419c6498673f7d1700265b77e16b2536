@@ -22,6 +22,30 @@
       "revId": "0cf34a53419c6498673f7d1700265b77e16b2536",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7c82e958",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-15T07:35:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7880b39_7caae98d",
+      "range": {
+        "startLine": 830,
+        "startChar": 0,
+        "endLine": 830,
+        "endChar": 2
+      },
+      "revId": "0cf34a53419c6498673f7d1700265b77e16b2536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

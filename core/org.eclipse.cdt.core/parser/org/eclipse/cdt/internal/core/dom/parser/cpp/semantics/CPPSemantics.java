@@ -3593,6 +3593,12 @@ public class CPPSemantics {
 			return null;
 		if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
 			return null;
+		
+		// The class type may be declared in a header but defined in the AST.
+		// In such a case, we want the constructors as AST bindings (since as
+		// index bindings they would fail declaredBefore() filtering), so map 
+		// the class type to its AST representation.
+		type = SemanticUtil.mapToAST(type, name);
 
 		return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
 	}

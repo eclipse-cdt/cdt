@@ -2480,4 +2480,19 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testSelfReferencingVariable_510484() throws Exception {
 		checkBindings();
 	}
+	
+	//	class Foo {
+	//		struct Bar;
+	//		void func();
+	//	};
+
+	//	struct Foo::Bar {
+	//		Bar(int, int);
+	//	};
+	//	void Foo::func() {
+	//		Bar waldo(0, 0);
+	//	}
+	public void testNestedClassDefinedOutOfLine_502999() throws Exception {
+		checkBindings();
+	}
 }

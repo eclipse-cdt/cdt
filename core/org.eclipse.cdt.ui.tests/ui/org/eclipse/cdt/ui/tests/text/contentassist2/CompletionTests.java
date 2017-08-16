@@ -606,6 +606,15 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(new String[] { "i" });
 	}
 
+	// namespace bug521016 {
+	// void test() {
+	//   B::Test::AAA::/*cursor*/
+	// }
+	// }
+	public void testNestedAliasTemplateSpecialization_521016() throws Exception{
+		assertCompletionResults(new String[] { "test()" });
+	}
+	
 	// template <typename TPA>
 	// struct A {
 	//   enum class AA {
@@ -1082,7 +1091,7 @@ public class CompletionTests extends CompletionTestBase {
 
 	//	void test() {
 	//		int alocal, blocal;
-	//		if (alocal < b/*cursor*/
+	//		if (alocal < bl/*cursor*/
 	public void testCompletionAfterLessThan_229062() throws Exception {
 		final String[] expected= { "blocal" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
@@ -1181,7 +1190,7 @@ public class CompletionTests extends CompletionTestBase {
 	public void testConstructorInitializerList_EmptyInput_266586() throws Exception {
 		final String[] expected= { "mOne", "Base",
 				"Base(int)", "Base(const Base<Helper> &)", "Helper",
-				"Helper(void)", "Helper(const Helper &)", "_A_331056", "_B_331056",
+				"Helper(void)", "Helper(const Helper &)", "_A_331056", "_B_331056", "bug521016",
 				// Namespaces must be offered as well. In order for this code
 				// to compile with gcc (e.g. 4.1.2), you need to write
 				// ::ns::Base<Helper>() instead of just Base<Helper>().

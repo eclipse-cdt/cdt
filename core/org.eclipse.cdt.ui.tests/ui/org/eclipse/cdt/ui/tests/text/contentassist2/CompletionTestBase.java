@@ -224,4 +224,20 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 	//
 	//	template<typename T1, typename T2>
 	//	using AliasForTemplateAlias = AliasForSpecialization<T1, T2>;
+	//
+	//  namespace bug521016 {
+	//    template <int TPA>
+	//    struct A {
+	//      template <int TPAA>
+	//      struct AA {
+	//        struct AAA {
+	//          static void test();
+	//        };
+	//      };
+	//    };
+    //
+	//    struct B {
+	//      using Test = A<0>::AA<0>;
+	//    };
+	//  }
 }

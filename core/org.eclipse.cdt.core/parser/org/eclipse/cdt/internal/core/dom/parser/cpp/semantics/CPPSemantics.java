@@ -1989,7 +1989,7 @@ public class CPPSemantics {
 		// This is done to distinguish between left and right points for the same offset.
 		final int pointOfRef= ((ASTNode) node).getOffset() * 2;
 		ASTNode nd = null;
-		if (obj instanceof ICPPSpecialization) {
+		while (obj instanceof ICPPSpecialization) {
 			obj = ((ICPPSpecialization) obj).getSpecializedBinding();
 		}
 

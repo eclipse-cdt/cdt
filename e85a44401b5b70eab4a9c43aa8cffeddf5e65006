@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_e21f0be9",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_231edbef",
+      "range": {
+        "startLine": 2,
+        "startChar": 3,
+        "endLine": 2,
+        "endChar": 33
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_021b37fe",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_6328d30e",
+      "range": {
+        "startLine": 2,
+        "startChar": 70,
+        "endLine": 2,
+        "endChar": 74
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_c3b1a74d",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "Rather than implement this in the class, use an inner class. Doing this as an implements means that all the methods of that interface also become API.",
+      "range": {
+        "startLine": 142,
+        "startChar": 136,
+        "endLine": 142,
+        "endChar": 158
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_22267342",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_c3b1a74d",
       "range": {
         "startLine": 142,
         "startChar": 136,
@@ -88,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_4221bf26",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Ok, I\u0027ve removed it.  This was old CDI-related code that we no longer use.",
+      "parentUuid": "a7c23755_a3ae6bef",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_3e7ef08a",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -99,6 +189,24 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "This should be a local variable, other than setting to null it is never accessed outside of saveMemento() where the first thing that happens is it is written",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_c22ccf1f",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_3e7ef08a",
       "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -122,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_e2462bd7",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve changed performGo() to not throw exceptions so the try-catch block is no longer needed.",
+      "parentUuid": "a7c23755_bedcc05a",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_7ecb0896",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -139,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_024257c2",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve changed it so that it returns a boolean instead of throwing an exception.",
+      "parentUuid": "a7c23755_7ecb0896",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_3e943014",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -150,6 +294,24 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "AFAICT nothing in this change takes advantage of this new throw, only the new empty catch on line 606",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_223d9344",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve changed it to return false instead of throwing an exception.",
+      "parentUuid": "a7c23755_3e943014",
       "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -179,6 +341,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_4238df52",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Should be \"save\"",
+      "parentUuid": "a7c23755_7e8ea807",
+      "range": {
+        "startLine": 824,
+        "startChar": 49,
+        "endLine": 824,
+        "endChar": 52
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_ded6dcef",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -190,6 +376,24 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "Since only DSF is available today in CDT, I can\u0027t test or see the purpose for all the target state checks.",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_62debb8c",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1089,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve cleaned up the code so that it supports only DSF.",
+      "parentUuid": "a7c23755_ded6dcef",
       "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -230,6 +434,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_a2e42356",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1125,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve removed this local variable and passed an empty string to updateTab().",
+      "parentUuid": "a7c23755_5ee1ecb7",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_be884000",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -253,6 +475,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_027177ff",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1148,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Good idea.  I\u0027ve broken the code off into a separate method, loadMemoryTabs().",
+      "parentUuid": "a7c23755_be884000",
+      "range": {
+        "startLine": 1148,
+        "startChar": 0,
+        "endLine": 1148,
+        "endChar": 29
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_0301df77",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -264,6 +510,30 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "As you are catching all exceptions (including runtime exceptions) please at a minimum log the error. Better still would be to catch only what you know to be handling and throw everything else.\n\nReason is, it is quite reasonable that an NPE may happen, and without the logging there is no indication at all of the underlying fault.\n\nI am working on trying to resolve the swallowed exceptions in DSF, see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d507855",
+      "range": {
+        "startLine": 1150,
+        "startChar": 30,
+        "endLine": 1155,
+        "endChar": 46
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_e2d1cb75",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "That\u0027s a good point.  The code is trying to catch an exception when a go to address has failed when trying to restore the memory tabs.  I\u0027ve fixed it so that it explicitly throws/catches a go to address exception and then log errors for the other exception cases.",
+      "parentUuid": "a7c23755_0301df77",
       "range": {
         "startLine": 1150,
         "startChar": 30,
@@ -322,6 +592,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_02f417f7",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1161,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "It\u0027s missing an else.  If the target supports multiple memory space, it will request the list of memory spaces and update the tabs...else, just update the tabs.  Good catch.",
+      "parentUuid": "a7c23755_fef0f887",
+      "range": {
+        "startLine": 1161,
+        "startChar": 4,
+        "endLine": 1161,
+        "endChar": 13
+      },
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_3ee8b0ee",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -356,6 +650,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_a28d0390",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1657,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c23755_9e8f0439",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_1e64d4c2",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -373,6 +685,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_829ac7c3",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1728,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "I\u0027ve fixed it so that it sets a launching flag for each added launch.",
+      "parentUuid": "a7c23755_1e64d4c2",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7c23755_7ee2280e",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 3
@@ -384,6 +714,24 @@
       "writtenOn": "2016-12-14T19:25:15Z",
       "side": 1,
       "message": "There is already a runOnUIThread in this class that takes a Runnable. As this callable does not do anything with the result I would recommend changing it and getting rid of the then unused runOnUIThread(Callable)",
+      "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_42c53f9f",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1781,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-17T17:35:20Z",
+      "side": 1,
+      "message": "The reason I used the Callable is that I wanted to throw an exception from the Callable.  You can\u0027t do that with a Runnable.  Let me know if there is a better way to do this.",
+      "parentUuid": "a7c23755_7ee2280e",
       "revId": "e85a44401b5b70eab4a9c43aa8cffeddf5e65006",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

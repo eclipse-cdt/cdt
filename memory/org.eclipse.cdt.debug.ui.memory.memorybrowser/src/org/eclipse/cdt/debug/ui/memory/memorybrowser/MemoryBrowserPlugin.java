@@ -29,6 +29,9 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static MemoryBrowserPlugin plugin;
 	
+	// The bundle context
+	private static BundleContext fContext;
+	
 	/**
 	 * The constructor
 	 */
@@ -43,6 +46,7 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		fContext = context;
 	}
 
 	/*
@@ -52,7 +56,8 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		super.stop(context);
+		context = null;
+		super.stop(fContext);
 	}
 
 	/**
@@ -101,5 +106,14 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, message, exception);
+	}
+	
+	/**
+	 * Returns the bundle context
+	 *
+	 * @return the bundle context
+	 */
+	public static BundleContext getBundleContext() {
+		return fContext;
 	}
 }

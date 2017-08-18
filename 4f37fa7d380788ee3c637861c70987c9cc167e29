@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_7bb74621",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "No, I checked and it\u0027s no longer needed.",
+      "parentUuid": "c7880b39_18172879",
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_18164854",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2017-08-18T07:53:46Z",
       "side": 1,
       "message": "We can\u0027t do, see other comments by wc.doSave()\n\n-- \n\nIn fact, this case is even worse, consider the case where the same launch config is launched multiple times. You will have multiple Launch objects all connected to save Launch Configuration object, so the ATTR_LAUNCHING value will not even be correct across all the launches.\n\nFor the needs here I suspect using the Launch object\u0027s get/set Attribute would do the job.",
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_dbee7afc",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "Good catch!  Our custom debugger doesn\u0027t allow multiple launches so it worked in our case.  I\u0027ll fix it to use the Launch object\u0027s get/set attribute.",
+      "parentUuid": "c7880b39_18164854",
       "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_5bdb6a62",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "Ok, I\u0027ll just make the original public API call my new performGo that returns a boolean.",
+      "parentUuid": "c7880b39_d82040d1",
+      "range": {
+        "startLine": 622,
+        "startChar": 8,
+        "endLine": 622,
+        "endChar": 15
+      },
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_b81c5470",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 4
@@ -70,6 +130,24 @@
       "writtenOn": "2017-08-18T07:53:46Z",
       "side": 1,
       "message": "You need to be in DsfExecutor thread to do this. The updateMemoryBrowserView is called (normally/always?) in the main thread.",
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7b5bc659",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1116,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "I think I found an alternate way of checking for the suspended state instead of using the DsfExecutor thread by using the ISuspendResume interface of the context object.",
+      "parentUuid": "c7880b39_b81c5470",
       "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -93,6 +171,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_3bf05e51",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1684,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "I agree it could be a topic for a new bug.  We didn\u0027t have to explicitly save the number of columns in our memory browser and it worked for us...I think the column sizes are handled in our memory rendering class.",
+      "parentUuid": "c7880b39_b8b37401",
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_386dc4f5",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 4
@@ -104,6 +200,24 @@
       "writtenOn": "2017-08-18T07:53:46Z",
       "side": 1,
       "message": "Please only write to the launch configuration if the memento has changed. This is something that I have recently learned/fixed in other places. See https://git.eclipse.org/r/#/c/102147/ for how I did it in similar places (plus Bug 520257 and Bug 500988 Comment 2 for background)\n\n--- \n\nActually your case is slightly more complicated than what I have referred to above. As you do the saveMemento as a result of performGo (called by createMemoryTabsFromMemento) it means that if you have 2+ tabs then every launch will cause the .launch file to be re-written as it incrementally writes each additional tab.\n\nPerhaps you could use the \"launching\" attribute to avoid saves back until the init/load of the memento is done?",
+      "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_bbcd2e2f",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1737,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-18T16:54:27Z",
+      "side": 1,
+      "message": "Good idea!  I fixed it by checking if it\u0027s launching, and if so, don\u0027t save the memento.",
+      "parentUuid": "c7880b39_386dc4f5",
       "revId": "4f37fa7d380788ee3c637861c70987c9cc167e29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

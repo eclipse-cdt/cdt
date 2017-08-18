@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_5bb0ca48",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-18T20:57:08Z",
+      "side": 1,
+      "message": "Thanks for resolving this API error.",
+      "revId": "7fc067b06dd3ccf2840c919b209ee00871ab4a6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_1ba1e2f0",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-18T20:57:08Z",
+      "side": 1,
+      "message": "Are you sure this does what you expect. Have you tried stepping into isSuspended? IIRC this will return true as DSF does not really use ISuspendReume interface (see SuspendResumeAdapterFactory and its ref in plugin.xml)",
+      "revId": "7fc067b06dd3ccf2840c919b209ee00871ab4a6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_1bcac2b2",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1613,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2017-08-18T20:57:08Z",
+      "side": 1,
+      "message": "It only throws an exception if caller was already on UI thread?",
+      "range": {
+        "startLine": 1613,
+        "startChar": 0,
+        "endLine": 1613,
+        "endChar": 44
+      },
+      "revId": "7fc067b06dd3ccf2840c919b209ee00871ab4a6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

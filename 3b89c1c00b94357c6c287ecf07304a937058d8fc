@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "c7880b39_e741d4be",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1989,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-08-22T08:45:07Z",
+      "side": 1,
+      "message": "I\u0027m having another issue with this code atm. If the specialization is an explicit one (or an overloaded template method/function?) then we should not try to replace it with the primary template, right?\n\nUnfortunately, I can only find ICPPTemplateInstance that is giving me that information.\n\nOTH I am a bit hesitant whether that is the right place to do as the problem I\u0027m having is with a TemplateId that gets bound to an explicit specialization when CPPTemplates.getInstance(...) is called without seamingly checking the point of definition (would finding the definition even be the job of \u0027CPPSemantics.declaredBefore?)",
+      "revId": "3b89c1c00b94357c6c287ecf07304a937058d8fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_c79db873",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTestBase.java",
         "patchSetId": 2

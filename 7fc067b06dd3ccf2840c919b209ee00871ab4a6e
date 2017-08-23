@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_87ee517e",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-23T18:14:26Z",
+      "side": 1,
+      "message": "Yup, I did set a breakpoint here and stepped through the code. I believe it works because it ends up checking if the stack frame VM node has an adapter for the ISuspendResume interface and calls its isSuspended() method, which always return true like you said.  I think this is ok because the stack frame node gets created when the target is suspended.\n\nI grep\u0027ed the CDT sources and found that ISuspendResume is used in other places too like MoveToLineActionDelegate and ResumeAtLineActionDelegate to check if the target is suspended.",
+      "parentUuid": "c7880b39_1ba1e2f0",
+      "revId": "7fc067b06dd3ccf2840c919b209ee00871ab4a6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_1bcac2b2",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
         "patchSetId": 5
@@ -47,6 +65,30 @@
       "writtenOn": "2017-08-18T20:57:08Z",
       "side": 1,
       "message": "It only throws an exception if caller was already on UI thread?",
+      "range": {
+        "startLine": 1613,
+        "startChar": 0,
+        "endLine": 1613,
+        "endChar": 44
+      },
+      "revId": "7fc067b06dd3ccf2840c919b209ee00871ab4a6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_0d7c3fd7",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/MemoryBrowser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1613,
+      "author": {
+        "id": 97497
+      },
+      "writtenOn": "2017-08-23T18:14:26Z",
+      "side": 1,
+      "message": "Good catch...yup, it should throw an exception if the caller is not on the UI thread.  I tried changing it to wait for the UI job to finish (with a call to job.join()), check for an error code, and throw an exception if that error code was returned.  It sometimes hangs with a deadlock in the call to job.join().  I looked at this for a couple of days and can\u0027t figure out how to resolve the deadlock.  Would you mind looking at the change and seeing if you can spot anything I did wrong?  I\u0027ll upload a new patch.",
+      "parentUuid": "c7880b39_1bcac2b2",
       "range": {
         "startLine": 1613,
         "startChar": 0,

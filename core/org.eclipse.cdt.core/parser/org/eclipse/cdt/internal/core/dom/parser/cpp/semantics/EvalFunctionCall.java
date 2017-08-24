@@ -108,9 +108,10 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		return containsDependentValue(fArguments);
+		return containsDependentValue(fArguments) || 
+			   !CPPTemplates.isFullyInstantiated(resolveFunctionBinding(null));
 	}
-
+	
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
 		if (!fCheckedIsConstantExpression) {
@@ -301,7 +302,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		ICPPFunction function = resolveFunctionBinding(context.getPoint());
 		if (function == null)
 			return this;
-
+		
 		if (!function.isConstexpr())
 			return EvalFixed.INCOMPLETE;
 

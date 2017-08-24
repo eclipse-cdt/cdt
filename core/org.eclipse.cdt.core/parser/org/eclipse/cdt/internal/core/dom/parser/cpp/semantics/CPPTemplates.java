@@ -3260,4 +3260,21 @@ public class CPPTemplates {
 		}
 		return name;
 	}
+	
+	/**
+	 * Checks whether a binding is fully instantiated, that is, it does not depend on template
+	 * parameters that do not yet have values.
+	 */
+	public static boolean isFullyInstantiated(IBinding binding) {
+		while (binding != null) {
+			binding = binding.getOwner();
+			if (binding instanceof ICPPTemplateDefinition) {
+				return false;
+			}
+			if (!(binding instanceof ICPPClassType)) {
+				break;
+			}
+		}
+		return true;
+	}
 }

@@ -10329,6 +10329,44 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo", 42);
 	}
 	
+	//	template <int N>
+	//	struct Model {
+	//	    static constexpr int getFamily() {
+	//	        if (N < 1350)
+	//	            return 1300;
+	//	        else
+	//	            return 1400;
+	//	    }
+	//	    static constexpr int res = getFamily();
+	//	};
+	//
+	//	constexpr int waldo = Model<1302>::res;
+	public void testStaticConstexprFunctionWithDependentBody_521274a() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 1300);
+	}
+	
+	//	template <int N>
+	//	struct constant {
+	//		static constexpr int value = N;
+	//	};
+	//	template <int N>
+	//	struct Model {
+	//	    static constexpr int getFamily() {
+	//	        if (N < 1350)
+	//	            return 1300;
+	//	        else
+	//	            return 1400;
+	//	    }
+	//		using family_t = constant<getFamily()>;
+	//	};
+	//
+	//	constexpr int waldo = Model<1302>::family_t::value;
+	public void testStaticConstexprFunctionWithDependentBody_521274b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 1300);
+	}
+	
 	//	template <class>
 	//	struct A {
 	//	    template <class>

@@ -299,9 +299,9 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			return EvalFixed.INCOMPLETE;
 
 		ICPPFunction function = resolveFunctionBinding(context.getPoint());
-		if (function == null)
+		if (function == null || !CPPTemplates.isFullyInstantiated(function))
 			return this;
-
+		
 		if (!function.isConstexpr())
 			return EvalFixed.INCOMPLETE;
 

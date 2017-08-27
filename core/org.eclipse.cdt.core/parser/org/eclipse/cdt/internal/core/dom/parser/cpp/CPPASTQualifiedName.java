@@ -41,9 +41,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -51,6 +55,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
@@ -422,6 +427,18 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				// This solves bug 456101 (template instance refering to itself).
 				// A<T>:: should not get a binding to its own template definition.
 				continue;
+			} else if (classType instanceof ICPPDeferredClassInstance
+					&& binding instanceof ICPPClassSpecialization) {
+				// during heuristic resolution of ICPPDeferredClassInstance's we
+				// might have found a partial specialization; those have their own template
+				// definition but share the same primary template as the ICPPDeferredClassInstance
+				ICPPClassType template = ((ICPPClassSpecialization) binding).getSpecializedBinding();
+				if (template instanceof ICPPClassTemplatePartialSpecialization) {
+					template = (ICPPClassType) ((ICPPClassTemplatePartialSpecialization) template)
+							.getPrimaryTemplate();
+				}
+				if (template.isSameType((IType) templateDefinition))
+					continue;
 			} else if (binding instanceof IType) {
 				if (classType.isSameType((IType) binding))
 					continue;

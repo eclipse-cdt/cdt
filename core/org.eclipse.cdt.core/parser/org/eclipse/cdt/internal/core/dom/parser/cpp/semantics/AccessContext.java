@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 /**
  * The context that determines access to private and protected class members.
@@ -115,11 +115,13 @@ public class AccessContext {
 	        while (binding instanceof ICPPSpecialization) {
 	            binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 	        }
-	        if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-	        	// A class template partial specialization inherits the visibility of its primary
-	        	// class template.
-	        	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
-	        }
+			if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+				// A class template partial specialization requires its primary
+				// template to be visible
+				if (!isAccessible(
+						((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate()))
+					return false;
+			}
 	        if (binding instanceof ICPPAliasTemplateInstance) {
 	        	binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
 	        }
@@ -300,15 +302,16 @@ public class AccessContext {
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
 			if (scope instanceof ICPPInternalUnknownScope) {
 				IType scopeType = ((ICPPInternalUnknownScope) scope).getScopeType();
-				if (scopeType instanceof ICPPDeferredClassInstance) {
-					return ((ICPPDeferredClassInstance) scopeType).getClassTemplate();
-				}
-				if (scopeType instanceof ICPPUnknownMemberClass && isPrefixLookup) {
-					scopeType = HeuristicResolver.resolveUnknownType((ICPPUnknownMemberClass) scopeType,
+//				if (scopeType instanceof ICPPUnknownMemberClass && isPrefixLookup) {
+				if (scopeType instanceof ICPPUnknownType && isPrefixLookup) {
+					scopeType = HeuristicResolver.resolveUnknownType((ICPPUnknownType)scopeType,
 							name.getParent());
 					if (scopeType instanceof ICPPClassType) {
 						return (ICPPClassType) scopeType;
 					}
+				}
+				if (scopeType instanceof ICPPDeferredClassInstance) {
+					return ((ICPPDeferredClassInstance) scopeType).getClassTemplate();
 				}
 			}
 

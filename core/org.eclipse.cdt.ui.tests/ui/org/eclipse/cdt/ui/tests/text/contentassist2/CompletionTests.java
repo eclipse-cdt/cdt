@@ -1856,7 +1856,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	public void testDependentMemberChain_bug478121() throws Exception {
 		setReplaceDotWithArrow(true);
-		final String[] expected = { "C", "c" };
+		final String[] expected = { "c" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 		assertDotReplacedWithArrow();
 	}
@@ -1909,5 +1909,26 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	public void testInheritingConstructor_511653() throws Exception {
 		assertCompletionResults(new String[] { "A;" });
+	}
+	
+	//	template <int I, int J>
+	//	struct A {
+	//	    struct Default {
+	//	    };
+	//	};
+	//
+	//	template <>
+	//	template <int J>
+	//	struct A<0, J> {
+	//	    struct Partial {
+	//	    };
+	//	};
+	//
+	//	template <int I>
+	//	struct B {
+	//	    A<0, I>::/*cursor*/;
+	//	};
+	public void testPartialSpecializationWithDeferredClassInstance_456224() throws Exception {
+		assertCompletionResults(new String[] { "Partial" });
 	}
 }

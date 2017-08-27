@@ -409,7 +409,17 @@ public class HeuristicResolver {
 		IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
-			return deferredInstance.getClassTemplate();
+			ICPPClassTemplate template = deferredInstance.getClassTemplate();
+			if (!deferredInstance.isExplicitSpecialization()) {
+				try {
+					IBinding partial = CPPTemplates.selectSpecialization(template,
+							deferredInstance.getTemplateArguments(), false, point);
+					if (partial != null && partial instanceof IType)
+						return (IType) partial;
+				} catch (DOMException e) {
+				}
+			}
+			return template;
 		} else if (type instanceof TypeOfDependentExpression) {
 			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
 			if (evaluation instanceof EvalUnary) {

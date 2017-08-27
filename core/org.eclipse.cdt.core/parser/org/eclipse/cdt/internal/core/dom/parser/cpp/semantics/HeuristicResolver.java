@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
@@ -143,8 +144,9 @@ public class HeuristicResolver {
 	private static class CPPDependentClassInstance extends CPPDeferredClassInstance
 			implements ICPPClassSpecialization {
 
-		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance) {
-			super(deferredInstance.getClassTemplate(), deferredInstance.getTemplateArguments());
+		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance, IASTNode point) {
+			super(chooseTemplateForDeferredInstance(deferredInstance, point), 
+					deferredInstance.getTemplateArguments());
 		}
 
 		@Override
@@ -287,7 +289,7 @@ public class HeuristicResolver {
 					break;
 				} else if (lookupType instanceof ICPPDeferredClassInstance) {
 					specializationContext = new CPPDependentClassInstance(
-							(ICPPDeferredClassInstance) lookupType);
+							(ICPPDeferredClassInstance) lookupType, point);
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
@@ -403,13 +405,32 @@ public class HeuristicResolver {
 	}
 
 	/**
+	 * Heuristically choose between the primary template and any partial specializations 
+	 * for a deferred template instance.
+	 */
+	private static ICPPClassTemplate chooseTemplateForDeferredInstance(ICPPDeferredClassInstance instance,
+			IASTNode point) {
+		ICPPClassTemplate template = instance.getClassTemplate();
+		if (!instance.isExplicitSpecialization()) {
+			try {
+				IBinding partial = CPPTemplates.selectSpecialization(template,
+						instance.getTemplateArguments(), false, point);
+				if (partial != null && partial instanceof ICPPTemplateInstance)
+					return (ICPPClassTemplate) ((ICPPTemplateInstance) partial).getTemplateDefinition();
+			} catch (DOMException e) {
+			}
+		}
+		return template;
+	}
+	
+	/**
 	 * Helper function for {@link #resolveUnknownType} which does one round of resolution.
 	 */
 	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, Set<HeuristicLookup> lookupSet,
-		IASTNode point) {
+			IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
-			return deferredInstance.getClassTemplate();
+			return chooseTemplateForDeferredInstance(deferredInstance, point);
 		} else if (type instanceof TypeOfDependentExpression) {
 			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
 			if (evaluation instanceof EvalUnary) {
@@ -421,8 +442,9 @@ public class HeuristicResolver {
 					if (argument instanceof ICPPUnknownType) {
 						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
 						if (resolved instanceof IPointerType) {
-							return ((IPointerType) resolved).getType();
+							resolved = ((IPointerType) resolved).getType();
 						}
+						return resolved;
 					}
 				}
 			} else if (evaluation instanceof EvalID) {
@@ -432,7 +454,7 @@ public class HeuristicResolver {
 					IType fieldOwnerType = fieldOwner.getType(point);
 					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(),
 							id.getTemplateArgs(), lookupSet, point);
-					if (candidates.length == 1) {
+					if (candidates.length > 0) {
 						return typeForBinding(candidates[0]);
 					}
 				}

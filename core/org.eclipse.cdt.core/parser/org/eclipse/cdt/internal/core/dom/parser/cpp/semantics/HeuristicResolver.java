@@ -288,8 +288,6 @@ public class HeuristicResolver {
 				} else if (lookupType instanceof ICPPDeferredClassInstance) {
 					specializationContext = new CPPDependentClassInstance(
 							(ICPPDeferredClassInstance) lookupType);
-					lookupType = specializationContext.getSpecializedBinding();
-					break;
 				}
 				IType resolvedType = resolveUnknownTypeOnce((ICPPUnknownType) lookupType, lookupSet, point);
 				resolvedType = SemanticUtil.getNestedType(resolvedType,
@@ -409,7 +407,17 @@ public class HeuristicResolver {
 		IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
-			return deferredInstance.getClassTemplate();
+			ICPPClassTemplate template = deferredInstance.getClassTemplate();
+			if (!deferredInstance.isExplicitSpecialization()) {
+				try {
+					IBinding partial = CPPTemplates.selectSpecialization(template,
+							deferredInstance.getTemplateArguments(), false, point);
+					if (partial != null && partial instanceof IType)
+						return (IType) partial;
+				} catch (DOMException e) {
+				}
+			}
+			return template;
 		} else if (type instanceof TypeOfDependentExpression) {
 			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
 			if (evaluation instanceof EvalUnary) {
@@ -421,8 +429,9 @@ public class HeuristicResolver {
 					if (argument instanceof ICPPUnknownType) {
 						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
 						if (resolved instanceof IPointerType) {
-							return ((IPointerType) resolved).getType();
+							resolved = ((IPointerType) resolved).getType();
 						}
+						return resolved;
 					}
 				}
 			} else if (evaluation instanceof EvalID) {
@@ -432,7 +441,7 @@ public class HeuristicResolver {
 					IType fieldOwnerType = fieldOwner.getType(point);
 					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(),
 							id.getTemplateArgs(), lookupSet, point);
-					if (candidates.length == 1) {
+					if (candidates.length > 0) {
 						return typeForBinding(candidates[0]);
 					}
 				}

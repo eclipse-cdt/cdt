@@ -2549,7 +2549,7 @@ public class CPPTemplates {
 		return null;
 	}
 
-	private static IBinding selectSpecialization(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args,
+	static IBinding selectSpecialization(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args,
 			boolean isDef, IASTNode point) throws DOMException {
 		if (template == null) {
 			return null;

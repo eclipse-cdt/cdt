@@ -1844,6 +1844,56 @@ public class CompletionTests extends CompletionTestBase {
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 	
+	//	template<typename _Tp>
+	//	class allocator {
+	//	public:
+	//		typedef _Tp& reference;
+	//		typedef const _Tp& const_reference;
+	//
+	//		template<typename _Tp1>
+	//		struct rebind {
+	//			typedef allocator<_Tp1> other;
+	//		};
+	//	};
+	//
+	//	template<typename _Alloc>
+	//	struct __alloc_traits {
+	//		typedef typename _Alloc::reference reference;
+	//		typedef typename _Alloc::const_reference const_reference;
+	//
+	//		template<typename _Tp>
+	//		struct rebind {
+	//			typedef typename _Alloc::template rebind<_Tp>::other other;
+	//		};
+	//	};
+	//
+	//	template<typename _Tp, typename _Alloc>
+	//	struct _Vector_base {
+	//		typedef typename __alloc_traits<_Alloc>::template
+	//		rebind<_Tp>::other _Tp_alloc_type;
+	//	};
+	//
+	//	template<typename _Tp, typename _Alloc = allocator<_Tp> >
+	//	class vector {
+	//		typedef _Vector_base<_Tp, _Alloc> _Base;
+	//		typedef typename _Base::_Tp_alloc_type _Tp_alloc_type;
+	//		typedef __alloc_traits <_Tp_alloc_type> _Alloc_traits;
+	//		typedef typename _Alloc_traits::reference reference;
+	//		typedef typename _Alloc_traits::const_reference const_reference;
+	//	public:
+	//		reference front();
+	//		const_reference front() const;
+	//
+	//	};
+	//
+	//	template<typename T>
+	//	void foo(vector<vector<T>> v) {
+	//		v.front().f/*cursor*/
+	//	}	
+	public void testDependentScopes_472818d() throws Exception {
+		assertCompletionResults(new String[] { "front()" });		
+	}
+	
 	//	template <int k>
 	//	struct D {
 	//		struct C {
@@ -1856,7 +1906,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	public void testDependentMemberChain_bug478121() throws Exception {
 		setReplaceDotWithArrow(true);
-		final String[] expected = { "C", "c" };
+		final String[] expected = { "c" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 		assertDotReplacedWithArrow();
 	}
@@ -1909,5 +1959,47 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	public void testInheritingConstructor_511653() throws Exception {
 		assertCompletionResults(new String[] { "A;" });
+	}
+	
+	//	template <int I, int J>
+	//	struct A {
+	//	    struct Default {
+	//	    };
+	//	};
+	//
+	//	template <>
+	//	template <int J>
+	//	struct A<0, J> {
+	//	    struct Partial {
+	//	    };
+	//	};
+	//
+	//	template <int I>
+	//	struct B {
+	//	    A<0, I>::/*cursor*/;
+	//	};
+	public void testPartialSpecializationWithDeferredClassInstance_456224a() throws Exception {
+		assertCompletionResults(new String[] { "Partial" });
+	}
+	
+	//	template <int I, int J>
+	//	struct A {
+	//	    struct Default {
+	//	    };
+	//	};
+	//
+	//	template <int J>
+	//	struct A<0, J> {
+	//	    struct Partial {
+	//	        struct Result {};
+	//	    };
+	//	};
+	//
+	//	template <int I>
+	//	struct B {
+	//	    A<0, I>::Partial::/*cursor*/
+	//	};
+	public void testPartialSpecializationWithDeferredClassInstance_456224b() throws Exception {
+		assertCompletionResults(new String[] { "Result" });
 	}
 }

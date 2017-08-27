@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
@@ -143,8 +144,9 @@ public class HeuristicResolver {
 	private static class CPPDependentClassInstance extends CPPDeferredClassInstance
 			implements ICPPClassSpecialization {
 
-		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance) {
-			super(deferredInstance.getClassTemplate(), deferredInstance.getTemplateArguments());
+		public CPPDependentClassInstance(ICPPDeferredClassInstance deferredInstance, IASTNode point) {
+			super(chooseTemplateForDeferredInstance(deferredInstance, point), 
+					deferredInstance.getTemplateArguments());
 		}
 
 		@Override
@@ -287,7 +289,7 @@ public class HeuristicResolver {
 					break;
 				} else if (lookupType instanceof ICPPDeferredClassInstance) {
 					specializationContext = new CPPDependentClassInstance(
-							(ICPPDeferredClassInstance) lookupType);
+							(ICPPDeferredClassInstance) lookupType, point);
 					lookupType = specializationContext.getSpecializedBinding();
 					break;
 				}
@@ -403,61 +405,100 @@ public class HeuristicResolver {
 	}
 
 	/**
+	 * Heuristically choose between the primary template and any partial specializations 
+	 * for a deferred template instance.
+	 */
+	private static ICPPClassTemplate chooseTemplateForDeferredInstance(ICPPDeferredClassInstance instance,
+			IASTNode point) {
+		ICPPClassTemplate template = instance.getClassTemplate();
+		if (!instance.isExplicitSpecialization()) {
+			try {
+				IBinding partial = CPPTemplates.selectSpecialization(template,
+						instance.getTemplateArguments(), false, point);
+				if (partial != null && partial instanceof ICPPTemplateInstance)
+					return (ICPPClassTemplate) ((ICPPTemplateInstance) partial).getTemplateDefinition();
+			} catch (DOMException e) {
+			}
+		}
+		return template;
+	}
+
+	private static IType evaluate(ICPPEvaluation evaluation, Set<HeuristicLookup> lookupSet, IASTNode point) {
+		if (evaluation instanceof EvalUnary) {
+			EvalUnary unary = (EvalUnary) evaluation;
+			// Handle the common case of a dependent type representing the
+			// result of dereferencing another dependent type.
+			if (unary.getOperator() == IASTUnaryExpression.op_star) {
+				IType argument = unary.getArgument().getType(point);
+				if (argument instanceof ICPPUnknownType) {
+					IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
+					if (resolved instanceof IPointerType) {
+						resolved = ((IPointerType) resolved).getType();
+					}
+					return resolved;
+				}
+			}
+		} else if (evaluation instanceof EvalID) {
+			EvalID id = (EvalID) evaluation;
+			ICPPEvaluation fieldOwner = id.getFieldOwner();
+			if (fieldOwner != null) {
+				IType fieldOwnerType = fieldOwner.getType(point);
+				IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(),
+						id.getTemplateArgs(), lookupSet, point);
+				if (candidates.length > 0) {
+					// If there is more than one candidate, for now just
+					// choose the first one. A better thing to do would
+					// be to perform heuristic overload resolution (TODO).
+					return typeForBinding(candidates[0]);
+				}
+			}
+		} else if (evaluation instanceof EvalFunctionCall) {
+			EvalFunctionCall evalFunctionCall = (EvalFunctionCall) evaluation;
+			ICPPEvaluation[] args = evalFunctionCall.getArguments();
+			IType functionType = args[0].getType(point);
+			if (args[0] instanceof EvalFunctionSet) {
+				for (int i = 1; i < args.length; i++) {
+					IType result = evaluate(args[i], lookupSet, point);
+					if (result != null) {
+						// collect types
+					} else
+						return null;
+				}
+				// resolve function with the collected types
+			} else if (functionType instanceof ICPPUnknownType) {
+				functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
+			}
+			return ExpressionTypes.typeFromFunctionCall(functionType);
+		} else if (evaluation instanceof EvalMemberAccess) {
+			IBinding member = ((EvalMemberAccess) evaluation).getMember();
+			// Presumably the type will be unknown. That's fine, it will be
+			// resolved during subsequent resolution rounds.
+			return typeForBinding(member);
+		} else if (evaluation instanceof EvalTypeId) {
+			EvalTypeId evalTypeId = (EvalTypeId) evaluation;
+			IType result = evalTypeId.getInputType();
+			if (evalTypeId.representsNewExpression()) {
+				result = new CPPPointerType(result);
+			}
+			return result;
+		} else if (evaluation instanceof EvalBinding) {
+			return evaluation.getType(point);
+		}
+		// TODO(nathanridge): Handle more cases.
+		return null;
+	}
+
+	/**
 	 * Helper function for {@link #resolveUnknownType} which does one round of resolution.
 	 */
 	private static IType resolveUnknownTypeOnce(ICPPUnknownType type, Set<HeuristicLookup> lookupSet,
-		IASTNode point) {
+			IASTNode point) {
 		if (type instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance deferredInstance = (ICPPDeferredClassInstance) type;
-			return deferredInstance.getClassTemplate();
+			return chooseTemplateForDeferredInstance(deferredInstance, point);
 		} else if (type instanceof TypeOfDependentExpression) {
 			ICPPEvaluation evaluation = ((TypeOfDependentExpression) type).getEvaluation();
-			if (evaluation instanceof EvalUnary) {
-				EvalUnary unary = (EvalUnary) evaluation;
-				// Handle the common case of a dependent type representing the result of
-				// dereferencing another dependent type.
-				if (unary.getOperator() == IASTUnaryExpression.op_star) {
-					IType argument = unary.getArgument().getType(point);
-					if (argument instanceof ICPPUnknownType) {
-						IType resolved = resolveUnknownType((ICPPUnknownType) argument, point);
-						if (resolved instanceof IPointerType) {
-							return ((IPointerType) resolved).getType();
-						}
-					}
-				}
-			} else if (evaluation instanceof EvalID) {
-				EvalID id = (EvalID) evaluation;
-				ICPPEvaluation fieldOwner = id.getFieldOwner();
-				if (fieldOwner != null) {
-					IType fieldOwnerType = fieldOwner.getType(point);
-					IBinding[] candidates = lookInside(fieldOwnerType, id.isPointerDeref(), id.getName(),
-							id.getTemplateArgs(), lookupSet, point);
-					if (candidates.length == 1) {
-						return typeForBinding(candidates[0]);
-					}
-				}
-			} else if (evaluation instanceof EvalFunctionCall) {
-				EvalFunctionCall evalFunctionCall = (EvalFunctionCall) evaluation;
-				ICPPEvaluation function = evalFunctionCall.getArguments()[0];
-				IType functionType = function.getType(point);
-				if (functionType instanceof ICPPUnknownType) {
-					functionType = resolveUnknownType((ICPPUnknownType) functionType, point);
-				}
-				return ExpressionTypes.typeFromFunctionCall(functionType);
-			} else if (evaluation instanceof EvalMemberAccess) {
-				IBinding member = ((EvalMemberAccess) evaluation).getMember();
-				// Presumably the type will be unknown. That's fine, it will be
-				// resolved during subsequent resolution rounds.
-				return typeForBinding(member);
-			} else if (evaluation instanceof EvalTypeId) {
-				EvalTypeId evalTypeId = (EvalTypeId) evaluation;
-				IType result = evalTypeId.getInputType();
-				if (evalTypeId.representsNewExpression()) {
-					result = new CPPPointerType(result);
-				}
-				return result;
-			}
-			// TODO(nathanridge): Handle more cases.
+			return evaluate(evaluation, lookupSet, point);
 		} else if (type instanceof ICPPUnknownMemberClass) {
 			ICPPUnknownMemberClass member = (ICPPUnknownMemberClass) type;
 			IType ownerType = member.getOwnerType();

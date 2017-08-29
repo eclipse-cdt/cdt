@@ -257,6 +257,13 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 			} catch (IOException e) {
 			}
 
+			// Close the stream (ignore exceptions on close)
+			try {
+				fInputStream.close();
+			} catch (IOException e) {
+				/* ignored on purpose */
+			}
+
 			return Status.OK_STATUS;
 		}
 	}

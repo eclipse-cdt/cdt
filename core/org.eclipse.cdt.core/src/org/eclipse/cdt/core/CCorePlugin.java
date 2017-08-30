@@ -1633,13 +1633,15 @@ public class CCorePlugin extends Plugin {
 	 * @since 6.3
 	 */
 	public static Version getCDTFeatureVersion() {
-		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-		if (providers != null) {
-			for (IBundleGroupProvider provider : providers) {
-				IBundleGroup[] bundleGroups = provider.getBundleGroups();
-				for (IBundleGroup group : bundleGroups) {
-					if (group.getIdentifier().equals(CDT_FEATURE_ID)) {
-						return new Version(group.getVersion());
+		if (Platform.isRunning()) {
+			IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+			if (providers != null) {
+				for (IBundleGroupProvider provider : providers) {
+					IBundleGroup[] bundleGroups = provider.getBundleGroups();
+					for (IBundleGroup group : bundleGroups) {
+						if (group.getIdentifier().equals(CDT_FEATURE_ID)) {
+							return new Version(group.getVersion());
+						}
 					}
 				}
 			}

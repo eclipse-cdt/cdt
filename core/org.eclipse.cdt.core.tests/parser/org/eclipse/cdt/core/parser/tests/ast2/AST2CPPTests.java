@@ -9850,6 +9850,20 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		dtor= (IASTImplicitNameOwner) name.getParent();
 		assertSame(ctor3, dtor.getImplicitNames()[0].resolveBinding());
 	}
+	
+	//	struct S {
+	//	    bool a;
+	//	    int b;
+	//	};
+	//
+	//	void waldo(S);
+	//
+	//	int main() {
+	//	    waldo({1, 2});
+	//	}
+	public void testIntToBoolConversionInInitList_521543() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	namespace A {
 	//        inline namespace B {

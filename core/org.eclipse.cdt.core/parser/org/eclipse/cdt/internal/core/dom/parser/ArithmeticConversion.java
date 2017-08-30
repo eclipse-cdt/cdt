@@ -341,6 +341,9 @@ public abstract class ArithmeticConversion {
 	public static boolean fitsIntoType(IBasicType basicTarget, long n) {
 		final Kind kind = basicTarget.getKind();
 		switch (kind) {
+		case eBoolean:
+			return n == 0 || n == 1;
+			
 		case eInt:
 			if (!basicTarget.isUnsigned()) {
 				if (basicTarget.isShort()) {

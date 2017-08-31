@@ -192,23 +192,32 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			targets.put(typeId, type);
 		}
 
-		Preferences prefs = getTargetsPref();
-		String childName = typeId + DELIMETER1 + id;
-		ILaunchTarget target = new LaunchTarget(typeId, id, prefs.node(childName));
-		type.put(id, target);
 		try {
-			prefs.flush();
+			Preferences prefs = getTargetsPref();
+			String childName = typeId + DELIMETER1 + id;
+			Preferences child;
+			if (prefs.nodeExists(childName)) {
+				child = prefs.node(childName);
+			} else {
+				child = prefs.node(childName);
+				// set the id so we have at least one attribute to save
+				child.put("name", id); //$NON-NLS-1$
+			}
+			ILaunchTarget target = new LaunchTarget(typeId, id, child);
+			type.put(id, target);
+			child.flush();
+
+			synchronized (listeners) {
+				for (ILaunchTargetListener listener : listeners) {
+					listener.launchTargetAdded(target);
+				}
+			}
+
+			return target;
 		} catch (BackingStoreException e) {
 			Activator.log(e);
+			return null;
 		}
-
-		synchronized (listeners) {
-			for (ILaunchTargetListener listener : listeners) {
-				listener.launchTargetAdded(target);
-			}
-		}
-
-		return target;
 	}
 
 	@Override

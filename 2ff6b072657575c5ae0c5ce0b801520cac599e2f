@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_9b076e25",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4487,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-08-31T17:48:26Z",
+      "side": 1,
+      "message": "you certainly have an idea what to do here",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_fb2cf29c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CElementHyperlinkDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-08-31T17:48:26Z",
+      "side": 1,
+      "message": "one minor issue remains. I realized when using decltype as TypeId inside a TemplateId the hyperlink would be extended to the whole TemplateId",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

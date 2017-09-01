@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "c7880b39_bb8c2943",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4461,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "\"resolveDecltypeOrAutoType()\" would be a more accurate name.\n\nPlease fill in the Javadoc comment at the top of the function. In the comment, mention that this is used by UI features like Open Declaration.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_9b076e25",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2
@@ -19,6 +36,81 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_5bf8a58a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4487,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "My suggestion is:\n\n  - don\u0027t handle dependent types specially in this function\n\n  - in OpenDeclarationsJob, once you check that the type is\n    a binding, check if it\u0027s an ICPPUnknownBinding, and if \n    so, call HeuristicResolver.resolveUnknownBinding(),\n    similar to how we do it here [1]\n\n  - CSourceHover can just use the dependent type.\n    (If we get an ugly type string for a dependent type,\n    we should fix that in ASTTypeUtil.getType().)\n\n[1] http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java#n291",
+      "parentUuid": "c7880b39_9b076e25",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_9b020d15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4496,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "This unwrapping should be done in OpenDeclarationsJob instead of here.\n\nIn CSourceHover, we want the consts, references, and pointers to be included in the string shown in the hover.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7b92c15e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Calling this parameter \"name\" is misleading, as we will be running this test on any piece of selected code. I would call it \"str\" or \"code\".",
+      "range": {
+        "startLine": 742,
+        "startChar": 47,
+        "endLine": 742,
+        "endChar": 51
+      },
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_fb087135",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "We should make this assertion a little more specific, to make sure it\u0027s resolving \"typeof(waldo)\" and not \"Basket\u003ctypeof(waldo)\u003e\". Something like \n\n  assertEquals(\"Waldo\", ((IASTName) target).toString());\n\nshould work.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_fb2cf29c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CElementHyperlinkDetector.java",
         "patchSetId": 2
@@ -30,6 +122,108 @@
       "writtenOn": "2017-08-31T17:48:26Z",
       "side": 1,
       "message": "one minor issue remains. I realized when using decltype as TypeId inside a TemplateId the hyperlink would be extended to the whole TemplateId",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_5b8d0540",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Moving code from this file to CPPSemantics resulted in several imports being unused in this file. Please remove them.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_9b876d1e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Use SemanticUtil.isAutoOrDecltype() here.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7b2481b7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Please remove unused imports from this file as well.",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_7bfd6179",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Please keep the more specific check:\n\n  if (SemanticUtil.isAutoOrDecltype(fSelection)) {\n      IASTNode node \u003d nodeSelector.findEnclosingNode(...);\n      if (node instance ICPPASTSimpleDeclSpecifier) {\n          ...\n      }\n  }\n\nAs currently written, we don\u0027t reach the \"else\" block that follows for _any_ simple-decl-specifier, but we may want to (e.g. if you\u0027re on the \u0027int\u0027 inside \u0027A\u003cint\u003e\u0027, we want to get into the else block and find the name \u0027A\u003cint\u003e\u0027).",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_bb07c924",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "The previous code here handled ICPPASTDecltypeSpecifier as well as ICPPASTSimpleDeclSpecifier. If we\u0027re going to use CPPSemantics.resolveAutoType(), we should make it handle ICPPASTDecltypeSpecifier as well.\n\nI should explain what ICPPASTDecltypeSpecifier is for, because it\u0027s a bit confusing :) It\u0027s used to represent decltypes used in a nested-name-specifier:\n\n  // Case 1: decltype(expr) is an ICPPASTDecltypeSpecifier.\n  decltype(expr)::name  \n\n  // Case 2: decltype(expr) is an ICPPASTSimpleDeclSpecifier\n  // with kind t_decltype.\n  decltype(expr) var;\n\n(The reason for this inconsistency is historical. When support for decltype was first implemented (before my time), only Case 2 was supported, and it was tacked onto SimpleDeclSpecifier. When I later added support for Case 1, I couldn\u0027t make that a SimpleDeclSpecifier, so I introduced a new kind of node. However, I was too lazy to change Case 2 to also use the new node.)",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_db0bb52f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:25:17Z",
+      "side": 1,
+      "message": "Please remove the commented code.",
       "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

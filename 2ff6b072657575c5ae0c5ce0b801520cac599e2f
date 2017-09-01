@@ -128,6 +128,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_7bcf2159",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CElementHyperlinkDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-01T00:44:55Z",
+      "side": 1,
+      "message": "I fixed this in Patch Set 3.\n\nThe other comments are for you to fix :)",
+      "parentUuid": "c7880b39_fb2cf29c",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_5b8d0540",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 2

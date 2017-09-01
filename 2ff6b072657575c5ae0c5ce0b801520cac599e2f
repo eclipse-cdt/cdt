@@ -231,6 +231,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_be389788",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-01T11:06:39Z",
+      "side": 1,
+      "message": "we still have an issue in case 1. findNode will return the QualifiedName node. This is also the case for the hyperlink calculation.",
+      "parentUuid": "c7880b39_bb07c924",
+      "revId": "2ff6b072657575c5ae0c5ce0b801520cac599e2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_db0bb52f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
         "patchSetId": 2

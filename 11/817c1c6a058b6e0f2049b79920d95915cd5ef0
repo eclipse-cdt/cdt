@@ -1,0 +1,7 @@
+Verified+1: Hudson CI
+Code-Review+2: Doug Schaefer <dschaefer@blackberry.com>
+Submitted-by: Marc-André Laperle <marc-andre.laperle@ericsson.com>
+Submitted-at: Fri, 01 Sep 2017 11:31:57 -0400
+Reviewed-on: https://git.eclipse.org/r/101857
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

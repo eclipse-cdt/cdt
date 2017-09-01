@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_a1ca3815",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-01T13:59:18Z",
+      "side": 1,
+      "message": "This will cause the unit test to fail, because \u0027sourceName\u0027 will point to Basket\u003cdecltype(waldo)\u003e.\nUsing findEnclosingNode() would find the proper IASTName, but I don\u0027t know what the implications would be; I guess you put the original test for auto into this section for reason ...",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_41db54e4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-01T13:59:18Z",
+      "side": 1,
+      "message": "I have given up on finding a solution for IUnknownBinding.\n\nHere is some test case though:\n\ntemplate\u003ctypename T\u003e\nstruct A {\n  struct AA{};\n\n  auto test() {\n    auto test \u003d A\u003cT\u003e::AA();\n    return test;\n  }\n\n};",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

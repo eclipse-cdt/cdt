@@ -228,6 +228,24 @@
       "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_ef5b47cc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:56:53Z",
+      "side": 1,
+      "message": "I wrote the necessary changes to HeuristicResolver in https://git.eclipse.org/r/104219. With that, your example code works.",
+      "parentUuid": "c7880b39_6f5037ad",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

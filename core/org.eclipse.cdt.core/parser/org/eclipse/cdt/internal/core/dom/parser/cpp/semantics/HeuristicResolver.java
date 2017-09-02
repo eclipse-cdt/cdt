@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -448,6 +449,13 @@ public class HeuristicResolver {
 				// Presumably the type will be unknown. That's fine, it will be
 				// resolved during subsequent resolution rounds.
 				return typeForBinding(member);
+			} else if (evaluation instanceof EvalTypeId) {
+				EvalTypeId evalTypeId = (EvalTypeId) evaluation;
+				IType result = evalTypeId.getInputType();
+				if (evalTypeId.representsNewExpression()) {
+					result = new CPPPointerType(result);
+				}
+				return result;
 			}
 			// TODO(nathanridge): Handle more cases.
 		} else if (type instanceof ICPPUnknownMemberClass) {
@@ -489,6 +497,11 @@ public class HeuristicResolver {
 			Set<HeuristicLookup> lookupSet = new HashSet<>();
 			return lookInside(((ICPPUnknownMember) binding).getOwnerType(), false,
 					binding.getNameCharArray(), null, lookupSet, point);
+		} else if (binding instanceof ICPPUnknownType) {
+			IType resolved = resolveUnknownType((ICPPUnknownType) binding, point);
+			if (resolved != binding && resolved instanceof IBinding) {
+				return new IBinding[] { (IBinding) resolved };
+			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}

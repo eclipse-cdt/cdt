@@ -1338,4 +1338,30 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		offset = code.indexOf("wuff") - 10;
 		target = testF3(file, offset);
 		assertInstance(target, IASTName.class);
-	}}
+	}
+	
+	//	template<typename T>
+	//	struct A {
+	//	  struct AA{};
+	//
+	//	  auto test() {
+	//	    auto test = A<T>::AA();
+	//	    return test;
+	//	  }
+	//
+	//	};
+	public void testDependentAutoType_520913() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug520913a.cpp", code);
+		
+		int offset = code.indexOf("auto test = ") + 2;
+		IASTNode target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+		assertEquals("AA", ((IASTName) target).toString());
+		
+		offset = code.indexOf("auto test()") + 2;
+		target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+		assertEquals("AA", ((IASTName) target).toString());
+	}
+}

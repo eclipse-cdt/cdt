@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_af9cdff0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T06:32:07Z",
+      "side": 1,
+      "message": "(See previous comment for why we don\u0027t want to do this.)",
+      "revId": "9ea4f3008e3a8276b1c74a34f659255fb11003d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_cf904bd4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T06:32:07Z",
+      "side": 1,
+      "message": "We don\u0027t need to use HeuristicResolver in CSourceHover, we can just use the dependent type.",
+      "revId": "9ea4f3008e3a8276b1c74a34f659255fb11003d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

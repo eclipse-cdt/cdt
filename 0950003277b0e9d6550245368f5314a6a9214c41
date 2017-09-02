@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_4f645b98",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CElementHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-02T05:30:17Z",
+      "side": 1,
+      "message": "git sometimes plays games with me, I\u0027ll check",
+      "parentUuid": "c7880b39_8f33a3ab",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_a1ca3815",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5
@@ -88,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_2f246f60",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-02T05:30:17Z",
+      "side": 1,
+      "message": "weird, that must have slipped away. You\u0027re absolutely right.",
+      "parentUuid": "c7880b39_af385f88",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5
@@ -117,6 +153,24 @@
       "side": 1,
       "message": "DId you try using HeuristicResolver.resolveUnknownBinding() like I suggested?",
       "parentUuid": "c7880b39_41db54e4",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_0f27b367",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-02T05:30:17Z",
+      "side": 1,
+      "message": "Yes I did, but to no avail.",
+      "parentUuid": "c7880b39_cf2ccb4f",
       "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

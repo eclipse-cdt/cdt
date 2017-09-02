@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_4f4b7b05",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:46:08Z",
+      "side": 1,
+      "message": "We need the check here too, to make sure we get into \u0027if\u0027 branch even if there is an enclosing name (like in the Basket\u003cdecltype(waldo)\u003e case).",
+      "parentUuid": "c7880b39_8f6e4376",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5
@@ -189,6 +207,24 @@
       "side": 1,
       "message": "Yes I did, but to no avail.",
       "parentUuid": "c7880b39_cf2ccb4f",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_6f5037ad",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:46:08Z",
+      "side": 1,
+      "message": "I took a look at this. HeuristicResolver is not smart enough to handle your example.\n\nWe should still use HeuristicResolver in this patch, as it will handle some other cases. In another patch, we can make HeuristicResolver smarter and make it handle your example.",
+      "parentUuid": "c7880b39_0f27b367",
       "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

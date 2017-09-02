@@ -124,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_8f6e4376",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-02T05:37:34Z",
+      "side": 1,
+      "message": "I just looked into the code and realized that I moved that test into the findImplicitTargets method.",
+      "parentUuid": "c7880b39_af385f88",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5

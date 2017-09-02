@@ -178,6 +178,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_6fa2f72c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T06:24:22Z",
+      "side": 1,
+      "message": "We don\u0027t want to do that. The selection can have both an explicit target (sourceName) and implicit targets. In such a case, we want to enter the \"else\" branch which will combine the two.\n\nAn example would be:\n\nstruct A {\n  A(int);\n};\n\nstruct B {\n  A field;\n\n  B() : field(0) {}\n};\n\nIf you do F3 over the \"field\" in \"field(0)\", you get two results: B::field (this is the explicit one, from sourceName), and A::A(int) (this is from implicitTargets). If we did what you suggested, we would only get A::A(int) in a case like this.",
+      "parentUuid": "c7880b39_0f5973d4",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5

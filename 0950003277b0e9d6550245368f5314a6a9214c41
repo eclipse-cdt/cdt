@@ -160,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_0f5973d4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-02T06:02:46Z",
+      "side": 1,
+      "message": "I currently don\u0027t see the implications, but could we do\n\nif (sourceName\u003d\u003d null || implicitTargets.length \u003e 1)\n\n?",
+      "parentUuid": "c7880b39_4f4b7b05",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5

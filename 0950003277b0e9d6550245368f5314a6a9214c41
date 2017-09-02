@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "c7880b39_cf05abcd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4462,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:20:21Z",
+      "side": 1,
+      "message": "@param node The decl-specifier or decltype-specifier in which the \u0027auto\u0027 or \u0027decltype\u0027 occurs.",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_6f3e7778",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:20:21Z",
+      "side": 1,
+      "message": "Keep the \u0027assertInstance(target, IASTName.class)\u0027 as well, before the assertEquals. (It produces a more helpful failure message than letting the test throw an NPE.)",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_8f33a3ab",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CElementHyperlinkDetector.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:20:21Z",
+      "side": 1,
+      "message": "You overwrote my changes from Patch Set 3 :)\n\nPlease make additional changes relative to the latest patch set (pull it from Gerrit if necessary).",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_a1ca3815",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5
@@ -19,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_af385f88",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:20:21Z",
+      "side": 1,
+      "message": "I\u0027m not sure why you removed the check that was here in Patch Set 2. It was necessary. I just asked for it to use SemanticUtil.isAutoOrDecltype():\n\n  if (SemanticUtil.isAutoOtDecltype(fSelectedText) || sourceName \u003d\u003d null) {\n     ...\n  }",
+      "parentUuid": "c7880b39_a1ca3815",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_41db54e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
         "patchSetId": 5
@@ -30,6 +99,24 @@
       "writtenOn": "2017-09-01T13:59:18Z",
       "side": 1,
       "message": "I have given up on finding a solution for IUnknownBinding.\n\nHere is some test case though:\n\ntemplate\u003ctypename T\u003e\nstruct A {\n  struct AA{};\n\n  auto test() {\n    auto test \u003d A\u003cT\u003e::AA();\n    return test;\n  }\n\n};",
+      "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_cf2ccb4f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/actions/OpenDeclarationsJob.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-02T05:20:21Z",
+      "side": 1,
+      "message": "DId you try using HeuristicResolver.resolveUnknownBinding() like I suggested?",
+      "parentUuid": "c7880b39_41db54e4",
       "revId": "0950003277b0e9d6550245368f5314a6a9214c41",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

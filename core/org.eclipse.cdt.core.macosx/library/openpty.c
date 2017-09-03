@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
+ *     Mikhail Zabaluev (Nokia) - bug 82744
+ *     Corey Ashford (IBM) - bug 272370, bug 272372
+ *     Martin Oberhuber - [519886] align w/ Linux, support OSX 10.13
  *******************************************************************************/
+
+/* _XOPEN_SOURCE is needed to bring in the header for ptsname */
+#define _XOPEN_SOURCE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -18,7 +25,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <grp.h>
-#include <termios.h>
 
 #include <stdlib.h>
 
@@ -29,6 +35,7 @@
 
 int ptym_open (char *pts_name);
 int ptys_open (int fdm, const char * pts_name);
+void set_noecho(int fd);
 
 int
 openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp)
@@ -43,6 +50,7 @@ openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct win
 		close(*amaster);
 		return -1;
 	}
+
 	if (name)
 		strcpy(name, line);
 #ifndef TCSAFLUSH
@@ -55,66 +63,6 @@ openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct win
 		(void) ioctl(*aslave, TIOCSWINSZ, (char *)winp);
 #endif
 	return 0;
-}
-
-int
-ptym_open(char * pts_name)
-{
-	char *ptr1, *ptr2;
-	int fdm;
-	
-	strcpy(pts_name, "/dev/ptyXY");
-	/* array index: 012345689 (for references in following code) */
-	for (ptr1 = "pqrstuvwxyzPQRST"; *ptr1 != 0; ptr1++) {
-		pts_name[8] = *ptr1;
-		for (ptr2 = "0123456789abcdef"; *ptr2 != 0; ptr2++) {
-			pts_name[9] = *ptr2;
-			/* try to open master */
-			fdm = open(pts_name, O_RDWR);
-			if (fdm < 0) {
-				if (errno == ENOENT) {/* different from EIO */
-					return -1;  /* out of pty devices */
-				} else {
-					continue;  /* try next pty device */
-				}
-			}
-			pts_name[5] = 't'; /* chage "pty" to "tty" */
-			return fdm;   /* got it, return fd of master */
-		}
-	}
-	return -1; /* out of pty devices */
-}
-
-int
-ptys_open(int fdm, const char * pts_name)
-{
-	int gid, fds;
-	struct group *grptr;
-
-	grptr = getgrnam("tty");
-	if (grptr != NULL) {
-		gid = grptr->gr_gid;
-	} else {
-		gid = -1;  /* group tty is not in the group file */
-	}
-
-	/* following two functions don't work unless we're root */
-	chown(pts_name, getuid(), gid);
-	chmod(pts_name, S_IRUSR | S_IWUSR | S_IWGRP);
-	fds = open(pts_name, O_RDWR);
-	if (fds < 0) {
-		close(fdm);
-		return -1;
-	}
-	
-#if	defined(TIOCSCTTY)
-	/*  TIOCSCTTY is the BSD way to acquire a controlling terminal. */
-	if (ioctl(fds, TIOCSCTTY, (char *)0) < 0) {
-		// ignore error: this is expected in console-mode
-	}
-#endif
-	
-	return fds;
 }
 
 void
@@ -133,4 +81,51 @@ set_noecho(int fd)
 	stermios.c_iflag |= (IGNCR);
 
 	tcsetattr(fd, TCSANOW, &stermios);
+}
+
+int
+ptym_open(char * pts_name)
+{
+	int fdm;
+	char *ptr;
+
+	strcpy(pts_name, "/dev/ptmx");
+	fdm = posix_openpt(O_RDWR|O_NOCTTY);
+	if (fdm < 0)
+		return -1;
+	if (grantpt(fdm) < 0) { /* grant access to slave */
+		close(fdm);
+		return -2;
+	}
+	if (unlockpt(fdm) < 0) { /* clear slave's lock flag */
+		close(fdm);
+		return -3;
+	}
+	ptr = ptsname(fdm);
+	if (ptr == NULL) { /* get slave's name */
+		close (fdm);
+		return -4;
+	}
+	strcpy(pts_name, ptr); /* return name of slave */
+	return fdm;            /* return fd of master */
+}
+
+int
+ptys_open(int fdm, const char * pts_name)
+{
+	int fds;
+	/* following should allocate controlling terminal */
+	fds = open(pts_name, O_RDWR);
+	if (fds < 0) {
+		close(fdm);
+		return -5;
+	}
+
+#if	defined(TIOCSCTTY)
+	/*  TIOCSCTTY is the BSD way to acquire a controlling terminal. */
+	if (ioctl(fds, TIOCSCTTY, (char *)0) < 0) {
+		// ignore error: this is expected in console-mode
+	}
+#endif
+	return fds;
 }

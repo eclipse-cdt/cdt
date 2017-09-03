@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_0aca41b3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-03T23:47:29Z",
+      "side": 1,
+      "message": "Some of these imports are not used, so they should not be added.",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_eabc1524",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-03T23:47:29Z",
+      "side": 1,
+      "message": "Can this check be restricted to the \"if (template instanceof ICPPClassTemplatePartialSpecialization)\" branch?",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_2ac7fdaa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-03T23:47:29Z",
+      "side": 1,
+      "message": "This change does not appear to be necessary to make the test pass.\n\nIf it\u0027s necessary for other reasons, could you please provide a code example, so that I can understand the motivation?",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

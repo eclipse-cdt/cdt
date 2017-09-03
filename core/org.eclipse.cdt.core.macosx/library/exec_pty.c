@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.  
+ *     Mikhail Zabaluev (Nokia) - bug 82744
+ *     Mikhail Sennikovsky - bug 145737
  *******************************************************************************/
 #include "exec0.h"
 #include "openpty.h"
@@ -20,7 +23,7 @@
 #include <termios.h>
 
 /* from pfind.c */
-extern char *pfind(const char *name, char *const envp[]);
+extern char *pfind(const char *name, char * const envp[]);
 
 pid_t
 exec_pty(const char *path, char *const argv[], char *const envp[],
@@ -43,7 +46,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	/*
 	 *  Make sure we can create our pipes before forking.
 	 */ 
-	if (console && channels != NULL) {
+	if (channels != NULL && console) {
 		if (pipe(pipe2) < 0) { 
 			fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
 			free(full_path);
@@ -90,6 +93,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 					return -1;
 				}
 			}
+
 			/* redirections */
 			dup2(fds, STDIN_FILENO);   /* dup stdin */
 			dup2(fds, STDOUT_FILENO);  /* dup stdout */
@@ -119,21 +123,19 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 		_exit(127);
 
 	} else if (childpid != 0) { /* parent */
-
 		if (console) {
 			set_noecho(fdm);
 		}
 		if (channels != NULL) {
-			/* close the write end of pipe1 */
-			if (console && close(pipe2[1]) == -1)
-				perror("close(pipe2[1])");
- 
 			channels[0] = fdm; /* Input Stream. */
 			channels[1] = fdm; /* Output Stream.  */
-			if (console) { /* stderr Stream.  */
-				channels[2] = pipe2[0]; 
+			if (console) {
+				/* close the write end of pipe1 */
+				if (close(pipe2[1]) == -1)
+					perror("close(pipe2[1])");
+				channels[2] = pipe2[0]; /* stderr Stream.  */
 			} else {
-				channels[2] = fdm;
+				channels[2] = fdm; /* Error Stream.  */
 			}
 		}
 

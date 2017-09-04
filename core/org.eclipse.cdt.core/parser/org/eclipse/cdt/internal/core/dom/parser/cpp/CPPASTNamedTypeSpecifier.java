@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -123,6 +124,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 					|| binding instanceof IEnumeration
 					|| binding instanceof ICPPNamespace
 					|| binding instanceof ITypedef
+					|| binding instanceof ICPPAliasTemplate
 					|| binding instanceof ICPPTemplateTypeParameter) {
 				if (i != j)
 					bindings[j] = binding;

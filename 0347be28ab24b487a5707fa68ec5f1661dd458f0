@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_955e5648",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-04T08:45:18Z",
+      "side": 1,
+      "message": "this basically boils down to what we have in the previous if clause. we would be self referencing the template definition",
+      "parentUuid": "c7880b39_eabc1524",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_2ac7fdaa",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2017-09-03T23:47:29Z",
       "side": 1,
       "message": "This change does not appear to be necessary to make the test pass.\n\nIf it\u0027s necessary for other reasons, could you please provide a code example, so that I can understand the motivation?",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_f596ba54",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-04T08:45:18Z",
+      "side": 1,
+      "message": "I left it for historical reasons, but the previous check was just erroneous. Nevertheless, the primary template must be accessible to begin with.\n\nI could think of a protected nested template/partial specialization that is only visible in the surrounding class.\n\nclass A {\n\n  template\u003cint I, int J\u003e\n  class B{};\n\n};\n\ntemplate\u003c\u003e\ntemplate\u003cint J\u003e\nclass A::B\u003c0,J\u003e {};\n\nOTOH, how likely is it to get a proposal that binds to a partial specialization ....",
+      "parentUuid": "c7880b39_2ac7fdaa",
       "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

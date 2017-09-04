@@ -54,6 +54,23 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_b507d224",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-04T09:01:46Z",
+      "side": 1,
+      "message": "this test can yield an ICPPClassTemplatePartialSpecialization, e.g. when doing code completion on a field that binds to such a template specialization.\nIn such a case though I think the field declaration would be erroneous if the primary template was not visible in the first place.",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_2ac7fdaa",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
         "patchSetId": 2

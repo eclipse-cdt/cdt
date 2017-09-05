@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_c44f4d3e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-05T04:21:14Z",
+      "side": 1,
+      "message": "This change doesn\u0027t look right. If we get the type of the expression inside the op_star without unwrapping a pointer type, we no longer have the correct type of the original expression: we have the type inside the op_star.",
+      "revId": "7d26319e5e1db513810390388bbeee88a96ab0d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_e45449d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-05T04:21:14Z",
+      "side": 1,
+      "message": "Please add a comment similar to:\n\n  // If there is more than one candidate, for now just\n  // choose the first one. A better thing to do would\n  // be to perform heuristic overload resolution (TODO).",
+      "revId": "7d26319e5e1db513810390388bbeee88a96ab0d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -103,6 +103,23 @@
       "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_a45a41fc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-05T04:21:14Z",
+      "side": 1,
+      "message": "I understand what you\u0027re trying to do here (make sure we select a partial specialization for the deferred instance if appropriate), but I don\u0027t think this is the way to do it.\n\nI have another way in mind; I\u0027ll post an updated patch with it shortly.",
+      "revId": "0347be28ab24b487a5707fa68ec5f1661dd458f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

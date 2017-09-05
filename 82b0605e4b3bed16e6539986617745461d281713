@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_faaf8267",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-05T12:52:32Z",
+      "side": 1,
+      "message": "Hi Nathan, I found a case where this returns a CPPFunctionSet. My guess is that this has something to do with overloads.\nI don\u0027t know whether it would make this change \u0027too heavy\u0027, but a very simple first test could be whether the set only contains one element and return that as a result.",
+      "revId": "82b0605e4b3bed16e6539986617745461d281713",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

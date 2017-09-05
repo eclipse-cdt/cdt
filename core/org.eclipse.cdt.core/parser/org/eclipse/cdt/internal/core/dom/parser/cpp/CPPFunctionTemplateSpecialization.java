@@ -82,7 +82,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!getClass().equals(obj.getClass()))
+		if (obj == null || !getClass().equals(obj.getClass()))
 			return false;
 		CPPFunctionTemplateSpecialization other = (CPPFunctionTemplateSpecialization) obj;
 		return Objects.equals(getSpecializedBinding(), other.getSpecializedBinding())

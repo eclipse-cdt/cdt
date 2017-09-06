@@ -31,7 +31,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
@@ -43,12 +42,18 @@ import org.eclipse.ui.PlatformUI;
 
 public class LaunchBarUIManager implements ILaunchBarUIManager {
 
-	private Map<String, ExecutableExtension<ILabelProvider>> descriptorLabelProviders = null;
+	private Map<String, ExecutableExtension<ILabelProvider>> descriptorLabelProviders;
+
+	// Map<configTypeId, descriptorTypeId, tabGroup>
+	private Map<String, Map<String, ExecutableExtension<ILaunchConfigurationTabGroup>>> buildTabGroups;
+
 	private ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
 
 	private void init() {
 		if (descriptorLabelProviders == null) {
 			descriptorLabelProviders = new HashMap<>();
+			buildTabGroups = new HashMap<>();
+
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID,
 					"launchBarUIContributions"); //$NON-NLS-1$
 			IExtension[] extensions = point.getExtensions();
@@ -60,6 +65,19 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 						ExecutableExtension<ILabelProvider> labelProvider = new ExecutableExtension<>(element,
 								"labelProvider"); //$NON-NLS-1$
 						descriptorLabelProviders.put(descriptorTypeId, labelProvider);
+					} else if (elementName.equals("buildTabGroup")) { //$NON-NLS-1$
+						String launchConfigTypeId = element.getAttribute("launchConfigType"); //$NON-NLS-1$
+						String descriptorTypeId = element.getAttribute("launchDescriptorType"); //$NON-NLS-1$
+						ExecutableExtension<ILaunchConfigurationTabGroup> tabGroup = new ExecutableExtension<>(element,
+								"tabGroup"); //$NON-NLS-1$
+						
+						Map<String, ExecutableExtension<ILaunchConfigurationTabGroup>> descGroup = buildTabGroups.get(launchConfigTypeId);
+						if (descGroup == null) {
+							descGroup = new HashMap<>();
+							buildTabGroups.put(launchConfigTypeId, descGroup);
+						}
+						
+						descGroup.put(descriptorTypeId, tabGroup);
 					}
 				}
 			}
@@ -88,46 +106,36 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 			return s;
 		}
 
-		if (true) {
-			try {
-				ILaunchMode mode = manager.getActiveLaunchMode();
-				ILaunchTarget target = manager.getActiveLaunchTarget();
-				ILaunchConfiguration config = manager.getLaunchConfiguration(descriptor, target);
+		try {
+			ILaunchMode mode = manager.getActiveLaunchMode();
+			ILaunchTarget target = manager.getActiveLaunchTarget();
+			ILaunchConfiguration config = manager.getLaunchConfiguration(descriptor, target);
 
-				ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
-				LaunchBarLaunchConfigDialog dialog = new LaunchBarLaunchConfigDialog(shell, workingCopy, descriptor,
-						mode, target);
-				if (dialog.open() == Window.OK) {
-					if (!workingCopy.getOriginal().equals(workingCopy)
-							&& !workingCopy.getOriginal().getAttributes().equals(workingCopy.getAttributes())) {
-						workingCopy.doSave();
-					}
+			ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
+
+			ILaunchConfigurationTabGroup buildTabGroup = null;
+			Map<String, ExecutableExtension<ILaunchConfigurationTabGroup>> descGroups = buildTabGroups
+					.get(config.getType().getIdentifier());
+			if (descGroups != null) {
+				ExecutableExtension<ILaunchConfigurationTabGroup> tabGroup = descGroups
+						.get(manager.getDescriptorTypeId(descriptor.getType()));
+				if (tabGroup != null) {
+					buildTabGroup = tabGroup.create();
 				}
-			} catch (CoreException e) {
-				return e.getStatus();
 			}
-		} else {
-			// At this point, no error handling should be needed.
-			try {
-				ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
-				ILaunchMode mode = manager.getActiveLaunchMode();
-				ILaunchTarget target = manager.getActiveLaunchTarget();
-				ILaunchConfigurationType configType = manager.getLaunchConfigurationType(descriptor, target);
-				ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(
-						configType,
-						mode.getIdentifier());
-				ILaunchConfiguration config = manager.getLaunchConfiguration(descriptor, target);
-				if (config instanceof ILaunchConfigurationWorkingCopy
-						&& ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
-					config = ((ILaunchConfigurationWorkingCopy) config).doSave();
+
+			LaunchBarLaunchConfigDialog dialog = new LaunchBarLaunchConfigDialog(shell, workingCopy, descriptor, mode,
+					target, buildTabGroup);
+			if (dialog.open() == Window.OK) {
+				if (!workingCopy.getOriginal().equals(workingCopy)
+						&& !workingCopy.getOriginal().getAttributes().equals(workingCopy.getAttributes())) {
+					workingCopy.doSave();
 				}
-				// open real eclipse launch configurations dialog
-				DebugUIPlugin.openLaunchConfigurationsDialog(shell, new StructuredSelection(config),
-						group.getIdentifier(), false);
-			} catch (CoreException e2) {
-				return e2.getStatus();
 			}
+		} catch (CoreException e) {
+			return e.getStatus();
 		}
+
 		return Status.OK_STATUS;
 	}
 

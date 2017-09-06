@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,12 @@ public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDe
 		if (ILaunchConfiguration.class.equals(adapter)) {
 			return adapter.cast(configuration);
 		}
+
+		T obj = configuration.getAdapter(adapter);
+		if (obj != null) {
+			return obj;
+		}
+
 		return super.getAdapter(adapter);
 	}
 

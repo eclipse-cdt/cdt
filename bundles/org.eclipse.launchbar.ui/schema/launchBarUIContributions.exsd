@@ -19,6 +19,7 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="descriptorUI"/>
+            <element ref="buildTabGroup"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,6 +49,11 @@
    </element>
 
    <element name="descriptorUI">
+      <annotation>
+         <documentation>
+            Provides a label provider to visualize launch descriptors in the descriptor selector.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="descriptorTypeId" type="string" use="required">
             <annotation>
@@ -66,6 +72,46 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.jface.viewers.ILabelProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="buildTabGroup">
+      <annotation>
+         <documentation>
+            Allows launch config providers to add build settings tabs to existing launch configuration tab groups when edited from the launch bar.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="launchConfigType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="launchDescriptorType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchBarContributions/descriptorType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="tabGroup" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.debug.ui.ILaunchConfigurationTabGroup"/>
                </appinfo>
             </annotation>
          </attribute>

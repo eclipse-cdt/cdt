@@ -39,6 +39,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private final ILaunchDescriptor descriptor;
 	private final ILaunchMode mode;
 	private final ILaunchTarget target;
+	private final ILaunchConfigurationTabGroup buildTabGroup;
 
 	private ILaunchConfigurationTabGroup group;
 	private CTabFolder tabFolder;
@@ -47,12 +48,16 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private boolean initing;
 
 	public LaunchBarLaunchConfigDialog(Shell shell, ILaunchConfigurationWorkingCopy workingCopy,
-			ILaunchDescriptor descriptor, ILaunchMode mode, ILaunchTarget target) {
+			ILaunchDescriptor descriptor, ILaunchMode mode, ILaunchTarget target,
+			ILaunchConfigurationTabGroup buildTabGroup) {
 		super(shell);
+
 		this.workingCopy = workingCopy;
 		this.descriptor = descriptor;
 		this.mode = mode;
 		this.target = target;
+		this.buildTabGroup = buildTabGroup;
+
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -123,25 +128,21 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		});
 
 		try {
+			if (buildTabGroup != null) {
+				buildTabGroup.createTabs(this, mode.getIdentifier());
+
+				for (ILaunchConfigurationTab configTab : buildTabGroup.getTabs()) {
+					installTab(configTab, tabFolder);
+				}
+
+				buildTabGroup.initializeFrom(workingCopy);
+			}
+
 			group = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, mode.getIdentifier());
 			group.createTabs(this, mode.getIdentifier());
 
 			for (ILaunchConfigurationTab configTab : group.getTabs()) {
-				configTab.setLaunchConfigurationDialog(this);
-
-				CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
-				tabItem.setData(configTab);
-				tabItem.setText(configTab.getName());
-				tabItem.setImage(configTab.getImage());
-
-				Composite tabComp = new Composite(tabFolder, SWT.NONE);
-				tabComp.setLayout(new GridLayout());
-				tabItem.setControl(tabComp);
-
-				configTab.createControl(tabComp);
-				Control configControl = configTab.getControl();
-				configControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+				CTabItem tabItem = installTab(configTab, tabFolder);
 				if (lastSelection == null) {
 					// Select the first tab by default
 					tabFolder.setSelection(tabItem);
@@ -162,8 +163,30 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		return composite;
 	}
 
+	private CTabItem installTab(ILaunchConfigurationTab tab, CTabFolder tabFolder) {
+		tab.setLaunchConfigurationDialog(this);
+
+		CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
+		tabItem.setData(tab);
+		tabItem.setText(tab.getName());
+		tabItem.setImage(tab.getImage());
+
+		Composite tabComp = new Composite(tabFolder, SWT.NONE);
+		tabComp.setLayout(new GridLayout());
+		tabItem.setControl(tabComp);
+
+		tab.createControl(tabComp);
+		Control configControl = tab.getControl();
+		configControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		return tabItem;
+	}
+
 	@Override
 	protected void okPressed() {
+		if (buildTabGroup != null) {
+			buildTabGroup.performApply(workingCopy);
+		}
 		group.performApply(workingCopy);
 		super.okPressed();
 	}
@@ -285,7 +308,16 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	@Override
 	public ILaunchConfigurationTab[] getTabs() {
-		return group.getTabs();
+		if (buildTabGroup != null) {
+			ILaunchConfigurationTab[] buildTabs = buildTabGroup.getTabs();
+			ILaunchConfigurationTab[] mainTabs = group.getTabs();
+			ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[buildTabs.length + mainTabs.length];
+			System.arraycopy(buildTabs, 0, tabs, 0, buildTabs.length);
+			System.arraycopy(mainTabs, 0, tabs, buildTabs.length, mainTabs.length);
+			return tabs;
+		} else {
+			return group.getTabs();
+		}
 	}
 
 	@Override

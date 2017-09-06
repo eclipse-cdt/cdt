@@ -61,6 +61,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -408,4 +409,12 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	public static IDebuggerConsoleManager getDebuggerConsoleManager() {
 		return fDebuggerConsoleManager;
 	}
+
+	/** @since 8.3 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 }

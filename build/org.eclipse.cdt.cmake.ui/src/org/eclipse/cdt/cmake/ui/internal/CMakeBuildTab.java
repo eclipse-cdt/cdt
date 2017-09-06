@@ -122,7 +122,7 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 	}
 
 	private void updateGeneratorButtons(String generator) {
-		if (generator != null && generator.equals("Ninja")) { //$NON-NLS-1$
+		if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
 			ninjaGenButton.setSelection(true);
 		} else {
 			unixGenButton.setSelection(true);
@@ -133,9 +133,8 @@ public class CMakeBuildTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		Map<String, String> properties = new HashMap<>();
 
-		if (ninjaGenButton.getSelection()) {
-			properties.put(CMakeBuildConfiguration.CMAKE_GENERATOR, "Ninja"); //$NON-NLS-1$
-		}
+		properties.put(CMakeBuildConfiguration.CMAKE_GENERATOR,
+				ninjaGenButton.getSelection() ? "Ninja" : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String cmakeArgs = cmakeArgsText.getText().trim();
 		if (!cmakeArgs.isEmpty()) {

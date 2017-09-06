@@ -155,4 +155,12 @@
             type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchBarUIContributions">
+      <buildTabGroup
+            launchConfigType="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+            launchDescriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            tabGroup="org.eclipse.cdt.launch.internal.corebuild.CoreBuildTabGroup">
+      </buildTabGroup>
+   </extension>
 </plugin>

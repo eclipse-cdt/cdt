@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_d769b870",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-06T20:57:46Z",
+      "side": 1,
+      "message": "I thought about this a bit more, and I think even if we only have one method in the set, we must be sure that the parameter really matches the type.\nSo I sketched up something that would try to resolve all the parameters and then ... yeah that\u0027s where I don\u0027t know how to find an overload. Any idea?",
+      "revId": "9c5a02428f97d9359e15f3543d0aa724963e3384",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

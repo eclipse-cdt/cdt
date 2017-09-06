@@ -34,6 +34,23 @@
       "revId": "82b0605e4b3bed16e6539986617745461d281713",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_f71cf42a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2017-09-06T20:50:07Z",
+      "side": 1,
+      "message": "I thought about it some more, and I think even with just one function, we\u0027re not sure whether the parameter type is really a valid one.\n\nI have sketched up something that would try to resolve the parameters one by one and then ... yeah that\u0027s where I don\u0027t know how I would try and find an overload for the method. Any idea?",
+      "revId": "82b0605e4b3bed16e6539986617745461d281713",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

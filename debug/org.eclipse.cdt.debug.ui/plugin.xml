@@ -2579,5 +2579,18 @@
            id="org.eclipse.cdt.debug.ui.localLaunchConfigurationTypeImage">
      </launchConfigurationTypeImage>
   </extension>
+  <extension
+        point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+     <launchTargetTypeUI
+           id="org.eclipse.cdt.launchTargetType.generic"
+           labelProvider="org.eclipse.cdt.debug.internal.ui.launch.GenericTargetLabelProvider">
+     </launchTargetTypeUI>
+     <wizard
+           class="org.eclipse.cdt.debug.internal.ui.launch.NewGenericTargetWizard"
+           icon="icons/obj16/cdt_logo_16.png"
+           id="org.eclipse.cdt.debug.ui.newGenericTargetWizard"
+           name="%GenericTarget.name">
+     </wizard>
+  </extension>
     
 </plugin>

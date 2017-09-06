@@ -93,7 +93,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Map<String, String> properties = getProperties();
 			String generator = properties.get(CMAKE_GENERATOR);
 			if (generator == null) {
-				generator = "Unix Makefiles"; //$NON-NLS-1$
+				generator = "Ninja"; //$NON-NLS-1$
 			}
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -200,7 +200,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			String cleanCommand = properties.get(CLEAN_COMMAND);
 			if (cleanCommand == null) {
-				if (generator != null && generator.equals("Ninja")) { //$NON-NLS-1$
+				if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
 					cleanCommand = "ninja clean"; //$NON-NLS-1$
 				} else {
 					cleanCommand = "make clean"; //$NON-NLS-1$

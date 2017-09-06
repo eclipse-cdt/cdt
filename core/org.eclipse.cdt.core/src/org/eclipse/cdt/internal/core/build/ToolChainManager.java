@@ -124,9 +124,12 @@ public class ToolChainManager implements IToolChainManager {
 		for (IToolChain toolChain : toolChains.values()) {
 			boolean matches = true;
 			for (Map.Entry<String, String> property : properties.entrySet()) {
-				if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
-					matches = false;
-					break;
+				String tcProperty = toolChain.getProperty(property.getKey());
+				if (tcProperty != null) {
+					if (!property.getValue().equals(tcProperty)) {
+						matches = false;
+						break;
+					}
 				}
 			}
 			if (matches) {

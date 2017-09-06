@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui.corebuild;
 
+import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -92,6 +94,11 @@ public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 	@Override
 	public String getName() {
 		return LaunchMessages.CoreBuildTab_Build;
+	}
+
+	@Override
+	public Image getImage() {
+		return LaunchImages.get(LaunchImages.IMG_VIEW_CORE_BUILD_TAB);
 	}
 
 	private IProject getProject(ILaunchConfiguration configuration) {

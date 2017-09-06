@@ -472,6 +472,13 @@
       </launchConfigurationType>
    </extension>
    <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.launchTargetType.generic"
+            provider="org.eclipse.cdt.debug.core.launch.GenericTargetTypeProvider">
+      </launchTargetType>
+   </extension>
+   <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
       <descriptorType
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLaunchDescriptorType"
@@ -480,6 +487,11 @@
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalLaunchConfigProvider"
+            descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            priority="10">
+      </configProvider>
+      <configProvider
+            class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildGenericLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
       </configProvider>

@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 public interface ICPPAliasTemplateInstance extends ITypedef, ICPPTemplateInstance {
 	/**
 	 * Returns the alias template specialized by this instance.
+	 * 
+	 * @since 6.4
 	 */
 	@Override
 	public ICPPAliasTemplate getTemplateDefinition();

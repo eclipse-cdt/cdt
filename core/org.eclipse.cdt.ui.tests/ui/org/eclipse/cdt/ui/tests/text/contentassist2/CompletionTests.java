@@ -1910,4 +1910,12 @@ public class CompletionTests extends CompletionTestBase {
 	public void testInheritingConstructor_511653() throws Exception {
 		assertCompletionResults(new String[] { "A;" });
 	}
+	
+	// template<int TestParam>
+	// struct A {
+	//   using type_t = A<Te/*cursor*/>
+	// };
+	public void testNonTypeTemplateParameterCompletion_() throws Exception {
+		assertCompletionResults(new String[] { "TestParam" });		
+	}
 }

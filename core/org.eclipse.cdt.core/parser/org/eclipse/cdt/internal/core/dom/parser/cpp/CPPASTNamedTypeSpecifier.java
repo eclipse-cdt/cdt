@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
@@ -123,7 +124,8 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 					|| binding instanceof IEnumeration
 					|| binding instanceof ICPPNamespace
 					|| binding instanceof ITypedef
-					|| binding instanceof ICPPTemplateTypeParameter) {
+					|| binding instanceof ICPPTemplateTypeParameter
+					|| binding instanceof ICPPTemplateNonTypeParameter) {
 				if (i != j)
 					bindings[j] = binding;
 				j++;

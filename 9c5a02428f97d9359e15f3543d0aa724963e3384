@@ -16,6 +16,24 @@
       "revId": "9c5a02428f97d9359e15f3543d0aa724963e3384",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_575ce8c5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-06T21:11:55Z",
+      "side": 1,
+      "message": "Why don\u0027t we leave that for another bug, instead of trying to do everything in this bug :)\n\nPlease file a new bug for the overloading case with a relevant code example, and I will take a look and think about it. Thanks!",
+      "parentUuid": "c7880b39_d769b870",
+      "revId": "9c5a02428f97d9359e15f3543d0aa724963e3384",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

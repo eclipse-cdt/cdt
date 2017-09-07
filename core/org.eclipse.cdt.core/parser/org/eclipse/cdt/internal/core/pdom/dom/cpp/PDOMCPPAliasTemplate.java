@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -55,11 +58,24 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	}
 
 	public void initData(IType aliasedType) {
+		storeAliasedType(aliasedType);
+	}
+	
+	private void storeAliasedType(IType aliasedType) {
 		try {
 			getLinkage().storeType(record + ALIASED_TYPE, aliasedType);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+	
+	@Override
+	public void update(PDOMLinkage linkage, IBinding newBinding, IASTNode point) throws CoreException {
+		if (!(newBinding instanceof ICPPAliasTemplate)) {
+			return;
+		}
+		
+		storeAliasedType(((ICPPAliasTemplate) newBinding).getType());
 	}
 
 	@Override

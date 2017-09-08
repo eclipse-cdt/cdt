@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_cb12ed15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-08T00:11:11Z",
+      "side": 1,
+      "message": "Let\u0027s call this something like \"resolveEvalType\". \"evaluate\" suggests a function that computes a value rather than a type.",
+      "revId": "a635830a5118f7348db691c85fc786a8e6ebfe4f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_0b1dd524",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-08T00:11:11Z",
+      "side": 1,
+      "message": "My comment that this change to the EvalUnary branch doesn\u0027t seem right (originally commented on Patch Set 3) still applies.",
+      "revId": "a635830a5118f7348db691c85fc786a8e6ebfe4f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

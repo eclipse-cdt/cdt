@@ -253,13 +253,13 @@ public class CPPVisitor extends ASTQueries {
 	// Common combinations of flags.
 	public static final int DO_NOT_RESOLVE_PLACEHOLDERS = 0;
 	
-	// Thread-local set of DeclSpecifiers for which auto types are being created.
+	// Thread-local set of declarators for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
-	private static final ThreadLocal<Set<IASTDeclSpecifier>> autoTypeDeclSpecs =
-			new ThreadLocal<Set<IASTDeclSpecifier>>() {
+	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators =
+			new ThreadLocal<Set<IASTDeclarator>>() {
 		@Override
-		protected Set<IASTDeclSpecifier> initialValue() {
+		protected Set<IASTDeclarator> initialValue() {
 			return new HashSet<>();
 		}
 	};
@@ -2166,8 +2166,8 @@ public class CPPVisitor extends ASTQueries {
 		IType cannotDeduce = placeholderKind == PlaceholderKind.Auto ? 
 				ProblemType.CANNOT_DEDUCE_AUTO_TYPE :
 			    ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
-		Set<IASTDeclSpecifier> recursionProtectionSet = autoTypeDeclSpecs.get();
-		if (!recursionProtectionSet.add(declSpec)) {
+		Set<IASTDeclarator> recursionProtectionSet = autoTypeDeclarators.get();
+		if (!recursionProtectionSet.add(declarator)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
 			return cannotDeduce;
 		}
@@ -2272,7 +2272,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 			}
 		} finally {
-			recursionProtectionSet.remove(declSpec);
+			recursionProtectionSet.remove(declarator);
 		}
 	}
 

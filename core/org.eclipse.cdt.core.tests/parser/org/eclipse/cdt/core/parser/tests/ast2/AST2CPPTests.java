@@ -12274,6 +12274,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	struct Waldo {
+	//	    int foo();
+	//	};
+	//
+	//	int main() {
+	//	    Waldo w;
+	//	    auto i1 = w, i2 = i1.foo();  // Error on 'foo'
+	//	}
+	public void testAutoWithTwoDeclarators_522066() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	constexpr int waldo = (sizeof(double) % 16);
 	public void testSizeofDouble_506170() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();

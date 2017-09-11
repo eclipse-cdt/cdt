@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.cdt.examples.dsf"
       label="%featureName"
-      version="9.3.0.qualifier"
+      version="9.4.0.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.cdt.examples.dsf"
       license-feature="org.eclipse.license"
-      license-feature-version="0.0.0"
-      plugin="org.eclipse.cdt.examples.dsf">
+      license-feature-version="0.0.0">
 
    <description>
       %description

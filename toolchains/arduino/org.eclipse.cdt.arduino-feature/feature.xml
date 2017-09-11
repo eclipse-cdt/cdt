@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.arduino"
       label="%featureName"
-      version="9.3.0.qualifier"
+      version="9.4.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.arduino.ui"
       license-feature="org.eclipse.license"

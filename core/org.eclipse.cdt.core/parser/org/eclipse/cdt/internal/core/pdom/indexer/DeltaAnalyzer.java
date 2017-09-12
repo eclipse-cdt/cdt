@@ -91,6 +91,9 @@ public class DeltaAnalyzer {
 			Set<IResource> handled) {
 		if (rDeltas != null) {
 			for (IResourceDelta rd: rDeltas) {
+				if (rd == null) {
+					continue;
+				}
 				final int rdkind = rd.getKind();
 				if (rdkind != IResourceDelta.ADDED) {
 					IResource res= rd.getResource();

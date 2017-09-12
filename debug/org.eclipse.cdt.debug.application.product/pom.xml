@@ -145,6 +145,7 @@
 							<source>repository</source>
 						</configuration>
 					</plugin>
+					<!-- Disable Mac signing for now
 					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-macsigner-plugin</artifactId>
@@ -162,6 +163,7 @@
 							</execution>
 						</executions>
 					</plugin>
+					-->
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>

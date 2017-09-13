@@ -898,5 +898,13 @@
             type="org.eclipse.core.resources.IResource">
       </propertyTester>
    </extension>
+<!-- Command Launcher Factory extension for Core Builder -->
+   <extension
+         point="org.eclipse.cdt.core.CommandLauncherFactory">
+      <factory
+            class="org.eclipse.cdt.internal.core.build.CBuildCommandLauncherFactory"
+            priority="1">
+      </factory>
+   </extension>
 
 </plugin>

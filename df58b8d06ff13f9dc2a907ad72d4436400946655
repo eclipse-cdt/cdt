@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_f99cd54c",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/ICBuildCommandLauncherConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-09-13T15:15:29Z",
+      "side": 1,
+      "message": "Core Build doesn\u0027t use the language settings. I\u0027m not sure why these are here.",
+      "revId": "df58b8d06ff13f9dc2a907ad72d4436400946655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -39,7 +39,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	public static boolean sSuppressUpdateOfLastRecentlyUsed = false;
 
 	private PDOMManager fManager;
-	private LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs= new LinkedHashMap<ITranslationUnit, ITranslationUnit>(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
+	private final LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs= new LinkedHashMap<ITranslationUnit, ITranslationUnit>(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<ITranslationUnit, ITranslationUnit> eldest) {
 			return size() > UPDATE_LR_CHANGED_FILES_COUNT;
@@ -131,23 +131,25 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		}
 
 		if (count > 0) {
-			if (addLRUs) {
-				for (final ITranslationUnit tu : fLRUs.keySet()) {
-					if (tu.getResource().exists()) {
-						final ICProject cproject= tu.getCProject();
-						DeltaAnalyzer analyzer= changeMap.get(cproject);
-						if (analyzer == null) {
-							analyzer= new DeltaAnalyzer();
-							changeMap.put(cproject, analyzer);
+			synchronized(fLRUs) {
+				if (addLRUs) {
+					for (final ITranslationUnit tu : fLRUs.keySet()) {
+						if (tu.getResource().exists()) {
+							final ICProject cproject= tu.getCProject();
+							DeltaAnalyzer analyzer= changeMap.get(cproject);
+							if (analyzer == null) {
+								analyzer= new DeltaAnalyzer();
+								changeMap.put(cproject, analyzer);
+							}
+							analyzer.getForcedList().add(tu);
 						}
-						analyzer.getForcedList().add(tu);
 					}
 				}
-			}
-			count= Math.min(count, newLRUs.length);
-			for (int i = 0; i < count; i++) {
-				final ITranslationUnit tu = newLRUs[i];
-				fLRUs.put(tu, tu);
+				count= Math.min(count, newLRUs.length);
+				for (int i = 0; i < count; i++) {
+					final ITranslationUnit tu = newLRUs[i];
+					fLRUs.put(tu, tu);
+				}
 			}
 		}
 	}

@@ -145,7 +145,7 @@ public class ParameterGuesser {
 			throws CModelException {
 		IType elementType = getType(element);
 		String elementName = element.getName();
-		if (elementType != null
+		if (elementType != null && enclosingType != null
 				&& (elementType.toString().equals(enclosingType.toString())
 						|| elementType.isSameType(enclosingType)
 						|| isImplicitlyConvertible(enclosingType, elementType, ast)

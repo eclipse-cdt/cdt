@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_0883ffa6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-19T03:50:20Z",
+      "side": 1,
+      "message": "There is no need to include the test case in the commit message.",
+      "revId": "012805f50b365d61f6ed128d8f12cc60e9d37118",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

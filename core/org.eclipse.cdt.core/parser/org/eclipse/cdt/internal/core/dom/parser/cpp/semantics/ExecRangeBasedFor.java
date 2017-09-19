@@ -133,6 +133,9 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		ICPPEvaluation valueRange = initClauseEval.computeForFunctionCall(record, context.recordStep());
 		ExecDeclarator declaratorExec = (ExecDeclarator) declarationExec.getDeclaratorExecutions()[0];
 		IVariable rangeVar = (IVariable) declaratorExec.getDeclaredBinding();
+		if (rangeVar == null) {
+			return ExecIncomplete.INSTANCE;
+		}
 
 		boolean rangeIsConst = SemanticUtil.isConst(initClauseEval.getType(context.getPoint()));
 		IType type = SemanticUtil.getNestedType(valueRange.getType(context.getPoint()), ALLCVQ | TDEF | REF);

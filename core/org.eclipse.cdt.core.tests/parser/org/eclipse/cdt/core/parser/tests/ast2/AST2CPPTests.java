@@ -12387,4 +12387,12 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testNamespaceAliasNamespaceWithPreviousFunctionName_517402() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	class C {};
+	//	typedef C D;
+	//	constexpr bool waldo = __is_class(D);
+	public void testIsClassBuiltinOnTypedef_522509() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 1);
+	}
 }

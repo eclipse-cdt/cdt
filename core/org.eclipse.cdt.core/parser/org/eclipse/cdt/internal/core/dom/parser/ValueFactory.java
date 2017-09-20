@@ -34,6 +34,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -51,7 +52,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -390,9 +390,7 @@ public class ValueFactory {
 	}
 
 	private static IValue applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {
-		while (type instanceof IQualifierType) {
-			type = ((IQualifierType) type).getType();
-		}
+		type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
 
 		switch (operator) {
 			case op_sizeof:

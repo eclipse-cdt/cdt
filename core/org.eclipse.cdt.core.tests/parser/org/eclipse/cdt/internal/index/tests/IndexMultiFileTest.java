@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-
 import junit.framework.TestSuite;
 
 /**
@@ -349,6 +341,25 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//   &Base::field
 	// };
 	public void testStackOverflow_514459() throws Exception {
+		checkBindings();
+	}
+	
+
+	//test.hpp *
+	//	template <typename> class A {};
+	//
+	//	struct C {
+	//	    C();
+	//	};
+	//
+	//	namespace Ptr2 {
+	//		using C = A<C>;
+	//	}
+
+	//test.cpp
+	//	#include "test.hpp"
+	//	C::C() {}
+	public void testAliasTemplateReferencingSameName_518937() throws Exception {
 		checkBindings();
 	}
 }

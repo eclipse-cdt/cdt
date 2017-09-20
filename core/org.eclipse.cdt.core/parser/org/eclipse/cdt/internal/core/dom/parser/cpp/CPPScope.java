@@ -213,7 +213,12 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 						if (binding instanceof ICPPNamespace) {
 							ICPPNamespaceScope indexNs = ((ICPPNamespace) binding).getNamespaceScope();
 							IBinding[] bindings = indexNs.getBindings(lookup);
-							result = ArrayUtil.addAll(IBinding.class, result, bindings);
+							for (IBinding candidate : bindings) {
+								if (lookup.isPrefixLookup() || 
+										CPPSemantics.declaredBefore(candidate, lookup.getLookupPoint(), true)) {
+									result = ArrayUtil.append(result, candidate);
+								}
+							}
 						}
 					} catch (CoreException e) {
 						CCorePlugin.log(e);

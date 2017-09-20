@@ -351,4 +351,23 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testStackOverflow_514459() throws Exception {
 		checkBindings();
 	}
+	
+
+	//test.hpp *
+	//	template <typename> class A {};
+	//
+	//	struct C {
+	//	    C();
+	//	};
+	//
+	//	namespace Ptr2 {
+	//		using C = A<C>;
+	//	}
+
+	//test.cpp
+	//	#include "test.hpp"
+	//	C::C() {}
+	public void testAliasTemplateReferencingSameName_518937() throws Exception {
+		checkBindings();
+	}
 }

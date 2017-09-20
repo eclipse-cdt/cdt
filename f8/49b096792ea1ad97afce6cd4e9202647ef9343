@@ -1,0 +1,7 @@
+Code-Review+2: Doug Schaefer <dschaefer@blackberry.com>
+Verified+1: Hudson CI
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Wed, 20 Sep 2017 15:03:44 -0400
+Reviewed-on: https://git.eclipse.org/r/105520
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

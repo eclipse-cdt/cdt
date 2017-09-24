@@ -49,7 +49,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	public PDOMCPPClassTemplatePartialSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
 			throws CoreException, DOMException {
-		super(linkage, parent, partial);
+		super(linkage, parent, partial, false);
 		getDB().putRecPtr(record + PRIMARY, primary.getRecord());
 		primary.addPartial(this);
 		

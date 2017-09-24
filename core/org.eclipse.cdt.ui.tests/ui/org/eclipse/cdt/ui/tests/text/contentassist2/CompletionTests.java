@@ -220,7 +220,7 @@ public class CompletionTests extends CompletionTestBase {
 	}
 
 	//class _friend_class { C3* x; void m() {x->m/*cursor*/
-	public void DISABLED_Bug_515417_testTypes_FriendClass() throws Exception {
+	public void testTypes_FriendClass() throws Exception {
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)", "m23(void)", "m1protected(void)",
 				"m2protected(void)", "m2private(void)"

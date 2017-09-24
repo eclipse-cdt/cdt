@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-
 import junit.framework.TestSuite;
 
 /**

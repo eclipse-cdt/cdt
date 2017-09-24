@@ -12,10 +12,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
@@ -24,6 +29,8 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
 
 	private static final String CLANG_LANGUAGE_SERVER = "clangd"; //$NON-NLS-1$
+
+	private IResourceChangeListener fResourceListener;
 
 	public CPPLanguageServer() {
 		List<String> commands = new ArrayList<>();
@@ -35,6 +42,43 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 		}
 		setWorkingDirectory(parent);
 		setCommands(commands);
+	}
+
+	@Override
+	public void stop() {
+		super.stop();
+		if (fResourceListener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
+			fResourceListener = null;
+		}
+	}
+
+	@Override
+	public Object getInitializationOptions(URI rootPath) {
+		installResourceChangeListener(rootPath);
+		return super.getInitializationOptions(rootPath);
+	}
+
+	private void installResourceChangeListener(URI rootPath) {
+		if (rootPath == null || fResourceListener != null) {
+			return;
+		}
+
+		IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(rootPath);
+		if (containers.length == 0) {
+			return;
+		}
+
+		for (IContainer c : containers) {
+			if (!(c instanceof IProject)) {
+				continue;
+			}
+			IProject project = (IProject) c;
+			fResourceListener = new CPPResourceChangeListener(project);
+			project.getWorkspace().addResourceChangeListener(fResourceListener);
+
+			break;
+		}
 	}
 
 	@Override

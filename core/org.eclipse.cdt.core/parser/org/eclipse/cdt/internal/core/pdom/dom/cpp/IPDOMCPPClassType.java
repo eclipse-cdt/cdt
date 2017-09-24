@@ -40,4 +40,11 @@ public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexTy
 	 * @param visibility The visibility of the <code>member</code>.
 	 */
 	void addMember(PDOMNode member, int visibility) throws CoreException;
+	
+	/**
+	 * Returns true if this class type is visible to ADL only.
+	 * A class type is visible to ADL only if it's only declaration so far
+	 * is a friend declaration inside another class.
+	 */
+	default boolean isVisibleToAdlOnly() { return false; }
 }

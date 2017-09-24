@@ -56,17 +56,20 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	private static final int KEY = FIRSTFRIEND + 4; // byte
 	private static final int ANONYMOUS = KEY + 1; // byte
 	private static final int FINAL = ANONYMOUS + 1; // byte
+	private static final int VISIBLE_TO_ADL_ONLY = FINAL + 1; // byte
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FINAL + 1;
+	protected static final int RECORD_SIZE = VISIBLE_TO_ADL_ONLY + 1;
 
 	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
-	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType) throws CoreException {
+	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
+			boolean visibleToAdlOnly) throws CoreException {
 		super(linkage, parent, classType.getNameCharArray());
 
 		setKind(classType);
 		setAnonymous(classType);
 		setFinal(classType);
+		setVisibleToAdlOnly(visibleToAdlOnly);
 		// Linked list is initialized by storage being zero'd by malloc.
 	}
 
@@ -105,6 +108,10 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private void setFinal(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
+	}
+	
+	private void setVisibleToAdlOnly(boolean visibleToAdlOnly) throws CoreException {
+		getDB().putByte(record + VISIBLE_TO_ADL_ONLY, (byte) (visibleToAdlOnly ? 1 : 0));
 	}
 
 	@Override
@@ -263,6 +270,16 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public boolean isFinal() {
 		try {
 			return getDB().getByte(record + FINAL) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isVisibleToAdlOnly() {
+		try {
+			return getDB().getByte(record + VISIBLE_TO_ADL_ONLY) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;

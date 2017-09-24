@@ -796,13 +796,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			// name is not found by name lookup until a matching declaration is provided in the innermost
 			// enclosing nonclass scope.
 			// See http://bugs.eclipse.org/508338
-			if (!(binding instanceof ICPPInternalBinding)
-					|| ASTInternal.hasNonFriendDeclaration((ICPPInternalBinding) binding)) {
-				if (binding instanceof ICPPClassTemplate) {
-					pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
-				} else {
-					pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
-				}
+			boolean visibleToAdlOnly = (binding instanceof ICPPInternalBinding) 
+					&& !ASTInternal.hasNonFriendDeclaration((ICPPInternalBinding) binding);
+			if (binding instanceof ICPPClassTemplate) {
+				pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding, visibleToAdlOnly);
+			} else {
+				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding, visibleToAdlOnly);
 			}
 		} else if (binding instanceof ICPPVariableTemplate) {
 			pdomBinding = new PDOMCPPVariableTemplate(this, parent, (ICPPVariableTemplate) binding);

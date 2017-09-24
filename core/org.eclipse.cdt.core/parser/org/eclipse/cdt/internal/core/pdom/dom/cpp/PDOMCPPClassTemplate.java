@@ -60,9 +60,10 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private volatile ICPPTemplateParameter[] params;  // Cached template parameters.
 	
-	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template)
+	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template,
+			boolean visibleToAdlOnly)
 			throws CoreException, DOMException {
-		super(linkage, parent, template);
+		super(linkage, parent, template, visibleToAdlOnly);
 		
 		final Database db = getDB();
 		ICPPTemplateParameter[] origParams= template.getTemplateParameters();

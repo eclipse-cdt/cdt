@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -68,6 +69,13 @@ public final class BindingCollector extends NamedNodeCollector {
 					if (parent.getParentNode() == null && !enumType.isScoped()) {
 						return true;
 					}
+				}
+			}
+			if (tBinding instanceof IPDOMCPPClassType) {
+				// Skip bindings that are visible to ADL only.
+				// TODO(nathanridge): Check if we're doing ADL, and accept it in that case.
+				if (((IPDOMCPPClassType) tBinding).isVisibleToAdlOnly()) {
+					return true;
 				}
 			}
 			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {

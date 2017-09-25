@@ -240,7 +240,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 				}
 				fToken.clear();
-				return consumed;
+				throw new RuntimeException("Throwing exception from SemanticHighlightingReconciler");
 			} finally {
 				CPPSemantics.popLookupPoint();
 			}

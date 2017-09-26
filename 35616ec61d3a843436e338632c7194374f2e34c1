@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_3c238fb0",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-26T21:15:33Z",
+      "side": 1,
+      "message": "Better in what way?",
+      "parentUuid": "479dfb6e_5cf32e5f",
+      "range": {
+        "startLine": 42,
+        "startChar": 3,
+        "endLine": 42,
+        "endChar": 59
+      },
+      "revId": "35616ec61d3a843436e338632c7194374f2e34c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "479dfb6e_3cdf4ad3",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-05-16T12:55:33Z",
       "side": 1,
       "message": "I really don\u0027t like this myself. I would rather use a \"Marker Interface\" to be able to match based on type without reaching into the internals. Since I am fairly new to contributing to CDT I was not sure what the general consensus/stance on \"Marker Interfaces\" is in the CDT developer community. The current solution in this patchset feels extremely brittle.",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 34,
+        "endChar": 141
+      },
+      "revId": "35616ec61d3a843436e338632c7194374f2e34c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_5c1a1b76",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-26T21:15:33Z",
+      "side": 1,
+      "message": "Looks like you already improved this in Patch Set 2.",
+      "parentUuid": "479dfb6e_3cdf4ad3",
       "range": {
         "startLine": 34,
         "startChar": 1,

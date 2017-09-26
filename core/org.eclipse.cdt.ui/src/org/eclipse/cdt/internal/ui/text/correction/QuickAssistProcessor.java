@@ -83,6 +83,10 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+				if (astRoot == null) {
+					return Status.CANCEL_STATUS;
+				}
+				
 				IASTNodeSelector selector= astRoot.getNodeSelector(null);
 				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
 

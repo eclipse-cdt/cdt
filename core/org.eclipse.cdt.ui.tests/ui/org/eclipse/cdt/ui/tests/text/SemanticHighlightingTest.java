@@ -184,9 +184,7 @@ public class SemanticHighlightingTest extends TestCase {
 		return document.getPositions(positionCategory);
 	}
 
-	private void makeAssertions(boolean isCpp) throws Exception {
-		setup(isCpp);
-		
+	private void doMakeAssertions() throws Exception {
 		IDocument document = fSourceViewer.getDocument();
 		int lines = document.getNumberOfLines();
 		
@@ -217,8 +215,15 @@ public class SemanticHighlightingTest extends TestCase {
 		}
 		
 		assertEqualMaps(actual, expected);
-		
-		teardown();
+	}
+
+	private void makeAssertions(boolean isCpp) throws Exception {
+		setup(isCpp);
+		try {
+			doMakeAssertions();
+		} finally {
+			teardown();
+		}
 	}
 	
 	private void makeAssertions() throws Exception {

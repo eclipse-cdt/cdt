@@ -1364,4 +1364,29 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertInstance(target, IASTName.class);
 		assertEquals("AA", ((IASTName) target).toString());
 	}
+
+	//	template<char T>
+	//	struct A {};
+	//
+	//	template<>
+	//  struct A<0> {};
+	//
+	//  void test(){
+	//    A<0> a0;
+	//    A<1> a1;
+	//	}
+	public void testPartialSpecializationResolution_525288() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug525288.cpp", code);
+		
+		int offset = code.indexOf("a0") - 5;
+		IASTNode target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+		assertEquals("A<0>", ((IASTName) target).toString());
+		
+		offset = code.indexOf("a1") - 5;
+		target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+		assertEquals("A", ((IASTName) target).toString());
+	}
 }

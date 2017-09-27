@@ -77,7 +77,7 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 	public ILaunchTarget save() {
 		try {
 			LaunchTarget target;
-			if (newId == null) {
+			if (newId == null || newId.equals(original.getId())) {
 				target = original;
 			} else {
 				// make a new one and remove the old one
@@ -91,7 +91,13 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 			
 			// set the changed attributes
 			for (Map.Entry<String, String> entry : changes.entrySet()) {
-				target.attributes.put(entry.getKey(), entry.getValue());
+				String key = entry.getKey();
+				String value = entry.getValue();
+				if (value != null) {
+					target.attributes.put(key, value);
+				} else {
+					target.attributes.remove(key);
+				}
 			}
 			target.attributes.flush();
 			return target;

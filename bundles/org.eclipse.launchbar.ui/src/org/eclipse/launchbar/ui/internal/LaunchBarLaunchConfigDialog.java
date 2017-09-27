@@ -3,7 +3,9 @@ package org.eclipse.launchbar.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -24,6 +26,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -31,7 +35,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILaunchBarLaunchConfigDialog {
 
@@ -40,8 +46,10 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private final ILaunchMode mode;
 	private final ILaunchTarget target;
 	private final ILaunchConfigurationTabGroup buildTabGroup;
+	private final String originalName;
 
 	private ILaunchConfigurationTabGroup group;
+	private Text nameText;
 	private CTabFolder tabFolder;
 	private CTabItem lastSelection;
 	private ProgressMonitorPart pmPart;
@@ -57,6 +65,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		this.mode = mode;
 		this.target = target;
 		this.buildTabGroup = buildTabGroup;
+		this.originalName = workingCopy.getName();
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
@@ -70,14 +79,6 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		initing = true;
-
-		// create the top level composite for the dialog area
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 
 		getShell().setText(Messages.LaunchBarLaunchConfigDialog_EditConfiguration);
 		boolean supportsTargets = true;
@@ -101,6 +102,31 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		}
 
 		setMessage(Messages.LaunchBarLaunchConfigDialog_SetParameters);
+
+		// create the top level composite for the dialog area
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
+
+		Composite nameComp = new Composite(composite, SWT.NONE);
+		nameComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		nameComp.setLayout(new GridLayout(2, false));
+
+		Label nameLabel = new Label(nameComp, SWT.NONE);
+		nameLabel.setText(Messages.LaunchBarLaunchConfigDialog_LaunchConfigName);
+
+		nameText = new Text(nameComp, SWT.BORDER);
+		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		nameText.setText(workingCopy.getName());
+		nameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateMessage();
+			}
+		});
 
 		tabFolder = new CTabFolder(composite, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -184,6 +210,11 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	@Override
 	protected void okPressed() {
+		String newName = nameText.getText().trim();
+		if (!newName.equals(originalName)) {
+			workingCopy.rename(newName);
+		}
+		
 		if (buildTabGroup != null) {
 			buildTabGroup.performApply(workingCopy);
 		}
@@ -277,6 +308,31 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			return;
 		}
 
+		String newName = nameText.getText().trim();
+		if (newName.isEmpty()) {
+			setMessage(Messages.LaunchBarLaunchConfigDialog_LCMustHaveName, IMessageProvider.ERROR);
+			return;
+		}
+
+		if (!newName.equals(originalName)) {
+			// make sure it's not taken
+			try {
+				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+
+				if (manager.isExistingLaunchConfigurationName(newName)) {
+					setMessage(Messages.LaunchBarLaunchConfigDialog_LCNameExists, IMessageProvider.ERROR);
+					return;
+				}
+
+				if (!manager.isValidLaunchConfigurationName(newName)) {
+					setMessage(Messages.LaunchBarLaunchConfigDialog_LCNameNotValid, IMessageProvider.ERROR);
+					return;
+				}
+			} catch (CoreException e1) {
+				Activator.log(e1.getStatus());
+			}
+		}
+
 		for (ILaunchConfigurationTab tab : getTabs()) {
 			tab.isValid(workingCopy);
 		}
@@ -297,13 +353,14 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	@Override
 	public void setName(String name) {
-		// Names aren't setable from this dialog
+		if (nameText != null && !nameText.isDisposed()) {
+			nameText.setText(name);
+		}
 	}
 
 	@Override
 	public String generateName(String name) {
-		// Names aren't setable from this dialog
-		return null;
+		return DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(name);
 	}
 
 	@Override

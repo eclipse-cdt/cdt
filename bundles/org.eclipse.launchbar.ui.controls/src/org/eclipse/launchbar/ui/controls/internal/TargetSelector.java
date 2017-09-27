@@ -18,14 +18,9 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetListener;
@@ -48,7 +43,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 public class TargetSelector extends CSelector implements ILaunchTargetListener {
 
@@ -108,7 +102,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 						if (status.getCode() == Code.OK) {
 							return baseImage;
 						} else {
-							String compId = String.format("%s.%s.%s", target.getTypeId(), target.getId(),
+							String compId = String.format("%s.%s.%s", target.getTypeId(), target.getId(), //$NON-NLS-1$
 									status.getCode());
 							Image image = Activator.getDefault().getImageRegistry().get(compId);
 							if (image == null && baseImage != null) {
@@ -157,34 +151,9 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 		return true;
 	}
 
-	private ISelectionProvider getSelectionProvider() {
-		return new ISelectionProvider() {
-			@Override
-			public void setSelection(ISelection selection) {
-				// ignore
-			}
-
-			@Override
-			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				// ignore
-			}
-
-			@Override
-			public ISelection getSelection() {
-				return new StructuredSelection(TargetSelector.this.getSelection());
-			}
-
-			@Override
-			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				// ignore
-			}
-		};
-	}
-
 	@Override
 	public void handleEdit(Object element) {
-		// opens property dialog on a selected target
-		new PropertyDialogAction(new SameShellProvider(getShell()), getSelectionProvider()).run();
+		targetUIManager.editLaunchTarget((ILaunchTarget) getSelection());
 	}
 
 	@Override

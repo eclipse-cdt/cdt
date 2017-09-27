@@ -205,7 +205,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			}
 			ILaunchTarget target = new LaunchTarget(typeId, id, child);
 			type.put(id, target);
-			child.flush();
+			prefs.flush();
 
 			synchronized (listeners) {
 				for (ILaunchTargetListener listener : listeners) {

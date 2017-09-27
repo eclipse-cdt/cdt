@@ -25,5 +25,19 @@ public interface ILaunchTargetUIManager {
 	 */
 	ILabelProvider getLabelProvider(ILaunchTarget target);
 
+	/**
+	 * @deprecated this should never have been in the interface, now returns null
+	 * @return null
+	 */
+	@Deprecated
 	public IWizardDescriptor[] getLaunchTargetWizards();
+
+	/**
+	 * Open a dialog to edit the specified launch target.
+	 * 
+	 * @param target
+	 *            launch target to edit
+	 */
+	void editLaunchTarget(ILaunchTarget target);
+
 }

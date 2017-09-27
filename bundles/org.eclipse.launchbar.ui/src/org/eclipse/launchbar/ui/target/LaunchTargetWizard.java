@@ -7,21 +7,27 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.target;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.launchbar.ui.internal.target.NewLaunchTargetWizard;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
-/**
- * Open the new launch target wizard.
- */
-public class NewLaunchTargetWizardAction extends Action {
+public abstract class LaunchTargetWizard extends Wizard {
 
-	@Override
-	public void run() {
-		Wizard wizard = new NewLaunchTargetWizard();
-		new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard).open();
+	protected ILaunchTarget launchTarget;
+
+	public void setLaunchTarget(ILaunchTarget launchTarget) {
+		this.launchTarget = launchTarget;
+	}
+
+	public ILaunchTarget getLaunchTarget() {
+		return launchTarget;
+	}
+
+	public boolean canDelete() {
+		return false;
+	}
+
+	public void performDelete() {
+		// do nothing by default
 	}
 
 }

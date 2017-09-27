@@ -10,111 +10,156 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.target;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.WizardDialog;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.activities.ws.WorkbenchTriggerPoints;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardSelectionPage;
-import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/**
- *	New wizard selection tab that allows the user to either select a
- *	registered 'New' wizard to be launched, or to select a solution or
- *	projects to be retrieved from an available server.  This page
- *	contains two visual tabs that allow the user to perform these tasks.
- *
- *  Temporarily has two inner pages.  The new format page is used if the system
- *  is currently aware of activity categories.
- */
-class NewLaunchTargetWizardSelectionPage extends WorkbenchWizardSelectionPage {
-	// widgets
-	private NewLaunchTargetWizardNewPage newResourcePage;
-	private IWizardDescriptor[] wizards;
-	private boolean canFinishEarly = false, hasPages = true;
+class NewLaunchTargetWizardSelectionPage extends WizardPage {
 
-	/**
-	 * Create an instance of this class.
-	 *
-	 * @param workbench the workbench
-	 * @param wizards the primary wizard elements
-	 */
-	public NewLaunchTargetWizardSelectionPage(IWorkbench workbench,
-			IWizardDescriptor[] wizards) {
-		super("newWizardSelectionPage", workbench, null, null, WorkbenchTriggerPoints.NEW_WIZARDS);//$NON-NLS-1$
-		setTitle(WorkbenchMessages.NewWizardSelectionPage_description);
-		this.wizards = wizards;
-	}
+	private Table table;
 
-	/**
-	 * Makes the next page visible.
-	 */
-	public void advanceToNextPageOrFinish() {
-		if (canFlipToNextPage()) {
-			getContainer().showPage(getNextPage());
-		} else if (canFinishEarly()) {
-			if (getWizard().performFinish()) {
-				((WizardDialog) getContainer()).close();
-			}
-		}
+	public NewLaunchTargetWizardSelectionPage() {
+		super(NewLaunchTargetWizardSelectionPage.class.getName());
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-		IDialogSettings settings = getDialogSettings();
-		newResourcePage = new NewLaunchTargetWizardNewPage(this, null, wizards);
-		newResourcePage.setDialogSettings(settings);
-		Control control = newResourcePage.createControl(parent);
-		getWorkbench().getHelpSystem().setHelp(control,
-				IWorkbenchHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
-		setControl(control);
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout());
+
+		table = new Table(comp, SWT.BORDER | SWT.SINGLE);
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		List<IConfigurationElement> elements = new ArrayList<>();
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint(Activator.PLUGIN_ID + ".launchTargetTypeUI"); //$NON-NLS-1$
+		for (IExtension extension : point.getExtensions()) {
+			for (IConfigurationElement element : extension.getConfigurationElements()) {
+				String elementName = element.getName();
+				if ("wizard2".equals(elementName) || "wizard".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
+					elements.add(element);
+				}
+			}
+		}
+
+		elements.sort(new Comparator<IConfigurationElement>() {
+			@Override
+			public int compare(IConfigurationElement o1, IConfigurationElement o2) {
+				String name1 = o1.getAttribute("name"); //$NON-NLS-1$
+				String name2 = o2.getAttribute("name"); //$NON-NLS-1$
+				return name1.compareTo(name2);
+			}
+		});
+
+		for (IConfigurationElement element : elements) {
+			String name = element.getAttribute("name"); //$NON-NLS-1$
+			TableItem item = new TableItem(table, SWT.NONE);
+			item.setText(name);
+
+			String iconFile = element.getAttribute("icon"); //$NON-NLS-1$
+			if (iconFile != null) {
+				ImageDescriptor desc = Activator.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), iconFile);
+				if (desc != null) {
+					item.setImage(desc.createImage());
+				}
+			}
+
+			item.setData(element);
+		}
+
+		table.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				getContainer().updateButtons();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+				if (canFlipToNextPage()) {
+					getContainer().showPage(getNextPage());
+				}
+			}
+		});
+
+		setControl(comp);
 	}
 
-	/**
-	 * Since Finish was pressed, write widget values to the dialog store so that they
-	 *will persist into the next invocation of this wizard page
-	 */
-	protected void saveWidgetValues() {
-		newResourcePage.saveWidgetValues();
+	@Override
+	public void dispose() {
+		for (TableItem item : table.getItems()) {
+			Object obj = item.getData();
+			if (obj instanceof Wizard) {
+				((Wizard) obj).dispose();
+			}
+		}
+		super.dispose();
+	}
+
+	public ImageDescriptor getDescriptionImage(IConfigurationElement element) {
+		String descImage = element.getAttribute("icon"); //$NON-NLS-1$
+		if (descImage == null) {
+			return null;
+		}
+		return AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), descImage);
 	}
 
 	@Override
 	public boolean canFlipToNextPage() {
-		// if the current page advertises that it does have pages then ask it via the super call
-		if (hasPages) {
-			return super.canFlipToNextPage();
+		return table.getSelectionIndex() >= 0;
+	}
+
+	@Override
+	public IWizardPage getNextPage() {
+		int i = table.getSelectionIndex();
+		if (i >= 0) {
+			TableItem item = table.getItem(i);
+			Object obj = item.getData();
+			Wizard nextWizard;
+			if (obj instanceof IConfigurationElement) {
+				IConfigurationElement element = (IConfigurationElement) obj;
+				try {
+					nextWizard = (Wizard) element.createExecutableExtension("class"); //$NON-NLS-1$
+					nextWizard.addPages();
+					if (nextWizard instanceof IWorkbenchWizard) {
+						((IWorkbenchWizard) nextWizard).init(PlatformUI.getWorkbench(), new StructuredSelection());
+					}
+					item.setData(nextWizard);
+				} catch (CoreException e) {
+					Activator.log(e);
+					return null;
+				}
+			} else {
+				nextWizard = (LaunchTargetWizard) obj;
+			}
+
+			return nextWizard.getStartingPage();
 		}
-		return false;
+		return super.getNextPage();
 	}
 
-	/**
-	 * Sets whether the selected wizard advertises that it does provide pages.
-	 *
-	 * @param newValue whether the selected wizard has pages
-	 * @since 3.1
-	 */
-	public void setHasPages(boolean newValue) {
-		hasPages = newValue;
-	}
-
-	/**
-	 * Sets whether the selected wizard advertises that it can finish early.
-	 *
-	 * @param newValue whether the selected wizard can finish early
-	 */
-	public void setCanFinishEarly(boolean newValue) {
-		canFinishEarly = newValue;
-	}
-
-	/**
-	 * Answers whether the currently selected page, if any, advertises that it may finish early.
-	 *
-	 * @return whether the page can finish early
-	 */
-	public boolean canFinishEarly() {
-		return canFinishEarly;
-	}
 }

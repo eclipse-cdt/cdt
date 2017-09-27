@@ -103,4 +103,5 @@ public class Activator extends AbstractUIPlugin {
 		ServiceReference<T> ref = context.getServiceReference(cls);
 		return ref != null ? context.getService(ref) : null;
 	}
+
 }

@@ -21,6 +21,7 @@ and target creation wizard.
          <sequence>
             <element ref="launchTargetTypeUI" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="wizard" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="wizard2" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -173,6 +174,53 @@ Since 3.0
       </annotation>
    </element>
 
+   <element name="wizard2">
+      <annotation>
+         <documentation>
+            Wizard that supports creation and editing of targets. These wizards are per target type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchTargetTypes/launchTargetType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.launchbar.ui.target.LaunchTargetWizard:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -187,7 +235,7 @@ Since 3.0
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-            &lt;extension
+         &lt;extension
          point=&quot;org.eclipse.launchbar.ui.launchTargetTypeUI&quot;&gt;
       &lt;launchTargetTypeUI
             id=&quot;com.qnx.tools.ide.target.qconn&quot;

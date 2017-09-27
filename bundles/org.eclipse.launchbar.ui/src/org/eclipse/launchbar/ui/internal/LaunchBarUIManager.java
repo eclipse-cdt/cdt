@@ -128,7 +128,8 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 					target, buildTabGroup);
 			if (dialog.open() == Window.OK) {
 				if (!workingCopy.getOriginal().equals(workingCopy)
-						&& !workingCopy.getOriginal().getAttributes().equals(workingCopy.getAttributes())) {
+						&& (!workingCopy.getOriginal().getAttributes().equals(workingCopy.getAttributes())
+								|| !workingCopy.getOriginal().getName().equals(workingCopy.getName()))) {
 					workingCopy.doSave();
 				}
 			}

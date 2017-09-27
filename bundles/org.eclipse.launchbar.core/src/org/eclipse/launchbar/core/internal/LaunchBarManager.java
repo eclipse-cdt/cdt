@@ -947,7 +947,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			return;
 		fireLaunchTargetsChanged();
 		// if we added new target we probably want to use it
-		if (activeLaunchDesc == null || supportsTarget(activeLaunchDesc, target)) {
+		if (activeLaunchDesc != null && supportsTarget(activeLaunchDesc, target)) {
 			try {
 				setActiveLaunchTarget(target);
 			} catch (CoreException e) {

@@ -7,9 +7,7 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.target;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,19 +17,27 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.target.ILaunchTargetUIManager;
+import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 	private Map<String, IConfigurationElement> typeElements;
 	private Map<String, ILabelProvider> labelProviders = new HashMap<>();
-	private IWizardDescriptor[] wizards;
+	private Map<String, IConfigurationElement> editElements;
 
 	@Override
 	public synchronized ILabelProvider getLabelProvider(ILaunchTarget target) {
@@ -43,13 +49,16 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 					.getExtensionPoint(Activator.getDefault().getBundle().getSymbolicName() + ".launchTargetTypeUI"); //$NON-NLS-1$
 			for (IExtension extension : point.getExtensions()) {
 				for (IConfigurationElement element : extension.getConfigurationElements()) {
-					String id = element.getAttribute("id"); //$NON-NLS-1$
-					if (id != null) {
-						typeElements.put(id, element);
+					if ("launchTargetTypeUI".equals(element.getName())) { //$NON-NLS-1$
+						String id = element.getAttribute("id"); //$NON-NLS-1$
+						if (id != null) {
+							typeElements.put(id, element);
+						}
 					}
 				}
 			}
 		}
+
 		String typeId = target.getTypeId();
 		ILabelProvider labelProvider = labelProviders.get(typeId);
 		if (labelProvider == null) {
@@ -85,27 +94,66 @@ public class LaunchTargetUIManager implements ILaunchTargetUIManager {
 	}
 
 	@Override
-	public synchronized IWizardDescriptor[] getLaunchTargetWizards() {
-		if (wizards != null)
-			return wizards;
-		WizardsRegistryReader reader = new WizardsRegistryReader(Activator.PLUGIN_ID, "launchTargetTypeUI"); //$NON-NLS-1$
-		WizardCollectionElement wizardElements = reader.getWizardElements();
-		List<IWizardDescriptor> result = collectWizards(wizardElements, new ArrayList<>());
-		wizards = result.toArray(new IWizardDescriptor[result.size()]);
-		return wizards;
+	public IWizardDescriptor[] getLaunchTargetWizards() {
+		// No one one should be using this. The new target wizard is internal.
+		return null;
 	}
 
-	/* we don't show categories we have to flatten the wizards */
-	private List<IWizardDescriptor> collectWizards(WizardCollectionElement element, List<IWizardDescriptor> result) {
-		Object[] children = element.getChildren(null); // children are categories
-		IWizardDescriptor[] wizards = element.getWizards();
-		for (IWizardDescriptor desc : wizards) {
-			result.add(desc);
+	@Override
+	public void editLaunchTarget(ILaunchTarget target) {
+		if (editElements == null) {
+			// Load them up
+			editElements = new HashMap<>();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint point = registry
+					.getExtensionPoint(Activator.getDefault().getBundle().getSymbolicName() + ".launchTargetTypeUI"); //$NON-NLS-1$
+			for (IExtension extension : point.getExtensions()) {
+				for (IConfigurationElement element : extension.getConfigurationElements()) {
+					if ("wizard2".equals(element.getName())) { //$NON-NLS-1$
+						String id = element.getAttribute("id"); //$NON-NLS-1$
+						if (id != null) {
+							editElements.put(id, element);
+						}
+					}
+				}
+			}
 		}
-		for (Object cat : children) {
-			WizardCollectionElement category = (WizardCollectionElement) cat;
-			collectWizards(category, result);
+
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		IConfigurationElement element = editElements.get(target.getTypeId());
+		if (element != null) {
+			try {
+				LaunchTargetWizard wizard = (LaunchTargetWizard) element.createExecutableExtension("class"); //$NON-NLS-1$
+				wizard.setLaunchTarget(target);
+				WizardDialog dialog = wizard.canDelete() ? new LaunchTargetWizardDialog(shell, wizard)
+						: new WizardDialog(shell, wizard);
+				dialog.open();
+			} catch (CoreException e) {
+				Activator.log(e.getStatus());
+			}
+		} else {
+			new PropertyDialogAction(new SameShellProvider(shell), new ISelectionProvider() {
+				@Override
+				public void setSelection(ISelection selection) {
+					// ignore
+				}
+
+				@Override
+				public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					// ignore
+				}
+
+				@Override
+				public ISelection getSelection() {
+					return new StructuredSelection(target);
+				}
+
+				@Override
+				public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					// ignore
+				}
+			}).run();
 		}
-		return result;
 	}
+
 }

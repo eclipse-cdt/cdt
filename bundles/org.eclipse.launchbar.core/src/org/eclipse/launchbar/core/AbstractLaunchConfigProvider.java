@@ -61,12 +61,16 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 			return false;
 		}
 
-		// Check for our class name but also that the config name
-		// matches what we originally set it to.
-		// This covers the case when the config was duplicated.
-		// We can own only one, the original one.
-		return configuration.getAttribute(ATTR_PROVIDER_CLASS, "").equals(getClass().getName()) //$NON-NLS-1$
-				&& configuration.getAttribute(ATTR_ORIGINAL_NAME, "").equals(configuration.getName()); //$NON-NLS-1$
+		if (configuration.getAttribute(ATTR_PROVIDER_CLASS, "").equals(getClass().getName())) { //$NON-NLS-1$
+			// We provided the configuration but we need to check if this is a duplicate and
+			// not own it. Check the original name and if there is still a config with that
+			// name, this is the duplicate. Otherwise it's simply a rename
+			String origName = configuration.getAttribute(ATTR_ORIGINAL_NAME, ""); //$NON-NLS-1$
+			return origName.equals(configuration.getName())
+					|| !DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(origName);
+		} else {
+			return false;
+		}
 	}
 
 }

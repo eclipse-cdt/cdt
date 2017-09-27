@@ -111,7 +111,7 @@ public interface IProblem {
 	public final static int SYNTAX_RELATED = 0x04000000;
 	
 	/**
-	 * IProblem relates to an implementation of design limitation
+	 * IProblem relates to an implementation or design limitation
 	 */
 	public final static int INTERNAL_RELATED = 0x10000000;
 
@@ -355,6 +355,12 @@ public interface IProblem {
 	 * @since 5.3
 	 */
 	public final static int MISSING_SEMICOLON = SYNTAX_RELATED | 0x002;
+	
+	/**
+	 * The parser's template argument nesting depth limit was exceeded.
+	 * @since 6.4
+	 */
+	public final static int TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED = INTERNAL_RELATED | 0x01;
 	
 	/**
 	 * @deprecated Not used.

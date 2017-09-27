@@ -98,11 +98,14 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(MISSING_SEMICOLON),
     			ParserMessages.getString("ParserProblemFactory.error.syntax.missingSemicolon")); //$NON-NLS-1$
+    	errorMessages.put(Integer.valueOf(TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED), 
+    			ParserMessages.getString("ParserProblemFactory.error.syntax.templateArgumentNestingDepthLimitExceeded")); //$NON-NLS-1$
 	}
 
     private final int id;
     private final char[] arg;
 	private boolean isError;
+	private IASTProblem originalProblem = null;
 
     public ASTProblem(IASTNode parent, ASTNodeProperty property, int id, char[] arg, boolean isError,
     		int startNumber, int endNumber) {
@@ -158,20 +161,27 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         return ParserMessages.getFormattedString("BaseProblemFactory.problemPattern", args); //$NON-NLS-1$
     }
 
-    public static String getMessage(int id, String arg) {
+    private static String getMessage(int id, String arg, IASTProblem originalProblem) {
         String msg = errorMessages.get(Integer.valueOf(id));
         if (msg == null)
             msg = ""; //$NON-NLS-1$
 
         if (arg != null) {
-            return MessageFormat.format(msg, new Object[] {arg});
+            msg = MessageFormat.format(msg, new Object[] {arg});
+        }
+        if (originalProblem != null) {
+        	msg = MessageFormat.format("{0}: {1}", msg, originalProblem.getMessage()); //$NON-NLS-1$
         }
         return msg;
+    }
+    
+    public static String getMessage(int id, String arg) {
+    	return getMessage(id, arg, null);
     }
 
     @Override
 	public String getMessage() {
-    	return getMessage(id, arg == null ? null : new String(arg));
+    	return getMessage(id, arg == null ? null : new String(arg), originalProblem);
     }
 
     @Override
@@ -218,5 +228,17 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 			return location.getNodeOffset();
 		}
 		return INT_VALUE_NOT_PROVIDED;
+	}
+
+	
+	
+	@Override
+	public IASTProblem getOriginalProblem() {
+		return originalProblem;
+	}
+
+	@Override
+	public void setOriginalProblem(IASTProblem original) {
+		originalProblem = original;
 	}
 }

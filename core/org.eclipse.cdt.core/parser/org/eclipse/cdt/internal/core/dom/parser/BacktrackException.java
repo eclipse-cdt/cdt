@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * @author jcamelon
@@ -94,5 +95,10 @@ public class BacktrackException extends Exception {
     @Override
     public StackTraceElement[] getStackTrace() {
         return EMPTY_STACK;
+    }
+
+    // Don't try alternative parses if this returns true.
+    public boolean isFatal() {
+    	return problem != null && problem.getID() == IProblem.TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED;
     }
 }

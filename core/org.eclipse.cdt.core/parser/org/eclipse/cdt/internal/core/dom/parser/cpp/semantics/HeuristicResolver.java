@@ -512,7 +512,7 @@ public class HeuristicResolver {
 	 */
 	public static IBinding[] resolveUnknownBinding(ICPPUnknownBinding binding) {
 		if (binding instanceof ICPPDeferredClassInstance) {
-			return new IBinding[] { ((ICPPDeferredClassInstance) binding).getClassTemplate() };
+			return new IBinding[] { chooseTemplateForDeferredInstance((ICPPDeferredClassInstance) binding) };
 		} else if (binding instanceof ICPPUnknownMember) {
 			Set<HeuristicLookup> lookupSet = new HashSet<>();
 			return lookInside(((ICPPUnknownMember) binding).getOwnerType(), false,

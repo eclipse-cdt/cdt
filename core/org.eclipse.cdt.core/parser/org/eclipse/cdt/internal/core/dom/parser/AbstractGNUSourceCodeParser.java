@@ -739,11 +739,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    protected IASTProblemDeclaration skipProblemDeclaration(int offset) {
+	protected IASTProblemDeclaration skipProblemDeclaration(int offset) {
+		return skipProblemDeclaration(offset, null);
+	}
+	
+    protected IASTProblemDeclaration skipProblemDeclaration(int offset, IASTProblem origProblem) {
 		failParse();
 		declarationMark= null;
     	int endOffset = skipToSemiOrClosingBrace(offset, false);
 		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, offset, endOffset-offset);
+		if (origProblem != null && origProblem.getID() != IProblem.SYNTAX_ERROR) {
+			problem.setOriginalProblem(origProblem);
+		}
 		return buildProblemDeclaration(problem);
     }
 
@@ -1771,7 +1778,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		}
     	}
 
-    	return new IASTDeclaration[] {skipProblemDeclaration(offset)};
+    	return new IASTDeclaration[] {skipProblemDeclaration(offset, origProblem)};
     }
 
 	protected IASTDeclaration asmDeclaration() throws EndOfFileException, BacktrackException {

@@ -185,6 +185,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private static final int DEFAULT_PARM_LIST_SIZE = 4;
 	private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE= 4;
+	private static final int TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT = 256;
 
 	// This is a parameter to the protected function {@link #declarator(DtorStrategy, DeclarationOptions)}
 	// so it needs to be protected too.
@@ -200,6 +201,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected ICPPASTTranslationUnit translationUnit;
 
 	private int functionBodyCount;
+	private int templateArgumentNestingDepth = 0;
 	private char[] currentClassName;
 	private char[] additionalNumericalSuffixes;
 
@@ -281,6 +283,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			try {
 				return nameSpecifier(ctx, strat);
 			} catch (BacktrackException e) {
+				if (e.isFatal()) {
+					throw e;
+				}
 				if (strat.setNextAlternative(true /* previous alternative failed to parse */)) {
 					backup(m);
 				} else {
@@ -705,33 +710,42 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	private List<IASTNode> templateArgumentList(ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
-		int startingOffset = LA(1).getOffset();
-		int endOffset = 0;
-		List<IASTNode> list= null;
-
-		boolean needComma= false;
-		int lt1= LT(1);
-		while (lt1 != IToken.tGT && lt1 != IToken.tGT_in_SHIFTR && lt1 != IToken.tEOC) {
-			if (needComma) {
-				if (lt1 != IToken.tCOMMA) {
-					throwBacktrack(startingOffset, endOffset - startingOffset);
+		if (templateArgumentNestingDepth >= TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT) {
+			throwBacktrack(createProblem(IProblem.TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED, 
+					LA(1).getOffset(), 1));
+		}
+		++templateArgumentNestingDepth;
+		try {
+			int startingOffset = LA(1).getOffset();
+			int endOffset = 0;
+			List<IASTNode> list= null;
+	
+			boolean needComma= false;
+			int lt1= LT(1);
+			while (lt1 != IToken.tGT && lt1 != IToken.tGT_in_SHIFTR && lt1 != IToken.tEOC) {
+				if (needComma) {
+					if (lt1 != IToken.tCOMMA) {
+						throwBacktrack(startingOffset, endOffset - startingOffset);
+					}
+					consume();
+				} else {
+					needComma= true;
 				}
-				consume();
-			} else {
-				needComma= true;
+	
+				IASTNode node= templateArgument(strat);
+				if (list == null) {
+					 list= new ArrayList<>();
+				}
+				list.add(node);
+				lt1= LT(1);
 			}
-
-			IASTNode node= templateArgument(strat);
 			if (list == null) {
-				 list= new ArrayList<>();
+				return Collections.emptyList();
 			}
-			list.add(node);
-			lt1= LT(1);
+			return list;
+		} finally {
+			--templateArgumentNestingDepth;
 		}
-		if (list == null) {
-			return Collections.emptyList();
-		}
-		return list;
 	}
 
 	private IASTNode templateArgument(ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
@@ -742,6 +756,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			typeId= typeId(DeclarationOptions.TYPEID);
 			lt1 = LT(1);
 		} catch (BacktrackException e) {
+			if (e.isFatal()) {
+				throw e;
+			}
 		}
 
 		if (typeId != null
@@ -800,6 +817,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				}
 				// The type-id is longer, use it.
 			} catch (BacktrackException e) {
+				if (e.isFatal()) {
+					throw e;
+				}
 				// Failed to parse an expression, use the type id.
 			}
 

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -37,6 +38,8 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -92,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -10382,5 +10386,52 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	};
 	public void testMemberOfUnknownMemberClass_519819() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	template <class> class any {};
+	//	typedef any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//			    any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<any<any<any<any<any<any<
+	//				any<any<any<any<any<any<any<any<any<int>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//			   >>>>>>>>>>>>> parser_killer_type;
+	public void testTemplateArgumentNestingDepthLimit_512297() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IASTTranslationUnit tu = helper.getTranslationUnit();
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		assertEquals(2, declarations.length);
+		assertInstance(declarations[1], IASTProblemDeclaration.class);
+		IASTProblemDeclaration problemDecl = (IASTProblemDeclaration) declarations[1];
+		IASTProblem problem = problemDecl.getProblem().getOriginalProblem();
+		assertNotNull(problem);
+		assertEquals(IProblem.TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED, problem.getID());
 	}
 }

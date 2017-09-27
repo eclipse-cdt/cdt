@@ -2071,65 +2071,65 @@ public class CPPVisitor extends ASTQueries {
 	
 	public static IType createType(IASTDeclarator declarator) {
 		// Resolve placeholders by default.
-		try {
-			CPPSemantics.pushLookupPoint(declarator);
-			return createType(declarator, RESOLVE_PLACEHOLDERS);
-		} finally {
-			CPPSemantics.popLookupPoint();
-		}
+		return createType(declarator, RESOLVE_PLACEHOLDERS);
 	}
 	
 	public static IType createType(IASTDeclarator declarator, int flags) {
 		if (declarator == null)
 			return ProblemType.NO_NAME;
 
-		declarator= findOutermostDeclarator(declarator);
-		IASTNode parent = declarator.getParent();
-
-		IASTDeclSpecifier declSpec = null;
-		boolean isPackExpansion= false;
-		if (parent instanceof IASTSimpleDeclaration) {
-			declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-		} else if (parent instanceof IASTParameterDeclaration) {
-			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
-		} else if (parent instanceof IASTFunctionDefinition) {
-			declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
-		} else if (parent instanceof ICPPASTTypeId) {
-			final ICPPASTTypeId typeId = (ICPPASTTypeId) parent;
-			declSpec = typeId.getDeclSpecifier();
-			isPackExpansion= typeId.isPackExpansion();
-		} else {
-			throw new IllegalArgumentException();
-		}
-
-		PlaceholderKind placeholder = usesAuto(declSpec);
-		if (placeholder != null) {
-			return createAutoType(declSpec, declarator, flags, placeholder);
-		}
-
-		IType type = createType(declSpec);
-		type = makeConstIfConstexpr(type, declSpec, declarator);
-		type = createType(type, declarator);
-
-		// C++ specification 8.3.4.3 and 8.5.1.4
-		IASTNode initClause= declarator.getInitializer();
-		if (initClause instanceof IASTEqualsInitializer) {
-			initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
-		}
-		if (initClause instanceof IASTInitializerList) {
-			IType t= SemanticUtil.getNestedType(type, TDEF);
-			if (t instanceof IArrayType) {
-				IArrayType at= (IArrayType) t;
-				if (at.getSize() == null) {
-					type= new CPPArrayType(at.getType(), IntegralValue.create(((IASTInitializerList) initClause).getSize()));
+		CPPSemantics.pushLookupPoint(declarator);
+		try {
+			declarator= findOutermostDeclarator(declarator);
+			IASTNode parent = declarator.getParent();
+	
+			IASTDeclSpecifier declSpec = null;
+			boolean isPackExpansion= false;
+			if (parent instanceof IASTSimpleDeclaration) {
+				declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+			} else if (parent instanceof IASTParameterDeclaration) {
+				declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+			} else if (parent instanceof IASTFunctionDefinition) {
+				declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
+			} else if (parent instanceof ICPPASTTypeId) {
+				final ICPPASTTypeId typeId = (ICPPASTTypeId) parent;
+				declSpec = typeId.getDeclSpecifier();
+				isPackExpansion= typeId.isPackExpansion();
+			} else {
+				throw new IllegalArgumentException();
+			}
+	
+			PlaceholderKind placeholder = usesAuto(declSpec);
+			if (placeholder != null) {
+				return createAutoType(declSpec, declarator, flags, placeholder);
+			}
+	
+			IType type = createType(declSpec);
+			type = makeConstIfConstexpr(type, declSpec, declarator);
+			type = createType(type, declarator);
+	
+			// C++ specification 8.3.4.3 and 8.5.1.4
+			IASTNode initClause= declarator.getInitializer();
+			if (initClause instanceof IASTEqualsInitializer) {
+				initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
+			}
+			if (initClause instanceof IASTInitializerList) {
+				IType t= SemanticUtil.getNestedType(type, TDEF);
+				if (t instanceof IArrayType) {
+					IArrayType at= (IArrayType) t;
+					if (at.getSize() == null) {
+						type= new CPPArrayType(at.getType(), IntegralValue.create(((IASTInitializerList) initClause).getSize()));
+					}
 				}
 			}
+	
+			if (isPackExpansion) {
+				type= new CPPParameterPackType(type);
+			}
+			return type;
+		} finally {
+			CPPSemantics.popLookupPoint();
 		}
-
-		if (isPackExpansion) {
-			type= new CPPParameterPackType(type);
-		}
-		return type;
 	}
 
 	private static IType createAutoParameterType(IASTDeclSpecifier declSpec, IASTDeclarator declarator,

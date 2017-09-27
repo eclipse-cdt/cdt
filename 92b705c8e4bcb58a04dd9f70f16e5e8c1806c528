@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_0d305b70",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/HeuristicResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-27T22:55:30Z",
+      "side": 1,
+      "message": "Please use the existing helper function, chooseTemplateForDeferredInstance().",
+      "revId": "92b705c8e4bcb58a04dd9f70f16e5e8c1806c528",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

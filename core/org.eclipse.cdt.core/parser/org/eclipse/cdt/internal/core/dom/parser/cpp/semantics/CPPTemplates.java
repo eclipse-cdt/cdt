@@ -227,7 +227,7 @@ public class CPPTemplates {
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 
 	// Infrastructure to protect against rogue template metaprograms that don't terminate.
-	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 256;
+	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 128;
 	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<Integer>() {
 		@Override
 		protected Integer initialValue() {

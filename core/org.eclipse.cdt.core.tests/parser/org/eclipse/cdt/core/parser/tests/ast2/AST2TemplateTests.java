@@ -10434,4 +10434,34 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertNotNull(problem);
 		assertEquals(IProblem.TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED, problem.getID());
 	}
+	
+	//	template<class... Ts>
+	//	struct infinite;
+	//
+	//	template<class Infinite, int N>
+	//	struct infinite_generator {
+	//	  typedef infinite<typename infinite_generator<Infinite, N-1>::type> type;
+	//	};
+	//
+	//	template<class Infinite>
+	//	struct infinite_generator<Infinite, 0> {
+	//	  typedef Infinite type;
+	//	};
+	//
+	//	template<class... Ts>
+	//	struct infinite {
+	//	  typedef infinite<Ts...> self_type;
+	//
+	//	  template<int N>
+	//	  static typename infinite_generator<self_type, N>::type generate() {
+	//	    return typename infinite_generator<self_type, N>::type();
+	//	  }
+	//	};
+	//
+	//	auto parser_killer_2 = infinite<int>::generate<400>();
+	public void testTemplateInstantiationDepthLimit_512297() throws Exception {
+		CPPASTNameBase.sAllowRecursionBindings = true;
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertProblem("generate<400>", "generate<400>");
+	}
 }

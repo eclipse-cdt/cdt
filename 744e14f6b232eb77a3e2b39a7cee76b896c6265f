@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_72bb7b0d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1385,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-09-28T19:25:56Z",
+      "side": 1,
+      "message": "It looks like CPPASTNameBase.sAllowNameComputation needs to be set to \"true\" in the test, if the test is going to be querying the string representations of template-ids.\n\nThere are some existing tests that set this flag.",
+      "revId": "744e14f6b232eb77a3e2b39a7cee76b896c6265f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

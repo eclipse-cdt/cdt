@@ -2185,8 +2185,15 @@ public class CPPSemantics {
 			}
 
 			// Select among those bindings that have been created without problems.
-			if (temp instanceof IProblemBinding)
+			if (temp instanceof IProblemBinding) {
+				// If this ProblemBinding was the only binding, return it rather than
+				// creating a new ProblemBinding below. This way the caller potentially
+				// gets a more specific error than SEMANTIC_NAME_NOT_FOUND.
+				if (items.length == 1) {
+					return temp;
+				}
 				continue;
+			}
 
 			if (!declaredBefore && !(temp instanceof ICPPMember) && !(temp instanceof IType) &&
 					!(temp instanceof IEnumerator)) {

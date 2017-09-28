@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -38,14 +39,14 @@ public class CBuilder extends IncrementalProjectBuilder {
 			// Get the build configuration
 			ICBuildConfiguration config = getBuildConfig().getAdapter(ICBuildConfiguration.class);
 			if (config == null) {
-				console.getErrorStream().write("Build not configured correctly\n");
+				console.getErrorStream().write(Messages.CBuilder_NotConfiguredCorrectly);
 				return null;
 			}
 
 			return config.build(kind, args, console, monitor);
 		} catch (IOException e) {
 			throw new CoreException(
-					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Exception while building", e));
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.CBuilder_ExceptionWhileBuilding, e));
 		}
 	}
 
@@ -61,14 +62,14 @@ public class CBuilder extends IncrementalProjectBuilder {
 			// Get the build configuration
 			ICBuildConfiguration config = getBuildConfig().getAdapter(ICBuildConfiguration.class);
 			if (config == null) {
-				console.getErrorStream().write("Build not configured correctly\n");
+				console.getErrorStream().write(Messages.CBuilder_NotConfiguredCorrectly2);
 				return;
 			}
 
 			config.clean(console, monitor);
 		} catch (IOException e) {
 			throw new CoreException(
-					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Exception while building", e));
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.CBuilder_ExceptionWhileBuilding2, e));
 		}
 	}
 

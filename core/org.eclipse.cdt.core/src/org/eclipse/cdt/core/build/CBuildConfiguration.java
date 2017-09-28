@@ -92,7 +92,6 @@ import com.google.gson.JsonParseException;
  * settings for subclasses.
  * 
  * @since 6.0
- * @noextend This class is provisional and should be subclassed with caution.
  */
 public abstract class CBuildConfiguration extends PlatformObject
 		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser {
@@ -138,7 +137,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 		toolChain = tc;
 
-		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
+		launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {

@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -221,7 +222,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		hoverComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		String rollOverLabel= PreferencesMessages.CEditorHoverConfigurationBlock_annotationRollover;
-		addCheckBox(hoverComposite, rollOverLabel, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER, 0); //$NON-NLS-1$
+		addCheckBox(hoverComposite, rollOverLabel, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER, 0);
 		//addFiller(hoverComposite);
 
 		Label label= new Label(hoverComposite, SWT.NONE);

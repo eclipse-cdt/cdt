@@ -9,14 +9,16 @@ package org.eclipse.cdt.internal.ui.wizards.project;
 
 import org.eclipse.tools.templates.ui.NewWizard;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+
 public class NewCDTProjectWizard extends NewWizard {
 
 	private static final String cdtTag = "org.eclipse.cdt.ui.cdtTag"; //$NON-NLS-1$
 
 	public NewCDTProjectWizard() {
 		super(cdtTag);
-		setWindowTitle("New C/C++ Project");
-		setTemplateSelectionPageTitle("Templates for New C/C++ Project");
+		setWindowTitle(CUIMessages.NewCDTProjectWizard_Title);
+		setTemplateSelectionPageTitle(CUIMessages.NewCDTProjectWizard_PageTitle);
 	}
 
 }

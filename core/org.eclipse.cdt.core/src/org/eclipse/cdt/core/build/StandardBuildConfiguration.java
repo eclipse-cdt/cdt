@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -77,7 +78,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format("Building in: %s\n", buildDir.toString()));
+			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
 			String[] command = new String[buildCommand.length];
 			Path make = findCommand(buildCommand[0]);

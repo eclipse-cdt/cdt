@@ -21,13 +21,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 public class ToolChainManager implements IToolChainManager {
 
 	private Map<String, IConfigurationElement> providerElements;
 	private Map<String, IToolChainProvider> providers;
 	private Map<List<String>, IToolChain> toolChains;
+	private List<IToolChain> orderedToolChains;
+	private List<ISafeRunnable> listeners = new ArrayList<>();
 
 	private void init() {
 		if (providerElements == null) {
@@ -45,6 +49,7 @@ public class ToolChainManager implements IToolChainManager {
 
 			// Load the discovered toolchains
 			toolChains = new HashMap<>();
+			orderedToolChains = new ArrayList<>();
 			for (IConfigurationElement element : providerElements.values()) {
 				// TODO check for enablement
 				try {
@@ -69,12 +74,16 @@ public class ToolChainManager implements IToolChainManager {
 
 	@Override
 	public void addToolChain(IToolChain toolChain) {
+		orderedToolChains.add(toolChain);
 		toolChains.put(getId(toolChain), toolChain);
+		fireChange();
 	}
 
 	@Override
 	public void removeToolChain(IToolChain toolChain) {
+		orderedToolChains.remove(toolChain);
 		toolChains.remove(getId(toolChain));
+		fireChange();
 	}
 
 	@Override
@@ -172,4 +181,39 @@ public class ToolChainManager implements IToolChainManager {
 		return tcs;
 	}
 
+	@Override
+	public Collection<IToolChain> getAllToolChains() throws CoreException {
+		init();
+		return orderedToolChains;
+	}
+
+	@Override
+	public void setToolChainOrder(List<IToolChain> orderedToolchains) throws CoreException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addToolChainListener(ISafeRunnable listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeToolChainListener(ISafeRunnable listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	private void fireChange() {
+		List<ISafeRunnable> runners;
+		synchronized (listeners) {
+			runners = new ArrayList<>(listeners);
+		}
+		for (ISafeRunnable runner : runners) {
+			SafeRunner.run(runner);
+		}
+	}
 }

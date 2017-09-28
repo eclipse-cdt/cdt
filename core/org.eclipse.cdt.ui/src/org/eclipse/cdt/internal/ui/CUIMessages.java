@@ -65,6 +65,22 @@ public final class CUIMessages extends NLS {
 	public static String TextEditorDropAdapter_error_message;
 	public static String TextEditorDropAdapter_unreadableFile;
 	public static String TextEditorDropAdapter_noFile;
+	public static String ToolChainPreferencePage_Add;
+	public static String ToolChainPreferencePage_Arch;
+	public static String ToolChainPreferencePage_AreYouSure;
+	public static String ToolChainPreferencePage_AvailableToolchains;
+	public static String ToolChainPreferencePage_Down;
+	public static String ToolChainPreferencePage_Edit;
+	public static String ToolChainPreferencePage_EditDot;
+	public static String ToolChainPreferencePage_Name;
+	public static String ToolChainPreferencePage_NoEditor;
+	public static String ToolChainPreferencePage_OS;
+	public static String ToolChainPreferencePage_Remove;
+	public static String ToolChainPreferencePage_Remove1;
+	public static String ToolChainPreferencePage_RemoveToolchain;
+	public static String ToolChainPreferencePage_Toolchains;
+	public static String ToolChainPreferencePage_Up;
+	public static String ToolChainPreferencePage_UserDefinedToolchains;
 	public static String OptionalMessageDialog_dontShowAgain;
 	public static String OptionalMessageDialog_rememberDecision;
 	public static String CStructureCreatorVisitor_translationUnitName;
@@ -72,6 +88,10 @@ public final class CUIMessages extends NLS {
 	public static String FileTransferDragAdapter_problem;
 	public static String FileTransferDragAdapter_problemTitle;
 	public static String CUIPlugin_initPrefs;
+	public static String NewToolChainWizard_Title;
+
+	public static String NewToolChainWizardSelectionPage_Description;
+	public static String NewToolChainWizardSelectionPage_Title;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CUIMessages.class);

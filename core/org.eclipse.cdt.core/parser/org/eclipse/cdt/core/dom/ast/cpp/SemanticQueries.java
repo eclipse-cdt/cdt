@@ -87,13 +87,14 @@ public class SemanticQueries {
 	 * Returns all pure virtual methods of a class. Inherited pure virtual methods
 	 * that have not been implemented are also returned.
 	 *
-	 * NOTE: The method produces complete results for template instantiations
-	 * but doesn't take into account base classes and methods dependent on unspecified
+	 * NOTE: The method produces complete results for template instantiations but
+	 * doesn't take into account base classes and methods dependent on unspecified
 	 * template parameters.
 	 *
-	 * @param classType the class whose pure virtual methods should be returned
+	 * @param classType
+	 *            the class whose pure virtual methods should be returned
 	 * @return an array containing all pure virtual methods of the class
-	 * @since 6.3
+	 * @since 6.4
 	 */
 	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType) {
 		FinalOverriderMap finalOverriderMap = CPPInheritance.getFinalOverriderMap(classType);

@@ -107,11 +107,6 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 			return;
 		}
 
-		if (archText.getText().isEmpty()) {
-			setErrorMessage("Please set the target CPU architecture.");
-			return;
-		}
-
 		setPageComplete(true);
 		setErrorMessage(null);
 	}

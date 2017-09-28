@@ -31,6 +31,7 @@
    <extension-point id="LanguageSettingsProviderAssociation" name="%LanguageSettingsProviderAssociationExtensionPoint" schema="schema/LanguageSettingsProviderAssociation.exsd"/>
    <extension-point id="RefreshExclusionContributor" name="%RefreshExclusionContributorExtensionPoint" schema="schema/RefreshExclusionContributor.exsd"/>
    <extension-point id="semanticHighlighting" name="%semanticHighlightingExtensionPoint" schema="schema/semanticHighlighting.exsd"/>
+   <extension-point id="newToolChainWizards" name="New ToolChain Wizards" schema="schema/newToolChainWizards.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

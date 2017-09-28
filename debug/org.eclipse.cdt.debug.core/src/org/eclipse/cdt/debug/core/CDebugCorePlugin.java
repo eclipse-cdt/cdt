@@ -17,6 +17,7 @@ import java.util.HashSet;
 import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.command.CCommandAdapterFactory;
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService;
+import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchBarTracker;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
@@ -45,6 +46,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -93,6 +95,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * Dummy source lookup director needed to manage common source containers.
 	 */
 	private CommonSourceLookupDirector fCommonSourceLookupDirector;
+
+	private CoreBuildLaunchBarTracker coreBuildLaunchBarTracker;
 
 	/**
 	 * The constructor.
@@ -227,6 +231,11 @@ public class CDebugCorePlugin extends Plugin {
 		setDefaultLaunchDelegates();
 		
 		Platform.getAdapterManager().registerAdapters(new DebugModelProvider(), ICDebugElement.class);
+
+		// Add core build launch bar listener
+		ILaunchBarManager launchBarManager = getService(ILaunchBarManager.class);
+		coreBuildLaunchBarTracker = new CoreBuildLaunchBarTracker();
+		launchBarManager.addListener(coreBuildLaunchBarTracker);
 	}
 
 	/* (non-Javadoc)
@@ -234,6 +243,10 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
+		ILaunchBarManager launchBarManager = getService(ILaunchBarManager.class);
+		launchBarManager.removeListener(coreBuildLaunchBarTracker);
+		coreBuildLaunchBarTracker = null;
+
 		disposeDisassemblyContextService();
 		disposeBreakpointListenersList();
 		disposeCommonSourceLookupDirector();

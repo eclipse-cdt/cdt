@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.ui; singleton:=true
-Bundle-Version: 6.2.0.qualifier
+Bundle-Version: 6.3.0.qualifier
 Bundle-Activator: org.eclipse.cdt.ui.CUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -76,6 +76,7 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.ui.actions,
  org.eclipse.cdt.ui.browser.typeinfo,
+ org.eclipse.cdt.ui.build,
  org.eclipse.cdt.ui.dialogs,
  org.eclipse.cdt.ui.extensions,
  org.eclipse.cdt.ui.internal.templateengine.wizard;x-internal:=true,

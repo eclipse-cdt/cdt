@@ -92,7 +92,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			properties.put(IToolChain.ATTR_OS, os);
 		}
 		String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
-		if (!arch.isEmpty()) {
+		if (arch != null && !arch.isEmpty()) {
 			properties.put(IToolChain.ATTR_ARCH, arch);
 		}
 		ICMakeToolChainFile file = null;
@@ -102,9 +102,24 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 
 		// create config
-		String configName = "cmake." + launchMode + '.' + toolChain.getId(); //$NON-NLS-1$
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
-		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, configName, toolChain, file,
+		StringBuilder configName = new StringBuilder("cmake."); //$NON-NLS-1$
+		configName.append(launchMode);
+		if (os != null) {
+			configName.append('.');
+			configName.append(os);
+		}
+		if (arch != null) {
+			configName.append('.');
+			configName.append(arch);
+		}
+		String name = configName.toString();
+		int i = 0;
+		while (project.hasBuildConfig(name)) {
+			name = configName.toString() + '.' + (++i);
+		}
+
+		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
+		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name, toolChain, file,
 				launchMode);
 		configManager.addBuildConfiguration(config, cmakeConfig);
 		return cmakeConfig;

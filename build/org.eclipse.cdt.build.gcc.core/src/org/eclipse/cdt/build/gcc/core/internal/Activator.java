@@ -18,10 +18,12 @@ public class Activator extends Plugin {
 
 	private static Plugin plugin;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		plugin = null;
 	}
@@ -46,6 +48,10 @@ public class Activator extends Plugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+
+	public static Plugin getPlugin() {
+		return plugin;
 	}
 
 }

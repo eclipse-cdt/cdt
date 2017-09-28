@@ -78,7 +78,8 @@ public class EnvDialog extends Dialog {
 	}
 
 	@Override
-	protected Control createDialogArea(Composite c) {
+	protected Control createDialogArea(Composite parent) {
+		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout(3, false));
 		GridData gd;
 

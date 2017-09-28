@@ -12,9 +12,6 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,6 +35,11 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
+
 /**
  * @deprecated as of CDT 4.0. This Block was used for New Project Wizard
  * for 3.X style projects.
@@ -47,9 +49,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 @Deprecated
 public class ReferenceBlock extends AbstractCOptionPage {
 
-	private static final String PREFIX = "ReferenceBlock"; //$NON-NLS-1$ //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$ //$NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$ //$NON-NLS-1$
+	private static final String PREFIX = "ReferenceBlock"; //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
 
 	private CheckboxTableViewer referenceProjectsViewer;
 

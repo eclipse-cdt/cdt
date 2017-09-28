@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CDT CMake UI
 Bundle-SymbolicName: org.eclipse.cdt.cmake.ui;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.cmake.ui.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.core.runtime,
@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core;bundle-version="6.1.0",
  org.eclipse.debug.ui;bundle-version="3.11.200",
  org.eclipse.cdt.launch;bundle-version="9.1.0",
- org.eclipse.cdt.debug.core;bundle-version="8.1.0"
+ org.eclipse.cdt.debug.core;bundle-version="8.1.0",
+ org.eclipse.cdt.ui;bundle-version="6.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

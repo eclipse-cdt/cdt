@@ -138,7 +138,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 		toolChain = tc;
 
-		launchMode = settings.get(LAUNCH_MODE, null); // $NON-NLS-1$
+		launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {

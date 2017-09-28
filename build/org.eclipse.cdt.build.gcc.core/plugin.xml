@@ -11,6 +11,10 @@
             class="org.eclipse.cdt.build.gcc.core.internal.Msys2ToolChainProvider"
             id="org.eclipse.cdt.build.gcc.core.msys2Provider">
       </provider>
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.GCCUserToolChainProvider"
+            id="org.eclipse.cdt.build.gcc.core.provider.user">
+      </provider>
    </extension>
 
 </plugin>

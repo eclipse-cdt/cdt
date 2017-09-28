@@ -73,6 +73,7 @@ import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -1089,5 +1090,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
+	}
+
+	/**
+	 * @since 6.3
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = fgCPlugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 }

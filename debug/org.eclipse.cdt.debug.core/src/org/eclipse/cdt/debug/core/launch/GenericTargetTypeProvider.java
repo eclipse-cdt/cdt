@@ -7,21 +7,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.launch;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.TargetStatus;
 
+/**
+ * 
+ * @since 8.3
+ */
 public class GenericTargetTypeProvider implements ILaunchTargetProvider {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.launchTargetType.generic"; //$NON-NLS-1$
 
 	@Override
 	public void init(ILaunchTargetManager targetManager) {
-		ILaunchBarManager launchBarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
-		launchBarManager.addListener(new CoreBuildLaunchBarTracker(TYPE_ID));
+		// Nothing to do
 	}
 
 	@Override

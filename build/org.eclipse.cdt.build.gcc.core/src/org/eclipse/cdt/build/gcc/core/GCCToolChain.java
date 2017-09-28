@@ -16,10 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,23 +45,21 @@ import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * The GCC toolchain. This is the base class for all GCC toolchains. It
- * represents GCC as found on the user's PATH. It can be overriden to change
+ * represents GCC as found on the user's PATH. It can be overridden to change
  * environment variable settings.
  */
 public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	private final IToolChainProvider provider;
 	private final String id;
-	private final String version;
-	private final String name;
-	private final Path[] path;
-	private final String prefix;
+	private final Path path;
 	private final IEnvironmentVariable pathVar;
 	private final IEnvironmentVariable[] envVars;
 	private final Map<String, String> properties = new HashMap<>();
+
+	private String cCommand;
+	private String cppCommand;
 	private String[] commands;
-	private String[] cCommands;
-	private String[] cppCommands;
 
 	public GCCToolChain(IToolChainProvider provider, String id, String version) {
 		this(provider, id, version, null, null);
@@ -74,12 +72,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	public GCCToolChain(IToolChainProvider provider, String id, String version, Path[] path, String prefix) {
 		this.provider = provider;
 		this.id = id;
-		this.version = version;
-		this.name = id + " - " + version; //$NON-NLS-1$
-		this.path = path;
-		this.prefix = prefix != null ? prefix : ""; //$NON-NLS-1$
 
-		if (path != null) {
+		if (path != null && path.length > 0) {
 			StringBuilder pathString = new StringBuilder();
 			for (int i = 0; i < path.length; ++i) {
 				pathString.append(path[i].toString());
@@ -87,13 +81,65 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 					pathString.append(File.pathSeparator);
 				}
 			}
-			pathVar = new EnvironmentVariable("PATH", pathString.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
+			this.path = path[0];
+			this.pathVar = new EnvironmentVariable("PATH", pathString.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
 					File.pathSeparator);
-			envVars = new IEnvironmentVariable[] { pathVar };
+			this.envVars = new IEnvironmentVariable[] { pathVar };
 		} else {
-			pathVar = null;
-			envVars = new IEnvironmentVariable[0];
+			this.path = null;
+			this.pathVar = null;
+			this.envVars = new IEnvironmentVariable[0];
 		}
+	}
+
+	public GCCToolChain(IToolChainProvider provider, Path pathToToolChain, String arch,
+			IEnvironmentVariable[] envVars) {
+		this.provider = provider;
+		this.path = pathToToolChain;
+
+		// We include arch in the id since a compiler can support multiple arches.
+		StringBuilder idBuilder = new StringBuilder("gcc-"); //$NON-NLS-1$
+		if (arch != null) {
+			idBuilder.append(arch);
+		}
+		idBuilder.append('-');
+		idBuilder.append(pathToToolChain.toString());
+		this.id = idBuilder.toString();
+
+		IEnvironmentVariable pathVar = null;
+		if (envVars != null) {
+			for (IEnvironmentVariable envVar : envVars) {
+				if (envVar.getName().equalsIgnoreCase("PATH")) { //$NON-NLS-1$
+					pathVar = envVar;
+				}
+			}
+		}
+		
+		if (pathVar == null) {
+			// Make one with the directory containing out tool
+			String name;
+			// if (System.getenv("Path") != null) { //$NON-NLS-1$
+			// name = "Path"; //$NON-NLS-1$
+			// } else {
+				name = "PATH"; //$NON-NLS-1$
+			// }
+			pathVar = new EnvironmentVariable(name, this.path.getParent().toString(),
+					IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator);
+			if (envVars == null) {
+				envVars = new IEnvironmentVariable[] { pathVar };
+			} else {
+				IEnvironmentVariable[] newVars = new IEnvironmentVariable[envVars.length + 1];
+				System.arraycopy(envVars, 0, newVars, 0, envVars.length);
+				newVars[envVars.length] = pathVar;
+				envVars = newVars;
+			}
+		}
+		this.pathVar = pathVar;
+		this.envVars = envVars;
+	}
+
+	public Path getPath() {
+		return path;
 	}
 
 	@Override
@@ -108,12 +154,30 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public String getVersion() {
-		return version;
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		StringBuilder name = new StringBuilder("GCC"); //$NON-NLS-1$
+		String os = getProperty(ATTR_OS);
+		if (os != null) {
+			name.append(' ');
+			name.append(os);
+		}
+
+		String arch = getProperty(ATTR_ARCH);
+		if (arch != null) {
+			name.append(' ');
+			name.append(arch);
+		}
+
+		if (path != null) {
+			name.append(' ');
+			name.append(path.toString());
+		}
+
+		return name.toString();
 	}
 
 	@Override
@@ -122,16 +186,22 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		if (value != null) {
 			return value;
 		}
-		
+
 		// By default, we're a local GCC
 		switch (key) {
 		case ATTR_OS:
 			return Platform.getOS();
 		case ATTR_ARCH:
-			return Platform.getOSArch();
+			if (Platform.getOS().equals(getProperty(ATTR_OS))) {
+				return Platform.getOSArch();
+			}
 		}
-		
+
 		return null;
+	}
+
+	public Map<String, String> getProperties() {
+		return properties;
 	}
 
 	@Override
@@ -359,7 +429,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		if (path != null && name.equals("PATH")) { //$NON-NLS-1$
+		if (pathVar != null && (name.equals("PATH") || name.equals("Path"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return pathVar;
 		}
 		return null;
@@ -377,17 +447,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			if (!command.toString().endsWith(".exe")) { //$NON-NLS-1$
+			if (!command.toString().endsWith(".exe") && !command.toString().endsWith(".bat")) { //$NON-NLS-1$
 				command = Paths.get(command.toString() + ".exe"); //$NON-NLS-1$
-			}
-		}
-
-		if (path != null) {
-			for (Path p : path) {
-				Path c = p.resolve(command);
-				if (Files.isExecutable(c)) {
-					return c;
-				}
 			}
 		}
 
@@ -405,44 +466,35 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		return null;
 	}
 
-	private boolean isLocal() {
-		return Platform.getOS().equals(properties.get(ATTR_OS))
-				&& Platform.getOSArch().equals(properties.get(ATTR_ARCH));
+	private void initCompileCommands() {
+		if (commands == null) {
+			cCommand = path.getFileName().toString();
+			cppCommand = null;
+			if (cCommand.contains("gcc")) { //$NON-NLS-1$
+				cppCommand = cCommand.replace("gcc", "g++"); //$NON-NLS-1$ //$NON-NLS-2$
+				commands = new String[] { cCommand, cppCommand };
+			} else if (cCommand.contains("clang")) { //$NON-NLS-1$
+				cppCommand = cCommand.replace("clang", "clang++"); //$NON-NLS-1$ //$NON-NLS-2$
+				commands = new String[] { cCommand, cppCommand };
+			} else {
+				commands = new String[] { cCommand };
+			}
+		}
 	}
 
 	@Override
 	public String[] getCompileCommands() {
-		if (commands == null) {
-			boolean local = isLocal();
-
-			List<String> cCommandsList = new ArrayList<>(Arrays.asList(prefix + "gcc", prefix + "clang", prefix + "cc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (local) {
-				cCommandsList.addAll(Arrays.asList("gcc", "clang", "cc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-			cCommands = cCommandsList.toArray(new String[cCommandsList.size()]);
-			
-			List<String> cppCommandsList = new ArrayList<>(Arrays.asList(prefix + "g++", prefix + "clang++", prefix + "c++")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (local) {
-				cppCommandsList.addAll(Arrays.asList("g++", "clang++", "c++")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-			cppCommands = cppCommandsList.toArray(new String[cppCommandsList.size()]);
-
-			List<String> commandsList = new ArrayList<>(cCommandsList);
-			commandsList.addAll(cppCommandsList);
-			commands = commandsList.toArray(new String[commandsList.size()]);
-		}
+		initCompileCommands();
 		return commands;
 	}
 
 	@Override
 	public String[] getCompileCommands(ILanguage language) {
-		if (commands == null) {
-			getCompileCommands();
-		}
+		initCompileCommands();
 		if (GPPLanguage.ID.equals(language.getId())) {
-			return cppCommands;
+			return new String[] { cppCommand != null ? cppCommand : cCommand };
 		} else if (GCCLanguage.ID.equals(language.getId())) {
-			return cCommands;
+			return new String[] { cCommand };
 		} else {
 			return new String[0];
 		}
@@ -498,4 +550,79 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		return newCommand;
 	}
 
+	public static class GCCInfo {
+		private static final Pattern versionPattern = Pattern.compile(".*(gcc|LLVM) version .*"); //$NON-NLS-1$
+		private static final Pattern targetPattern = Pattern.compile("Target: (.*)"); //$NON-NLS-1$
+
+		public String target;
+		public String version;
+
+		public GCCInfo(String command) throws IOException {
+			this(command, null);
+		}
+
+		public GCCInfo(String command, Map<String, String> env) throws IOException {
+			ProcessBuilder builder = new ProcessBuilder(new String[] { command, "-v" }).redirectErrorStream(true); //$NON-NLS-1$
+			if (env != null) {
+				Map<String, String> procEnv = builder.environment();
+				for (Entry<String, String> entry : env.entrySet()) {
+					if ("PATH".equals(entry.getKey())) { //$NON-NLS-1$
+						// prepend the path
+						String path = entry.getValue() + File.pathSeparator + procEnv.get("PATH"); //$NON-NLS-1$
+						procEnv.put("PATH", path); //$NON-NLS-1$
+					} else {
+						// replace
+						procEnv.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			Process proc = builder.start();
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+					Matcher versionMatcher = versionPattern.matcher(line);
+					if (versionMatcher.matches()) {
+						version = line.trim();
+						continue;
+					}
+					Matcher targetMatcher = targetPattern.matcher(line);
+					if (targetMatcher.matches()) {
+						target = targetMatcher.group(1);
+						continue;
+					}
+				}
+			}
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			GCCInfo other = (GCCInfo) obj;
+			if (target == null) {
+				if (other.target != null)
+					return false;
+			} else if (!target.equals(other.target))
+				return false;
+			if (version == null) {
+				if (other.version != null)
+					return false;
+			} else if (!version.equals(other.version))
+				return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((target == null) ? 0 : target.hashCode());
+			result = prime * result + ((version == null) ? 0 : version.hashCode());
+			return result;
+		}
+
+	}
 }

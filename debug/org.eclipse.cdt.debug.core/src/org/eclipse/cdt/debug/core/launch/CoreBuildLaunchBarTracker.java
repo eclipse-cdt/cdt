@@ -23,7 +23,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.ILaunchBarListener;
@@ -32,9 +34,8 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
- * A launchbar listener that attempts to set the active build configuration on
- * the project adapted from the launch descriptor that supports the given
- * target.
+ * A launchbar listener that attempts to set the active core build configuration
+ * on the project adapted from the launch descriptor.
  * 
  * @since 8.3
  */
@@ -45,22 +46,20 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 			.getService(ICBuildConfigurationManager.class);
 	private final IToolChainManager toolChainManager = CDebugCorePlugin.getService(IToolChainManager.class);
 
-	private final String targetTypeId;
+	private ILaunchMode lastMode;
+	private ILaunchDescriptor lastDescriptor;
+	private ILaunchTarget lastTarget;
 
-	public CoreBuildLaunchBarTracker(String targetTypeId) {
-		this.targetTypeId = targetTypeId;
-	}
-
-	private void setActiveBuildConfig(String mode, ILaunchDescriptor descriptor, ILaunchTarget target)
+	private void setActiveBuildConfig(ILaunchMode mode, ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
-		if (!targetTypeId.equals(target.getTypeId())) {
-			return;
-		}
-
 		IProject project = descriptor.getAdapter(IProject.class);
 		if (project == null) {
 			// Can we get the project name from the config
 			ILaunchConfiguration configuration = launchBarManager.getLaunchConfiguration(descriptor, target);
+			if (configuration == null) {
+				// TODO why is the configuration null?
+				return;
+			}
 			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (!projectName.isEmpty()) {
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -79,43 +78,63 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 			return;
 		}
 
-		// Pick build config based on toolchain for target
-		Map<String, String> properties = new HashMap<>();
-		properties.putAll(target.getAttributes());
-		Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
-		if (!tcs.isEmpty()) {
-			IToolChain toolChain = tcs.iterator().next();
-			IProgressMonitor monitor = new NullProgressMonitor();
-			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode,
-					new NullProgressMonitor());
-			if (buildConfig != null) {
-				IProjectDescription desc = project.getDescription();
-				desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
-				project.setDescription(desc, monitor);
+		IProject finalProject = project;
 
-				// Copy over the build attributes from the launch config
-				ILaunchConfiguration configuration = launchBarManager.getLaunchConfiguration(descriptor, target);
-				Map<String, String> buildProps = configuration.getAttribute(
-						CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode),
-						buildConfig.getDefaultProperties());
-				buildConfig.setProperties(buildProps);
+		lastMode = mode;
+		lastDescriptor = descriptor;
+		lastTarget = target;
+
+		// Pick build config based on toolchain for target
+		// Since this may create a new config, need to run it in a Job
+		Job job = new Job("Change Build Configurations") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					Map<String, String> properties = new HashMap<>();
+					properties.putAll(target.getAttributes());
+					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
+					if (!tcs.isEmpty()) {
+						IToolChain toolChain = tcs.iterator().next();
+						ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
+								mode.getIdentifier(), monitor);
+						if (buildConfig != null
+								&& !buildConfig.getBuildConfiguration().equals(finalProject.getActiveBuildConfig())) {
+							IProjectDescription desc = finalProject.getDescription();
+							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
+							finalProject.setDescription(desc, monitor);
+
+							// Copy over the build attributes from the launch config
+							ILaunchConfiguration configuration = launchBarManager.getLaunchConfiguration(descriptor,
+									target);
+							Map<String, String> buildProps = configuration.getAttribute(
+									CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode.getIdentifier()),
+									buildConfig.getDefaultProperties());
+							buildConfig.setProperties(buildProps);
+						}
+					}
+
+					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
 			}
-		}
+		};
+		job.setRule(project.getWorkspace().getRoot());
+		job.schedule();
 	}
 
 	@Override
 	public void activeLaunchTargetChanged(ILaunchTarget target) {
 		try {
-			if (target == null || target.equals(ILaunchTarget.NULL_TARGET)) {
+			if (target == null || target.equals(ILaunchTarget.NULL_TARGET) || target.equals(lastTarget)) {
 				return;
 			}
 
-			ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-			if (launchMode == null) {
+			ILaunchMode mode = launchBarManager.getActiveLaunchMode();
+			if (mode == null) {
 				return;
 			}
 
-			String mode = launchMode.getIdentifier();
 			ILaunchDescriptor descriptor = launchBarManager.getActiveLaunchDescriptor();
 			setActiveBuildConfig(mode, descriptor, target);
 		} catch (CoreException e) {
@@ -126,16 +145,15 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 	@Override
 	public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
 		try {
-			if (descriptor == null) {
+			if (descriptor == null || descriptor.equals(lastDescriptor)) {
 				return;
 			}
 
-			ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-			if (launchMode == null) {
+			ILaunchMode mode = launchBarManager.getActiveLaunchMode();
+			if (mode == null) {
 				return;
 			}
 
-			String mode = launchMode.getIdentifier();
 			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
 			setActiveBuildConfig(mode, descriptor, target);
 		} catch (CoreException e) {
@@ -147,13 +165,13 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 	@Override
 	public void activeLaunchModeChanged(ILaunchMode mode) {
 		try {
-			if (mode == null) {
+			if (mode == null || mode.equals(lastMode)) {
 				return;
 			}
 
 			ILaunchDescriptor descriptor = launchBarManager.getActiveLaunchDescriptor();
 			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
-			setActiveBuildConfig(mode.getIdentifier(), descriptor, target);
+			setActiveBuildConfig(mode, descriptor, target);
 		} catch (CoreException e) {
 			CDebugCorePlugin.log(e.getStatus());
 		}

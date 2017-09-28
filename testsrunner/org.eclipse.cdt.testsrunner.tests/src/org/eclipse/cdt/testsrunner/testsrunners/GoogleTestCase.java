@@ -695,4 +695,46 @@ public class GoogleTestCase extends BaseTestCase {
 		expectTestingException();
 	}
 
+
+	//Running main() from gtest_main.cc
+	//[==========] Running 1 test from 1 test case.
+	//[----------] Global test environment set-up.
+	//[----------] 2 tests from TestCaseName/0, where TypeParam = TypeStruct<float, true>
+	//[ RUN      ] TestCaseName/0.TestName
+	//[       OK ] TestCaseName/0.TestName (0 ms)
+	//[ RUN      ] TestCaseName/0.AnotherTestName
+	//[       OK ] TestCaseName/0.AnotherTestName (1 ms)
+	//[----------] 2 tests from TestCaseName/0 (1 ms total)
+	//
+	//[----------] 2 tests from TestCaseName/1, where TypeParam = UT::(anonymous namespace)::CoreTag
+	//[ RUN      ] TestCaseName/1.TestName
+	//[       OK ] TestCaseName/1.TestName (1 ms)
+	//[ RUN      ] TestCaseName/1.AnotherTestName
+	//[       OK ] TestCaseName/1.AnotherTestName (0 ms)
+	//[----------] 2 tests from TestCaseName/1 (1 ms total)
+	//
+	//[----------] Global test environment tear-down
+	//[==========] 1 test from 1 test case ran. (0 ms total)
+	//[  PASSED  ] 1 test.
+	public void testTypeParametrizedTestsWithTemplatesParsing() {
+		mockModelUpdater.skipCalls("setTestingTime");
+
+		mockModelUpdater.enterTestSuite("TestCaseName/0(TypeStruct<float, true>)");
+		mockModelUpdater.enterTestCase("TestName");
+		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("AnotherTestName");
+		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.exitTestSuite();
+		mockModelUpdater.enterTestSuite("TestCaseName/1(UT::(anonymous namespace)::CoreTag)");
+		mockModelUpdater.enterTestCase("TestName");
+		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("AnotherTestName");
+		mockModelUpdater.setTestStatus(ITestItem.Status.Passed);
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.exitTestSuite();
+	}
+
 }

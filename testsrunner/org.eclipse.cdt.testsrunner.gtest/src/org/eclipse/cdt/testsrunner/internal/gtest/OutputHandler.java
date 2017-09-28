@@ -492,8 +492,8 @@ public class OutputHandler {
 	private static final int DEFAULT_LOCATION_LINE = 1;
     
 	// Common regular expression parts
-	static private String regexTestSuiteName = "([^,]+)"; //$NON-NLS-1$
-	static private String regexParameterInstantiation = "(\\s*,\\s+where\\s+TypeParam\\s*=([^,(]+))?"; //$NON-NLS-1$
+	static private String regexTestSuiteName = "([^, ]+)"; //$NON-NLS-1$
+	static private String regexParameterInstantiation = "(\\s*,\\s+where\\s+TypeParam\\s*=(.+))?"; //$NON-NLS-1$
 	static private String regexTestName = regexTestSuiteName+"\\.([^,]+)"; //$NON-NLS-1$
 	static private String regexTestCount = "\\d+\\s+tests?"; //$NON-NLS-1$
 	static private String regexTestTime = "(\\d+)\\s+ms"; //$NON-NLS-1$

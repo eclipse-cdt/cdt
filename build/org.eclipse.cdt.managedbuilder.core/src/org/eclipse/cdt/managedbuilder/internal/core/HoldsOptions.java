@@ -8,6 +8,7 @@
  * Contributors:
  * Symbian Ltd - Initial API and implementation
  * Baltasar Belyavsky (Texas Instruments) - [405643] HoldsOptions performance improvements
+ * cartu38 opendev (STMicroelectronics) - [366519] Only options from "extension elements" get recomputed 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -662,13 +663,19 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		IOption options[] = getOptions();
 
 		for (IOption opt : options) {
-			if (opt.isExtensionElement()) {
-				Option option = (Option)opt;
-				BooleanExpressionApplicabilityCalculator calc =
-					option.getBooleanExpressionCalculator(extensions);
+			Option option = (Option) opt;
+			BooleanExpressionApplicabilityCalculator calc = option.getBooleanExpressionCalculator(false);
+			if (calc != null) {
+				// Let's adjust Option relying on main setting
+				calc.adjustOption(getParentResourceInfo(), this, option, false);
+			}
 
-				if(calc != null)
-					calc.adjustOption(getParentResourceInfo(),this,option, extensions);
+			if (opt.isExtensionElement()) {
+				calc = option.getBooleanExpressionCalculator(extensions);
+				if (calc != null) {
+					// Let's adjust Option considering extension what's may override main setting
+					calc.adjustOption(getParentResourceInfo(), this, option, extensions);
+				}
 			}
 		}
 	}

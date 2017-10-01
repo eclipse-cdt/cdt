@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -113,11 +114,13 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 					context.add(modelCache);
 				}
 			}
+			CPPSemantics.pushLookupPoint(ast);
 			try {
 				processAst(ast);
 			} finally {
 				modelCache = null;
 				setContext(null);
+				CPPSemantics.popLookupPoint();
 			}
 		}
 	}

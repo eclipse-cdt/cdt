@@ -245,22 +245,27 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-
-		int j = 0;
-		for (int i = 0; i < bindings.length; i++) {
-			IBinding binding = bindings[i];
-			if (!(binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit())) {
-				if (i != j)
-					bindings[j] = binding;
-				j++;
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
+	
+			int j = 0;
+			for (int i = 0; i < bindings.length; i++) {
+				IBinding binding = bindings[i];
+				if (!(binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit())) {
+					if (i != j)
+						bindings[j] = binding;
+					j++;
+					}
 				}
-			}
-
-
-		if (j < bindings.length)
-			return Arrays.copyOfRange(bindings, 0, j);
-		return bindings;
+	
+	
+			if (j < bindings.length)
+				return Arrays.copyOfRange(bindings, 0, j);
+			return bindings;
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 	}
 
 	@Override

@@ -131,25 +131,30 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 					fImplicitNames= IASTImplicitName.EMPTY_NAME_ARRAY;
 				} else if (type instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) type;
-					if (CPPSemantics.findBindings(ct.getCompositeScope(), CPPVisitor.BEGIN, true, this).length > 0) {
-						CPPASTName name = new CPPASTName(CPPVisitor.BEGIN);
-						name.setOffset(position.getOffset());
-						CPPASTFieldReference fieldRef = new CPPASTFieldReference(name, forInitExpr.copy());
-						IASTExpression expr= new CPPASTFunctionCallExpression(fieldRef, CPPVisitor.NO_ARGS);
-						expr.setParent(this);
-						expr.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
-						CPPASTImplicitName begin= new CPPASTImplicitName(name.toCharArray(), this);
-						begin.setBinding(name.resolveBinding());
-						begin.setOffsetAndLength(position);
-
-						name = new CPPASTName(CPPVisitor.END);
-						name.setOffset(position.getOffset());
-						fieldRef.setFieldName(name);
-						CPPASTImplicitName end= new CPPASTImplicitName(name.toCharArray(), this);
-						end.setBinding(name.resolveBinding());
-						end.setOffsetAndLength(position);
-
-						fImplicitNames= new IASTImplicitName[] {begin, end};
+					CPPSemantics.pushLookupPoint(this);
+					try {
+						if (CPPSemantics.findBindings(ct.getCompositeScope(), CPPVisitor.BEGIN, true, this).length > 0) {
+							CPPASTName name = new CPPASTName(CPPVisitor.BEGIN);
+							name.setOffset(position.getOffset());
+							CPPASTFieldReference fieldRef = new CPPASTFieldReference(name, forInitExpr.copy());
+							IASTExpression expr= new CPPASTFunctionCallExpression(fieldRef, CPPVisitor.NO_ARGS);
+							expr.setParent(this);
+							expr.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
+							CPPASTImplicitName begin= new CPPASTImplicitName(name.toCharArray(), this);
+							begin.setBinding(name.resolveBinding());
+							begin.setOffsetAndLength(position);
+	
+							name = new CPPASTName(CPPVisitor.END);
+							name.setOffset(position.getOffset());
+							fieldRef.setFieldName(name);
+							CPPASTImplicitName end= new CPPASTImplicitName(name.toCharArray(), this);
+							end.setBinding(name.resolveBinding());
+							end.setOffsetAndLength(position);
+	
+							fImplicitNames= new IASTImplicitName[] {begin, end};
+						}
+					} finally {
+						CPPSemantics.popLookupPoint();
 					}
 				}
 			}

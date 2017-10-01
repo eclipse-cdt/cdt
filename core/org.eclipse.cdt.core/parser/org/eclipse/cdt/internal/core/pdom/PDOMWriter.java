@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeclaredVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -527,7 +528,12 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				}
 			}
 		};
-		ast.accept(visitor);
+		CPPSemantics.pushLookupPoint(ast);
+		try {
+			ast.accept(visitor);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 		
 		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
 			

@@ -180,19 +180,19 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					handleMacros = prefix.length() > 0;
 				}
 
-				IBinding[] bindings = astContext.findBindings(name, !context.isContextInformationStyle());
-
-				if (bindings != null) {
-					AccessContext accessibilityContext = new AccessContext(name, true);
-					try {
-						CPPSemantics.pushLookupPoint(completionNode.getTranslationUnit());
-						for (IBinding binding : bindings) {
-							if (accessibilityContext.isAccessible(binding))
-								handleBinding(binding, context, prefix, astContext, proposals);
-						}
-					} finally {
-						CPPSemantics.popLookupPoint();
+				CPPSemantics.pushLookupPoint(name);
+				try {
+					IBinding[] bindings = astContext.findBindings(name, !context.isContextInformationStyle());
+	
+					if (bindings != null) {
+						AccessContext accessibilityContext = new AccessContext(name, true);
+							for (IBinding binding : bindings) {
+								if (accessibilityContext.isAccessible(binding))
+									handleBinding(binding, context, prefix, astContext, proposals);
+							}
 					}
+				} finally {
+					CPPSemantics.popLookupPoint();
 				}
 			}
 

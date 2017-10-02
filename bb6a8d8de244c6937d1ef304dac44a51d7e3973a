@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_0687559a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "I had chosen the message that way because that is the name of the bug.",
+      "parentUuid": "c7880b39_b888702f",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_7cefd7aa",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblem.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2017-09-26T21:15:33Z",
       "side": 1,
       "message": "This is not going to work if the problem is on the last line of the file. To handle that case, we need to get the line offset of the line to which the marker pertains (as opposed to the next line) and add the line\u0027s length.\n\nPlease also add a test for this case.",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_4105c785",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "I changed the calculation accordingly. However, I was not able to find a way to write a test that actually contains only a single line. While I was able to create a file containing only a signle line, the IDocument associated with it always has an extra empty line at the end. I also tried to append additional newlines my self, and still the IDocument always had another extra newline.\n\nHere is the code I tried. Maybe you have another idea on how to achieve this specific test:\n\n\t//int func() { }\n\tpublic void testMarkerOnLastLineNoNewline_495842() throws Exception {\n\t\ttry(BufferedWriter writer \u003d new BufferedWriter(new FileWriter(loadcode(\"\", false)))) {\n\t\t\twriter.write(getAboveComment().trim());\n\t\t}\n\t\tindexFiles();\n\t\tString result \u003d runQuickFixOneFile();\n\t\tassertContainedIn(\"int func() { } // @suppress(\\\"No return\\\")\", result);\n\t}",
+      "parentUuid": "c7880b39_7cefd7aa",
       "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_46a15d25",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7880b39_3ca0ef79",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_9cb003c7",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2017-09-26T21:15:33Z",
       "side": 1,
       "message": "I wonder if it would make sense to have AbstractCodanCMarkerResolution implement ICodanMarkerResolution2, and call setMarkerArguments() in its prepareFor() implementation? After all, setting the marker arguments is kind of a specific preparation that the resolution generator has so far been doing explicitly, but it feels like it would be better to make it the resolution\u0027s responsibility.",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_c6a54d38",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "As far as I can tell, this would break the resolution creation process logic to some degree. The pattern used to set the marker arguments is the messagePattern of the codanMarkerResolution. This pattern is a regex, contrary to the messagePattern of the \"problem\" extension, which is a Java message pattern. If a resolution has a messagePattern, the resolution generator first checks if the resolution marker message matches the pattern. Since the resolution generator already has the pattern, and it already decides the viability based on the pattern, I believe the resolution generator should set the arguments of the problem as it is the \"Information Expert\" already.",
+      "parentUuid": "c7880b39_9cb003c7",
       "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_669819fd",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7880b39_5ca77b92",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_7caa775b",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
         "patchSetId": 3
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_869b45f7",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7880b39_7caa775b",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_d88b7c28",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/ui/ICodanMarkerResolution2.java",
         "patchSetId": 3
@@ -115,6 +223,24 @@
       "writtenOn": "2017-09-26T21:15:33Z",
       "side": 1,
       "message": "The naming convention for extension interfaces like this in the Eclipse codebase is \"ICodanMarkerResolutionExtension\" (and then \"ICodanMarkerResolutionExtension2\" for a further extension, and so on).",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_269e11ec",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/ui/ICodanMarkerResolution2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-02T16:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7880b39_d88b7c28",
       "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

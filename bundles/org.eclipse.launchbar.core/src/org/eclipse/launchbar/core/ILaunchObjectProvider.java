@@ -19,10 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 public interface ILaunchObjectProvider {
 
 	/**
-	 * Add initial launch descriptors and set up for new ones.
+	 * Add initial launch objects and set up listeners for new ones.
 	 * 
-	 * @param launchbar manager
-	 * @throws CoreException 
+	 * @param launchbar
+	 *            manager
+	 * @throws CoreException
 	 */
 	void init(ILaunchBarManager manager) throws CoreException;
 

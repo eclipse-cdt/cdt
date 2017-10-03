@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_2c042f21",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-10-03T07:10:07Z",
+      "side": 1,
+      "message": "Please give this field a proper name.",
+      "revId": "bb818d69552672cb52b959f38ade5bebccf24d30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

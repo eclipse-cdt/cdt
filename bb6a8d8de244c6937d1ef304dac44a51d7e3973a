@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "c7880b39_ec2067a5",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-10-03T07:10:07Z",
+      "side": 1,
+      "message": "The problem is that by default, CDT will \"helpfully\" auto-insert a trailing newline on file save. We can disable this behaviour in the test with:\n\nPreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);",
+      "parentUuid": "c7880b39_4105c785",
+      "revId": "bb6a8d8de244c6937d1ef304dac44a51d7e3973a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7880b39_3ca0ef79",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanProblemMarkerResolutionGenerator.java",
         "patchSetId": 3

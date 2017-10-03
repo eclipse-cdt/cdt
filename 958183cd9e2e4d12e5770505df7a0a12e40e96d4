@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_2fd6e1f0",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblemTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-10-03T15:53:31Z",
+      "side": 1,
+      "message": "Why are we setting it to true during indexing?",
+      "revId": "958183cd9e2e4d12e5770505df7a0a12e40e96d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

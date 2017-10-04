@@ -310,6 +310,15 @@ public class CPPSemantics {
 	public static void popLookupPoint() {
 		fLookupPoints.get().pop();
 	}
+	/**
+	 * Get the current point of instantiation / point of lookup for name lookups.
+	 * 
+	 * NOTE: This is meant to be used primarily for "declaredBefore" purposes, that is,
+	 *       for determining whether something was declared before or after the point
+	 *       of lookup. It is NOT meant to be used as a general mechanism for accessing
+	 *       information about a call site without having to pass that information along
+	 *       the usual way (via function arguments).
+	 */
 	public static IASTNode getCurrentLookupPoint() {
 		Deque<IASTNode> lookupPoints = fLookupPoints.get();
 		return lookupPoints.isEmpty() ? null : lookupPoints.peek();

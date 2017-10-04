@@ -142,7 +142,7 @@ public class TemplateTable implements Listener {
 			Template template = (Template) item.getData();
 			ImageDescriptor imageDesc = template.getIcon();
 			Image image = images.get(imageDesc);
-			if (image == null) {
+			if (image == null && imageDesc != null) {
 				image = imageDesc.createImage();
 				images.put(imageDesc, image);
 			}
@@ -152,6 +152,8 @@ public class TemplateTable implements Listener {
 				rect = image.getBounds();
 				y = event.y + Math.max(0, (event.height - rect.height) / 2);
 				gc.drawImage(image, event.x + 4, y);
+			} else {
+				y = event.y + Math.max(0, (event.height - 48) / 2);
 			}
 			gc.setFont(fontBold);
 			String name = template.getLabel();

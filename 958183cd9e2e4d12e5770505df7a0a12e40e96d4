@@ -16,6 +16,24 @@
       "revId": "958183cd9e2e4d12e5770505df7a0a12e40e96d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_5d73e75a",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixSuppressProblemTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2017-10-04T13:50:08Z",
+      "side": 1,
+      "message": "I didn\u0027t have my concentration up and tried a couple of different things, moving code around etc. Overlooked that one. Glad you caught it!",
+      "parentUuid": "c7880b39_2fd6e1f0",
+      "revId": "958183cd9e2e4d12e5770505df7a0a12e40e96d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

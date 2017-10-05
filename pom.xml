@@ -504,7 +504,7 @@
 						<dependencies>
 							<dependency>
 								<type>p2-installable-unit</type>
-								<artifactId>org.eclipse.platform.feature.group</artifactId>
+								<artifactId>org.eclipse.cdt.feature.group</artifactId>
 							</dependency>
 						</dependencies>
 						<product>org.eclipse.platform.ide</product>

@@ -34,6 +34,7 @@
 
 		<module>org.eclipse.cdt.cmake.core</module>
 		<module>org.eclipse.cdt.cmake.ui</module>
+		<module>org.eclipse.cdt.cmake.ui.tests</module>
 		<module>org.eclipse.cdt.cmake-feature</module>
 	</modules>
 

@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
@@ -115,8 +116,12 @@ public class ClassTypeHelper {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 				if (declSpec.isFriend()) {
 					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
-					if (declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0) {
-						resultSet.put(((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding());
+					if (dtors.length == 0) {
+						if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
+							resultSet.put(((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding());
+						} else if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
+							resultSet.put(((ICPPASTNamedTypeSpecifier) declSpec).getName().resolveBinding());
+						}
 					} else {
 						for (IASTDeclarator dtor : dtors) {
 							if (dtor == null) break;

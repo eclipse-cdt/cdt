@@ -12,13 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.memory-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
-		<module>org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
-		<module>org.eclipse.cdt.debug.ui.memory.search</module>
-		<module>org.eclipse.cdt.debug.ui.memory.traditional</module>
-		<module>org.eclipse.cdt.debug.ui.memory.transport</module>
-		<module>org.eclipse.cdt.debug.ui.memory-feature</module>
-	</modules>
 </project>

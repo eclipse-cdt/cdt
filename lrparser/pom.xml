@@ -12,13 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.lrparser-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.core.lrparser</module>
-		<module>org.eclipse.cdt.core.lrparser.feature</module>
-		<module>org.eclipse.cdt.core.lrparser.sdk.feature</module>
-<!--
-		<module>org.eclipse.cdt.core.lrparser.tests</module>
--->
-	</modules>
 </project>

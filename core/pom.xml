@@ -12,23 +12,4 @@
 
 	<artifactId>org.eclipse.cdt-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.core.native</module>
-		<module>org.eclipse.cdt.core.linux</module>
-		<module>org.eclipse.cdt.core.linux.x86</module>
-		<module>org.eclipse.cdt.core.linux.x86_64</module>
-		<module>org.eclipse.cdt.core.linux.ppc64</module>
-		<module>org.eclipse.cdt.core.linux.ppc64le</module>
-		<module>org.eclipse.cdt.core.win32</module>
-		<module>org.eclipse.cdt.core.win32.x86</module>
-		<module>org.eclipse.cdt.core.win32.x86_64</module>
-		<module>org.eclipse.cdt.core.macosx</module>
-
-		<module>org.eclipse.cdt.core</module>
-		<module>org.eclipse.cdt.ui</module>
-
-		<module>org.eclipse.cdt.core.tests</module>
-		<module>org.eclipse.cdt.ui.tests</module>
-	</modules>
 </project>

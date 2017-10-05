@@ -12,12 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.llvm-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.managedbuilder.llvm.ui</module>
-		<module>org.eclipse.cdt.managedbuilder.llvm-feature</module>
-		<module>org.eclipse.cdt.llvm.dsf.lldb.core</module>
-		<module>org.eclipse.cdt.llvm.dsf.lldb.ui</module>
-		<module>org.eclipse.cdt.llvm.dsf.lldb-feature</module>
-	</modules>
 </project>

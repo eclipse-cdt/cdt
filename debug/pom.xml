@@ -12,30 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.debug-parent</artifactId>
 	<packaging>pom</packaging>
-	<modules>
-		<module>org.eclipse.cdt.debug.core</module>
-		<module>org.eclipse.cdt.debug.ui</module>
-
-		<module>org.eclipse.cdt.gdb</module>
-		<module>org.eclipse.cdt.gdb.ui</module>
-		<module>org.eclipse.cdt.gdb-feature</module>
-		<module>org.eclipse.cdt.gnu.debug-feature</module>
-
-		<module>org.eclipse.cdt.debug.application</module>
-		<module>org.eclipse.cdt.debug.application.doc</module>
-		<module>org.eclipse.cdt.debug.standalone-feature</module>
-		<!--
-		TODO:  Investigate/Fix hanging before re-enable re-enabling
-		<module>org.eclipse.cdt.debug.application.tests</module>
-		-->
-	</modules>
-
-	<profiles>
-		<profile>
-			<id>build-standalone-debugger-rcp</id>
-			<modules>
-				<module>org.eclipse.cdt.debug.application.product</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>

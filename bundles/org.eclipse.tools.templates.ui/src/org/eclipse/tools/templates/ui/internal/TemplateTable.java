@@ -64,6 +64,8 @@ public class TemplateTable implements Listener {
 		for (Template template : sorted) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setData(template);
+			// Since we have nothing to help SWTBot find items, store the label
+			item.setData("org.eclipse.swtbot.widget.key", template.getLabel()); //$NON-NLS-1$
 		}
 	}
 

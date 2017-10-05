@@ -9,6 +9,7 @@ package org.eclipse.cdt.cmake.ui.internal;
 
 import org.eclipse.cdt.cmake.core.CMakeProjectGenerator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tools.templates.core.IGenerator;
 import org.eclipse.tools.templates.ui.TemplateWizard;
@@ -17,6 +18,12 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 public class NewCMakeProjectWizard extends TemplateWizard {
 
 	private WizardNewProjectCreationPage mainPage;
+
+	@Override
+	public void setContainer(IWizardContainer wizardContainer) {
+		super.setContainer(wizardContainer);
+		setWindowTitle(Messages.NewCMakeProjectWizard_WindowTitle);
+	}
 
 	@Override
 	public void addPages() {
@@ -29,8 +36,8 @@ public class NewCMakeProjectWizard extends TemplateWizard {
 				Dialog.applyDialogFont(getControl());
 			}
 		};
-		mainPage.setTitle("New CMake Project"); //$NON-NLS-1$
-		mainPage.setDescription("Specify properties of new CMake project."); //$NON-NLS-1$
+		mainPage.setTitle(Messages.NewCMakeProjectWizard_PageTitle);
+		mainPage.setDescription(Messages.NewCMakeProjectWizard_Description);
 		this.addPage(mainPage);
 	}
 

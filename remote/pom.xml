@@ -12,9 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.remote-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.remote.core</module>
-		<module>org.eclipse.cdt.remote-feature</module>
-	</modules>
 </project>

@@ -12,12 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.dsf-parent</artifactId>
 	<packaging>pom</packaging>
-	<modules>
-		<module>org.eclipse.cdt.dsf</module>
-		<module>org.eclipse.cdt.dsf.ui</module>
-		<module>org.eclipse.cdt.examples.dsf</module>
-		<module>org.eclipse.cdt.examples.dsf.pda</module>
-		<module>org.eclipse.cdt.examples.dsf.pda.ui</module>
-		<module>org.eclipse.cdt.examples.dsf-feature</module>
-	</modules>
 </project>

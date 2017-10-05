@@ -12,10 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.launch-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.launch</module>
-		<module>org.eclipse.cdt.docker.launcher</module>
-		<module>org.eclipse.cdt.docker.launcher-feature</module>
-	</modules>
 </project>

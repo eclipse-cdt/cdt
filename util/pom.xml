@@ -12,9 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.util-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.util</module>
-		<module>org.eclipse.cdt.util-feature</module>
-	</modules>
 </project>

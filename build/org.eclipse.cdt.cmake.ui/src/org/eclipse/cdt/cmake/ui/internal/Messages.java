@@ -15,9 +15,13 @@ public class Messages extends NLS {
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Title;
 	public static String CMakePropertyPage_LaunchCMakeGui;
 
+	public static String NewCMakeProjectWizard_Description;
+	public static String NewCMakeProjectWizard_PageTitle;
+	public static String NewCMakeProjectWizard_WindowTitle;
+
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+		NLS.initializeMessages("org.eclipse.cdt.cmake.ui.internal.messages", Messages.class); //$NON-NLS-1$
 	}
 
 	private Messages() {

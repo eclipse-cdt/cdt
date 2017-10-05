@@ -55,32 +55,192 @@
 	</licenses>
 
 	<modules>
-		<module>build</module>
-		<module>codan</module>
-		<module>core</module>
-		<module>cross</module>
-		<module>debug</module>
-		<module>dsf</module>
-		<module>dsf-gdb</module>
-		<module>jtag</module>
-		<module>launch</module>
-		<module>llvm</module>
-		<module>lrparser</module>
-		<module>memory</module>
-		<module>native</module>
-		<module>qt</module>
-		<module>releng</module>
-		<module>remote</module>
-		<module>testsrunner</module>
-		<module>toolchains/arduino</module>
-		<module>upc</module>
-		<module>util</module>
-		<module>visualizer</module>
-		<module>windows</module>
-		<module>xlc</module>
+		<!-- The test plug-ins need to be at the end -->
+		<module>build/org.eclipse.cdt.build.gcc.core</module>
+		<module>build/org.eclipse.cdt.make.core</module>
+		<module>build/org.eclipse.cdt.make.ui</module>
+		<module>build/org.eclipse.cdt.managedbuilder.core</module>
+		<module>build/org.eclipse.cdt.managedbuilder.ui</module>
+		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
+		<module>build/org.eclipse.cdt.gnu.build-feature</module>
+
+		<module>build/org.eclipse.cdt.autotools.core</module>
+		<module>build/org.eclipse.cdt.autotools.docs</module>
+		<module>build/org.eclipse.cdt.autotools.ui</module>
+		<module>build/org.eclipse.cdt.autotools-feature</module>
+
+		<module>build/org.eclipse.cdt.cmake.core</module>
+		<module>build/org.eclipse.cdt.cmake.ui</module>
+		<module>build/org.eclipse.cdt.cmake-feature</module>
+
+		<module>codan/org.eclipse.cdt.codan.core</module>
+		<module>codan/org.eclipse.cdt.codan.ui</module>
+		<module>codan/org.eclipse.cdt.codan.core.cxx</module>
+		<module>codan/org.eclipse.cdt.codan.ui.cxx</module>
+		<module>codan/org.eclipse.cdt.codan.checkers</module>
+		<module>codan/org.eclipse.cdt.codan.checkers.ui</module>
+
+		<module>core/org.eclipse.cdt.core.native</module>
+		<module>core/org.eclipse.cdt.core.linux</module>
+		<module>core/org.eclipse.cdt.core.linux.x86</module>
+		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
+		<module>core/org.eclipse.cdt.core.linux.ppc64</module>
+		<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
+		<module>core/org.eclipse.cdt.core.win32</module>
+		<module>core/org.eclipse.cdt.core.win32.x86</module>
+		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
+		<module>core/org.eclipse.cdt.core.macosx</module>
+		<module>core/org.eclipse.cdt.core</module>
+		<module>core/org.eclipse.cdt.ui</module>
+		
+		<module>cross/org.eclipse.cdt.build.crossgcc</module>
+		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>
+		<module>cross/org.eclipse.cdt.launch.remote</module>
+		<module>cross/org.eclipse.cdt.launch.remote-feature</module>
+		
+		<module>debug/org.eclipse.cdt.debug.core</module>
+		<module>debug/org.eclipse.cdt.debug.ui</module>
+
+		<module>debug/org.eclipse.cdt.gdb</module>
+		<module>debug/org.eclipse.cdt.gdb.ui</module>
+		<module>debug/org.eclipse.cdt.gdb-feature</module>
+		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
+
+		<module>debug/org.eclipse.cdt.debug.application</module>
+		<module>debug/org.eclipse.cdt.debug.application.doc</module>
+		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
 
 		<module>doc/org.eclipse.cdt.doc.user</module>
 		<module>doc/org.eclipse.cdt.doc.isv</module>
+		
+		<module>dsf/org.eclipse.cdt.dsf</module>
+		<module>dsf/org.eclipse.cdt.dsf.ui</module>
+		<module>dsf/org.eclipse.cdt.examples.dsf</module>
+		<module>dsf/org.eclipse.cdt.examples.dsf.pda</module>
+		<module>dsf/org.eclipse.cdt.examples.dsf.pda.ui</module>
+		<module>dsf/org.eclipse.cdt.examples.dsf-feature</module>
+
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>
+		<module>dsf-gdb/org.eclipse.cdt.gnu.dsf-feature</module>
+		<module>dsf-gdb/org.eclipse.cdt.gnu.multicorevisualizer-feature</module>
+		<module>dsf-gdb/org.eclipse.cdt.examples.dsf.gdb</module>
+
+		<module>jtag/org.eclipse.cdt.debug.gdbjtag</module>
+		<module>jtag/org.eclipse.cdt.debug.gdbjtag.core</module>
+		<module>jtag/org.eclipse.cdt.debug.gdbjtag.ui</module>
+		<module>jtag/org.eclipse.cdt.debug.gdbjtag-feature</module>
+
+		<module>launch/org.eclipse.cdt.launch</module>
+		<module>launch/org.eclipse.cdt.docker.launcher</module>
+		<module>launch/org.eclipse.cdt.docker.launcher-feature</module>
+
+		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>
+		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.core</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
+		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb-feature</module>
+
+		<module>lrparser/org.eclipse.cdt.core.lrparser</module>
+		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
+		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
+
+		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.search</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.traditional</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory-feature</module>
+
+		<module>native/org.eclipse.cdt.native.serial</module>
+
+		<module>qt/org.eclipse.cdt.qt.core</module>
+		<module>qt/org.eclipse.cdt.qt.ui</module>
+		<module>qt/org.eclipse.cdt.qt-feature</module>
+
+		<module>remote/org.eclipse.cdt.remote.core</module>
+		<module>remote/org.eclipse.cdt.remote-feature</module>
+
+		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.gtest</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.qttest</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
+
+		<module>toolchains/arduino/org.eclipse.cdt.arduino.core</module>
+		<module>toolchains/arduino/org.eclipse.cdt.arduino.ui</module>
+		<module>toolchains/arduino/org.eclipse.cdt.arduino-feature</module>
+
+		<module>upc/org.eclipse.cdt.core.parser.upc</module>
+		<module>upc/org.eclipse.cdt.core.parser.upc.feature</module>
+		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.feature</module>
+
+		<module>upc/org.eclipse.cdt.managedbuilder.bupc.ui</module>
+		<module>upc/org.eclipse.cdt.bupc-feature</module>
+
+		<module>util/org.eclipse.cdt.util</module>
+		<module>util/org.eclipse.cdt.util-feature</module>
+
+		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
+		<module>visualizer/org.eclipse.cdt.visualizer.examples</module>
+		<module>visualizer/org.eclipse.cdt.visualizer.ui</module>
+		<module>visualizer/org.eclipse.cdt.visualizer-feature</module>
+
+		<module>windows/org.eclipse.cdt.msw.build</module>
+		<module>windows/org.eclipse.cdt.msw-feature</module>
+
+		<module>xlc/org.eclipse.cdt.core.lrparser.xlc</module>
+		<module>xlc/org.eclipse.cdt.errorparsers.xlc</module>
+		<module>xlc/org.eclipse.cdt.make.xlc.core</module>
+		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.core</module>
+		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.ui</module>
+		<module>xlc/org.eclipse.cdt.managedbuilder.xlupc.ui</module>
+		<module>xlc/org.eclipse.cdt.xlc.feature</module>
+		<module>xlc/org.eclipse.cdt.xlc.sdk-feature</module>
+
+		<module>releng/org.eclipse.cdt.native-feature</module>
+		<module>releng/org.eclipse.cdt</module>
+		<module>releng/org.eclipse.cdt.platform-feature</module>
+		<module>releng/org.eclipse.cdt-feature</module>
+		<module>releng/org.eclipse.cdt.sdk</module>
+		<module>releng/org.eclipse.cdt.sdk-feature</module>
+		<module>releng/org.eclipse.cdt.target</module>
+		<module>releng/org.eclipse.cdt.repo</module>
+
+		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
+		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
+		<module>build/org.eclipse.cdt.make.core.tests</module>
+		<module>build/org.eclipse.cdt.make.ui.tests</module>
+		<module>build/org.eclipse.cdt.autotools.tests</module>
+		<module>build/org.eclipse.cdt.autotools.ui.tests</module>
+		<module>build/org.eclipse.cdt.cmake.ui.tests</module>
+		<module>codan/org.eclipse.cdt.codan.core.tests</module>
+		<module>codan/org.eclipse.cdt.codan.checkers.ui.tests</module>
+		<module>core/org.eclipse.cdt.core.tests</module>
+		<module>core/org.eclipse.cdt.ui.tests</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
+		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
+		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
+		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
+
+		<module>releng/org.eclipse.cdt.testing</module>
+		<module>releng/org.eclipse.cdt.testing-feature</module>
+		<module>releng/org.eclipse.cdt.testing.repo</module>
+
+		<!-- TODO:  Investigate/Fix hanging before re-enable re-enabling
+		<module>debug/org.eclipse.cdt.debug.application.tests</module>
+		-->
+		
+		<!--
+		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
+		<module>qt/org.eclipse.cdt.qt.core.tests</module>
+		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
+		<module>org.eclipse.cdt.core.lrparser.xlc.tests</module>
+		-->
 	</modules>
 
 	<pluginRepositories>
@@ -121,6 +281,12 @@
 			<properties>
 				<base.ui.test.vmargs>${base.test.vmargs}</base.ui.test.vmargs>
 			</properties>
+		</profile>
+		<profile>
+			<id>build-standalone-debugger-rcp</id>
+			<modules>
+				<module>debug/org.eclipse.cdt.debug.application.product</module>
+			</modules>
 		</profile>
 		<!-- Automatic profile for features that shouldn't generate sources -->
 		<profile>
@@ -504,7 +670,7 @@
 						<dependencies>
 							<dependency>
 								<type>p2-installable-unit</type>
-								<artifactId>org.eclipse.platform.feature.group</artifactId>
+								<artifactId>org.eclipse.cdt.feature.group</artifactId>
 							</dependency>
 						</dependencies>
 						<product>org.eclipse.platform.ide</product>

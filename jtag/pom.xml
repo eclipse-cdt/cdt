@@ -12,11 +12,4 @@
 
   <artifactId>org.eclipse.cdt.jtag-parent</artifactId>
   <packaging>pom</packaging>
-
-  <modules>
-		<module>org.eclipse.cdt.debug.gdbjtag</module>
-		<module>org.eclipse.cdt.debug.gdbjtag.core</module>
-		<module>org.eclipse.cdt.debug.gdbjtag.ui</module>
-		<module>org.eclipse.cdt.debug.gdbjtag-feature</module>
-  </modules>
 </project>

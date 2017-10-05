@@ -12,7 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.native-parent</artifactId>
 	<packaging>pom</packaging>
-	<modules>
-		<module>org.eclipse.cdt.native.serial</module>
-	</modules>
 </project>

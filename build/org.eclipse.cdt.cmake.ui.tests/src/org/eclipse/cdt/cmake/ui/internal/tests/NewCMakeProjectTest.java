@@ -1,0 +1,104 @@
+package org.eclipse.cdt.cmake.ui.internal.tests;
+
+import static org.eclipse.swtbot.eclipse.finder.matchers.WidgetMatcherFactory.withPartName;
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.cdt.cmake.core.CMakeNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+@SuppressWarnings("nls")
+public class NewCMakeProjectTest {
+
+	private static SWTWorkbenchBot bot;
+
+	@BeforeClass
+	public static void beforeClass() {
+		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
+		SWTBotPreferences.TIMEOUT = 10000;
+		bot = new SWTWorkbenchBot();
+	}
+
+	@Before
+	public void before() {
+		bot.resetWorkbench();
+
+		for (SWTBotView view : bot.views(withPartName("Welcome"))) {
+			view.close();
+		}
+	}
+
+	@Test(timeout = 60000)
+	public void createCMakeProject() throws Exception {
+		// open C++ perspective
+		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
+			bot.perspectiveByLabel("C/C++").activate();
+		}
+
+		// Activate C/C++ wizard
+		bot.menu("File").menu("New").menu("C/C++ Project").click();
+		bot.shell("New C/C++ Project").activate();
+
+		// Double click on the template
+		SWTBotTable templateTable = bot.table();
+		bot.getDisplay().syncExec(() -> {
+			for (int i = 0; i < templateTable.rowCount(); ++i) {
+				SWTBotTableItem item = templateTable.getTableItem(i);
+				String label = (String) item.widget.getData(SWTBotPreferences.DEFAULT_KEY);
+				System.err.print("Template: " + label);
+				if ("CMake Project".equals(label)) {
+					item.doubleClick();
+					System.err.println(" Clicked");
+					break;
+				} else {
+					System.err.println();
+				}
+			}
+		});
+
+		try {
+			// Select the shell again since magic wizardry happened
+			bot.shell("New CMake Project").activate();
+		} finally {
+			System.err.println("Shells: ");
+			for (SWTBotShell shell : bot.shells()) {
+				System.err.println("'" + shell.getText() + "'");
+			}
+			System.err.println("Active Shell: " + bot.activeShell().getText());
+		}
+
+		// Create the project
+		String projectName = "CMakeTestProj";
+		bot.textWithLabel("Project name:").setText(projectName);
+		bot.button("Finish").click();
+		
+		// Make sure it shows up in Project Explorer
+		bot.viewByPartName("Project Explorer").show();
+		bot.tree().getTreeItem(projectName);
+
+		// Make sure the project indexer completes. At that point we're stable.
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		ICProject cproject = CoreModel.getDefault().create(project);
+		IIndexManager indexManager = CCorePlugin.getIndexManager();
+		while (!indexManager.isProjectContentSynced(cproject)) {
+			Thread.sleep(1000);
+		}
+
+		// Make sure it has the right nature
+		assertTrue(project.hasNature(CMakeNature.ID));
+	}
+
+}

@@ -106,6 +106,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		idBuilder.append(pathToToolChain.toString());
 		this.id = idBuilder.toString();
 
+		properties.put(ATTR_ARCH, arch);
+
 		IEnvironmentVariable pathVar = null;
 		if (envVars != null) {
 			for (IEnvironmentVariable envVar : envVars) {

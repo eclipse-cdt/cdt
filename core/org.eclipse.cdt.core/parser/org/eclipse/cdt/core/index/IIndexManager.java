@@ -277,12 +277,22 @@ public interface IIndexManager extends IPDOMManager {
 	boolean isProjectIndexed(ICProject proj);
 
 	/**
+	 * @param cproject
+	 *            the project to check
+	 * @return whether the content in the project fragment of the specified
+	 *         project's index is complete (contains all sources) and up to date.
+	 * @throws CoreException
+	 * @since 6.4
+	 */
+	public boolean isProjectContentSynced(ICProject cproject) throws CoreException;
+
+	/**
 	 * Returns whether the indexer-setup for a project is currently postponed. Note,
 	 * that a postponed setup does not prevent the indexer from becoming idle
 	 * ({@link #isIndexerIdle()}.
 	 * <p>
-	 * The fact that the indexer-setup for a project is no longer postponed, will be reported using
-	 * {@link IndexerSetupParticipant#onIndexerSetup(ICProject)}.
+	 * The fact that the indexer-setup for a project is no longer postponed, will be
+	 * reported using {@link IndexerSetupParticipant#onIndexerSetup(ICProject)}.
 	 */
 	boolean isIndexerSetupPostponed(ICProject proj);
 

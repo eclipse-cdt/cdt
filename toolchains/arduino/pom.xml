@@ -13,10 +13,4 @@
 
 	<artifactId>org.eclipse.cdt.arduino-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.arduino.core</module>
-		<module>org.eclipse.cdt.arduino.ui</module>
-		<module>org.eclipse.cdt.arduino-feature</module>
-	</modules>
 </project>

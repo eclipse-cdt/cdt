@@ -12,11 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.visualizer-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.visualizer.core</module>
-		<module>org.eclipse.cdt.visualizer.examples</module>
-		<module>org.eclipse.cdt.visualizer.ui</module>
-		<module>org.eclipse.cdt.visualizer-feature</module>
-	</modules>
 </project>

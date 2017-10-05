@@ -12,16 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.upc-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.core.parser.upc</module>
-		<module>org.eclipse.cdt.core.parser.upc.feature</module>
-		<module>org.eclipse.cdt.core.parser.upc.sdk.feature</module>
-
-		<module>org.eclipse.cdt.managedbuilder.bupc.ui</module>
-		<module>org.eclipse.cdt.bupc-feature</module>
-<!-- 
-		<module>org.eclipse.cdt.core.parser.upc.tests</module>
--->
-	</modules>
 </project>

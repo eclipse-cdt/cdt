@@ -12,17 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.dsf-gdb-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.dsf.gdb</module>
-		<module>org.eclipse.cdt.dsf.gdb.ui</module>
-		<module>org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui</module>
-		<module>org.eclipse.cdt.gnu.dsf-feature</module>
-		<module>org.eclipse.cdt.gnu.multicorevisualizer-feature</module>
-
-		<module>org.eclipse.cdt.dsf.gdb.tests</module>
-		<module>org.eclipse.cdt.tests.dsf.gdb</module>
-		<module>org.eclipse.cdt.examples.dsf.gdb</module>
-		<module>org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
-	</modules>
 </project>

@@ -12,11 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.cross-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.build.crossgcc</module>
-		<module>org.eclipse.cdt.build.crossgcc-feature</module>
-		<module>org.eclipse.cdt.launch.remote</module>
-		<module>org.eclipse.cdt.launch.remote-feature</module>
-	</modules>
 </project>

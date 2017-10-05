@@ -33,7 +33,7 @@ public class ToolChainManager implements IToolChainManager {
 	private List<IToolChain> orderedToolChains;
 	private List<ISafeRunnable> listeners = new ArrayList<>();
 
-	private void init() {
+	private synchronized void init() {
 		if (providerElements == null) {
 			providerElements = new HashMap<>();
 			providers = new HashMap<>();

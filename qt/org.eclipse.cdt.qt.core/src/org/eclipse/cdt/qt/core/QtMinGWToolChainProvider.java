@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.qt.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +17,8 @@ import org.eclipse.cdt.build.gcc.core.GCCToolChain;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.internal.qt.core.Activator;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.CoreException;
@@ -46,12 +49,23 @@ public class QtMinGWToolChainProvider implements IToolChainProvider {
 						Path gcc = Paths.get("bin\\gcc.exe"); //$NON-NLS-1$
 						try {
 							Files.walk(installLocation.resolve("Tools"), 1) //$NON-NLS-1$
-									.filter(path -> Files.exists(path.resolve(gcc))).map(path -> {
-										GCCToolChain toolChain = new GCCToolChain(this, TOOLCHAIN_ID, "", //$NON-NLS-1$
-												new Path[] { path.resolve("bin") }); //$NON-NLS-1$
+									.filter(path -> Files.exists(path.resolve(gcc))).forEach(path -> {
+										IEnvironmentVariable[] env = new IEnvironmentVariable[] {
+												new EnvironmentVariable("PATH", //$NON-NLS-1$
+														path.resolve("bin").toString(), //$NON-NLS-1$
+														IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator) };
+										GCCToolChain toolChain = new GCCToolChain(this, path.resolve(gcc),
+												Platform.ARCH_X86, env);
 										toolChain.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$
-										return toolChain;
-									}).forEach(toolChain -> manager.addToolChain(toolChain));
+										manager.addToolChain(toolChain);
+
+										if (Platform.getOSArch().equals(Platform.ARCH_X86_64)) {
+											toolChain = new GCCToolChain(this, path.resolve(gcc), Platform.ARCH_X86_64,
+													env);
+											toolChain.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$
+											manager.addToolChain(toolChain);
+										}
+									});
 						} catch (IOException e) {
 							Activator.log(e);
 						}

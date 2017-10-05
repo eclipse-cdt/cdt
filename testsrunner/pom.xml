@@ -12,14 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.testsrunner-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.testsrunner</module>
-		<module>org.eclipse.cdt.testsrunner.boost</module>
-		<module>org.eclipse.cdt.testsrunner.gtest</module>
-		<module>org.eclipse.cdt.testsrunner.qttest</module>
-		<module>org.eclipse.cdt.testsrunner.tap</module>
-		<module>org.eclipse.cdt.testsrunner.tests</module>
-		<module>org.eclipse.cdt.testsrunner.feature</module>
-	</modules>
 </project>

@@ -24,7 +24,7 @@
 <repository location="http://download.eclipse.org/technology/swtbot/snapshots/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-    <repository location="http://download.eclipse.org/tm/updates/4.2milestones/20161026"/>
+<repository location="http://download.eclipse.org/tm/updates/4.2milestones/20161026"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>

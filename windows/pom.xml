@@ -12,9 +12,4 @@
 
 	<artifactId>org.eclipse.cdt.windows-parent</artifactId>
 	<packaging>pom</packaging>
-
-	<modules>
-		<module>org.eclipse.cdt.msw.build</module>
-		<module>org.eclipse.cdt.msw-feature</module>
-	</modules>
 </project>

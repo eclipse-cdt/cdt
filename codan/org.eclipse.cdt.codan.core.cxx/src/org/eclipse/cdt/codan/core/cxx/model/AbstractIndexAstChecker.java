@@ -171,8 +171,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			for (IASTComment comm : commentsArray) {
 				IASTFileLocation fileLocation = comm.getFileLocation();
 				if (fileLocation.getStartingLineNumber() == loc.getLineNumber()) {
-					//XXX check on windows portable or os?
-					String problemFile = loc.getFile().getLocation().toPortableString();
+					String problemFile = loc.getFile().getLocation().toOSString();
 					String commentFile = fileLocation.getFileName();
 					if (problemFile.equals(commentFile)) {
 						lineComments.add(comm);

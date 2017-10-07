@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt"
       label="%featureName"
-      version="9.3.2.qualifier"
+      version="9.3.3.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

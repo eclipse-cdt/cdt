@@ -109,6 +109,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String EXTRACT_CONSTANT= "org.eclipse.cdt.ui.refactor.extract.constant"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the refactor -> override methods action
+	 * (value <code>"org.eclipse.cdt.ui.refactor.override.methods"</code>).
+	 */
+	public static final String OVERRIDE_METHODS= "org.eclipse.cdt.ui.refactor.override.methods"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the refactor -> extract local variable action
 	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.local.variable"</code>).
 	 */

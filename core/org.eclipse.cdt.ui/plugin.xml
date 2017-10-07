@@ -1919,6 +1919,13 @@
                menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
                id="org.eclipse.cdt.ui.actions.ImplementMethod"
                retarget="true">
+         </action> 
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.override.methods"
+               label="%Refactoring.overrideMethods.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
+               id="org.eclipse.cdt.ui.actions.OverrideMethods"
+               retarget="true">
          </action>
 <!-- Import Group -->
          <action
@@ -3202,6 +3209,11 @@
 	        categoryId="org.eclipse.cdt.ui.category.source"
 	        id="org.eclipse.cdt.ui.refactor.getters.and.setters"/>
       <command
+      		name="%ActionDefinition.overrideMethods.name"
+            description="%ActionDefinition.overrideMethods.description"
+	        categoryId="org.eclipse.cdt.ui.category.source"
+	        id="org.eclipse.cdt.ui.refactor.override.methods"/>
+      <command
             name="%ActionDefinition.surroundWith.quickMenu.name"
             description="%ActionDefinition.surroundWith.quickMenu.description"
             categoryId="org.eclipse.cdt.ui.category.source"
@@ -4482,6 +4494,10 @@
       <contribution
             class="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoringContribution"
             id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.overridemethods.OverrideMethodsRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.overridemethods.OverrideMethodsRefactoring">
       </contribution>
    </extension>
    <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">

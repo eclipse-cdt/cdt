@@ -11,12 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>8.3.0-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.testing.repo</artifactId>
-	<packaging>eclipse-repository</packaging>
-  	
-	<build>
-		<finalName>${project.artifactId}</finalName>
-	</build>
-
+	<groupId>org.eclipse.cdt.features</groupId>
+	<artifactId>org.eclipse.cdt.sdk</artifactId>
+	<packaging>eclipse-feature</packaging>
 </project>

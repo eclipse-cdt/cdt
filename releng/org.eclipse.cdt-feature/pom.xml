@@ -11,27 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>9.3.2-SNAPSHOT</version>
+	<groupId>org.eclipse.cdt.features</groupId>
 	<artifactId>org.eclipse.cdt</artifactId>
-	<packaging>eclipse-plugin</packaging>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>plugin-source</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>attach-source</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+	<packaging>eclipse-feature</packaging>
 </project>

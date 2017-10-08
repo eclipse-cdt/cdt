@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -88,6 +90,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private boolean fBasedOnIncompleteIndex;
 	private boolean fNodesOmitted;
 	private IBuiltinBindingsProvider fBuiltinBindingsProvider;
+	
+	// Caches
+	private final WeakHashMap<IType, String> fUnnormalizedTypeStringCache = new WeakHashMap<>();
+	private final WeakHashMap<IType, String> fNormalizedTypeStringCache = new WeakHashMap<>();
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -570,5 +576,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			return fBuiltinBindingsProvider.isKnownBuiltin(builtinName);
 		}
 		return false;
+	}
+	
+	public Map<IType, String> getTypeStringCache(boolean normalized) {
+		return normalized ? fNormalizedTypeStringCache : fUnnormalizedTypeStringCache;
 	}
 }

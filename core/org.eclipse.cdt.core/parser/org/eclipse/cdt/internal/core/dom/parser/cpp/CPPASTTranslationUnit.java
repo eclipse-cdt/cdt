@@ -244,7 +244,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
 	}
-
+	
 	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,
 			ICPPClassTemplatePartialSpecialization astSpec) {
 		fScopeMapper.recordPartialSpecialization(indexSpec, astSpec);

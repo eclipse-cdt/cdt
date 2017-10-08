@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -1088,7 +1087,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			FileContent codeReader= fResolver.getCodeReader(tu);
 
 			long start= System.currentTimeMillis();
-			ASTTypeUtil.startTranslationUnit();
 			IASTTranslationUnit ast=
 					createAST(lang, codeReader, scanInfo, fASTOptions, ctx, progress.split(10));
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
@@ -1114,8 +1112,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (--fSwallowOutOfMemoryError < 0)
 				throw e;
 			th= e;
-		} finally {
-			ASTTypeUtil.finishTranslationUnit();
 		}
 		if (th != null) {
 			swallowError(path, th);

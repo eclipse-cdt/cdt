@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -53,8 +54,11 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private final CPPScopeMapper fScopeMapper;
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
 
-	// Caches.
+	// Caches
+	
 	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
+	// Cache for (unnormalized) template argument list strings of template instances.
+	private final Map<ICPPTemplateInstance, String> fTemplateArgListStringCache = new HashMap<>();
 
 	public CPPASTTranslationUnit() {
 		fScopeMapper= new CPPScopeMapper(this);
@@ -243,6 +247,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
+	}
+	
+	public Map<ICPPTemplateInstance, String> getTemplateArgumentListStringCache() {
+		return fTemplateArgListStringCache;
 	}
 
 	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,

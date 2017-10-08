@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -51,10 +52,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
@@ -901,12 +904,33 @@ public class ASTTypeUtil {
 		}
 
 		if (binding instanceof ICPPTemplateInstance) {
-			appendArgumentList(((ICPPTemplateInstance) binding).getTemplateArguments(), normalize, result);
+			appendTemplateInstanceArguments((ICPPTemplateInstance) binding, normalize, result);
 		} else if (binding instanceof ICPPUnknownMemberClassInstance) {
 			appendArgumentList(((ICPPUnknownMemberClassInstance) binding).getArguments(), normalize, result);
 		}
 	}
 
+	private static void appendTemplateInstanceArguments(ICPPTemplateInstance instance, boolean normalize,
+			StringBuilder result) {
+		IASTNode lookupPoint = CPPSemantics.getCurrentLookupPoint();
+		if (lookupPoint != null && !normalize) {
+			// Unnormalized argument list strings are cached in the AST for performance.
+			IASTTranslationUnit tu = lookupPoint.getTranslationUnit();
+			if (tu instanceof CPPASTTranslationUnit) {
+				Map<ICPPTemplateInstance, String> cache = 
+						((CPPASTTranslationUnit) tu).getTemplateArgumentListStringCache();
+				String argListString = cache.get(instance);
+				if (argListString == null) {
+					argListString = getArgumentListString(instance.getTemplateArguments(), false);
+					cache.put(instance, argListString);
+				}
+				result.append(argListString);
+				return;
+			}
+		}
+		appendArgumentList(instance.getTemplateArguments(), normalize, result);
+	}
+	
 	private static ICPPTemplateParameter getTemplateParameter(IBinding binding) {
 		if (binding instanceof ICPPTemplateParameter)
 			return (ICPPTemplateParameter) binding;

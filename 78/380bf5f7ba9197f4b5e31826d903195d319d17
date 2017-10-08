@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: John Dallaway <john@dallaway.org.uk>
+Code-Review+1: Jonah Graham <jonah@kichwacoders.com>
+Submitted-by: John Dallaway <john@dallaway.org.uk>
+Submitted-at: Sun, 08 Oct 2017 12:30:03 -0400
+Reviewed-on: https://git.eclipse.org/r/106424
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

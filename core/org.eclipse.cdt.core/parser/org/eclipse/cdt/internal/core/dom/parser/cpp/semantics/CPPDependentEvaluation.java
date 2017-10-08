@@ -112,8 +112,8 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 		for (int i = 0; i < subexpressions.length; i++) {
 			ICPPEvaluation origEval = subexpressions[i];
 			ICPPEvaluation newEval;
-			if (origEval instanceof EvalParameterPack) {
-				ICPPEvaluation pattern = ((EvalParameterPack) origEval).getExpansionPattern();
+			if (origEval instanceof EvalPackExpansion) {
+				ICPPEvaluation pattern = ((EvalPackExpansion) origEval).getExpansionPattern();
 				if (pattern == null) {
 					newEval = EvalFixed.INCOMPLETE;
 				} else {

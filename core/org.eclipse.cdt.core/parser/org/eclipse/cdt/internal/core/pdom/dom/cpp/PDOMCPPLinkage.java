@@ -131,7 +131,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalPackExpansion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
@@ -1682,8 +1682,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return EvalInitList.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_MEMBER_ACCESS:
 			return EvalMemberAccess.unmarshal(firstBytes, buffer);
-		case ITypeMarshalBuffer.EVAL_PARAMETER_PACK:
-			return EvalParameterPack.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_PACK_EXPANSION:
+			return EvalPackExpansion.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_TYPE_ID:
 			return EvalTypeId.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_UNARY:

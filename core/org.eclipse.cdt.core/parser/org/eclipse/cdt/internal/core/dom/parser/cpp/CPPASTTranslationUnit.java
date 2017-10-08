@@ -53,7 +53,8 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private final CPPScopeMapper fScopeMapper;
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
 
-	// Caches.
+	// Caches
+	
 	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
 
 	public CPPASTTranslationUnit() {
@@ -244,7 +245,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
 	}
-
+	
 	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,
 			ICPPClassTemplatePartialSpecialization astSpec) {
 		fScopeMapper.recordPartialSpecialization(indexSpec, astSpec);

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
@@ -55,6 +56,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
@@ -75,36 +77,6 @@ public class ASTTypeUtil {
 	private static final String SPACE = " "; //$NON-NLS-1$
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
-	private static class ResultCache {
-		// Keep two separate maps for normalized and unnormalized type representations.
-		private WeakHashMap<IType, String> normalizedTypes = new WeakHashMap<>();
-		private WeakHashMap<IType, String> unnormalizedTypes = new WeakHashMap<>();
-
-		/**
-		 * Returns the cached string representation for a type. Returns {@code null}
-		 * if the value was not cached or was garbage collected.
-		 */
-		public String get(IType type, boolean normalize) {
-			if (normalize) {
-				return normalizedTypes.get(type);
-			} else {
-				return unnormalizedTypes.get(type);
-			}
-		}
-
-		/**
-		 * Stores a string representation of the given type name in the cache.
-		 */
-		public String put(IType type, boolean normalize, String result) {
-			if (normalize) {
-				return normalizedTypes.put(type, result);
-			} else {
-				return unnormalizedTypes.put(type, result);
-			}
-		}
-	}
-
-	private static final ThreadLocal<ResultCache> resultCache = new ThreadLocal<>();
 	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress=
 			new ThreadLocal<Set<IBinding>>() {
 		@Override
@@ -234,7 +206,7 @@ public class ASTTypeUtil {
 		appendArgumentList(args, normalize, result);
 		return result.toString();
 	}
-
+	
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
 		result.append('<');
 		for (int i = 0; i < args.length; i++) {
@@ -577,15 +549,35 @@ public class ASTTypeUtil {
 		return result.toString();
 	}
 
+	// Get the current translation unit. Used for accessing caches inside it.
+	private static ASTTranslationUnit getTranslationUnit() {
+		IASTNode lookupPoint = CPPSemantics.getCurrentLookupPoint();
+		if (lookupPoint != null) {
+			IASTTranslationUnit tu = lookupPoint.getTranslationUnit();
+			if (tu instanceof ASTTranslationUnit) {
+				return (ASTTranslationUnit) tu;
+			}
+		}
+		return null;
+	}
+	
+	private static Map<IType, String> getTypeStringCache(boolean normalize) {
+		ASTTranslationUnit tu = getTranslationUnit();
+		if (tu != null) {
+			return tu.getTypeStringCache(normalize);
+		}
+		return null;
+	}
+	
 	/**
 	 * Appends the the result of {@link #getType(IType, boolean)} to the given buffer.
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
 		// performance: check if type was appended before
-		ResultCache cache = resultCache.get();
+		Map<IType, String> cache = getTypeStringCache(normalize);
 		if (cache != null) {
-			String cachedResult = cache.get(type, normalize);
+			String cachedResult = cache.get(type);
 			if (cachedResult != null) {
 				result.append(cachedResult);
 				return;
@@ -721,7 +713,7 @@ public class ASTTypeUtil {
 
 		if (cache != null) {
 			// Store result in the cache.
-			cache.put(originalType, normalize, result.substring(startOffset));
+			cache.put(originalType, result.substring(startOffset));
 		}
 	}
 
@@ -987,22 +979,18 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Marks start of processing a translation unit during indexing.
-	 * Enables caching of string representations of types.
-	 *
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated This is no longer used.
 	 */
+	@Deprecated
 	public static void startTranslationUnit() {
-		resultCache.set(new ResultCache());
 	}
 
 	/**
-	 * Marks the end of processing a translation unit during indexing.
-	 * Disables caching of string representations of types and clears the previously cached results.
-	 *
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated This is no longer used.
 	 */
+	@Deprecated
 	public static void finishTranslationUnit() {
-		resultCache.set(null);
 	}
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -51,10 +52,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
@@ -233,6 +236,36 @@ public class ASTTypeUtil {
 		StringBuilder result= new StringBuilder();
 		appendArgumentList(args, normalize, result);
 		return result.toString();
+	}
+	
+	/**
+	 * Similar to getArgumentListString(ICPPTemplateArgument[], boolean), returning the
+	 * argument list string for the template instance's template arguments, but caches the
+	 * argument list string in the AST if one is available.
+	 * 
+	 * Prefer using this over getArgumentListString(ICPPTemplateArgument[], boolean), to
+	 * benefit from the performance advantages of caching.
+	 * 
+	 * @since 6.4
+	 */
+	public static String getArgumentListString(ICPPTemplateInstance instance, boolean normalize) {
+		IASTNode lookupPoint = CPPSemantics.getCurrentLookupPoint();
+		if (lookupPoint != null) {
+			// Argument list strings are cached in the AST for performance.
+			IASTTranslationUnit tu = lookupPoint.getTranslationUnit();
+			if (tu instanceof CPPASTTranslationUnit) {
+				Map<ICPPTemplateInstance, String> cache = 
+						((CPPASTTranslationUnit) tu).getTemplateArgumentListStringCache(normalize);
+				String argListString = cache.get(instance);
+				if (argListString == null) {
+					argListString = getArgumentListString(instance.getTemplateArguments(), normalize);
+					cache.put(instance, argListString);
+				}
+				return argListString;
+			}
+		}
+		// Don't have access to an AST - just recompute it.
+		return getArgumentListString(instance.getTemplateArguments(), normalize);
 	}
 
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
@@ -901,7 +934,9 @@ public class ASTTypeUtil {
 		}
 
 		if (binding instanceof ICPPTemplateInstance) {
-			appendArgumentList(((ICPPTemplateInstance) binding).getTemplateArguments(), normalize, result);
+			// Use getArgumentListString() instead of appendArgumentList() because the
+			// former does caching.
+			result.append(getArgumentListString((ICPPTemplateInstance) binding, normalize));
 		} else if (binding instanceof ICPPUnknownMemberClassInstance) {
 			appendArgumentList(((ICPPUnknownMemberClassInstance) binding).getArguments(), normalize, result);
 		}

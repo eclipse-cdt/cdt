@@ -3098,8 +3098,8 @@ public class CPPTemplates {
 		if (m1 == null || m2 == null || m1.length != m2.length)
 			return false;
 
-		String s1 = ASTTypeUtil.getArgumentListString(m1, true);
-		String s2 = ASTTypeUtil.getArgumentListString(m2, true);
+		String s1 = ASTTypeUtil.getArgumentListString(i1, true);
+		String s2 = ASTTypeUtil.getArgumentListString(i2, true);
 		return s1.equals(s2);
 	}
 

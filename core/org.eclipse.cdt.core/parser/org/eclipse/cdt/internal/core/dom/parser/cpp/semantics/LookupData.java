@@ -585,7 +585,7 @@ public class LookupData extends ScopeLookupData {
 		int count= 0;
 		if (functionArgs != null) {
 			for (ICPPEvaluation arg : functionArgs) {
-				if (arg instanceof EvalParameterPack)
+				if (arg instanceof EvalPackExpansion)
 					count++;
 			}
 		}

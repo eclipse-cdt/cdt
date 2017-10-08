@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalParameterPack;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalPackExpansion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.core.runtime.Assert;
 
@@ -96,8 +96,8 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 			IType t= ((ICPPParameterPackType) type).getType();
 			if (t != null) {
 				ICPPEvaluation evaluation;
-				if (fEvaluation instanceof EvalParameterPack) {
-					evaluation = ((EvalParameterPack) fEvaluation).getExpansionPattern();
+				if (fEvaluation instanceof EvalPackExpansion) {
+					evaluation = ((EvalPackExpansion) fEvaluation).getExpansionPattern();
 				} else {
 					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), false, false, fEvaluation);
 				}

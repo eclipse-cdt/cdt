@@ -27,15 +27,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Evaluation for a pack expansion expression.
  */
-public class EvalParameterPack extends CPPDependentEvaluation {
+public class EvalPackExpansion extends CPPDependentEvaluation {
 	private ICPPEvaluation fExpansionPattern;
 	private IType fType;
 
-	public EvalParameterPack(ICPPEvaluation expansionPattern, IASTNode pointOfDefinition) {
+	public EvalPackExpansion(ICPPEvaluation expansionPattern, IASTNode pointOfDefinition) {
 		this(expansionPattern, findEnclosingTemplate(pointOfDefinition));
 	}
 
-	public EvalParameterPack(ICPPEvaluation expansionPattern, IBinding templateDefinition) {
+	public EvalPackExpansion(ICPPEvaluation expansionPattern, IBinding templateDefinition) {
 		super(templateDefinition);
 		fExpansionPattern = expansionPattern;
 	}
@@ -97,7 +97,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 		ICPPEvaluation expansionPattern = fExpansionPattern.instantiate(context, maxDepth);
 		if (expansionPattern == fExpansionPattern)
 			return this;
-		return new EvalParameterPack(expansionPattern, getTemplateDefinition());
+		return new EvalPackExpansion(expansionPattern, getTemplateDefinition());
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 			return this;
 		}
 
-		EvalParameterPack evalParamPack = new EvalParameterPack(expansionPattern, getTemplateDefinition());
+		EvalPackExpansion evalParamPack = new EvalPackExpansion(expansionPattern, getTemplateDefinition());
 		return evalParamPack;
 	}
 
@@ -123,7 +123,7 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putShort(ITypeMarshalBuffer.EVAL_PARAMETER_PACK);
+		buffer.putShort(ITypeMarshalBuffer.EVAL_PACK_EXPANSION);
 		buffer.marshalEvaluation(fExpansionPattern, includeValue);
 		marshalTemplateDefinition(buffer);
 	}
@@ -131,6 +131,6 @@ public class EvalParameterPack extends CPPDependentEvaluation {
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation expansionPattern = buffer.unmarshalEvaluation();
 		IBinding templateDefinition = buffer.unmarshalBinding();
-		return new EvalParameterPack(expansionPattern, templateDefinition);
+		return new EvalPackExpansion(expansionPattern, templateDefinition);
 	}
 }

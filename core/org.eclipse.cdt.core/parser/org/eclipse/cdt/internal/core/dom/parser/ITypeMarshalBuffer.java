@@ -69,7 +69,7 @@ public interface ITypeMarshalBuffer {
 		EVAL_ID             	        = 0x0A,
 		EVAL_INIT_LIST      	        = 0x0B,
 		EVAL_MEMBER_ACCESS  	        = 0x0C,
-		EVAL_PARAMETER_PACK 	        = 0x0D,
+		EVAL_PACK_EXPANSION 	        = 0x0D,
 		EVAL_TYPE_ID        	        = 0x0E,
 		EVAL_UNARY          	        = 0x0F,
 		EVAL_UNARY_TYPE_ID  	        = 0x10,

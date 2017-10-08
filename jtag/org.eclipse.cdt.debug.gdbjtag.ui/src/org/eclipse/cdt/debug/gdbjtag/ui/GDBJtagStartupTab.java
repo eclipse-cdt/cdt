@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2015 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     Andy Jin - Added DSF debugging, bug 248593
+ *     John Dallaway - Execute run commands before resume, bug 525692
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -430,7 +431,12 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		symbolsFileBrowse.setEnabled(enabled);
 	}
 
+	/** Implementation migrated to {@link #createRunGroup(Composite)} */
+	@Deprecated
 	public void createRunOptionGroup(Composite parent) {
+	}
+
+	public void createRunGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
@@ -438,7 +444,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		group.setLayoutData(gd);
-		group.setText(Messages.getString("GDBJtagStartupTab.runOptionGroup_Text"));
+		group.setText(Messages.getString("GDBJtagStartupTab.runGroup_Text"));
 		
 		setPcRegister = new Button(group, SWT.CHECK);
 		setPcRegister.setText(Messages.getString("GDBJtagStartupTab.setPcRegister_Text"));
@@ -496,6 +502,18 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
+		runCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		gd.heightHint = 60;
+		runCommands.setLayoutData(gd);
+		runCommands.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				scheduleUpdateJob();
+			}
+		});
+
 		setResume = new Button(group, SWT.CHECK);
 		setResume.setText(Messages.getString("GDBJtagStartupTab.setResume_Text"));
 		gd = new GridData();
@@ -542,26 +560,6 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	
 	private void resumeChanged() {
 		resume = setResume.getSelection();
-	}
-	
-	public void createRunGroup(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		group.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
-		group.setText(Messages.getString("GDBJtagStartupTab.runGroup_Text"));
-
-		runCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 60;
-		runCommands.setLayoutData(gd);
-		runCommands.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent evt) {
-				scheduleUpdateJob();
-			}
-		});
 	}
 	
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 QNX Software Systems and others.
+ * Copyright (c) 2007, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Updated to extend FinalLaunchSequence instead of copying it (bug 324101)
  *     William Riley (Renesas) - Memory viewing broken (Bug 413483)
  *     Marc Khouzam (Ericsson) - Cannot disable Delay command (bug 413437)
+ *     John Dallaway - Execute run commands before resume (Bug 525692)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -174,8 +175,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					
 					"stepSetProgramCounter",   //$NON-NLS-1$
 					"stepStopScript",   //$NON-NLS-1$
-					"stepResumeScript",   //$NON-NLS-1$
 					"stepUserDebugCommands",   //$NON-NLS-1$
+					"stepResumeScript",   //$NON-NLS-1$
 					"stepJTAGCleanup",   //$NON-NLS-1$
 			};
 		}

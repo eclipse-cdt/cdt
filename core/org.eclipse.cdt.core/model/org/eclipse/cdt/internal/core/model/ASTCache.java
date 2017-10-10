@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -216,8 +217,10 @@ public class ASTCache {
 				return astRunnable.runOnAST(lang, ast);
 			}
 			try {
+				CPPSemantics.pushLookupPoint(ast);
 				return astRunnable.runOnAST(lang, ast);
 			} finally {
+				CPPSemantics.popLookupPoint();
 				releaseSharedAST(ast);
 			}
 		} catch (CoreException e) {

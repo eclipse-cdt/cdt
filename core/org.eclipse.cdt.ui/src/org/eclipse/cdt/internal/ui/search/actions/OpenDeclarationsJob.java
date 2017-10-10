@@ -252,92 +252,92 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, implicitTargets))
 				return Status.OK_STATUS;
 		} else {
-			boolean found= false;
-			final IASTNode parent = sourceName.getParent();
-			if (parent instanceof IASTPreprocessorIncludeStatement) {
-				openInclude(((IASTPreprocessorIncludeStatement) parent));
-				return Status.OK_STATUS;
-			} else if (parent instanceof ICPPASTTemplateId) {
-				sourceName = (IASTName) parent;
-			}
-			NameKind kind = getNameKind(sourceName);
-			IBinding b = sourceName.resolveBinding();
-			IBinding[] bindings = new IBinding[] { b };
-			if (b instanceof IProblemBinding) {
-				IBinding[] candidateBindings = ((IProblemBinding) b).getCandidateBindings();
-				if (candidateBindings.length != 0) {
-					bindings = candidateBindings;
+			CPPSemantics.pushLookupPoint(sourceName);
+			try {
+				boolean found= false;
+				final IASTNode parent = sourceName.getParent();
+				if (parent instanceof IASTPreprocessorIncludeStatement) {
+					openInclude(((IASTPreprocessorIncludeStatement) parent));
+					return Status.OK_STATUS;
+				} else if (parent instanceof ICPPASTTemplateId) {
+					sourceName = (IASTName) parent;
 				}
-			} else if (kind == NameKind.DEFINITION && b instanceof IType && !(b instanceof ICPPClassTemplate)) {
-				// Don't navigate away from a type definition.
-				// Select the name at the current location instead.
-				// However, for a class template, it's useful to navigate to
-				// a forward declaration, as it may contain definitions of
-				// default arguments, while the definition may not.
-				navigateToName(sourceName);
-				return Status.OK_STATUS;
-			}
-			IName[] targets = IName.EMPTY_ARRAY;
-			String filename = ast.getFilePath();
-			for (int i = 0; i < bindings.length; ++i) {
-				IBinding binding = bindings[i];
-				if (binding instanceof ICPPUnknownBinding) {
-					// We're not going to find declarations for an unknown binding.
-					// To try to do something useful anyways, we try to heuristically
-					// resolve the unknown binding to one or more concrete bindings,
-					// and use those instead.
-					try {
-						CPPSemantics.pushLookupPoint(sourceName);
+				NameKind kind = getNameKind(sourceName);
+				IBinding b = sourceName.resolveBinding();
+				IBinding[] bindings = new IBinding[] { b };
+				if (b instanceof IProblemBinding) {
+					IBinding[] candidateBindings = ((IProblemBinding) b).getCandidateBindings();
+					if (candidateBindings.length != 0) {
+						bindings = candidateBindings;
+					}
+				} else if (kind == NameKind.DEFINITION && b instanceof IType && !(b instanceof ICPPClassTemplate)) {
+					// Don't navigate away from a type definition.
+					// Select the name at the current location instead.
+					// However, for a class template, it's useful to navigate to
+					// a forward declaration, as it may contain definitions of
+					// default arguments, while the definition may not.
+					navigateToName(sourceName);
+					return Status.OK_STATUS;
+				}
+				IName[] targets = IName.EMPTY_ARRAY;
+				String filename = ast.getFilePath();
+				for (int i = 0; i < bindings.length; ++i) {
+					IBinding binding = bindings[i];
+					if (binding instanceof ICPPUnknownBinding) {
+						// We're not going to find declarations for an unknown binding.
+						// To try to do something useful anyways, we try to heuristically
+						// resolve the unknown binding to one or more concrete bindings,
+						// and use those instead.
 						IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(
 								(ICPPUnknownBinding) binding);
 						if (resolved.length > 0) {
 							bindings = ArrayUtil.addAll(bindings, resolved);
 							continue;
 						}
-					} finally {
-						CPPSemantics.popLookupPoint();
 					}
-				}
-				if (binding instanceof ICPPUsingDeclaration) {
-					// Skip using-declaration bindings. Their delegates will be among the implicit targets.
-					continue;
-				}
-				if (binding != null && !(binding instanceof IProblemBinding)) {
-					IName[] names = findDeclNames(ast, kind, binding);
-					for (final IName name : names) {
-						if (name != null) {
-							if (name instanceof IIndexName &&
-									filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
-								// Exclude index names from the current file.
-							} else if (areOverlappingNames(name, sourceName)) {
-								// Exclude the current location.
-							} else if (binding instanceof IParameter) {
-								if (isInSameFunction(sourceName, name)) {
+					if (binding instanceof ICPPUsingDeclaration) {
+						// Skip using-declaration bindings. Their delegates will be among the implicit targets.
+						continue;
+					}
+					if (binding != null && !(binding instanceof IProblemBinding)) {
+						IName[] names = findDeclNames(ast, kind, binding);
+						for (final IName name : names) {
+							if (name != null) {
+								if (name instanceof IIndexName &&
+										filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
+									// Exclude index names from the current file.
+								} else if (areOverlappingNames(name, sourceName)) {
+									// Exclude the current location.
+								} else if (binding instanceof IParameter) {
+									if (isInSameFunction(sourceName, name)) {
+										targets = ArrayUtil.append(targets, name);
+									}
+								} else if (binding instanceof ICPPTemplateParameter) {
+									if (isInSameTemplate(sourceName, name)) {
+										targets = ArrayUtil.append(targets, name);
+									}
+								} else {
 									targets = ArrayUtil.append(targets, name);
 								}
-							} else if (binding instanceof ICPPTemplateParameter) {
-								if (isInSameTemplate(sourceName, name)) {
-									targets = ArrayUtil.append(targets, name);
-								}
-							} else {
-								targets = ArrayUtil.append(targets, name);
 							}
 						}
 					}
 				}
+				targets = ArrayUtil.trim(ArrayUtil.addAll(targets, implicitTargets));
+				if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, targets)) {
+					found= true;
+				} else {
+					// Leave old method as fallback for local variables, parameters and
+					// everything else not covered by ICElementHandle.
+					found = navigateOneLocation(ast, targets);
+				}
+				if (!found && !navigationFallBack(ast, sourceName, kind)) {
+					fAction.reportSymbolLookupFailure(new String(sourceName.toCharArray()));
+				}
+				return Status.OK_STATUS;
+			} finally {
+				CPPSemantics.popLookupPoint();
 			}
-			targets = ArrayUtil.trim(ArrayUtil.addAll(targets, implicitTargets));
-			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, targets)) {
-				found= true;
-			} else {
-				// Leave old method as fallback for local variables, parameters and
-				// everything else not covered by ICElementHandle.
-				found = navigateOneLocation(ast, targets);
-			}
-			if (!found && !navigationFallBack(ast, sourceName, kind)) {
-				fAction.reportSymbolLookupFailure(new String(sourceName.toCharArray()));
-			}
-			return Status.OK_STATUS;
 		}
 
 		// No enclosing name, check if we're in an include statement

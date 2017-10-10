@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_7a017b3c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2017-10-10T07:46:55Z",
+      "side": 1,
+      "message": "Add: \"This method is scheduled for removal in 10.0.\"\n(Please check with CDT team deprecation strategy, but should be OK to remove API with the next major version)",
+      "revId": "035568e9b98648dae8e3fefa2aa8f96bf7954d30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_9afc67a9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2017-10-10T07:46:55Z",
+      "side": 1,
+      "message": "Add: \"This method is scheduled for removal in 10.0.\"",
+      "revId": "035568e9b98648dae8e3fefa2aa8f96bf7954d30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7880b39_da2d0fcd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTTranslationUnit.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2017-10-10T07:46:55Z",
+      "side": 1,
+      "message": "Here is no change. Please remove the file from commit.",
+      "revId": "035568e9b98648dae8e3fefa2aa8f96bf7954d30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

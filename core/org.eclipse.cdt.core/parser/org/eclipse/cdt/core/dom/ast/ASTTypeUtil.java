@@ -76,6 +76,11 @@ public class ASTTypeUtil {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
 	private static final int DEAULT_ITYPE_SIZE = 2;
+	
+	// A threshold above which type strings are appended to other type strings
+	// "by reference" rather than by copying their contents. This avoids the
+	// sizes of type strings from getting out of control for certain code patterns.
+	private static final int TYPE_STRING_LENGTH_THRESHOLD = 100000;
 
 	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress=
 			new ThreadLocal<Set<IBinding>>() {
@@ -559,6 +564,28 @@ public class ASTTypeUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * Append a string to the builder "by reference".
+	 * 
+	 * Instead of copying the bytes of the string into the builder, it copies
+	 * the string's "address", as returned by System.identityHashCode().
+	 * 
+	 * To preserve correct semantics, the string that's passed in must
+	 * be interned, to ensure that we get the same "address" if and only if
+	 * we would have gotten the same contents. (However, we do not call 
+	 * intern() ourselves, as some of our callers already know they have
+	 * an interned strings, and calling it again would be wasteful.)
+	 * 
+	 * The motivation is to avoid strings built by ASTTypeUtil from becoming
+	 * excessively long by having the contents of a long string appended
+	 * repeatedly to them.
+	 */
+	private static void appendStringReference(String str, StringBuilder result) {
+		result.append("{String@");  //$NON-NLS-1$
+		result.append(System.identityHashCode(str));
+		result.append("}");  //$NON-NLS-1$
+	}
 	
 	/**
 	 * Appends the the result of {@link #getType(IType, boolean)} to the given buffer.
@@ -570,6 +597,13 @@ public class ASTTypeUtil {
 		if (cache != null) {
 			String cachedResult = cache.get(type);
 			if (cachedResult != null) {
+				// If the cached result is very long, append it "by reference".
+				// Note that all strings longer than TYPE_STRING_LENGTH_THRESHOLD
+				// stored in the cache are interned, so we are meeting that
+				// requirement of appendStringReference().
+				if (cachedResult.length() > TYPE_STRING_LENGTH_THRESHOLD) {
+					appendStringReference(cachedResult, result);
+				}
 				result.append(cachedResult);
 				return;
 			}
@@ -704,7 +738,20 @@ public class ASTTypeUtil {
 
 		if (cache != null) {
 			// Store result in the cache.
-			cache.put(originalType, result.substring(startOffset));
+			String toCache = result.substring(startOffset);
+			// If the string to be cached is too long, we want to append it "by reference" instead.
+			if (toCache.length() > TYPE_STRING_LENGTH_THRESHOLD) {
+				// Remove the contents of the string from the buffer.
+				result.setLength(startOffset);
+				
+				// Intern the string. This is required for calling appendStringReference(),
+				// to ensure that we get a unique String object for unique contents.
+				toCache = toCache.intern();
+
+				// Re-append the string by reference.
+				appendStringReference(toCache, result);
+			}
+			cache.put(originalType, toCache);
 		}
 	}
 

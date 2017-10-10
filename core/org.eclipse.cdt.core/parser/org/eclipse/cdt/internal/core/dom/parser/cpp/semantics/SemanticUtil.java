@@ -742,6 +742,8 @@ public class SemanticUtil {
 	}
 
 	public static boolean isAutoOrDecltype(String code) {
+		if (code == null)
+			return false;
 		return (code.equals(Keywords.AUTO) || code.equals(Keywords.TYPEOF) || code.equals(Keywords.DECLTYPE));
 	}
 

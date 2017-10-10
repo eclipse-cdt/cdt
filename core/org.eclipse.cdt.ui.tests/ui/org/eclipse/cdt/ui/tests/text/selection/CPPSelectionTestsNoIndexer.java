@@ -1391,4 +1391,15 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertInstance(target, IASTName.class);
 		assertEquals("A", ((IASTName) target).toString());
 	}
+
+	// void npeTest() {
+	//     auto i = 1;
+	// }
+	public void testNPEinAutoTypeTest_525794() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug525794.cpp", code);
+
+		int offset = code.indexOf("auto") - 2;
+		IASTNode target = testF3(file, offset);
+	}
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_c0f99e8f",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1395,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-10-10T21:58:59Z",
+      "side": 1,
+      "message": "I think it would make sense to put this into a separate test, like \"testEmptySpace\".",
+      "revId": "0d7a1f82e37430a12b32447fb5732e7e8f27e348",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1390,5 +1390,8 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		target = testF3(file, offset);
 		assertInstance(target, IASTName.class);
 		assertEquals("A", ((IASTName) target).toString());
+		
+		offset = code.indexOf("a1") - 7;
+		target = testF3(file, offset);
 	}
 }

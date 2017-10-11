@@ -1234,27 +1234,28 @@ public class PDOM extends PlatformObject implements IPDOM {
 		PDOMName name;
 		if ((options & FIND_DECLARATIONS) != 0) {
 			for (name= pdomBinding.getFirstDeclaration(); name != null; name= name.getNextInBinding()) {
-				if (isCommitted(name)) {
+				if (isCommitted(name) && !name.isPotentialMatch()) {
 					names.add(name);
 				}
 			}
 		}
 		if ((options & FIND_DEFINITIONS) != 0) {
 			for (name = pdomBinding.getFirstDefinition(); name != null; name= name.getNextInBinding()) {
-				if (isCommitted(name)) {
+				boolean findPotentialMatches = (options & FIND_POTENTIAL_MATCHES) != 0;
+				if (isCommitted(name) && (!name.isPotentialMatch() || findPotentialMatches)) {
 					names.add(name);
 				}
 			}
 		}
 		if ((options & FIND_REFERENCES) != 0) {
 			for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
-				if (isCommitted(name)) {
+				if (isCommitted(name) && !name.isPotentialMatch()) {
 					names.add(name);
 				}
 			}
 			for (IPDOMIterator<PDOMName> iterator = pdomBinding.getExternalReferences(); iterator.hasNext();) {
 				name = iterator.next();
-				if (isCommitted(name))
+				if (isCommitted(name) && !name.isPotentialMatch())
 					names.add(name);
 			}
 		}

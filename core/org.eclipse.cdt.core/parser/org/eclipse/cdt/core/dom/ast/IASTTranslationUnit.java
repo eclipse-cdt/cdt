@@ -118,14 +118,24 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
     public IName[] getDefinitions(IBinding binding);
 
 	/**
+	 * Equivalent to getDefinitionsInAst(binding, false).
+	 */
+	public IASTName[] getDefinitionsInAST(IBinding binding);
+	
+	/**
      * Returns the array of definitions in this translation unit for the given binding.
      * The array contains the IASTName nodes that define the binding.
 	 * These are part of the AST, no definitions are pulled in from the index.
 	 * 
+	 * If 'permissive' is true, definitions that are not exact matches (for example,
+	 * a method definition with a non-matching signature) are also returned.
+	 * 
 	 * @param binding
+	 * @param permissive
 	 * @return Array of IASTName nodes for the binding's declaration
+	 * @since 6.4
 	 */
-	public IASTName[] getDefinitionsInAST(IBinding binding);
+	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive);
 
 	/**
 	 * Returns the list of references in this translation unit to the given

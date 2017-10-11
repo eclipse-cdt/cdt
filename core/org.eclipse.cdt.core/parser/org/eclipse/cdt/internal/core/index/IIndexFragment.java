@@ -50,6 +50,10 @@ public interface IIndexFragment {
 	 */
 	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES = IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES;
 	/**
+	 * @see IIndex#FIND_POTENTIAL_MATCHES
+	 */
+	final int FIND_POTENTIAL_MATCHES = IIndex.FIND_POTENTIAL_MATCHES;
+	/**
 	 * @see IIndex#FIND_DECLARATIONS_DEFINITIONS
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = IIndex.FIND_DECLARATIONS_DEFINITIONS;
@@ -210,7 +214,7 @@ public interface IIndexFragment {
 	 * references, declarations or definitions, or a combination of those.
 	 * @param binding a binding for which names are searched for
 	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS},
-	 *     {@link #FIND_REFERENCES} and {@link #FIND_NON_LOCAL_ONLY}
+	 *     {@link #FIND_REFERENCES}, {@link #FIND_NON_LOCAL_ONLY}, and {@link #FIND_POTENTIAL_MATCHES}.
 	 * @return an array of names
 	 * @throws CoreException
 	 */

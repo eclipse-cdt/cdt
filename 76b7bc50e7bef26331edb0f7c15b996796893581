@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7880b39_e69872fe",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1398,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-10-11T17:59:40Z",
+      "side": 1,
+      "message": "The scenario being tested is unrelated to there being an \"auto\" type there. I would call the test \"testEmptySpace_525794\".",
+      "revId": "76b7bc50e7bef26331edb0f7c15b996796893581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

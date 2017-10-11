@@ -1508,6 +1508,7 @@ public class CPPVisitor extends ASTQueries {
 		private int kind;
 		private char[] requiredName;
 		private IIndex index;
+		private boolean permissive;
 
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
@@ -1516,10 +1517,11 @@ public class CPPVisitor extends ASTQueries {
 		private static final int KIND_COMPOSITE = 5;
 		private static final int KIND_TEMPLATE_PARAMETER = 6;
 
-		public CollectDeclarationsAction(IBinding binding) {
+		public CollectDeclarationsAction(IBinding binding, boolean permissive) {
 			shouldVisitTranslationUnit = true;
 			shouldVisitNames = true;
 			this.decls = new IASTName[DEFAULT_LIST_SIZE];
+			this.permissive = permissive;
 
 			final String bname = binding.getName();
 			if (bname.length() > 0 && !bname.startsWith("operator")) { //$NON-NLS-1$
@@ -1645,7 +1647,7 @@ public class CPPVisitor extends ASTQueries {
 		private boolean isDeclarationBinding(IBinding nameBinding) {
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
-					if (areEquivalentBindings(nameBinding, binding, index)) {
+					if (areEquivalentBindings(nameBinding, binding, index, permissive)) {
 						return true;
 					}
 					// A using declaration is a declaration for the references of its delegates.
@@ -1667,6 +1669,20 @@ public class CPPVisitor extends ASTQueries {
 		}
 	}
 
+	private static boolean areEquivalentBindings(IBinding candidate, IBinding target, IIndex index,
+			boolean permissive) {
+		if (permissive && candidate instanceof IProblemBinding && !(target instanceof IProblemBinding)) {
+			IProblemBinding problem = (IProblemBinding) candidate;
+			for (IBinding c : problem.getCandidateBindings()) {
+				if (areEquivalentBindings(c, target, index)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return areEquivalentBindings(candidate, target, index);
+	}
+	
 	private static boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
 		if (binding1.equals(binding2)) {
 			return true;
@@ -2740,7 +2756,11 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	public static IASTName[] getDeclarations(IASTTranslationUnit tu, IBinding binding) {
-	    CollectDeclarationsAction action = new CollectDeclarationsAction(binding);
+		return getDeclarations(tu, binding, false);
+	}
+	
+	public static IASTName[] getDeclarations(IASTTranslationUnit tu, IBinding binding, boolean permissive) {
+	    CollectDeclarationsAction action = new CollectDeclarationsAction(binding, permissive);
 	    tu.accept(action);
 
 		IASTName[] found = action.getDeclarations();

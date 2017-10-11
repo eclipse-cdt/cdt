@@ -406,9 +406,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {
-		List<IASTName> declNames= new ArrayList<>();
-		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
-		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
+		List<IASTName> exactMatches = new ArrayList<>();
+		List<IASTName> permissiveMatches = new ArrayList<>();
+		exactMatches.addAll(Arrays.asList(ast.getDefinitionsInAST(binding, /* permissive = */ true)));
+		for (Iterator<IASTName> i = exactMatches.iterator(); i.hasNext();) {
 			IASTName name= i.next();
 			final IBinding b2 = name.resolveBinding();
 			if (b2 instanceof ICPPUsingDeclaration) {
@@ -427,13 +428,27 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					i.remove();
 				}
 			}
+			if (b2 instanceof IProblemBinding) {
+				permissiveMatches.add(name);
+				i.remove();
+			}
 		}
-		if (!declNames.isEmpty()) {
-			return declNames.toArray(new IASTName[declNames.size()]);
+		if (!exactMatches.isEmpty()) {
+			return exactMatches.toArray(new IASTName[exactMatches.size()]);
 		}
 
 		// 2. Try definition in index.
-		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		IName[] indexMatches = index.findNames(binding, IIndex.FIND_DEFINITIONS | 
+				IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		if (indexMatches.length > 0) {
+			return indexMatches;
+		}
+		
+		if (!permissiveMatches.isEmpty()) {
+			return permissiveMatches.toArray(new IASTName[permissiveMatches.size()]);
+		}
+		
+		return IName.EMPTY_ARRAY;
 	}
 
 	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {

@@ -130,11 +130,16 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
     }
 
     @Override
-	public IASTName[] getDefinitionsInAST(IBinding binding) {
+    public IASTName[] getDefinitionsInAST(IBinding binding) {
+    	return getDefinitionsInAST(binding, false);
+    }
+    
+    @Override
+	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive) {
         if (binding instanceof IMacroBinding) {
         	return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
-    	IASTName[] names = CPPVisitor.getDeclarations(this, binding);
+    	IASTName[] names = CPPVisitor.getDeclarations(this, binding, permissive);
         for (int i = 0; i < names.length; i++) {
             if (!names[i].isDefinition())
                 names[i] = null;

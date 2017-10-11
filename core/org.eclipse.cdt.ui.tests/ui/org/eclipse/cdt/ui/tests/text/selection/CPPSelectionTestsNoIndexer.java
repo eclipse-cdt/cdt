@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -1390,5 +1391,19 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		target = testF3(file, offset);
 		assertInstance(target, IASTName.class);
 		assertEquals("A", ((IASTName) target).toString());
+	}
+	
+	//	class Waldo {
+	//	    void find();
+	//	};
+	//	int Waldo::find() {}
+	public void testNavigationToDefinitionWithWrongSignature_525739() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug525739.cpp", code);
+		
+		int offset = code.indexOf("void find") + 6;
+		IASTNode target = testF3(file, offset);
+		assertInstance(target, IASTName.class);
+		assertEquals(IASTNameOwner.r_definition, ((IASTName) target).getRoleOfName(false));
 	}
 }

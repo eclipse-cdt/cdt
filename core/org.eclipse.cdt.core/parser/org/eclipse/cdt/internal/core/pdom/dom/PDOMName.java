@@ -56,9 +56,17 @@ public final class PDOMName implements IIndexFragmentName {
 	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x10;
 	public static final int READ_ACCESS 						= 0x20;
 	public static final int WRITE_ACCESS 						= 0x40;
+	// Whether this name is a potential match for its binding, rather than an exact match.
+	// Potential matches are recorded in the index so that we can e.g. offer best-effort
+	// navigation even in the presence of errors in the code (or an incomplete project
+	// configuration), but they are annotated as such so exact matches can be preferred
+	// where appropriate.
+	public static final int IS_POTENTIAL_MATCH                  = 0x80;
+	// Note: There is no room in the flags byte for more flags. If more flags are
+	//       needed, the flag byte needs to be expanded to a short.
 
-	public PDOMName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
-			throws CoreException {
+	public PDOMName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller,
+			boolean isPotentialMatch) throws CoreException {
 		this.linkage = linkage;
 		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -66,6 +74,10 @@ public final class PDOMName implements IIndexFragmentName {
 		// What kind of name are we
 		int flags= getRoleOfName(name);
 
+		if (isPotentialMatch) {
+			flags |= IS_POTENTIAL_MATCH;
+		}
+		
 		flags |= binding.getAdditionalNameFlags(flags, name);
 		db.putByte(record + FLAGS, (byte) flags);
 
@@ -284,6 +296,11 @@ public final class PDOMName implements IIndexFragmentName {
 	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
+	}
+	
+	@Override
+	public boolean isPotentialMatch() throws CoreException {
+		return getFlags(IS_POTENTIAL_MATCH) == IS_POTENTIAL_MATCH;
 	}
 
 	@Override

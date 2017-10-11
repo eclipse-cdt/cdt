@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -514,9 +515,27 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			PDOMBinding pdomBinding = linkage.addBinding(name);
 			if (pdomBinding != null) {
-				final PDOMName result= new PDOMName(fLinkage, name, this, pdomBinding, caller);
+				final PDOMName result= new PDOMName(fLinkage, name, this, pdomBinding, caller, 
+						false /* exact match */);
 				linkage.onCreateName(this, name, result);
 				return result;
+			} else {
+				IBinding b = name.resolveBinding();
+				if (b instanceof IProblemBinding) {
+					IIndexFragmentName result = null;
+					for (IBinding candidate : ((IProblemBinding) b).getCandidateBindings()) {
+						pdomBinding = linkage.adaptBinding(candidate);
+						if (pdomBinding != null) {
+							final PDOMName pdomName = new PDOMName(fLinkage, name, this, pdomBinding, caller,
+									true /* potential match */);
+							linkage.onCreateName(this, name, pdomName);
+							if (result == null) {
+								result = pdomName;
+							}
+						}
+					}
+					return result;
+				}
 			}
 		} catch (CoreException e) {
 			final IStatus status = e.getStatus();

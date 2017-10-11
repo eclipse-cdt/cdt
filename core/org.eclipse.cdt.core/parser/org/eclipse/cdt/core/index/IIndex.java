@@ -65,6 +65,13 @@ public interface IIndex {
 	 */
 	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES= 0x8;
 	/**
+	 * Constant to include potential matches in the results of a search.
+	 * An example of a potential match might be a function definition that does match
+	 * a declaration exactly in signature.
+	 * @since 6.4
+	 */
+	final int FIND_POTENTIAL_MATCHES = 0x10;
+	/**
 	 * Constant to search for all declarations including definitions.
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
@@ -387,7 +394,8 @@ public interface IIndex {
 	 *
 	 * @param binding a binding for which names are searched for
 	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS},
-	 * {@link #FIND_REFERENCES} and {@link #SEARCH_ACROSS_LANGUAGE_BOUNDARIES}.
+	 * {@link #FIND_REFERENCES}, {@link #SEARCH_ACROSS_LANGUAGE_BOUNDARIES}, and 
+	 * {@link #FIND_POTENTIAL_MATCHES}.
 	 * @return an array of names
 	 * @throws CoreException
 	 */

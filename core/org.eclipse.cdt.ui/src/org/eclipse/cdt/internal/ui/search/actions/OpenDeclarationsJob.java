@@ -406,9 +406,15 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {
-		List<IASTName> declNames= new ArrayList<>();
-		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
-		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
+		// The priority of matches are as follows:
+		//  - If there are exact AST matches, those are returned.
+		//  - Otherwise, if there are exact index matches, those are returned.
+		//  - Otherwise, permissive matches from the AST and index, if any, are
+		//    combined and returned.
+		List<IASTName> exactAstMatches = new ArrayList<>();
+		List<IName> permissiveMatches = new ArrayList<>();
+		exactAstMatches.addAll(Arrays.asList(ast.getDefinitionsInAST(binding, /* permissive = */ true)));
+		for (Iterator<IASTName> i = exactAstMatches.iterator(); i.hasNext();) {
 			IASTName name= i.next();
 			final IBinding b2 = name.resolveBinding();
 			if (b2 instanceof ICPPUsingDeclaration) {
@@ -427,13 +433,36 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					i.remove();
 				}
 			}
+			if (b2 instanceof IProblemBinding) {
+				permissiveMatches.add(name);
+				i.remove();
+			}
 		}
-		if (!declNames.isEmpty()) {
-			return declNames.toArray(new IASTName[declNames.size()]);
+		if (!exactAstMatches.isEmpty()) {
+			return exactAstMatches.toArray(new IASTName[exactAstMatches.size()]);
 		}
 
-		// 2. Try definition in index.
-		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		// Try definition in index.
+		IName[] indexMatches = index.findNames(binding, IIndex.FIND_DEFINITIONS | 
+				IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES | IIndex.FIND_POTENTIAL_MATCHES);
+		List<IName> exactIndexMatches = new ArrayList<>();
+		exactIndexMatches.addAll(Arrays.asList(indexMatches));
+		for (Iterator<IName> i = exactIndexMatches.iterator(); i.hasNext();) {
+			IName name = i.next();
+			if (name instanceof IIndexName && ((IIndexName) name).isPotentialMatch()) {
+				permissiveMatches.add(name);
+				i.remove();
+			}
+		}
+		if (!exactIndexMatches.isEmpty()) {
+			return exactIndexMatches.toArray(new IName[exactIndexMatches.size()]);
+		}
+		
+		if (!permissiveMatches.isEmpty()) {
+			return permissiveMatches.toArray(new IName[permissiveMatches.size()]);
+		}
+		
+		return IName.EMPTY_ARRAY;
 	}
 
 	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {

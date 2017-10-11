@@ -67,11 +67,17 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 		return CVisitor.getDeclarations(this, binding);
 	}
 
-    @Override
+	@Override
 	public IASTName[] getDefinitionsInAST(IBinding binding) {
+		return getDefinitionsInAST(binding, false);
+	}
+	
+    @Override
+	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive) {
 		if (binding instanceof IMacroBinding) {
 			return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
+		// TODO: Implement support for permissive=true.
     	IASTName[] names = CVisitor.getDeclarations(this, binding);
     	for (int i = 0; i < names.length; i++) {
     		if (!names[i].isDefinition())

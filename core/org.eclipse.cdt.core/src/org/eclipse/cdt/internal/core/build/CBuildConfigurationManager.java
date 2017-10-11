@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -314,6 +315,11 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 
 	@Override
 	public boolean supports(IProject project) throws CoreException {
+		// Is this a CDT project?
+		if (!CoreModel.hasCNature(project)) {
+			return false;
+		}
+
 		initProviders();
 
 		// First see if we have a build config registered

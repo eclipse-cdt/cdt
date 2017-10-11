@@ -70,6 +70,14 @@ public interface IIndexName extends IName {
 	public boolean couldBePolymorphicMethodCall() throws CoreException;
 
 	/**
+	 * Returns whether this name is a potential match for its binding, rather than an exact match.
+	 * An example of a potential match might be a function definition that does match a
+	 * declaration exactly in signature.
+	 * @since 6.4
+	 */
+	public boolean isPotentialMatch() throws CoreException;
+	
+	/**
 	 * Returns whether this name specifies an inline namespace.
 	 * @since 5.3
 	 */

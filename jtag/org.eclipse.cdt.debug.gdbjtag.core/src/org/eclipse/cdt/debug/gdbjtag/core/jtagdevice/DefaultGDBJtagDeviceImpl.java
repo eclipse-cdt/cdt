@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 QNX Software Systems and others.
+ * Copyright (c) 2008, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     John Dallaway - Use GDB/MI for temporary breakpoint, bug 525726
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -130,7 +131,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	@Override
 	public void doStopAt(String stopAt, Collection<String> commands) {
-		String cmd = "tbreak " + stopAt; //$NON-NLS-1$
+		String cmd = "-break-insert -t -f " + stopAt; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 

@@ -26,7 +26,7 @@
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.java.source>1.8</sonar.java.source>
 		<target-platform>cdt</target-platform>
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7milestones</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
 

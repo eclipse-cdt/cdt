@@ -8,15 +8,20 @@
 package org.eclipse.cdt.cmake.core.internal;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.core.runtime.CoreException;
 
 public class CMakeToolChainFile implements ICMakeToolChainFile {
 
 	String n;
 	private final Path path;
+	private IToolChain toolchain;
 
 	final Map<String, String> properties = new HashMap<>();
 
@@ -38,6 +43,23 @@ public class CMakeToolChainFile implements ICMakeToolChainFile {
 	@Override
 	public void setProperty(String key, String value) {
 		properties.put(key, value);
+	}
+
+	@Override
+	public IToolChain getToolChain() throws CoreException {
+		if (toolchain == null) {
+			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
+			toolchain = tcManager.getToolChain(properties.get(CMakeBuildConfiguration.TOOLCHAIN_TYPE),
+					properties.get(CMakeBuildConfiguration.TOOLCHAIN_ID));
+
+			if (toolchain == null) {
+				Collection<IToolChain> tcs = tcManager.getToolChainsMatching(properties);
+				if (!tcs.isEmpty()) {
+					toolchain = tcs.iterator().next();
+				}
+			}
+		}
+		return toolchain;
 	}
 
 	boolean matches(Map<String, String> properties) {

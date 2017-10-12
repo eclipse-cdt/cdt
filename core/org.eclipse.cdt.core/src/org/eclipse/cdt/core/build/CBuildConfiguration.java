@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -96,9 +95,6 @@ import com.google.gson.JsonParseException;
 public abstract class CBuildConfiguration extends PlatformObject
 		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser {
 
-	private static final String TOOLCHAIN_TYPE = "cdt.toolChain.type"; //$NON-NLS-1$
-	private static final String TOOLCHAIN_ID = "cdt.toolChain.id"; //$NON-NLS-1$
-	private static final String TOOLCHAIN_VERSION = "cdt.toolChain.version"; //$NON-NLS-1$
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
 	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
@@ -111,8 +107,6 @@ public abstract class CBuildConfiguration extends PlatformObject
 	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
 	private ScannerInfoCache scannerInfoCache;
 
-	private Map<String, String> properties;
-
 	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		this.config = config;
 		this.name = name;
@@ -120,9 +114,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 		Preferences settings = getSettings();
 		String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
 		String id = settings.get(TOOLCHAIN_ID, ""); //$NON-NLS-1$
-		String version = settings.get(TOOLCHAIN_VERSION, ""); //$NON-NLS-1$
 		IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
-		IToolChain tc = toolChainManager.getToolChain(typeId, id, version);
+		IToolChain tc = toolChainManager.getToolChain(typeId, id);
 
 		if (tc == null) {
 			// check for other versions
@@ -132,7 +125,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 				tc = tcs.iterator().next();
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-						String.format(Messages.CBuildConfigurationtoolchainMissing, config.getName())));
+						CCorePlugin.STATUS_TOOLCHAIN_NOT_FOUND,
+						String.format(Messages.CBuildConfiguration_ToolchainMissing, config.getName()),
+						null));
 			}
 		}
 		toolChain = tc;
@@ -157,7 +152,6 @@ public abstract class CBuildConfiguration extends PlatformObject
 		Preferences settings = getSettings();
 		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
 		settings.put(TOOLCHAIN_ID, toolChain.getId());
-		settings.put(TOOLCHAIN_VERSION, toolChain.getVersion());
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
@@ -181,6 +175,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 	/**
 	 * @since 6.2
 	 */
+	@Override
 	public String getLaunchMode() {
 		return launchMode;
 	}
@@ -756,12 +751,11 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 */
 	@Override
 	public boolean setProperties(Map<String, String> properties) {
-		if (this.properties == null || !this.properties.equals(properties)) {
-			this.properties = properties;
-			return true;
-		} else {
-			return false;
+		Preferences settings = getSettings();
+		for (Entry<String, String> entry : properties.entrySet()) {
+			settings.put(entry.getKey(), entry.getValue());
 		}
+		return true;
 	}
 
 	/**
@@ -769,10 +763,42 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 */
 	@Override
 	public Map<String, String> getProperties() {
-		if (properties == null) {
-			properties = getDefaultProperties();
+		Map<String, String> properties = new HashMap<>();
+		Preferences settings = getSettings();
+		try {
+			for (String key : settings.childrenNames()) {
+				String value = settings.get(key, null);
+				if (value != null) {
+					properties.put(key, value);
+				}
+			}
+		} catch (BackingStoreException e) {
+			CCorePlugin.log(e);
 		}
-		return Collections.unmodifiableMap(properties);
+		return properties;
+	}
+
+	/**
+	 * @since 6.4
+	 */
+	@Override
+	public String getProperty(String name) {
+		return getSettings().get(name, null);
+	}
+
+	/**
+	 * @since 6.4
+	 */
+	@Override
+	public void setProperty(String name, String value) {
+		Preferences settings = getSettings();
+		settings.put(name, value);
+	}
+
+	@Override
+	public void removeProperty(String name) {
+		Preferences settings = getSettings();
+		settings.remove(name);
 	}
 
 	/**

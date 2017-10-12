@@ -189,7 +189,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 	@Override
 	public String[] getQmakeConfig() {
-		String qmakeArgs = getProperties().get(QMAKE_ARGS);
+		String qmakeArgs = getProperty(QMAKE_ARGS);
 		if (qmakeArgs != null) {
 			return qmakeArgs.split(" "); //$NON-NLS-1$
 		}
@@ -447,7 +447,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	}
 
 	public String[] getMakeCommand() {
-		String buildCommandStr = getProperties().get(BUILD_COMMAND);
+		String buildCommandStr = getProperty(BUILD_COMMAND);
 		if (buildCommandStr != null) {
 			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$ 
 			Path command = findCommand(buildCommand[0]);

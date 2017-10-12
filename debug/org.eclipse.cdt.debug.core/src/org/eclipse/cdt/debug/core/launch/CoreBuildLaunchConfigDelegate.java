@@ -44,6 +44,11 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		return configuration.getMappedResources()[0].getProject();
 	}
 
+	/**
+	 * @deprecated Use the version that takes the launch config so we can see if it
+	 *             know what toolchain to use.
+	 */
+	@Deprecated
 	protected ICBuildConfiguration getBuildConfiguration(IProject project, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
 		// Pick build config based on toolchain for target
@@ -58,6 +63,32 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		}
 	}
 
+	/**
+	 * @since 8.3
+	 */
+	protected ICBuildConfiguration getBuildConfiguration(ILaunchConfiguration configuration, String mode,
+			ILaunchTarget target, IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject(configuration);
+		String toolchainId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_ID, (String) null);
+		if (toolchainId != null) {
+			String providerId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
+			IToolChain toolchain = toolChainManager.getToolChain(providerId, toolchainId);
+			if (toolchain != null) {
+				return configManager.getBuildConfiguration(project, toolchain, mode, monitor);
+			}
+		}
+
+		// Pick the first one that matches
+		Map<String, String> properties = new HashMap<>();
+		properties.putAll(target.getAttributes());
+		Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
+		if (!tcs.isEmpty()) {
+			IToolChain toolChain = tcs.iterator().next();
+			return configManager.getBuildConfiguration(project, toolChain, mode, monitor);
+		}
+
+		return null;
+	}
 	protected IBinary getBinary(ICBuildConfiguration buildConfig) throws CoreException {
 		IBinary[] binaries = buildConfig.getBuildOutput();
 		IBinary exeFile = null;
@@ -81,6 +112,10 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		return new IProject[] { project };
 	}
 
+	/**
+	 * @deprecated Store build properties right on the build configs
+	 */
+	@Deprecated
 	public static String getBuildAttributeName(String mode) {
 		return "COREBUILD_" + mode; //$NON-NLS-1$
 	}
@@ -88,16 +123,12 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
-		IProject project = getProject(configuration);
-		ICBuildConfiguration buildConfig = getBuildConfiguration(project, mode, target, monitor);
+		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 		if (buildConfig != null) {
+			IProject project = getProject(configuration);
 			IProjectDescription desc = project.getDescription();
 			desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 			project.setDescription(desc, monitor);
-
-			Map<String, String> buildProps = configuration.getAttribute(getBuildAttributeName(mode),
-					buildConfig.getDefaultProperties());
-			buildConfig.setProperties(buildProps);
 		}
 
 		// proceed with the build

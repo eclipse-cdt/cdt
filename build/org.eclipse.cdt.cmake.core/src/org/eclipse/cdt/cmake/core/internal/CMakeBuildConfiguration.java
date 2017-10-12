@@ -90,8 +90,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		IProject project = getProject();
 		try {
-			Map<String, String> properties = getProperties();
-			String generator = properties.get(CMAKE_GENERATOR);
+			String generator = getProperty(CMAKE_GENERATOR);
 			if (generator == null) {
 				generator = "Ninja"; //$NON-NLS-1$
 			}
@@ -131,7 +130,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
 				
-				String userArgs = properties.get(CMAKE_ARGUMENTS);
+				String userArgs = getProperty(CMAKE_ARGUMENTS);
 				if (userArgs != null) {
 					command.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
 				}
@@ -147,7 +146,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
-				String buildCommand = properties.get(BUILD_COMMAND);
+				String buildCommand = getProperty(BUILD_COMMAND);
 				if (buildCommand == null) {
 					if (generator.equals("Ninja")) { //$NON-NLS-1$
 						buildCommand = "ninja"; //$NON-NLS-1$
@@ -184,8 +183,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
-			Map<String, String> properties = getProperties();
-			String generator = properties.get(CMAKE_GENERATOR);
+			String generator = getProperty(CMAKE_GENERATOR);
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
@@ -198,7 +196,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				return;
 			}
 
-			String cleanCommand = properties.get(CLEAN_COMMAND);
+			String cleanCommand = getProperty(CLEAN_COMMAND);
 			if (cleanCommand == null) {
 				if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
 					cleanCommand = "ninja clean"; //$NON-NLS-1$

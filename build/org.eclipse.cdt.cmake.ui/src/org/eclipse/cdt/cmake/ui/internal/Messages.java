@@ -17,7 +17,17 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_CMakeArgs;
 	public static String CMakeBuildTab_Generator;
 	public static String CMakeBuildTab_Ninja;
+	public static String CMakeBuildTab_NoneAvailable;
+	public static String CMakeBuildTab_Settings;
+	public static String CMakeBuildTab_Toolchain;
 	public static String CMakeBuildTab_UnixMakefiles;
+	public static String CMakePreferencePage_Add;
+	public static String CMakePreferencePage_ConfirmRemoveDesc;
+	public static String CMakePreferencePage_ConfirmRemoveTitle;
+	public static String CMakePreferencePage_Files;
+	public static String CMakePreferencePage_Path;
+	public static String CMakePreferencePage_Remove;
+	public static String CMakePreferencePage_Toolchain;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Body;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Title;
 	public static String CMakePropertyPage_LaunchCMakeGui;
@@ -25,6 +35,13 @@ public class Messages extends NLS {
 	public static String NewCMakeProjectWizard_Description;
 	public static String NewCMakeProjectWizard_PageTitle;
 	public static String NewCMakeProjectWizard_WindowTitle;
+
+	public static String NewCMakeToolChainFilePage_Browse;
+	public static String NewCMakeToolChainFilePage_NoPath;
+	public static String NewCMakeToolChainFilePage_Path;
+	public static String NewCMakeToolChainFilePage_Select;
+	public static String NewCMakeToolChainFilePage_Title;
+	public static String NewCMakeToolChainFilePage_Toolchain;
 
 	static {
 		// initialize resource bundle

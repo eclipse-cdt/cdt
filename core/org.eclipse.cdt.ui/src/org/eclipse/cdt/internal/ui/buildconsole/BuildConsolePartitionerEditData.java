@@ -55,6 +55,12 @@ public class BuildConsolePartitionerEditData {
 		 * All the streams that have been written to since the last update.
 		 */
 		List<IBuildConsoleStreamDecorator> getStreamsNeedingNotifcation();
+		
+		/**
+		 * True if partitions with problem markers have been added since the last
+		 * update.
+		 */
+		boolean hasProblemsAdded();
 	}
 
 	/**
@@ -95,6 +101,12 @@ public class BuildConsolePartitionerEditData {
 	 * Set of streams that have been updated since the last UI update.
 	 */
 	private Set<IBuildConsoleStreamDecorator> fEditStreams = new HashSet<>();
+	
+	/**
+	 * True if partitions with problem markers have been added since the last UI
+	 * update.
+	 */
+	private boolean fEditProblemsAdded = false;
 
 
 	public BuildConsolePartitionerEditData(int maxLines) {
@@ -150,6 +162,9 @@ public class BuildConsolePartitionerEditData {
 					partitionType = BuildConsolePartition.WARNING_PARTITION_TYPE;
 				} else {
 					partitionType = BuildConsolePartition.ERROR_PARTITION_TYPE;
+				}
+				if (marker != null) {
+					fEditProblemsAdded = true;
 				}
 				if (fEditPartitions.isEmpty()) {
 					fEditPartitions.add(new BuildConsolePartition(stream, fEditStringBuilder.length(),
@@ -300,6 +315,7 @@ public class BuildConsolePartitionerEditData {
 	 */
 	public UpdateUIData getUpdate() {
 		boolean clearDocumentMarkerManager;
+		boolean problemsAdded;
 		long newOffset;
 		String newConents;
 		List<ITypedRegion> newPartitions;
@@ -313,6 +329,8 @@ public class BuildConsolePartitionerEditData {
 			fClearDocumentMarkerManager = false;
 			streamsNeedingNotifcation = new ArrayList<>(fEditStreams);
 			fEditStreams.clear();
+			problemsAdded = fEditProblemsAdded;
+			fEditProblemsAdded = false;
 		}
 
 		return new UpdateUIData() {
@@ -340,6 +358,11 @@ public class BuildConsolePartitionerEditData {
 			@Override
 			public long getOffset() {
 				return newOffset;
+			}
+			
+			@Override
+			public boolean hasProblemsAdded() {
+				return problemsAdded;
 			}
 		};
 	}

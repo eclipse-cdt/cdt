@@ -24,6 +24,7 @@ import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainListener;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainProvider;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -179,6 +180,19 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 			}
 		}
 		return matches;
+	}
+
+	@Override
+	public ICMakeToolChainFile getToolChainFileFor(IToolChain toolchain) {
+		String id = toolchain.getId();
+
+		for (ICMakeToolChainFile file : getToolChainFiles()) {
+			if (id.equals(file.getProperty(CMakeBuildConfiguration.TOOLCHAIN_ID))) {
+				return file;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

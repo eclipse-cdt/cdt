@@ -35,6 +35,7 @@ public interface IToolChainManager {
 	/**
 	 * Return the toolchain from the given provider with the given id and version.
 	 * 
+	 * @deprecated Version is now irrelevant. id's are unique.
 	 * @param providerId
 	 *            id of provider
 	 * @param id
@@ -44,7 +45,23 @@ public interface IToolChainManager {
 	 * @return the toolchain
 	 * @throws CoreException
 	 */
-	IToolChain getToolChain(String providerId, String id, String version) throws CoreException;
+	@Deprecated
+	default IToolChain getToolChain(String providerId, String id, String version) throws CoreException {
+		return getToolChain(providerId, id);
+	}
+
+	/**
+	 * Return the toolChain from the given provider with the given id.
+	 * 
+	 * @param providerId
+	 *            id of provider
+	 * @param id
+	 *            id of toolchain
+	 * @return the toolchain
+	 * @throws CoreException
+	 * @since 6.4
+	 */
+	IToolChain getToolChain(String providerId, String id) throws CoreException;
 	
 	/**
 	 * Return the toolchains provided by the given provider

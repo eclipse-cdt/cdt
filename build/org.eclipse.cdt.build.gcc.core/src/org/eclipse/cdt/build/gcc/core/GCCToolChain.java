@@ -103,7 +103,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			idBuilder.append(arch);
 		}
 		idBuilder.append('-');
-		idBuilder.append(pathToToolChain.toString());
+		idBuilder.append(pathToToolChain.toString().replaceAll("\\\\", "/")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.id = idBuilder.toString();
 
 		properties.put(ATTR_ARCH, arch);

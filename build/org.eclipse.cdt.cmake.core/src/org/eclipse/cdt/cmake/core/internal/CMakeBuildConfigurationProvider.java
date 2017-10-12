@@ -73,18 +73,6 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 	@Override
 	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
 			IProgressMonitor monitor) throws CoreException {
-		// See if there is one already
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-			if (cconfig != null) {
-				CMakeBuildConfiguration cmakeConfig = cconfig.getAdapter(CMakeBuildConfiguration.class);
-				if (cmakeConfig != null && cmakeConfig.getToolChain().equals(toolChain)
-						&& launchMode.equals(cmakeConfig.getLaunchMode())) {
-					return cconfig;
-				}
-			}
-		}
-
 		// get matching toolchain file if any
 		Map<String, String> properties = new HashMap<>();
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
@@ -108,13 +96,13 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			configName.append('.');
 			configName.append(os);
 		}
-		if (arch != null) {
+		if (arch != null && !arch.isEmpty()) {
 			configName.append('.');
 			configName.append(arch);
 		}
 		String name = configName.toString();
 		int i = 0;
-		while (project.hasBuildConfig(name)) {
+		while (configManager.hasConfiguration(this, project, name)) {
 			name = configName.toString() + '.' + (++i);
 		}
 

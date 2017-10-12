@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -51,6 +53,17 @@ public interface ICBuildConfigurationProvider {
 	default ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain,
 			String launchMode, IProgressMonitor monitor) throws CoreException {
 		return null;
+	}
+
+	/**
+	 * Return a collection of supported toolchains for build configurations of this
+	 * type.
+	 * 
+	 * @since 6.4
+	 */
+	default Collection<IToolChain> getSupportedToolchains(Collection<IToolChain> toolchains)
+			throws CoreException {
+		return toolchains;
 	}
 
 }

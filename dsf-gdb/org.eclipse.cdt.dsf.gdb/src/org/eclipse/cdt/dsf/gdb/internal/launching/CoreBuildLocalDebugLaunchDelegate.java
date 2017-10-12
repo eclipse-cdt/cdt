@@ -30,7 +30,6 @@ import org.eclipse.cdt.dsf.gdb.launching.ServicesLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -67,8 +66,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 			throws CoreException {
 		GdbLaunch gdbLaunch = (GdbLaunch) launch;
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-		IProject project = getProject(configuration);
-		ICBuildConfiguration buildConfig = getBuildConfiguration(project, mode, target, monitor);
+		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 
 		Map<String, String> buildEnv = new HashMap<>();
 		buildConfig.setBuildEnvironment(buildEnv);

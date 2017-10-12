@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -86,7 +87,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 
 		// Pick build config based on toolchain for target
 		// Since this may create a new config, need to run it in a Job
-		Job job = new Job("Change Build Configurations") {
+		Job job = new Job(InternalDebugCoreMessages.CoreBuildLaunchBarTracker_Job) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -102,14 +103,6 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 							IProjectDescription desc = finalProject.getDescription();
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);
-
-							// Copy over the build attributes from the launch config
-							ILaunchConfiguration configuration = launchBarManager.getLaunchConfiguration(descriptor,
-									target);
-							Map<String, String> buildProps = configuration.getAttribute(
-									CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode.getIdentifier()),
-									buildConfig.getDefaultProperties());
-							buildConfig.setProperties(buildProps);
 						}
 					}
 

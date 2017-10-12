@@ -40,6 +40,9 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 			File dir = new File(dirStr);
 			if (dir.isDirectory()) {
 				for (File file : dir.listFiles()) {
+					if (file.isDirectory()) {
+						continue;
+					}
 					Matcher matcher = gccPattern.matcher(file.getName());
 					if (matcher.matches()) {
 						try {

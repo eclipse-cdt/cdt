@@ -9,6 +9,15 @@ package org.eclipse.cdt.cmake.core;
 
 import java.nio.file.Path;
 
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.core.runtime.CoreException;
+
+/**
+ * A toolchain file.
+ *
+ * @noimplement
+ * @noextend
+ */
 public interface ICMakeToolChainFile {
 
 	Path getPath();
@@ -16,5 +25,7 @@ public interface ICMakeToolChainFile {
 	String getProperty(String key);
 
 	void setProperty(String key, String value);
+
+	IToolChain getToolChain() throws CoreException;
 
 }

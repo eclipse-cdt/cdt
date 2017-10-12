@@ -108,9 +108,11 @@ import com.ibm.icu.text.MessageFormat;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CCorePlugin extends Plugin {
+	// IStatus codes for our plug-in
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
+
 	/**
 	 * Status code for core exception that is thrown if a pdom grew larger than
 	 * the supported limit.
@@ -118,6 +120,13 @@ public class CCorePlugin extends Plugin {
 	 * @since 5.2
 	 */
 	public static final int STATUS_PDOM_TOO_LARGE = 4;
+
+	/**
+	 * Toolchain not found when inflating a build configuration.
+	 * 
+	 * @since 6.4
+	 */
+	public static final int STATUS_TOOLCHAIN_NOT_FOUND = 5;
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -59,7 +60,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 
 		Group filesGroup = new Group(control, SWT.NONE);
 		filesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		filesGroup.setText("ToolChain Files");
+		filesGroup.setText(Messages.CMakePreferencePage_Files);
 		filesGroup.setLayout(new GridLayout(2, false));
 
 		Composite filesComp = new Composite(filesGroup, SWT.NONE);
@@ -75,18 +76,14 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		});
 
 		TableColumn pathColumn = new TableColumn(filesTable, SWT.NONE);
-		pathColumn.setText("ToolChain File");
+		pathColumn.setText(Messages.CMakePreferencePage_Path);
 
-		TableColumn osColumn = new TableColumn(filesTable, SWT.NONE);
-		osColumn.setText("OS");
-
-		TableColumn archColumn = new TableColumn(filesTable, SWT.NONE);
-		archColumn.setText("CPU");
+		TableColumn tcColumn = new TableColumn(filesTable, SWT.NONE);
+		tcColumn.setText(Messages.CMakePreferencePage_Toolchain);
 
 		TableColumnLayout tableLayout = new TableColumnLayout();
-		tableLayout.setColumnData(pathColumn, new ColumnWeightData(75, 350, true));
-		tableLayout.setColumnData(osColumn, new ColumnWeightData(25, 100, true));
-		tableLayout.setColumnData(archColumn, new ColumnWeightData(25, 100, true));
+		tableLayout.setColumnData(pathColumn, new ColumnWeightData(50, 350, true));
+		tableLayout.setColumnData(tcColumn, new ColumnWeightData(50, 350, true));
 		filesComp.setLayout(tableLayout);
 
 		Composite buttonsComp = new Composite(filesGroup, SWT.NONE);
@@ -95,11 +92,11 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 
 		Button addButton = new Button(buttonsComp, SWT.PUSH);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		addButton.setText("Add...");
+		addButton.setText(Messages.CMakePreferencePage_Add);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				NewCMakeToolChainFileWizard wizard = new NewCMakeToolChainFileWizard(getFiles());
+				NewCMakeToolChainFileWizard wizard = new NewCMakeToolChainFileWizard();
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					ICMakeToolChainFile file = wizard.getNewFile();
@@ -115,11 +112,11 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 
 		removeButton = new Button(buttonsComp, SWT.PUSH);
 		removeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		removeButton.setText("Remove");
+		removeButton.setText(Messages.CMakePreferencePage_Remove);
 		removeButton.setEnabled(false);
 		removeButton.addListener(SWT.Selection, e -> {
-			if (MessageDialog.openConfirm(getShell(), "Deregister CMake ToolChain File",
-					"Do you wish to deregister the selected files?")) {
+			if (MessageDialog.openConfirm(getShell(), Messages.CMakePreferencePage_ConfirmRemoveTitle,
+					Messages.CMakePreferencePage_ConfirmRemoveDesc)) {
 				for (TableItem item : filesTable.getSelection()) {
 					ICMakeToolChainFile file = (ICMakeToolChainFile) item.getData();
 					if (filesToAdd.containsKey(file.getPath())) {
@@ -145,14 +142,16 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		for (ICMakeToolChainFile file : sorted) {
 			TableItem item = new TableItem(filesTable, SWT.NONE);
 			item.setText(0, file.getPath().toString());
-			String os = file.getProperty(IToolChain.ATTR_OS);
-			if (os != null) {
-				item.setText(1, os);
+
+			try {
+				IToolChain tc = file.getToolChain();
+				if (tc != null) {
+					item.setText(1, tc.getName());
+				}
+			} catch (CoreException e) {
+				Activator.log(e.getStatus());
 			}
-			String arch = file.getProperty(IToolChain.ATTR_ARCH);
-			if (arch != null) {
-				item.setText(2, arch);
-			}
+
 			item.setData(file);
 		}
 	}

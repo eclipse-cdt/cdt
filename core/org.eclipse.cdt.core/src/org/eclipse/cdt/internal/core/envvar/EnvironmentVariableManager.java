@@ -446,18 +446,22 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	@Override
 	public void setEnvironment(Map<String, String> env, IBuildConfiguration config, boolean resolveMacros) {
 		for (IEnvironmentVariable var : getVariables(config, resolveMacros)) {
+			String name = var.getName();
+			if ("PATH".equals(name) && env.containsKey("Path")) { //$NON-NLS-1$ //$NON-NLS-2$
+				name = "Path"; //$NON-NLS-1$
+			}
 			switch (var.getOperation()) {
 			case IEnvironmentVariable.ENVVAR_REPLACE:
-				env.put(var.getName(), var.getValue());
+				env.put(name, var.getValue());
 				break;
 			case IEnvironmentVariable.ENVVAR_APPEND:
-				env.put(var.getName(), env.get(var.getName()) + var.getDelimiter() + var.getValue());
+				env.put(name, env.get(name) + var.getDelimiter() + var.getValue());
 				break;
 			case IEnvironmentVariable.ENVVAR_PREPEND:
-				env.put(var.getName(), var.getValue() + var.getDelimiter() + env.get(var.getName()));
+				env.put(name, var.getValue() + var.getDelimiter() + env.get(name));
 				break;
 			case IEnvironmentVariable.ENVVAR_REMOVE:
-				env.remove(var.getName());
+				env.remove(name);
 				break;
 			}
 		}

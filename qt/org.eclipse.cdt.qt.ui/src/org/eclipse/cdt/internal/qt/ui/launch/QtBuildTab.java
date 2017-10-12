@@ -8,12 +8,10 @@
 package org.eclipse.cdt.internal.qt.ui.launch;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration;
 import org.eclipse.cdt.internal.qt.ui.Activator;
 import org.eclipse.cdt.internal.qt.ui.Messages;
@@ -34,9 +32,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class QtBuildTab extends CommonBuildTab {
 
-	Combo qmakeCombo;
-	Text qmakeArgsText;
-	Text buildCmdText;
+	private Combo qmakeCombo;
+	private Text qmakeArgsText;
+	private Text buildCmdText;
 
 	@Override
 	public void createControl(Composite parent) {
@@ -64,38 +62,15 @@ public class QtBuildTab extends CommonBuildTab {
 	}
 
 	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		try {
-			String mode = getLaunchConfigurationDialog().getMode();
-			configuration.setAttribute(CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode),
-					getBuildConfiguration(configuration).getDefaultProperties());
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
-	}
-
-	private Map<String, String> getProperties(ILaunchConfiguration configuration) throws CoreException {
-		String mode = getLaunchConfigurationDialog().getMode();
-		Map<String, String> properties = configuration
-				.getAttribute(CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode), new HashMap<>());
-		if (properties.isEmpty()) {
-			properties = getBuildConfiguration(configuration).getProperties();
-		}
-
-		return properties;
-	}
-
-	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			Map<String, String> properties = getProperties(configuration);
-
+			ICBuildConfiguration buildConfig = getBuildConfiguration();
 			// qmake command
 			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 			IQtInstallManager qtManager = Activator.getService(IQtInstallManager.class);
 			ILaunchTarget target = getLaunchTarget();
 
-			String qmakeCmd = properties.get(QtBuildConfiguration.QMAKE_COMMAND);
+			String qmakeCmd = buildConfig.getProperty(QtBuildConfiguration.QMAKE_COMMAND);
 			qmakeCombo.removeAll();
 			Collection<IToolChain> toolChains = tcManager.getToolChainsMatching(target.getAttributes());
 			int select = -1;
@@ -116,13 +91,13 @@ public class QtBuildTab extends CommonBuildTab {
 			}
 
 			// qmake args
-			String qmakeArgs = properties.get(QtBuildConfiguration.QMAKE_ARGS);
+			String qmakeArgs = buildConfig.getProperty(QtBuildConfiguration.QMAKE_ARGS);
 			if (qmakeArgs != null) {
 				qmakeArgsText.setText(qmakeArgs);
 			}
 
 			// build command
-			String buildCommand = properties.get(QtBuildConfiguration.BUILD_COMMAND);
+			String buildCommand = buildConfig.getProperty(QtBuildConfiguration.BUILD_COMMAND);
 			if (buildCommand != null) {
 				buildCmdText.setText(buildCommand);
 			}
@@ -132,17 +107,29 @@ public class QtBuildTab extends CommonBuildTab {
 	}
 
 	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		try {
-			Map<String, String> properties = new HashMap<>(getProperties(configuration));
-			properties.put(QtBuildConfiguration.QMAKE_COMMAND, qmakeCombo.getItem(qmakeCombo.getSelectionIndex()));
-			properties.put(QtBuildConfiguration.QMAKE_ARGS, qmakeArgsText.getText().trim());
-			properties.put(QtBuildConfiguration.BUILD_COMMAND, buildCmdText.getText().trim());
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		buildConfig.removeProperty(QtBuildConfiguration.QMAKE_ARGS);
+		buildConfig.removeProperty(QtBuildConfiguration.BUILD_COMMAND);
+	}
 
-			String mode = getLaunchBarLaunchConfigDialog().getMode();
-			configuration.setAttribute(CoreBuildLaunchConfigDelegate.getBuildAttributeName(mode), properties);
-		} catch (CoreException e) {
-			Activator.log(e);
+	@Override
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		buildConfig.setProperty(QtBuildConfiguration.QMAKE_COMMAND, qmakeCombo.getItem(qmakeCombo.getSelectionIndex()));
+
+		String qmakeArgs = qmakeArgsText.getText().trim();
+		if (qmakeArgs.isEmpty()) {
+			buildConfig.removeProperty(QtBuildConfiguration.QMAKE_ARGS);
+		} else {
+			buildConfig.setProperty(QtBuildConfiguration.QMAKE_ARGS, qmakeArgs);
+		}
+
+		String buildCmd = buildCmdText.getText().trim();
+		if (buildCmd.isEmpty()) {
+			buildConfig.removeProperty(QtBuildConfiguration.BUILD_COMMAND);
+		} else {
+			buildConfig.setProperty(QtBuildConfiguration.BUILD_COMMAND, buildCmd);
 		}
 	}
 

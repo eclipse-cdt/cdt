@@ -7,18 +7,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.ui.internal;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -26,14 +28,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewCMakeToolChainFilePage extends WizardPage {
 
-	private final Map<Path, ICMakeToolChainFile> existing;
 	private Text pathText;
-	private Text osText;
-	private Text archText;
+	private Combo tcCombo;
 
-	public NewCMakeToolChainFilePage(Map<Path, ICMakeToolChainFile> existing) {
-		super("NewCMakeToolChainFilePage", "New CMake ToolChain File", null); //$NON-NLS-1$
-		this.existing = existing;
+	private IToolChain[] toolchains;
+
+	public NewCMakeToolChainFilePage() {
+		super("NewCMakeToolChainFilePage", Messages.NewCMakeToolChainFilePage_Title, null); //$NON-NLS-1$
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 
 		Label pathLabel = new Label(comp, SWT.NONE);
 		pathLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		pathLabel.setText("Path:");
+		pathLabel.setText(Messages.NewCMakeToolChainFilePage_Path);
 
 		Composite pathComp = new Composite(comp, SWT.NONE);
 		pathComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -58,31 +59,33 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 
 		Button pathButton = new Button(pathComp, SWT.PUSH);
 		pathButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		pathButton.setText("Browse...");
+		pathButton.setText(Messages.NewCMakeToolChainFilePage_Browse);
 		pathButton.addListener(SWT.Selection, e -> {
 			FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-			dialog.setText("Select location for CMake toolchain file");
+			dialog.setText(Messages.NewCMakeToolChainFilePage_Select);
 			String path = dialog.open();
 			if (path != null) {
 				pathText.setText(path);
 			}
 		});
 
-		Label osLabel = new Label(comp, SWT.NONE);
-		osLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		osLabel.setText("Target OS:");
+		Label tcLabel = new Label(comp, SWT.NONE);
+		tcLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		tcLabel.setText(Messages.NewCMakeToolChainFilePage_Toolchain);
 
-		osText = new Text(comp, SWT.BORDER);
-		osText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		osText.addModifyListener(e -> validate());
-
-		Label archLabel = new Label(comp, SWT.NONE);
-		archLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		archLabel.setText("Target CPU:");
-
-		archText = new Text(comp, SWT.BORDER);
-		archText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		archText.addModifyListener(e -> validate());
+		tcCombo = new Combo(comp, SWT.READ_ONLY);
+		tcCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		try {
+			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
+			toolchains = tcManager.getAllToolChains().toArray(new IToolChain[0]);
+			for (IToolChain tc : toolchains) {
+				tcCombo.add(tc.getName());
+			}
+			tcCombo.select(0);
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
 
 		setControl(comp);
 		validate();
@@ -93,17 +96,7 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 
 		String path = pathText.getText();
 		if (path.isEmpty()) {
-			setErrorMessage("Please set the path to the CMake toolchain file.");
-			return;
-		}
-
-		if (existing.containsKey(Paths.get(path))) {
-			setErrorMessage("CMake toolchain file entry already exists.");
-			return;
-		}
-
-		if (osText.getText().isEmpty()) {
-			setErrorMessage("Please set the target operating system.");
+			setErrorMessage(Messages.NewCMakeToolChainFilePage_NoPath);
 			return;
 		}
 
@@ -115,15 +108,9 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 		ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 		ICMakeToolChainFile file = manager.newToolChainFile(Paths.get(pathText.getText()));
 
-		String os = osText.getText();
-		if (!os.isEmpty()) {
-			file.setProperty(IToolChain.ATTR_OS, os);
-		}
-
-		String arch = archText.getText();
-		if (!arch.isEmpty()) {
-			file.setProperty(IToolChain.ATTR_ARCH, arch);
-		}
+		IToolChain tc = toolchains[tcCombo.getSelectionIndex()];
+		file.setProperty(CMakeBuildConfiguration.TOOLCHAIN_TYPE, tc.getProvider().getId());
+		file.setProperty(CMakeBuildConfiguration.TOOLCHAIN_ID, tc.getId());
 
 		return file;
 	}

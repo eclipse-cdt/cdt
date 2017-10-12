@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.ui.internal;
 
-import java.nio.file.Path;
-import java.util.Map;
-
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -18,12 +15,9 @@ public class NewCMakeToolChainFileWizard extends Wizard {
 	private ICMakeToolChainFile newFile;
 	private NewCMakeToolChainFilePage page;
 
-	public NewCMakeToolChainFileWizard(Map<Path, ICMakeToolChainFile> existing) {
-		page = new NewCMakeToolChainFilePage(existing);
-	}
-
 	@Override
 	public void addPages() {
+		page = new NewCMakeToolChainFilePage();
 		addPage(page);
 	}
 

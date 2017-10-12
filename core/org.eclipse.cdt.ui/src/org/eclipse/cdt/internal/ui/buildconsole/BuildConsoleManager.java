@@ -132,14 +132,15 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				listener.consoleChange(event);
 			}
 		}
-		showConsole();
+		showConsole(true);
 	}
 
 	/**
 	 * Opens the console view. If the view is already open, it is brought to the
-	 * front. The console that is shown is the console that was last on top.
+	 * front if requested and the respective user preference is set. The console
+	 * that is shown is the console that was last on top.
 	 */
-	protected void showConsole() {
+	protected void showConsole(boolean bringToTop) {
 		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -155,11 +156,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 					//restore focus stolen by the creation of the
 					// console
 					page.activate(activePart);
-				} else {
-					boolean bringToTop = shouldBringToTop(consoleView);
-					if (bringToTop) {
-						page.bringToTop(consoleView);
-					}
+				}
+				if (bringToTop && shouldBringToTop(consoleView)) {
+					page.bringToTop(consoleView);
 				}
 				if (consoleView instanceof IConsoleView) {
 					if (BuildConsole.getCurrentPage() == null)

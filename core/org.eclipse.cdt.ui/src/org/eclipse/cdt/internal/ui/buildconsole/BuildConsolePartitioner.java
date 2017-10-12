@@ -242,6 +242,7 @@ public class BuildConsolePartitioner
 
 		// notify all streams with data we are about to update
 		update.getStreamsNeedingNotifcation().forEach(this::warnOfContentChange);
+		fManager.showConsole(update.hasProblemsAdded());
 
 		/*
 		 * The order of these statements matters, the setting the contents of
@@ -306,7 +307,6 @@ public class BuildConsolePartitioner
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
 		}
-		fManager.showConsole();
 	}
 
 	public IDocument getDocument() {

@@ -68,7 +68,6 @@ public class ToolChainManager implements IToolChainManager {
 		List<String> id = new ArrayList<>(3);
 		id.add(toolChain.getProvider().getId());
 		id.add(toolChain.getId());
-		id.add(toolChain.getVersion());
 		return id;
 	}
 
@@ -101,12 +100,11 @@ public class ToolChainManager implements IToolChainManager {
 	}
 
 	@Override
-	public IToolChain getToolChain(String providerId, String id, String version) throws CoreException {
+	public IToolChain getToolChain(String providerId, String id) throws CoreException {
 		init();
 		List<String> tid = new ArrayList<>(3);
 		tid.add(providerId);
 		tid.add(id);
-		tid.add(version);
 
 		IToolChain toolChain = toolChains.get(tid);
 		if (toolChain != null) {
@@ -116,7 +114,7 @@ public class ToolChainManager implements IToolChainManager {
 		// Try the provider
 		IToolChainProvider realProvider = providers.get(providerId);
 		if (realProvider != null) {
-			toolChain = realProvider.getToolChain(id, version);
+			toolChain = realProvider.getToolChain(id);
 			if (toolChain != null) {
 				toolChains.put(getId(toolChain), toolChain);
 				return toolChain;

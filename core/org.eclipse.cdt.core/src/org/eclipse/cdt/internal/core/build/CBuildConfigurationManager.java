@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -142,6 +143,13 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	}
 
 	@Override
+	public boolean hasConfiguration(ICBuildConfigurationProvider provider, IProject project,
+			String configName) throws CoreException {
+		String name = provider.getId() + '/' + configName;
+		return project.hasBuildConfig(name);
+	}
+
+	@Override
 	public IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider,
 			IProject project, String configName, IProgressMonitor monitor) throws CoreException {
 		String name = provider.getId() + '/' + configName;
@@ -196,7 +204,15 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 					}
 
 					if (provider != null) {
-						config = provider.getCBuildConfiguration(buildConfig, configName);
+						try {
+							config = provider.getCBuildConfiguration(buildConfig, configName);
+						} catch (CoreException e) {
+							IStatus status = e.getStatus();
+							if (!status.getPlugin().equals(CCorePlugin.PLUGIN_ID)
+									|| status.getCode() != CCorePlugin.STATUS_TOOLCHAIN_NOT_FOUND) {
+								throw e;
+							}
+						}
 						if (config != null) {
 							configs.put(buildConfig, config);
 							// Also make sure we reset the binary parser cache
@@ -224,8 +240,19 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain,
 			String launchMode, IProgressMonitor monitor) throws CoreException {
+		// First see if we have one
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			ICBuildConfiguration cconfig = getBuildConfiguration(config);
+			if (cconfig != null && cconfig.getToolChain().equals(toolChain)
+					&& launchMode.equals(cconfig.getLaunchMode())) {
+				return cconfig;
+			}
+		}
+
+		// Nope, ask the provider to create one
 		ICBuildConfigurationProvider provider = getProvider(project);
 		if (provider != null) {
+			// The provider will call us back to add in the new one
 			return provider.createBuildConfiguration(project, toolChain, launchMode, monitor);
 		} else {
 			return null;

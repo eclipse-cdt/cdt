@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,10 +30,8 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelega
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
-		IProject project = getProject(configuration);
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-
-		ICBuildConfiguration buildConfig = getBuildConfiguration(project, mode, target, monitor);
+		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 		IBinary exeFile = getBinary(buildConfig);
 
 		try {

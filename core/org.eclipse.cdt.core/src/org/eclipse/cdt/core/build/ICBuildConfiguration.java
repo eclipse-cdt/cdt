@@ -34,11 +34,21 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * CDT doesn't like that the Platform default config name is an empty string.
 	 * It needs a real name for the name of the build directory, for example.
 	 */
-	public static String DEFAULT_NAME = "default"; //$NON-NLS-1$
+	public static final String DEFAULT_NAME = "default"; //$NON-NLS-1$
 	
 	/**
-	 * Returns the resources build configuration that this CDT build
-	 * configuration is associated with.
+	 * @since 6.4
+	 */
+	public static final String TOOLCHAIN_TYPE = "cdt.toolChain.type"; //$NON-NLS-1$
+
+	/**
+	 * @since 6.4
+	 */
+	public static final String TOOLCHAIN_ID = "cdt.toolChain.id"; //$NON-NLS-1$
+
+	/**
+	 * Returns the resources build configuration that this CDT build configuration
+	 * is associated with.
 	 * 
 	 * @return resources build configuration
 	 */
@@ -51,6 +61,15 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 */
 	IToolChain getToolChain() throws CoreException;
 	
+	/**
+	 * Return the launch mode associated with this build configuration.
+	 * 
+	 * @since 6.4
+	 */
+	default String getLaunchMode() {
+		return null;
+	}
+
 	/**
 	 * Ids for the Binary Parsers to use when checking whether a file is a
 	 * binary that can be launched.
@@ -73,7 +92,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Return all of the build environment variables for this configuration.
 	 * 
-	 * @return
+	 * @return environment variables
 	 * @throws CoreException
 	 */
 	IEnvironmentVariable[] getVariables() throws CoreException;
@@ -158,6 +177,45 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 */
 	default Map<String, String> getDefaultProperties() {
 		return new HashMap<>();
+	}
+
+	/**
+	 * Set a property to the given value.
+	 * 
+	 * @param name
+	 *            the name of the property
+	 * @param the
+	 *            new value for the property
+	 * @since 6.4
+	 */
+	default void setProperty(String name, String value) {
+		Map<String, String> properties = new HashMap<>(getProperties());
+		properties.put(name, value);
+		setProperties(properties);
+	}
+
+	/**
+	 * Remove the named property.
+	 * 
+	 * @param name
+	 *            name of the property
+	 * @since 6.4
+	 */
+	default void removeProperty(String name) {
+		Map<String, String> properties = new HashMap<>(getProperties());
+		properties.remove(name);
+		setProperties(properties);
+	}
+
+	/**
+	 * Return the named property.
+	 * 
+	 * @param name
+	 *            the name of the property
+	 * @since 6.4
+	 */
+	default String getProperty(String name) {
+		return getProperties().get(name);
 	}
 
 	/**

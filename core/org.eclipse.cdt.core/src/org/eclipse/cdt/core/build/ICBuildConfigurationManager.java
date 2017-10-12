@@ -32,6 +32,20 @@ public interface ICBuildConfigurationManager {
 	ICBuildConfigurationProvider getProvider(String id);
 
 	/**
+	 * Return whether the given project has a configuration with the given
+	 * configName.
+	 *
+	 * @param provider
+	 * @param project
+	 * @param configName
+	 * @return true if project has the named config
+	 * @throws CoreException
+	 * @since 6.4
+	 */
+	boolean hasConfiguration(ICBuildConfigurationProvider provider, IProject project, String configName)
+			throws CoreException;
+
+	/**
 	 * Create a new build configuration to be owned by a provider.
 	 * 
 	 * @param provider
@@ -62,9 +76,11 @@ public interface ICBuildConfigurationManager {
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Create a new build configuration for a given project using a toolchain
-	 * with the given properties and that builds for a given launch mode.
+	 * Create a new build configuration for a given project using a toolchain with
+	 * the given properties and that builds for a given launch mode.
 	 * 
+	 * @deprecated clients really need to pick which toolchain they want a build
+	 *             config for. This method pretty much picks one at random.
 	 * @param project
 	 *            project for the config
 	 * @param properties
@@ -75,6 +91,7 @@ public interface ICBuildConfigurationManager {
 	 * @throws CoreException
 	 * @since 6.2
 	 */
+	@Deprecated
 	ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties,
 			String launchMode, IProgressMonitor monitor) throws CoreException;
 

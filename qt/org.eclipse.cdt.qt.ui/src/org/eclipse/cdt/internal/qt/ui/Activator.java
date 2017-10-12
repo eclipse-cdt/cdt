@@ -118,6 +118,10 @@ public class Activator extends AbstractUIPlugin {
 		getDefault().getLog().log(new Status(code, PLUGIN_ID, msg, e));
 	}
 
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
 	public static <T> T getService(Class<T> service) {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);

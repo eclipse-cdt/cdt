@@ -11,10 +11,13 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.cdt.core.build.IToolChain;
+
 /**
  * Manages toolchain files for CMake.
  * 
  * @noimplement
+ * @noextend
  */
 public interface ICMakeToolChainManager {
 
@@ -27,6 +30,8 @@ public interface ICMakeToolChainManager {
 	ICMakeToolChainFile getToolChainFile(Path path);
 
 	Collection<ICMakeToolChainFile> getToolChainFilesMatching(Map<String, String> properties);
+
+	ICMakeToolChainFile getToolChainFileFor(IToolChain toolchain);
 
 	Collection<ICMakeToolChainFile> getToolChainFiles();
 

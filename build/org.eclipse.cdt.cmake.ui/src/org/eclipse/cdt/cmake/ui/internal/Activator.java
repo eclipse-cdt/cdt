@@ -40,9 +40,13 @@ public class Activator extends AbstractUIPlugin {
 		return new Status(IStatus.ERROR, PLUGIN_ID, message, cause);
 	}
 
+	public static void log(IStatus status) {
+		plugin.getLog().log(status);
+	}
+
 	public static void log(Exception e) {
 		if (e instanceof CoreException) {
-			plugin.getLog().log(((CoreException) e).getStatus());
+			log(((CoreException) e).getStatus());
 		} else {
 			plugin.getLog().log(errorStatus(e.getLocalizedMessage(), e));
 		}

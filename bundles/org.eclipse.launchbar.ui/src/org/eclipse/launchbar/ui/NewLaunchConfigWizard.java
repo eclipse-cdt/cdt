@@ -19,28 +19,25 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchMode;
-import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigEditPage;
-import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigModePage;
-import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigTypePage;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigTypePage2;
 
 public class NewLaunchConfigWizard extends Wizard implements ILaunchConfigurationListener {
 
-	private NewLaunchConfigModePage modePage = new NewLaunchConfigModePage();
-	private NewLaunchConfigTypePage typePage = new NewLaunchConfigTypePage();
-	private NewLaunchConfigEditPage editPage = new NewLaunchConfigEditPage();
+	private NewLaunchConfigTypePage2 typePage;
+	private NewLaunchConfigEditPage editPage;
 
 	private List<ILaunchConfiguration> configsToDelete = new ArrayList<>();
 
 	public NewLaunchConfigWizard() {
+		editPage = new NewLaunchConfigEditPage();
+		typePage = new NewLaunchConfigTypePage2(editPage);
+
 		setWindowTitle(Messages.NewLaunchConfigWizard_0);
 
 		// while the wizard is open, some ill behaved launch config tabs save the working copy.
@@ -48,46 +45,6 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 		// We also need to turn off listening in the tool bar manager so that we don't treat these
 		// as real launch configs.
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
-	}
-
-	@Override
-	public void createPageControls(Composite pageContainer) {
-		super.createPageControls(pageContainer);
-
-		// Link the pages
-		SelectionListener modePageListener = new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ILaunchGroup selectedGroup = modePage.getSelectedGroup();
-				typePage.setLaunchGroup(selectedGroup);
-				editPage.setLaunchGroup(selectedGroup);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-				getContainer().showPage(modePage.getNextPage());
-			}
-		};
-		modePage.addGroupSelectionListener(modePageListener);
-		modePageListener.widgetSelected(null);
-
-		SelectionListener typePageListener = new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				editPage.setLaunchConfigType(typePage.getSelectedType());
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-				getContainer().showPage(typePage.getNextPage());
-			}
-		};
-		typePage.addTypeSelectionListener(typePageListener);
-		typePageListener.widgetSelected(null);
-		
-		editPage.setLaunchConfigType(typePage.getSelectedType());
 	}
 
 	@Override
@@ -102,7 +59,6 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 
 	@Override
 	public void addPages() {
-		addPage(modePage);
 		addPage(typePage);
 		addPage(editPage);
 	}
@@ -120,8 +76,9 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 	}
 
 	public ILaunchMode getLaunchMode() {
-		String initMode = modePage.getSelectedGroup().getMode();
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(initMode);
+		// TODO we want to make sure the newly created config has the right mode
+		// selected in the launch bar
+		return null;
 	}
 
 	@Override

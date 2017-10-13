@@ -31,6 +31,10 @@ public class Messages extends NLS {
 	public static String NewLaunchConfigTypePage_0;
 	public static String NewLaunchConfigTypePage_1;
 	public static String NewLaunchConfigTypePage_2;
+
+	public static String NewLaunchConfigTypePage2_Mode;
+
+	public static String NewLaunchConfigTypePage2_Type;
 	public static String NewLaunchConfigWizard_0;
 
 	public static String NewLaunchTargetWizard_Title;

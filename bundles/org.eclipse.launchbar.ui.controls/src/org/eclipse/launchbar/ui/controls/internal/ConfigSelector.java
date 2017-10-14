@@ -51,6 +51,7 @@ public class ConfigSelector extends CSelector {
 
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
+		setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.CONFIG_SELECTOR);
 
 		setToolTipText(Messages.ConfigSelector_1);
 		defaultProvider = new DefaultDescriptorLabelProvider();
@@ -166,6 +167,7 @@ public class ConfigSelector extends CSelector {
 	@Override
 	public void createActionArea(Composite parent) {
 		final Composite createButton = new Composite(parent, SWT.BORDER);
+		createButton.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.NEW);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(createButton);
 		GridLayoutFactory.fillDefaults().margins(7, 7).applyTo(createButton);
 		createButton.setBackground(getBackground());
@@ -228,11 +230,6 @@ public class ConfigSelector extends CSelector {
 		if (element == null)
 			element = noConfigs[0];
 		super.setSelection(element);
-	}
-
-	@Override
-	public void openPopup() {
-		super.openPopup();
 	}
 
 }

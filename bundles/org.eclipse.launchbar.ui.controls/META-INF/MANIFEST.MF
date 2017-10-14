@@ -19,4 +19,4 @@ Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Export-Package: org.eclipse.launchbar.ui.controls.internal;x-internal:=true
+Export-Package: org.eclipse.launchbar.ui.controls.internal;x-friends:="org.eclipse.launchbar.ui.tests"

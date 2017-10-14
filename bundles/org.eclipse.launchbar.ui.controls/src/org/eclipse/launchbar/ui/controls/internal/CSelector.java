@@ -264,6 +264,7 @@ public abstract class CSelector extends Composite {
 		arrow.addMouseListener(mouseListener);
 		if (editable) {
 			final EditButton editButton = new EditButton(buttonComposite, SWT.NONE);
+			editButton.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.EDIT);
 			editButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 			editButton.setBackground(getBackground());
 			editButton.addSelectionListener(new SelectionAdapter() {
@@ -303,6 +304,7 @@ public abstract class CSelector extends Composite {
 			popup.dispose();
 		}
 		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP | SWT.RESIZE);
+		popup.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.POPUP);
 		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 		popup.setBackground(getBackground());
 		listViewer = new LaunchBarListViewer(popup);

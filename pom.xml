@@ -40,7 +40,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -48,19 +48,24 @@
 			<url>http://download.eclipse.org/cbi/updates/license/</url>
 			<layout>p2</layout>
 		</repository>
-		<repository>
+		<!-- repository>
 			<id>orbit</id>
 			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
 			<layout>p2</layout>
-		</repository>
+		</repository-->
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.0</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.2/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>remote</id>
-			<url>http://download.eclipse.org/tools/ptp/updates/remote/neon/</url>
+			<url>http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>swtbot</id>
+			<url>http://download.eclipse.org/technology/swtbot/snapshots/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -71,6 +76,7 @@
 		<module>bundles/org.eclipse.launchbar.ui.controls</module>
 		<module>features/org.eclipse.launchbar</module>
 		<module>tests/org.eclipse.launchbar.core.tests</module>
+		<module>tests/org.eclipse.launchbar.ui.tests</module>
 		
 		<module>bundles/org.eclipse.launchbar.remote.core</module>
 		<module>bundles/org.eclipse.launchbar.remote.ui</module>

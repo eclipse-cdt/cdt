@@ -11,9 +11,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -22,10 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents the type of an unknown member.
  */
-public class TypeOfUnknownMember implements ICPPUnknownType, ISerializableType {
+public class TypeOfUnknownMember extends CPPUnknownBinding implements ICPPUnknownType, ISerializableType {
 	private final CPPUnknownMember fMember;
 
 	public TypeOfUnknownMember(CPPUnknownMember member) {
+		super(("decltype(" + member.getName() + ")").toCharArray());  //$NON-NLS-1$  //$NON-NLS-2$
 		fMember = member;
 	}
 
@@ -53,11 +56,8 @@ public class TypeOfUnknownMember implements ICPPUnknownType, ISerializableType {
 	}
 
 	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	public IBinding getOwner() {
+		// We won't know until instantiation.
+		return null;
 	}
 }

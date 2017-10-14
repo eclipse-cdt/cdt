@@ -9723,6 +9723,15 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		IVariable var2 = helper.assertNonProblem("var2");
 		assertSameType(var1.getType(), var2.getType());
 	}
+	
+	//	template <typename T>
+	//	void foo() {
+	//	    typedef decltype(T::member) C;
+	//	    typedef decltype(C::member) D;
+	//	}
+	public void testScopeOfUnkownMemberType_525982() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool>
 	//	struct integral_constant {

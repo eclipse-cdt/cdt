@@ -1533,6 +1533,16 @@ public class CPPTemplates {
 							return instantiated.getType();
 						}
 					}
+				} else if (type instanceof TypeOfUnknownMember) {
+					IBinding binding = resolveUnknown(((TypeOfUnknownMember) type).getUnknownMember(), context);
+					if (binding instanceof IType) {
+						return (IType) binding;
+					} else if (binding instanceof IVariable) {
+						return ((IVariable) binding).getType();
+					} else if (binding instanceof IFunction) {
+						return ((IFunction) binding).getType();
+					}
+					return type;
 				} else {
 					IBinding binding= resolveUnknown((ICPPUnknownBinding) type, context);
 					if (binding instanceof IType)
@@ -1542,18 +1552,6 @@ public class CPPTemplates {
 				}
 			}
 			
-			if (type instanceof TypeOfUnknownMember) {
-				IBinding binding = resolveUnknown(((TypeOfUnknownMember) type).getUnknownMember(), context);
-				if (binding instanceof IType) {
-					return (IType) binding;
-				} else if (binding instanceof IVariable) {
-					return ((IVariable) binding).getType();
-				} else if (binding instanceof IFunction) {
-					return ((IFunction) binding).getType();
-				}
-				return type;
-			}
-
 			if (context.getContextTypeSpecialization() != null && type instanceof IBinding) {
 				IType unwound= getNestedType(type, TDEF);
 				ICPPClassSpecialization withinClass = context.getContextClassSpecialization();

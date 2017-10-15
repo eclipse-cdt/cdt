@@ -1097,6 +1097,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			break;
         case IToken.tAND:
 			op= IASTBinaryExpression.op_logicalAnd;
+			unaryOp = IASTUnaryExpression.op_labelReference;
 			break;
         case IToken.tBITOR:
 			op= IASTBinaryExpression.op_binaryOr;
@@ -1269,6 +1270,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     				// ambiguity with unary operator
     				case IToken.tPLUS: case IToken.tMINUS:
     				case IToken.tSTAR: case IToken.tAMPER:
+    				case IToken.tAND:
 						final int operatorOffset = LA(1).getOffset();
     					IToken markEnd= mark();
     					backup(mark);
@@ -2597,7 +2599,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			skipBrackets(IToken.tLPAREN, IToken.tRPAREN, IToken.tSEMI);
 			switch (LTcatchEOF(1)) {
 			case IToken.tAMPERASSIGN:
-			case IToken.tAND:
 			case IToken.tARROW:
 			case IToken.tARROWSTAR:
 			case IToken.tASSIGN:

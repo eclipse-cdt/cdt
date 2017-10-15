@@ -7569,6 +7569,41 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(true);
 	}
 	
+	//	void f() {
+	//	    unsigned long long labelPtr;
+	//	    labelPtr = (unsigned long long) &&L;
+	//	    goto *labelPtr;
+	//	L:
+	//	    return;
+	//	}
+	public void testExpressionLabelReferenceCast_486140a() throws Exception {
+		// Here, the cast-expression is the only valid parse.
+		parseAndCheckBindings(true);
+	}
+
+	//	typedef unsigned long long ULL;
+	//	void f() {
+	//	    unsigned long long labelPtr;
+	//	    labelPtr = (ULL) &&L;
+	//	    goto *labelPtr;
+	//	L:
+	//	    return;
+	//	}
+	public void testExpressionLabelReferenceCast_486140b() throws Exception {
+		// Here, the cast-expression and the binary-expression are both
+		// syntactically valid, but the correct parse is the cast-expression.
+		parseAndCheckBindings(true);
+	}
+	
+	//	int test(int waldo, int other) {
+	//	    return (waldo) && other;
+	//	}
+	public void testBinaryExprNotMisparsedAsCast_486140() throws Exception {
+		// Again cast-expression and binary-expression are both syntactically
+		// valid, but this time the correct parse is binary-expression.
+		parseAndCheckBindings(true);
+	}
+	
 	//	int version = 0;
 	//	int NextVersion() {
 	//		return __atomic_add_fetch(&version, 1, 5);

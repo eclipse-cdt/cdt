@@ -123,7 +123,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
 			tcCombo.removeAll();
 			if (toolchains.length > 0) {
-				tcCombo.add(String.format(LaunchMessages.CommonBuildTab_Default, toolchains[0]));
+				tcCombo.add(String.format(LaunchMessages.CommonBuildTab_Default, toolchains[0].getName()));
 			} else {
 				tcCombo.add(LaunchMessages.CommonBuildTab_NotFound);
 			}

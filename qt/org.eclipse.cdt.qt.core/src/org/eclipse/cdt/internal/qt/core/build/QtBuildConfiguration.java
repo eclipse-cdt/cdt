@@ -144,6 +144,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		if (launchMode != null) {
 			settings.put(LAUNCH_MODE, launchMode);
 		}
+
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
@@ -463,47 +464,17 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			}
 			return buildCommand;
 		} else {
-			return null;
-		}
-
-	}
-
-	@Override
-	public Map<String, String> getDefaultProperties() {
-		Map<String, String> defaults = super.getDefaultProperties();
-
-		String qmakeCommand = qtInstall.getQmakePath().toString();
-		defaults.put(QMAKE_COMMAND, qmakeCommand);
-
-		String qmakeArgs;
-		String launchMode = getLaunchMode();
-		if (launchMode != null) {
-			switch (launchMode) {
-			case "run": //$NON-NLS-1$
-				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=release"; //$NON-NLS-1$
-				break;
-			case "debug": //$NON-NLS-1$
-				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=debug"; //$NON-NLS-1$
-				break;
-			default:
-				qmakeArgs = "CONFIG-=debug_and_release CONFIG+=launch_mode_" + launchMode; //$NON-NLS-1$
+			Path command = findCommand("make"); //$NON-NLS-1$
+			if (command == null) {
+				command = findCommand("mingw32-make"); //$NON-NLS-1$
 			}
-		} else {
-			qmakeArgs = "CONFIG+=debug_and_release CONFIG+=launch_modeall"; //$NON-NLS-1$
-		}
-		defaults.put(QMAKE_ARGS, qmakeArgs);
 
-		String buildCommand = "make"; //$NON-NLS-1$
-		if (findCommand(buildCommand) == null) {
-			buildCommand = "mingw32-make"; //$NON-NLS-1$
-			if (findCommand(buildCommand) == null) {
-				// Neither was found, default to make
-				buildCommand = "make"; //$NON-NLS-1$
+			if (command != null) {
+				return new String[] { command.toString() };
+			} else {
+				return null;
 			}
 		}
-		defaults.put(BUILD_COMMAND, buildCommand);
-
-		return defaults;
 	}
 
 	@Override

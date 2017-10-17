@@ -56,12 +56,14 @@ public class QtMinGWToolChainProvider implements IToolChainProvider {
 														IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator) };
 										GCCToolChain toolChain = new GCCToolChain(this, path.resolve(gcc),
 												Platform.ARCH_X86, env);
+										toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_WIN32);
 										toolChain.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$
 										manager.addToolChain(toolChain);
 
 										if (Platform.getOSArch().equals(Platform.ARCH_X86_64)) {
 											toolChain = new GCCToolChain(this, path.resolve(gcc), Platform.ARCH_X86_64,
 													env);
+											toolChain.setProperty(IToolChain.ATTR_OS, Platform.OS_WIN32);
 											toolChain.setProperty(IToolChain.ATTR_PACKAGE, "qt"); //$NON-NLS-1$
 											manager.addToolChain(toolChain);
 										}

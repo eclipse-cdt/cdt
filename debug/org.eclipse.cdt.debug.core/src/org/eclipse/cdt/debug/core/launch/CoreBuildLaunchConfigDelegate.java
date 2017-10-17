@@ -81,14 +81,16 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		// Pick the first one that matches
 		Map<String, String> properties = new HashMap<>();
 		properties.putAll(target.getAttributes());
-		Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
-		if (!tcs.isEmpty()) {
-			IToolChain toolChain = tcs.iterator().next();
-			return configManager.getBuildConfiguration(project, toolChain, mode, monitor);
+		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
+			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode, monitor);
+			if (buildConfig != null) {
+				return buildConfig;
+			}
 		}
 
 		return null;
 	}
+
 	protected IBinary getBinary(ICBuildConfiguration buildConfig) throws CoreException {
 		IBinary[] binaries = buildConfig.getBuildOutput();
 		IBinary exeFile = null;

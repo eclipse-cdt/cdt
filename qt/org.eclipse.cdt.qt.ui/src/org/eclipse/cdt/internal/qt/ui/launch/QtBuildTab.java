@@ -65,6 +65,10 @@ public class QtBuildTab extends CommonBuildTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			ICBuildConfiguration buildConfig = getBuildConfiguration();
+			if (buildConfig == null) {
+				return;
+			}
+
 			// qmake command
 			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 			IQtInstallManager qtManager = Activator.getService(IQtInstallManager.class);

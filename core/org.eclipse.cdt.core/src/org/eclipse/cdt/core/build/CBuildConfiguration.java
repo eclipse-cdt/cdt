@@ -125,7 +125,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 				tc = tcs.iterator().next();
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-						CCorePlugin.STATUS_TOOLCHAIN_NOT_FOUND,
+						CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
 						String.format(Messages.CBuildConfiguration_ToolchainMissing, config.getName()),
 						null));
 			}

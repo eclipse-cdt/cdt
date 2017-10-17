@@ -126,7 +126,7 @@ public class CCorePlugin extends Plugin {
 	 * 
 	 * @since 6.4
 	 */
-	public static final int STATUS_TOOLCHAIN_NOT_FOUND = 5;
+	public static final int STATUS_BUILD_CONFIG_NOT_VALID = 5;
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 

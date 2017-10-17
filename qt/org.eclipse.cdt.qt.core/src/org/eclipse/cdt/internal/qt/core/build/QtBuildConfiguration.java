@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -114,7 +115,8 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 		if (getQtInstall() == null) {
 			throw new CoreException(
-					Activator.error(String.format(Messages.QtBuildConfiguration_ConfigNotFound, name)));
+					new Status(IStatus.ERROR, Activator.ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
+							String.format(Messages.QtBuildConfiguration_ConfigNotFound, name), null));
 		}
 
 		String oldLaunchMode = settings.get(LAUNCH_MODE, null);

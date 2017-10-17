@@ -209,7 +209,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 						} catch (CoreException e) {
 							IStatus status = e.getStatus();
 							if (!status.getPlugin().equals(CCorePlugin.PLUGIN_ID)
-									|| status.getCode() != CCorePlugin.STATUS_TOOLCHAIN_NOT_FOUND) {
+									|| status.getCode() != CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID) {
 								throw e;
 							}
 						}

@@ -83,10 +83,12 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		if (arch != null && !arch.isEmpty()) {
 			properties.put(IToolChain.ATTR_ARCH, arch);
 		}
-		ICMakeToolChainFile file = null;
-		Collection<ICMakeToolChainFile> files = manager.getToolChainFilesMatching(properties);
-		if (!files.isEmpty()) {
-			file = files.iterator().next();
+		ICMakeToolChainFile file = manager.getToolChainFileFor(toolChain);
+		if (file == null) {
+			Collection<ICMakeToolChainFile> files = manager.getToolChainFilesMatching(properties);
+			if (!files.isEmpty()) {
+				file = files.iterator().next();
+			}
 		}
 
 		// create config

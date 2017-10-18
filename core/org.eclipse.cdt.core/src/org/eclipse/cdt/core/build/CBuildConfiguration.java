@@ -554,7 +554,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 	/**
 	 * @since 6.1
 	 */
-	protected void loadScannerInfoCache() {
+	protected synchronized void loadScannerInfoCache() {
 		if (scannerInfoCache == null) {
 			File cacheFile = getScannerInfoCacheFile();
 			if (cacheFile.exists()) {

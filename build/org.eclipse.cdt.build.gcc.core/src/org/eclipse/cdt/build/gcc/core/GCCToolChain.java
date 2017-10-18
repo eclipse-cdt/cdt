@@ -474,7 +474,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			cppCommand = null;
 			if (cCommand.contains("gcc")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("gcc", "g++"); //$NON-NLS-1$ //$NON-NLS-2$
-				commands = new String[] { cCommand, cppCommand };
+				// Also recognize c++ as an alias for g++
+				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "c++") }; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (cCommand.contains("clang")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("clang", "clang++"); //$NON-NLS-1$ //$NON-NLS-2$
 				commands = new String[] { cCommand, cppCommand };

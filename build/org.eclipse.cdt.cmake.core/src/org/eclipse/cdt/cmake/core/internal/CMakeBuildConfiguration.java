@@ -47,17 +47,28 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private static final String TOOLCHAIN_FILE = "cdt.cmake.toolchainfile"; //$NON-NLS-1$
 
+	private static ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
+
 	private ICMakeToolChainFile toolChainFile;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 
-		ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 		Preferences settings = getSettings();
 		String pathStr = settings.get(TOOLCHAIN_FILE, ""); //$NON-NLS-1$
 		if (!pathStr.isEmpty()) {
 			Path path = Paths.get(pathStr);
 			toolChainFile = manager.getToolChainFile(path);
+		} else {
+			toolChainFile = manager.getToolChainFileFor(getToolChain());
+			if (toolChainFile != null) {
+				settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
+				try {
+					settings.flush();
+				} catch (BackingStoreException e) {
+					Activator.log(e);
+				}
+			}
 		}
 	}
 
@@ -70,6 +81,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		super(config, name, toolChain, launchMode);
 		this.toolChainFile = toolChainFile;
 
+		saveToolChainFile();
+	}
+
+	private void saveToolChainFile() {
 		if (toolChainFile != null) {
 			Preferences settings = getSettings();
 			settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
@@ -79,10 +94,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				Activator.log(e);
 			}
 		}
-	}
-
-	public ICMakeToolChainFile getToolChainFile() {
-		return toolChainFile;
 	}
 
 	@Override
@@ -117,7 +128,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				command.add("-G"); //$NON-NLS-1$
 				command.add(generator);
 
-				if (toolChainFile != null) {
+				ICMakeToolChainFile tcFile = toolChainFile;
+				if (tcFile != null) {
 					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
 				}
 

@@ -61,12 +61,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		} else {
 			toolChainFile = manager.getToolChainFileFor(getToolChain());
 			if (toolChainFile != null) {
-				settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
-				try {
-					settings.flush();
-				} catch (BackingStoreException e) {
-					Activator.log(e);
-				}
+				saveToolChainFile();
 			}
 		}
 	}
@@ -78,20 +73,20 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
 			ICMakeToolChainFile toolChainFile, String launchMode) {
 		super(config, name, toolChain, launchMode);
-		this.toolChainFile = toolChainFile;
 
-		saveToolChainFile();
+		this.toolChainFile = toolChainFile;
+		if (toolChainFile != null) {
+			saveToolChainFile();
+		}
 	}
 
 	private void saveToolChainFile() {
-		if (toolChainFile != null) {
-			Preferences settings = getSettings();
-			settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
-			try {
-				settings.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
-			}
+		Preferences settings = getSettings();
+		settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
 		}
 	}
 

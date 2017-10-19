@@ -417,7 +417,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	protected Path findCommand(String command) {
-		if (Platform.getOS().equals(Platform.OS_WIN32) && !command.endsWith(".exe")) { //$NON-NLS-1$
+		if (Platform.getOS().equals(Platform.OS_WIN32)
+				&& !(command.endsWith(".exe") || command.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			command += ".exe"; //$NON-NLS-1$
 		}
 

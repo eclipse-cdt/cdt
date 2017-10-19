@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -255,12 +256,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			addDiscoveryOptions(commandLine);
 			commandLine.addAll(commandStrings.subList(1, commandStrings.size()));
 
-			// Strip quotes from the args on Windows
+			// Strip surrounding quotes from the args on Windows
 			if (Platform.OS_WIN32.equals(Platform.getOS())) {
 				for (int i = 0; i < commandLine.size(); i++) {
 					String arg = commandLine.get(i);
-					if (arg.contains("\"")) { //$NON-NLS-1$
-						commandLine.set(i, arg.replaceAll("\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
+					if (arg.startsWith("\"") && arg.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
+						commandLine.set(i, arg.substring(1, arg.length() - 1));
 					}
 				}
 			}
@@ -284,7 +285,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			for (int i = 1; i < commandLine.size(); ++i) {
 				if (!commandLine.get(i).startsWith("-")) { //$NON-NLS-1$
 					// TODO optimize by dealing with multi arg options like -o
-					Path filePath = buildDirectory.resolve(commandLine.get(i));
+					Path filePath;
+					try {
+						filePath = buildDirectory.resolve(commandLine.get(i));
+					} catch (InvalidPathException e) {
+						continue;
+					}
 					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(filePath.toUri());
 					if (files.length > 0 && files[0].exists()) {
 						// replace it with a temp file
@@ -478,6 +484,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "c++") }; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (cCommand.contains("clang")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("clang", "clang++"); //$NON-NLS-1$ //$NON-NLS-2$
+				commands = new String[] { cCommand, cppCommand };
+			} else if (cCommand.contains("emcc")) { //$NON-NLS-1$
+				// TODO Hack for emscripten. Can we generalize?
+				cppCommand = cCommand.replace("emcc", "em++"); //$NON-NLS-1$ //$NON-NLS-2$
 				commands = new String[] { cCommand, cppCommand };
 			} else {
 				commands = new String[] { cCommand };

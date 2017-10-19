@@ -12410,4 +12410,10 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("waldo", 1);
 	}
+	
+	//	struct A {};
+	//	struct A* b = (1 == 1) ? new struct A : new struct A;
+    public void test_ElabTypeSpecInNewExprInConditional_526134() throws Exception {
+    	parseAndCheckBindings();
+    }
 }

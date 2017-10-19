@@ -4768,7 +4768,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// base clause
 		if (LT(1) == IToken.tCOLON) {
-			baseClause(astClassSpecifier);
+			try {
+				baseClause(astClassSpecifier);
+			} catch (BacktrackException e) {
+				// Couldn't parse a base-clause.
+				// Backtrack and try an elaborated-type-specifier instead.
+				backup(mark);
+				throw e;
+			}
 			// content assist within the base-clause
 			if (LT(1) == IToken.tEOC) {
 				return astClassSpecifier;

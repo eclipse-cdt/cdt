@@ -43,8 +43,12 @@ public class SerialPortSettingsBlock extends Observable {
 
 	private ComboDialogField fSpeedField;
 
-	private String fSpeedChoices[] = { "9600", "19200", "38400", "57600", "115200" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-
+	private String fSpeedChoices[] = { 
+		"9600", "19200", "38400", "57600", "115200", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		"230400", "460800", "921600", "1000000", "1152000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		"1500000", "2000000", "2500000", "3000000", "3500000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		"4000000" //$NON-NLS-1$
+	};
 	private Control fControl;
 
 	private String fErrorMessage = null;

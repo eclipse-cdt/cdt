@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+1: Doug Schaefer <dschaefer@blackberry.com>
+Code-Review+2: John Dallaway <john@dallaway.org.uk>
+Submitted-by: John Dallaway <john@dallaway.org.uk>
+Submitted-at: Fri, 20 Oct 2017 11:06:06 -0400
+Reviewed-on: https://git.eclipse.org/r/110445
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 QNX Software Systems and others.
+ * Copyright (c) 2007, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Bruce Griffith, Sage Electronic Engineering, LLC - bug 305943
  *              - API generalization to become transport-independent (e.g. to
  *                allow connections via serial ports and pipes).
+ *     John Dallaway - Ensure correct SessionType enabled, bug 334110
 *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.Activator;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
@@ -442,6 +444,14 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		savedJtagDevice = jtagDevice.getText();
 		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, savedJtagDevice);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
+		if (useRemote.getSelection()) {
+			// ensure LaunchUtils.getSessionType() returns SessionType.REMOTE (bug 334110)
+			configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+		} else {
+			// ensure LaunchUtils.getSessionType() returns the default session type
+			configuration.removeAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE);
+		}
 		if (savedJtagDevice.length() > 0) {
 			try {
 				IGDBJtagDevice device = findJtagDeviceByName(jtagDevice.getText()).getDevice();
@@ -473,6 +483,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				   IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 	}

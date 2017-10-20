@@ -29,6 +29,7 @@ import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -273,11 +274,8 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	}
 
 	public IProblem getProblem(IMarker marker) {
-		IPath path = marker.getResource().getFullPath();
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		if (file == null)
-			return null;
-		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(file);
+		IResource resource = marker.getResource();
+		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(resource);
 		String id = getProblemId(marker);
 		return profile.findProblem(id);
 	}

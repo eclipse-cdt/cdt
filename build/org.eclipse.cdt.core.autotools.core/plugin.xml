@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="autotoolsNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.autotools.core.AutotoolsNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.core.autotools.core.AutotoolsBuildConfigurationProvider"
+            id="org.eclipse.cdt.core.autotools.core.provider"
+            natureId="org.eclipse.cdt.core.autotools.core.autotoolsNature">
+      </provider>
+   </extension>
+
+</plugin>

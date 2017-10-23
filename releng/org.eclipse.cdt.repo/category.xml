@@ -149,6 +149,12 @@
    <feature url="features/org.eclipse.cdt.cmake.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.cmake.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.core.autotools_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.autotools" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.core.autotools.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.autotools.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.llvm.dsf.lldb_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb" version="0.0.0">
       <category name="extra"/>
    </feature>

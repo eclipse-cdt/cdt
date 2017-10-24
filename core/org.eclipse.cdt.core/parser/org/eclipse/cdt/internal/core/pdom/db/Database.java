@@ -26,8 +26,8 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -128,7 +128,7 @@ public class Database {
 	}
 
 	// a cache for strings which is used for btree lookups; soft refs ensure garbage collection
-	private final Map<Long, Reference<IString>> stringCache = new HashMap<>();
+	private final Map<Long, Reference<IString>> stringCache = new ConcurrentHashMap<>();
 	private final ReferenceQueue<IString> stringDisposal = new ReferenceQueue<>();
 
 	/**

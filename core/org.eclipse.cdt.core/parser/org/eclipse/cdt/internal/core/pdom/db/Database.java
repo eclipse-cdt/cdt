@@ -486,7 +486,9 @@ public class Database {
 		}
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;
-		stringCache.remove(offset); // also remove record from string cache (if it exists)
+		synchronized (stringCache) {
+			stringCache.remove(offset); // also remove record from string cache (if it exists)
+		}
 	}
 
 	public void putByte(long offset, byte value) throws CoreException {
@@ -587,10 +589,12 @@ public class Database {
 			bytelen= 2 * len;
 		}
 
-		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return addStringToCache(new LongString(this, chars, useBytes));
-		} else {
-			return addStringToCache(new ShortString(this, chars, useBytes));
+		synchronized(stringCache) {
+			if (bytelen > ShortString.MAX_BYTE_LENGTH) {
+				return addStringToCache(new LongString(this, chars, useBytes));
+			} else {
+				return addStringToCache(new ShortString(this, chars, useBytes));
+			}
 		}
 	}
 
@@ -603,19 +607,21 @@ public class Database {
 	}
 
 	public IString getString(long offset) throws CoreException {
-		final Reference<IString> cachedStringReference = stringCache.get(offset);
-		if (cachedStringReference != null) {
-			final IString cachedString = cachedStringReference.get();
-			if (cachedString != null) {
-				return cachedString; // string already cached, no need to re-retrieve it :-)
+		synchronized (stringCache) {
+			final Reference<IString> cachedStringReference = stringCache.get(offset);
+			if (cachedStringReference != null) {
+				final IString cachedString = cachedStringReference.get();
+				if (cachedString != null) {
+					return cachedString; // string already cached, no need to re-retrieve it :-)
+				}
 			}
+			final int l = getInt(offset);
+			int bytelen= l < 0 ? -l : 2 * l;
+			if (bytelen > ShortString.MAX_BYTE_LENGTH) {
+				return addStringToCache(new LongString(this, offset));
+			}
+			return addStringToCache(new ShortString(this, offset));
 		}
-		final int l = getInt(offset);
-		int bytelen= l < 0 ? -l : 2 * l;
-		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
-			return addStringToCache(new LongString(this, offset));
-		}
-		return addStringToCache(new ShortString(this, offset));
 	}
 
 	private IString addStringToCache(IString string) {

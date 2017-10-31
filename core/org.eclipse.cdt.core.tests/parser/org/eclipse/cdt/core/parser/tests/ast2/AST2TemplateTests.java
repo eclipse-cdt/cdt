@@ -9017,6 +9017,24 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testDecltypeInPackExpansion_486425b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> 
+	//	class meta {
+	//	    typedef T type;
+	//	};
+	//
+	//	template <typename... Ts>
+	//	using Alias = void(typename meta<Ts>::type...);
+	//
+	//	template <typename... Ts>
+	//	Alias<Ts...>* async(Ts...);
+	//
+	//	int main() {
+	//	    async();  // ERROR: Invalid arguments
+	//	}
+	public void testDependentPackExpansionInFunctionType_526684() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {};

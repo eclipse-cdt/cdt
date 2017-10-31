@@ -1304,12 +1304,21 @@ public class CPPTemplates {
 					IType[] newResult= new IType[result.length + packSize - 1];
 					System.arraycopy(result, 0, newResult, 0, j);
 					result= newResult;
+					context.setExpandPack(true);
 					int oldPackOffset = context.getPackOffset();
 					for (int k= 0; k < packSize; k++) {
 						context.setPackOffset(k);
-						result[j++]= instantiateType(innerType, context);
+						IType instantiated = instantiateType(innerType, context);
+						if (context.isPackExpanded()) {
+							if (instantiated != null) {
+								instantiated = new CPPParameterPackType(instantiated);
+							}
+						}
+						result[j++]= instantiated; 
+						
 					}
 					context.setPackOffset(oldPackOffset);
+					context.setExpandPack(false);
 					continue;
 				}
 			} else {

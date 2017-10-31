@@ -12,21 +12,24 @@
 package org.eclipse.cdt.core.autotools.core;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 
 public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 
@@ -40,7 +43,7 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		super(config, name, toolChain, "run"); // TODO: why "run"
+		super(config, name, toolChain, "run"); // TODO: why "run" //$NON-NLS-1$
 	}
 
 	@Override
@@ -49,27 +52,48 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		
 		IProject project = getProject();
 		
-		execute(Arrays.asList(new String[] { "autoreconf", "--install" }), project.getLocation(), console, monitor);
-		execute(Arrays.asList(new String[] { "./configure" }), project.getLocation(), console, monitor);
-		execute(Arrays.asList(new String[] { "make" }), project.getLocation(), console, monitor);
+		execute(Arrays.asList(new String[] { "autoreconf", "--install" }), project.getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
+		execute(Arrays.asList(new String[] { "./configure" }), project.getLocation(), console, monitor); //$NON-NLS-1$
+		execute(Arrays.asList(new String[] { "make" }), project.getLocation(), console, monitor); //$NON-NLS-1$
 		
 		return new IProject[] { project };
 	}
 
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
-		execute(Arrays.asList(new String[] { "make", "clean" }), getProject().getLocation(), console, monitor);
+		execute(Arrays.asList(new String[] { "make", "clean" }), getProject().getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void execute(List<String> command, IPath dir, IConsole console, IProgressMonitor monitor) throws CoreException {
-		
+		String cmd = command.get(0);
+
+		if (Platform.getOS().equals(Platform.OS_WIN32) && !(cmd.endsWith(".exe") && !cmd.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			// Maybe a shell script, see if we can launch it in sh
+			// TODO this probably should be generalized in CBuildConfiguration
+			Path shPath = findCommand("sh"); //$NON-NLS-1$
+			if (shPath != null) {
+				List<String> shCommand = new ArrayList<>();
+				shCommand.add(shPath.toString());
+				shCommand.add("-c"); //$NON-NLS-1$
+				shCommand.add("\"" + String.join(" ", command) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				command = shCommand;
+			}
+		} else {
+			Path cmdPath = findCommand(cmd);
+			if (cmdPath != null) {
+				cmd = cmdPath.toString();
+				command.set(0, cmd);
+			}
+		}
+
 		ProcessBuilder builder = new ProcessBuilder(command).directory(dir.toFile());
+		setBuildEnvironment(builder.environment());
 
 		try {
 			Process process = builder.start();
 			watchProcess(process, new IConsoleParser[0], console);
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ",  command), e));
+			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-2$
 		}
 
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);

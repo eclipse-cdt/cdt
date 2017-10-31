@@ -43,7 +43,7 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	public static final String PROJECTTYPE = "projectType";					//$NON-NLS-1$
 	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
 	/**
-	 * @since 8.5
+	 * @since 8.6
 	 */
 	public static final String OPTIONAL_BUILD_PROPERTIES = "optionalBuildProperties"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE = "buildArtefactType"; //$NON-NLS-1$

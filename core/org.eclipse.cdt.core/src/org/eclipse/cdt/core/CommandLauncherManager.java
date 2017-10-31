@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * @since 6.3
+ * @since 6.4
  */
 public class CommandLauncherManager {
 	

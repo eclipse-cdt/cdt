@@ -158,12 +158,15 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Name of the extension point for contributing a Command Launcher factory
-	 * @since 6.3
+	 * 
+	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_SIMPLE_ID = "CommandLauncherFactory"; //$NON-NLS-1$
 	/**
-	 * Full unique name of the extension point for contributing a Command Launcher factory
-	 * @since 6.3
+	 * Full unique name of the extension point for contributing a Command Launcher
+	 * factory
+	 * 
+	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_UNIQ_ID = PLUGIN_ID + "." + COMMAND_LAUNCHER_FACTORY_SIMPLE_ID; //$NON-NLS-1$
 

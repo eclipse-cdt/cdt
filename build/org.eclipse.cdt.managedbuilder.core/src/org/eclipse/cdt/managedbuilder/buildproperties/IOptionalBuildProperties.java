@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.buildproperties;
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 8.5
+ * @since 8.6
  */
 public interface IOptionalBuildProperties extends Cloneable {
 	String[] getProperties();

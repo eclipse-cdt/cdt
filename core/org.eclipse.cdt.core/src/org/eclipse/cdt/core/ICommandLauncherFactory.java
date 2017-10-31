@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
 
 /**
- * @since 6.3
+ * @since 6.4
  */
 public interface ICommandLauncherFactory {
 	

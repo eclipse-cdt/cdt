@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 
 /**
- * @since 8.5
+ * @since 8.6
  */
 public interface IOptionalBuildObjectPropertiesContainer {
 	IOptionalBuildProperties getOptionalBuildProperties();

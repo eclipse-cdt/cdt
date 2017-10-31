@@ -6,6 +6,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.gcc.core.internal;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +15,8 @@ import org.eclipse.cdt.build.gcc.core.GCCToolChain;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.Platform;
 
@@ -66,8 +69,23 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 		Path msysPath = Paths.get(installLocation);
 		Path gccPath = msysPath.resolve("mingw64\\bin\\gcc.exe"); //$NON-NLS-1$
 		if (Files.exists(gccPath)) {
-			GCCToolChain toolChain = new GCCToolChain(this, "x86_64-w64-mingw32", "msys2.x86_64", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
-					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") }); //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuilder pathVar = new StringBuilder();
+			pathVar.append(msysPath);
+			pathVar.append("\\mingw64\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\usr\\local\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\usr\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\bin"); //$NON-NLS-1$
+			IEnvironmentVariable[] vars = new IEnvironmentVariable[] {
+					new EnvironmentVariable("PATH", pathVar.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
+							File.pathSeparator)
+			};
+			GCCToolChain toolChain = new GCCToolChain(this, gccPath, Platform.ARCH_X86_64, vars);
 			toolChain.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
 			manager.addToolChain(toolChain);
 			return true;
@@ -81,8 +99,22 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 		Path msysPath = Paths.get(installLocation);
 		Path gccPath = msysPath.resolve("mingw32\\bin\\gcc.exe"); //$NON-NLS-1$
 		if (Files.exists(gccPath)) {
-			GCCToolChain toolChain = new GCCToolChain(this, "i686-w64-mingw32", "msys2.i686", new Path[] { //$NON-NLS-1$ //$NON-NLS-2$
-					gccPath.getParent(), msysPath.resolve("bin"), msysPath.resolve("usr\\bin") }); //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuilder pathVar = new StringBuilder();
+			pathVar.append(msysPath);
+			pathVar.append("\\mingw32\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\usr\\local\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\usr\\bin"); //$NON-NLS-1$
+			pathVar.append(File.pathSeparatorChar);
+			pathVar.append(msysPath);
+			pathVar.append("\\bin"); //$NON-NLS-1$
+			IEnvironmentVariable[] vars = new IEnvironmentVariable[] {
+					new EnvironmentVariable("PATH", pathVar.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
+							File.pathSeparator) };
+			GCCToolChain toolChain = new GCCToolChain(this, gccPath, Platform.ARCH_X86, vars);
 			toolChain.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
 			manager.addToolChain(toolChain);
 			return true;

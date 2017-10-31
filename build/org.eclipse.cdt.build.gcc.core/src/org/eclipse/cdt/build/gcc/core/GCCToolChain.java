@@ -62,14 +62,17 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private String cppCommand;
 	private String[] commands;
 
+	@Deprecated
 	public GCCToolChain(IToolChainProvider provider, String id, String version) {
 		this(provider, id, version, null, null);
 	}
 
+	@Deprecated
 	public GCCToolChain(IToolChainProvider provider, String id, String version, Path[] path) {
 		this(provider, id, version, path, null);
 	}
 
+	@Deprecated
 	public GCCToolChain(IToolChainProvider provider, String id, String version, Path[] path, String prefix) {
 		this.provider = provider;
 		this.id = id;

@@ -417,11 +417,6 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	protected Path findCommand(String command) {
-		if (Platform.getOS().equals(Platform.OS_WIN32)
-				&& !(command.endsWith(".exe") || command.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			command += ".exe"; //$NON-NLS-1$
-		}
-
 		Path cmdPath = Paths.get(command);
 		if (cmdPath.isAbsolute()) {
 			return cmdPath;
@@ -442,6 +437,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 			Path commandPath = Paths.get(dir, command);
 			if (Files.exists(commandPath)) {
 				return commandPath;
+			} else {
+				if (Platform.getOS().equals(Platform.OS_WIN32)
+						&& !(command.endsWith(".exe") || command.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					commandPath = Paths.get(dir, command + ".exe"); //$NON-NLS-1$
+					if (Files.exists(commandPath)) {
+						return commandPath;
+					}
+				}
 			}
 		}
 		return null;

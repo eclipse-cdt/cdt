@@ -104,12 +104,19 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		return s;
 	}
 	
-	private ICommandLauncher fLocalLauncher = CommandLauncherManager.getInstance().getCommandLauncher();
+	private ICommandLauncher fLocalLauncher;
 	private boolean fShowCommand;
 	private String[] fCommandArgs;
 	private IRemoteConnection fConnection;
 	private IRemoteProcess fRemoteProcess;
 	private final Properties fEnvironment = new Properties();
+	
+	public RemoteCommandLauncher() {
+	}
+	
+	public RemoteCommandLauncher(ICommandLauncher localLauncher) {
+		this.fLocalLauncher = localLauncher;
+	}
 
 	/**
 	 * The number of milliseconds to pause between polling.
@@ -135,7 +142,9 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		localLauncher.setProject(getProject());
 		localLauncher.setErrorMessage(getErrorMessage());
 		usingLocalLauncher = false;
-		fLocalLauncher = localLauncher;
+		if (fLocalLauncher == null) {
+			fLocalLauncher = localLauncher;
+		}
 		if (getProject() != null) {
 			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {

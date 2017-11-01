@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICommandLauncher;
@@ -126,6 +128,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IAConfiguration toolsCfg;
 	private IBuilder builder;
 	
+	private ICommandLauncher localCommandLauncher = new CommandLauncher();
 
 	/**
 	 * @since 2.0
@@ -336,6 +339,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		toolsCfg = AutotoolsConfigurationManager.getInstance().getConfiguration(getProject(), icfg.getId());
 			
 		initializeBuildConfigDirs(icfg, toolsCfg);
+
+		ICommandLauncher configureLauncher = CommandLauncherManager.getInstance().getCommandLauncher(project);
+
 		// Create the top-level directory for the build output
 		if (!createDirectory(buildDir)) {
 			rc = IStatus.ERROR;
@@ -345,31 +351,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						.getUniqueIdentifier(), rc, errMsg, null);
 		}
 		checkCancel();
-
-		// // How did we do
-		// if (!getInvalidDirList().isEmpty()) {
-		// status = new MultiStatus (
-		// ManagedBuilderCorePlugin.getUniqueIdentifier(),
-		// IStatus.WARNING,
-		// "",
-		// null);
-		// // Add a new status for each of the bad folders
-		// iter = getInvalidDirList().iterator();
-		// while (iter.hasNext()) {
-		// status.add(new Status (
-		// IStatus.WARNING,
-		// ManagedBuilderCorePlugin.getUniqueIdentifier(),
-		// SPACES_IN_PATH,
-		// ((IContainer)iter.next()).getFullPath().toString(),
-		// null));
-		// }
-		// } else {
-		// status = new MultiStatus(
-		// ManagedBuilderCorePlugin.getUniqueIdentifier(),
-		// IStatus.OK,
-		// "",
-		// null);
-		// }
 
 		// Get a build console for the project
 		IConsole console = CCorePlugin.getDefault().getConsole("org.eclipse.cdt.autotools.ui.configureConsole"); //$NON-NLS-1$
@@ -416,7 +397,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
 					}
 					makeargs[makeargs.length - 1] = target;
-					rc = runCommand(makeCmd,
+					rc = runCommand(localCommandLauncher, makeCmd,
 							getProjectLocation(),
 							makeargs,
 							AutotoolsPlugin.getResourceString("MakeGenerator.clean.topdir"), //$NON-NLS-1$
@@ -466,7 +447,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 								System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
 							}
 							makeargs[makeargs.length - 1] = target;
-							rc = runCommand(makeCmd,
+							rc = runCommand(localCommandLauncher, makeCmd,
 									buildLocation,
 									makeargs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.clean.builddir", new String[]{buildDir}), //$NON-NLS-1$
@@ -497,7 +478,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	            // can simply run config.status again to ensure the top level Makefile has been
 				// created.
 				if (makefile == null || !makefile.exists()) {
-					rc = runScript(configfile, buildLocation, null, 
+					rc = runScript(configureLauncher, configfile, buildLocation, null,
 							AutotoolsPlugin.getFormattedString("MakeGenerator.run.config.status", new String[]{buildDir}), //$NON-NLS-1$
 							errMsg, console, null, consoleStart);
 					consoleStart = false;
@@ -505,7 +486,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			}
 			// Look for configure and configure from scratch
 			else if (configurePath.toFile().exists()) {
-				rc = runScript(configurePath, 
+				rc = runScript(configureLauncher, configurePath,
 						buildLocation,
 						configArgs, 
 						AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", new String[]{buildDir}), //$NON-NLS-1$
@@ -528,7 +509,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					configStatus.delete();
 				// Get any user-specified arguments for autogen.
 				String[] autogenArgs = getAutogenArgs(autogenCmdParms);
-				rc = runScript(autogenPath,
+				rc = runScript(localCommandLauncher, autogenPath,
 						autogenPath.removeLastSegments(1), autogenArgs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.autogen.sh", new String[]{buildDir}), //$NON-NLS-1$
 						errMsg, console, autogenEnvs, consoleStart);
@@ -538,8 +519,11 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					configStatus = configfile.toFile();
 					// Check for config.status.  If it is created, then
 					// autogen.sh ran configure and we should not run it
-					// ourselves.
-					if (configStatus == null || !configStatus.exists()) {
+					// ourselves unless the local command launcher and
+					// configure launchers are different, meaning that
+					// configure needs to be run remotely.
+					if (configStatus == null || !configStatus.exists() || !localCommandLauncher.getClass().getName()
+							.equals(configureLauncher.getClass().getName())) {
 						if (!configurePath.toFile().exists()) {
 							// no configure script either...try running autoreconf
 							String[] reconfArgs = new String[1];
@@ -548,7 +532,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 								reconfCmd = DEFAULT_AUTORECONF;
 							IPath reconfCmdPath = new Path(reconfCmd);
 							reconfArgs[0] = "-i"; //$NON-NLS-1$
-							rc = runScript(reconfCmdPath,
+							rc = runScript(localCommandLauncher, reconfCmdPath,
 									getSourcePath(),
 									reconfArgs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$
@@ -558,7 +542,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						}
 						// Check if configure generated and if yes, run it.
 						if (rc != IStatus.ERROR && configurePath.toFile().exists()) {
-							rc = runScript(configurePath, 
+							rc = runScript(configureLauncher, configurePath,
 									buildLocation,
 									configArgs, 
 									AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", new String[]{buildDir}), //$NON-NLS-1$
@@ -581,15 +565,26 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				String[] makeargs = new String[1];
 				IPath makeCmd = builder.getBuildCommand();
 				makeargs[0] = "-f" + getMakefileCVSPath().toOSString(); //$NON-NLS-1$
-				rc = runCommand(makeCmd,
+				rc = runCommand(localCommandLauncher, makeCmd,
 						getProjectLocation().append(buildDir),
 						makeargs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.makefile.cvs", new String[]{buildDir}), //$NON-NLS-1$
 						errMsg, console, consoleStart);
 				consoleStart = false;
 				if (rc != IStatus.ERROR) {
-					File makefileFile = getProjectLocation().append(buildDir)
-					.append(MAKEFILE).toFile();
+					refresh();
+					// if the local command launcher is not the same as the configure launcher, we
+					// need
+					// to rerun the configure command remotely
+					if (configurePath.toFile().exists() && !localCommandLauncher.getClass().getName()
+							.equals(configureLauncher.getClass().getName())) {
+						rc = runScript(configureLauncher, configurePath, buildLocation, configArgs,
+								AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", //$NON-NLS-1$
+										new String[] { buildDir }), errMsg, console, configureEnvs, false);
+					}
+				}
+				if (rc != IStatus.ERROR) {
+					File makefileFile = getProjectLocation().append(buildDir).append(MAKEFILE).toFile();
 					addMakeTargetsToManager(makefileFile);
 					toolsCfg.setDirty(false);
 				}
@@ -602,7 +597,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					reconfCmd = DEFAULT_AUTORECONF;
 				IPath reconfCmdPath = new Path(reconfCmd);
 				reconfArgs[0] = "-i"; //$NON-NLS-1$
-				rc = runScript(reconfCmdPath,
+				rc = runScript(localCommandLauncher, reconfCmdPath,
 						getSourcePath(),
 						reconfArgs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$
@@ -612,7 +607,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				if (rc != IStatus.ERROR) {
 					refresh();
 					if (configurePath.toFile().exists()) {
-						rc = runScript(configurePath, 
+						rc = runScript(configureLauncher, configurePath, 
 								buildLocation,
 								configArgs, 
 								AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", new String[]{buildDir}), //$NON-NLS-1$
@@ -839,7 +834,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 
 	// Run a command or executable (e.g. make).
-	private int runCommand(IPath commandPath, IPath runPath, String[] args, String jobDescription, String errMsg,
+	private int runCommand(ICommandLauncher commandLauncher, IPath commandPath, IPath runPath, String[] args,
+			String jobDescription, String errMsg,
 			IConsole console, boolean consoleStart) throws CoreException, NullPointerException, IOException {
 
 		int rc = IStatus.OK;
@@ -893,7 +889,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			ICommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher(commandLauncher);
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 
@@ -1105,7 +1101,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     }
 
     // Run an autotools script (e.g. configure, autogen.sh, config.status).
-	private int runScript(IPath commandPath, IPath runPath, String[] args, String jobDescription, String errMsg,
+	private int runScript(ICommandLauncher commandLauncher, IPath commandPath, IPath runPath, String[] args,
+			String jobDescription, String errMsg,
 			IConsole console, List<String> additionalEnvs, boolean consoleStart)
 					throws CoreException, NullPointerException, IOException {
 
@@ -1207,7 +1204,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			consoleOutStream.flush();
 
 			// Get a launcher for the config command
-			ICommandLauncher launcher = new RemoteCommandLauncher();
+			ICommandLauncher launcher = new RemoteCommandLauncher(commandLauncher);
 			launcher.setProject(project);
 			// Set the environment
 			IEnvironmentVariable variables[] = 

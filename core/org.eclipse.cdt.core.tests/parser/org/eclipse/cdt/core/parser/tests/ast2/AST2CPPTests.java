@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -147,6 +148,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -7606,6 +7608,37 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertSame(col.getName(2).resolveBinding(), col.getName(10).resolveBinding());
 		assertSame(col.getName(4).resolveBinding(), col.getName(11).resolveBinding());
 		assertSame(col.getName(6).resolveBinding(), col.getName(12).resolveBinding());
+	}
+
+	// auto L = L"";
+	// auto u8 = u8"";
+	// auto u = u"";
+	// auto U = U"";
+	public void testStringLiteralPrefixTypes_526724() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		IType actual_L = ((IVariable) col.getName(0).resolveBinding()).getType();
+		IType actual_u8 = ((IVariable) col.getName(1).resolveBinding()).getType();
+		IType actual_u = ((IVariable) col.getName(2).resolveBinding()).getType();
+		IType actual_U = ((IVariable) col.getName(3).resolveBinding()).getType();
+
+		IType eWChar = createStringType(Kind.eWChar);
+		IType eChar = createStringType(Kind.eChar);
+		IType eChar16 = createStringType(Kind.eChar16);
+		IType eChar32 = createStringType(Kind.eChar32);
+
+		assertSameType(actual_L, eWChar);
+		assertSameType(actual_u8, eChar);
+		assertSameType(actual_u, eChar16);
+		assertSameType(actual_U, eChar32);
+	}
+
+	protected IType createStringType(Kind kind) {
+		IType type = new CPPBasicType(kind, 0);
+		type = new CPPQualifierType(type, true, false);
+		return new CPPPointerType(type);
 	}
 
 	//	namespace ns {

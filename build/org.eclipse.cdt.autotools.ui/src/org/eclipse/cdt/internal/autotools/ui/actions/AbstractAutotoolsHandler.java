@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -299,8 +300,9 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 
 						ArrayList<String> additionalEnvs = new ArrayList<>();
 						String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
-						// Get a launcher for the config command
-						RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+						// Get a launcher for the config command...default non-remote to use local
+						// commands
+						RemoteCommandLauncher launcher = new RemoteCommandLauncher(new CommandLauncher());
 						launcher.setProject(project);
 						// Set the environment
 						IEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider()

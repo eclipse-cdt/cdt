@@ -16,6 +16,7 @@
  *     William Riley (Renesas) - Memory viewing broken (Bug 413483)
  *     Marc Khouzam (Ericsson) - Cannot disable Delay command (bug 413437)
  *     John Dallaway - Execute run commands before resume (Bug 525692)
+ *     John Dallaway - Test for reset/delay/halt command not defined (Bug 361881)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -341,7 +342,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doReset(commands);
-				queueCommands(commands, rm);
+				if (commands.isEmpty()) {
+					setError(String.format(Messages.getString("GDBJtagDebugger.reset_not_defined"), getGDBJtagDeviceName()), rm); //$NON-NLS-1$
+				} else {
+					queueCommands(commands, rm);
+				}
 			} else {
 				rm.done();
 			}
@@ -357,8 +362,13 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
 			int defaultDelay = fGdbJtagDevice.getDefaultDelay();
 			List<String> commands = new ArrayList<String>();
-			fGdbJtagDevice.doDelay(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
-			queueCommands(commands, rm);
+			int delay = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay);
+			fGdbJtagDevice.doDelay(delay, commands);
+			if (commands.isEmpty() && (delay != 0)) {
+				setError(String.format(Messages.getString("GDBJtagDebugger.delay_not_defined"), getGDBJtagDeviceName()), rm); //$NON-NLS-1$
+			} else {
+				queueCommands(commands, rm);
+			}
 		} else {
 			rm.done();
 		}						
@@ -373,7 +383,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
 				List<String> commands = new ArrayList<String>();
 				fGdbJtagDevice.doHalt(commands);
-				queueCommands(commands, rm);								
+				if (commands.isEmpty()) {
+					setError(String.format(Messages.getString("GDBJtagDebugger.halt_not_defined"), getGDBJtagDeviceName()), rm); //$NON-NLS-1$
+				} else {
+					queueCommands(commands, rm);
+				}
 			} else {
 				rm.done();
 			}
@@ -611,9 +625,17 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		}
 	}
 
+	private void setError(String message, RequestMonitor rm) {
+		rm.done(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message));
+	}
+
+	private String getGDBJtagDeviceName() {
+		return CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE);
+	}
+
 	private IGDBJtagDevice getGDBJtagDevice () {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); 
+		String jtagDeviceName = getGDBJtagDeviceName();
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
 		for (GDBJtagDeviceContribution availableDevice : availableDevices) {
 			if (jtagDeviceName.equals(availableDevice.getDeviceName())) {

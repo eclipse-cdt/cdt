@@ -53,7 +53,10 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 
 			// local didn't work, try and find one that does
 			if (toolChain == null) {
-				for (IToolChain tc : toolChainManager.getToolChainsMatching(new HashMap<>())) {
+				properties = new HashMap<>();
+				// XXX this is temporary for docker/commandlauncher support
+				properties.put("remote", "true");
+				for (IToolChain tc : toolChainManager.getToolChainsMatching(properties)) {
 					toolChain = tc;
 					break;
 				}

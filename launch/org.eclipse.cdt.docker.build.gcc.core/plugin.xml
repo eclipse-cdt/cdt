@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.docker.build.gcc.core.DockerGCCPathToolChainProvider"
+            id="org.eclipse.cdt.docker.build.gcc.core.gccPathProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.docker.build.gcc.core.launchTargetType"
+            provider="org.eclipse.cdt.docker.build.gcc.core.DockerLaunchTargetProvider">
+      </launchTargetType>
+   </extension>
+
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+      <configProvider
+            class="org.eclipse.cdt.docker.build.gcc.core.DockerCoreBuildLaunchConfigProvider"
+            descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            priority="5">
+      </configProvider>
+   </extension>
+
+</plugin>

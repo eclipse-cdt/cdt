@@ -157,11 +157,9 @@
         <requirement
             name="org.freemarker"/>
         <requirement
-            name="org.bouncycastle.bcpkix"
-            versionRange="[1.51.0.v201505131810,1.51.0.v201505131810]"/>
+            name="org.bouncycastle.bcpkix"/>
         <requirement
-            name="org.bouncycastle.bcprov"
-            versionRange="[1.51.0.v201505131810,1.51.0.v201505131810]"/>
+            name="org.bouncycastle.bcprov"/>
         <requirement
             name="org.antlr.runtime"/>
         <requirement
@@ -204,8 +202,6 @@
               url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
           <repository
               url="http://download.eclipse.org/tm/updates/4.0/"/>
-          <repository
-              url="http://download.eclipse.org/eclipse/updates/4.7milestones/"/>
           <repository
               url="http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones"/>
           <repository

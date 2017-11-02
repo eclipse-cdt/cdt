@@ -66,8 +66,8 @@ public class CDebugImages {
 	public static final String IMG_OVRS_VARIABLE_CASTED = NAME_PREFIX + "casttype_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_ARGUMENT = NAME_PREFIX + "argument_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_GLOBAL = NAME_PREFIX + "global_ovr.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_BREAKPOINT_ENABLED = NAME_PREFIX + "brkp_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "brkpd_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_ENABLED = NAME_PREFIX + "brkp_obj.png";	//$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "brkpd_obj.png";	//$NON-NLS-1$
 	public static final String IMG_OBJS_HWBREAKPOINT_ENABLED = NAME_PREFIX + "hwbrkp_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_HWBREAKPOINT_DISABLED = NAME_PREFIX + "hwbrkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED = NAME_PREFIX + "addrbrkp_obj.gif";	//$NON-NLS-1$

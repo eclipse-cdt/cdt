@@ -79,7 +79,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 
 	private ProjectSpecificLanguageServerWrapper getLanguageSeverWrapper(LanguageServerDefinition definition) {
 		try {
-			return LanguageServiceAccessor.getLSWrapperForConnection(fProject, definition, false);
+			return LanguageServiceAccessor.getLSWrapperForConnection(fProject, definition);
 		} catch (IOException e) {
 			// Do nothing
 			return null;

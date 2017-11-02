@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "a7979753_9b084269",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-02T19:46:51Z",
+      "side": 1,
+      "message": "Was thinking of this. The environment handling probably should be moved to the toolchain since it will be very different on remotes.\n\nWe could even extend that so the toolchains have an method that the builder calls instead of command launcher. Then we can hide that whole mechanism in the toolchain.",
+      "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7979753_bbd25e42",
         "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerGCCToolChain.java",
         "patchSetId": 1

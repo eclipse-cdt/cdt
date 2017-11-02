@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_88039a4b",
+        "filename": "build/org.eclipse.cdt.build.gcc.core/src/org/eclipse/cdt/build/gcc/core/internal/GCCPathToolChainProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-02T19:36:46Z",
+      "side": 0,
+      "message": "Hmm, we shouldn\u0027t have to do that with all toolchains. The default should be false. Need to see what happens if you don\u0027t set this.",
+      "revId": "89cb1076e43310e5174f019eef2de87a23711247",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

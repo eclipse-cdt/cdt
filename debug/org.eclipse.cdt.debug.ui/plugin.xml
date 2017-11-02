@@ -1051,7 +1051,7 @@
             annotationType="org.eclipse.cdt.debug.core.breakpoint"
             colorPreferenceKey="breakpointIndicationColor"
             colorPreferenceValue="0,0,255"
-            icon="icons/obj16/brkp_obj.gif"
+            icon="icons/obj16/brkp_obj.png"
             label="%BreakpointMarkerPreference.label"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
             overviewRulerPreferenceValue="false"

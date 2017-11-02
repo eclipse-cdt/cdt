@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -257,4 +259,11 @@ public interface IToolChain extends IAdaptable {
 		return true;
 	}
 
+	/**
+	 * Get the ICommandLauncher for use with this toolchain.  
+	 * @return ICommandLauncher for use with this toolchain.  May be <code>null</code>.
+	 */
+	default ICommandLauncher getCommandLauncher() {
+		return new CommandLauncher();
+	}
 }

@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GCC Docker Support
+Bundle-SymbolicName: org.eclipse.cdt.docker.build.gcc.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - CDT
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.eclipse.core.resources;bundle-version="3.12.0",
+ org.eclipse.debug.core;bundle-version="3.11.0"
+Import-Package: org.eclipse.cdt.build.gcc.core,
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.core.build,
+ org.eclipse.cdt.core.dom.ast.gnu.c,
+ org.eclipse.cdt.core.dom.ast.gnu.cpp,
+ org.eclipse.cdt.core.envvar,
+ org.eclipse.cdt.core.model,
+ org.eclipse.cdt.core.parser,
+ org.eclipse.cdt.debug.internal.core.launch,
+ org.eclipse.cdt.docker.launcher,
+ org.eclipse.launchbar.core,
+ org.eclipse.launchbar.core.target,
+ org.eclipse.linuxtools.docker.ui.launch,
+ org.eclipse.swt.widgets

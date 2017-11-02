@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.build.gcc.core.internal;
+package org.eclipse.cdt.docker.build.gcc.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Finds gcc and clang on the path.
  */
-public class GCCPathToolChainProvider implements IToolChainProvider {
+public class DockerGCCPathToolChainProvider implements IToolChainProvider {
 
-	public static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.docker.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
 
 	private static final Pattern gccPattern = Pattern.compile("(.*-)?((gcc|clang)(\\.exe)?)"); //$NON-NLS-1$
 
@@ -35,6 +35,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 
 	@Override
 	public void init(IToolChainManager manager) {
+		// For docker-based access this is all wrong as it just 
+		// looks on the path
 		String path = System.getenv("PATH"); //$NON-NLS-1$
 		for (String dirStr : path.split(File.pathSeparator)) {
 			File dir = new File(dirStr);
@@ -50,7 +52,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 							if (info.target != null && info.version != null) {
 								String[] tuple = info.target.split("-"); //$NON-NLS-1$
 								if (tuple.length > 2) {
-									GCCToolChain gcc = new GCCToolChain(this, file.toPath(), tuple[0], null);
+									DockerGCCToolChain gcc = new DockerGCCToolChain(new GCCToolChain(this, file.toPath(), tuple[0], null));
 										
 									// OS
 									switch (tuple[1]) {
@@ -64,13 +66,11 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 										gcc.setProperty(IToolChain.ATTR_OS, Platform.OS_MACOSX);
 										break;
 									}
-									// XXX docker/commandlauncher support
-									gcc.setProperty("remote", "false");
 									manager.addToolChain(gcc);
 								}
 							}
 						} catch (IOException e) {
-							Activator.log(e);
+							e.printStackTrace();
 						}
 					}
 				}

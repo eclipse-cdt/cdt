@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_883c7af0",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2017-11-02T14:58:37Z",
+      "side": 0,
+      "message": "Is\nhttp://download.eclipse.org/eclipse/updates/4.7\ninherited or something? Normally this file has to mirror cdt.target so that\u0027s why the platform update site was there.",
+      "revId": "2e0f85e5143587204f7380ef8c8209fdf266e1d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

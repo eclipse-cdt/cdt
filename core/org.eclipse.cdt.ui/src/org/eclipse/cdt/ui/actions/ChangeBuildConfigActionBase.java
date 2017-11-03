@@ -8,17 +8,21 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Warren Paul (Nokia) - bug 200420.
+ *     Jesper Eskilson (IAR Systems AB) - bug 526789. 
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -55,6 +59,75 @@ public class ChangeBuildConfigActionBase {
 	protected HashSet<IProject> fProjects = new HashSet<IProject>();
 	
 	/**
+	 * Abstraction over {@link ICConfigurationDescription} and
+	 * {@link IBuildConfiguration} for the purpose of being able to support both
+	 * Core Build and MBS projects.
+	 * 
+	 * @author jesperes
+	 *
+	 */
+	private static class GenericConfiguration {
+		final private String name;
+		final private boolean isActive;
+		final private String description;
+
+		public GenericConfiguration(ICConfigurationDescription cfg) {
+			name = cfg.getName();
+			isActive = getIsActiveFromConfig(cfg);
+			description = cfg.getDescription();
+		}
+
+		public GenericConfiguration(IBuildConfiguration cfg) {
+			name = cfg.getName().split("/")[1]; //$NON-NLS-1$
+			isActive = getIsActiveFromConfig(cfg);
+			description = null; // IBuildConfigurations do not have a description
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public boolean isActive() {
+			return isActive;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("GenericConfiguration [name=%s, isActive=%s, description=%s]", name, //$NON-NLS-1$
+					isActive, description);
+		}
+
+		/**
+		 * Return true iff the configuration is the active one.
+		 * 
+		 * @param cfg
+		 * @return
+		 */
+		private boolean getIsActiveFromConfig(ICConfigurationDescription cfg) {
+			return cfg.isActive();
+		}
+
+		/**
+		 * Same as {@link #getIsActiveFromConfig(ICConfigurationDescription)}, but for
+		 * {@link IBuildConfiguration}.
+		 * 
+		 * @param cfg
+		 * @return
+		 */
+		private boolean getIsActiveFromConfig(IBuildConfiguration cfg) {
+			try {
+				return cfg.getProject().getActiveBuildConfig().getName().equals(cfg.getName());
+			} catch (CoreException e) {
+				return false;
+			}
+		}
+	}
+
+	/**
 	 * Fills the menu with build configurations which are common for all selected projects
 	 * @param menu The menu to fill
 	 */
@@ -70,11 +143,11 @@ public class ChangeBuildConfigActionBase {
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
 		for (IProject prj : fProjects) {
-			ICConfigurationDescription[] cfgDescs = getCfgs(prj);
+			GenericConfiguration[] cfgDescs = getCfgs(prj);
 
 			String sActiveConfig = null;
 			// Store names and detect active configuration
-			for (ICConfigurationDescription cfgDesc : cfgDescs) {
+			for (GenericConfiguration cfgDesc : cfgDescs) {
 				String s = cfgDesc.getName();
 				if (!configNames.contains(s)) 
 					configNames.add(s);
@@ -100,7 +173,7 @@ public class ChangeBuildConfigActionBase {
 			boolean commonDesc = true;
 			boolean firstProj = true;
 			for (IProject prj : fProjects) {
-				ICConfigurationDescription[] cfgDescs = getCfgs(prj);
+				GenericConfiguration[] cfgDescs = getCfgs(prj);
 				int i = 0;
 				for (; i < cfgDescs.length; i++) {
 					if (cfgDescs[i].getName().equals(sName)) {
@@ -228,12 +301,10 @@ public class ChangeBuildConfigActionBase {
 						}
 					}
 					// Check whether the project is CDT project
+					// Bug 526789: now we also check if this is a Core Build project
 					if (project != null) {
-						if (!CoreModel.getDefault().isNewStyleProject(project))
+						if (getCfgs(project).length == 0) {
 							project = null;
-						else {
-							ICConfigurationDescription[] tmp = getCfgs(project);
-							if (tmp.length == 0)	project = null;
 						}
 					}
 					if (project != null) {
@@ -280,16 +351,16 @@ public class ChangeBuildConfigActionBase {
 		boolean enable = false;
 		if (!badObject && !fProjects.isEmpty()) {
 			Iterator<IProject> iter = fProjects.iterator();
-			ICConfigurationDescription[] firstConfigs = getCfgs(iter.next());
-			if (firstConfigs!=null) {
-				for (ICConfigurationDescription firstConfig : firstConfigs) {
+			GenericConfiguration[] firstConfigs = getCfgs(iter.next());
+			if (firstConfigs != null) {
+				for (GenericConfiguration firstConfig : firstConfigs) {
 					boolean common = true;
 					Iterator<IProject> iter2 = fProjects.iterator();
 					while (iter2.hasNext()) {
-						ICConfigurationDescription[] currentConfigs = getCfgs(iter2.next());
+						GenericConfiguration[] currentConfigs = getCfgs(iter2.next());
 						int j = 0;
 						for (; j < currentConfigs.length; j++) {
-							if (firstConfig.getName().equals(currentConfigs[j].getName())) 
+							if (firstConfig.getName().equals(currentConfigs[j].getName()))
 								break;
 						}
 						if (j == currentConfigs.length) {
@@ -319,7 +390,7 @@ public class ChangeBuildConfigActionBase {
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			if (projects != null && projects.length == 1) {
 				IProject project = projects[0];
-				if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) { 
+				if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) {
 					onSelectionChanged(action, new ImaginarySelection(project));
 					return;
 				}
@@ -360,15 +431,29 @@ public class ChangeBuildConfigActionBase {
 		}
 	}
 	
-	private ICConfigurationDescription[] getCfgs(IProject prj) {
-		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
-		if (prjd != null) { 
-			ICConfigurationDescription[] cfgs = prjd.getConfigurations();
-			if (cfgs != null) {
-				return cfgs;
+	private GenericConfiguration[] getCfgs(IProject prj) {
+		if (CoreModel.getDefault().isNewStyleProject(prj)) {
+			ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
+			if (prjd != null) {
+				ICConfigurationDescription[] cfgs = prjd.getConfigurations();
+				if (cfgs != null) {
+					GenericConfiguration[] genCfgs = new GenericConfiguration[cfgs.length];
+					for (int i = 0; i < cfgs.length; i++) {
+						genCfgs[i] = new GenericConfiguration(cfgs[i]);
+					}
+					return genCfgs;
+				}
+			}
+		} else {
+			// Bug 526789: Support for CoreBuild projects.
+			try {
+				return Arrays.stream(prj.getBuildConfigs()).filter(cfg -> !cfg.getName().isEmpty())
+						.map(cfg -> new GenericConfiguration(cfg))
+						.toArray(n -> new GenericConfiguration[n]);
+			} catch (CoreException e) {
 			}
 		}
-		
-		return new ICConfigurationDescription[0];
+
+		return new GenericConfiguration[0];
 	}
 }

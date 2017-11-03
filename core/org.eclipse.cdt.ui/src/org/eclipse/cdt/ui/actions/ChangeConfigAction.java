@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.newui.AbstractPage;
@@ -50,18 +56,61 @@ public class ChangeConfigAction extends Action {
 		Iterator<IProject> iter = fProjects.iterator();
 		while (iter.hasNext()) {
 			IProject prj = iter.next();
-			ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
 			boolean changed = false;
-			ICConfigurationDescription[] configs = prjd.getConfigurations(); 
-			if (configs != null && configs.length > 0) {
-				for (ICConfigurationDescription config : configs) {
-					if (config.getName().equals(fConfigName)) {
-						config.setActive();
-						CDTPropertyManager.performOk(null);
-						AbstractPage.updateViews(prj);
-						changed = true;
-						break;
+			if (CoreModel.getDefault().isNewStyleProject(prj)) {
+				ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
+				ICConfigurationDescription[] configs = prjd.getConfigurations();
+				if (configs != null && configs.length > 0) {
+					for (ICConfigurationDescription config : configs) {
+						if (config.getName().equals(fConfigName)) {
+							config.setActive();
+							CDTPropertyManager.performOk(null);
+							AbstractPage.updateViews(prj);
+							changed = true;
+							break;
+						}
 					}
+				}
+			} else {
+				try {
+					List<IBuildConfiguration> configsToKeep = new ArrayList<>();
+					IBuildConfiguration newConfig = null;
+
+					/*
+					 * Find the build configuration to change to. Remove the default config if it is
+					 * still here.
+					 */
+					for (IBuildConfiguration config : prj.getBuildConfigs()) {
+						if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+							continue;
+						}
+
+						String[] elems = config.getName().split("/"); //$NON-NLS-1$
+						if (elems.length != 2)
+							continue;
+
+						configsToKeep.add(config);
+						
+						String configName = elems[1];
+						if (configName.equals(fConfigName)) {
+							newConfig = config;
+						}
+					}
+
+					if (newConfig != null) {
+						IProjectDescription descr = prj.getDescription();
+						descr.setActiveBuildConfig(newConfig.getName());
+						descr.setBuildConfigs(
+								configsToKeep.stream().map(c -> c.getName()).toArray(n -> new String[n]));
+						prj.setDescription(descr, null);
+						changed = true;
+					}
+
+				} catch (CoreException e) {
+					/*
+					 * This should only happen if the project is closed or does not exist. In either
+					 * case there is really not much we can do.
+					 */
 				}
 			}
 			

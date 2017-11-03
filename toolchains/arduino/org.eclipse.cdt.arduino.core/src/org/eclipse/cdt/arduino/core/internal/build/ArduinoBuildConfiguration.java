@@ -741,11 +741,12 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
 				ProcessBuilder processBuilder = new ProcessBuilder().command(getBuildCommand())
 						.directory(getBuildDirectory().toFile());
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
-				if (watchProcess(process, new IConsoleParser[] { epm }, console) == 0) {
+				if (watchProcess(process, new IConsoleParser[] { epm }) == 0) {
 					showSizes(console);
 				}
 			}
@@ -773,7 +774,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			setBuildEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			watchProcess(process, new IConsoleParser[0], console);
+			watchProcess(process, console);
 
 			getBuildContainer().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

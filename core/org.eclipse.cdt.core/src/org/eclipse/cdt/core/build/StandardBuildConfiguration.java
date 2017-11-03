@@ -87,6 +87,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
 				// run make
 				console.getOutputStream().write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
 				ProcessBuilder processBuilder = new ProcessBuilder(command)
@@ -94,7 +95,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				IConsoleParser[] consoleParsers = new IConsoleParser[] { epm, this };
-				watchProcess(process, consoleParsers, console);
+				watchProcess(process, consoleParsers);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -125,7 +126,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 					.directory(getBuildDirectory().toFile());
 			setBuildEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
-			watchProcess(process, new IConsoleParser[0], console);
+			watchProcess(process, console);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

@@ -94,6 +94,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
 		IProject project = getProject();
+		
 		try {
 			String generator = getProperty(CMAKE_GENERATOR);
 			if (generator == null) {
@@ -146,11 +147,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[0], console);
+				watchProcess(process, console);
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
+				
 				String buildCommand = getProperty(BUILD_COMMAND);
 				if (buildCommand == null) {
 					if (generator.equals("Ninja")) { //$NON-NLS-1$
@@ -170,7 +173,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm }, console);
+				watchProcess(process, new IConsoleParser[] { epm });
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -219,7 +222,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
 			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-			watchProcess(process, new IConsoleParser[0], console);
+			watchProcess(process, console);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

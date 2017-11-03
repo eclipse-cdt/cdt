@@ -391,12 +391,13 @@ public class QtBuildConfiguration extends CBuildConfiguration
 				outStream.write(msg.toString());
 
 				// TODO qmake error parser
-				watchProcess(process, new IConsoleParser[0], console);
+				watchProcess(process, console);
 				doFullBuild = false;
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
 				// run make
 				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
 				command.add("all"); //$NON-NLS-1$
@@ -404,7 +405,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm }, console);
+				watchProcess(process, new IConsoleParser[] { epm });
 			}
 
 			getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -433,6 +434,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
 				// run make
 				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
 				command.add("clean"); //$NON-NLS-1$
@@ -440,7 +442,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm }, console);
+				watchProcess(process, new IConsoleParser[] { epm });
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

@@ -450,10 +450,37 @@ public abstract class CBuildConfiguration extends PlatformObject
 		return null;
 	}
 
+	@Deprecated
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, IConsole console)
+		throws CoreException {
+		if (consoleParsers == null || consoleParsers.length == 0) {
+			return watchProcess(process, console);
+		} else {
+			return watchProcess(process, consoleParsers);
+		}
+	}
+
+	/**
+	 * @since 6.4
+	 */
+	protected int watchProcess(Process process, IConsole console) throws CoreException {
+		new ReaderThread(process.getInputStream(), console.getOutputStream()).start();
+		new ReaderThread(process.getErrorStream(), console.getErrorStream()).start();
+		try {
+			return process.waitFor();
+		} catch (InterruptedException e) {
+			CCorePlugin.log(e);
+			return -1;
+		}
+	}
+	
+	/**
+	 * @since 6.4
+	 */
+	protected int watchProcess(Process process, IConsoleParser[] consoleParsers)
 			throws CoreException {
-		new ReaderThread(process.getInputStream(), consoleParsers, console.getOutputStream()).start();
-		new ReaderThread(process.getErrorStream(), consoleParsers, console.getErrorStream()).start();
+		new ReaderThread(process.getInputStream(), consoleParsers).start();
+		new ReaderThread(process.getErrorStream(), consoleParsers).start();
 		try {
 			return process.waitFor();
 		} catch (InterruptedException e) {
@@ -463,34 +490,42 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	private static class ReaderThread extends Thread {
-
 		private final BufferedReader in;
-		private final PrintStream out;
 		private final IConsoleParser[] consoleParsers;
+		private final PrintStream out;
 
-		public ReaderThread(InputStream in, IConsoleParser[] consoleParsers, OutputStream out) {
+		public ReaderThread(InputStream in, IConsoleParser[] consoleParsers) {
 			this.in = new BufferedReader(new InputStreamReader(in));
+			this.out = null;
 			this.consoleParsers = consoleParsers;
-			this.out = new PrintStream(out);
 		}
 
+		public ReaderThread(InputStream in, OutputStream out) {
+			this.in = new BufferedReader(new InputStreamReader(in));
+			this.out = new PrintStream(out);
+			this.consoleParsers = null;
+		}
+		
 		@Override
 		public void run() {
 			try {
 				for (String line = in.readLine(); line != null; line = in.readLine()) {
-					for (IConsoleParser consoleParser : consoleParsers) {
-						// Synchronize to avoid interleaving of lines
-						synchronized (consoleParser) {
-							consoleParser.processLine(line);
+					if (consoleParsers != null) {
+						for (IConsoleParser consoleParser : consoleParsers) {
+							// Synchronize to avoid interleaving of lines
+							synchronized (consoleParser) {
+								consoleParser.processLine(line);
+							}
 						}
 					}
-					out.println(line);
+					if (out != null) {
+						out.println(line);
+					}
 				}
 			} catch (IOException e) {
 				CCorePlugin.log(e);
 			}
 		}
-
 	}
 
 	private File getScannerInfoCacheFile() {

@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
@@ -90,8 +89,9 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		setBuildEnvironment(builder.environment());
 
 		try {
+			// TODO Error parsers
 			Process process = builder.start();
-			watchProcess(process, new IConsoleParser[0], console);
+			watchProcess(process, console);
 		} catch (IOException e) {
 			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-2$
 		}

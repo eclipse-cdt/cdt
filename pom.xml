@@ -57,6 +57,7 @@
 	<modules>
 		<!-- The test plug-ins need to be at the end -->
 		<module>build/org.eclipse.cdt.build.gcc.core</module>
+		<module>build/org.eclipse.cdt.build.gcc.ui</module>
 		<module>build/org.eclipse.cdt.make.core</module>
 		<module>build/org.eclipse.cdt.make.ui</module>
 		<module>build/org.eclipse.cdt.managedbuilder.core</module>

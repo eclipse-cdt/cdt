@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.cmake.core.ICMakeInstallation;
+import org.eclipse.cdt.cmake.core.ICMakeInstallationManager;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -33,6 +35,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -111,14 +115,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
 				List<String> command = new ArrayList<>();
 
-				// TODO location of CMake out of preferences if not found here
-				Path cmakePath = findCommand("cmake"); //$NON-NLS-1$
-				if (cmakePath != null) {
-					command.add(cmakePath.toString());
-				} else {
-					command.add("cmake"); //$NON-NLS-1$
+				ICMakeInstallationManager manager = Activator.getService(ICMakeInstallationManager.class);
+				ICMakeInstallation cmake = manager.getActive();
+				if(cmake == null) {
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.CMakeBuildConfiguration_CMakeNotFound));
 				}
-
+				
+				command.add(cmake.getCMakeCommand().toString());
 				command.add("-G"); //$NON-NLS-1$
 				command.add(generator);
 

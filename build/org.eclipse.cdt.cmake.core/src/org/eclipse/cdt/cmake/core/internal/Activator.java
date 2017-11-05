@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
 
+import org.eclipse.cdt.cmake.core.ICMakeInstallationManager;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +25,7 @@ public class Activator extends Plugin {
 		super.start(bundleContext);
 		Activator.plugin = this;
 		bundleContext.registerService(ICMakeToolChainManager.class, new CMakeToolChainManager(), null);
+		bundleContext.registerService(ICMakeInstallationManager.class, new CMakeInstallationManager(), null);
 	}
 
 	@Override

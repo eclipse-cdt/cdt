@@ -21,6 +21,12 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_Settings;
 	public static String CMakeBuildTab_Toolchain;
 	public static String CMakeBuildTab_UnixMakefiles;
+	public static String CMakeInstallationsPreferencePage_Add;
+	public static String CMakeInstallationsPreferencePage_Installations;
+	public static String CMakeInstallationsPreferencePage_Path;
+	public static String CMakeInstallationsPreferencePage_Remove;
+	public static String CMakeInstallationsPreferencePage_Type;
+	public static String CMakeInstallationsPreferencePage_Version;
 	public static String CMakePreferencePage_Add;
 	public static String CMakePreferencePage_ConfirmRemoveDesc;
 	public static String CMakePreferencePage_ConfirmRemoveTitle;
@@ -28,10 +34,13 @@ public class Messages extends NLS {
 	public static String CMakePreferencePage_Path;
 	public static String CMakePreferencePage_Remove;
 	public static String CMakePreferencePage_Toolchain;
+	public static String CMakePropertyPage_CMakeGUINotFound;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Body;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Title;
 	public static String CMakePropertyPage_LaunchCMakeGui;
 
+	public static String NewCMakeInstallationPage_Title;
+	
 	public static String NewCMakeProjectWizard_Description;
 	public static String NewCMakeProjectWizard_PageTitle;
 	public static String NewCMakeProjectWizard_WindowTitle;

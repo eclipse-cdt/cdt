@@ -12,9 +12,14 @@ package org.eclipse.cdt.cmake.ui.properties;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.cmake.core.ICMakeInstallation;
+import org.eclipse.cdt.cmake.core.ICMakeInstallationManager;
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.cdt.cmake.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +58,13 @@ public class CMakePropertyPage extends PropertyPage {
 					String sourceDir = project.getLocation().toOSString();
 					String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
 					
-					Runtime.getRuntime().exec(new String[] { "cmake-gui", "-H" + sourceDir, "-B" + buildDir }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					ICMakeInstallationManager installationManager = Activator.getService(ICMakeInstallationManager.class);
+					ICMakeInstallation cmake = installationManager.getActive();
+					if(cmake == null) {
+						throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.CMakePropertyPage_CMakeGUINotFound));
+					}
+					
+					Runtime.getRuntime().exec(new String[] { cmake.getCMakeGUICommand().toString(), "-H" + sourceDir, "-B" + buildDir }); //$NON-NLS-2$ //$NON-NLS-3$
 				} catch (CoreException | IOException e1) {
 					MessageDialog.openError(parent.getShell(), Messages.CMakePropertyPage_FailedToStartCMakeGui_Title, 
 							Messages.CMakePropertyPage_FailedToStartCMakeGui_Body + e1.getMessage());

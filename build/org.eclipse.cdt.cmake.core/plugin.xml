@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="toolChainProvider" name="CMake ToolChain File Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension-point id="installationProvider" name="CMake Installation Provider" schema="schema/installationProvider.exsd"/>
    <extension
          id="cmakeNature"
          point="org.eclipse.core.resources.natures">
@@ -17,6 +18,13 @@
             class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider"
             id="org.eclipse.cdt.cmake.core.provider"
             natureId="org.eclipse.cdt.cmake.core.cmakeNature">
+      </provider>
+   </extension>
+   <extension
+         id="cmakeSystemInstallationProvider"
+         point="org.eclipse.cdt.cmake.core.installationProvider">
+      <provider
+            class="org.eclipse.cdt.cmake.core.internal.CMakeSystemInstallationProvider">
       </provider>
    </extension>
 </plugin>

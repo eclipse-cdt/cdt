@@ -13,6 +13,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.cmake.core.internal.messages"; //$NON-NLS-1$
 	public static String CMakeBuildConfiguration_Building;
 	public static String CMakeBuildConfiguration_BuildingIn;
+	public static String CMakeBuildConfiguration_BuildingComplete;
 	public static String CMakeBuildConfiguration_Cleaning;
 	public static String CMakeBuildConfiguration_NotFound;
 	public static String CMakeBuildConfiguration_ProcCompCmds;

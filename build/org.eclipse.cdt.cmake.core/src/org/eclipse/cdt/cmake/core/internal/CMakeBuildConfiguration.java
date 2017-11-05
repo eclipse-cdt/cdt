@@ -109,7 +109,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 
-			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
+			boolean runCMake;
+			switch (generator) {
+			case "Ninja": //$NON-NLS-1$
+				runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
+				break;
+			default:
+				runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
+			}
+
+			if (runCMake) { // $NON-NLS-1$
 				List<String> command = new ArrayList<>();
 
 				// TODO location of CMake out of preferences if not found here
@@ -155,14 +164,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				epm.setOutputStream(console.getOutputStream());
 				
 				String buildCommand = getProperty(BUILD_COMMAND);
-				if (buildCommand == null) {
-					if (generator.equals("Ninja")) { //$NON-NLS-1$
-						buildCommand = "ninja"; //$NON-NLS-1$
-					} else {
-						buildCommand = "make"; //$NON-NLS-1$
-					}
-				}
-				String[] command = buildCommand.split(" "); //$NON-NLS-1$
+				String[] command = buildCommand != null && !buildCommand.trim().isEmpty() ? buildCommand.split(" ") //$NON-NLS-1$
+						: new String[] { "cmake", "--build", "." }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 				Path cmdPath = findCommand(command[0]);
 				if (cmdPath != null) {
@@ -180,6 +183,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			// Load compile_commands.json file
 			processCompileCommandsFile(monitor);
+
+			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			return new IProject[] { project };
 		} catch (IOException e) {

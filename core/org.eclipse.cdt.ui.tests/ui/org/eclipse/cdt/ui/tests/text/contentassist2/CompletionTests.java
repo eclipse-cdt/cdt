@@ -2032,4 +2032,12 @@ public class CompletionTests extends CompletionTestBase {
 	public void testPartialSpecializationWithDeferredClassInstance_456224b() throws Exception {
 		assertCompletionResults(new String[] { "Result" });
 	}
+	
+	// template<int TestParam>
+	// struct A {
+	//   using type_t = A<Te/*cursor*/>
+	// };
+	public void testNonTypeTemplateParameterCompletion_522010() throws Exception {
+		assertCompletionResults(new String[] { "TestParam" });		
+	}
 }

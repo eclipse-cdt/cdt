@@ -36,11 +36,13 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode.CompletionNameEntry;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -160,9 +162,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 		} else {
 			boolean handleMacros= false;
-			IASTName[] names = completionNode.getNames();
+			CompletionNameEntry[] entries = ((ASTCompletionNode) completionNode).getEntries();
 
-			for (IASTName name : names) {
+			for (CompletionNameEntry entry : entries) {
+				IASTName name = entry.fName;
 				if (name.getTranslationUnit() == null && !(name instanceof IASTInactiveCompletionName)) {
 					// The node isn't properly hooked up, must have backtracked out of this node.
 					// Inactive completion names are special in that they are not hooked up
@@ -171,7 +174,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					continue;
 				}
 
-				IASTCompletionContext astContext = name.getCompletionContext();
+				IASTCompletionContext astContext = getCompletionContext(name, entry.fParent);
 				if (astContext == null) {
 					continue;
 				} else if (astContext instanceof IASTIdExpression
@@ -203,6 +206,13 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return proposals;
 	}
 
+	private static IASTCompletionContext getCompletionContext(IASTName name, IASTNode parent) {
+		if (parent instanceof IASTCompletionContext) {
+			return (IASTCompletionContext) parent;
+		}
+		return name.getCompletionContext();
+	}
+	
 	/**
 	 * Checks whether the invocation offset is inside or before the preprocessor directive keyword.
 	 *

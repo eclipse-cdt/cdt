@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -38,7 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  */
 public class ASTCompletionNode implements IASTCompletionNode {
 
-	private final List<IASTName> names = new LinkedList<IASTName>();
+	private final List<CompletionNameEntry> entries = new ArrayList<>();
 	
 	private final String prefix;
 	private IASTTranslationUnit tu;
@@ -62,7 +62,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 
 	
 	public void addName(IASTName name) {
-		names.add(name);
+		entries.add(new CompletionNameEntry(name, name.getParent()));
 	}
 
 	
@@ -77,7 +77,11 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	
 	@Override
 	public IASTName[] getNames() {
-		return names.toArray(new IASTName[names.size()]);
+		IASTName[] names = new IASTName[entries.size()];
+		for (int i = 0; i < entries.size(); ++i) {
+			names[i] = entries.get(i).fName;
+		}
+		return names;
 	}
 
 	
@@ -100,6 +104,19 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	public IASTTranslationUnit getTranslationUnit() {
 		return tu;
 	}
-	
 
+	@Override
+	public boolean containsName(IASTName name) {
+		for (CompletionNameEntry entry : entries) {
+			if (entry.fName == name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public CompletionNameEntry[] getEntries() {
+		return entries.toArray(new CompletionNameEntry[entries.size()]);
+	}
 }

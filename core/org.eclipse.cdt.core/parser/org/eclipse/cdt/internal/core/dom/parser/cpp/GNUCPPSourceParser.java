@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
@@ -785,6 +786,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					name = namedTypeSpec.getName();
 					if (name.contains(typeId)) {
 						idExpression = setRange(getNodeFactory().newIdExpression(name), name);
+						
+						// If the name was one of the completion names, add it to the completion
+						// node again now that it has a new parent. This ensures that completion 
+						// proposals are offered for both contexts that the name appears in.
+						ASTCompletionNode completionNode = (ASTCompletionNode) getCompletionNode();
+						if (completionNode != null && completionNode.containsName(name)) {
+							completionNode.addName(name);
+						}
 					}
 				}
 

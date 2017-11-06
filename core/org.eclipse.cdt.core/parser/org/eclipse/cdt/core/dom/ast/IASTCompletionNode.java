@@ -26,6 +26,25 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTCompletionNode {
 	/**
+	 * Represents a name that fits in this context, and its parent.
+	 * The parent is stored separately because two entries can have
+	 * the same name but different parents. (This is due to the
+	 * parser sometimes re-using nodes between alternatives in an
+	 * ambiguous node.)
+	 *  
+	 * @since 6.4 
+	 */
+	public class CompletionNameEntry {
+		public CompletionNameEntry(IASTName name, IASTNode parent) {
+			fName = name;
+			fParent = parent;
+		}
+		
+		public IASTName fName;
+		public IASTNode fParent;
+	}
+	
+	/**
 	 * If the point of completion was at the end of a potential identifier, this
 	 * string contains the text of that identifier.
 	 * 
@@ -39,9 +58,27 @@ public interface IASTCompletionNode {
 	public int getLength();
 
 	/**
+	 * Returns true if this completion node contains a {@link CompletionNameEntry}
+	 * with the given name.
+	 * 
+	 * @since 6.4
+	 */
+	public boolean containsName(IASTName name);
+	
+	/**
 	 * Returns a list of names that fit in this context.
+	 * If doing computations based on the name's parent, prefer calling getEntries() instead
+	 * and obtaining the parent from there.
 	 */
 	public IASTName[] getNames();
+	
+	/**
+	 * Returns a list of names that fir in this context, along with their parents.
+	 * See {@link CompletionNameEntry} for more details.
+	 * 
+	 * @since 6.4
+	 */
+	public CompletionNameEntry[] getEntries();
 
 	/**
 	 * Returns the translation unit for this completion.

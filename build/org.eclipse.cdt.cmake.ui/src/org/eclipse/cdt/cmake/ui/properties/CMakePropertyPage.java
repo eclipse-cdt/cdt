@@ -47,7 +47,7 @@ public class CMakePropertyPage extends PropertyPage {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IProject project = (IProject) getElement();
+				IProject project = getElement().getAdapter(IProject.class);
 				try {
 					String configName = project.getActiveBuildConfig().getName();
 					String sourceDir = project.getLocation().toOSString();

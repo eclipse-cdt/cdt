@@ -8,15 +8,13 @@
             id="org.eclipse.cdt.cmake.ui.properties.cmakePropertyPage"
             name="CMake">
          <enabledWhen>
-            <and>
-               <instanceof
-                     value="org.eclipse.core.resources.IProject">
-               </instanceof>
-               <test
-                     property="org.eclipse.core.resources.projectNature"
-                     value="org.eclipse.cdt.cmake.core.cmakeNature">
-               </test>
-            </and>
+           <adapt
+                 type="org.eclipse.core.resources.IProject">
+              <test
+                    property="org.eclipse.core.resources.projectNature"
+                    value="org.eclipse.cdt.cmake.core.cmakeNature">
+              </test>
+           </adapt>
          </enabledWhen>
       </page>
    </extension>

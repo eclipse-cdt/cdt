@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "a7979753_1457bf52",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 121525
+      },
+      "writtenOn": "2017-11-06T17:26:49Z",
+      "side": 1,
+      "message": "Will it make more sense to move this (together with convertEnvironment()) to CBuildConfiguration instead? They seemed to be general enough to be applicable for other types of external build systems, e.g. autotools.",
+      "range": {
+        "startLine": 154,
+        "startChar": 16,
+        "endLine": 154,
+        "endChar": 28
+      },
+      "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7979753_bbd25e42",
         "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerGCCToolChain.java",
         "patchSetId": 1
@@ -36,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "a7979753_2af61651",
+        "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerGCCToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 121525
+      },
+      "writtenOn": "2017-11-06T17:26:49Z",
+      "side": 1,
+      "message": "Subclassing GCCToolChain makes sense, where GCCToolChain defaults to native command launcher.\n\nOne thing I\u0027m not sure is the use of IToolChainProvider w.r.t. to IToolChain with varying ICommandLauncher, depending on how the toolchains\u0027 environment are bootstrapped, custom command launcher would be required, e.g.:\n\n(1) toolchain environment mostly inherited from system, i.e. GCCPathToolChainProvider and GCCUserToolChainProvider which uses native CommandLauncher\n(2) toolchain environment inherited from system and later configured by sourcing some environment setup script\n(3) toolchain environment managed by a parent process such as docker-run (or any exe). A slightly more complicated example would be docker images with entrypoint which would result in nested environment setup, i.e. (3) + (2), or (3) + (3).\n\nThe reason I\u0027m thinking about the above is that I\u0027m unsure whether the choice of CommandLauncher would have any correlation or impact to how toolchains are represented/managed using NewToolChainWizardSelectionPage or ToolChainPreferencePage.",
+      "parentUuid": "a7979753_bbd25e42",
+      "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7979753_1be9b2f3",
         "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerGCCToolChain.java",
         "patchSetId": 1
@@ -47,6 +88,23 @@
       "writtenOn": "2017-11-02T19:39:23Z",
       "side": 1,
       "message": "Actually calculating the scanner info will be the hard thing. I\u0027d like to see that soon-ish.",
+      "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_f4595387",
+        "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerLaunchTargetProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 121525
+      },
+      "writtenOn": "2017-11-06T17:26:49Z",
+      "side": 1,
+      "message": "From the launchbar, I\u0027m able to select \"Docker Container\" as the target. However when I launch I only see \"Auto A/C++ Local Application\" launch type in the Console view?",
       "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

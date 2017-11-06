@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "a7979753_6a9e5eed",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-06T18:12:41Z",
+      "side": 1,
+      "message": "+1 This definitely is something all build configs do. My biggest issue is that we need both build config and toolchain knowledge that the command needs to be remoted. Specifically, some build configs add to the path and need to be remote aware to do that.",
+      "parentUuid": "a7979753_1457bf52",
+      "range": {
+        "startLine": 154,
+        "startChar": 16,
+        "endLine": 154,
+        "endChar": 28
+      },
+      "revId": "171b69dac6c7d52ce8d4d52710024d0bee4b4639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7979753_bbd25e42",
         "filename": "launch/org.eclipse.cdt.docker.build.gcc.core/src/org/eclipse/cdt/docker/build/gcc/core/DockerGCCToolChain.java",
         "patchSetId": 1

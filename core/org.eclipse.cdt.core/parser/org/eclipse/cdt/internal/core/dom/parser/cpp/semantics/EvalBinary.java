@@ -491,7 +491,19 @@ public class EvalBinary extends CPPDependentEvaluation {
 			Number numericValue = fixed2.getValue().numberValue();
 			if (numericValue == null)
 				return EvalFixed.INCOMPLETE;
-			return new EvalCompositeAccess(fixed1, numericValue.intValue());
+			ICPPEvaluation composite = fixed1;
+			int arrayIndex = numericValue.intValue();
+			if (fixed1 instanceof EvalPointer) {
+				ICPPEvaluation elementEval = ((EvalPointer) fixed1).getTargetEvaluation();
+				if (elementEval instanceof EvalCompositeAccess) {
+					// 'composite' will now be the underlying array that the pointer points into.
+					// Since the pointer may not point at the beginning of the array, the array
+					// index needs to be shifted by the pointer's position.
+					composite = ((EvalCompositeAccess) elementEval).getParent();
+					arrayIndex += ((EvalPointer) fixed1).getPosition();
+				}
+			}
+			return new EvalCompositeAccess(composite, arrayIndex);
 		} else if ((isArray(fixed1) || isArray(fixed2)) && (hasIntType(fixed1) || hasIntType(fixed2))) {
 			int offset = hasIntType(fixed1) ? fixed1.getValue().numberValue().intValue() : fixed2.getValue().numberValue().intValue();
 			EvalCompositeAccess evalCompositeAccess = new EvalCompositeAccess(isArray(fixed1) ? fixed1 : fixed2, offset);

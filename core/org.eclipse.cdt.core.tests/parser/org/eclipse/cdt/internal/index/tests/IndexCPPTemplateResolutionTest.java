@@ -3140,4 +3140,17 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testRegression_516338() throws Exception {
 		checkBindings();
 	}
+	
+	//	struct Foo {
+	//	    char value[1];
+	//	    constexpr Foo() : value{0} {
+	//	        value[0] = 0;  // Indexer fails here.
+	//	    }
+	//	};
+	//	constexpr auto foo = Foo{};
+	
+	//	// empty file
+	public void testAssignmentToMemberArrayElement_514363() throws Exception {
+		checkBindings();
+	}
 }

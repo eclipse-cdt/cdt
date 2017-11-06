@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public class ASTCompletionNode implements IASTCompletionNode {
 	private final IToken completionToken;
-	private final List<IASTName> names = new ArrayList<>();
+	private final List<CompletionNameEntry> entries = new ArrayList<>();
 	private final IASTTranslationUnit translationUnit;
 	
 	public ASTCompletionNode(IToken completionToken, IASTTranslationUnit translationUnit) {
@@ -29,7 +29,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	}
 
 	public void addName(IASTName name) {
-		names.add(name);
+		entries.add(new CompletionNameEntry(name, name.getParent()));
 	}
 
 	@Override
@@ -43,8 +43,27 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	}
 
 	@Override
+	public boolean containsName(IASTName name) {
+		for (CompletionNameEntry entry : entries) {
+			if (entry.fName == name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public IASTName[] getNames() {
-		return names.toArray(new IASTName[names.size()]);
+		IASTName[] names = new IASTName[entries.size()];
+		for (int i = 0; i < entries.size(); ++i) {
+			names[i] = entries.get(i).fName;
+		}
+		return names;
+	}
+
+	@Override
+	public CompletionNameEntry[] getEntries() {
+		return entries.toArray(new CompletionNameEntry[entries.size()]);
 	}
 
 	@Override

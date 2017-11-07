@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_7673a4d8",
+        "filename": "build/org.eclipse.cdt.build.gcc.core/src/org/eclipse/cdt/build/gcc/core/ClangToolChain.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-07T16:01:13Z",
+      "side": 1,
+      "message": "D\u0027Oh! Will fix up the copyright date in the next update.",
+      "revId": "79868244477c811715abd0e437dd758c69b75a88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -591,7 +591,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 
 	//#define STRUCT_C1
 	///*include*/
-	//void gfunc() {gfC1().m/*cursor*/
+	//void gfunc() {gfC1()->m/*cursor*/
 	public void testGlobalFunction() throws Exception {
 		final String[] expected= {
 				"m123", "m12", "m13"

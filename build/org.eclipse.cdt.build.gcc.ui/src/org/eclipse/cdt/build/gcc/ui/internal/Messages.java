@@ -13,10 +13,12 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.build.gcc.ui.internal.messages"; //$NON-NLS-1$
 	public static String GCCToolChainSettingsPage_Arch;
 	public static String GCCToolChainSettingsPage_Browse;
+	public static String GCCToolChainSettingsPage_ClangTitle;
 	public static String GCCToolChainSettingsPage_Compiler;
 	public static String GCCToolChainSettingsPage_Description;
 	public static String GCCToolChainSettingsPage_OS;
 	public static String GCCToolChainSettingsPage_Title;
+	public static String NewClangToolChainWizard_Title;
 	public static String NewEnvVarDialog_Append;
 	public static String NewEnvVarDialog_Delimiter;
 	public static String NewEnvVarDialog_Edit;

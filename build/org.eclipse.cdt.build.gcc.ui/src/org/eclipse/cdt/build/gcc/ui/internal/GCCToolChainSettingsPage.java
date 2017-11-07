@@ -33,10 +33,10 @@ public class GCCToolChainSettingsPage extends WizardPage {
 	private Text osText;
 	private Text archText;
 
-	public GCCToolChainSettingsPage(GCCToolChain toolChain) {
+	public GCCToolChainSettingsPage(GCCToolChain toolChain, boolean isClang) {
 		super(GCCToolChainSettingsPage.class.getName());
 		this.toolChain = toolChain;
-		setTitle(Messages.GCCToolChainSettingsPage_Title);
+		setTitle(isClang ? Messages.GCCToolChainSettingsPage_ClangTitle : Messages.GCCToolChainSettingsPage_Title);
 		setDescription(Messages.GCCToolChainSettingsPage_Description);
 	}
 

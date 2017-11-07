@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.build.gcc.core.ClangToolChain;
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
 import org.eclipse.cdt.build.gcc.core.GCCToolChain.GCCInfo;
 import org.eclipse.cdt.core.build.IToolChain;
@@ -26,7 +27,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 
 	public static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
 
-	private static final Pattern gccPattern = Pattern.compile("(.*-)?((gcc|clang)(\\.exe)?)"); //$NON-NLS-1$
+	private static final Pattern gccPattern = Pattern.compile("(.*-)?gcc(\\.exe)?"); //$NON-NLS-1$
+	private static final Pattern clangPattern = Pattern.compile("clang(\\.exe)?"); //$NON-NLS-1$
 
 	@Override
 	public String getId() {
@@ -51,7 +53,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 								String[] tuple = info.target.split("-"); //$NON-NLS-1$
 								if (tuple.length > 2) {
 									GCCToolChain gcc = new GCCToolChain(this, file.toPath(), tuple[0], null);
-										
+
 									// OS
 									switch (tuple[1]) {
 									case "w64": //$NON-NLS-1$
@@ -69,6 +71,14 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 							}
 						} catch (IOException e) {
 							Activator.log(e);
+						}
+					} else {
+						matcher = clangPattern.matcher(file.getName());
+						if (matcher.matches()) {
+							// TODO only support host clang for now, need to figure out multi
+							ClangToolChain clang = new ClangToolChain(this, file.toPath(), Platform.getOSArch(), null);
+							clang.setProperty(IToolChain.ATTR_OS, Platform.getOS());
+							manager.addToolChain(clang);
 						}
 					}
 				}

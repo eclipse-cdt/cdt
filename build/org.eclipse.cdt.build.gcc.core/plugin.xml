@@ -15,6 +15,14 @@
             class="org.eclipse.cdt.build.gcc.core.GCCUserToolChainProvider"
             id="org.eclipse.cdt.build.gcc.core.provider.user">
       </provider>
+      <type
+            id="org.eclipse.cdt.build.gcc"
+            name="GCC">
+      </type>
+      <type
+            id="org.eclipse.cdt.build.clang"
+            name="clang">
+      </type>
    </extension>
 
 </plugin>

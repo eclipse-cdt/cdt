@@ -69,7 +69,9 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 	private Button userEdit;
 	private Button userRemove;
 
-	private IToolChainManager manager = CUIPlugin.getService(IToolChainManager.class);
+	private List<IToolChain> toolChains;
+
+	private static IToolChainManager manager = CUIPlugin.getService(IToolChainManager.class);
 
 	private ISafeRunnable tcListener = () -> Display.getDefault().asyncExec(() -> {
 		availTable.refresh();
@@ -90,10 +92,12 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 			IToolChain toolChain = (IToolChain) element;
 			switch (columnIndex) {
 			case 0:
-				return toolChain.getName();
+				return manager.getToolChainTypeName(toolChain.getTypeId());
 			case 1:
-				return toolChain.getProperty(IToolChain.ATTR_OS);
+				return toolChain.getName();
 			case 2:
+				return toolChain.getProperty(IToolChain.ATTR_OS);
+			case 3:
 				return toolChain.getProperty(IToolChain.ATTR_ARCH);
 			}
 			return null;
@@ -118,25 +122,19 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		availGroup.setLayout(new GridLayout(2, false));
 
 		availTable = createToolChainTable(availGroup);
+		availTable.setLabelProvider(new TableLabelProvider());
+		availTable.setContentProvider(new IStructuredContentProvider() {
+			@Override
+			public Object[] getElements(Object inputElement) {
+				return toolChains.toArray();
+			}
+		});
 		availTable.getTable().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
 		});
-		availTable.setLabelProvider(new TableLabelProvider());
-		availTable.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				try {
-					return manager.getAllToolChains().toArray();
-				} catch (CoreException e) {
-					CUIPlugin.log(e.getStatus());
-					return new Object[0];
-				}
-			}
-		});
-		
 
 		Composite availButtonComp = new Composite(availGroup, SWT.NONE);
 		availButtonComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
@@ -145,10 +143,38 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		availUp = new Button(availButtonComp, SWT.PUSH);
 		availUp.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		availUp.setText(CUIMessages.ToolChainPreferencePage_Up);
+		availUp.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int i = availTable.getTable().getSelectionIndex();
+				if (i < 1) {
+					return;
+				}
+				
+				IToolChain tc = toolChains.get(i - 1);
+				toolChains.set(i - 1, toolChains.get(i));
+				toolChains.set(i, tc);
+				availTable.refresh();
+			}
+		});
 
 		availDown = new Button(availButtonComp, SWT.PUSH);
 		availDown.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		availDown.setText(CUIMessages.ToolChainPreferencePage_Down);
+		availDown.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int i = availTable.getTable().getSelectionIndex();
+				if (i < 0 || i > toolChains.size() - 2) {
+					return;
+				}
+
+				IToolChain tc = toolChains.get(i + 1);
+				toolChains.set(i + 1, toolChains.get(i));
+				toolChains.set(i, tc);
+				availTable.refresh();
+			}
+		});
 
 		Group userGroup = new Group(control, SWT.NONE);
 		userGroup.setText(CUIMessages.ToolChainPreferencePage_UserDefinedToolchains);
@@ -156,12 +182,6 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		userGroup.setLayout(new GridLayout(2, false));
 
 		userTable = createToolChainTable(userGroup);
-		userTable.getTable().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateButtons();
-			}
-		});
 		userTable.setLabelProvider(new TableLabelProvider());
 		userTable.setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -177,6 +197,12 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 					CUIPlugin.log(e);
 				}
 				return tcs.toArray();
+			}
+		});
+		userTable.getTable().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateButtons();
 			}
 		});
 
@@ -256,6 +282,13 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});
 
+		toolChains = new ArrayList<IToolChain>();
+		try {
+			toolChains.addAll(manager.getAllToolChains());
+		} catch (CoreException e) {
+			CUIPlugin.log(e.getStatus());
+		}
+
 		availTable.setInput(manager);
 		userTable.setInput(manager);
 		updateButtons();
@@ -269,6 +302,24 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		super.dispose();
 	}
 
+	@Override
+	public boolean performOk() {
+		if (!super.performOk()) {
+			return false;
+		}
+
+		try {
+			if (!toolChains.equals(manager.getAllToolChains())) {
+				manager.setToolChainOrder(toolChains);
+			}
+		} catch (CoreException e) {
+			CUIPlugin.log(e.getStatus());
+			return false;
+		}
+
+		return true;
+	}
+
 	private TableViewer createToolChainTable(Composite parent) {
 		Composite tableComp = new Composite(parent, SWT.NONE);
 		tableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -280,9 +331,13 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 
 		TableColumnLayout tableLayout = new TableColumnLayout();
 
+		TableColumn tableTypeColumn = new TableColumn(table, SWT.LEAD);
+		tableTypeColumn.setText(CUIMessages.ToolChainPreferencePage_Type);
+		tableLayout.setColumnData(tableTypeColumn, new ColumnWeightData(2));
+
 		TableColumn tableNameColumn = new TableColumn(table, SWT.LEAD);
 		tableNameColumn.setText(CUIMessages.ToolChainPreferencePage_Name);
-		tableLayout.setColumnData(tableNameColumn, new ColumnWeightData(6));
+		tableLayout.setColumnData(tableNameColumn, new ColumnWeightData(10));
 
 		TableColumn tableOSColumn = new TableColumn(table, SWT.LEAD);
 		tableOSColumn.setText(CUIMessages.ToolChainPreferencePage_OS);
@@ -298,9 +353,9 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	private void updateButtons() {
-		boolean availSelected = availTable.getTable().getSelectionCount() > 0;
-		availUp.setEnabled(availSelected);
-		availDown.setEnabled(availSelected);
+		int i = availTable.getTable().getSelectionIndex();
+		availUp.setEnabled(i > 0);
+		availDown.setEnabled(i >= 0 && i < toolChains.size() - 2);
 
 		boolean userSelected = userTable.getTable().getSelectionCount() > 0;
 		userEdit.setEnabled(userSelected);

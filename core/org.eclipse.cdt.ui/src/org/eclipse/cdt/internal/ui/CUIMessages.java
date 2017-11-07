@@ -79,6 +79,7 @@ public final class CUIMessages extends NLS {
 	public static String ToolChainPreferencePage_Remove1;
 	public static String ToolChainPreferencePage_RemoveToolchain;
 	public static String ToolChainPreferencePage_Toolchains;
+	public static String ToolChainPreferencePage_Type;
 	public static String ToolChainPreferencePage_Up;
 	public static String ToolChainPreferencePage_UserDefinedToolchains;
 	public static String OptionalMessageDialog_dontShowAgain;

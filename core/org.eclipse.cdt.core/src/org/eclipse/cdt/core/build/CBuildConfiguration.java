@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -119,11 +118,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 		if (tc == null) {
 			// check for other versions
-			Collection<IToolChain> tcs = toolChainManager.getToolChains(typeId, id);
-			if (!tcs.isEmpty()) {
-				// TODO grab the newest version
-				tc = tcs.iterator().next();
-			} else {
+			tc = toolChainManager.getToolChain(typeId, id);
+			if (tc == null) {
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
 						CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
 						String.format(Messages.CBuildConfiguration_ToolchainMissing, config.getName()),

@@ -62,8 +62,10 @@ public interface IToolChain extends IAdaptable {
 	/**
 	 * The version of the toolchain
 	 * 
+	 * @deprecated the version doesn't matter. id's for a given type must be unique.
 	 * @return toolchain version
 	 */
+	@Deprecated
 	String getVersion();
 
 	/**
@@ -72,6 +74,18 @@ public interface IToolChain extends IAdaptable {
 	 * @return toolchain name
 	 */
 	String getName();
+
+	/**
+	 * The type id for the toolchain. The combination of type id and toolchain id
+	 * uniquely identify the toolchain in the system.
+	 * 
+	 * @since 6.4
+	 */
+	default String getTypeId() {
+		// Subclasses really need to override this. There can be multiple providers for
+		// a given toolchain type.
+		return getProvider().getId();
+	}
 
 	/**
 	 * Returns an property of the toolchain. Used to determine applicability of

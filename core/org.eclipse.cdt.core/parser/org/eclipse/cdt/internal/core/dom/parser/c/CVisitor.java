@@ -604,8 +604,16 @@ public class CVisitor extends ASTQueries {
 		if (fieldOwner == null)
 			return null;
 
+		boolean isPointerDeref = fieldReference.isPointerDereference();
 		IType type = fieldOwner.getExpressionType();
 	    while (type != null && type instanceof ITypeContainer) {
+	    	if (type instanceof IPointerType) {
+	    		if (isPointerDeref) {
+	    			isPointerDeref = false;
+	    		} else {
+	    			return null;
+	    		}
+	    	}
     		type = ((ITypeContainer) type).getType();
 	    }
 

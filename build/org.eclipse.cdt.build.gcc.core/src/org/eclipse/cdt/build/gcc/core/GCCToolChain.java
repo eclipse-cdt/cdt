@@ -51,6 +51,8 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class GCCToolChain extends PlatformObject implements IToolChain {
 
+	public static final String TYPE_ID = "org.eclipse.cdt.build.gcc"; //$NON-NLS-1$
+
 	private final IToolChainProvider provider;
 	private final String id;
 	private final Path path;
@@ -144,6 +146,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		this.envVars = envVars;
 	}
 
+	@Override
+	public String getTypeId() {
+		return TYPE_ID;
+	}
+
 	public Path getPath() {
 		return path;
 	}
@@ -165,21 +172,20 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	@Override
 	public String getName() {
-		StringBuilder name = new StringBuilder("GCC"); //$NON-NLS-1$
+		StringBuilder name = new StringBuilder(); // $NON-NLS-1$
 		String os = getProperty(ATTR_OS);
 		if (os != null) {
-			name.append(' ');
 			name.append(os);
+			name.append(' ');
 		}
 
 		String arch = getProperty(ATTR_ARCH);
 		if (arch != null) {
-			name.append(' ');
 			name.append(arch);
+			name.append(' ');
 		}
 
 		if (path != null) {
-			name.append(' ');
 			name.append(path.toString());
 		}
 

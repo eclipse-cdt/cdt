@@ -15,7 +15,6 @@ import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -199,16 +198,6 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 			}
 		}
 		manager.removeToolChain(toolChain);
-	}
-
-	@Override
-	public IToolChain getToolChain(String id) throws CoreException {
-		Collection<IToolChain> tcs = manager.getToolChains(PROVIDER_ID, id);
-		if (tcs.isEmpty()) {
-			return null;
-		} else {
-			return tcs.iterator().next();
-		}
 	}
 
 	private void saveJsonFile() throws IOException {

@@ -36,28 +36,16 @@ public interface IToolChainProvider {
 	/**
 	 * Called by the manager to dynamically create the toolchain.
 	 * 
-	 * @deprecated We have dropped the concept of version. All ids must be unique.
 	 * @param id
 	 *            the id of the toolchain
 	 * @param version
 	 *            the version of the toolchain
 	 * @return the toolchain initialized with the settings.
+	 * @deprecated providers do not manage toolchains, call
+	 *             IToolManager.getToolChain() instead.
 	 */
 	@Deprecated
 	default IToolChain getToolChain(String id, String version) throws CoreException {
-		return getToolChain(id);
-	}
-
-	/**
-	 * Called by the manager to dynamically create the toolchain.
-	 * 
-	 * @param id
-	 *            the id of the toolchain
-	 * @return the toolchain initialized with the settings.
-	 * @since 6.4
-	 */
-	default IToolChain getToolChain(String id) throws CoreException {
-		// By default, assumes all toolchains were added at init time.
 		return null;
 	}
 

@@ -201,7 +201,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 			// Menus
 			HierarchicalProperties menus = board.getMenus();
-			if (menus != null) {
+			if (menus != null && target != null) {
 				for (Entry<String, HierarchicalProperties> menuEntry : menus.getChildren().entrySet()) {
 					String key = menuEntry.getKey();
 					String value = target.getMenuValue(key);

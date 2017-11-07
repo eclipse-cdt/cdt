@@ -1,5 +1,5 @@
 ifeq ($(OS),Windows_NT)
-SHELL = $(ComSpec)
+SHELL = cmd
 RMDIR = rmdir /s /q
 RM = del /q
 mymkdir = if not exist "$1" mkdir "$1"

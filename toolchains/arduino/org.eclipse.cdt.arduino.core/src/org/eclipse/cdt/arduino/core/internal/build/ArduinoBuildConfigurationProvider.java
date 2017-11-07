@@ -10,6 +10,7 @@ package org.eclipse.cdt.arduino.core.internal.build;
 import java.util.Collection;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
@@ -52,7 +53,7 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 				}
 			}
 			if (board != null) {
-				IToolChain toolChain = createToolChain(config);
+				IToolChain toolChain = createToolChain("default"); //$NON-NLS-1$
 				return new ArduinoBuildConfiguration(config, name, "run", board, toolChain); //$NON-NLS-1$
 			}
 		} else {
@@ -60,12 +61,12 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 			IRemoteConnection connection = connectionType.getConnection(name);
 			if (connection == null) {
-				throw Activator.coreException(String.format("Unknown connection: %s", name), null);
+				throw Activator.coreException(String.format(Messages.ArduinoBuildConfigurationProvider_UnknownConnection, name), null);
 			}
 
 			ArduinoRemoteConnection target = connection.getService(ArduinoRemoteConnection.class);
 			if (target != null) {
-				IToolChain toolChain = createToolChain(config);
+				IToolChain toolChain = createToolChain(connection.getName());
 				return new ArduinoBuildConfiguration(config, name, "run", target, toolChain); //$NON-NLS-1$
 			}
 		}
@@ -88,17 +89,22 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 		// Make a new one
 		String configName = target.getRemoteConnection().getName();
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
-		IToolChain toolChain = createToolChain(config);
+		IToolChain toolChain = createToolChain(configName);
 		ArduinoBuildConfiguration arduinoConfig = new ArduinoBuildConfiguration(config, configName, "run", target, //$NON-NLS-1$
 				toolChain);
 		configManager.addBuildConfiguration(config, arduinoConfig);
 		return arduinoConfig;
 	}
 
-	private IToolChain createToolChain(IBuildConfiguration config) throws CoreException {
+	private IToolChain createToolChain(String id) throws CoreException {
 		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+		IToolChain toolChain = toolChainManager.getToolChain(ArduinoToolChain.TYPE_ID, id);
+		if (toolChain != null) {
+			return toolChain;
+		}
+
 		IToolChainProvider provider = toolChainManager.getProvider(ArduinoToolChainProvider.ID);
-		IToolChain toolChain = new ArduinoToolChain(provider, config);
+		toolChain = new ArduinoToolChain(provider, id);
 		toolChainManager.addToolChain(toolChain);
 		return toolChain;
 	}

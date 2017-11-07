@@ -16,6 +16,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.arduino.core.internal.messages"; //$NON-NLS-1$
 	public static String ArduinoBoardManager_0;
 	public static String ArduinoBoardManager_1;
+	public static String ArduinoBuildConfigurationProvider_UnknownConnection;
 	public static String ArduinoLaunchConfigurationDelegate_0;
 	public static String ArduinoLaunchConfigurationDelegate_1;
 	public static String ArduinoLaunchConfigurationDelegate_2;

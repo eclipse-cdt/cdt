@@ -9,6 +9,7 @@ package org.eclipse.cdt.internal.core.build;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +25,16 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class ToolChainManager implements IToolChainManager {
 
 	private Map<String, IConfigurationElement> providerElements;
 	private Map<String, IToolChainProvider> providers;
-	private Map<List<String>, IToolChain> toolChains;
+	private Map<String, Map<String, IToolChain>> toolChains;
+	private Map<String, String> toolChainTypeNames = new HashMap<>();
 	private List<IToolChain> orderedToolChains;
 	private List<ISafeRunnable> listeners = new ArrayList<>();
 
@@ -49,39 +54,110 @@ public class ToolChainManager implements IToolChainManager {
 
 			// Load the discovered toolchains
 			toolChains = new HashMap<>();
-			orderedToolChains = new ArrayList<>();
 			for (IConfigurationElement element : providerElements.values()) {
-				// TODO check for enablement
+				switch (element.getName()) {
+				case "provider": //$NON-NLS-1$
+					// TODO check for enablement
+					try {
+						IToolChainProvider provider = (IToolChainProvider) element
+								.createExecutableExtension("class"); //$NON-NLS-1$
+						providers.put(element.getAttribute("id"), provider); //$NON-NLS-1$
+						provider.init(this);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+					break;
+				case "type": //$NON-NLS-1$
+					toolChainTypeNames.put(element.getAttribute("id"), element.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
+					break;
+				}
+			}
+
+			orderedToolChains = new ArrayList<>();
+			Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+					.node(getClass().getSimpleName()).node("order"); //$NON-NLS-1$
+			String nString = prefs.get("n", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!nString.isEmpty()) {
 				try {
-					IToolChainProvider provider = (IToolChainProvider) element
-							.createExecutableExtension("class"); //$NON-NLS-1$
-					providers.put(element.getAttribute("id"), provider); //$NON-NLS-1$
-					provider.init(this);
-				} catch (CoreException e) {
+					int n = Integer.parseInt(nString);
+					for (int i = 0; i < n; ++i) {
+						String typeId = prefs.get(Integer.toString(i) + ".type", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						String id = prefs.get(Integer.toString(i) + ".id", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						IToolChain toolChain = getToolChain(typeId, id);
+						if (toolChain != null) {
+							orderedToolChains.add(toolChain);
+						}
+					}
+				} catch (NumberFormatException e) {
 					CCorePlugin.log(e);
+				} catch (CoreException e) {
+					CCorePlugin.log(e.getStatus());
+				}
+			}
+
+			for (Map<String, IToolChain> type : toolChains.values()) {
+				for (IToolChain toolChain : type.values()) {
+					if (!orderedToolChains.contains(toolChain)) {
+						orderedToolChains.add(toolChain);
+					}
 				}
 			}
 		}
 	}
 
-	private List<String> getId(IToolChain toolChain) {
-		List<String> id = new ArrayList<>(3);
-		id.add(toolChain.getProvider().getId());
-		id.add(toolChain.getId());
-		return id;
+	@Override
+	public String getToolChainTypeName(String typeId) {
+		init();
+		String name = toolChainTypeNames.get(typeId);
+		return name != null ? name : typeId;
+	}
+
+	private void saveToolChainOrder() {
+		Preferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+				.node(getClass().getSimpleName()).node("order"); //$NON-NLS-1$
+		prefs.put("n", Integer.toString(orderedToolChains.size())); //$NON-NLS-1$
+		int i = 0;
+		for (IToolChain toolChain : orderedToolChains) {
+			prefs.put(Integer.toString(i) + ".type", toolChain.getTypeId()); //$NON-NLS-1$
+			prefs.put(Integer.toString(i) + ".id", toolChain.getId()); //$NON-NLS-1$
+			i++;
+		}
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	@Override
 	public void addToolChain(IToolChain toolChain) {
-		orderedToolChains.add(toolChain);
-		toolChains.put(getId(toolChain), toolChain);
+		Map<String, IToolChain> type = toolChains.get(toolChain.getTypeId());
+		if (type == null) {
+			type = new HashMap<>();
+			toolChains.put(toolChain.getTypeId(), type);
+		}
+		type.put(toolChain.getId(), toolChain);
+
+		if (orderedToolChains != null) {
+			// is null at init time where order will be established later
+			orderedToolChains.add(toolChain);
+			saveToolChainOrder();
+		}
+
 		fireChange();
 	}
 
 	@Override
 	public void removeToolChain(IToolChain toolChain) {
-		orderedToolChains.remove(toolChain);
-		toolChains.remove(getId(toolChain));
+		Map<String, IToolChain> type = toolChains.get(toolChain.getTypeId());
+		if (type != null) {
+			type.remove(toolChain.getId());
+		}
+
+		if (orderedToolChains.remove(toolChain)) {
+			saveToolChainOrder();
+		}
+
 		fireChange();
 	}
 
@@ -100,95 +176,47 @@ public class ToolChainManager implements IToolChainManager {
 	}
 
 	@Override
-	public IToolChain getToolChain(String providerId, String id) throws CoreException {
+	public IToolChain getToolChain(String typeId, String id) throws CoreException {
 		init();
-		List<String> tid = new ArrayList<>(3);
-		tid.add(providerId);
-		tid.add(id);
-
-		IToolChain toolChain = toolChains.get(tid);
-		if (toolChain != null) {
-			return toolChain;
-		}
-
-		// Try the provider
-		IToolChainProvider realProvider = providers.get(providerId);
-		if (realProvider != null) {
-			toolChain = realProvider.getToolChain(id);
-			if (toolChain != null) {
-				toolChains.put(getId(toolChain), toolChain);
-				return toolChain;
-			}
-		}
-
-		return null;
+		Map<String, IToolChain> type = toolChains.get(typeId);
+		return type != null ? type.get(id) : null;
 	}
 
 	@Override
 	public Collection<IToolChain> getToolChainsMatching(Map<String, String> properties) {
 		init();
 		List<IToolChain> tcs = new ArrayList<>();
-		for (IToolChain toolChain : toolChains.values()) {
-			boolean matches = true;
-			for (Map.Entry<String, String> property : properties.entrySet()) {
-				String tcProperty = toolChain.getProperty(property.getKey());
-				if (tcProperty != null) {
-					if (!property.getValue().equals(tcProperty)) {
-						matches = false;
-						break;
+		for (Map<String, IToolChain> type : toolChains.values()) {
+			for (IToolChain toolChain : type.values()) {
+				boolean matches = true;
+				for (Map.Entry<String, String> property : properties.entrySet()) {
+					String tcProperty = toolChain.getProperty(property.getKey());
+					if (tcProperty != null) {
+						if (!property.getValue().equals(tcProperty)) {
+							matches = false;
+							break;
+						}
 					}
 				}
+				if (matches) {
+					tcs.add(toolChain);
+				}
 			}
-			if (matches) {
-				tcs.add(toolChain);
-			}
-		}
-		
-		// Allow 32-bit compilers on 64-bit machines
-		// TODO is there a cleaner way to do this?
-		if ("x86_64".equals(properties.get(IToolChain.ATTR_ARCH))) { //$NON-NLS-1$
-			Map<String, String> properties32 = new HashMap<>(properties);
-			properties32.put(IToolChain.ATTR_ARCH, "x86"); //$NON-NLS-1$
-			tcs.addAll(getToolChainsMatching(properties32));
 		}
 
-		return tcs;
-	}
-
-	@Override
-	public Collection<IToolChain> getToolChains(String providerId) {
-		init();
-		List<IToolChain> tcs = new ArrayList<>();
-		for (IToolChain toolChain : toolChains.values()) {
-			if (toolChain.getProvider().getId().equals(providerId)) {
-				tcs.add(toolChain);
-			}
-		}
-		return tcs;
-	}
-
-	@Override
-	public Collection<IToolChain> getToolChains(String providerId, String id) throws CoreException {
-		init();
-		List<IToolChain> tcs = new ArrayList<>();
-		for (IToolChain toolChain : toolChains.values()) {
-			if (toolChain.getProvider().getId().equals(providerId) && toolChain.getId().equals(id)) {
-				tcs.add(toolChain);
-			}
-		}
 		return tcs;
 	}
 
 	@Override
 	public Collection<IToolChain> getAllToolChains() throws CoreException {
 		init();
-		return orderedToolChains;
+		return Collections.unmodifiableCollection(orderedToolChains);
 	}
 
 	@Override
 	public void setToolChainOrder(List<IToolChain> orderedToolchains) throws CoreException {
-		// TODO Auto-generated method stub
-
+		this.orderedToolChains = orderedToolchains;
+		saveToolChainOrder();
 	}
 
 	@Override

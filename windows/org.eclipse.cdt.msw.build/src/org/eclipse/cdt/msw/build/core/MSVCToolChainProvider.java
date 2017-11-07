@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.msw.build.Activator;
@@ -70,12 +69,6 @@ public class MSVCToolChainProvider implements IToolChainProvider {
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Finding cl.exe", e)); //$NON-NLS-1$
 		}
-	}
-
-	@Override
-	public IToolChain getToolChain(String id, String version) throws CoreException {
-		// TODO Auto-generated method stub
-		return IToolChainProvider.super.getToolChain(id, version);
 	}
 
 }

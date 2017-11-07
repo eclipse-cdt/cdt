@@ -46,6 +46,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/core/build/IToolChain.java" type="org.eclipse.cdt.core.build.IToolChain">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.build.IToolChain"/>
+                <message_argument value="getTypeId()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/core/build/IToolChainProvider.java" type="org.eclipse.cdt.core.build.IToolChainProvider">
         <filter comment="This interface is still pretty new. Assuming low risk." id="404000815">
             <message_arguments>
@@ -62,11 +70,6 @@
         <filter comment="Newish interface. Assuming low risk." id="404000815">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.build.IToolChainProvider"/>
-                <message_argument value="removeToolChain(IToolChain)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="This is a newish interface. Assuming low risk." id="1211105284">
-            <message_arguments>
                 <message_argument value="removeToolChain(IToolChain)"/>
             </message_arguments>
         </filter>

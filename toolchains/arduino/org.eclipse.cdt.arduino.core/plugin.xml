@@ -99,5 +99,9 @@
             class="org.eclipse.cdt.arduino.core.internal.build.ArduinoToolChainProvider"
             id="org.eclipse.cdt.arduino.core.toolChainProvider">
       </provider>
+      <type
+            id="org.eclipse.cdt.arduino"
+            name="Arduino">
+      </type>
    </extension>
 </plugin>

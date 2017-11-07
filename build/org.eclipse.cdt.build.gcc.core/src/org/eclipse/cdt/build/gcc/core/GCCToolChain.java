@@ -109,7 +109,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			idBuilder.append(arch);
 		}
 		idBuilder.append('-');
-		idBuilder.append(pathToToolChain.toString().replaceAll("\\\\", "/")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (pathToToolChain != null) {
+			idBuilder.append(pathToToolChain.toString().replaceAll("\\\\", "/")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		this.id = idBuilder.toString();
 
 		properties.put(ATTR_ARCH, arch);
@@ -123,15 +125,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 		}
 		
-		if (pathVar == null) {
+		if (pathVar == null && this.path != null) {
 			// Make one with the directory containing out tool
-			String name;
-			// if (System.getenv("Path") != null) { //$NON-NLS-1$
-			// name = "Path"; //$NON-NLS-1$
-			// } else {
-				name = "PATH"; //$NON-NLS-1$
-			// }
-			pathVar = new EnvironmentVariable(name, this.path.getParent().toString(),
+			pathVar = new EnvironmentVariable("PATH", this.path.getParent().toString(), //$NON-NLS-1$
 					IEnvironmentVariable.ENVVAR_PREPEND, File.pathSeparator);
 			if (envVars == null) {
 				envVars = new IEnvironmentVariable[] { pathVar };

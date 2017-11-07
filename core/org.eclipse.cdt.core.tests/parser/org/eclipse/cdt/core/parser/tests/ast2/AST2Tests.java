@@ -7704,4 +7704,16 @@ public class AST2Tests extends AST2TestBase {
     	IASTConditionalExpression expr = helper.assertNode("cond ? arr1 : arr2");
     	assertSameType(expr.getExpressionType(), CommonCTypes.pointerToInt);
     }
+    
+	//    struct S {
+	//        int waldo;
+	//    };
+	//    int main() {
+	//        struct S* s;
+	//        s.waldo;
+	//    }
+    public void testMemberAccessOnPointerType_526857() throws Exception {
+    	BindingAssertionHelper helper = getAssertionHelper(C);
+    	helper.assertProblem("s.waldo", "waldo");
+    }
 }

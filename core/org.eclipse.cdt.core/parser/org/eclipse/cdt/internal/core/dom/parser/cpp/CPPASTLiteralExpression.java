@@ -242,6 +242,10 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
     	// Skip past a prefix affecting the character type.
     	if (fValue[0] == 'L' || fValue[0] == 'u' || fValue[0] == 'U') {
+    		if(fValue[1] == '8') {
+    			++start;
+    		}
+    		
     		++start;
     	}
 
@@ -347,15 +351,19 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	public Kind getBasicCharKind() {
 		switch (fValue[0]) {
-    	case 'L':
-    		return Kind.eWChar;
-    	case 'u':
-    		return Kind.eChar16;
-    	case 'U':
-    		return Kind.eChar32;
-    	default:
-    		return Kind.eChar;
-    	}
+		case 'L':
+			return Kind.eWChar;
+		case 'U':
+			return Kind.eChar32;
+		case 'u':
+			// Bug 526724 u8 should result in Kind.eChar
+			if (fValue[1] != '8') {
+				return Kind.eChar16;
+			}
+			//$FALL-THROUGH$
+		default:
+			return Kind.eChar;
+		}
 	}
 
 	private IType classifyTypeOfFloatLiteral() {

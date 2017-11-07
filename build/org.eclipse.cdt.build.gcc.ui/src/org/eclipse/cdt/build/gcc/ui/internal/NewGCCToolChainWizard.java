@@ -62,7 +62,7 @@ public class NewGCCToolChainWizard extends ToolChainWizard {
 	public void addPages() {
 		super.addPages();
 
-		settingsPage = new GCCToolChainSettingsPage((GCCToolChain) toolChain);
+		settingsPage = new GCCToolChainSettingsPage((GCCToolChain) toolChain, false);
 		addPage(settingsPage);
 
 		envPage = new ToolChainEnvironmentPage(toolChain);

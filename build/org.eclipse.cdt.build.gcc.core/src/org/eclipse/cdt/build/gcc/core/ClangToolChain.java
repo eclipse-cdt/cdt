@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 QNX Software Systems and others.
+ * Copyright (c) 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
  */
 public class ClangToolChain extends GCCToolChain {
 
-	private static final String TYPE_ID = "org.eclipse.cdt.build.clang"; //$NON-NLS-1$
+	public static final String TYPE_ID = "org.eclipse.cdt.build.clang"; //$NON-NLS-1$
 
 	public ClangToolChain(IToolChainProvider provider, Path pathToToolChain, String arch,
 			IEnvironmentVariable[] envVars) {

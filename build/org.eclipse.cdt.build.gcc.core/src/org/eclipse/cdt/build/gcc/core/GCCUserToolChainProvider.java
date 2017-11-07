@@ -48,6 +48,7 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 	private static final String OPERATION = "operation"; //$NON-NLS-1$
 	private static final String PATH = "path"; //$NON-NLS-1$
 	private static final String PROPERTIES = "properties"; //$NON-NLS-1$
+	private static final String TYPE = "type"; //$NON-NLS-1$
 	private static final String VALUE = "value"; //$NON-NLS-1$
 
 	private IToolChainManager manager;
@@ -73,6 +74,12 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 				toolChains = new JsonParser().parse(new FileReader(jsonFile)).getAsJsonArray();
 				for (JsonElement element : toolChains) {
 					JsonObject tc = element.getAsJsonObject();
+					String type;
+					if (tc.has(TYPE)) {
+						type = tc.get(TYPE).getAsString();
+					} else {
+						type = GCCToolChain.TYPE_ID;
+					}
 					String arch;
 					if (tc.has(ARCH)) {
 						arch = tc.get(ARCH).getAsString();
@@ -100,14 +107,24 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 						envvars = envlist.toArray(new IEnvironmentVariable[0]);
 					}
 
-					GCCToolChain gcc = new GCCToolChain(this, path, arch, envvars);
-					if (tc.has(PROPERTIES)) {
-						for (JsonElement prop : tc.get(PROPERTIES).getAsJsonArray()) {
-							JsonObject propobj = prop.getAsJsonObject();
-							gcc.setProperty(propobj.get(NAME).getAsString(), propobj.get(VALUE).getAsString());
-						}
+					GCCToolChain gcc = null;
+					switch (type) {
+					case GCCToolChain.TYPE_ID:
+						gcc = new GCCToolChain(this, path, arch, envvars);
+						break;
+					case ClangToolChain.TYPE_ID:
+						gcc = new ClangToolChain(this, path, arch, envvars);
+						break;
 					}
-					manager.addToolChain(gcc);
+					if (gcc != null) {
+						if (tc.has(PROPERTIES)) {
+							for (JsonElement prop : tc.get(PROPERTIES).getAsJsonArray()) {
+								JsonObject propobj = prop.getAsJsonObject();
+								gcc.setProperty(propobj.get(NAME).getAsString(), propobj.get(VALUE).getAsString());
+							}
+						}
+						manager.addToolChain(gcc);
+					}
 				}
 			}
 		} catch (IOException | IllegalStateException e) {

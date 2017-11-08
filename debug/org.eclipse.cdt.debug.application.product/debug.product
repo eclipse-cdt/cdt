@@ -359,6 +359,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.tm.terminal.control"/>
       <plugin id="org.eclipse.tools.templates.core"/>
+      <plugin id="org.eclipse.tools.templates.freemarker"/>
       <plugin id="org.eclipse.tools.templates.ui"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
@@ -376,6 +377,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.update.configurator"/>
+      <plugin id="org.freemarker"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.tukaani.xz"/>

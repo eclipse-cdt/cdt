@@ -288,11 +288,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			// Change source file to a tmp file (needs to be empty)
 			Path tmpFile = null;
 			for (int i = 1; i < commandLine.size(); ++i) {
-				if (!commandLine.get(i).startsWith("-")) { //$NON-NLS-1$
-					// TODO optimize by dealing with multi arg options like -o
+				String arg = commandLine.get(i);
+				if (!arg.startsWith("-")) { //$NON-NLS-1$
 					Path filePath;
 					try {
-						filePath = buildDirectory.resolve(commandLine.get(i));
+						filePath = buildDirectory.resolve(commandLine.get(i)).normalize();
 					} catch (InvalidPathException e) {
 						continue;
 					}
@@ -312,6 +312,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 						tmpFile = Files.createTempFile(parentPath, ".sc", extension); //$NON-NLS-1$
 						commandLine.set(i, tmpFile.toString());
 					}
+				} else if (arg.equals("-o")) { //$NON-NLS-1$
+					// skip over the next arg
+					// TODO handle other args like this
+					i++;
 				}
 			}
 			if (tmpFile == null) {
@@ -486,7 +490,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			if (cCommand.contains("gcc")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("gcc", "g++"); //$NON-NLS-1$ //$NON-NLS-2$
 				// Also recognize c++ as an alias for g++
-				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "c++") }; //$NON-NLS-1$ //$NON-NLS-2$
+				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "c++"), "cc", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			} else if (cCommand.contains("clang")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("clang", "clang++"); //$NON-NLS-1$ //$NON-NLS-2$
 				commands = new String[] { cCommand, cppCommand };
@@ -529,21 +533,21 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				// ran into an option, we're done.
 				break;
 			}
-			Path srcPath = Paths.get(arg);
-			URI uri;
-			if (srcPath.isAbsolute()) {
-				uri = srcPath.toUri();
-			} else {
-				try {
-					uri = buildDirectoryURI.resolve(arg);
-				} catch (IllegalArgumentException e) {
-					// Bad URI
-					continue;
+			try {
+				Path srcPath = Paths.get(arg);
+				URI uri;
+				if (srcPath.isAbsolute()) {
+					uri = srcPath.toUri();
+				} else {
+					uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
 				}
-			}
 
-			for (IFile resource : root.findFilesForLocationURI(uri)) {
-				resources.add(resource);
+				for (IFile resource : root.findFilesForLocationURI(uri)) {
+					resources.add(resource);
+				}
+			} catch (IllegalArgumentException e) {
+				// Bad URI
+				continue;
 			}
 		}
 

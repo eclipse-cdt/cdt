@@ -18,16 +18,22 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
 public class ReturnTypeDeductionTests extends AST2CPPTestBase {
-	private void assertReturnType(String functionName, IType returnType) throws Exception {
+	private IType getReturnType(String functionName) throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPFunction f = bh.assertNonProblem(functionName);
-		assertSameType(f.getType().getReturnType(), returnType);
+		return f.getType().getReturnType();
+	}
+	
+	private void assertReturnType(String functionName, IType returnType) throws Exception {
+		assertSameType(getReturnType(functionName), returnType);
 	}
 	
 	private void assertReturnTypeProblem(String functionName) throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper();
-		ICPPFunction f = bh.assertNonProblem(functionName);
-		assertInstance(f.getType().getReturnType(), IProblemType.class);
+		assertInstance(getReturnType(functionName), IProblemType.class);
+	}
+	
+	private void assertReturnTypeValid(String functionName) throws Exception {
+		assertFalse(getReturnType(functionName) instanceof IProblemType);
 	}
 	
 	private void assertLambdaReturnType(String lambdaName, IType returnType) throws Exception {
@@ -52,6 +58,17 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	//	}
 	public void testMultipleReturnsSameType() throws Exception {
 		assertReturnType("f", CommonCPPTypes.int_);
+	}
+	
+	//	struct S {};
+	//	auto f(const S& s, bool c) {
+	//		if (c)
+	//			return S();
+	//		else
+	//			return s;
+	//	}
+	public void testMultipleReturnsDifferingByConst() throws Exception {
+		assertReturnTypeValid("f");
 	}
 	
 	//	auto f(int x) {

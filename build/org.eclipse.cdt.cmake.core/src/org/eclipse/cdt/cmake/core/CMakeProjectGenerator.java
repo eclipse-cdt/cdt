@@ -58,7 +58,9 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 		List<IPathEntry> entries = new ArrayList<>();
 		IProject project = getProject();
 
-		// Create the source folders
+		// Create the source and output folders
+		IFolder buildFolder = getProject().getFolder("build"); //$NON-NLS-1$
+
 		TemplateManifest manifest = getManifest();
 		if (manifest != null) {
 			List<SourceRoot> srcRoots = getManifest().getSrcRoots();
@@ -69,14 +71,15 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 						sourceFolder.create(true, true, monitor);
 					}
 
-					entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath()));
+					entries.add(CoreModel.newSourceEntry(sourceFolder.getFullPath(),
+							new IPath[] { buildFolder.getFullPath() }));
 				}
 			} else {
 				entries.add(CoreModel.newSourceEntry(getProject().getFullPath()));
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(getProject().getFolder("build").getFullPath(), //$NON-NLS-1$
+		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath(), // $NON-NLS-1$
 				new IPath[] { new Path("**/CMakeFiles/**") })); //$NON-NLS-1$
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);

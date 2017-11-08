@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -413,35 +414,39 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	protected Path findCommand(String command) {
-		Path cmdPath = Paths.get(command);
-		if (cmdPath.isAbsolute()) {
-			return cmdPath;
-		}
-
-		Map<String, String> env = new HashMap<>(System.getenv());
-		setBuildEnvironment(env);
-
-		String pathStr = env.get("PATH"); //$NON-NLS-1$
-		if (pathStr == null) {
-			pathStr = env.get("Path"); // for Windows //$NON-NLS-1$
-			if (pathStr == null) {
-				return null; // no idea
+		try {
+			Path cmdPath = Paths.get(command);
+			if (cmdPath.isAbsolute()) {
+				return cmdPath;
 			}
-		}
-		String[] path = pathStr.split(File.pathSeparator);
-		for (String dir : path) {
-			Path commandPath = Paths.get(dir, command);
-			if (Files.exists(commandPath)) {
-				return commandPath;
-			} else {
-				if (Platform.getOS().equals(Platform.OS_WIN32)
-						&& !(command.endsWith(".exe") || command.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					commandPath = Paths.get(dir, command + ".exe"); //$NON-NLS-1$
-					if (Files.exists(commandPath)) {
-						return commandPath;
+
+			Map<String, String> env = new HashMap<>(System.getenv());
+			setBuildEnvironment(env);
+
+			String pathStr = env.get("PATH"); //$NON-NLS-1$
+			if (pathStr == null) {
+				pathStr = env.get("Path"); // for Windows //$NON-NLS-1$
+				if (pathStr == null) {
+					return null; // no idea
+				}
+			}
+			String[] path = pathStr.split(File.pathSeparator);
+			for (String dir : path) {
+				Path commandPath = Paths.get(dir, command);
+				if (Files.exists(commandPath)) {
+					return commandPath;
+				} else {
+					if (Platform.getOS().equals(Platform.OS_WIN32)
+							&& !(command.endsWith(".exe") || command.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$
+						commandPath = Paths.get(dir, command + ".exe"); //$NON-NLS-1$
+						if (Files.exists(commandPath)) {
+							return commandPath;
+						}
 					}
 				}
 			}
+		} catch (InvalidPathException e) {
+			// ignore
 		}
 		return null;
 	}
@@ -699,11 +704,13 @@ public abstract class CBuildConfiguration extends PlatformObject
 						}
 					} else {
 						Path commandPath = findCommand(command.get(0));
-						command.set(0, commandPath.toString());
-						IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(),
-								command, null, resource, getBuildDirectoryURI());
-						scannerInfoCache.addScannerInfo(commandStrings, info, resource);
-						infoChanged = true;
+						if (commandPath != null) {
+							command.set(0, commandPath.toString());
+							IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(),
+									command, null, resource, getBuildDirectoryURI());
+							scannerInfoCache.addScannerInfo(commandStrings, info, resource);
+							infoChanged = true;
+						}
 					}
 				}
 				return true;

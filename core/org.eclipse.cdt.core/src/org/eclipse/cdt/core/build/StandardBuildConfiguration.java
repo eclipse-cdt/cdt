@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class StandardBuildConfiguration extends CBuildConfiguration {
 
-	private String[] buildCommand = { "make", "all" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[] buildCommand = { "make", "-j", "-f", "../../Makefile", "all" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	private String[] cleanCommand = { "make", "clean" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private IContainer buildContainer;
 
@@ -62,9 +62,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 	@Override
 	public IContainer getBuildContainer() throws CoreException {
-		// If a container isn't set, assume build bits can go anywhere in the
-		// project
-		return buildContainer != null ? buildContainer : getProject();
+		return buildContainer != null ? buildContainer : super.getBuildContainer();
 	}
 
 	@Override
@@ -99,6 +97,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+			outStream.write(String.format(Messages.StandardBuildConfiguration_1, buildDir.toString()));
 
 			return new IProject[] { project };
 		} catch (IOException e) {

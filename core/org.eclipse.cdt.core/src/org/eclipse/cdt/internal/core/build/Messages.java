@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	public static String CBuilder_NotConfiguredCorrectly;
 	public static String CBuilder_NotConfiguredCorrectly2;
 	public static String StandardBuildConfiguration_0;
+	public static String StandardBuildConfiguration_1;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

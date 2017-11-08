@@ -194,5 +194,13 @@
         <simple name="buildArguments" external="true" nullable="true"/>
       </processType>
     </extension>
+    <extension
+          point="org.eclipse.cdt.core.buildConfigProvider">
+       <provider
+             class="org.eclipse.cdt.make.internal.core.MakefileBuildConfigurationProvider"
+             id="org.eclipse.cdt.make.core.provider"
+             natureId="org.eclipse.cdt.make.core.makeNature">
+       </provider>
+    </extension>
 
 </plugin>

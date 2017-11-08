@@ -196,7 +196,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		IASTCompoundStatement body = fLambdaExpression.getBody();
 		if (body != null) {
 			return CPPVisitor.deduceReturnType(body, declSpecForDeduction, declaratorForDeduction, 
-					placeholder, body);
+					placeholder);
 		}
 		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 	}

@@ -52,6 +52,11 @@ public class CDTProjectWizard2 extends TemplateWizard implements IGenerator, ICD
 	}
 
 	@Override
+	public boolean canFinish() {
+		return cdtWizard.canFinish();
+	}
+
+	@Override
 	public boolean performFinish() {
 		return cdtWizard.performFinish();
 	}

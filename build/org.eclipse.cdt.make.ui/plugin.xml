@@ -629,4 +629,26 @@
        </includes>
     </viewerActionBinding>
  </extension>
+ <extension
+       point="org.eclipse.tools.templates.ui.templates">
+    <template
+          icon="icons/cdt_logo_48.png"
+          id="org.eclipse.cdt.make.ui.template"
+          label="Makefile Project"
+          wizard="org.eclipse.cdt.make.internal.ui.wizards.NewMakefileProjectWizard">
+       <description>
+          Create a new project that builds with the &apos;make&apos; build tool.
+       </description>
+       <tagReference
+             id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+       <tagReference
+             id="org.eclipse.cdt.make.ui.tag">
+       </tagReference>
+    </template>
+    <tag
+          id="org.eclipse.cdt.make.ui.tag"
+          label="Make">
+    </tag>
+ </extension>
 </plugin>

@@ -3940,28 +3940,7 @@
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui.newProject"
 	         type="new"
-	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard1">
-		 <enablement>
-		 	<or>
-	         	<with variable="activeWorkbenchWindow.activePerspective">
-                    <equals
-                          value="org.eclipse.cdt.ui.CPerspective">
-                    </equals>
-	         	</with>
-	         	<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-		        <and>
-		            <instanceof value="org.eclipse.core.resources.IProject"/>
-		            <test property="org.eclipse.core.resources.projectNature"
-		                  value="org.eclipse.cdt.core.cnature"/>
-		        </and>
-         	</or>
-         </enablement>
-	   </commonWizard>
-	   <commonWizard
-	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
-	         menuGroupId="org.eclipse.cdt.ui.newProject"
-	         type="new"
-	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard2">
+	         wizardId="org.eclipse.cdt.ui.wizard.project">
 		 <enablement>
 		 	<or>
 	         	<with variable="activeWorkbenchWindow.activePerspective">

@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.formatter;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * @since 6.3
+ * @since 6.4
  */
 public class Messages extends NLS {
 	public static String CommandLineConfigFile;

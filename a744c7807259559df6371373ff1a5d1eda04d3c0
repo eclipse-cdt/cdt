@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_ca8e6b3d",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/tests/AutomatedIntegrationSuite.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-08T18:42:16Z",
+      "side": 1,
+      "message": "Ericcson? This class is barely copyrightable. Feel free to put your company here.",
+      "revId": "a744c7807259559df6371373ff1a5d1eda04d3c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_ea93275f",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/tests/VersionComparator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-08T18:42:16Z",
+      "side": 1,
+      "message": "Copyright.",
+      "revId": "a744c7807259559df6371373ff1a5d1eda04d3c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_0a895332",
+        "filename": "build/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/tests/VersionComparatorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-08T18:42:16Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "a744c7807259559df6371373ff1a5d1eda04d3c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

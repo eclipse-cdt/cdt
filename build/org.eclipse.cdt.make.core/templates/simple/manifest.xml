@@ -1,0 +1,7 @@
+<templateManifest>
+	<file src="/templates/simple/Makefile"
+		dest="/${projectName}/Makefile"/>
+	<file src="/templates/simple/main.cpp"
+		dest="/${projectName}/${projectName}.cpp"
+		open="true"/>
+</templateManifest>

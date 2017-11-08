@@ -57,6 +57,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -427,4 +428,14 @@ public class MakeCorePlugin extends Plugin {
 			}
 		}
 	}
+
+	/**
+	 * @since 7.4
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 }

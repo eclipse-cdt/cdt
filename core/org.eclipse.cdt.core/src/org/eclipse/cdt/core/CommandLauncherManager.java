@@ -69,11 +69,8 @@ public class CommandLauncherManager {
 
 		@Override
 		public void setProject(IProject project) {
-			if (launcher != null) {
-				launcher.setProject(project);
-			} else {
-				fProject = project;
-			}
+			fProject = project;
+			launcher = null;
 		}
 
 		@Override
@@ -88,9 +85,8 @@ public class CommandLauncherManager {
 		public void showCommand(boolean show) {
 			if (launcher != null) {
 				launcher.showCommand(show);
-			} else {
-				fShowCommand = show;
 			}
+			fShowCommand = show;
 		}
 
 		@Override
@@ -105,9 +101,8 @@ public class CommandLauncherManager {
 		public void setErrorMessage(String error) {
 			if (launcher != null) {
 				launcher.setErrorMessage(error);
-			} else {
-				fErrorMessage = error;
 			}
+			fErrorMessage = error;
 		}
 
 		@Override

@@ -45,7 +45,7 @@ import org.eclipse.text.edits.TextEdit;
  * progress monitor for output.</p>
  *
  * @author Ben Konrath <bkonrath@redhat.com>
- * @since 6.3
+ * @since 6.4
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

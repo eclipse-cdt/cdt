@@ -147,7 +147,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		this.launchMode = launchMode;
 
 		Preferences settings = getSettings();
-		settings.put(TOOLCHAIN_TYPE, toolChain.getProvider().getId());
+		settings.put(TOOLCHAIN_TYPE, toolChain.getTypeId());
 		settings.put(TOOLCHAIN_ID, toolChain.getId());
 		try {
 			settings.flush();

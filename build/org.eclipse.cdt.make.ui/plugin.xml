@@ -651,4 +651,11 @@
           label="Make">
     </tag>
  </extension>
+ <extension
+       point="org.eclipse.cdt.launch.coreBuildTab">
+    <provider
+          nature="org.eclipse.cdt.make.core.makeNature"
+          tabClass="org.eclipse.cdt.make.internal.ui.MakeBuildSettingsTab">
+    </provider>
+ </extension>
 </plugin>

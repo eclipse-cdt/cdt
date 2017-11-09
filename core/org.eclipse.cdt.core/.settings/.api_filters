@@ -74,4 +74,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/core/build/StandardBuildConfiguration.java" type="org.eclipse.cdt.core.build.StandardBuildConfiguration">
+        <filter comment="No one extends this yet." id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.build.StandardBuildConfiguration"/>
+                <message_argument value="BUILD_CONTAINER"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

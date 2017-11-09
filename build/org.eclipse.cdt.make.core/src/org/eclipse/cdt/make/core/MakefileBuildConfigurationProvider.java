@@ -5,19 +5,21 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.make.internal.core;
+package org.eclipse.cdt.make.core;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.StandardBuildConfiguration;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * @since 7.4
+ */
 public class MakefileBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = "org.eclipse.cdt.make.core.provider"; //$NON-NLS-1$

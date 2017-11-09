@@ -9,6 +9,10 @@ package org.eclipse.cdt.core.build;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -20,11 +24,15 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -35,12 +43,26 @@ import org.eclipse.core.runtime.Status;
  */
 public class StandardBuildConfiguration extends CBuildConfiguration {
 
-	private String[] buildCommand = { "make", "-j", "-f", "../../Makefile", "all" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	private String[] cleanCommand = { "make", "clean" }; //$NON-NLS-1$ //$NON-NLS-2$
+	/**
+	 * @since 6.4
+	 */
+	public static final String BUILD_CONTAINER = "stdbuild.build.container"; //$NON-NLS-1$
+
+	private String[] buildCommand;
+	private String[] cleanCommand;
 	private IContainer buildContainer;
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
+		String container = getProperty(BUILD_CONTAINER);
+		if (container != null && !container.trim().isEmpty()) {
+			IPath containerLoc = new org.eclipse.core.runtime.Path(container);
+			if (containerLoc.segmentCount() == 1) {
+				buildContainer = ResourcesPlugin.getWorkspace().getRoot().getProject(containerLoc.segment(0));
+			} else {
+				buildContainer = ResourcesPlugin.getWorkspace().getRoot().getFolder(containerLoc);
+			}
+		}
 	}
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
@@ -50,6 +72,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 	public void setBuildContainer(IContainer buildContainer) {
 		this.buildContainer = buildContainer;
+		setProperty(BUILD_CONTAINER, buildContainer.getFullPath().toString());
 	}
 
 	public void setBuildCommand(String[] buildCommand) {
@@ -60,9 +83,53 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		this.cleanCommand = cleanCommand;
 	}
 
+	private void createBuildContainer(IContainer container, IProgressMonitor monitor) throws CoreException {
+		IContainer parent = container.getParent();
+		if (!(parent instanceof IProject) && !parent.exists()) {
+			createBuildContainer(parent, monitor);
+		}
+
+		if (container instanceof IFolder) {
+			((IFolder) container).create(IResource.FORCE | IResource.DERIVED, true, monitor);
+		}
+	}
+
 	@Override
 	public IContainer getBuildContainer() throws CoreException {
+		if (buildContainer == null) {
+			return super.getBuildContainer();
+		} else {
+			if (!(buildContainer instanceof IProject) && !buildContainer.exists()) {
+				createBuildContainer(buildContainer, new NullProgressMonitor());
+			}
+		}
 		return buildContainer != null ? buildContainer : super.getBuildContainer();
+	}
+
+	/**
+	 * @since 6.4
+	 */
+	public IContainer getDefaultBuildContainer() throws CoreException {
+		return super.getBuildContainer();
+	}
+
+	@Override
+	public String getProperty(String name) {
+		String prop = super.getProperty(name);
+		if (prop != null) {
+			return prop;
+		}
+
+		switch (name) {
+		case BUILD_CONTAINER:
+			try {
+				return getBuildContainer().getFullPath().toString();
+			} catch (CoreException e) {
+				CCorePlugin.log(e.getStatus());
+			}
+		}
+
+		return null;
 	}
 
 	@Override
@@ -78,12 +145,25 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
-			String[] command = new String[buildCommand.length];
-			Path make = findCommand(buildCommand[0]);
-			command[0] = make.toString();
-			System.arraycopy(buildCommand, 1, command, 1, buildCommand.length - 1);
+			List<String> command;
+			if (buildCommand != null) {
+				command = Arrays.asList(buildCommand);
+				Path make = findCommand(buildCommand[0]);
+				command.set(0, make.toString());
+			} else {
+				command = new ArrayList<>();
+				command.add(findCommand("make").toString()); //$NON-NLS-1$
+				command.add("-j"); //$NON-NLS-1$
+				if (!getBuildContainer().equals(getProject())) {
+					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
+					Path relative = getBuildDirectory().relativize(makefile);
+					command.add("-f"); //$NON-NLS-1$
+					command.add(relative.toString());
+				}
+				command.add("all"); //$NON-NLS-1$
+			}
 
-			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+			try (ErrorParserManager epm = new ErrorParserManager(project, getProject().getLocationURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
 				// run make
@@ -115,10 +195,20 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			ConsoleOutputStream outStream = console.getOutputStream();
 
-			String[] command = new String[cleanCommand.length];
-			Path make = findCommand(cleanCommand[0]);
-			command[0] = make.toString();
-			System.arraycopy(cleanCommand, 1, command, 1, cleanCommand.length - 1);
+			List<String> command;
+			if (cleanCommand != null) {
+				command = Arrays.asList(cleanCommand);
+			} else {
+				command = new ArrayList<>();
+				command.add(findCommand("make").toString()); //$NON-NLS-1$
+				if (!getBuildContainer().equals(getProject())) {
+					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
+					Path relative = getBuildDirectory().relativize(makefile);
+					command.add("-f"); //$NON-NLS-1$
+					command.add(relative.toString());
+				}
+				command.add("clean"); //$NON-NLS-1$
+			}
 
 			// run make
 			outStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$

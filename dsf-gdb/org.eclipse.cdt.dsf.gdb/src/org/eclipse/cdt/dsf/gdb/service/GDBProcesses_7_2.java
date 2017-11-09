@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2017 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ICreatedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -445,10 +446,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 									shouldInterrupt = false;
 								}
 
-	    						fCommandControl.queueCommand(
-	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId(), shouldInterrupt),
-		    							new ImmediateDataRequestMonitor<MIInfo>(rm));
-		                    }
+								boolean extraNewline = targetAttachRequiresTrailingNewline();
+								ICommand<MIInfo> miTargetAttach = fCommandFactory.createMITargetAttach(fContainerDmc,
+										((IMIProcessDMContext) procCtx).getProcId(), shouldInterrupt, extraNewline);
+								fCommandControl.queueCommand(
+										miTargetAttach,
+										new ImmediateDataRequestMonitor<MIInfo>(rm));
+							}
+
 		                },
 						// Initialize memory data for this process.
 	    				new Step() { 
@@ -498,7 +503,20 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
             dataRm.done();
 	    }
 	}
-	
+
+	/**
+	 * GDB 7.11 had a bug that -target-attach sometimes did not flush its error
+	 * response. However sending a newline forced GDB to flush the buffer.
+	 * 
+	 * See Bug 522367
+	 * 
+	 * @return whether to add extra newline.
+	 * @since 5.4
+	 */
+	protected boolean targetAttachRequiresTrailingNewline() {
+		return false;
+	}
+
 	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
 		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;

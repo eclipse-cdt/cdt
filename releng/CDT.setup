@@ -73,9 +73,9 @@
         xsi:type="pde:APIBaselineTask"
         id="baseline"
         name="CDT"
-        version="9.2"
+        version="9.3"
         location="${workspace.location/../api.baseline}"
-        remoteURI="http://download.eclipse.org/tools/cdt/builds/neon/milestones/ur2-rc4/cdt-9.2ur2-rc4.zip"/>
+        remoteURI="http://download.eclipse.org/tools/cdt/releases/9.3/cdt-9.3.3.zip"/>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"

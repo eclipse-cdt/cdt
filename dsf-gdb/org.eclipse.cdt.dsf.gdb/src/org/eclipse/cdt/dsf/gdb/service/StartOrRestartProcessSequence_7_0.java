@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Ericsson and others.
+ * Copyright (c) 2011, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -41,12 +42,14 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowNewConsoleInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.pty.PersistentPTY;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -286,36 +289,73 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     			rm.done();
     			return;
     		}
-    		
-    		// Every other type of session that can get to this code, is starting a new process
-    		// and requires a pty for it.
-    		try {
-    			// Use a PersistentPTY so it can be re-used for restarts.
-    			// It is possible that the inferior will be restarted by the user from
-    			// the GDB console, in which case, we are not able to create a new PTY
-    			// for it; using a persistentPTY allows this to work since the persistentPTY
-    			// does not need to be replaced but can continue to be used.
-    			fPty = new PersistentPTY();
-				fPty.validateSlaveName();
+    
+			boolean externalConsoleDefault = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+					IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_EXTERNAL_CONSOLE_DEFAULT, null);
 
-    			// Tell GDB to use this PTY
-    			fCommandControl.queueCommand(
-    					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)getContainerContext(), fPty.getSlaveName()), 
-    					new ImmediateDataRequestMonitor<MIInfo>(rm) {
-    						@Override
-    						protected void handleFailure() {
-    							// We were not able to tell GDB to use the PTY
-    							// so we won't use it at all.
-    			    			fPty = null;
-    			        		rm.done();
-    						}
-    					});
-    		} catch (IOException e) {
-    			fPty = null;
-        		rm.done();
+    		boolean externalConsole = CDebugUtils.getAttribute(fAttributes,
+    				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
+    				externalConsoleDefault);
+    		if (externalConsole) {
+	    		initializeExternalConsole(new ImmediateRequestMonitor(rm) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							fPty = null;
+							rm.done();
+						} else {
+							initializePty(rm);
+						}
+	    			}
+	    		});
+    		} else {
+				initializePty(rm);
     		}
     	}
     }
+
+	private void initializeExternalConsole(final RequestMonitor rm) {
+		fCommandControl.queueCommand(fCommandFactory.createMIGDBShowNewConsole(getContainerContext()),
+				new ImmediateDataRequestMonitor<MIGDBShowNewConsoleInfo>(rm) {
+					@Override
+					protected void handleSuccess() {
+						fCommandControl.queueCommand(
+								fCommandFactory.createMIGDBSetNewConsole(getContainerContext(), true),
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
+					}
+				});
+	}
+
+	private void initializePty(final RequestMonitor rm) {
+		// Every other type of session that can get to this code, is starting a new process
+		// and requires a pty for it.
+		try {
+			// Use a PersistentPTY so it can be re-used for restarts.
+			// It is possible that the inferior will be restarted by the user from
+			// the GDB console, in which case, we are not able to create a new PTY
+			// for it; using a persistentPTY allows this to work since the persistentPTY
+			// does not need to be replaced but can continue to be used.
+			fPty = new PersistentPTY();
+			fPty.validateSlaveName();
+
+			// Tell GDB to use this PTY
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)getContainerContext(), fPty.getSlaveName()), 
+					new ImmediateDataRequestMonitor<MIInfo>(rm) {
+						@Override
+						protected void handleFailure() {
+							// We were not able to tell GDB to use the PTY
+							// so we won't use it at all.
+			    			fPty = null;
+			        		rm.done();
+						}
+					});
+		} catch (IOException e) {
+			fPty = null;
+			rm.done();
+		}
+	}
 	
 	/** 
 	 * @since 4.7 

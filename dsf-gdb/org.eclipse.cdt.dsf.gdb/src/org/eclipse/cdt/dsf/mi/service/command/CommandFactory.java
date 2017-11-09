@@ -130,6 +130,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDisconnectedTraci
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetLanguage;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNewConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
@@ -146,6 +147,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceNotes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceUser;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowLanguage;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowNewConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBVersion;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
@@ -217,6 +219,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowNewConsoleInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
@@ -799,6 +802,11 @@ public class CommandFactory {
 		return new MIGDBSetLanguage(ctx, language);
 	}
 
+	/** @since 5.4*/
+	public ICommand<MIInfo> createMIGDBSetNewConsole(IDMContext ctx, boolean isSet) {
+		return new MIGDBSetNewConsole(ctx, isSet);
+	}
+
 	public ICommand<MIInfo> createMIGDBSetNonStop(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetNonStop(ctx, isSet);
 	}
@@ -866,6 +874,11 @@ public class CommandFactory {
 
 	public ICommand<MIGDBShowExitCodeInfo> createMIGDBShowExitCode(ICommandControlDMContext ctx) {
 		return new MIGDBShowExitCode(ctx);
+	}
+
+	/** @since 5.4 */
+	public ICommand<MIGDBShowNewConsoleInfo> createMIGDBShowNewConsole(IDMContext ctx) {
+		return new MIGDBShowNewConsole(ctx);
 	}
 
 	/** @since 4.3 */

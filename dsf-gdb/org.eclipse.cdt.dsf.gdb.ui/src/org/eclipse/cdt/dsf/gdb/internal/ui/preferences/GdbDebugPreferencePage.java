@@ -691,7 +691,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 
 		boolField= new BooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_USE_RTTI,
-				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + "\n" //$NON-NLS-1$
+				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + " \n" //$NON-NLS-1$
 				+ MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label2,
 				group2);
 
@@ -708,7 +708,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 
 		final ListenableBooleanFieldEditor enablePrettyPrintingField = new ListenableBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING,
-				MessagesForPreferences.GdbDebugPreferencePage_enablePrettyPrinting_label1 + "\n" //$NON-NLS-1$
+				MessagesForPreferences.GdbDebugPreferencePage_enablePrettyPrinting_label1 + " \n" //$NON-NLS-1$
 				+ MessagesForPreferences.GdbDebugPreferencePage_enablePrettyPrinting_label2,
 				SWT.NONE, group);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015  Ericsson and others.
+ * Copyright (c) 2008, 2017  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,13 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.0
 	 */
 	public static final String ATTR_DEBUGGER_DEBUG_ON_FORK = GdbPlugin.PLUGIN_ID + ".DEBUG_ON_FORK"; //$NON-NLS-1$
-	
+
+	/**
+	 * Launch configuration attribute key. Boolean value to set the 'new-console' GDB option.
+	 * @since 5.4
+	 */
+	public static final String ATTR_DEBUGGER_EXTERNAL_CONSOLE = GdbPlugin.PLUGIN_ID + ".EXTERNAL_CONSOLE"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute key. The value is a String specifying the type of Tracepoint mode
 	 * that should be used for this launch.
@@ -214,7 +220,13 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.0
 	 */
 	public static final boolean DEBUGGER_DEBUG_ON_FORK_DEFAULT = false;
-	
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_EXTERNAL_CONSOLE.
+	 * @since 5.4
+	 */
+	public static final boolean DEBUGGER_EXTERNAL_CONSOLE_DEFAULT = false;
+
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that only normal tracepoints should be used.

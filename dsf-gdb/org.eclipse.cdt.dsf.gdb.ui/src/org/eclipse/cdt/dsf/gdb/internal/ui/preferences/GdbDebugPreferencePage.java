@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Ericsson and others.
+ * Copyright (c) 2009, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.IGdbUIConstants;
 import org.eclipse.cdt.dsf.gdb.service.command.CustomTimeoutsMap;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -582,8 +583,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				group1);
 		enableStopAtMain.fillIntoGrid(group1, 3);
 		addField(enableStopAtMain);
-
-		fCommandTimeoutField = new IntegerWithBooleanFieldEditor( 
+    	
+    	fCommandTimeoutField = new IntegerWithBooleanFieldEditor( 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 
 				MessagesForPreferences.GdbDebugPreferencePage_Command_timeout,
@@ -609,6 +610,16 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				SWT.NONE, group1);
 		enableNonStop.fillIntoGrid(group1, 3);
 		addField(enableNonStop);
+
+    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+			BooleanFieldEditor externalConsoleField = new BooleanFieldEditor(
+					IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE,
+					MessagesForPreferences.GdbDebugPreferencePage_external_console,
+					group1);
+	
+			externalConsoleField.fillIntoGrid(group1, 3);
+			addField(externalConsoleField);
+    	}
 
 		group1.setLayout(groupLayout);
 

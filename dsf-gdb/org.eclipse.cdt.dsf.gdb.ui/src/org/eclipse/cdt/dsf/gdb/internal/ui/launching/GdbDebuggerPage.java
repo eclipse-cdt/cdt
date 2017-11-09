@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -60,6 +61,10 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
+	/**
+	 * Checkbox for using GDB's new-console -- only displayed on Windows. Will be null if unsupported.
+	 */
+	private Button fExternalConsole;
 	
 	/**
 	 * A combo box to let the user choose if fast tracepoints should be used or not.
@@ -101,6 +106,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
+				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE));
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
 		
@@ -157,6 +164,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		boolean debugOnFork = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
+		boolean externalConsole = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
+				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE));
 
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
@@ -166,6 +175,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fReverseCheckBox.setSelection(reverseEnabled);
 		fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);
 		fDebugOnFork.setSelection(debugOnFork);
+		if (fExternalConsole != null) {
+			fExternalConsole.setSelection(externalConsole);
+		}
 		
 		updateTracepointModeFromConfig(configuration);
 		
@@ -252,6 +264,10 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
                 fUpdateThreadlistOnSuspend.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				fDebugOnFork.getSelection());
+		if (fExternalConsole != null) {
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
+					fExternalConsole.getSelection());
+		}
 		
 		if (fTracepointModeCombo != null) {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
@@ -333,6 +349,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
 
 		fDebugOnFork = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
+    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+    		fExternalConsole = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.use_new_console_for_process")); //$NON-NLS-1$
+    	}
 		
 		createTracepointModeCombo(comp);
 	}

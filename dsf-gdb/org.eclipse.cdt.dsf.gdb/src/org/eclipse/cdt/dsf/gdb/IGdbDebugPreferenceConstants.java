@@ -127,6 +127,14 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREF_USE_RTTI = PREFIX + "useRtti"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference whether to use new-console. Default is
+	 * {@link IGDBLaunchConfigurationConstants#DEBUGGER_EXTERNAL_CONSOLE_DEFAULT}
+	 * 
+	 * @since 5.4
+	 */
+	public static final String PREF_EXTERNAL_CONSOLE = PREFIX + "externalConsole"; //$NON-NLS-1$
+
+	/**
 	 * Boolean preference whether to hide or not, the running threads in the debug view.
 	 * Default is <code>false</code>.
 	 * 

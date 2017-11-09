@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ericsson and others.
+ * Copyright (c) 2016, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * @since 5.2
  */
-public class GDBProcesses_7_12 extends GDBProcesses_7_10 {
+public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 
 	public GDBProcesses_7_12(DsfSession session) {
 		super(session);
@@ -119,5 +119,10 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_10 {
     	} else {
 			super.detachDebuggerFromProcess(dmc, rm);
 	    }
+	}
+
+	@Override
+	protected boolean targetAttachRequiresTrailingNewline() {
+		return true;
 	}
 }

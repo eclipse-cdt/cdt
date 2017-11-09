@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Ericsson and others.
+ * Copyright (c) 2008, 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String GDB_7_11_VERSION = "7.11"; //$NON-NLS-1$
 	/** @since 5.2 */
 	public static final String GDB_7_12_VERSION = "7.12"; //$NON-NLS-1$
 
@@ -281,6 +283,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	protected IProcesses createProcessesService(DsfSession session) {
 		if (compareVersionWith(GDB_7_12_VERSION) >= 0) {
 			return new GDBProcesses_7_12(session);
+		}
+		if (compareVersionWith(GDB_7_11_VERSION) >= 0) {
+			return new GDBProcesses_7_11(session);
 		}
 		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBProcesses_7_10(session);

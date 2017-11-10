@@ -25,11 +25,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class MakeBuildSettingsTab extends CommonBuildTab {
 
 	private Button projectButton;
 	private Button configButton;
+	private Text buildCmdText;
+	private Text cleanCmdText;
 
 	private boolean defaultProject;
 
@@ -49,18 +53,35 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 		tcControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		// Build Output Group
-		Group group = new Group(comp, SWT.NONE);
-		group.setText("Build Output Location");
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		Group outputGroup = new Group(comp, SWT.NONE);
+		outputGroup.setText("Build Output Location");
+		outputGroup.setLayout(new GridLayout());
+		outputGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		projectButton = new Button(group, SWT.RADIO);
+		projectButton = new Button(outputGroup, SWT.RADIO);
 		projectButton.setText("Build in project directory");
 		projectButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		configButton = new Button(group, SWT.RADIO);
+		configButton = new Button(outputGroup, SWT.RADIO);
 		configButton.setText("Build in configuration specific folder");
 		configButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		Group cmdGroup = new Group(comp, SWT.NONE);
+		cmdGroup.setText("Build Commands");
+		cmdGroup.setLayout(new GridLayout(2, false));
+		cmdGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		Label label = new Label(cmdGroup, SWT.NONE);
+		label.setText("Build:");
+
+		buildCmdText = new Text(cmdGroup, SWT.BORDER);
+		buildCmdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		label = new Label(cmdGroup, SWT.NONE);
+		label.setText("Clean:");
+
+		cleanCmdText = new Text(cmdGroup, SWT.BORDER);
+		cleanCmdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	}
 
 	@Override
@@ -85,6 +106,16 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 				defaultProject = false;
 			}
 		}
+
+		String buildCommand = properties.get(StandardBuildConfiguration.BUILD_COMMAND);
+		if (buildCommand != null && !buildCommand.trim().isEmpty()) {
+			buildCmdText.setText(buildCommand);
+		}
+
+		String cleanCommand = properties.get(StandardBuildConfiguration.CLEAN_COMMAND);
+		if (cleanCommand != null && !cleanCommand.trim().isEmpty()) {
+			cleanCmdText.setText(cleanCommand);
+		}
 	}
 
 	@Override
@@ -101,6 +132,16 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 				} else if (!defaultProject && projectButton.getSelection()) {
 					properties.put(StandardBuildConfiguration.BUILD_CONTAINER,
 							stdConfig.getProject().getFullPath().toString());
+				}
+
+				String buildCommand = buildCmdText.getText().trim();
+				if (!buildCommand.isEmpty()) {
+					properties.put(StandardBuildConfiguration.BUILD_COMMAND, buildCommand);
+				}
+
+				String cleanCommand = cleanCmdText.getText().trim();
+				if (!cleanCommand.isEmpty()) {
+					properties.put(StandardBuildConfiguration.CLEAN_COMMAND, cleanCommand);
 				}
 			}
 		} catch (CoreException e) {
@@ -125,6 +166,16 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 				defaultProject = false;
 			}
 		}
+
+		String buildCommand = buildConfig.getProperty(StandardBuildConfiguration.BUILD_COMMAND);
+		if (buildCommand != null && !buildCommand.trim().isEmpty()) {
+			buildCmdText.setText(buildCommand);
+		}
+
+		String cleanCommand = buildConfig.getProperty(StandardBuildConfiguration.CLEAN_COMMAND);
+		if (cleanCommand != null && !cleanCommand.trim().isEmpty()) {
+			cleanCmdText.setText(cleanCommand);
+		}
 	}
 
 	@Override
@@ -139,6 +190,16 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 					stdConfig.setBuildContainer(stdConfig.getDefaultBuildContainer());
 				} else if (!defaultProject && projectButton.getSelection()) {
 					stdConfig.setBuildContainer(stdConfig.getProject());
+				}
+				
+				String buildCommand = buildCmdText.getText().trim();
+				if (!buildCommand.isEmpty()) {
+					stdConfig.setBuildCommand(buildCommand.split(" ")); //$NON-NLS-1$
+				}
+	
+				String cleanCommand = cleanCmdText.getText().trim();
+				if (!cleanCommand.isEmpty()) {
+					stdConfig.setCleanCommand(cleanCommand.split(" ")); //$NON-NLS-1$
 				}
 			}
 		} catch (CoreException e) {

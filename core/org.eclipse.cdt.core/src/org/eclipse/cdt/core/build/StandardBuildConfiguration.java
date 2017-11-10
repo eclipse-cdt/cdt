@@ -47,6 +47,14 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	 * @since 6.4
 	 */
 	public static final String BUILD_CONTAINER = "stdbuild.build.container"; //$NON-NLS-1$
+	/**
+	 * @since 6.4
+	 */
+	public static final String BUILD_COMMAND = "stdbuild.build.command"; //$NON-NLS-1$
+	/**
+	 * @since 6.4
+	 */
+	public static final String CLEAN_COMMAND = "stdbuild.clean.command"; //$NON-NLS-1$
 
 	private String[] buildCommand;
 	private String[] cleanCommand;
@@ -54,6 +62,15 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
+		applyProperties();
+	}
+
+	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
+			String launchMode) {
+		super(config, name, toolChain);
+	}
+
+	private void applyProperties() {
 		String container = getProperty(BUILD_CONTAINER);
 		if (container != null && !container.trim().isEmpty()) {
 			IPath containerLoc = new org.eclipse.core.runtime.Path(container);
@@ -63,11 +80,16 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				buildContainer = ResourcesPlugin.getWorkspace().getRoot().getFolder(containerLoc);
 			}
 		}
-	}
 
-	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			String launchMode) {
-		super(config, name, toolChain);
+		String buildCmd = getProperty(BUILD_COMMAND);
+		if (buildCmd != null && !buildCmd.trim().isEmpty()) {
+			buildCommand = buildCmd.split(" "); //$NON-NLS-1$
+		}
+
+		String cleanCmd = getProperty(CLEAN_COMMAND);
+		if (cleanCmd != null && !cleanCmd.trim().isEmpty()) {
+			cleanCommand = cleanCmd.split(" "); //$NON-NLS-1$
+		}
 	}
 
 	public void setBuildContainer(IContainer buildContainer) {
@@ -77,6 +99,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 	public void setBuildCommand(String[] buildCommand) {
 		this.buildCommand = buildCommand;
+		setProperty(BUILD_COMMAND, String.join(" ", buildCommand)); //$NON-NLS-1$
 	}
 
 	public void setCleanCommand(String[] cleanCommand) {
@@ -133,6 +156,15 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	}
 
 	@Override
+	public boolean setProperties(Map<String, String> properties) {
+		if (!super.setProperties(properties)) {
+			return false;
+		}
+		applyProperties();
+		return true;
+	}
+
+	@Override
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
 		IProject project = getProject();
@@ -153,7 +185,6 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			} else {
 				command = new ArrayList<>();
 				command.add(findCommand("make").toString()); //$NON-NLS-1$
-				command.add("-j"); //$NON-NLS-1$
 				if (!getBuildContainer().equals(getProject())) {
 					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 					Path relative = getBuildDirectory().relativize(makefile);

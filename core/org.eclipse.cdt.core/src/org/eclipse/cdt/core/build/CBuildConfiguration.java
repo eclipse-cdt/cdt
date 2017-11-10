@@ -674,6 +674,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 		// Make sure it's a compile command
 		String[] compileCommands = toolChain.getCompileCommands();
+		boolean found = false;
 		loop:
 		for (String arg : command) {
 			// TODO we should really ask the toolchain, not all args start with '-'
@@ -685,9 +686,26 @@ public abstract class CBuildConfiguration extends PlatformObject
 			for (String cc : compileCommands) {
 				if (arg.endsWith(cc)
 						&& (arg.equals(cc) || arg.endsWith("/" + cc) || arg.endsWith("\\" + cc))) { //$NON-NLS-1$ //$NON-NLS-2$
+					found = true;
 					break loop;
 				}
 			}
+
+			if (Platform.getOS().equals(Platform.OS_WIN32) && !arg.endsWith(".exe")) { //$NON-NLS-1$
+				// Try with exe
+				arg = arg + ".exe"; //$NON-NLS-1$
+				for (String cc : compileCommands) {
+					if (arg.endsWith(cc)
+							&& (arg.equals(cc) || arg.endsWith("/" + cc) || arg.endsWith("\\" + cc))) { //$NON-NLS-1$ //$NON-NLS-2$
+						found = true;
+						break loop;
+					}
+				}
+			}
+		}
+
+		if (!found) {
+			return false;
 		}
 
 		try {

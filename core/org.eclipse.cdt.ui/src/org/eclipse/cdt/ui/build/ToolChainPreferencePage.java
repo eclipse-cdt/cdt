@@ -126,6 +126,12 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		availTable.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
+				toolChains = new ArrayList<IToolChain>();
+				try {
+					toolChains.addAll(manager.getAllToolChains());
+				} catch (CoreException e) {
+					CUIPlugin.log(e.getStatus());
+				}
 				return toolChains.toArray();
 			}
 		});
@@ -281,13 +287,6 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 				}
 			}
 		});
-
-		toolChains = new ArrayList<IToolChain>();
-		try {
-			toolChains.addAll(manager.getAllToolChains());
-		} catch (CoreException e) {
-			CUIPlugin.log(e.getStatus());
-		}
 
 		availTable.setInput(manager);
 		userTable.setInput(manager);

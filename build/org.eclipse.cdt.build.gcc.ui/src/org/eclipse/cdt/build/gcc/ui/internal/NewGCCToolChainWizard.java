@@ -30,8 +30,8 @@ public class NewGCCToolChainWizard extends ToolChainWizard {
 	@Override
 	public boolean performFinish() {
 		Path path = settingsPage.getPath();
-		String os = settingsPage.getOS();
-		String arch = settingsPage.getArch();
+		String os = settingsPage.getOS().trim();
+		String arch = settingsPage.getArch().trim();
 		IEnvironmentVariable[] envvars = envPage.getEnvVars();
 
 		new Job(Messages.NewGCCToolChainWizard_Add) {
@@ -47,7 +47,9 @@ public class NewGCCToolChainWizard extends ToolChainWizard {
 					}
 
 					GCCToolChain gcc = new GCCToolChain(provider, path, arch, envvars);
-					gcc.setProperty(IToolChain.ATTR_OS, os);
+					if (!os.isEmpty()) {
+						gcc.setProperty(IToolChain.ATTR_OS, os);
+					}
 					provider.addToolChain(gcc);
 					return Status.OK_STATUS;
 				} catch (CoreException e) {

@@ -153,7 +153,6 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			} else {
 				command = new ArrayList<>();
 				command.add(findCommand("make").toString()); //$NON-NLS-1$
-				command.add("-j"); //$NON-NLS-1$
 				if (!getBuildContainer().equals(getProject())) {
 					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 					Path relative = getBuildDirectory().relativize(makefile);

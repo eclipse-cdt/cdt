@@ -321,10 +321,13 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			if (tmpFile == null) {
 				// Have to assume there wasn't a source file. Add one in the
 				// resource's container
+				// TODO really?
 				IPath parentPath = resource instanceof IFile ? resource.getParent().getLocation()
 						: resource.getLocation();
-				tmpFile = Files.createTempFile(parentPath.toFile().toPath(), ".sc", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
-				commandLine.add(tmpFile.toString());
+				if (parentPath.toFile().exists()) {
+					tmpFile = Files.createTempFile(parentPath.toFile().toPath(), ".sc", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
+					commandLine.add(tmpFile.toString());
+				}
 			}
 
 			return getScannerInfo(buildConfig, commandLine, buildDirectory, tmpFile);
@@ -490,7 +493,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			if (cCommand.contains("gcc")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("gcc", "g++"); //$NON-NLS-1$ //$NON-NLS-2$
 				// Also recognize c++ as an alias for g++
-				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "c++"), "cc", "c++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				commands = new String[] { cCommand, cppCommand, cCommand.replace("gcc", "cc"), //$NON-NLS-1$ //$NON-NLS-2$
+						cCommand.replace("gcc", "c++") }; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (cCommand.contains("clang")) { //$NON-NLS-1$
 				cppCommand = cCommand.replace("clang", "clang++"); //$NON-NLS-1$ //$NON-NLS-2$
 				commands = new String[] { cCommand, cppCommand };
@@ -533,12 +537,23 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				// ran into an option, we're done.
 				break;
 			}
+			if (i > 1 && cmd.get(i - 1).equals("-o")) { //$NON-NLS-1$
+				// this is an output file
+				--i;
+				continue;
+			}
 			try {
 				Path srcPath = Paths.get(arg);
 				URI uri;
 				if (srcPath.isAbsolute()) {
 					uri = srcPath.toUri();
 				} else {
+					if (arg.startsWith("/") && Platform.getOS().equals(Platform.OS_WIN32)) { //$NON-NLS-1$
+						String drive = srcPath.getName(0).toString();
+						if (drive.length() == 1) {
+							srcPath = Paths.get(drive + ":\\").resolve(srcPath.subpath(1, srcPath.getNameCount())); //$NON-NLS-1$
+						}
+					}
 					uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
 				}
 

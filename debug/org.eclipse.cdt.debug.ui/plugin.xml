@@ -260,9 +260,9 @@
             label="%DebugActionSet.label"
             id="org.eclipse.cdt.debug.ui.debugActionSet">
          <menu
-               label="%RunMenu.label"
+               label="%DebugMenu.label"
                path="additions"
-               id="org.eclipse.ui.run">
+               id="org.eclipse.ui.debug">
          </menu>
          <action
                id="org.eclipse.cdt.debug.ui.actions.ResumeAtLine"
@@ -271,7 +271,7 @@
                icon="icons/elcl16/resume_at_line_co.gif"
                helpContextId="jump_to_line_action_context"
                label="%GlobalResumeAtLineAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"/>
+               menubarPath="org.eclipse.ui.debug/stepGroup"/>
          <action
                id="org.eclipse.cdt.debug.ui.actions.MoveToLine"
                class="org.eclipse.cdt.debug.internal.ui.actions.RetargetMoveToLineAction"
@@ -279,14 +279,14 @@
                icon="icons/elcl16/move_to_line_co.gif"
                helpContextId="move_to_line_action_context"
                label="%GlobalMoveToLineAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"/>
+               menubarPath="org.eclipse.ui.debug/stepGroup"/>
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                helpContextId="toggle_instruction_step_mode_action_context"
                icon="icons/elcl16/instr_step.gif"
                id="org.eclipse.cdt.debug.ui.actions.ToggleInstructionStepMode"
                label="%ToggleInstructionStepModeAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
+               menubarPath="org.eclipse.ui.debug/stepGroup"
                state="false"
                style="toggle"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
@@ -296,7 +296,7 @@
    <extension
        point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?endof=stepGroup">
+            locationURI="menu:org.eclipse.ui.debug?endof=stepGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
                disabledIcon="icons/dlcl16/signal0_co.gif"
@@ -1975,9 +1975,9 @@
          </command>
       </menuContribution>
       
-  <!-- Reverse debugging contributions to Run menu -->           
+  <!-- Reverse debugging contributions to Debug menu -->           
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?before=stepGroup">
+            locationURI="menu:org.eclipse.ui.debug?before=stepGroup">
          <menu
                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                icon="icons/obj16/reverse_toggle.gif"
@@ -1989,7 +1989,7 @@
          </menu>
       </menuContribution>      
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?after=stepGroup">
+            locationURI="menu:org.eclipse.ui.debug?after=stepGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
                icon="icons/obj16/reverse_resume.gif"
@@ -2001,7 +2001,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?before=stepIntoGroup">
+            locationURI="menu:org.eclipse.ui.debug?before=stepIntoGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseStepInto"
                icon="icons/obj16/reverse_stepinto.gif"
@@ -2013,7 +2013,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?before=stepOverGroup">
+            locationURI="menu:org.eclipse.ui.debug?before=stepOverGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseStepOver"
                icon="icons/obj16/reverse_stepover.gif"
@@ -2025,7 +2025,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?before=stepReturnGroup">
+            locationURI="menu:org.eclipse.ui.debug?before=stepReturnGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.uncall"
                icon="icons/obj16/uncall.gif"
@@ -2339,7 +2339,7 @@
        <!-- Step Into Selection debugging contributions -->  
        </menuContribution>
               <menuContribution
-             locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
+             locationURI="menu:org.eclipse.ui.debug?endof=emptyStepGroup">
           <command
                 commandId="org.eclipse.cdt.debug.ui.command.StepIntoSelection"
                 style="push">

@@ -308,7 +308,7 @@ public class SerialPort {
 		return outputStream;
 	}
 
-	public void open() throws IOException {
+	public synchronized void open() throws IOException {
 		handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
 		isOpen = true;
 
@@ -356,18 +356,26 @@ public class SerialPort {
 	}
 	
 	public void pause() throws IOException {
-		isPaused = true;
-		close0(handle);
-		try {
-			// Sleep for a second since some serial ports take a while to actually close
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// nothing to do 
+		if (!isOpen) {
+			return;
+		}
+		synchronized (pauseMutex) {
+			isPaused = true;
+			close0(handle);
+			try {
+				// Sleep for a second since some serial ports take a while to actually close
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// nothing to do
+			}
 		}
 	}
 
 	public void resume() throws IOException {
 		synchronized (pauseMutex) {
+			if (!isPaused) {
+				return;
+			}
 			isPaused = false;
 			handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
 			isOpen = true;

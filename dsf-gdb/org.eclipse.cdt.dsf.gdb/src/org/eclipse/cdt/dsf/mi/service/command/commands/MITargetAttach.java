@@ -66,8 +66,11 @@ public class MITargetAttach extends MICommand<MIInfo> {
 	}
 
 	/**
-	 * Add an extra newline to force GDB 7.11 to flush error response to the MI channel.
+	 * Add an extra newline to force GDB 7.11 to flush error response to the MI
+	 * channel.
+	 * 
 	 * @see GDBProcesses_7_2#targetAttachRequiresTrailingNewline
+	 * @since 5.4
 	 */
 	@Override
 	public String constructCommand(String groupId, String threadId, int frameId) {

@@ -121,6 +121,9 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 	    }
 	}
 
+	/**
+	 * @since 5.4
+	 */
 	@Override
 	protected boolean targetAttachRequiresTrailingNewline() {
 		return true;

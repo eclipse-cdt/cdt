@@ -286,6 +286,16 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = "org.eclipse.cdt.dsf.gdb" + ".POST_MORTEM_TYPE"; //$NON-NLS-1$  //$NON-NLS-2$
 
 	/**
+	 * @since 8.3
+	 */
+	public final static String ATTR_LOCATION = CDT_LAUNCH_ID + ".ATTR_LOCATION"; //$NON-NLS-1$
+
+	/**
+	 * @since 8.3
+	 */
+	public final static String ATTR_TOOL_ARGUMENTS = CDT_LAUNCH_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute value. The key is
 	 * ATTR_DEBUGGER_STOP_AT_MAIN.
 	 */

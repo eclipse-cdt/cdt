@@ -154,11 +154,16 @@
             id="org.eclipse.cdt.launch.launchConfigurationTabGroup.local"
             type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
       </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.launch.internal.corebuild.GenericLaunchConfigTabGroup"
+            id="org.eclipse.cdt.launch.genericLaunchConfigTabGroup"
+            type="org.eclipse.cdt.debug.core.genericLaunchConfigType">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.launchbar.ui.launchBarUIContributions">
       <buildTabGroup
-            launchConfigType="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+            launchConfigType="org.eclipse.cdt.debug.core.genericLaunchConfigType"
             launchDescriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             tabGroup="org.eclipse.cdt.launch.internal.corebuild.CoreBuildTabGroup">
       </buildTabGroup>

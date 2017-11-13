@@ -102,7 +102,10 @@
 		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>
 		<module>cross/org.eclipse.cdt.launch.remote</module>
 		<module>cross/org.eclipse.cdt.launch.remote-feature</module>
-		
+		<module>cross/org.eclipse.cdt.launch.serial.core</module>
+		<module>cross/org.eclipse.cdt.launch.serial.ui</module>
+		<module>cross/org.eclipse.cdt.launch.serial-feature</module>
+
 		<module>debug/org.eclipse.cdt.debug.core</module>
 		<module>debug/org.eclipse.cdt.debug.ui</module>
 

@@ -71,6 +71,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String OPEN_BRACKET_OP = "("; //$NON-NLS-1$
 	private static final String SIZEOF_OP = "sizeof "; //$NON-NLS-1$
 	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof..."; //$NON-NLS-1$
+	private static final String NOEXCEPT_OP = "noexcept ("; //$NON-NLS-1$
 	private static final String NOT_OP = "!"; //$NON-NLS-1$
 	private static final String TILDE_OP = "~"; //$NON-NLS-1$
 	private static final String AMPERSAND_OP = "&"; //$NON-NLS-1$
@@ -253,6 +254,7 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
+		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_alignOf:
 		case IASTUnaryExpression.op_labelReference:
 			return true;
@@ -269,6 +271,7 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_postFixIncr:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_typeid:
+		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_alignOf:
 			return true;
 
@@ -306,6 +309,8 @@ public class ExpressionWriter extends NodeWriter{
 			return THROW;
 		case ICPPASTUnaryExpression.op_typeid:
 			return TYPEID_OP;
+		case ICPPASTUnaryExpression.op_noexcept:
+			return NOEXCEPT_OP;
 		case IASTUnaryExpression.op_alignOf:
 			return ALIGNOF_OP;
 		case IASTUnaryExpression.op_labelReference:
@@ -324,7 +329,7 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_postFixIncr:
 			return INCREMENT_OP;
 		case ICPPASTUnaryExpression.op_typeid:
-			return CLOSING_BRACKET_OP;
+		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_alignOf:
 			return CLOSING_BRACKET_OP;

@@ -146,3 +146,28 @@ struct S
     {
     }
 };
+
+//!Noexcept without expression specifiers
+//%CPP
+void foo() noexcept
+{
+}
+
+
+//!Noexcept with expression specifiers
+//%CPP
+void foo() noexcept (1 + 1)
+{
+}
+
+//!Nested noexcept specifiers
+//%CPP
+void foo() noexcept (noexcept (1 + 1))
+{
+}
+
+//!Multiple nested noexcept specifiers
+//%CPP
+void foo() noexcept (noexcept (1 + 1) && noexcept (2 + 3))
+{
+}

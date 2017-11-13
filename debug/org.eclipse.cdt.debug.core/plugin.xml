@@ -470,6 +470,13 @@
             name="%localApplicationLaunch.name"
             public="false">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.cdt.debug.core.launch.CoreBuildGenericLaunchConfigDelegate"
+            id="org.eclipse.cdt.debug.core.genericLaunchConfigType"
+            modes="run"
+            name="Auto Generic Launch"
+            public="false">
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.launchbar.core.launchTargetTypes">
@@ -491,7 +498,7 @@
             priority="10">
       </configProvider>
       <configProvider
-            class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildGenericLaunchConfigProvider"
+            class="org.eclipse.cdt.debug.core.launch.CoreBuildGenericLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
       </configProvider>

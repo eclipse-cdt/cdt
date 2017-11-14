@@ -266,7 +266,9 @@ public class BuildConsolePartitioner
 			// to avoid document becoming 0 length and therefore the
 			// listeners assume the document has been cleared
 			fDocument.replace(length + toTrim, 0, appendContents);
-			fDocument.replace(0, toTrim, ""); //$NON-NLS-1$
+			if (toTrim > 0) {
+				fDocument.replace(0, toTrim, ""); //$NON-NLS-1$
+			}
 		} catch (BadLocationException e) {
 			fDocument.set(update.getNewContents());
 		}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_961abef8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/actions/ChangeConfigAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-11-14T15:51:04Z",
+      "side": 1,
+      "message": "The default config is still used. On the TODO list to figure out what to do with it. But these things adapt to ICBuildConfiguration. We should add a getName to it. CBuildConfiguration implements one that gives the strings we\u0027ve been using as build output directory names.",
+      "revId": "a0c46e199f0e5a9db00766a1023dfc881e057426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

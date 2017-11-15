@@ -84,6 +84,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 			int n = matcher.groupCount();
 			if (n == 0)
 				return;
+			if (!matcher.matches())
+				return;
 			String[] res = new String[n];
 			for (int i = 0; i < n; i++) {
 				res[i] = matcher.group(i + 1);

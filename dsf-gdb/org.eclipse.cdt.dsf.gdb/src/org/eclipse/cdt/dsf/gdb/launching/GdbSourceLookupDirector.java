@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,14 @@ import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBSourceLookup;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
@@ -61,7 +65,33 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 	 */
 	public Map<String, String> getSubstitutionsPaths() {
 		Map<String, String> entries = new HashMap<>();
-		collectSubstitutionsPaths(getSourceContainers(), entries);
+		try {
+			collectSubstitutionsPaths(getSourceContainers(), entries);
+		} catch (NullPointerException npe) {
+			/*
+			 * Bug 500988: getting source containers from composite containers has a race
+			 * condition around termination. This can lead to a NPE being thrown from within
+			 * the above code.
+			 * 
+			 * The reason for the NPE is that termination of a launch can cause the launch
+			 * configuration to be updated (e.g. with memory settings memento). This update
+			 * causes the source lookups to be recalculated, however that recalculation is
+			 * happening while the launch is terminating. The termination causes the source
+			 * containers to be disposed in another thread and as the dispose method is not
+			 * thread safe, we get NPEs. See CompositeSourceContainer.dispose() where the
+			 * race condition is. Unfortunately synchronizing it leads to potential
+			 * deadlocks.
+			 * 
+			 * Catching all NPEs and silently discarding them makes it very hard to track
+			 * down bugs, so in case the NPE is caused for another reason we are logging it.
+			 */
+			GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.getUniqueIdentifier(), IStatus.ERROR,
+					"NullPointerException while trying to calculated source lookup path. " //$NON-NLS-1$
+							+ "This can be ignored if it occurs while terminating a debug session. " //$NON-NLS-1$
+							+ "See Bug 500988.", //$NON-NLS-1$
+					npe));
+			entries = Collections.emptyMap();
+		}
 		return entries;
 	}
 

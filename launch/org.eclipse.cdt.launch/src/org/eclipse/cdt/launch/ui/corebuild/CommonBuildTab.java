@@ -167,7 +167,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 		} else {
 			IToolChain tc = toolchains[i - 1];
 			configuration.setAttribute(ICBuildConfiguration.TOOLCHAIN_ID, tc.getId());
-			configuration.setAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, tc.getProvider().getId());
+			configuration.setAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, tc.getTypeId());
 		}
 	}
 

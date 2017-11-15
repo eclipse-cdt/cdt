@@ -109,7 +109,7 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 		ICMakeToolChainFile file = manager.newToolChainFile(Paths.get(pathText.getText()));
 
 		IToolChain tc = toolchains[tcCombo.getSelectionIndex()];
-		file.setProperty(CMakeBuildConfiguration.TOOLCHAIN_TYPE, tc.getProvider().getId());
+		file.setProperty(CMakeBuildConfiguration.TOOLCHAIN_TYPE, tc.getTypeId());
 		file.setProperty(CMakeBuildConfiguration.TOOLCHAIN_ID, tc.getId());
 
 		return file;

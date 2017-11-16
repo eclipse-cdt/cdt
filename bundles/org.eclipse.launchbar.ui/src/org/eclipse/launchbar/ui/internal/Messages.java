@@ -39,6 +39,10 @@ public class Messages extends NLS {
 
 	public static String NewLaunchTargetWizard_Title;
 
+	public static String NewLaunchTargetWizardSelectionPage_Description;
+
+	public static String NewLaunchTargetWizardSelectionPage_Title;
+
 	public static String DescriptorMustNotBeNull;
 	public static String DescriptorMustNotBeNullDesc;
 	public static String NoActiveTarget;

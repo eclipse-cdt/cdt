@@ -25,6 +25,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,6 +45,8 @@ class NewLaunchTargetWizardSelectionPage extends WizardPage {
 
 	public NewLaunchTargetWizardSelectionPage() {
 		super(NewLaunchTargetWizardSelectionPage.class.getName());
+		setTitle(Messages.NewLaunchTargetWizardSelectionPage_Title);
+		setDescription(Messages.NewLaunchTargetWizardSelectionPage_Description);
 	}
 
 	@Override

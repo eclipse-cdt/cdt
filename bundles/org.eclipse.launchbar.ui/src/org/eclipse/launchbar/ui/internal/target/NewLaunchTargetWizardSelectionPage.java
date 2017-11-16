@@ -26,7 +26,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -157,7 +156,7 @@ class NewLaunchTargetWizardSelectionPage extends WizardPage {
 					return null;
 				}
 			} else {
-				nextWizard = (LaunchTargetWizard) obj;
+				nextWizard = (Wizard) obj;
 			}
 
 			return nextWizard.getStartingPage();

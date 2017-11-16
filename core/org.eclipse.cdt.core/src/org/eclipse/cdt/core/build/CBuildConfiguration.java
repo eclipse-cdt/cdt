@@ -149,6 +149,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		Preferences settings = getSettings();
 		settings.put(TOOLCHAIN_TYPE, toolChain.getTypeId());
 		settings.put(TOOLCHAIN_ID, toolChain.getId());
+		settings.put(LAUNCH_MODE, launchMode);
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {

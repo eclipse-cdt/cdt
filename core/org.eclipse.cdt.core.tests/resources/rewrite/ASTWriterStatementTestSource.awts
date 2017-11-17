@@ -146,7 +146,7 @@ int f()
 }
 
 
-//!IfStatementTest
+//!BasicNoBraceIfStatementTest
 //%CPP
 int g()
 {
@@ -210,7 +210,7 @@ int foo()
 }
 
 
-//!SwitchStatementTest
+//!CSwitchStatementTest
 //%C
 void foo()
 {
@@ -240,7 +240,7 @@ int foo(int a)
 }
 
 
-//!GNUSwitchStatementTest
+//!GNUCSwitchStatementTest
 //%C
 int foo(int a)
 {
@@ -323,8 +323,55 @@ int foo()
     }
 }
 
-
 //!ArrayDeclarationStatementTest
 //%CPP
 string* newElements = new string[m_capacity];
 
+//!Basic Constexpr If
+//%CPP
+void f()
+{
+    constexpr bool b{false};
+    if constexpr (b){
+    }
+}
+
+//!Constexpr If with init-statement
+//%CPP
+void f()
+{
+    if constexpr (constexpr bool b{false};b){
+    }
+}
+
+//!Constexpr If with init-statement and declaration
+//%CPP
+void f()
+{
+    if constexpr (constexpr bool b{false};int k = 42){
+    }
+}
+
+//!If with init-statement
+//%CPP
+void f()
+{
+    if (bool b{false};b == true){
+    }
+}
+
+//!If with init-statement and declaration
+//%CPP
+void f()
+{
+    if (bool b{false};int k = 42){
+    }
+}
+
+//!If with constexpr init-statement and declaration
+//%CPP
+void f()
+{
+    if (constexpr bool b{false};int k = 42){
+    }
+}

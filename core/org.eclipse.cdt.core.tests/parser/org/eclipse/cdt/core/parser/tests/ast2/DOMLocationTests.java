@@ -703,6 +703,36 @@ public class DOMLocationTests extends AST2TestBase {
         assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
     }
 
+    public void testConstexprIf_1() throws Exception {
+        String code = "void foo() { if constexpr (true) {} }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+        IASTIfStatement statement = (IASTIfStatement) body.getStatements()[0];
+        String rawDeclarator = "if constexpr (true) {}"; //$NON-NLS-1$
+        assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testConstexprIf_2() throws Exception {
+        String code = "void foo() { if constexpr (int i = 1; i == 1) {} }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+        IASTIfStatement statement = (IASTIfStatement) body.getStatements()[0];
+        String rawDeclarator = "if constexpr (int i = 1; i == 1) {}"; //$NON-NLS-1$
+        assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testConstexprIf_3() throws Exception {
+        String code = "void foo() { if (int i = 1; i == 1) {} }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+        IASTIfStatement statement = (IASTIfStatement) body.getStatements()[0];
+        String rawDeclarator = "if (int i = 1; i == 1) {}"; //$NON-NLS-1$
+        assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
     // int main(void){	
     // 	#define one 1
     //	int integer = one; 

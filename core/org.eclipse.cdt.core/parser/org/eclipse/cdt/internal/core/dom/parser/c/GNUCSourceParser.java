@@ -2143,7 +2143,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset;
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
-        IASTStatement init = forInitStatement();
+        IASTStatement init = initStatement();
         IASTExpression for_condition = null;
         switch (LT(1)) {
         case IToken.tSEMI:

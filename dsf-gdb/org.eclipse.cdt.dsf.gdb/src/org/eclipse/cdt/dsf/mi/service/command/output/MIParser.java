@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2017 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Mathias Kunter       - Don't always parse backslashes (Bug 367456, Bug 307311)
+ *     John Dallaway        - Process async output with no variable (Bug 527419)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -283,19 +284,22 @@ public class MIParser {
         MIResult result = new MIResult();
         int equal;
         if (buffer.length() > 0 && Character.isLetter(buffer.charAt(0)) && (equal = buffer.indexOf('=')) != -1) {
+            // Result is a variable and value
             String variable = buffer.substring(0, equal);
             result.setVariable(variable);
             buffer.delete(0, equal + 1);
             MIValue value = processMIValue(buffer);
             result.setMIValue(value);
-        } else if(buffer.length()>0 && buffer.charAt(0)=='"') {
-            // This an error but we just swallow it and move on.
-            MIValue value = processMIValue(buffer);
-            result.setMIValue(value);
         } else {
-            result.setVariable(buffer.toString());
-            result.setMIValue(new MIConst()); // Empty string:???
-            buffer.setLength(0);
+            MIValue value = processMIValue(buffer);
+            if (value != null) {
+                // Result is a value only (bug 527419)
+                result.setMIValue(value);
+            } else {
+                result.setVariable(buffer.toString());
+                result.setMIValue(new MIConst()); // Empty string:???
+                buffer.setLength(0);
+            }
         }
         return result;
     }

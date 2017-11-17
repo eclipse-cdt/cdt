@@ -204,8 +204,20 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause);
 
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTIfStatement newIfStatement(boolean isConstexpr, IASTStatement initStatement, IASTDeclaration condition,
+			IASTStatement then, IASTStatement elseClause);
+
 	@Override
 	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
+
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTIfStatement newIfStatement(boolean isConstexpr, IASTStatement initStatement, IASTExpression condition,
+			IASTStatement then, IASTStatement elseClause);
 
 	/**
 	 * @since 5.2

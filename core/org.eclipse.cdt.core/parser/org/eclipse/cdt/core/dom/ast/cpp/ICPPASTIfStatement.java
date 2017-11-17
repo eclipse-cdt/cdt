@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
@@ -21,6 +23,15 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTIfStatement extends IASTIfStatement {
+	/**
+	 * {@code INIT_STATEMENT} represents the relationship between an
+	 * {@code ICPPASTIfStatement} and its nested {@code IASTStatement}.
+	 * 
+	 * @since 6.4
+	 */
+	public static final ASTNodeProperty INIT_STATEMENT = new ASTNodeProperty(
+			"ICPPASTIfStatement.INIT_STATEMENT - IASTStatement init-statement for ICPPASTIfStatement"); //$NON-NLS-1$
+
 	/**
 	 * Returns the condition declaration. The condition declaration and the condition expression are
 	 * mutually exclusive.
@@ -34,7 +45,43 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
      * Sets the condition declaration.
      */
     public void setConditionDeclaration(IASTDeclaration d);
+
+    /**
+     * Sets the isConstxpr member variable.
+     * 
+     * @since 6.4
+     */
+    public void setIsConstexpr(boolean isConstexpr);
+
+    /**
+     * Checks whether this if statement is a constexpr if statement.
+     * 
+     * @return true iff this if statement is a constexpr if.
+     * 
+     * @since 6.4
+     */
+    public boolean isConstexpr();
+
+    /**
+     * Returns the init-statement for an if.
+     * 
+     * @return the init-statement, or <code>null</code> if the 'if' statement doesn't
+     *    have one.
+     *
+     * @since 6.4
+     */
+    public IASTStatement getInitializerStatement();
     
+    /**
+     * Sets the optional init-statement of an if.
+     * 
+     * @param statement this statement should either be a <code>IASTSimpleDeclaration</code> or a
+     *    <code>IASTExpressionStatement</code>.
+     *
+     * @since 6.4
+     */
+    public void setInitializerStatement(IASTStatement statement);
+
     /**
 	 * Returns the implicit <code>IScope</code> represented by this if statement
 	 * 

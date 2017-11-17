@@ -5218,26 +5218,38 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		int start = LA(1).getOffset();
 		if_loop: while (true) {
 			int so = consume(IToken.t_if).getOffset();
+			ICPPASTIfStatement new_if_statement = getNodeFactory().newIfStatement();
+			// constexpr if
+			if (LT(1) == IToken.t_constexpr) {
+				consume();
+				new_if_statement.setIsConstexpr(true);
+			}
 			consume(IToken.tLPAREN);
+			// init-statement
+			IToken mark= mark();
+			try {
+				IASTStatement statement = initStatement();
+				new_if_statement.setInitializerStatement(statement);
+			} catch (BacktrackException e) {
+				backup(mark);
+			}
 			// condition
 			IASTNode condition= cppStyleCondition(IToken.tRPAREN);
 			if (LT(1) == IToken.tEOC) {
 				// Completing in the condition
-				ICPPASTIfStatement new_if = getNodeFactory().newIfStatement();
 				if (condition instanceof IASTExpression)
-					new_if.setConditionExpression((IASTExpression) condition);
+					new_if_statement.setConditionExpression((IASTExpression) condition);
 				else if (condition instanceof IASTDeclaration)
-					new_if.setConditionDeclaration((IASTDeclaration) condition);
+					new_if_statement.setConditionDeclaration((IASTDeclaration) condition);
 
 				if (if_statement != null) {
-					if_statement.setElseClause(new_if);
+					if_statement.setElseClause(new_if_statement);
 				}
-				return result != null ? result : new_if;
+				return result != null ? result : new_if_statement;
 			}
 			consume(IToken.tRPAREN);
 
 			IASTStatement thenClause = statement();
-			ICPPASTIfStatement new_if_statement = getNodeFactory().newIfStatement();
 			((ASTNode) new_if_statement).setOffset(so);
 			if (condition != null && (condition instanceof IASTExpression || condition instanceof IASTDeclaration))
 				// shouldn't be possible but failure in condition() makes it so
@@ -5395,7 +5407,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	private IASTForStatement startTraditionalForLoop() throws BacktrackException, EndOfFileException {
-		final IASTStatement initStmt = forInitStatement();
+		final IASTStatement initStmt = initStatement();
 		IASTNode condition= null;
 		IASTExpression iterExpr= null;
 

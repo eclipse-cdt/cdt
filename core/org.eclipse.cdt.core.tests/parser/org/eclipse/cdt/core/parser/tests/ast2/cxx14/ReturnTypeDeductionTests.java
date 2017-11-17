@@ -310,4 +310,626 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
+
+	//	auto foo() {
+	//		if constexpr (constexpr int x { }; x == 0) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfInitTruePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.int_);
+	}
+
+	//	auto foo() {
+	//		if constexpr (constexpr int x { }; x != 0) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfInitFalsePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	constexpr bool shouldrun() {
+	//		return true;
+	//	}
+	//	auto foo() {
+	//		if constexpr (!shouldrun()) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfFunctionCallFalsePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	constexpr bool shouldrun() {
+	//		return true;
+	//	}
+	//	auto foo() {
+	//		if constexpr (shouldrun()) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfFunctionCallTruePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.int_);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//	auto foo() {
+	//		if constexpr (shouldrun<0>()) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfFunctionTemplateCallFalsePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//	auto foo() {
+	//		if constexpr (shouldrun<42>()) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	public void testConstexprIfFunctionTemplateCallTruePathReturnType() throws Exception {
+		assertReturnType("foo", CommonCPPTypes.int_);
+	}
+
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (N == 0) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	//	auto waldo = foo<1>();
+	public void testConstexprIfFalsePathVariableType_1() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (N == 0) {
+	//	        return 42;
+	//		}
+	//		return "asdf";
+	//	}
+	//	auto waldo = foo<1>();
+	public void testConstexprIfFalsePathVariableType_2() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return 42;
+	//		} else {
+	//			return "asdf";
+	//		}
+	//		return -1;
+	//	}
+	//
+	//	auto waldo = foo<1>();
+	public void testConstexprIfFalsePathVariableType_3() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableTypeProblem("waldo");
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//	
+	//	template<int N, int K>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return "asdf";
+	//	        }
+	//			return 42;
+	//		} else {
+	//			return "asdf";
+	//		}
+	//		return -1;
+	//	}
+	//	
+	//	auto waldo = foo<3, 3>();
+	public void testConstexprIfFalsePathVariableType_4() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableTypeProblem("waldo");
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else {
+	//	        	return "asdf1";
+	//	        }
+	//			return 42;
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//		return "asdf";
+	//	}
+	//
+	//	auto waldo = foo<3, 3>();
+	public void testConstexprIfFalsePathVariableType_5() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (N == 0) {
+	//	        return 42;
+	//		} else {
+	//	        return "asdf";
+	//	    }
+	//	}
+	//	auto waldo = foo<0>();
+	public void testConstexprIfTruePathVariableType_1() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
+
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (N == 0) {
+	//	        return 42;
+	//		}
+	//		return "asdf";
+	//	}
+	//	auto waldo = foo<0>();
+	public void testConstexprIfTruePathVariableType_2() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableTypeProblem("waldo");
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return 42;
+	//		} else {
+	//			return "asdf";
+	//		}
+	//		return -1;
+	//	}
+	//
+	//	auto waldo = foo<42>();
+	public void testConstexprIfTruePathVariableType_3() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return "asdf";
+	//	        }
+	//			return 42;
+	//		} else {
+	//			return "asdf";
+	//		}
+	//		return -1;
+	//	}
+	//
+	//	auto waldo = foo<42, 3>();
+	public void testConstexprIfTruePathVariableType_4() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else if constexpr (shouldrun<T>()) {
+	//	        	return "asdf1";
+	//	        }
+	//			return 42;
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 3>();
+	public void testConstexprIfTruePathVariableType_5() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else if constexpr (shouldrun<T>()) {
+	//	        	if (i == 0) {
+	//	        		return "";
+	//	        	}
+	//	        	return "asdf1";
+	//	        } else {
+	//	        	return 42;
+	//	        }
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//		return "";
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_6() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	struct String { constexpr String(const char *); };
+	//	constexpr String operator""_s(char const * str, unsigned long len) { return String { str }; }
+	//
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else if constexpr (shouldrun<T>()) {
+	//	        	if (i == 0) {
+	//	        		return String { "" };
+	//	        	} else {
+	//	        		return ""_s;
+	//	        	}
+	//	        	return String { "asdf1" };
+	//	        } else {
+	//	        	return 42;
+	//	        }
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//		return ""_s;
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_7() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertNonProblem("waldo");
+	}
+
+	//	struct String { constexpr String(const char *); };
+	//	constexpr String operator""_s(char const * str, unsigned long len) { return String { str }; }
+	//
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else if constexpr (shouldrun<T>()) {
+	//	        	if (i == 0) {
+	//	        		return String { "" };
+	//	        	} else {
+	//	        		return ""_s;
+	//	        	}
+	//	        	return String { "asdf1" };
+	//	        } else {
+	//	        	return 42;
+	//	        }
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//		if constexpr (shouldrun<T>()) {
+	//			if (i == 10) {
+	//				return ""_s;
+	//			} else {
+	//				if constexpr (shouldrun<K>()) {
+	//					return 1;
+	//				}
+	//			}
+	//		}
+	//		return ""_s;
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_8() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertNonProblem("waldo");
+	}
+
+	//	struct String { constexpr String(const char *); };
+	//	constexpr String operator""_s(char const * str, unsigned long len) { return String { str }; }
+	//
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//	        if constexpr (shouldrun<K>()) {
+	//	            return 7;
+	//	        } else if constexpr (shouldrun<T>()) {
+	//	        	if (i == 0) {
+	//	        		return String { "" };
+	//	        	} else {
+	//	        		return ""_s;
+	//	        	}
+	//	        	return String { "asdf1" };
+	//	        } else {
+	//	        	return 42;
+	//	        }
+	//		} else {
+	//			return "asdf2";
+	//		}
+	//		if constexpr (shouldrun<T>()) {
+	//			if (i == 10) {
+	//				return ""_s;
+	//			} else {
+	//				if constexpr (shouldrun<N>()) {
+	//					return 1;
+	//				}
+	//			}
+	//		}
+	//		return ""_s;
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_9() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableTypeProblem("waldo");
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//			return "adsf1";
+	//		}
+	//		if constexpr (shouldrun<T>()) {
+	//			if constexpr (shouldrun<K>()) {
+	//				return 42;
+	//			}
+	//		}
+	//		return "asdf2";
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_10() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//			return "adsf1";
+	//		}
+	//		if constexpr (shouldrun<T>()) {
+	//			if constexpr (shouldrun<K>()) {
+	//				return 42;
+	//			}
+	//		}
+	//		return "asdf2";
+	//	}
+	//
+	//	auto waldo = foo<42, 42, 42>(0);
+	public void testConstexprIfTruePathVariableType_11() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableTypeProblem("waldo");
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return "adsf1";
+	//		}
+	//	}
+	//
+	//	auto waldo = foo<42>();
+	public void testConstexprIfTruePathVariableType_12() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+	
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//  char const * foobar();
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return "adsf1";
+	//		}
+	//		return foobar();
+	//	}
+	//
+	//	auto waldo = foo<42>();
+	public void testConstexprIfTruePathVariableType_13() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//  char const * foobar();
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return foobar();
+	//		}
+	//		return "adsf1";
+	//	}
+	//
+	//	auto waldo = foo<42>();
+	public void testConstexprIfTruePathVariableType_14() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int K>
+	//  auto foobar() {
+	//		if constexpr (shouldrun<K>()) {
+	//			return "foobar";
+	//		} else {
+	//			return -1;
+	//		}
+	//	}
+	//
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (shouldrun<N>()) {
+	//			return foobar<N>();
+	//		} else {
+	//			return "foo";
+	//		}
+	//		return decltype(foobar<N>()) {};
+	//	}
+	//
+	//	auto waldo = foo<42>();
+	public void testConstexprIfTruePathVariableType_15() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int T>
+	//	constexpr bool shouldrun() {
+	//		return T == 42;
+	//	}
+	//
+	//	template<int N, int K, int T>
+	//	auto foo(int i) {
+	//		if constexpr (shouldrun<N>()) {
+	//		} else {
+	//			return -1;
+	//		}
+	//		if constexpr (shouldrun<T>()) {
+	//			if constexpr (shouldrun<K>()) {
+	//				return -2;
+	//			}
+	//			return "asdf1";
+	//		}
+	//		return "asdf2";
+	//	}
+	//
+	//	auto waldo = foo<42, 3, 42>(0);
+	public void testConstexprIfTruePathVariableType_16() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.pointerToConstChar);
+	}
+
+	//	template<int N>
+	//	auto foo() {
+	//		if constexpr (N == 0) {
+	//			return -1;
+	//		} else {
+	//			return foo<N - 1>();
+	//		}
+	//	}
+	//
+	//	auto waldo = foo<25>();
+	public void testConstexprIfRecursion() throws Exception {
+		// This will fail if foo<N>() is called with N > IntegralValue.MAX_RECURSION_DEPTH.
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
+
+	//	auto bar(int n) {
+	//		if (n == 0) {
+	//			return 1;
+	//		} else {
+	//			return bar(n - 1);
+	//		}
+	//	}
+	//
+	//	auto waldo = bar(42);
+	public void testBasicRecursion() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);
+	}
 }

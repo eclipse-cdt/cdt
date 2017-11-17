@@ -3209,4 +3209,49 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testSizeofParameterPackFormat_464498() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void foo() {
+	//	if constexpr (constexpr bool k = true) {
+	//	}
+	//}
+
+	//void foo() {
+	//	if constexpr (constexpr bool k = true) {
+	//	}
+	//}
+	public void testConstexprIfFormat_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	if 
+	//	constexpr (constexpr bool k = true) {
+	//	}
+	//}
+
+	//void foo() {
+	//	if constexpr (constexpr bool k = true) {
+	//	}
+	//}
+	public void testConstexprIfFormat_2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	if
+	//
+	//	constexpr
+	//  (constexpr bool k = true) {
+	//	}
+	//}
+
+	//void foo() {
+	//	if
+	//
+	//	constexpr (constexpr bool k = true) {
+	//	}
+	//}
+	public void testConstexprIfFormat_3() throws Exception {
+		assertFormatterResult();
+	}
 }

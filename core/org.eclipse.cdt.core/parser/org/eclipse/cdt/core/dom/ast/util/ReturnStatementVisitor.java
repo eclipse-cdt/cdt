@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 
 /**
@@ -48,6 +49,12 @@ public abstract class ReturnStatementVisitor extends ASTVisitor {
 	 * @param stmt the return statement that was encountered
 	 */
 	protected abstract void onReturnStatement(IASTReturnStatement stmt);
+
+	/**
+	 * Called when a if statement is encountered in the function body.
+	 * @param stmt the if statement that was encountered
+	 */
+	protected abstract void onIfStatement(ICPPASTIfStatement stmt);
 	
 	@Override
 	public int visit(IASTDeclaration element) {
@@ -66,6 +73,10 @@ public abstract class ReturnStatementVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTStatement stmt) {
+		if (stmt instanceof ICPPASTIfStatement) {
+			onIfStatement((ICPPASTIfStatement) stmt);
+			return PROCESS_SKIP;
+		}
 		if (stmt instanceof IASTReturnStatement) {
 			onReturnStatement((IASTReturnStatement) stmt);
 			return PROCESS_SKIP;

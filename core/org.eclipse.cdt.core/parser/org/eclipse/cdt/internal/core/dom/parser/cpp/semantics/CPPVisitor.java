@@ -2340,28 +2340,81 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	private static class ReturnTypeDeducer extends ReturnStatementVisitor {
-		private static final ICPPEvaluation voidEval = new EvalFixed(
-				CPPSemantics.VOID_TYPE, ValueCategory.PRVALUE, IntegralValue.UNKNOWN);
-		
-		private ICPPEvaluation[] fReturnEvals = ICPPEvaluation.EMPTY_ARRAY;
+		private static final ICPPEvaluation voidEval = new EvalFixed(CPPSemantics.VOID_TYPE, ValueCategory.PRVALUE, IntegralValue.UNKNOWN);
+
+		private ICPPEvaluation fReturnEval;
 		private boolean fEncounteredReturnStatement = false;
-		
-		protected ReturnTypeDeducer(IASTFunctionDefinition func) {
+		private boolean fRecursiveCallsOnly = true;
+
+		private IASTDeclSpecifier fAutoDeclSpec;
+		private IASTDeclarator fAutoDeclarator;
+		private PlaceholderKind fPlaceholder;
+
+		protected ReturnTypeDeducer(IASTFunctionDefinition func, IASTDeclSpecifier autoDeclSpec, 
+				IASTDeclarator autoDeclarator, PlaceholderKind placeholder) {
 			super(func);
+			fAutoDeclSpec = autoDeclSpec;
+			fAutoDeclarator = autoDeclarator;
+			fPlaceholder = placeholder;
+		}
+		
+		@Override
+		protected void onIfStatement(ICPPASTIfStatement stmt) {
+			if (stmt.isConstexpr()) {
+				ICPPASTExpression expression = (ICPPASTExpression) stmt.getConditionExpression();
+				if (expression != null && expression.getEvaluation().getValue().numberValue() != null) {
+					if (expression.getEvaluation().getValue().numberValue().intValue() != 0) {
+						stmt.getThenClause().accept(this);
+					} else if (stmt.getElseClause() != null) {
+						stmt.getElseClause().accept(this);
+					}
+				} else if (expression != null) {
+					ReturnTypeDeducer thenDeducer = new ReturnTypeDeducer(getFunction(), fAutoDeclSpec, fAutoDeclarator, fPlaceholder);
+					stmt.getThenClause().accept(thenDeducer);
+					ReturnTypeDeducer elseDeducer = new ReturnTypeDeducer(getFunction(), fAutoDeclSpec, fAutoDeclarator, fPlaceholder);
+					if (stmt.getElseClause() != null) {						
+						stmt.getElseClause().accept(elseDeducer);
+					}
+
+					if (!thenDeducer.fEncounteredReturnStatement && !elseDeducer.fEncounteredReturnStatement) {
+						return;
+					}
+
+					fRecursiveCallsOnly = false;
+					fEncounteredReturnStatement = true;
+
+					EvalConstexprIfReturn returnEval = new EvalConstexprIfReturn(
+								expression.getEvaluation(),
+								thenDeducer.fReturnEval,
+								elseDeducer.fReturnEval,
+								null,
+								expression,
+								fPlaceholder == PlaceholderKind.DecltypeAuto
+							);
+
+					if (fReturnEval == null) {
+						fReturnEval = returnEval;
+					} else if (fReturnEval instanceof EvalConstexprIfReturn) {
+						((EvalConstexprIfReturn) fReturnEval).setFinalEval(returnEval);
+					} else {
+						returnEval.setFinalEval(fReturnEval);
+						fReturnEval = returnEval;
+					}
+				}
+			} else {
+				stmt.getThenClause().accept(this);
+				if (stmt.getElseClause() != null) {
+					stmt.getElseClause().accept(this);
+				}
+			}
 		}
 
 		@Override
 		protected void onReturnStatement(IASTReturnStatement stmt) {
 			fEncounteredReturnStatement = true;
 			IASTInitializerClause returnExpression = stmt.getReturnArgument();
-			ICPPEvaluation returnEval;
-			if (returnExpression == null) {
-				returnEval = voidEval;
-			} else {
-				returnEval = ((ICPPASTInitializerClause) returnExpression).getEvaluation();
-			}
-			IType returnType = returnEval.getType();
-			if (returnType instanceof ISemanticProblem) {
+			ICPPEvaluation returnEval = (returnExpression == null) ? voidEval : ((ICPPASTInitializerClause) returnExpression).getEvaluation();
+			if (returnEval.getType() instanceof ISemanticProblem) {
 				// If a function makes a recursive call in some of its return statements,
 				// the type those return expressions will be a problem type. We ignore 
 				// these, because we can still successfully deduce from another return 
@@ -2370,15 +2423,29 @@ public class CPPVisitor extends ASTQueries {
 				// and deduceReturnType() will error out as desired.
 				return;
 			}
-			
-			fReturnEvals = ArrayUtil.append(fReturnEvals, returnEval);
-		}
-		
-		public ICPPEvaluation[] getReturnEvaluations() {
-			if (fReturnEvals.length == 0 && !fEncounteredReturnStatement) {
-				fReturnEvals = ArrayUtil.append(fReturnEvals, voidEval);
+			fRecursiveCallsOnly = false;
+			if (fReturnEval == null) {
+				fReturnEval = returnEval;
+			} else if (fReturnEval instanceof EvalConstexprIfReturn) {
+				((EvalConstexprIfReturn) fReturnEval).setFinalEval(returnEval);
+			} else if (!isSameTypeNoCV(fReturnEval.getType(), returnEval.getType())) {
+				fReturnEval = EvalFixed.INCOMPLETE;
 			}
-			return ArrayUtil.trim(fReturnEvals);
+		}
+
+		private boolean isSameTypeNoCV(IType typeA, IType typeB) {
+			int options = SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.CVTYPE;
+			return SemanticUtil.getNestedType(typeA, options).isSameType(SemanticUtil.getNestedType(typeB, options));
+		}
+
+		public IType getType() {
+			if (fRecursiveCallsOnly && fEncounteredReturnStatement) {
+				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+			}
+			if (fReturnEval instanceof EvalConstexprIfReturn) {
+				return new TypeOfDependentExpression(fReturnEval);
+			}
+			return deduceTypeFromReturnEvaluation((!fEncounteredReturnStatement) ? voidEval : fReturnEval, fAutoDeclSpec, fAutoDeclarator, fPlaceholder);
 		}
 	}
 
@@ -2408,30 +2475,12 @@ public class CPPVisitor extends ASTQueries {
 	
 	public static IType deduceReturnType(IASTStatement functionBody, IASTDeclSpecifier autoDeclSpec, 
 			IASTDeclarator autoDeclarator, PlaceholderKind placeholder) {
-		ICPPEvaluation[] returnEvals = ICPPEvaluation.EMPTY_ARRAY;
-		if (functionBody != null) {
-			ReturnTypeDeducer deducer = new ReturnTypeDeducer(null);
-			functionBody.accept(deducer);
-			returnEvals = deducer.getReturnEvaluations();
-		}
-		if (returnEvals.length == 0) {
+		if (functionBody == null) {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
-		
-		// [dcl.spec.auto] p7: 
-		//   If a function with a declared return type that contains a placeholder type has multiple 
-		//   return statements, the return type is deduced for each such return statement.
-		//   If the type deduced is not the same in each deduction, the program is ill-formed.
-		IType returnType = deduceTypeFromReturnEvaluation(returnEvals[0], autoDeclSpec, autoDeclarator, 
-				placeholder);
-		for (int i = 1; i < returnEvals.length; ++i) {
-			IType otherType = deduceTypeFromReturnEvaluation(returnEvals[i], autoDeclSpec, autoDeclarator, 
-					placeholder);
-			if (!returnType.isSameType(otherType)) {
-				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
-			}
-		}
-		return returnType;
+		ReturnTypeDeducer deducer = new ReturnTypeDeducer(null, autoDeclSpec, autoDeclarator, placeholder);
+		functionBody.accept(deducer);
+		return deducer.getType();
 	}
 	
 	/**

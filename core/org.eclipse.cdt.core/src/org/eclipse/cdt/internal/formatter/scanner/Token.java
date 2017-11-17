@@ -505,4 +505,5 @@ public class Token {
     static public final int t_byte = 214;
     static public final int t_transient = 215;
     static public final int t_native = 216;
+    static public final int t_constexpr = 5400;
 }

@@ -124,6 +124,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompositeAccess;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstexprIfReturn;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
@@ -1671,6 +1672,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return EvalCompoundStatementExpression.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_CONDITIONAL:
 			return EvalConditional.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EVAL_CONSTEXPR_IF_RETURN_TYPE:
+			return EvalConstexprIfReturn.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FIXED:
 			return EvalFixed.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_FUNCTION_CALL:

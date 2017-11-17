@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
@@ -647,7 +648,61 @@ public class DOMLocationTests extends AST2TestBase {
         assertSoleLocation(problems[1], code, "\"deprecated include\"");
         assertSoleLocation(problems[2], code, "#invalid");        	
     }
+
+    public void testBug527396_1() throws Exception {
+        String code = "void foo() noexcept {}"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarator();
+        String rawDeclarator = "foo() noexcept"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testBug527396_2() throws Exception {
+        String code = "void foo() noexcept(false) {}"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarator();
+        String rawDeclarator = "foo() noexcept(false)"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testBug527396_3() throws Exception {
+        String code = "void foo() {}"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarator();
+        String rawDeclarator = "foo()"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testBug527396_4() throws Exception {
+        String code = "void foo() noexcept;"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        IASTSimpleDeclaration definition = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarators()[0];
+        String rawDeclarator = "foo() noexcept"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
     
+    public void testBug527396_5() throws Exception {
+        String code = "void foo() noexcept(false);"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        IASTSimpleDeclaration definition = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarators()[0];
+        String rawDeclarator = "foo() noexcept(false)"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testBug527396_6() throws Exception {
+        String code = "void foo();"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        IASTSimpleDeclaration definition = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarators()[0];
+        String rawDeclarator = "foo()"; //$NON-NLS-1$
+        assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
     // int main(void){	
     // 	#define one 1
     //	int integer = one; 

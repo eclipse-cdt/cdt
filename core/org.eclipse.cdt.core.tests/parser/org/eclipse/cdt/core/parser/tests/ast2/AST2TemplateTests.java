@@ -10509,4 +10509,168 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertProblem("generate<400>", "generate<400>");
 	}
+
+	//	// A metafunction that loops infinitely on odd inputs.
+	//	template <int N>
+	//	struct meta {
+	//	    static constexpr int value = 1 + meta<N - 2>::value;
+	//	};
+	//	template <>
+	//	struct meta<0> {
+	//	    static constexpr int value = 0;
+	//	};
+	//
+	//	// A constexpr function that calls 'meta' on an odd input
+	//  // but only in the uninstantiated branch of a constexpr if.
+	//	template <int N>
+	//	constexpr int foo() {
+	//	    if constexpr (N % 2 != 0) {
+	//	        return meta<N - 1>::value;
+	//	    } else {
+	//	        return meta<N>::value;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = foo<7>();
+	public void testConditionalInstantiationOfConstexprIfTrueBranch_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 3);
+	}
+
+	//	// A metafunction that loops infinitely on odd inputs.
+	//	template <int N>
+	//	struct meta {
+	//	    static constexpr int value = 1 + meta<N - 2>::value;
+	//	};
+	//	template <>
+	//	struct meta<0> {
+	//	    static constexpr int value = 0;
+	//	};
+	//
+	//	// A constexpr function that calls 'meta' on an odd input
+	//  // but only in the uninstantiated branch of a constexpr if.
+	//	template <int N>
+	//	constexpr int foo() {
+	//	    if constexpr (N % 2 == 0) {
+	//	        return meta<N>::value;
+	//	    } else {
+	//	        return meta<N - 1>::value;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = foo<7>();
+	public void testConditionalInstantiationOfConstexprIfFalseBranch_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 3);
+	}
+
+	//	template <int N>
+	//	constexpr int fib() {
+	//	    if constexpr (N == 0) {
+	//	        return 0;
+	//	    } else if constexpr (N == 1) {
+	//	        return 1;
+	//	    } else {
+	//	        return fib<N - 1>() + fib<N - 2>();
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = fib<7>();
+	public void testConstexprFibonacciConstexprIf_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 13);
+	}
+
+	//	constexpr int g(int x) {
+	//	    return x * 2;
+	//	}
+	//
+	//	template <int N>
+	//	constexpr int foo() {
+	//	    if constexpr (constexpr auto x = g(N)) {
+	//	        return 14 / x;
+	//	    } else {
+	//	        return 0;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = foo<2>();
+	public void testConstexprIfDeclarationTrueBranch_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 3);
+	}
+
+	//	constexpr int g(int x) {
+	//	    return x * 2;
+	//	}
+	//
+	//	template <int N>
+	//	constexpr int foo() {
+	//	    if constexpr (constexpr auto x = g(N)) {
+	//	        return 14 / x;
+	//	    } else {
+	//	        return 42;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = foo<0>();
+	public void testConstexprIfDeclarationFalseBranch_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 42);
+	}
+
+	//	constexpr int g(int x) {
+	//	    return x * 2;
+	//	}
+	//
+	//	template <int N>
+	//	constexpr auto foo() {
+	//	    if constexpr (constexpr auto x = g(N)) {
+	//	        return "Error";
+	//	    } else {
+	//	        return 42;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr auto waldo = foo<0>();
+	public void testReturnAutoConstexprIfDeclarationFalseBranch_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 42);
+	}
+
+	//	constexpr auto foo() {
+	//	    if constexpr (false) {
+	//	        return "Error";
+	//	    } else {
+	//	        return 42;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr auto waldo = foo();
+	public void testReturnAutoConstexprIfDeclarationFalseBranchValueExpression_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 42);
+	}
+
+	//	constexpr auto foo() {
+	//	    if constexpr (true) {
+	//	        return 42;
+	//	    } else {
+	//	        return "Error";
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr auto waldo = foo();
+	public void testReturnAutoConstexprIfDeclarationTrueBranchValueExpression_527427() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 42);
+	}
 }

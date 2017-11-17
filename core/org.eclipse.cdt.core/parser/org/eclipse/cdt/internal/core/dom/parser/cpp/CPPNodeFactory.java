@@ -509,8 +509,20 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
+	public ICPPASTIfStatement newIfStatement(boolean isConstexpr, IASTStatement initStatement, IASTDeclaration condition,
+			IASTStatement then, IASTStatement elseClause) {
+		return new CPPASTIfStatement(isConstexpr, initStatement, condition, then, elseClause);
+	}
+
+	@Override
 	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause) {
 		return new CPPASTIfStatement(condition, then, elseClause);
+	}
+
+	@Override
+	public ICPPASTIfStatement newIfStatement(boolean isConstexpr, IASTStatement initStatement, IASTExpression condition,
+			IASTStatement then, IASTStatement elseClause) {
+		return new CPPASTIfStatement(isConstexpr, initStatement, condition, then, elseClause);
 	}
 
 	@Override

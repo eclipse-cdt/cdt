@@ -2366,13 +2366,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr);
     protected abstract IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall);
 
-    protected IASTStatement forInitStatement() throws BacktrackException, EndOfFileException {
+    protected IASTStatement initStatement() throws BacktrackException, EndOfFileException {
         if (LT(1) == IToken.tSEMI)
             return parseNullStatement();
         try {
         	return parseDeclarationOrExpressionStatement();
         } catch (BacktrackException e) {
-        	// Missing semicolon within for loop does not make a complete for-statement
+        	// A init statement always terminates with a semicolon
         	IASTNode before = e.getNodeBeforeProblem();
         	if (before != null) {
         		e.initialize(e.getProblem());

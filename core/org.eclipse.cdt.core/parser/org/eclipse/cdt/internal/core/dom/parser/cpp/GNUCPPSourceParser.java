@@ -4659,15 +4659,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// noexcept specification
 		if (LT(1) == IToken.t_noexcept) {
 			consume();  // noexcept
-			IASTExpression expression;
+			IASTExpression expression = ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT;
+			endOffset = getEndOffset();
 			if (LT(1) == IToken.tLPAREN) {
 				consume();		// (
 				expression = expression();
 				consume(IToken.tRPAREN);	//)
-			} else {
-				expression = ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT;
+				endOffset = getEndOffset();
 			}
-			endOffset = getEndOffset();
 			fc.setNoexceptExpression((ICPPASTExpression) expression);
 		}
 

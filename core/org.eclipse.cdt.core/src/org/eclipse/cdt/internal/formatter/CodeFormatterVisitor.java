@@ -3299,10 +3299,21 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_if);
 		}
-        final int line = scribe.line;
 		IASTNode condition = node.getConditionExpression();
-		if (condition == null && node instanceof ICPPASTIfStatement) {
-			condition = ((ICPPASTIfStatement) node).getConditionDeclaration();
+		if (node instanceof ICPPASTIfStatement) {
+			ICPPASTIfStatement cppIfStatment = (ICPPASTIfStatement) node;
+			if (cppIfStatment.isConstexpr()) {
+				scribe.space();
+				scribe.printNextToken(Token.t_constexpr);
+				scribe.space();
+			}
+			IASTStatement initStatement = cppIfStatment.getInitializerStatement();
+			if (initStatement != null) {
+				initStatement.accept(this);
+			}
+			if (condition == null) {
+				condition = ((ICPPASTIfStatement) node).getConditionDeclaration();
+			}
 		}
 		final IASTStatement thenStatement = node.getThenClause();
 		final IASTStatement elseStatement = node.getElseClause();
@@ -3357,7 +3368,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.printTrailingComment();
 				} else {
 					if (getCurrentPosition() <= nodeOffset(thenStatement)) {
-						formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+						formatLeftCurlyBrace(scribe.line, preferences.brace_position_for_block);
 					}
 					thenStatement.accept(this);
 					if (elseStatement != null && preferences.insert_new_line_before_else_in_if_statement) {

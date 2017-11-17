@@ -194,4 +194,69 @@ public class IfStatementTests extends TestBase {
 	public void testDeclarationInIfStatementCondition3() throws Exception {
 		assertEvaluationEquals(7);
 	}
+	
+	//	constexpr int g(int x) {
+	//	  return x * 2;
+	//	}
+	//	constexpr int f(int y) {
+	//	  if(int x = g(y); x == 2) {
+	//	    return 14 / x;
+	//	  } else {
+	//	    return 0;
+	//	  }
+	//	}
+	
+	//	constexpr int x = f(1);
+	public void testInitStatementInIfStatementCondition1() throws Exception {
+		assertEvaluationEquals(7);
+	}
+	
+	//	constexpr int g(int x) {
+	//	  return x * 2;
+	//	}
+	//	constexpr int f(int y) {
+	//	  if(int x = g(y); x != 2) {
+	//	    return 14 / x;
+	//	  } else {
+	//	    return 0;
+	//	  }
+	//	}
+	
+	//	constexpr int x = f(1);
+	public void testInitStatementInIfStatementCondition2() throws Exception {
+		assertEvaluationEquals(0);
+	}
+	
+	//	constexpr int g(int x) {
+	//	  return x * 2;
+	//	}
+	//	constexpr int f() {
+	//	  if constexpr (constexpr int x = g(1); x != 2) {
+	//	    return 14 / x;
+	//	  } else {
+	//	    return 0;
+	//	  }
+	//	}
+	
+	//	constexpr int x = f();
+	public void testInitStatementInIfStatementCondition3() throws Exception {
+		assertEvaluationEquals(0);
+	}
+	
+	//	constexpr int g(int x) {
+	//	  return x * 2;
+	//	}
+	//	constexpr int f(int y) {
+	//    int x = g(y);
+	//	  if(; x == 2) {
+	//	    return 14 / x;
+	//	  } else {
+	//	    return 0;
+	//	  }
+	//	}
+	
+	//	constexpr int x = f(1);
+	public void testEmptyInitStatementInIfStatementCondition1() throws Exception {
+		assertEvaluationEquals(7);
+	}
 }

@@ -268,7 +268,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private class TrailingSemicolonFormatter extends TrailingTokenFormatter {
 		TrailingSemicolonFormatter(IASTNode node) {
 			super(Token.tSEMI, getLastNodeCharacterPosition(node),
-					fInsideFor ? preferences.insert_space_before_semicolon_in_for :
+					fHasClauseInitStatement ? preferences.insert_space_before_semicolon_in_for :
 								 preferences.insert_space_before_semicolon,
 					false);
 		}
@@ -396,7 +396,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	final DefaultCodeFormatterOptions preferences;
 	private final Scribe scribe;
 
-	private boolean fInsideFor;
+	private boolean fHasClauseInitStatement;
 	private boolean fInsideMacroArguments;
 	private boolean fExpectSemicolonAfterDeclaration= true;
 
@@ -3134,7 +3134,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTNullStatement node) {
-		if (!fInsideFor && nodeOffset(node) == getCurrentPosition()) {
+		if (!fHasClauseInitStatement && nodeOffset(node) == getCurrentPosition()) {
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 			scribe.printTrailingComment();
 		}
@@ -3143,7 +3143,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTDeclarationStatement node) {
 		node.getDeclaration().accept(this);
-		if (!fInsideFor) {
+		if (!fHasClauseInitStatement) {
 			scribe.startNewLine();
 		}
 		return PROCESS_SKIP;
@@ -3151,7 +3151,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTExpressionStatement node) {
 		Runnable semicolonFormatter = null;
-		if (!fInsideFor) {
+		if (!fHasClauseInitStatement) {
 			semicolonFormatter = new TrailingSemicolonFormatter(node);
 			scribe.setTailFormatter(semicolonFormatter);
 		}
@@ -3160,7 +3160,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			semicolonFormatter.run();
 			scribe.setTailFormatter(null);
 		}
-		if (!fInsideFor) {
+		if (!fHasClauseInitStatement) {
 			scribe.startNewLine();
 		}
 		return PROCESS_SKIP;
@@ -3176,7 +3176,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		Runnable tailFormatter = null;
 		if (!doNodesHaveSameOffset(node, initializerStmt)) {
 			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
-			fInsideFor= true;
+			fHasClauseInitStatement = true;
 			if (preferences.insert_space_after_opening_paren_in_for) {
 				scribe.space();
 			}
@@ -3240,7 +3240,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.setTailFormatter(null);
 					}
 				} finally {
-					fInsideFor= false;
+					fHasClauseInitStatement= false;
 				}
 				ok = true;
 			} catch (AlignmentException e) {
@@ -3271,7 +3271,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.printNextToken(Token.t_for);
 		final int line = scribe.line;
 		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
-		fInsideFor= true;
+		fHasClauseInitStatement= true;
 		try {
 			if (preferences.insert_space_after_opening_paren_in_for) {
 				scribe.space();
@@ -3285,7 +3285,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			initializer.accept(this);
 		} finally {
-			fInsideFor= false;
+			fHasClauseInitStatement= false;
 		}
 		if (peekNextToken() == Token.tRPAREN) {
 			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
@@ -3295,14 +3295,37 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return PROCESS_SKIP;
 	}
 
+	private void beginIfClause() {
+		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_if);
+		if (preferences.insert_space_after_opening_paren_in_if) {
+			scribe.space();
+		}
+	}
+	
 	private int visit(IASTIfStatement node) {
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_if);
 		}
-        final int line = scribe.line;
 		IASTNode condition = node.getConditionExpression();
-		if (condition == null && node instanceof ICPPASTIfStatement) {
-			condition = ((ICPPASTIfStatement) node).getConditionDeclaration();
+		if (node instanceof ICPPASTIfStatement) {
+			ICPPASTIfStatement cppIfStatment = (ICPPASTIfStatement) node;
+			if (cppIfStatment.isConstexpr()) {
+				scribe.space();
+				scribe.printNextToken(Token.t_constexpr);
+				scribe.space();
+			}
+			IASTStatement initStatement = cppIfStatment.getInitializerStatement();
+			if (initStatement != null) {
+				beginIfClause();
+				fHasClauseInitStatement = true;
+				initStatement.accept(this);
+				if (preferences.insert_space_after_semicolon_in_for) {
+					scribe.space();
+				}
+			}
+			if (condition == null) {
+				condition = ((ICPPASTIfStatement) node).getConditionDeclaration();
+			}
 		}
 		final IASTStatement thenStatement = node.getThenClause();
 		final IASTStatement elseStatement = node.getElseClause();
@@ -3310,9 +3333,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		fExpectSemicolonAfterDeclaration= false;
 		try {
 			if (condition == null || !doNodesHaveSameOffset(node, condition)) {
-		        scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_if);
-				if (preferences.insert_space_after_opening_paren_in_if) {
-					scribe.space();
+				if (!fHasClauseInitStatement) {					
+					beginIfClause();
 				}
 				Runnable tailFormatter = null;
 				if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block) &&
@@ -3334,7 +3356,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				condition.accept(this);
 			}
 		} finally {
-			fExpectSemicolonAfterDeclaration= true;
+			fHasClauseInitStatement = false;
+			fExpectSemicolonAfterDeclaration = true;
 		}
 
 		boolean thenStatementIsBlock = false;
@@ -3357,7 +3380,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.printTrailingComment();
 				} else {
 					if (getCurrentPosition() <= nodeOffset(thenStatement)) {
-						formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+						formatLeftCurlyBrace(scribe.line, preferences.brace_position_for_block);
 					}
 					thenStatement.accept(this);
 					if (elseStatement != null && preferences.insert_new_line_before_else_in_if_statement) {

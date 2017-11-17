@@ -888,6 +888,7 @@ public class SimpleScanner {
         fgKeywords.put("compl", Integer.valueOf(Token.t_compl)); //$NON-NLS-1$
         fgKeywords.put("const", Integer.valueOf(Token.t_const)); //$NON-NLS-1$
         fgKeywords.put("const_cast", Integer.valueOf(Token.t_const_cast)); //$NON-NLS-1$
+        fgKeywords.put("constexpr", Integer.valueOf(Token.t_constexpr)); //$NON-NLS-1$
         fgKeywords.put("continue", Integer.valueOf(Token.t_continue)); //$NON-NLS-1$
         fgKeywords.put("default", Integer.valueOf(Token.t_default)); //$NON-NLS-1$
         fgKeywords.put("delete", Integer.valueOf(Token.t_delete)); //$NON-NLS-1$

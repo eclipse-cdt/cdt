@@ -21,6 +21,8 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
+ * 
+ * @noextend This class is not intended to be subclassed by Clients
  */
 public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.docker.launcher.ContainerCommandLauncher;
 import org.eclipse.cdt.internal.docker.launcher.ContainerPropertyVolumesModel.MountType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;

@@ -30,6 +30,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.property;bundle-version="1.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.cdt.docker.launcher;x-internal:=true,
+Export-Package: org.eclipse.cdt.docker.launcher,
  org.eclipse.cdt.internal.docker.launcher;x-internal:=true,
  org.eclipse.cdt.internal.docker.launcher.ui.preferences;x-internal:=true

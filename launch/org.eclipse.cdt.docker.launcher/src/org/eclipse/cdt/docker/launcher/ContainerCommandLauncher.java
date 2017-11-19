@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.docker.launcher;
+package org.eclipse.cdt.docker.launcher;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,9 @@ import java.util.Properties;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.cdt.internal.core.ProcessClosure;
+import org.eclipse.cdt.internal.docker.launcher.Messages;
+import org.eclipse.cdt.internal.docker.launcher.PreferenceConstants;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -80,6 +81,7 @@ public class ContainerCommandLauncher
 		return fProject;
 	}
 
+	@SuppressWarnings("unused")
 	private String getImageName() {
 		return fImageName;
 	}

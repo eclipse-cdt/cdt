@@ -308,7 +308,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		// By default, none
+		IEnvironmentVariable[] vars = getVariables();
+		if (vars != null) {
+			for (IEnvironmentVariable var : vars) {
+				if (var.getName().equals(name)) {
+					return var;
+				}
+			}
+		}
 		return null;
 	}
 

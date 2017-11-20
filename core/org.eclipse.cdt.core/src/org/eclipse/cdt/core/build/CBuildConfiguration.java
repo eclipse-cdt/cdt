@@ -68,12 +68,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -127,9 +126,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 						null));
 			}
 		}
-		toolChain = tc;
+		this.toolChain = tc;
 
-		launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
+		this.launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
@@ -204,18 +203,28 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	public IContainer getBuildContainer() throws CoreException {
-		// TODO should really be passing a monitor in here or create this in
-		// a better spot. should also throw the core exception
 		// TODO make the name of this folder a project property
-		IProgressMonitor monitor = new NullProgressMonitor();
 		IProject project = getProject();
 		IFolder buildRootFolder = project.getFolder("build"); //$NON-NLS-1$
-		if (!buildRootFolder.exists()) {
-			buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
-		}
 		IFolder buildFolder = buildRootFolder.getFolder(name);
-		if (!buildFolder.exists()) {
-			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
+
+		if (!buildRootFolder.exists() || !buildFolder.exists()) {
+			new Job(Messages.CBuildConfiguration_CreateJob) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						if (!buildRootFolder.exists()) {
+							buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
+						}
+						if (!buildFolder.exists()) {
+							buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
+						}
+						return Status.OK_STATUS;
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+				}
+			}.schedule();
 		}
 
 		return buildFolder;
@@ -308,7 +317,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		// By default, none
+		IEnvironmentVariable[] vars = getVariables();
+		if (vars != null) {
+			for (IEnvironmentVariable var : vars) {
+				if (var.getName().equals(name)) {
+					return var;
+				}
+			}
+		}
 		return null;
 	}
 
@@ -377,8 +393,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 				URI uri = URIUtil.toURI(externalLocation);
 				if (uri.getScheme() != null) {
 					marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
-					String locationText = NLS.bind(
-							CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
+					String locationText = String.format(Messages.CBuildConfiguration_Location,
 							problemMarkerInfo.lineNumber, externalLocation);
 					marker.setAttribute(IMarker.LOCATION, locationText);
 				}

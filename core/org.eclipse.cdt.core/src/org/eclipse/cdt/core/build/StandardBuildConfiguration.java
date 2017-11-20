@@ -19,6 +19,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.build.Messages;
@@ -59,15 +63,18 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	private String[] buildCommand;
 	private String[] cleanCommand;
 	private IContainer buildContainer;
+	private IEnvironmentVariable[] envVars;
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 		applyProperties();
+		setupEnvVars();
 	}
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			String launchMode) {
-		super(config, name, toolChain);
+			String launchMode) throws CoreException {
+		super(config, name, toolChain, launchMode);
+		setupEnvVars();
 	}
 
 	private void applyProperties() {
@@ -90,6 +97,33 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		if (cleanCmd != null && !cleanCmd.trim().isEmpty()) {
 			cleanCommand = cleanCmd.split(" "); //$NON-NLS-1$
 		}
+	}
+
+	private void setupEnvVars() throws CoreException {
+		IToolChain toolchain = getToolChain();
+		List<IEnvironmentVariable> vars = new ArrayList<>();
+
+		String[] cc = toolchain.getCompileCommands(GCCLanguage.getDefault());
+		if (cc != null && cc.length > 0) {
+			vars.add(new EnvironmentVariable("CC", cc[0])); //$NON-NLS-1$
+		}
+
+		String[] cxx = toolchain.getCompileCommands(GPPLanguage.getDefault());
+		if (cxx != null && cxx.length > 0) {
+			vars.add(new EnvironmentVariable("CXX", cxx[0])); //$NON-NLS-1$
+		}
+
+		String mode = getLaunchMode();
+		if (mode != null && !mode.isEmpty()) {
+			vars.add(new EnvironmentVariable("BUILD_MODE", mode)); //$NON-NLS-1$
+		}
+
+		envVars = vars.toArray(new IEnvironmentVariable[0]);
+	}
+
+	@Override
+	public IEnvironmentVariable[] getVariables() {
+		return envVars;
 	}
 
 	public void setBuildContainer(IContainer buildContainer) {

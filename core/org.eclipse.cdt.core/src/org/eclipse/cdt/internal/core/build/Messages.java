@@ -11,6 +11,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.build.Messages"; //$NON-NLS-1$
+	public static String CBuildConfiguration_CreateJob;
 	public static String CBuildConfiguration_ToolchainMissing;
 	public static String CBuilder_ExceptionWhileBuilding;
 	public static String CBuilder_ExceptionWhileBuilding2;

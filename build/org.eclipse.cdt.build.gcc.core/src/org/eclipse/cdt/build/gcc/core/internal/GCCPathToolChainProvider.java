@@ -15,9 +15,11 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.build.gcc.core.ClangToolChain;
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
 import org.eclipse.cdt.build.gcc.core.GCCToolChain.GCCInfo;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -66,7 +68,14 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 										gcc.setProperty(IToolChain.ATTR_OS, Platform.OS_MACOSX);
 										break;
 									}
-									manager.addToolChain(gcc);
+									try {
+										if (manager.getToolChain(gcc.getTypeId(), gcc.getId()) == null) {
+											// Only add if another provider hasn't already added it
+											manager.addToolChain(gcc);
+										}
+									} catch (CoreException e) {
+										CCorePlugin.log(e.getStatus());
+									}
 								}
 							}
 						} catch (IOException e) {

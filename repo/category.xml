@@ -3,11 +3,20 @@
    <bundle id="org.eclipse.tools.templates.core" version="0.0.0">
       <category name="main"/>
    </bundle>
+   <bundle id="org.eclipse.tools.templates.core.source" version="0.0.0">
+      <category name="main"/>
+   </bundle>
    <bundle id="org.eclipse.tools.templates.freemarker" version="0.0.0">
       <category name="main"/>
    </bundle>
-   <bundle id="org.eclipse.tools.templates.ui" version="0.0.0">
+   <bundle id="org.eclipse.tools.templates.freemarker.source" version="0.0.0">
       <category name="main"/>
    </bundle>
-   <category-def name="main" label="IDE Commons Templates"/>
+   <bundle id="org.eclipse.tools.templates.ui.source" version="0.0.0">
+      <category name="main"/>
+   </bundle>
+   <bundle id="org.eclipse.tools.templates.ui.source" version="0.0.0">
+      <category name="main"/>
+   </bundle>
+   <category-def name="main" label="Template Engine"/>
 </site>

@@ -168,7 +168,6 @@
 		<module>qt/org.eclipse.cdt.qt-feature</module>
 
 		<module>remote/org.eclipse.cdt.remote.core</module>
-		<module>remote/org.eclipse.cdt.remote-feature</module>
 
 		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
@@ -189,7 +188,6 @@
 		<module>upc/org.eclipse.cdt.bupc-feature</module>
 
 		<module>util/org.eclipse.cdt.util</module>
-		<module>util/org.eclipse.cdt.util-feature</module>
 
 		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
 		<module>visualizer/org.eclipse.cdt.visualizer.examples</module>

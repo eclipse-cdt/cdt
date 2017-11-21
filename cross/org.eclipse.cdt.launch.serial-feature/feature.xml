@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.cdt.launch.serial.feature"
-      label="Launch over Serial"
-      version="1.0.0.qualifier">
+      label="%featureName"
+      version="1.0.0.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      %description
    </description>
 
    <copyright url="http://www.example.com/copyright">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Mentor Graphics and others.
+ * Copyright (c) 2012, 2018 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *      Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *      Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *      Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
+ *      Jonah Graham (Kichwa Coders) - Bug 530377 - Corruption of state due to fast events from GDB
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -22,9 +23,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.cdt.core.IAddress;
@@ -80,8 +83,22 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.osgi.framework.BundleContext;
 
 /**
- * Provides synchronization between breakpoints set from outside of the Eclipse breakpoint 
- * framework (GDB console, trace files, etc.) and the Breakpoints view.
+ * Provides synchronization between breakpoints set from outside of the Eclipse
+ * breakpoint framework (GDB console, trace files, etc.) and the Breakpoints
+ * view.
+ * <p>
+ * Bug 530377: Prior to fixing 530377, events that arrived from GDB faster than
+ * DSF/Eclipse fully processed them could cause the state within the
+ * synchronizer and manager to become corrupt. This would happen because it
+ * takes multiple DSF stages to complete handling 1 event, so the handling of
+ * the next event would become intermingled. That violated many assumptions in
+ * the code that the code run in the respective RequestMonitor would be on the
+ * same state. This is an unsuprising assumption based on the general idea of
+ * DSF as not requiring the normal synchronization primitives as everything is
+ * single-threaded. To resolve this problem, there is some code
+ * {@link #queueEvent(BreakpointEvent)} that ensures each event is fully
+ * processed before the next event starts processing.
+ * 
  * @since 4.2
  */
 public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMIBreakpointsTrackingListener {
@@ -121,6 +138,32 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	 * Collection of pending breakpoint modifications
 	 */
 	private Map<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>> fPendingModifications;
+
+	/**
+	 * Class to store an event that needs to be performed by the synchronizer
+	 * 
+	 * @see MIBreakpointsSynchronizer class documentation for design comments
+	 */
+	private static class BreakpointEvent {
+		MIBreakpoint created;
+		MIBreakpoint modified;
+		String deleted;
+	}
+
+	/**
+	 * List of events that are queued, waiting to be processed.
+	 * 
+	 * @see MIBreakpointsSynchronizer class documentation for design comments
+	 */
+	private Queue<BreakpointEvent> fBreakpointEvents = new LinkedList<>();
+
+	/**
+	 * True if the delayed events processing task is idle. If idle, a new event
+	 * should trigger restarting the processing.
+	 * 
+	 * @see MIBreakpointsSynchronizer class documentation for design comments
+	 */
+	private boolean fEventsIdle = true;
 
 	public MIBreakpointsSynchronizer(DsfSession session) {
 		super(session);
@@ -172,6 +215,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		fCreatedTargetBreakpoints.clear();
 		fDeletedTargetBreakpoints.clear();
 		fPendingModifications.clear();
+		fBreakpointEvents.clear();
 		getSession().removeServiceEventListener(this);
 		MIBreakpointsManager bm = getBreakpointsManager();
 		if (bm != null) {
@@ -217,18 +261,68 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		return fBreakpointsManager;
 	}
 
+	/**
+	 * Queue (and potentially start processing) breakpoint events from GDB.
+	 * 
+	 * @param event
+	 *            from GDB that needs to be processed once the synchronizer is idle
+	 *            and has completed the previous event.
+	 */
+	private void queueEvent(BreakpointEvent event) {
+		fBreakpointEvents.add(event);
+		if (fEventsIdle) {
+			runNextEvent();
+		}
+	}
+	
+	private void runNextEvent() {
+		fEventsIdle = false;
+		BreakpointEvent event = fBreakpointEvents.poll();
+		if (event == null) {
+			fEventsIdle = true;
+			return;
+		}
+
+		RequestMonitor rm = new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				runNextEvent();
+				super.handleCompleted();
+			}
+		};
+
+		if (event.created != null) {
+			doTargetBreakpointCreated(event.created, rm);
+		} else if (event.deleted != null) {
+			doTargetBreakpointDeleted(event.deleted, rm);
+		} else if (event.modified != null) {
+			doTargetBreakpointModified(event.modified, rm);
+		} else {
+			rm.done();
+		}
+	}
+
 	public void targetBreakpointCreated(final MIBreakpoint miBpt) {
+		BreakpointEvent event = new BreakpointEvent();
+		event.created = miBpt;
+		queueEvent(event);
+	}
+
+	private void doTargetBreakpointCreated(final MIBreakpoint miBpt, RequestMonitor rm) {
 		if (isCatchpoint(miBpt)) {
+			rm.done();
 			return;
 		}
 		MIBreakpoints breakpointsService = getBreakpointsService();
 		final MIBreakpointsManager bm = getBreakpointsManager();
 		if (breakpointsService == null || bm == null) {
+			rm.done();
 			return;
 		}
 
 		final IBreakpointsTargetDMContext bpTargetDMC = getBreakpointsTargetContext(miBpt);
 		if (bpTargetDMC == null) {
+			rm.done();
 			return;
 		}
 
@@ -253,7 +347,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
         getSource(
         	bpTargetDMC,
         	debuggerPath, 
-        	new DataRequestMonitor<String>(getExecutor(), null) {
+        	new DataRequestMonitor<String>(getExecutor(), rm) {
             	@Override
             	@ConfinedToDsfExecutor( "fExecutor" )
             	protected void handleSuccess() {
@@ -273,6 +367,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 							if (isThreadSpecific) {
 								setThreadSpecificBreakpoint(plBpt, miBpt);
 							}
+							doTargetBreakpointCreatedSync(miBpt, bpTargetDMC, plBpt);
+							delayDone(100, rm);
+		        			return;
 	        			}
 	        			else {
 							// The corresponding platform breakpoint already exists. 
@@ -286,37 +383,85 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 								if (isThreadSpecific) {
 									setThreadSpecificBreakpoint(plBpt, miBpt);
 								}
-								bm.breakpointAdded(plBpt, miBpt);
+								
+								ICBreakpoint plBpt2 = plBpt;
+								bm.breakpointAdded(plBpt2, miBpt, new RequestMonitor(getExecutor(), rm) {
+									@Override
+									protected void handleCompleted() {
+										doTargetBreakpointCreatedSync(miBpt, bpTargetDMC, plBpt2);
+										rm.done();
+									}
+								});
+			        			return;
+							} else {
+								doTargetBreakpointCreatedSync(miBpt, bpTargetDMC, plBpt);
+								rm.done();
+			        			return;
 							}
 	        			}
-						// Make sure the platform breakpoint's parameters are synchronized 
-						// with the target breakpoint.
-						Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
-						if (map != null) {
-							MIBreakpoint mod = map.remove(miBpt.getNumber());
-							if (mod != null) {
-								targetBreakpointModified(bpTargetDMC, plBpt, mod);
-							}
-						}
-						else {
-							targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
-						}
 					}
 					catch(CoreException e) {
 						GdbPlugin.log(getStatus());
 					}
-            		super.handleSuccess();
+					rm.done();
+					return;
             	}
+
             });
+	}
+
+	private void doTargetBreakpointCreatedSync(final MIBreakpoint miBpt,
+			final IBreakpointsTargetDMContext bpTargetDMC, ICBreakpoint plBpt) {
+		// Make sure the platform breakpoint's parameters are synchronized 
+		// with the target breakpoint.
+		Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
+		if (map != null) {
+			MIBreakpoint mod = map.remove(miBpt.getNumber());
+			if (mod != null) {
+				targetBreakpointModified(bpTargetDMC, plBpt, mod);
+			}
+		}
+		else {
+			targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
+		}
+	};
+
+	/**
+	 * Some operations that are passed to platform require a number or delays before
+	 * they complete. The reason is that the platform code will retrigger DSF code
+	 * and continue updating state. Ideally there would be completion monitors for
+	 * the platform operations, but that is not available. Use this method to delay
+	 * calling .done() until at least delayExecutorCycles cycles of the executor
+	 * have run.
+	 * 
+	 * @param delayExecutorCycles
+	 * @param rm
+	 */
+	private void delayDone(int delayExecutorCycles, RequestMonitor rm) {
+		getExecutor().execute(() -> {
+			int remaining = delayExecutorCycles - 1;
+			if (remaining < 0) {
+				rm.done();
+			} else {
+				delayDone(remaining, rm);
+			}
+		});
 	}
 
 	/**
 	 * @since 5.0
 	 */
 	public void targetBreakpointDeleted(final String id) {
+		BreakpointEvent event = new BreakpointEvent();
+		event.deleted = id;
+		queueEvent(event);
+	}
+
+	private void doTargetBreakpointDeleted(final String id, RequestMonitor rm) {
 		MIBreakpoints breakpointsService = getBreakpointsService();
 		final MIBreakpointsManager bm = getBreakpointsManager();
 		if (breakpointsService == null || bm == null) {
+			rm.done();
 			return;
 		}
 		final IBreakpointsTargetDMContext bpTargetDMC = breakpointsService.getBreakpointTargetContext(id);
@@ -325,15 +470,17 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 				new MIBreakpointDMContext(breakpointsService, new IDMContext[] { bpTargetDMC }, id);
 			breakpointsService.getBreakpointDMData(
 				bpDMC, 
-				new DataRequestMonitor<IBreakpointDMData>(getExecutor(), null) {
+				new DataRequestMonitor<IBreakpointDMData>(getExecutor(), rm) {
 					@Override
 					@ConfinedToDsfExecutor( "fExecutor" )
 					protected void handleSuccess() {
 						if (!(getData() instanceof MIBreakpointDMData)) {
+							rm.done();
 							return;
 						}
 						MIBreakpointDMData data = (MIBreakpointDMData)getData();
 						if (MIBreakpoints.CATCHPOINT.equals(data.getBreakpointType())) {
+							rm.done();
 							return;
 						}
 	
@@ -353,11 +500,13 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 									
 									IMIProcesses processes = getServicesTracker().getService(IMIProcesses.class);
 									if (processes == null) {
+										rm.done();
 										return;
 									}
 
 									IContainerDMContext contDMC = processes.createContainerContextFromThreadId(getCommandControl().getContext(), data.getThreadId());
 									if (contDMC == null) {
+										rm.done();
 										return;
 									}
 
@@ -371,57 +520,115 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 									}
 									if (!list.isEmpty()) {
 										bpExtension.setThreadFilters(list.toArray(new IExecutionDMContext[list.size()]));
+										rm.done();
+										return;
 									}
 									else {
-										bm.uninstallBreakpoint(bpTargetDMC, (ICBreakpoint)plBpt, new RequestMonitor(getExecutor(), null));
+										bm.uninstallBreakpoint(bpTargetDMC, (ICBreakpoint)plBpt, new RequestMonitor(getExecutor(), rm));
+										return;
 									}
 								}
 								else {
-									bm.uninstallBreakpoint(bpTargetDMC, (ICBreakpoint)plBpt, new RequestMonitor(getExecutor(), null));
+									bm.uninstallBreakpoint(bpTargetDMC, (ICBreakpoint)plBpt, new RequestMonitor(getExecutor(), rm));
+									return;
 								}
 							}
 							catch(CoreException e) {
 								GdbPlugin.log(e.getStatus());
 							}
 						}
+						rm.done();
 					}
 				});
 
+		} else {
+			rm.done();
 		}
 	}
 
 	public void targetBreakpointModified(final MIBreakpoint miBpt) {
-		if (isCatchpoint(miBpt)) {
-			return;
-		}
+		BreakpointEvent event = new BreakpointEvent();
+		event.modified = miBpt;
+		queueEvent(event);
+	}
+	
+	/**
+	 * Find the platform breakpoint, returning it, if it exists via the DRM. If the
+	 * drm's data is null, it has not been found.
+	 */
+	private void findPlatformBreakpoint(final MIBreakpoint miBpt, DataRequestMonitor<IBreakpoint> drm) {
 		MIBreakpoints breakpointsService = getBreakpointsService();
 		final MIBreakpointsManager bm = getBreakpointsManager();
 		if (breakpointsService != null && bm != null) {
 			final IBreakpointsTargetDMContext bpTargetDMC = getBreakpointsTargetContext(miBpt);
 			if (bpTargetDMC == null) {
+				drm.done((IBreakpoint)null);
 				return;
 			}
 			final Map<String, MIBreakpointDMData> contextBreakpoints = breakpointsService.getBreakpointMap(bpTargetDMC);
 			if (contextBreakpoints == null) {
+				drm.done((IBreakpoint)null);
 				return;
 			}
 			IBreakpoint b = bm.findPlatformBreakpoint(
-				new MIBreakpointDMContext(breakpointsService, new IDMContext[] { bpTargetDMC }, miBpt.getNumber()));
-			if (!(b instanceof ICBreakpoint)) {
-				// Platform breakpoint hasn't been created yet. Store the latest 
-				// modification data, it will be picked up later.
-				Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
-				if (map == null) {
-					map = new HashMap<String, MIBreakpoint>();
-					fPendingModifications.put(bpTargetDMC, map);
-				}
-				map.put(miBpt.getNumber(), miBpt);
+					new MIBreakpointDMContext(breakpointsService, new IDMContext[] { bpTargetDMC }, miBpt.getNumber()));
+			if (b != null) {
+				drm.done(b);
+			} else {
+				// Convert the debug info file path into the file path in the local file system
+				String debuggerPath = getFileName(miBpt);
+				getSource(bpTargetDMC, debuggerPath, new DataRequestMonitor<String>(getExecutor(), drm) {
+					@Override
+					@ConfinedToDsfExecutor("fExecutor")
+					protected void handleSuccess() {
+						String fileName = getData();
+						if (fileName == null) {
+							fileName = getFileName(miBpt);
+						}
+						// Try to find matching platform breakpoint
+						ICBreakpoint plBpt = getPlatformBreakpoint(miBpt, fileName);
+						drm.done(plBpt);
+					}
+				});
 			}
-			else {
-				ICBreakpoint plBpt = (ICBreakpoint)b;
-				targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
-			}
+		} else {
+			drm.done((ICBreakpoint) null);
 		}
+	}
+
+	private void doTargetBreakpointModified(final MIBreakpoint miBpt, RequestMonitor rm) {
+		if (isCatchpoint(miBpt)) {
+			rm.done();
+			return;
+		}
+		
+		findPlatformBreakpoint(miBpt, new DataRequestMonitor<IBreakpoint>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				IBreakpointsTargetDMContext bpTargetDMC = getBreakpointsTargetContext(miBpt);
+				if (bpTargetDMC == null) {
+					rm.done();
+					return;
+				}
+
+				IBreakpoint breakpoint = getData();
+				if (!(breakpoint instanceof ICBreakpoint)) {
+					// Platform breakpoint hasn't been created yet. Store the latest
+					// modification data, it will be picked up later.
+					Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
+					if (map == null) {
+						map = new HashMap<String, MIBreakpoint>();
+						fPendingModifications.put(bpTargetDMC, map);
+					}
+					map.put(miBpt.getNumber(), miBpt);
+					rm.done();
+				} else {
+					ICBreakpoint plBpt = (ICBreakpoint) breakpoint;
+					targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
+					delayDone(100, rm);
+				}
+			}
+		});
 	}
 
 	private void targetBreakpointModified(

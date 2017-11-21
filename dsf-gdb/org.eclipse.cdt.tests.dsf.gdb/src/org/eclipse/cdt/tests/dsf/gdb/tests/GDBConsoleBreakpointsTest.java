@@ -13,6 +13,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -446,7 +447,38 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
 		assertEquals(0, getTargetBreakpoints().length);
 	}
-	
+
+	/**
+	 * Bug 530377
+	 */
+	@Test
+	public void testFastEvents() throws Throwable {
+		List<IBreakpoint> bps = getPlatformFunctionBreakpoints();
+		assertEquals(0, bps.size());
+
+		java.nio.file.Path tempFile = Files.createTempFile("testFastEvents", "gdb");
+		try {
+
+			StringBuilder sb = new StringBuilder();
+			for (int bpId = 2; bpId < 1000; bpId++) {
+				sb.append(String.format("break %s\n", FUNCTION_VALID));
+				sb.append(String.format("delete %s\n", bpId));
+			}
+			Files.write(tempFile, sb.toString().getBytes("UTF-8"));
+			queueConsoleCommand("source " + tempFile.toString());
+		} finally {
+			Files.delete(tempFile);
+		}
+
+		bps = getPlatformFunctionBreakpoints();
+		assertEquals(1, bps.size());
+
+		IBreakpoint breakpoint = bps.get(0);
+
+		CBreakpoint cBreakpoint = ((CBreakpoint) breakpoint);
+		waitForInstallCountChange(cBreakpoint, 0);
+		breakpoint.delete();
+	}
 
 	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsChangedEvent e) {

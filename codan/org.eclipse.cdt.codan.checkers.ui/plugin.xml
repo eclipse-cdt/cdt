@@ -47,18 +47,18 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUsePointer"
              messagePattern="%GCCFixitNoPointerOpCPP">
        </resolution>
-    <resolution
-          class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUsePointer"
-          messagePattern="%GCCFixitNoPointerOperator.errormsg">
-    </resolution>
-    <resolution
-          class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUseDotOperator"
-          messagePattern="%GCCFixitInvalidPtrTypeCPP">
-    </resolution>
-    <resolution
-          class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUseDotOperator"
-          messagePattern="%GCCFixitInvalidPtrStruct.errormsg">
-    </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUsePointer"
+             messagePattern="%GCCFixitNoPointerOperator.errormsg">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUseDotOperator"
+             messagePattern="%GCCFixitInvalidPtrTypeCPP">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixUseDotOperator"
+             messagePattern="%GCCFixitInvalidPtrStruct.errormsg">
+       </resolution>
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateField"
              problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">

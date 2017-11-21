@@ -424,5 +424,20 @@
                name="Nesting comments">
          </problem>
       </checker>
+            <checker
+            class="org.eclipse.cdt.codan.internal.checkers.DecltypeAutoChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.DecltypeAutoChecker"
+            name="%checker.name.DecltypeAutoChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="true"
+               defaultSeverity="Error"
+               description="%problem.description.DecltypeAutoProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.DecltypeAutoProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.DecltypeAutoProblem"
+               name="%problem.name.DecltypeAutoProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

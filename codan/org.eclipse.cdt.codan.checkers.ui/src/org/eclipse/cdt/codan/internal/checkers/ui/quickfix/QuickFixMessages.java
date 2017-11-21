@@ -16,6 +16,7 @@ public class QuickFixMessages extends NLS {
 	public static String CaseBreakQuickFixBreak_Label;
 	public static String CaseBreakQuickFixComment_Label;
 	public static String CaseBreakQuickFixFallthroughAttribute_Label;
+	public static String DecltypeAutoQuickFix_remove_specifiers;
 	public static String QuickFixCreateClass_CreateNewClass;
 	public static String QuickFixCreateField_create_field;
 	public static String QuickFixCreateLocalVariable_create_local_variable;

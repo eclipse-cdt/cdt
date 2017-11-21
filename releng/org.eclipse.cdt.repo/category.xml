@@ -161,6 +161,12 @@
    <feature url="features/org.eclipse.cdt.llvm.dsf.lldb.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.llvm.dsf.lldb.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.launch.serial.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.serial.feature" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.launch.serial.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.serial.feature.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>

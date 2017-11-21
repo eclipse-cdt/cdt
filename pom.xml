@@ -189,7 +189,6 @@
 		<module>upc/org.eclipse.cdt.bupc-feature</module>
 
 		<module>util/org.eclipse.cdt.util</module>
-		<module>util/org.eclipse.cdt.util-feature</module>
 
 		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
 		<module>visualizer/org.eclipse.cdt.visualizer.examples</module>

@@ -68,10 +68,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -208,23 +208,12 @@ public abstract class CBuildConfiguration extends PlatformObject
 		IFolder buildRootFolder = project.getFolder("build"); //$NON-NLS-1$
 		IFolder buildFolder = buildRootFolder.getFolder(name);
 
-		if (!buildRootFolder.exists() || !buildFolder.exists()) {
-			new Job(Messages.CBuildConfiguration_CreateJob) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						if (!buildRootFolder.exists()) {
-							buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
-						}
-						if (!buildFolder.exists()) {
-							buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
-						}
-						return Status.OK_STATUS;
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-				}
-			}.schedule();
+		IProgressMonitor monitor = new NullProgressMonitor();
+		if (!buildRootFolder.exists()) {
+			buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
+		}
+		if (!buildFolder.exists()) {
+			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
 		}
 
 		return buildFolder;

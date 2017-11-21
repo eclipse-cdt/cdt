@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Template Engine UI
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tools.templates.ui;singleton:=true
 Bundle-Version: 1.1.1.qualifier
 Bundle-Activator: org.eclipse.tools.templates.ui.internal.Activator
@@ -13,5 +13,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.ui,
  org.eclipse.tools.templates.ui.internal
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin

@@ -72,8 +72,11 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
 <repository location="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
 </location>
 </locations>

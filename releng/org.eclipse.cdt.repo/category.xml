@@ -47,12 +47,6 @@
    <feature url="features/org.eclipse.cdt.xlc.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.sdk" version="0.0.0">
       <category name="extra"/>
    </feature>
-   <feature url="features/org.eclipse.cdt.util_0.0.0.qualifier.jar" id="org.eclipse.cdt.util" version="0.0.0">
-      <category name="extra"/>
-   </feature>
-   <feature url="features/org.eclipse.cdt.util.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.util.source" version="0.0.0">
-      <category name="extra"/>
-   </feature>
    <feature url="features/org.eclipse.cdt.debug.ui.memory_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory" version="0.0.0">
       <category name="extra"/>
    </feature>
@@ -167,9 +161,16 @@
    <feature url="features/org.eclipse.cdt.launch.serial.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.serial.feature.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <iu id="org.eclipse.cdt.util" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.util.source" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.remote.core" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.ui" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
 </site>

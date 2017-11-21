@@ -2270,6 +2270,10 @@ public class CPPVisitor extends ASTQueries {
 					// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
 					return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 				}
+				if (declSpec.isConst() || declSpec.isVolatile()) {
+					// 'decltype(auto)' cannot be combined with any type specifiers. [dcl.type.auto.deduct]
+					return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+				}
 				if (autoInitClause instanceof IASTExpression) {
 					return getDeclType((IASTExpression) autoInitClause);					
 				} else {
@@ -2390,6 +2394,10 @@ public class CPPVisitor extends ASTQueries {
 		if (placeholder == PlaceholderKind.DecltypeAuto) {
 			if (autoDeclarator != null && autoDeclarator.getPointerOperators().length > 0) {
 				// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
+				return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+			}
+			if (autoDeclSpec.isConst() || autoDeclSpec.isVolatile()) {
+				// 'decltype(auto)' cannot be combined with any type specifiers. [dcl.type.auto.deduct]
 				return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
 			}
 			return CPPSemantics.getDeclTypeForEvaluation(returnEval);

@@ -19,6 +19,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ClassMembersInitializationCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerLineTests;
 import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerNestedTests;
+import org.eclipse.cdt.codan.core.internal.checkers.DecltypeAutoCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.FormatStringCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.NonVirtualDestructorCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ProblemBindingCheckerTest;
@@ -66,6 +67,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(CaseBreakCheckerTest.class);
 		suite.addTestSuite(CatchByReferenceTest.class);
 		suite.addTestSuite(ClassMembersInitializationCheckerTest.class);
+		suite.addTestSuite(DecltypeAutoCheckerTest.class);
 		suite.addTestSuite(FormatStringCheckerTest.class);
 		suite.addTestSuite(NonVirtualDestructorCheckerTest.class);
 		suite.addTestSuite(ProblemBindingCheckerTest.class);

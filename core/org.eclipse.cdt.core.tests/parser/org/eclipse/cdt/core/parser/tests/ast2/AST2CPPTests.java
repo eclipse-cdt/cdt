@@ -12268,6 +12268,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	decltype(auto) j{42}; // Valid since C++17: decltype(j) is int
 	//	decltype(auto) k = new decltype(auto)(1L); // decltype(j) is long int *
 	//	decltype(auto) l; // Error - missing initializer.
+	//	decltype(auto) const m = 42; // Error - decltype(auto) does not allow type specifiers. Bug 527553
+	//	decltype(auto) volatile n = 42; // Error - decltype(auto) does not allow type specifiers. Bug 527553
+	//	decltype(auto) const volatile o = 42; // Error - decltype(auto) does not allow type specifiers. Bug 527553
 	public void testDecltypeAutoVariableTypes_482225() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -12306,6 +12309,54 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		ICPPVariable l = bh.assertNonProblem("l;", 1);
 		IProblemType lType = (IProblemType) l.getType();
 		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, lType.getID());
+
+		ICPPVariable m = bh.assertNonProblem("m =", 1);
+		IProblemType mType = (IProblemType) m.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, mType.getID());
+
+		ICPPVariable n = bh.assertNonProblem("n =", 1);
+		IProblemType nType = (IProblemType) n.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, nType.getID());
+
+		ICPPVariable o = bh.assertNonProblem("o =", 1);
+		IProblemType oType = (IProblemType) o.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, oType.getID());
+	}
+
+	//	auto foo() -> decltype(auto) const {
+	//		return 23.0;
+	//	}
+	//	auto a = foo();
+	public void testDecltypeAutoTrailingReturnTypeConst_527553() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPVariable a = bh.assertNonProblem("a =", 1);
+		IProblemType aType = (IProblemType) a.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, aType.getID());
+	}
+
+	//	auto foo() -> decltype(auto) volatile {
+	//		return 23.0;
+	//	}
+	//  auto a = foo();
+	public void testDecltypeAutoTrailingReturnTypeVolatile_527553() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPVariable a = bh.assertNonProblem("a =", 1);
+		IProblemType aType = (IProblemType) a.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, aType.getID());
+	}
+
+	//	auto foo() -> decltype(auto) const {
+	//		return 23.0;
+	//	}
+	//	decltype(auto) a = foo();
+	public void testDecltypeAutoTrailingReturnTypeConstDecltype_527553() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+		ICPPVariable a = bh.assertNonProblem("a =", 1);
+		IProblemType aType = (IProblemType) a.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE, aType.getID());
 	}
 
 	//	auto foo() -> decltype(auto) {

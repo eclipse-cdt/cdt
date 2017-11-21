@@ -50,7 +50,6 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -873,7 +872,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 // Update the mappings
                 threadsIDs.remove(breakpoint);
                 fPendingRequests.remove(breakpoint);
-
 				rm.done();
             }
         };
@@ -1294,16 +1292,38 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     @ThreadSafe
 	@Override
     public void breakpointAdded(final IBreakpoint breakpoint) {
-    	breakpointAdded(breakpoint, null);
+    	breakpointAdded(breakpoint, null, new RequestMonitor(getExecutor(), null));
     }
-    
-    /**
-     * Extension of {@link #breakpointAdded(IBreakpoint)}
-     * @param miBpt the MIBreakpoint that initiated the breakpointAdded, or null
-     * @since 5.3
-     */
-    @ThreadSafe
-    public void breakpointAdded(final IBreakpoint breakpoint, MIBreakpoint miBpt) {
+
+	/**
+	 * Extension of {@link #breakpointAdded(IBreakpoint)}
+	 * 
+	 * @param miBpt
+	 *            the MIBreakpoint that initiated the breakpointAdded, or null
+	 * @since 5.3
+	 * @deprecated Use
+	 *             {@link #breakpointAdded(IBreakpoint, MIBreakpoint, RequestMonitor)}
+	 *             instead. See Bug 530377.
+	 */
+	@ThreadSafe
+	@Deprecated
+	public void breakpointAdded(final IBreakpoint breakpoint, MIBreakpoint miBpt) {
+		breakpointAdded(breakpoint, miBpt, new RequestMonitor(getExecutor(), null));
+	}
+
+	/**
+	 * Extension of {@link #breakpointAdded(IBreakpoint)} that can be monitored for
+	 * completeness with a {@link RequestMonitor}.
+	 * 
+	 * @param breakpoint
+	 *            the added breakpoint
+	 * @param miBpt
+	 *            the MIBreakpoint that initiated the breakpointAdded, or null
+	 * @param rm
+	 * @since 5.5
+	 */
+	@ThreadSafe
+	public void breakpointAdded(final IBreakpoint breakpoint, MIBreakpoint miBpt, RequestMonitor rm) {
         if (supportsBreakpoint(breakpoint)) {
             try {
                 // Retrieve the breakpoint attributes
@@ -1315,7 +1335,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         // For a new breakpoint, the first thing we do is set the target filter to all existing processes.
                 		// We will need this when it is time to install the breakpoint.
                 		// We fetch the processes from our IProcess service to be generic (bug 431986)
-                		fProcesses.getProcessesBeingDebugged(fConnection.getContext(), new ImmediateDataRequestMonitor<IDMContext[]>() {
+                		fProcesses.getProcessesBeingDebugged(fConnection.getContext(), new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
                 			@Override
                 			protected void handleCompleted() {
                 				if (isSuccess()) {
@@ -1341,14 +1361,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 				}
 
                 				// Now we can install the bp for all target contexts
-                				final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), null) {
+                				final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
                 					@Override
                 					protected void handleCompleted() {
                 						// Log any error when creating the breakpoint
                 						if (getStatus().getSeverity() == IStatus.ERROR) {
                 							GdbPlugin.getDefault().getLog().log(getStatus());
                 						}
-
+                						rm.done();
                 					}
                 				};
                 				countingRm.setDoneCount(fPlatformToAttributesMaps.size());
@@ -1368,15 +1388,20 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                         countingRm.done();
                                     }
                                 }
-
                 			}
                 		});
                 	}
                 });
+
+                // Normal return case, rm handling passed to runnable
+        		return;
             } catch (CoreException e) {
             } catch (RejectedExecutionException e) {
             }
         }
+
+        // error/abnormal return case
+        rm.done();
     }
 
     /**
@@ -1454,6 +1479,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         }
                     }
                 });
+
             } catch (CoreException e) {
             } catch (RejectedExecutionException e) {
             }

@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_0e4ce496",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "\"Support for if with initializer and partial support for constexpr if\".\n\nSupport for constexpr if is not complete until conditional instantiation semantics are implemented (see https://git.eclipse.org/r/112032 for a testcase).",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_0e1a24a2",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/DOMLocationTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "This test is not testing \"constexpr if\".",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_2e19a0ac",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/DOMLocationTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "Nor this one.",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_4efd0ca3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTIfStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "With CDT 9.4 at the RC2 stage, this change is not going to make CDT 9.4. The next release will be CDT 9.5, a minor release.\n\nThat means the @since tags added in this patch will need to be changed to a minor version higher (for org.eclipse.cdt.core, they will need to be 6.5).",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_8e2e14c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2375,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "Reword comment to reflect that this function is not specific to \u0027for\u0027 loops any more.",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_4e142c73",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecIf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "executeInitStatement",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_ae603002",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecIf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "Since you\u0027re changing the storage format of ExecIf, PDOM.DEFAULT_VERSION (in PDOM.java) and related constants need to be bumped.",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_6e3d68ea",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3304,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-22T04:57:09Z",
+      "side": 1,
+      "message": "It would be good to add relevant test cases to CodeFormatterTest.",
+      "revId": "0dcd4bb3dbb02f8ee6e8dfecedf5e32f6d232487",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

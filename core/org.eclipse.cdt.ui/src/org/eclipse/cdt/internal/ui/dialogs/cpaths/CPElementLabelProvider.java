@@ -35,11 +35,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- */
-@Deprecated
 class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));

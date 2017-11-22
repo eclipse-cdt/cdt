@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,11 +32,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-/**
- * @deprecated as of CDT 4.0. This abstract block was used for New Project Wizards
- * and property pages for 3.X style projects.
- */
-@Deprecated
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
+
 public abstract class TabFolderOptionBlock {
 
 	protected boolean initializingTabs = true;

@@ -38,11 +38,6 @@ import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
-/**
- * @deprecated as of CDT 4.0. This wizard was used in property pages/wizards
- * for 3.X style projects.
- */
-@Deprecated
 public class CPathContainerDescriptor implements IContainerDescriptor {
 
 

@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ide.IDE;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for Path Container Wizard
- * for 3.X style projects.
- */
-@Deprecated
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+
 public class ProjectContainerDescriptor implements IContainerDescriptor {
 	private int[] fFilterType;
 	

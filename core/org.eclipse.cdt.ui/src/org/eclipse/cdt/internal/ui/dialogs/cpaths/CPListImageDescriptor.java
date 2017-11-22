@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- */
-@Deprecated
+import org.eclipse.cdt.internal.ui.CPluginImages;
+
 public class CPListImageDescriptor extends CompositeImageDescriptor {
 
 	/** Flag to render the waring adornment */
@@ -48,7 +44,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data = fBaseImage.getImageData();
+			ImageData data = fBaseImage.getImageData(100);
 			setSize(new Point(data.width, data.height));
 		}
 		return fSize;
@@ -80,7 +76,7 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = fBaseImage.getImageData();
+		ImageData bg = fBaseImage.getImageData(100);
 		if (bg == null) {
 			bg = DEFAULT_IMAGE_DATA;
 		}
@@ -96,17 +92,17 @@ public class CPListImageDescriptor extends CompositeImageDescriptor {
 		ImageData data = null;
 		int x= getSize().x;
 		if ((flags & PATH_INHERIT) == PATH_INHERIT) {
-			data = CPluginImages.DESC_OVR_PATH_INHERIT.getImageData();
+			data = CPluginImages.DESC_OVR_PATH_INHERIT.getImageData(100);
 			drawImage(data, x, 0);
 		}
 		x= 0;
 		if ((flags & ERROR) != 0) {
-			data= CPluginImages.DESC_OVR_ERROR.getImageData();
+			data = CPluginImages.DESC_OVR_ERROR.getImageData(100);
 			drawImage(data, x, size.y - data.height);
 			x+= data.width;
 		}
 		if ((flags & WARNING) != 0) {
-			data= CPluginImages.DESC_OVR_WARNING.getImageData();
+			data = CPluginImages.DESC_OVR_WARNING.getImageData(100);
 			drawImage(data, x, size.y - data.height);
 			x+= data.width;
 		}

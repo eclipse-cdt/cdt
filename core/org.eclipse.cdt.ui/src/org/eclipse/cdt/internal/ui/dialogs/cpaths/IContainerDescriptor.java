@@ -16,12 +16,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- * @noreference This interface is not intended to be referenced by clients.
- */
-@Deprecated
 public interface IContainerDescriptor {
 	public IPathEntryContainerPage createPage() throws CoreException;
 	public String getName();

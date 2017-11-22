@@ -13,18 +13,15 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+
+import org.eclipse.cdt.core.model.IPathEntry;
 
 /**
  * Viewer filter for archive selection dialogs. Archives are files with file extension '.so', '.dll' and '.a'. The filter is not
  * case sensitive.
- * 
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
  */
-@Deprecated
 public class CPElementFilter extends ViewerFilter {
 
 	protected List<Object> fExcludes;

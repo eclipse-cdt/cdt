@@ -70,11 +70,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  * DialogPage for C/C++ Project Paths page for 3.X projects.
- * 
- * @deprecated as of CDT 4.0. This page was used for property pages
- * for 3.X style projects.
  */
-@Deprecated
 public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage {
 	private TreeListDialogField<CPElementGroup> fIncludeSymPathsList;
 	private SelectionButtonDialogField fShowInheritedPaths;

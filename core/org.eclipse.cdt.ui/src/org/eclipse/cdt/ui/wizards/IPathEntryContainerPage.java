@@ -16,12 +16,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 
-/**
- * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
- * for 3.X style projects.
- * @noreference This interface is not intended to be referenced by clients.
- */
-@Deprecated
 public interface IPathEntryContainerPage extends IWizardPage {
 	/**
 	 * Method <code>initialize()</code> is called before  <code>ICPathContainerPage.setSelection</code>

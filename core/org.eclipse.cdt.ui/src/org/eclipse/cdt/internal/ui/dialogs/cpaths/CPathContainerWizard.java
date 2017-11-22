@@ -29,11 +29,6 @@ import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
-/**
- * @deprecated as of CDT 4.0. This wizard was used in property pages
- * for 3.X style projects.
- */
-@Deprecated
 public class CPathContainerWizard extends Wizard {
 
 	private IContainerDescriptor fPageDesc;

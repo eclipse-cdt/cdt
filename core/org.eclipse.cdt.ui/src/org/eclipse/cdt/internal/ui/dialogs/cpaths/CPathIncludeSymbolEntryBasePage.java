@@ -18,11 +18,7 @@ import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Abstract DialogPage for C/C++ Project Paths page for 3.X projects.
- * 
- * @deprecated as of CDT 4.0. This page was used to set preferences/properties
- * for 3.X style projects.
  */
-@Deprecated
 public abstract class CPathIncludeSymbolEntryBasePage extends CPathBasePage {
 
     public CPathIncludeSymbolEntryBasePage(String title) {

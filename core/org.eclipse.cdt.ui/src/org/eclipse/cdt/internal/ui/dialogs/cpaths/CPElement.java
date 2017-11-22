@@ -37,11 +37,6 @@ import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- */
-@Deprecated
 public class CPElement {
 	public static final String SOURCEATTACHMENT = "sourcepath"; //$NON-NLS-1$
 	public static final String SOURCEATTACHMENTROOT = "rootpath"; //$NON-NLS-1$

@@ -21,11 +21,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- */
-@Deprecated
 public class CPElementGroup {
 
 	private CPElement parent;

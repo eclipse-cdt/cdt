@@ -28,10 +28,7 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
  * Block for C/C++ Include Paths and Symbols page for 3.X projects.
- * 
- * @deprecated as of CDT 4.0.
  */
-@Deprecated
 public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implements IStatusChangeListener {
 
 	private CPathIncludeSymbolEntryBasePage fIncludeSymbols;

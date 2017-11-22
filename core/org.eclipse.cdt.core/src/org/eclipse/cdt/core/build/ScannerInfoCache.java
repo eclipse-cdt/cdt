@@ -134,4 +134,36 @@ public class ScannerInfoCache {
 		resourceMap.put(resourcePath, command);
 	}
 
+	/**
+	 * @since 6.4
+	 */
+	public void removeResource(IResource resource) {
+		String resourcePath = resource.getLocation().toOSString();
+		Command command = resourceMap.get(resourcePath);
+		if (command != null) {
+			command.resourcePaths.remove(resourcePath);
+			if (command.resourcePaths.isEmpty()) {
+				commands.remove(command);
+				commandMap.remove(command.command);
+			}
+			resourceMap.remove(resourcePath);
+		}
+	}
+
+	/**
+	 * @since 6.4
+	 */
+	public void removeCommand(List<String> commandStrings) {
+		Command command = commandMap.remove(commandStrings);
+		if (command != null) {
+			commands.remove(command);
+			for (String resourcePath : command.resourcePaths) {
+				Command current = resourceMap.get(resourcePath);
+				if (current.equals(command)) {
+					resourceMap.remove(resourcePath);
+				}
+			}
+		}
+	}
+
 }

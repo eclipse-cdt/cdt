@@ -197,7 +197,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
-      <page
+      <!--page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             name="%PropertyMakeProject.name"
@@ -220,7 +220,7 @@
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page> 
-      <!--page
+      <page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             name="%IncludeSymbolProperties.name"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"

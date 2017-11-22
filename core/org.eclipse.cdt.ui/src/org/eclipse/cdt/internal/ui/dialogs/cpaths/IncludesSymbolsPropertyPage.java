@@ -45,10 +45,8 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
- * @deprecated as of CDT 4.0.
  * @noreference This class is not intended to be referenced by clients.
  */
-@Deprecated
 public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
 	private static final String PAGE_SETTINGS = "IncludeSysmbolsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$

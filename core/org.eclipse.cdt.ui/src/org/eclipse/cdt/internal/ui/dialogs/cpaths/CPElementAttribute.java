@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for property pages
- * for 3.X style projects.
- */
-@Deprecated
 public class CPElementAttribute {
 
 	private CPElement fParent;

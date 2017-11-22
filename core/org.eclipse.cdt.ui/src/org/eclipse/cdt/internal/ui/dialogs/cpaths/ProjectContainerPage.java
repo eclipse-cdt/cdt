@@ -41,11 +41,6 @@ import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
-/**
- * @deprecated as of CDT 4.0. This class was used for Path Container Wizard
- * for 3.X style projects.
- */
-@Deprecated
 public class ProjectContainerPage extends WizardPage implements IPathEntryContainerPage {
 
 	private int[] fFilterType;

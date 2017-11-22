@@ -33,11 +33,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
-/**
- * @deprecated as of CDT 4.0. This page was used for CPathContainerWizard
- * for 3.X style projects.
-  */
-@Deprecated
 public class CPathContainerSelectionPage extends WizardPage {
 
 	private static final String DIALOGSTORE_SECTION= "CPathContainerSelectionPage"; //$NON-NLS-1$

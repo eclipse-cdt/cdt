@@ -37,11 +37,18 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IIncludeFileEntry;
+import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -92,7 +99,7 @@ import com.google.gson.JsonParseException;
  * @since 6.0
  */
 public abstract class CBuildConfiguration extends PlatformObject
-		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser {
+		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
@@ -129,6 +136,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 		this.toolChain = tc;
 
 		this.launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
+
+		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
@@ -156,6 +165,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 		} catch (BackingStoreException e) {
 			CCorePlugin.log(e);
 		}
+
+		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
 	protected CBuildConfiguration(IBuildConfiguration config, IToolChain toolChain) {
@@ -651,6 +662,34 @@ public abstract class CBuildConfiguration extends PlatformObject
 		return scannerInfoCache;
 	}
 
+	private IExtendedScannerInfo getBaseScannerInfo(IResource resource) throws CoreException {
+		IPath resPath = resource.getFullPath();
+		IIncludeEntry[] includeEntries = CoreModel.getIncludeEntries(resPath);
+		String[] includes = new String[includeEntries.length];
+		for (int i = 0; i < includeEntries.length; ++i) {
+			includes[i] = includeEntries[i].getFullIncludePath().toOSString();
+		}
+
+		IIncludeFileEntry[] includeFileEntries = CoreModel.getIncludeFileEntries(resPath);
+		String[] includeFiles = new String[includeFileEntries.length];
+		for (int i = 0; i < includeFiles.length; ++i) {
+			includeFiles[i] = includeFileEntries[i].getFullIncludeFilePath().toOSString();
+		}
+
+		IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
+		Map<String, String> symbolMap = new HashMap<String, String>();
+		for (int i = 0; i < macros.length; ++i) {
+			symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
+		}
+
+		IMacroFileEntry[] macroFileEntries = CoreModel.getMacroFileEntries(resPath);
+		String[] macroFiles = new String[macroFileEntries.length];
+		for (int i = 0; i < macroFiles.length; ++i) {
+			macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toOSString();
+		}
+		return new ExtendedScannerInfo(symbolMap, includes, includeFiles, macroFiles);
+	}
+
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		loadScannerInfoCache();
@@ -658,10 +697,10 @@ public abstract class CBuildConfiguration extends PlatformObject
 		if (info == null) {
 			ICElement celement = CCorePlugin.getDefault().getCoreModel().create(resource);
 			if (celement instanceof ITranslationUnit) {
-				ITranslationUnit tu = (ITranslationUnit) celement;
 				try {
-					info = getToolChain().getDefaultScannerInfo(getBuildConfiguration(), null,
-							tu.getLanguage(), getBuildDirectoryURI());
+					ITranslationUnit tu = (ITranslationUnit) celement;
+					info = getToolChain().getDefaultScannerInfo(getBuildConfiguration(),
+							getBaseScannerInfo(resource), tu.getLanguage(), getBuildDirectoryURI());
 					scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
 					saveScannerInfoCache();
 				} catch (CoreException e) {
@@ -670,6 +709,42 @@ public abstract class CBuildConfiguration extends PlatformObject
 			}
 		}
 		return info;
+	}
+
+	@Override
+	public void elementChanged(ElementChangedEvent event) {
+		// check if the path entries changed in the project and clear the cache if so
+		processElementDelta(event.getDelta());
+	}
+
+	private void processElementDelta(ICElementDelta delta) {
+		if (delta == null) {
+			return;
+		}
+
+		int flags = delta.getFlags();
+		int kind = delta.getKind();
+		if (kind == ICElementDelta.CHANGED) {
+			if ((flags & (ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
+					| ICElementDelta.F_CHANGED_PATHENTRY_MACRO)) != 0) {
+				IResource resource = delta.getElement().getResource();
+				if (resource.getProject().equals(getProject())) {
+					loadScannerInfoCache();
+					if (scannerInfoCache.hasResource(DEFAULT_COMMAND, resource)) {
+						scannerInfoCache.removeResource(resource);
+					} else {
+						// Clear the whole command and exit the delta
+						scannerInfoCache.removeCommand(DEFAULT_COMMAND);
+						return;
+					}
+				}
+			}
+		}
+
+		ICElementDelta[] affectedChildren = delta.getAffectedChildren();
+		for (int i = 0; i < affectedChildren.length; i++) {
+			processElementDelta(affectedChildren[i]);
+		}
 	}
 
 	private boolean infoChanged = false;

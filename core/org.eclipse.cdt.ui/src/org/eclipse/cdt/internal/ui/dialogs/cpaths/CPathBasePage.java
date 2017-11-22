@@ -23,11 +23,7 @@ import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 
 /**
  * Abstract Option Page for C/C++ Project Paths page for 3.X projects.
- * 
- * @deprecated as of CDT 4.0. This page was used to set preferences/properties
- * for 3.X style projects.
  */
-@Deprecated
 public abstract class CPathBasePage extends AbstractCOptionPage {
 
 	public CPathBasePage(String title) {

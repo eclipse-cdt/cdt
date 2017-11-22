@@ -10491,4 +10491,32 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertProblem("generate<400>", "generate<400>");
 	}
+
+	//	// A metafunction that loops infinitely on odd inputs.
+	//	template <int N>
+	//	struct meta {
+	//	    static constexpr int value = 1 + meta<N - 2>::value;
+	//	};
+	//	template <>
+	//	struct meta<0> {
+	//	    static constexpr int value = 0;
+	//	};
+	//
+	//	// A constexpr function that calls 'meta' on an odd input
+	//  // but only in the uninstantiated branch of a constexpr if.
+	//	template <int N>
+	//	constexpr int foo() {
+	//	    if constexpr (N % 2 == 0) {
+	//	        return meta<N>::value;
+	//	    } else {
+	//	        return meta<N - 1>::value;
+	//	    }
+	//	}
+	//
+	//	// Call the function
+	//	constexpr int waldo = foo<7>();
+	public void testConditionalInstantiationOfConstexprIfBranch() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 3);
+	}
 }

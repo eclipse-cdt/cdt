@@ -61,6 +61,12 @@ public class BuildGroup extends CViewActionGroup {
 	    public CDTBuildAction(IShellProvider shell, int kind) {
 	        super(shell, kind);
 	    }
+	    
+	    @Override
+	    protected boolean updateSelection(IStructuredSelection s) {
+	    	return true;
+	    }
+	    
 	    @Override
 	    public void run() {
 	    	// Ensure we correctly save files in all referenced projects before build

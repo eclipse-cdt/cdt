@@ -73,6 +73,12 @@ public class BaseTestCase extends TestCase {
 	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 5;
 	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
 	
+	/**
+	 * This provides the systems new line separator. Use this if you do String comparisons in tests
+	 * instead of hard coding '\n' or '\r\n' respectively.
+	 */
+	protected static final String NL = System.getProperty("line.separator");
+	
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;

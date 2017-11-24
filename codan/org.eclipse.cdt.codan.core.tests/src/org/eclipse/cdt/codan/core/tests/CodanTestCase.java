@@ -174,7 +174,7 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	protected String getAboveComment() {
-		return getContents(1)[0].toString();
+		return getContents(1)[0].toString().replaceAll("\\r\\n|\\n", NL);
 	}
 
 	protected StringBuilder[] getContents(int sections) {

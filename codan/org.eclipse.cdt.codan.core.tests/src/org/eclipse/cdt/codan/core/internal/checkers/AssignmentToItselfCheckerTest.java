@@ -76,6 +76,6 @@ public class AssignmentToItselfCheckerTest extends CheckerTestCase {
 		int start = marker.getAttribute(IMarker.CHAR_START, -1);
 		int end = marker.getAttribute(IMarker.CHAR_END, -1);
 		// The offset should start at the beginning of the expression "x = x"
-		assertEquals("x\n       = x", code.substring(start, end));
+		assertEquals("x" + NL + "       = x", code.substring(start, end));
 	}
 }

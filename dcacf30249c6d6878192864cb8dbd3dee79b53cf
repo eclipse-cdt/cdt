@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_4a35ed8e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-25T04:46:58Z",
+      "side": 1,
+      "message": "These whitespace changes are unrelated to the purpose of the patch. I would prefer not including them, as they confuse \"blame\". They can be committed in a separate patch, if you\u0027d like.",
+      "revId": "dcacf30249c6d6878192864cb8dbd3dee79b53cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_6a38e987",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12330,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-11-25T04:46:58Z",
+      "side": 1,
+      "message": "Please include the bug number in the added tests, as other tests in this file do.",
+      "revId": "dcacf30249c6d6878192864cb8dbd3dee79b53cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

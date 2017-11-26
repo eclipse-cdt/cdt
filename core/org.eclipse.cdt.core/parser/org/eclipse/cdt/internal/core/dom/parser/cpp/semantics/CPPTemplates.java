@@ -1221,8 +1221,17 @@ public class CPPTemplates {
 	static int determinePackSize(ICPPTemplateParameter tpar, ICPPTemplateParameterMap tpMap) {
 		if (tpar.isParameterPack()) {
 			ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
-			if (args != null)
+			if (args != null) {
+				// The arguments could be dependent, so they could themselves
+				// contain pack expansions.
+				for (ICPPTemplateArgument arg : args) {
+					if (arg.isPackExpansion()) {
+						return PACK_SIZE_DEFER;
+					}
+				}
+				
 				return args.length;
+			}
 			return PACK_SIZE_DEFER;
 		}
 		return PACK_SIZE_NOT_FOUND;

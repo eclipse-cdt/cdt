@@ -9035,6 +9035,24 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testDependentPackExpansionInFunctionType_526684() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <int> struct __make;
+	//	template <> struct __make<2> { typedef int type; };
+	//
+	//	template <typename... T>
+	//	using type_pack_element = typename __make<sizeof...(T)>::type;
+	//
+	//	template <typename... T>
+	//	struct tuple_element {
+	//	    typedef type_pack_element<T...> type;
+	//	};
+	//
+	//	typedef tuple_element<int, int>::type Waldo;
+	public void testSizeofParameterPack_527697() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ITypedef waldo = helper.assertNonProblem("Waldo");
+		assertSameType(CommonCPPTypes.int_, waldo);
+	}
 
 	//	template <typename T>
 	//	struct A {};

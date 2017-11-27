@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.utils.Platform;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -90,6 +91,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	private boolean isLocal() throws CoreException {
+		IToolChain toolchain = getToolChain();
+		return Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
+				&& Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH));
+	}
+
 	@Override
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
@@ -108,6 +115,18 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Path buildDir = getBuildDirectory();
 
 			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
+
+			// Make sure we have a toolchain file if cross
+			if (toolChainFile == null && !isLocal()) {
+				ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
+				toolChainFile = manager.getToolChainFileFor(getToolChain());
+				
+				if (toolChainFile == null) {
+					// error
+					console.getErrorStream().write(Messages.CMakeBuildConfiguration_NoToolchainFile);
+					return null;
+				}
+			}
 
 			boolean runCMake;
 			switch (generator) {

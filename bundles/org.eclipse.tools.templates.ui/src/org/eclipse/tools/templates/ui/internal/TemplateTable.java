@@ -23,8 +23,8 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -37,8 +37,6 @@ public class TemplateTable implements Listener {
 	private Font fontBold;
 	private Font fontDefault;
 	private Map<ImageDescriptor, Image> images = new HashMap<>();
-
-	private static final Rectangle EMPTY_IMAGE_BOUNDS = new Rectangle(0, 0, 48, 48);
 
 	public TemplateTable(Composite parent, int style) {
 		table = new Table(parent, style);
@@ -113,62 +111,66 @@ public class TemplateTable implements Listener {
 		}
 	}
 
+	private void initFonts(GC gc) {
+		if (fontDefault == null) {
+			Font font = gc.getFont();
+			FontData[] data = font.getFontData();
+			if (data.length > 0) {
+				Display display = table.getDisplay();
+				FontData d = data[0];
+				FontData normal = new FontData(d.getName(), d.getHeight(),
+						d.getStyle() | SWT.ITALIC);
+				fontDefault = new Font(display, normal);
+				FontData bold = new FontData(d.getName(), Math.round(d.getHeight() * 1.15F), d.getStyle() | SWT.BOLD);
+				fontBold = new Font(display, bold);
+			}
+		}
+	}
+	
 	private void computeItemArea(Event event) {
 		GC gc = event.gc;
 		FontMetrics metrics = gc.getFontMetrics();
 		int height = (int) (metrics.getHeight() * 3.15);
 
 		event.width = table.getClientArea().width - event.x;
-		event.height = Math.max(48, height) + 8; // 48 for icon/text, 8 buffer
+		event.height = Math.max(48, height) + 8; // 48 for icon/text, 8 margin
 	}
 
 	private void paintItem(Event event) {
 		Widget w = event.item;
 		GC gc = event.gc;
-		if (fontDefault == null) {
-			Font font = gc.getFont();
-			FontData[] data = font.getFontData();
-			if (data.length > 0) {
-				FontData d = data[0];
-				FontData normal = new FontData(d.getName(), d.getHeight(), // Math.round(d.getHeight()
-																			// *
-																			// .85F),
-						d.getStyle() | SWT.ITALIC);
-				fontDefault = new Font(event.display, normal);
-				FontData bold = new FontData(d.getName(), Math.round(d.getHeight() * 1.15F), d.getStyle() | SWT.BOLD);
-				fontBold = new Font(event.display, bold);
-			}
-		}
+		initFonts(gc);
 		if (w instanceof TableItem) {
 			TableItem item = (TableItem) w;
 			Template template = (Template) item.getData();
+			
+			// image
 			ImageDescriptor imageDesc = template.getIcon();
 			Image image = images.get(imageDesc);
 			if (image == null && imageDesc != null) {
 				image = imageDesc.createImage();
 				images.put(imageDesc, image);
 			}
-			Rectangle rect = EMPTY_IMAGE_BOUNDS;
-			int y = 0;
 			if (image != null) {
-				rect = image.getBounds();
-				y = event.y + Math.max(0, (event.height - rect.height) / 2);
-				gc.drawImage(image, event.x + 4, y);
-			} else {
-				y = event.y + Math.max(0, (event.height - 48) / 2);
+				gc.drawImage(image, event.x, event.y + Math.max(0, (event.height - 48) / 2));
 			}
+			
+			int imageWidth = 48 + 6; // icon plus margin
+			
+			// name in bold
 			gc.setFont(fontBold);
 			String name = template.getLabel();
 			Point nameExtent = gc.textExtent(name, SWT.DRAW_TRANSPARENT);
-			int iconMargin = 10;
-			gc.drawText(name, rect.x + rect.width + iconMargin, y, SWT.DRAW_TRANSPARENT);
-			gc.setFont(fontDefault);
-			int flags = SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
+			gc.drawText(name, event.x + imageWidth, event.y, SWT.DRAW_TRANSPARENT);
+			
+			// description in one or two lines
 			String description = template.getDescription();
-			int width = table.getClientArea().width;
 			if (description != null) {
+				gc.setFont(fontDefault);
+				int flags = SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
+				int width = table.getClientArea().width;
 				Point descExt = gc.textExtent(description, flags);
-				int descWidth = width - (rect.x + rect.width + iconMargin);
+				int descWidth = width - imageWidth;
 				if (descExt.x > descWidth) {
 					FontMetrics fm = gc.getFontMetrics();
 					int averageCharWidth = fm.getAverageCharWidth();
@@ -181,7 +183,7 @@ public class TemplateTable implements Listener {
 								+ description.substring(lastWS + 1, Math.min(endIndex, description.length()));
 					}
 				}
-				gc.drawText(description, rect.x + rect.width + iconMargin, y + nameExtent.y + 2, flags);
+				gc.drawText(description, event.x + imageWidth, event.y + nameExtent.y, flags);
 			}
 		}
 	}

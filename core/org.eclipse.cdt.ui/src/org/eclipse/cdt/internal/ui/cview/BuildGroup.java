@@ -64,6 +64,9 @@ public class BuildGroup extends CViewActionGroup {
 	    
 	    @Override
 	    protected boolean updateSelection(IStructuredSelection s) {
+	    	// Call the super since it needs to clear out some settings
+	    	super.updateSelection(s);
+	    	// Always build CDT projects
 	    	return true;
 	    }
 	    

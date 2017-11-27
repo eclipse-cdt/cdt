@@ -10,7 +10,7 @@ package org.eclipse.cdt.internal.core.build;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.build.Messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.build.messages"; //$NON-NLS-1$
 	public static String CBuildConfiguration_CreateJob;
 	public static String CBuildConfiguration_ToolchainMissing;
 	public static String CBuildConfiguration_Location;
@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String CBuilder_NotConfiguredCorrectly2;
 	public static String StandardBuildConfiguration_0;
 	public static String StandardBuildConfiguration_1;
+	public static String StandardBuildConfiguration_CommandNotFound;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

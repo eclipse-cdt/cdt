@@ -44,6 +44,13 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		return configuration.getMappedResources()[0].getProject();
 	}
 
+	@Override
+	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode)
+			throws CoreException {
+		IProject project = getProject(configuration);
+		return project != null ? new IProject[] { project } : new IProject[0];
+	}
+
 	/**
 	 * @deprecated Use the version that takes the launch config so we can see if it
 	 *             know what toolchain to use.

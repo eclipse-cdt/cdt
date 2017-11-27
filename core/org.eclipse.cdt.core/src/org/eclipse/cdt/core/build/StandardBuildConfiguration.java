@@ -60,8 +60,11 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	 */
 	public static final String CLEAN_COMMAND = "stdbuild.clean.command"; //$NON-NLS-1$
 
-	private String[] buildCommand;
-	private String[] cleanCommand;
+	private static final String[] DEFAULT_BUILD_COMMAND = new String[] { "make" }; //$NON-NLS-1$
+	private static final String[] DEFAULT_CLEAN_COMMAND = new String[] { "make", "clean" }; //$NON-NLS-1$ //$NON-NLS-2$
+
+	private String[] buildCommand = DEFAULT_BUILD_COMMAND;
+	private String[] cleanCommand = DEFAULT_CLEAN_COMMAND;
 	private IContainer buildContainer;
 	private IEnvironmentVariable[] envVars;
 
@@ -91,11 +94,15 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		String buildCmd = getProperty(BUILD_COMMAND);
 		if (buildCmd != null && !buildCmd.trim().isEmpty()) {
 			buildCommand = buildCmd.split(" "); //$NON-NLS-1$
+		} else {
+			buildCommand = DEFAULT_BUILD_COMMAND;
 		}
 
 		String cleanCmd = getProperty(CLEAN_COMMAND);
 		if (cleanCmd != null && !cleanCmd.trim().isEmpty()) {
 			cleanCommand = cleanCmd.split(" "); //$NON-NLS-1$
+		} else {
+			cleanCommand = DEFAULT_CLEAN_COMMAND;
 		}
 	}
 
@@ -132,12 +139,23 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	}
 
 	public void setBuildCommand(String[] buildCommand) {
-		this.buildCommand = buildCommand;
-		setProperty(BUILD_COMMAND, String.join(" ", buildCommand)); //$NON-NLS-1$
+		if (buildCommand != null) {
+			this.buildCommand = buildCommand;
+			setProperty(BUILD_COMMAND, String.join(" ", buildCommand)); //$NON-NLS-1$
+		} else {
+			this.buildCommand = DEFAULT_BUILD_COMMAND;
+			removeProperty(BUILD_COMMAND);
+		}
 	}
 
 	public void setCleanCommand(String[] cleanCommand) {
-		this.cleanCommand = cleanCommand;
+		if (cleanCommand != null) {
+			this.cleanCommand = cleanCommand;
+			setProperty(CLEAN_COMMAND, String.join(" ", cleanCommand)); //$NON-NLS-1$
+		} else {
+			this.cleanCommand = DEFAULT_CLEAN_COMMAND;
+			removeProperty(CLEAN_COMMAND);
+		}
 	}
 
 	private void createBuildContainer(IContainer container, IProgressMonitor monitor) throws CoreException {
@@ -183,7 +201,12 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				return getBuildContainer().getFullPath().toString();
 			} catch (CoreException e) {
 				CCorePlugin.log(e.getStatus());
+				return null;
 			}
+		case BUILD_COMMAND:
+			return String.join(" ", buildCommand); //$NON-NLS-1$
+		case CLEAN_COMMAND:
+			return String.join(" ", cleanCommand); //$NON-NLS-1$
 		}
 
 		return null;
@@ -211,21 +234,23 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
-			List<String> command;
-			if (buildCommand != null) {
-				command = Arrays.asList(buildCommand);
-				Path make = findCommand(buildCommand[0]);
-				command.set(0, make.toString());
-			} else {
-				command = new ArrayList<>();
-				command.add(findCommand("make").toString()); //$NON-NLS-1$
-				if (!getBuildContainer().equals(getProject())) {
-					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
-					Path relative = getBuildDirectory().relativize(makefile);
-					command.add("-f"); //$NON-NLS-1$
-					command.add(relative.toString());
-				}
-				command.add("all"); //$NON-NLS-1$
+			Path make = findCommand(buildCommand[0]);
+			if (make == null) {
+				console.getErrorStream()
+						.write(String.format(Messages.StandardBuildConfiguration_CommandNotFound, buildCommand[0]));
+				return null;
+			}
+
+			List<String> command = new ArrayList<>();
+			command.add(make.toString());
+			if (!getBuildContainer().equals(getProject())) {
+				Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
+				Path relative = getBuildDirectory().relativize(makefile);
+				command.add("-f"); //$NON-NLS-1$
+				command.add(relative.toString());
+			}
+			for (int i = 1; i < buildCommand.length; i++) {
+				command.add(buildCommand[i]);
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getProject().getLocationURI(), this,

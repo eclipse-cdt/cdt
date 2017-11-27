@@ -54,31 +54,31 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 
 		// Build Output Group
 		Group outputGroup = new Group(comp, SWT.NONE);
-		outputGroup.setText("Build Output Location");
+		outputGroup.setText(Messages.MakeBuildSettingsTab_BuildOutputLocation);
 		outputGroup.setLayout(new GridLayout());
 		outputGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		projectButton = new Button(outputGroup, SWT.RADIO);
-		projectButton.setText("Build in project directory");
+		projectButton.setText(Messages.MakeBuildSettingsTab_BuildInProjectDir);
 		projectButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		configButton = new Button(outputGroup, SWT.RADIO);
-		configButton.setText("Build in configuration specific folder");
+		configButton.setText(Messages.MakeBuildSettingsTab_BuildInConfigDir);
 		configButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		Group cmdGroup = new Group(comp, SWT.NONE);
-		cmdGroup.setText("Build Commands");
+		cmdGroup.setText(Messages.MakeBuildSettingsTab_BuildCommands);
 		cmdGroup.setLayout(new GridLayout(2, false));
 		cmdGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		Label label = new Label(cmdGroup, SWT.NONE);
-		label.setText("Build:");
+		label.setText(Messages.MakeBuildSettingsTab_Build);
 
 		buildCmdText = new Text(cmdGroup, SWT.BORDER);
 		buildCmdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		label = new Label(cmdGroup, SWT.NONE);
-		label.setText("Clean:");
+		label.setText(Messages.MakeBuildSettingsTab_Clean);
 
 		cleanCmdText = new Text(cmdGroup, SWT.BORDER);
 		cleanCmdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -86,7 +86,7 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 
 	@Override
 	public String getName() {
-		return "Makefile";
+		return Messages.MakeBuildSettingsTab_Makefile;
 	}
 
 	@Override
@@ -195,11 +195,15 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 				String buildCommand = buildCmdText.getText().trim();
 				if (!buildCommand.isEmpty()) {
 					stdConfig.setBuildCommand(buildCommand.split(" ")); //$NON-NLS-1$
+				} else {
+					stdConfig.setBuildCommand(null);
 				}
 	
 				String cleanCommand = cleanCmdText.getText().trim();
 				if (!cleanCommand.isEmpty()) {
 					stdConfig.setCleanCommand(cleanCommand.split(" ")); //$NON-NLS-1$
+				} else {
+					stdConfig.setCleanCommand(null);
 				}
 			}
 		} catch (CoreException e) {

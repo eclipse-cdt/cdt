@@ -58,27 +58,20 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public static final CPPASTLiteralExpression INT_ZERO =
 			new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
 
-    private int fKind;
-    private char[] fValue = CharArrayUtils.EMPTY;
-    private int fStringLiteralSize = -1;  // Accounting for escape sequences and the null terminator.
-    private char[] fSuffix = CharArrayUtils.EMPTY;
-    private boolean fIsCompilerSuffix = true;
+	private int fKind;
+	private char[] fValue = CharArrayUtils.EMPTY;
+	private int fStringLiteralSize = -1;  // Accounting for escape sequences and the null terminator.
+	private char[] fSuffix = CharArrayUtils.EMPTY;
+	private boolean fHasNumericalSuffix;
 	private ICPPEvaluation fEvaluation;
 
 	private IBinding fUserDefinedLiteralOperator;
 	private IASTImplicitName[] fImplicitNames;
 
-    public CPPASTLiteralExpression() {
-	}
-
 	public CPPASTLiteralExpression(int kind, char[] value) {
-		this.fKind = kind;
-		this.fValue = value;
-	}
-
-	public CPPASTLiteralExpression(int kind, char[] value, char[] suffix, boolean isCompilerSuffix) {
-		this(kind, value);
-		this.setSuffix(suffix);
+		fKind = kind;
+		fValue = value;
+		calculateSuffix();
 	}
 
 	@Override
@@ -88,87 +81,102 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	@Override
 	public CPPASTLiteralExpression copy(CopyStyle style) {
-		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(fKind,
-				fValue == null ? null : fValue.clone(),
-				fSuffix == null ? null : fSuffix.clone(),
-				fIsCompilerSuffix);
+		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(fKind, fValue == null ? null : fValue.clone());
+		copy.fSuffix = fSuffix == null ? null : fSuffix.clone();
+		copy.fHasNumericalSuffix = fHasNumericalSuffix;
 		copy.setOffsetAndLength(this);
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getKind() {
-        return fKind;
-    }
+		return fKind;
+	}
 
-    @Override
-	public void setKind(int value) {
-        assertNotFrozen();
-        fKind = value;
-    }
+	@Override
+	public void setKind(int kind) {
+		assertNotFrozen();
+		fKind = kind;
+		calculateSuffix();
+	}
 
-    @Override
+	@Override
 	public char[] getValue() {
-    	return fValue;
-    }
+		return fValue;
+	}
 
-    @Override
+	@Override
 	public void setValue(char[] value) {
-        assertNotFrozen();
-    	this.fValue= value;
-    }
-
-    public char[] getSuffix() {
-		return fSuffix;
-	}
-
-    public void addSuffix(char[] suffix) {
-    	setSuffix(suffix);
-    	// Make sure fValue reflects the added suffix.
-    	fValue = CharArrayUtils.concat(fValue, suffix);
-    }
-    
-	private void setSuffix(char[] suffix) {
-		this.fSuffix = suffix;
-	}
-
-	public void calculateSuffix() {
-		this.calculateSuffix(CharArrayUtils.EMPTY);
+		assertNotFrozen();
+		fValue = value;
+		calculateSuffix();
 	}
 
 	/**
-	 * Returns the suffix of a user-defined literal integer or float
-	 * @param compilerSuffixes
+	 * Adds a suffix to this literal expression.
+	 * 
+	 * @param suffix The suffix to be added.
 	 */
-	public void calculateSuffix(char[] compilerSuffixes) {
+	public void addSuffix(char[] suffix) {
+		assertNotFrozen();
+		fHasNumericalSuffix = false;
+		fValue = CharArrayUtils.concat(fValue, suffix);
+		calculateSuffix();
+	}
+
+	private char[] getLiteral() {
+		return fHasNumericalSuffix ? fValue : CharArrayUtils.concat(fValue, fSuffix);
+	}
+
+	/**
+	 * Update the suffix with the provided additional numerical suffixes.
+	 * The a additional numerical suffix must consists of a single char only.
+	 * 
+	 * @param suffixes Additional numerical suffixes like 'i' or 'j'.
+	 */
+	public void suportAdditionalNumericalSuffixes(char[] suffixes) {
+		assertNotFrozen();
+		if ((fKind == lk_float_constant || fKind == lk_integer_constant) && fValue != null && fSuffix != null && fSuffix.length == 1) {
+			for (int j = 0; j < suffixes.length; j++) {
+				if (fSuffix[0] == suffixes[j]) {
+					fValue = getLiteral();
+					fHasNumericalSuffix = true;
+					break;
+				}
+			}
+		}
+	}
+
+	private void calculateSuffix() {
 		try {
+			fValue = getLiteral();
 			switch (fKind) {
 			case lk_float_constant:
 			case lk_integer_constant:
-				int udOffset = (fValue[0] == '.' ? afterDecimalPoint(0) : integerLiteral());
-				if (udOffset > 0) {
-					/*
-					 * 2.14.8.1
-					 * "If a token matches both user-defined-literal and another literal kind, it is
-					 * treated as the latter"
-					 */
-					setSuffix(CharArrayUtils.subarray(fValue, udOffset, -1));
-					for (int i = 0; i < fSuffix.length; i++) {
-						switch (fSuffix[i]) {
-						case 'l': case 'L':
-						case 'u': case 'U':
-						case 'f': case 'F':
-							continue;
+				{
+					int offset = (fValue[0] == '.' ? afterDecimalPoint(0) : integerLiteral());
+					if (offset == 0) {
+						fHasNumericalSuffix = true;
+					} else {
+						/*
+						 * 2.14.8.1
+						 * "If a token matches both user-defined-literal and another literal kind, it is
+						 * treated as the latter"
+						 */
+						fSuffix = CharArrayUtils.subarray(fValue, offset, -1);
+
+						switch (new String(fSuffix).toLowerCase()) {
+						case "u": case "f": case "l": //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						case "ul": case "lu": case "ll": //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						case "ull": case "llu": //$NON-NLS-1$ //$NON-NLS-2$
+							fHasNumericalSuffix = true;
+							break;
 						}
-						for (int j = 0; j < compilerSuffixes.length; j++) {
-							if (fSuffix[i] == compilerSuffixes[j]) {
-								continue;
-							}
+
+						if (!fHasNumericalSuffix) {
+							// Remove the suffix from the value if it's not a numerical suffix
+							fValue = CharArrayUtils.subarray(fValue, 0, offset);
 						}
-						fIsCompilerSuffix = false;
-						// Remove the suffix from the value if it's a UDL
-						setValue(CharArrayUtils.subarray(fValue, 0, udOffset));
-						break;
 					}
 				}
 				break;
@@ -176,10 +184,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				{
 					final int offset = CharArrayUtils.lastIndexOf('"', fValue, CharArrayUtils.indexOf('"', fValue) + 1);
 					if (offset > 0) {
-						setSuffix(CharArrayUtils.subarray(fValue, offset + 1, -1));
-						if (fSuffix.length > 0) {
-							fIsCompilerSuffix = false;
-						}
+						fSuffix = CharArrayUtils.subarray(fValue, offset + 1, -1);
+						fValue = CharArrayUtils.subarray(fValue, 0, fValue.length - fSuffix.length);
 					}
 				}
 				break;
@@ -187,10 +193,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				{
 					final int offset = CharArrayUtils.lastIndexOf('\'', fValue, CharArrayUtils.indexOf('\'', fValue) + 1);
 					if (offset > 0) {
-						setSuffix(CharArrayUtils.subarray(fValue, offset + 1, -1));
-						if (fSuffix.length > 0) {
-							fIsCompilerSuffix = false;
-						}
+						fSuffix = CharArrayUtils.subarray(fValue, offset + 1, -1);
+						fValue = CharArrayUtils.subarray(fValue, 0, fValue.length - fSuffix.length);
 					}
 				}
 				break;
@@ -202,8 +206,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	@Override
 	public String toString() {
-        return new String(fValue);
-    }
+		return new String(getLiteral());
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
@@ -236,8 +240,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
         return true;
     }
 
+	private boolean hasSuffix() {
+		return fSuffix != null && fSuffix.length > 0;
+	}
+
     private int computeStringLiteralSize() {
-    	int start = 0, end = fValue.length - 1 - getSuffix().length;
+    	int start = 0, end = fValue.length - 1;
     	boolean isRaw = false;
 
     	// Skip past a prefix affecting the character type.
@@ -316,18 +324,17 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	}
 
 	private IType getCharType() {
-		return fSuffix.length > 0 ? getUserDefinedLiteralOperatorType() : new CPPBasicType(getBasicCharKind(), 0, this);
+		return hasSuffix() ? getUserDefinedLiteralOperatorType() : new CPPBasicType(getBasicCharKind(), 0, this);
     }
 
 	private IBinding getUserDefinedLiteralOperator() {
-		if (!fIsCompilerSuffix && fUserDefinedLiteralOperator == null) {
+		if (hasSuffix() && !fHasNumericalSuffix && fUserDefinedLiteralOperator == null) {
 			try {
 				fUserDefinedLiteralOperator = CPPSemantics.findUserDefinedLiteralOperator(this);
 			} catch (DOMException e) {
 			}
 			if (fUserDefinedLiteralOperator == null) {
-				fUserDefinedLiteralOperator = new ProblemBinding(this, ISemanticProblem.BINDING_NOT_FOUND,
-						fSuffix);
+				fUserDefinedLiteralOperator = new ProblemBinding(this, ISemanticProblem.BINDING_NOT_FOUND, fSuffix);
 			}
 		}
 		return fUserDefinedLiteralOperator;
@@ -372,7 +379,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		Kind kind= Kind.eDouble;
 		int flags= 0;
 		if (len > 0) {
-			if (fIsCompilerSuffix) {
+			if (fHasNumericalSuffix) {
 				switch (lit[len - 1]) {
 				case 'f': case 'F':
 					kind= Kind.eFloat;
@@ -394,7 +401,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		final char[] lit= fSuffix;
 		int flags= 0;
 
-		if (fIsCompilerSuffix) {
+		if (fHasNumericalSuffix) {
 			for (int i= lit.length - 1; i >= 0; i--) {
 				final char c= lit[i];
 				if (!(c > 'f' && c <= 'z') && !(c > 'F' && c <= 'Z')) {
@@ -656,15 +663,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null)
-			fEvaluation= createEvaluation();
+			fEvaluation = createEvaluation();
 		return fEvaluation;
 	}
 
 	private ICPPEvaluation createLiteralEvaluation() {
-    	switch (fKind) {
+		switch (fKind) {
 		case lk_this: {
 			IScope scope = CPPVisitor.getContainingScope(this);
-			IType type= CPPVisitor.getImpliedObjectType(scope);
+			IType type = CPPVisitor.getImpliedObjectType(scope);
 			if (type == null)
 				return EvalFixed.INCOMPLETE;
 			return new EvalFixed(new CPPPointerType(type), PRVALUE, IntegralValue.THIS);
@@ -680,7 +687,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		case lk_integer_constant:
 			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue());
 		case lk_string_literal:
-			return new EvalFixed(getStringType(), LVALUE, CStringValue.create(getValue()));
+			return new EvalFixed(getStringType(), LVALUE, CStringValue.create(getLiteral()));
 		case lk_nullptr:
 			return EVAL_NULL_PTR;
     	}
@@ -730,7 +737,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 
 		//has a user-defined literal suffix but didn't find a udl operator function => error
-		if (getSuffix().length > 0 && (getKind() == lk_string_literal || !fIsCompilerSuffix)) {
+		if (hasSuffix() && !fHasNumericalSuffix) {
 			return EvalFixed.INCOMPLETE;
 		}
 
@@ -774,7 +781,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (fImplicitNames == null) {
-			if (fIsCompilerSuffix) {
+			if (!hasSuffix() || fHasNumericalSuffix) {
 				fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			} else {
 				CPPASTImplicitName operatorName = new CPPASTImplicitName(fSuffix, this);

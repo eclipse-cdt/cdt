@@ -1933,13 +1933,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			t = consume();
 			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage());
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			((CPPASTLiteralExpression) literalExpr).calculateSuffix(additionalNumericalSuffixes);
+			((CPPASTLiteralExpression) literalExpr).suportNumericCompilerSuffixes(additionalNumericalSuffixes);
 			break;
 		case IToken.tFLOATINGPT:
 			t = consume();
 			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage());
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			((CPPASTLiteralExpression) literalExpr).calculateSuffix(additionalNumericalSuffixes);
+			((CPPASTLiteralExpression) literalExpr).suportNumericCompilerSuffixes(additionalNumericalSuffixes);
 			break;
 		case IToken.tSTRING:
 		case IToken.tLSTRING:
@@ -1947,9 +1947,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tUTF32STRING:
 		case IToken.tUSER_DEFINED_STRING_LITERAL:
 			literalExprWithRange = stringLiteral();
-			if (supportUserDefinedLiterals) {
-				 ((CPPASTLiteralExpression) literalExprWithRange).calculateSuffix();
-			}
 			break;
 		case IToken.tCHAR:
 		case IToken.tLCHAR:
@@ -1960,9 +1957,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			literalExpr = getNodeFactory().newLiteralExpression(
 					IASTLiteralExpression.lk_char_constant, t.getImage());
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			if (supportUserDefinedLiterals) {
-				((CPPASTLiteralExpression) literalExprWithRange).calculateSuffix();
-			}
 			break;
 		case IToken.t_false:
 			t = consume();

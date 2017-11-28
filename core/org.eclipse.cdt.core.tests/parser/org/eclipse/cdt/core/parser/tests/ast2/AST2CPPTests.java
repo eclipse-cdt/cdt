@@ -11941,6 +11941,17 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertEquals(IProblem.PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION, problems[0].getID());
 	}
 
+	// struct basic_string {
+	//   basic_string(char const * str, int len);
+	// };
+	// basic_string operator""s(char const * str, int len) {
+	//   return basic_string { str, len };
+	// }
+	// auto waldo = "Waldo"s;
+	public void testStringLiterals() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "basic_string");
+	}
+
 	// // Test name lacking a space
 	// int operator ""X(const char* s) { return 0; }
 	// int operator ""_X(const char* s) { return 0; }

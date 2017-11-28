@@ -175,9 +175,9 @@ public class CharArrayUtils {
 	}
 
 	public static final char[] concat(char[] first, char[] second) {
-		if (first == null)
+		if (first == null || first.length == 0)
 			return second;
-		if (second == null)
+		if (second == null || second.length == 0)
 			return first;
 
 		int length1 = first.length;

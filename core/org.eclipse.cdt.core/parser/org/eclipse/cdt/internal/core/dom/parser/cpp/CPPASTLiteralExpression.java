@@ -65,6 +65,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     private boolean fIsCompilerSuffix = true;
 	private ICPPEvaluation fEvaluation;
 
+	private boolean fIsUDLIntegral = false;
 	private IBinding fUserDefinedLiteralOperator;
 	private IASTImplicitName[] fImplicitNames;
 
@@ -92,6 +93,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				fValue == null ? null : fValue.clone(),
 				fSuffix == null ? null : fSuffix.clone(),
 				fIsCompilerSuffix);
+		copy.fIsUDLIntegral = fIsUDLIntegral;
 		copy.setOffsetAndLength(this);
 		return copy(copy, style);
 	}
@@ -122,13 +124,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return fSuffix;
 	}
 
-    public void addSuffix(char[] suffix) {
-    	setSuffix(suffix);
-    	// Make sure fValue reflects the added suffix.
-    	fValue = CharArrayUtils.concat(fValue, suffix);
-    }
-    
+	public void addSuffix(char[] suffix) {
+		assertNotFrozen();
+		setSuffix(suffix);
+		// Make sure fValue reflects the added suffix.
+		fValue = CharArrayUtils.concat(fValue, suffix);
+	}
+
 	private void setSuffix(char[] suffix) {
+		assertNotFrozen();
 		this.fSuffix = suffix;
 	}
 
@@ -141,6 +145,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	 * @param compilerSuffixes
 	 */
 	public void calculateSuffix(char[] compilerSuffixes) {
+		assertNotFrozen();
 		try {
 			switch (fKind) {
 			case lk_float_constant:
@@ -168,6 +173,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 						fIsCompilerSuffix = false;
 						// Remove the suffix from the value if it's a UDL
 						setValue(CharArrayUtils.subarray(fValue, 0, udOffset));
+						fIsUDLIntegral = true;
 						break;
 					}
 				}
@@ -202,7 +208,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 	@Override
 	public String toString() {
-        return new String(fValue);
+        return new String(fValue) + (fIsUDLIntegral ? new String(fSuffix) : ""); //$NON-NLS-1$
     }
 
 	@Override

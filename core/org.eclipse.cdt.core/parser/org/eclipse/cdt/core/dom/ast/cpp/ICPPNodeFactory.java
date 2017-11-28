@@ -223,6 +223,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
 
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, char[] numericCompilerSuffixes);
+
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
 
 	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);

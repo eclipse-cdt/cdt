@@ -310,8 +310,8 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 				}
 
 				// Clean up the scanner info data
-				IPath stateLoc = CCorePlugin.getDefault().getStateLocation();
-				IPath scannerInfoPath = stateLoc.append(project.getName());
+				IPath scannerInfoPath = CCorePlugin.getDefault().getStateLocation().append("infoCache") //$NON-NLS-1$
+						.append(project.getName());
 				Path directory = scannerInfoPath.toFile().toPath();
 				if (!Files.exists(directory)) {
 					return;

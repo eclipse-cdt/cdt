@@ -913,7 +913,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				IToken ident = consume(IToken.tIDENTIFIER);
 
 				char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
-				operatorName = CharArrayUtils.concat(operatorName,  strOp.getCharImage());
+				operatorName = CharArrayUtils.concat(operatorName, strOp.getCharImage());
 				operatorName = CharArrayUtils.concat(operatorName, ident.getCharImage());
 
 				IASTName name = getNodeFactory().newOperatorName(operatorName);
@@ -929,12 +929,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			int startQuote = image.indexOf('"');
 			int endQuote = image.lastIndexOf('"');
 			if (startQuote != -1 && endQuote == startQuote + 1) {
-				char[] ident = image.substring(endQuote + 1).toCharArray();
-
 				char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
-				operatorName = CharArrayUtils.concat(operatorName,  strOp.getCharImage());
-				operatorName = CharArrayUtils.concat(operatorName, ident);
-
+				operatorName = CharArrayUtils.concat(operatorName, strOp.getCharImage());
 				IASTName name = getNodeFactory().newOperatorName(operatorName);
 				setRange(name, firstToken.getOffset(), strOp.getEndOffset());
 				return name;

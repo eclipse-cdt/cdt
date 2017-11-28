@@ -171,3 +171,10 @@ void foo() noexcept (noexcept (1 + 1))
 void foo() noexcept (noexcept (1 + 1) && noexcept (2 + 3))
 {
 }
+
+//!Basic UDL operator
+//%CPP
+constexpr long double operator ""_deg(long double deg)
+{
+    return deg * 3.141592 / 180;
+}

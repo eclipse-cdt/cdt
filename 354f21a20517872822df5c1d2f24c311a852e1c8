@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_11e2310d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "Redundant initialization.",
+      "range": {
+        "startLine": 68,
+        "startChar": 34,
+        "endLine": 68,
+        "endChar": 39
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_b1695dee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "I\u0027m not convinced that two separate booleans, fIsCompilerSuffix and fIsUDLIntegral, is the best way to model this object.",
+      "range": {
+        "startLine": 68,
+        "startChar": 17,
+        "endLine": 68,
+        "endChar": 31
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_9163810c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "With introduction of fIsUDLIntegral this constructor no longer produces an object in a valid state.",
+      "range": {
+        "startLine": 80,
+        "startChar": 8,
+        "endLine": 80,
+        "endChar": 31
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_f1e68521",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "It\u0027s probably better to inline this method.",
+      "range": {
+        "startLine": 134,
+        "startChar": 14,
+        "endLine": 134,
+        "endChar": 23
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_d1e7c91d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "No need to assert in a private method.",
+      "range": {
+        "startLine": 135,
+        "startChar": 2,
+        "endLine": 135,
+        "endChar": 17
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_f101253e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-11-28T18:09:29Z",
+      "side": 1,
+      "message": "Reliance on toString method for anything but debugging is a dangerous practice. It is preferable to introduce a specialized method or methods with clearly defined semantics.",
+      "range": {
+        "startLine": 210,
+        "startChar": 15,
+        "endLine": 210,
+        "endChar": 23
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

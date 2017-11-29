@@ -252,9 +252,21 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				commandLine.add(getCommandPath(command).toString());
 			}
 
-			if (baseScannerInfo != null && baseScannerInfo.getIncludePaths() != null) {
-				for (String includePath : baseScannerInfo.getIncludePaths()) {
-					commandLine.add("-I" + includePath); //$NON-NLS-1$
+			if (baseScannerInfo != null) {
+				if (baseScannerInfo.getIncludePaths() != null) {
+					for (String includePath : baseScannerInfo.getIncludePaths()) {
+						commandLine.add("-I" + includePath); //$NON-NLS-1$
+					}
+				}
+
+				if (baseScannerInfo.getDefinedSymbols() != null) {
+					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
+						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
+							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+						} else {
+							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
+						}
+					}
 				}
 			}
 
@@ -358,9 +370,21 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				commandLine.add(getCommandPath(command).toString());
 			}
 
-			if (baseScannerInfo != null && baseScannerInfo.getIncludePaths() != null) {
-				for (String includePath : baseScannerInfo.getIncludePaths()) {
-					commandLine.add("-I" + includePath); //$NON-NLS-1$
+			if (baseScannerInfo != null) {
+				if (baseScannerInfo.getIncludePaths() != null) {
+					for (String includePath : baseScannerInfo.getIncludePaths()) {
+						commandLine.add("-I" + includePath); //$NON-NLS-1$
+					}
+				}
+				
+				if (baseScannerInfo.getDefinedSymbols() != null) {
+					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
+						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
+							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+						} else {
+							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
+						}
+					}
 				}
 			}
 
@@ -405,7 +429,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		// Scan for the scanner info
 		Map<String, String> symbols = new HashMap<>();
 		List<String> includePath = new ArrayList<>();
-		Pattern definePattern = Pattern.compile("#define (.*)\\s(.*)"); //$NON-NLS-1$
+		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
 		boolean inIncludePaths = false;
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -434,7 +458,6 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Files.delete(tmpFile);
 
 		return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
-
 	}
 
 	@Override

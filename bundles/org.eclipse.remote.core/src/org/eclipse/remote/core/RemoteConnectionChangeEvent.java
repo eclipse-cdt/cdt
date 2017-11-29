@@ -51,6 +51,12 @@ public class RemoteConnectionChangeEvent {
 	 */
 	public static final int CONNECTION_REMOVED = 1 << 5;
 
+	/**
+	 * Event indicating the connection attributes had changed.
+	 * @since 3.0
+	 */
+	public static final int ATTRIBUTES_CHANGED = 1 << 6;
+
 	private final IRemoteConnection connection;
 	private final int type;
 

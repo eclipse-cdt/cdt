@@ -318,6 +318,10 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 			throw new RemoteConnectionException(e);
 		}
 
+		if (newAttributes.size() > 0 || newSecureAttributes.size() > 0) {
+			original.fireConnectionChangeEvent(RemoteConnectionChangeEvent.ATTRIBUTES_CHANGED);
+		}
+
 		/*
 		 * Reset state for isDirty()
 		 */

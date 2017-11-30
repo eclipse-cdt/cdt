@@ -43,7 +43,7 @@ rebuild: clean all
 
 $(OS_DIR)/win32/x86/serial.dll:	serial.c
 	mkdir -p $(dir $@)
-	i686-w64-mingw32-gcc -Wl,--kill-at -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
+	i686-w64-mingw32-gcc -Wl,--kill-at -static-libgcc -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
 
 $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 	mkdir -p $(dir $@)

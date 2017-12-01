@@ -63,6 +63,7 @@
     <extension
           point="org.eclipse.ui.preferencePages">
        <page
+             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
              class="org.eclipse.cdt.internal.qt.ui.preferences.QtPreferencePage"
              id="org.eclipse.cdt.qt.ui.preferencePage.qt"
              name="%preferences.qt.name">

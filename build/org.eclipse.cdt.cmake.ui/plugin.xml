@@ -28,12 +28,6 @@
             id="org.eclipse.cdt.cmake.ui.page1"
             name="%cmake.preferences.name">
       </page>
-      <page
-            category="org.eclipse.cdt.cmake.ui.page1"
-            class="org.eclipse.cdt.ui.build.ToolChainPreferencePage"
-            id="org.eclipse.cdt.cmake.ui.page.toolchains"
-            name="%toolchains.preferences.name">
-      </page>
    </extension>
    <extension
          point="org.eclipse.tools.templates.ui.templates">

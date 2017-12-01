@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
 import org.eclipse.launchbar.core.internal.Activator;
 
 /**
@@ -25,7 +26,7 @@ public class CoreBuildLaunchDescriptorType implements ILaunchDescriptorType {
 			// Make sure it's a new style build
 			IProject project = (IProject) launchObject;
 			if (Activator.getService(ICBuildConfigurationManager.class).supports(project)) {
-				return new CoreBuildProjectLaunchDescriptor(this, project);
+				return new ProjectLaunchDescriptor(this, project);
 			}
 		}
 		// TODO IBinary

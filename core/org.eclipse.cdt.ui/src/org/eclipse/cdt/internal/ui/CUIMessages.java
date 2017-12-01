@@ -69,6 +69,7 @@ public final class CUIMessages extends NLS {
 	public static String ToolChainPreferencePage_Arch;
 	public static String ToolChainPreferencePage_AreYouSure;
 	public static String ToolChainPreferencePage_AvailableToolchains;
+	public static String ToolChainPreferencePage_Desc;
 	public static String ToolChainPreferencePage_Down;
 	public static String ToolChainPreferencePage_Edit;
 	public static String ToolChainPreferencePage_EditDot;

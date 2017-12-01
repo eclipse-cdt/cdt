@@ -124,13 +124,16 @@ public class NewEnvVarDialog extends Dialog {
 		label.setText(Messages.NewEnvVarDialog_Name);
 
 		nameText = new Text(comp, SWT.BORDER);
-		nameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.horizontalSpan = 2;
+		nameText.setLayoutData(layoutData);
 		if (envvar != null) {
 			nameText.setText(envvar.getName());
 		}
 
-		Button selectButton = new Button(comp, SWT.PUSH);
-		selectButton.setText(Messages.NewEnvVarDialog_Select);
+		// TODO
+		// Button selectButton = new Button(comp, SWT.PUSH);
+		// selectButton.setText(Messages.NewEnvVarDialog_Select);
 
 		valueLabel = new Label(comp, SWT.NONE);
 		valueLabel.setText(Messages.NewEnvVarDialog_Value);

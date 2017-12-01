@@ -22,5 +22,13 @@
             type="org.eclipse.cdt.launch.serial.launchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchBarUIContributions">
+      <buildTabGroup
+            launchConfigType="org.eclipse.cdt.launch.serial.launchConfigurationType"
+            launchDescriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            tabGroup="org.eclipse.cdt.launch.internal.corebuild.CoreBuildTabGroup">
+      </buildTabGroup>
+   </extension>
 
 </plugin>

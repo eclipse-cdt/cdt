@@ -451,6 +451,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("int", 		"__builtin_vsnprintf", "char*", "size_t", "const char*", "va_list");
 		function("int", 		"__builtin_vsprintf", "char*", "const char*", "va_list");
 		function("int", 		"__builtin_vsscanf", "const char*", "const char*", "va_list");
+		
+		// Object size checking (https://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html) [incomplete]
+		function("size_t",      "__builtin_object_size", "const void*", "int");
+		
+		// x86 built-in functions (https://gcc.gnu.org/onlinedocs/gcc/x86-Built-in-Functions.html) [incomplete]
+		function("double",      "__builtin_ia32_shufpd", "double", "double", "int");
     }
 
 	private void variable(String type, String name) {

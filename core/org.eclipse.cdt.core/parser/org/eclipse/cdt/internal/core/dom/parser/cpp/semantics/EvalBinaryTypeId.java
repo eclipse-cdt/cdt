@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Performs evaluation of an expression.
+ * Evaluation for a binary type-id expression.
  */
 public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	private final Operator fOperator;
@@ -153,6 +153,6 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		return CPPTemplates.isDependentType(fType1) || CPPTemplates.isDependentType(fType2);
+		return isValueDependent();
 	}
 }

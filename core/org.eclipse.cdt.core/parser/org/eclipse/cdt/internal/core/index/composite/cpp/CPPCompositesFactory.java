@@ -99,6 +99,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalNaryTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalPackExpansion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
@@ -439,6 +440,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
 				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, c2, e.isPointerDeref(), 
 						compositeTemplateDefinition);
+			return e;
+		}
+		if (eval instanceof EvalNaryTypeId) {
+			EvalNaryTypeId e = (EvalNaryTypeId) eval;
+			IType[] operands = e.getOperands();
+			IType[] operands2 = getCompositeTypes(operands);
+			if (operands != operands2 || templateDefinition != compositeTemplateDefinition) 
+				e = new EvalNaryTypeId(e.getOperator(), operands2, compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalPackExpansion) {

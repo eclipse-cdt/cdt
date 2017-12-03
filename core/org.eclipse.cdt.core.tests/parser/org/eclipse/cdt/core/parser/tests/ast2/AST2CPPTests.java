@@ -12500,4 +12500,19 @@ public class AST2CPPTests extends AST2CPPTestBase {
     public void test_ElabTypeSpecInNewExprInConditional_526134() throws Exception {
     	parseAndCheckBindings();
     }
+    
+    //	constexpr bool waldo1 = __is_trivially_constructible(int, short);
+    //	struct S { int fMem; S(int mem) : fMem(mem) {} };
+    //	constexpr bool waldo2 = __is_trivially_constructible(S);
+    //	constexpr bool waldo3 = __is_trivially_constructible(S, const S&);
+    //	constexpr bool waldo4 = __is_trivially_constructible(S, int);
+    //	constexpr bool waldo5 = __is_trivially_constructible(S, const S&, float);
+	public void testIsTriviallyConstructible_528072() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo1", 1);
+		helper.assertVariableValue("waldo2", 0);
+		helper.assertVariableValue("waldo3", 1);
+		helper.assertVariableValue("waldo4", 0);
+		helper.assertVariableValue("waldo5", 0);
+	}
 }

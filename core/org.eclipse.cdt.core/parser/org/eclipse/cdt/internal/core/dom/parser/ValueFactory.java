@@ -37,6 +37,8 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
@@ -57,6 +59,8 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -263,6 +267,14 @@ public class ValueFactory {
 	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator,
 			IType type1, IType type2) {
 		IValue val = applyBinaryTypeIdOperator(operator, type1, type2);
+		if (isInvalidValue(val))
+			return IntegralValue.UNKNOWN;
+		return val;
+	}
+	
+	public static IValue evaluateNaryTypeIdExpression(Operator operator, IType[] operands, 
+			IBinding pointOfDefinition) {
+		IValue val = applyNaryTypeIdOperator(operator, operands, pointOfDefinition);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
 		return val;
@@ -592,6 +604,21 @@ public class ValueFactory {
 			return IntegralValue.create(0);
 		case __is_trivially_assignable:
 			return IntegralValue.UNKNOWN;		// TODO: Implement.
+		}
+		return IntegralValue.UNKNOWN;
+	}
+	
+	private static IValue applyNaryTypeIdOperator(ICPPASTNaryTypeIdExpression.Operator operator, 
+			IType[] operands, IBinding pointOfDefinition) {
+		switch (operator) {
+		case __is_trivially_constructible:
+			if (operands.length == 0) {
+				return IntegralValue.UNKNOWN;
+			}
+			IType typeToConstruct = operands[0];
+			IType[] argumentTypes = Arrays.copyOfRange(operands, 1, operands.length);
+			return IntegralValue.create(TypeTraits.isTriviallyConstructible(typeToConstruct, argumentTypes, 
+					pointOfDefinition) ? 1 : 0);
 		}
 		return IntegralValue.UNKNOWN;
 	}

@@ -76,7 +76,8 @@ public interface ITypeMarshalBuffer {
 		EVAL_CONSTRUCTOR		        = 0x11,
 		EVAL_REFERENCE			        = 0x12,
 		EVAL_POINTER                    = 0x13,
-		EVAL_COMPOSITE_ACCESS 	        = 0x14;
+		EVAL_COMPOSITE_ACCESS 	        = 0x14,
+		EVAL_NARY_TYPE_ID               = 0x15;
 	// Can add more evaluations up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
 	final static byte

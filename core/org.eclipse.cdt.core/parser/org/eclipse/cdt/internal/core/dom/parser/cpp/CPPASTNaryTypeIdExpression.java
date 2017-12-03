@@ -16,11 +16,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalNaryTypeId;
 
 public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTypeIdExpression {
 	private Operator fOperator;
 	private ICPPASTTypeId[] fOperands;
+	private ICPPEvaluation fEvaluation;
 
 	public CPPASTNaryTypeIdExpression(Operator operator, ICPPASTTypeId[] operands) {
 		fOperator = operator;
@@ -81,14 +85,23 @@ public class CPPASTNaryTypeIdExpression extends ASTNode implements ICPPASTNaryTy
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
-		// TODO: Implement. This will need a new evaluation type, EvalNaryTypeId.
-		return EvalFixed.INCOMPLETE;
+		if (fEvaluation == null) {
+			IType[] types = new IType[fOperands.length];
+			for (int i = 0; i < fOperands.length; i++) {
+				types[i] = CPPVisitor.createType(fOperands[i]);
+				if (types[i] == null) {
+					fEvaluation = EvalFixed.INCOMPLETE;
+					break;
+				}
+			}
+			fEvaluation = new EvalNaryTypeId(fOperator, types, this);
+		}
+		return fEvaluation;
 	}
 
 	@Override
 	public IType getExpressionType() {
-		// TODO: When getEvaluation() is implemented, delegate to getEvaluation().getType().
-		return CPPBasicType.BOOLEAN;
+		return CPPEvaluation.getType(this);
 	}
 
 	@Override

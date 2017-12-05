@@ -238,6 +238,18 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		command.add("-dD"); //$NON-NLS-1$
 	}
 
+	private static Pattern MINGW_PATH = Pattern.compile("\\/([a-zA-z])(\\/.*)"); //$NON-NLS-1$
+
+	protected String fixMingwPath(String arg) {
+		if (arg.startsWith("/") && Platform.getOS().equals(Platform.OS_WIN32)) { //$NON-NLS-1$
+			Matcher matcher = MINGW_PATH.matcher(arg);
+			if (matcher.matches()) {
+				return matcher.group(1) + ':' + matcher.group(2);
+			}
+		}
+		return arg;
+	}
+
 	@Override
 	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, List<String> commandStrings,
 			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
@@ -262,7 +274,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
-							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+							commandLine.add("-D" + macro.getKey() + '=' + macro.getValue()); //$NON-NLS-1$
 						} else {
 							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
 						}
@@ -309,6 +321,13 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 						continue;
 					}
 					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(filePath.toUri());
+					if (files.length == 0) {
+						String mingwPath = fixMingwPath(arg);
+						if (mingwPath != arg) {
+							filePath = Paths.get(mingwPath);
+							files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(filePath.toUri());
+						}
+					}
 					if (files.length > 0 && files[0].exists()) {
 						// replace it with a temp file
 						Path parentPath = filePath.getParent();
@@ -324,10 +343,20 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 						tmpFile = Files.createTempFile(parentPath, ".sc", extension); //$NON-NLS-1$
 						commandLine.set(i, tmpFile.toString());
 					}
-				} else if (arg.equals("-o")) { //$NON-NLS-1$
-					// skip over the next arg
-					// TODO handle other args like this
-					i++;
+				} else {
+					switch (arg) {
+					case "-o": //$NON-NLS-1$
+					case "-D": //$NON-NLS-1$
+						i++;
+						break;
+					case "-I": //$NON-NLS-1$
+						// See if it's a MinGW Path
+						String path = commandLine.get(++i);
+						String mingwPath = fixMingwPath(path);
+						if (path != mingwPath) {
+							commandLine.set(i, mingwPath);
+						}
+					}
 				}
 			}
 			if (tmpFile == null) {
@@ -380,7 +409,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
-							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+							commandLine.add("-D" + macro.getKey() + '=' + macro.getValue()); //$NON-NLS-1$
 						} else {
 							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
 						}
@@ -430,22 +459,27 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Map<String, String> symbols = new HashMap<>();
 		List<String> includePath = new ArrayList<>();
 		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
-		boolean inIncludePaths = false;
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				if (inIncludePaths) {
-					if (line.equals("End of search list.")) { //$NON-NLS-1$
-						inIncludePaths = false;
-					} else {
-						includePath.add(line.trim());
-					}
-				} else if (line.startsWith("#define ")) { //$NON-NLS-1$
+				if (line.startsWith("#define ")) { //$NON-NLS-1$
 					Matcher matcher = definePattern.matcher(line);
 					if (matcher.matches()) {
 						symbols.put(matcher.group(1), matcher.group(2));
 					}
-				} else if (line.equals("#include <...> search starts here:")) { //$NON-NLS-1$
-					inIncludePaths = true;
+				} else {
+					String dir = line.trim();
+					if (dir.equals(".")) { //$NON-NLS-1$
+						includePath.add(buildDirectory.toString());
+					} else {
+						try {
+							Path dirPath = Paths.get(dir);
+							if (Files.isDirectory(dirPath)) {
+								includePath.add(dirPath.toString());
+							}
+						} catch (InvalidPathException e) {
+							// nothing
+						}
+					}
 				}
 			}
 		}
@@ -571,13 +605,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				if (srcPath.isAbsolute()) {
 					uri = srcPath.toUri();
 				} else {
-					if (arg.startsWith("/") && Platform.getOS().equals(Platform.OS_WIN32)) { //$NON-NLS-1$
-						String drive = srcPath.getName(0).toString();
-						if (drive.length() == 1) {
-							srcPath = Paths.get(drive + ":\\").resolve(srcPath.subpath(1, srcPath.getNameCount())); //$NON-NLS-1$
-						}
+					String mingwPath = fixMingwPath(arg);
+					if (mingwPath != arg) {
+						uri = Paths.get(mingwPath).toUri();
+					} else {
+						uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
 					}
-					uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
 				}
 
 				for (IFile resource : root.findFilesForLocationURI(uri)) {

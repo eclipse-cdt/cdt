@@ -792,7 +792,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 		try {
 			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
-			if (resources != null) {
+			if (resources != null && resources.length > 0) {
 				List<String> commandStrings = toolChain.stripCommand(command, resources);
 
 				for (IResource resource : resources) {

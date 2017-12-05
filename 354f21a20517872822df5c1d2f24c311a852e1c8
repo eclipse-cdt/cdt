@@ -137,6 +137,30 @@
       "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_8893482b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-05T00:43:20Z",
+      "side": 1,
+      "message": "This comment has not been addressed yet.",
+      "parentUuid": "a7979753_f101253e",
+      "range": {
+        "startLine": 210,
+        "startChar": 15,
+        "endLine": 210,
+        "endChar": 23
+      },
+      "revId": "354f21a20517872822df5c1d2f24c311a852e1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

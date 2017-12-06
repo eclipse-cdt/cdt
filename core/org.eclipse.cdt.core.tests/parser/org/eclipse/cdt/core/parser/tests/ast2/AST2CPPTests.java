@@ -11929,6 +11929,90 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	// class Ret {};
+	// Ret operator "" _X(char const * const s, unsigned long sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_1a() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const * volatile s, unsigned long sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_1b() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const * const volatile s, unsigned long sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_1c() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const * s, unsigned long const sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_2a() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const * s, unsigned long volatile sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_2b() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const * s, unsigned long const volatile sz) { return Ret(); }
+	// auto test = "123"_X;
+	public void testUserDefinedLiteralConcatenation_528196_2c() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(unsigned long long const) { return Ret(); }
+	// auto test = 10_X;
+	public void testUserDefinedLiteralConcatenation_528196_3a() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(unsigned long long volatile) { return Ret(); }
+	// auto test = 10_X;
+	public void testUserDefinedLiteralConcatenation_528196_3b() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(unsigned long long const volatile) { return Ret(); }
+	// auto test = 10_X;
+	public void testUserDefinedLiteralConcatenation_528196_3c() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const) { return Ret(); }
+	// auto test = 'a'_X;
+	public void testUserDefinedLiteralConcatenation_528196_4a() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char volatile) { return Ret(); }
+	// auto test = 'a'_X;
+	public void testUserDefinedLiteralConcatenation_528196_4b() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
+	// Ret operator "" _X(char const volatile) { return Ret(); }
+	// auto test = 'a'_X;
+	public void testUserDefinedLiteralConcatenation_528196_4c() throws Exception {
+		checkUserDefinedLiteralIsRet(getAboveComment());
+	}
+
+	// class Ret {};
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 	// Ret operator "" _Y(const char* s, unsigned sz) { return Ret(); }
 	// auto test = "123"_X "123"_Y;

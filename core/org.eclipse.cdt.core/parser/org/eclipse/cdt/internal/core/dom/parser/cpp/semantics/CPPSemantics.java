@@ -221,6 +221,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
@@ -3302,7 +3303,12 @@ public class CPPSemantics {
 				} else if (kind == IASTLiteralExpression.lk_float_constant) {
 					type = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG);
 				}
-				return func.getParameters()[0].getType().isSameType(type);
+				IType paramType = func.getParameters()[0].getType();
+				if (paramType instanceof CPPQualifierType && type != null) {
+					CPPQualifierType qualifiedType = (CPPQualifierType) paramType;
+					type = new CPPQualifierType(type, qualifiedType.isConst(), qualifiedType.isVolatile());
+				}
+				return paramType.isSameType(type);
 			}
 		}
 		return false;

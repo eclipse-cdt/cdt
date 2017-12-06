@@ -3302,7 +3302,7 @@ public class CPPSemantics {
 				} else if (kind == IASTLiteralExpression.lk_float_constant) {
 					type = new CPPBasicType(Kind.eDouble, IBasicType.IS_LONG);
 				}
-				return func.getParameters()[0].getType().isSameType(type);
+				return SemanticUtil.getNestedType(func.getParameters()[0].getType(), CVTYPE).isSameType(type);
 			}
 		}
 		return false;

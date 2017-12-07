@@ -9053,6 +9053,22 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		ITypedef waldo = helper.assertNonProblem("Waldo");
 		assertSameType(CommonCPPTypes.int_, waldo);
 	}
+	
+	//	template <int, class>
+	//	struct A {};
+	//
+	//	struct B : A<0, int>, A<1, int> {};
+	//
+	//	template <class T>
+	//	void waldo(A<1, T>);
+	//
+	//	void foo() {
+	//	    B b;
+	//	    waldo(b);
+	//	}
+	public void testTemplateArgumentDeduction_MultipleInheritance_527697() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {};

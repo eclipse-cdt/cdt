@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -301,10 +302,20 @@ public class TemplateArgumentDeduction {
 					ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
 					ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 					if (pTemplate != null) {
-						ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate);
-						if (aInst != null && aInst != argcheck) {
-							par= pcheck;
-							arg= aInst;
+						ICPPClassType[] aInstances = findBaseInstances((ICPPClassType) argcheck, pTemplate);
+						boolean attempted = false;
+						for (ICPPClassType aInst : aInstances) {
+							if (aInst != null && aInst != argcheck) {
+								par= pcheck;
+								arg= aInst;
+								attempted = true;
+								if (deduct.fromType(par, arg, true, false)) {
+									return true;
+								}
+							}
+						}
+						if (attempted) {
+							return false;
 						}
 					}
 				}
@@ -631,29 +642,29 @@ public class TemplateArgumentDeduction {
 	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of
 	 * the deduced A.
 	 */
-	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate) throws DOMException {
-		return findBaseInstance(a, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<>());
+	private static ICPPClassType[] findBaseInstances(ICPPClassType a, ICPPClassTemplate pTemplate) throws DOMException {
+		return findBaseInstances(a, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<>());
 	}
 
-	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, 
+	private static ICPPClassType[] findBaseInstances(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, 
 			HashSet<Object> handled) throws DOMException {
 		if (a instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
 			ICPPClassTemplate tmpl= getPrimaryTemplate(inst);
 			if (pTemplate.isSameType(tmpl))
-				return a;
+				return new ICPPClassType[] { a };
 		}
+		ICPPClassType[] results = ICPPClassType.EMPTY_CLASS_ARRAY;
 		if (maxdepth-- > 0) {
 			for (ICPPBase cppBase : a.getBases()) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof ICPPClassType && handled.add(base)) {
-					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth, handled);
-					if (inst != null)
-						return inst;
+					ICPPClassType[] inst= findBaseInstances((ICPPClassType) base, pTemplate, maxdepth, handled);
+					results = ArrayUtil.addAll(results, inst);
 				}
 			}
 		}
-		return null;
+		return ArrayUtil.trim(results);
 	}
 
 	private static ICPPClassTemplate getPrimaryTemplate(ICPPTemplateInstance inst) throws DOMException {

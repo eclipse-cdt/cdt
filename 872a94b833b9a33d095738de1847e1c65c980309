@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_5d567956",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3306,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2017-12-07T03:33:55Z",
+      "side": 1,
+      "message": "Simpler:\n\n  IType paramType \u003d func.getParameters()[0].getType();\n  paramType \u003d SemanticUtil.getNestedType(paramType, CVTYPE);\n  return paramType.isSameType(type);",
+      "revId": "872a94b833b9a33d095738de1847e1c65c980309",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

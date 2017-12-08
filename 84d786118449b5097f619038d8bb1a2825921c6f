@@ -71,6 +71,53 @@
     },
     {
       "key": {
+        "uuid": "a7979753_e9604703",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:55:12Z",
+      "side": 1,
+      "message": "In fact, cloning is redundant regardless since the contents of the array are never modified. Passing compiler suffixes to the constructor is still a good idea though.",
+      "parentUuid": "a7979753_e925a7e2",
+      "range": {
+        "startLine": 95,
+        "startChar": 34,
+        "endLine": 95,
+        "endChar": 66
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_0964b313",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:55:12Z",
+      "side": 1,
+      "message": "Cloning is not needed since the contents of the array are never modified.",
+      "range": {
+        "startLine": 99,
+        "startChar": 71,
+        "endLine": 99,
+        "endChar": 76
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7979753_291faf94",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
         "patchSetId": 9

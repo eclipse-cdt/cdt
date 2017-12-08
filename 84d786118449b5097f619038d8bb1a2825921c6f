@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_491a3ba3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "This initialization is redundant since the field is initialized in the constructor.",
+      "range": {
+        "startLine": 63,
+        "startChar": 18,
+        "endLine": 63,
+        "endChar": 23
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_89142374",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "Redundant qualifier.",
+      "range": {
+        "startLine": 84,
+        "startChar": 2,
+        "endLine": 84,
+        "endChar": 7
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_e925a7e2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "It is unfortunate that compiler suffixes, which are not really supposed to change, are cloned here. Cloning can be avoided by passing compiler suffixes to the constructor as a parameter.",
+      "range": {
+        "startLine": 95,
+        "startChar": 34,
+        "endLine": 95,
+        "endChar": 66
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_291faf94",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "Support -\u003e Adds support for",
+      "range": {
+        "startLine": 141,
+        "startChar": 4,
+        "endLine": 141,
+        "endChar": 11
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_092913bd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "Reset -\u003e Resets",
+      "range": {
+        "startLine": 153,
+        "startChar": 4,
+        "endLine": 153,
+        "endChar": 9
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_6919b7ab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "The code would be easier to understand if the existing suffix was passed as the second parameter. The method could be made static after this change.",
+      "range": {
+        "startLine": 188,
+        "startChar": 16,
+        "endLine": 188,
+        "endChar": 25
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_a9563f30",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 701,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-08T03:27:56Z",
+      "side": 1,
+      "message": "Redundant qualifier.",
+      "range": {
+        "startLine": 701,
+        "startChar": 2,
+        "endLine": 701,
+        "endChar": 7
+      },
+      "revId": "84d786118449b5097f619038d8bb1a2825921c6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

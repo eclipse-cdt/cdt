@@ -957,6 +957,10 @@ public class ASTTypeUtil {
 	}
 
 	public static char[] createNameForAnonymous(IBinding binding) {
+		if (binding instanceof ICPPSpecialization) {
+			// TODO: Do we need distinct names for distinct specializations?
+			return createNameForAnonymous(((ICPPSpecialization) binding).getSpecializedBinding());
+		}
 		StringBuilder result= new StringBuilder();
 		appendNameForAnonymous(binding, result);
 		if (result.length() == 0)

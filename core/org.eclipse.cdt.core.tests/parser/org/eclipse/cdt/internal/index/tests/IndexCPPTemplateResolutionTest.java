@@ -3140,4 +3140,18 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testRegression_516338() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <typename>
+	//	struct Outer {
+	//	    static struct {
+	//	        int field;
+	//	    } static_field;
+	//	};
+	//
+	//	auto waldo = Outer<int>::static_field;
+	
+	//	int x = waldo.field;
+	public void testSpecializationOfAnonymousClass_528456() throws Exception {
+		checkBindings();
+	}
 }

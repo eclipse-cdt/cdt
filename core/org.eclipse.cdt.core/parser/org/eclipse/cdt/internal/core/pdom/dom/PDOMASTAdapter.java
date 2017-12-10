@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -43,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
@@ -663,7 +665,87 @@ public class PDOMASTAdapter {
 			return ((ICPPClassType) fDelegate).getVisibility(member);
 		}
 	}
+	
+	private static class AnonymousClassSpecialization extends AnonymousClassType 
+			implements ICPPClassSpecialization {
+		public AnonymousClassSpecialization(char[] name, ICPPClassSpecialization delegate) {
+			super(name, delegate);
+		}
+		
+		private ICPPClassSpecialization getDelegate() {
+			return (ICPPClassSpecialization) fDelegate;
+		}
 
+		@Override
+		public ICPPTemplateParameterMap getTemplateParameterMap() {
+			return getDelegate().getTemplateParameterMap();
+		}
+
+		@Override
+		public ICPPClassType getSpecializedBinding() {
+			return getDelegate().getSpecializedBinding();
+		}
+
+		@Override
+		public IBinding specializeMember(IBinding binding) {
+			return getDelegate().specializeMember(binding);
+		}
+
+		@Override
+		public IBinding specializeMember(IBinding binding, IASTNode point) {
+			return specializeMember(binding);
+		}
+
+		@Override
+		public ICPPBase[] getBases(IASTNode point) {
+			return getBases();
+		}
+
+		@Override
+		public ICPPConstructor[] getConstructors(IASTNode point) {
+			return getConstructors();
+		}
+
+		@Override
+		public ICPPField[] getDeclaredFields(IASTNode point) {
+			return getDeclaredFields();
+		}
+
+		@Override
+		public ICPPMethod[] getMethods(IASTNode point) {
+			return getMethods();
+		}
+
+		@Override
+		public ICPPMethod[] getAllDeclaredMethods(IASTNode point) {
+			return getAllDeclaredMethods();
+		}
+
+		@Override
+		public ICPPMethod[] getDeclaredMethods(IASTNode point) {
+			return getDeclaredMethods();
+		}
+
+		@Override
+		public IBinding[] getFriends(IASTNode point) {
+			return getFriends();
+		}
+
+		@Override
+		public IField[] getFields(IASTNode point) {
+			return getFields();
+		}
+
+		@Override
+		public ICPPClassType[] getNestedClasses(IASTNode point) {
+			return getNestedClasses();
+		}
+
+		@Override
+		public ICPPUsingDeclaration[] getUsingDeclarations(IASTNode point) {
+			return getUsingDeclarations();
+		}
+	}
 
 	/**
 	 * If the provided binding is anonymous, either an adapter is returned 
@@ -682,6 +764,11 @@ public class PDOMASTAdapter {
 							return new AnonymousCPPEnumeration(name, (IEnumeration) binding);
 						}
 						return new AnonymousEnumeration(name, (IEnumeration) binding);
+					}
+				} else if (binding instanceof ICPPClassSpecialization) { 
+					name = ASTTypeUtil.createNameForAnonymous(binding);
+					if (name != null) {
+						return new AnonymousClassSpecialization(name, (ICPPClassSpecialization) binding);
 					}
 				} else if (binding instanceof ICPPClassType) {
 					name = ASTTypeUtil.createNameForAnonymous(binding);

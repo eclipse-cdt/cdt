@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_0b51002d",
+        "filename": "build/org.eclipse.cdt.build.gcc.core/src/org/eclipse/cdt/build/gcc/core/GCCToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2017-12-12T13:03:02Z",
+      "side": 1,
+      "message": "Don\u0027t know about scanner discovery but in real compiler -I can be joined or not, this assumes that its -I \u003cpath\u003e, but it could be -I\u003cpath\u003e",
+      "revId": "26ce4a602ba083735643f49d09ea5815671243a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

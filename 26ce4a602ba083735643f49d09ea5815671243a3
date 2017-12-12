@@ -16,6 +16,24 @@
       "revId": "26ce4a602ba083735643f49d09ea5815671243a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_0b0820e3",
+        "filename": "build/org.eclipse.cdt.build.gcc.core/src/org/eclipse/cdt/build/gcc/core/GCCToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2017-12-12T14:34:29Z",
+      "side": 1,
+      "message": "Of course. In that case we just send in the path unchanged. This was a bit of an emergency and very last minute hack to get the esp32 build environment working. I\u0027m going to partition out this code into a MinGWGCCToolChain and handle more cases there with a better architecture so it\u0027s not so hacky.",
+      "parentUuid": "a7979753_0b51002d",
+      "revId": "26ce4a602ba083735643f49d09ea5815671243a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

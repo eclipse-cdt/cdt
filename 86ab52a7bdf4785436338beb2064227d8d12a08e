@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_30f8e0ed",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-14T01:57:40Z",
+      "side": 1,
+      "message": "It makes sense to introduce  ICPPNodeFactory.newLiteralExpression(int, String, , char[] numericCompilerSuffixes) method, use it in GNUCPPSourceParser, and get rid of the setNumericCompilerSuffixes method.",
+      "range": {
+        "startLine": 86,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 31
+      },
+      "revId": "86ab52a7bdf4785436338beb2064227d8d12a08e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

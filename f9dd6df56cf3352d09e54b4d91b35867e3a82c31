@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7979753_a30c89f6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-15T00:16:05Z",
+      "side": 1,
+      "message": "Make final",
+      "range": {
+        "startLine": 75,
+        "startChar": 1,
+        "endLine": 75,
+        "endChar": 8
+      },
+      "revId": "f9dd6df56cf3352d09e54b4d91b35867e3a82c31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_632d4147",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-15T00:16:05Z",
+      "side": 1,
+      "message": "Isn\u0027t this equivalent to:\nfValue \u003d value;\nfSuffix \u003d CharArrayUtils.EMPTY?",
+      "range": {
+        "startLine": 88,
+        "startChar": 2,
+        "endLine": 88,
+        "endChar": 24
+      },
+      "revId": "f9dd6df56cf3352d09e54b4d91b35867e3a82c31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_03339dac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-15T00:16:05Z",
+      "side": 1,
+      "message": "Redundant qualifier.\n\nSame below.",
+      "range": {
+        "startLine": 99,
+        "startChar": 68,
+        "endLine": 99,
+        "endChar": 73
+      },
+      "revId": "f9dd6df56cf3352d09e54b4d91b35867e3a82c31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_4330459d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-15T00:16:05Z",
+      "side": 1,
+      "message": "Should fSuffix also be copied?",
+      "range": {
+        "startLine": 100,
+        "startChar": 2,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "f9dd6df56cf3352d09e54b4d91b35867e3a82c31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7979753_8326ad68",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-15T00:16:05Z",
+      "side": 1,
+      "message": "Please also modify the concat method to replace first four lines with:\nif (first \u003d\u003d null || first.length \u003d\u003d 0)\n    return second;\nif (second \u003d\u003d null |  || second.length \u003d\u003d 0)\n    return first;",
+      "range": {
+        "startLine": 122,
+        "startChar": 24,
+        "endLine": 122,
+        "endChar": 30
+      },
+      "revId": "f9dd6df56cf3352d09e54b4d91b35867e3a82c31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

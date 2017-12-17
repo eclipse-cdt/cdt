@@ -19,6 +19,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -400,15 +402,22 @@ public class EvalID extends CPPDependentEvaluation {
 					return EvalFixed.INCOMPLETE;
 				}
 			}
-			IType fieldOwnerClassTypeCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
-			IType fieldOwnerClassType = SemanticUtil.getNestedType(fieldOwnerClassTypeCV, CVTYPE);
-			if (fieldOwnerClassType instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerClassType, fieldOwner, 
-						templateArgs, fieldOwnerClassTypeCV);
+			IType fieldOwnerTypeSimplifiedCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
+			IType fieldOwnerTypeSimplified = SemanticUtil.getNestedType(fieldOwnerTypeSimplifiedCV, CVTYPE);
+			if (fieldOwnerTypeSimplified instanceof ICPPClassType) {
+				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerTypeSimplified, fieldOwner, 
+						templateArgs, fieldOwnerTypeSimplifiedCV);
 				if (eval != null)
 					return eval;
-				if (!CPPTemplates.isDependentType(fieldOwnerClassType)) 
+				if (!CPPTemplates.isDependentType(fieldOwnerTypeSimplified)) 
 					return EvalFixed.INCOMPLETE;
+			} else if (fieldOwnerTypeSimplified instanceof ICPPBasicType) {
+				// Handle pseudo-destructor of basic type, e.g. "T().~T" instantiated with [T = int].
+				String typename = CPPTemplates.unwrapDestructorName(name);
+				if (typename != null && typename.equals(ASTTypeUtil.getType(fieldOwnerTypeSimplified))) {
+					ICPPFunction pseudoDestructor = ((ICPPBasicType) fieldOwnerTypeSimplified).getPseudoDestructor();
+					return new EvalBinding(pseudoDestructor, null, getTemplateDefinition());
+				}
 			}
 		}
 

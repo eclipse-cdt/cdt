@@ -19,7 +19,7 @@ import static org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter.EMPTY_CPPPARAMETER_
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.addAll;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.appendAt;
 import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.UNSPECIFIED_TYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.VOID;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.Arrays;
@@ -69,8 +69,10 @@ import org.eclipse.core.runtime.IStatus;
  * Base implementation for C++ scopes.
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
-    private static final ICPPFunctionType DESTRUCTOR_FUNCTION_TYPE =
-    		CPPVisitor.createImplicitFunctionType(UNSPECIFIED_TYPE, EMPTY_CPPPARAMETER_ARRAY, false, false);
+	// Destructors don't have a return type, but the type of a destructor call expression
+	// is void, so it's simpler to model them as having a void return type.
+    public static final ICPPFunctionType DESTRUCTOR_FUNCTION_TYPE =
+    		CPPVisitor.createImplicitFunctionType(VOID, EMPTY_CPPPARAMETER_ARRAY, false, false);
 
 	private ICPPMethod[] implicits;
 

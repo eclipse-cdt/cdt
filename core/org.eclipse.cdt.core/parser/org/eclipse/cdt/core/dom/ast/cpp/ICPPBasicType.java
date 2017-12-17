@@ -46,4 +46,12 @@ public interface ICPPBasicType extends IBasicType {
 	 */
 	@Deprecated
 	public static final int t_wchar_t = ICPPASTSimpleDeclSpecifier.t_wchar_t;
+
+	/**
+	 * Get the built-in type's pseudo-destructor.
+	 * The pseudo-destructor is the function named by e.g. an id-expression
+	 * of the form "T().~T" when instantiated with T mapped to a built-in type.
+	 * @since 6.5
+	 */
+	public ICPPFunction getPseudoDestructor();
 }

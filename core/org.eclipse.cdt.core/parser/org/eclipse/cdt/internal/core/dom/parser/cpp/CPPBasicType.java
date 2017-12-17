@@ -12,19 +12,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -52,6 +57,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	private final Kind fKind;
 	private final int fModifiers;
 	private Long fAssociatedValue;
+	private ICPPFunction fPseudoDestructor;
 
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
 		if (kind == Kind.eUnspecified) {
@@ -320,5 +326,16 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	@Deprecated
 	public IASTExpression getValue() {
 		return null;
+	}
+
+	@Override
+	public ICPPFunction getPseudoDestructor() {
+		if (fPseudoDestructor == null) {
+			char[] dtorName = ("~" + toString()).toCharArray(); //$NON-NLS-1$
+			IScope globalScope = CPPSemantics.getCurrentLookupPoint().getTranslationUnit().getScope();
+			fPseudoDestructor = new CPPImplicitFunction(dtorName, globalScope, 
+					CPPClassScope.DESTRUCTOR_FUNCTION_TYPE, EMPTY_CPPPARAMETER_ARRAY, true, false);
+		}
+		return fPseudoDestructor;
 	}
 }

@@ -10525,4 +10525,16 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertProblem("generate<400>", "generate<400>");
 	}
+	
+	//	template <typename T> T declval();
+	//
+	//	template <class T>
+	//	using destructor_expr_t = decltype(declval<T>().~T());
+	//
+	//	typedef destructor_expr_t<int> Waldo;
+	public void testDestructorExpressionType_528846() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IType waldo = helper.assertNonProblem("Waldo");
+		assertSameType(CommonCPPTypes.void_, waldo);
+	}
 }

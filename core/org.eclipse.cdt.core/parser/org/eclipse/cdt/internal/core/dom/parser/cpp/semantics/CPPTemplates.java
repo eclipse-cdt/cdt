@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -2180,6 +2181,8 @@ public class CPPTemplates {
 			IASTDeclarator declarator = ((IASTFunctionDefinition) nestedDecl).getDeclarator();
 			declarator= ASTQueries.findInnermostDeclarator(declarator);
 			name = declarator.getName();
+		} else if (nestedDecl instanceof ICPPASTAliasDeclaration) {
+			name = ((ICPPASTAliasDeclaration) nestedDecl).getAlias();
 		}
 		if (name != null) {
 			if (name instanceof ICPPASTQualifiedName) {
@@ -3234,6 +3237,17 @@ public class CPPTemplates {
 		}
 		return exec;
 	}
+
+	/**
+	 * If 'name' is a destructor-name, return the name of the type (i.e. the
+	 * portion following the '~'). Otherwise return null.
+	 */
+	public static String unwrapDestructorName(char[] name) {
+		if (name == null || name.length == 0 || name[0] != '~') {
+			return null;
+		}
+		return new String(name).substring(1).trim();
+	}
 	
 	/**
 	 * Instantiate a plain name (simple-id).
@@ -3251,10 +3265,10 @@ public class CPPTemplates {
 	 *         instantiation context's parameter map, the provided name is returned unchanged. 
 	 */
 	public static char[] instantiateName(char[] name, InstantiationContext context, IBinding enclosingTemplate) {
-		if (name == null || name.length == 0 || name[0] != '~') {
+		String typename = unwrapDestructorName(name);
+		if (typename == null) {  // not a destructor-name
 			return name;
 		}
-		String typename = new String(name).substring(1);
 		ICPPTemplateParameterMap map = context.getParameterMap();
 		IBinding enclosing = enclosingTemplate;
 		while (enclosing != null) {
@@ -3267,9 +3281,16 @@ public class CPPTemplates {
 								IType argType = arg.getTypeValue();
 								argType = SemanticUtil.getNestedType(argType, CVTYPE | TDEF);
 								if (argType instanceof ICPPClassType) {
+									// Destructor for class type.
 									StringBuilder result = new StringBuilder();
 									result.append('~');
 									result.append(((ICPPClassType) argType).getName());
+									return result.toString().toCharArray();
+								} else if (argType instanceof ICPPBasicType) {
+									// Pseudo-destructor for builtin type.
+									StringBuilder result = new StringBuilder();
+									result.append('~');
+									ASTTypeUtil.appendType(argType, true, result);
 									return result.toString().toCharArray();
 								}
 							}

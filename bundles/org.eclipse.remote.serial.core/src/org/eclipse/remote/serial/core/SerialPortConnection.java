@@ -20,7 +20,9 @@ import org.eclipse.cdt.serial.StopBits;
 import org.eclipse.remote.core.IRemoteCommandShellService;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnection.Service;
+import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.serial.internal.core.Activator;
 import org.eclipse.remote.serial.internal.core.Messages;
 
@@ -31,6 +33,15 @@ public class SerialPortConnection implements ISerialPortService, IRemoteCommandS
 	
 	private SerialPortConnection(IRemoteConnection remoteConnection) {
 		this.remoteConnection = remoteConnection;
+		this.remoteConnection.addConnectionChangeListener(new IRemoteConnectionChangeListener() {
+
+			@Override
+			public void connectionChanged(RemoteConnectionChangeEvent event) {
+				if (event.getType() == RemoteConnectionChangeEvent.ATTRIBUTES_CHANGED) {
+					serialPort = null;
+				}
+			}
+		});
 	}
 
 	public static class Factory implements IRemoteConnection.Service.Factory {

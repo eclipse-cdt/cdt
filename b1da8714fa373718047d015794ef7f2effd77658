@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_dd33a9f8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-19T23:02:14Z",
+      "side": 1,
+      "message": "It would be cleaner to replace this line with:\nfKind \u003d kind;\nfSuffix \u003d getSuffix(kind, value, CharArrayUtils.EMPTY);\nfLiteral \u003d getLiteral(value, fSuffix);\n\nThere is no need to call resetLazyFields in constructor.",
+      "range": {
+        "startLine": 87,
+        "startChar": 2,
+        "endLine": 87,
+        "endChar": 19
+      },
+      "revId": "b1da8714fa373718047d015794ef7f2effd77658",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_9d03e119",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-19T23:02:14Z",
+      "side": 1,
+      "message": "There no need to clone the value since the contents of the array are never modified.",
+      "range": {
+        "startLine": 98,
+        "startChar": 78,
+        "endLine": 98,
+        "endChar": 86
+      },
+      "revId": "b1da8714fa373718047d015794ef7f2effd77658",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

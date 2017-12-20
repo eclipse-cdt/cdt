@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_c6c03a77",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-20T18:47:07Z",
+      "side": 1,
+      "message": "fSuffix is guaranteed to be null at this point, but it\u0027s preferable to pass CharArrayUtils.EMPTY as the third parameter to minimize amount of work done inside the getSuffix method.",
+      "range": {
+        "startLine": 88,
+        "startChar": 35,
+        "endLine": 88,
+        "endChar": 42
+      },
+      "revId": "ddb8b20cb663db51d55bfa47426ff3ec0a01b1d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_a6d24e42",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2017-12-20T18:47:07Z",
+      "side": 1,
+      "message": "Alternatively, the copy method could use a private constructor with four parameters: int kind, char[] literal, char[] suffix, char[] numericCompilerSuffixes",
+      "range": {
+        "startLine": 100,
+        "startChar": 33,
+        "endLine": 100,
+        "endChar": 106
+      },
+      "revId": "ddb8b20cb663db51d55bfa47426ff3ec0a01b1d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

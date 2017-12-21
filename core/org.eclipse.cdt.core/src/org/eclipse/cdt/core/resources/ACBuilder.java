@@ -38,8 +38,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 
@@ -258,7 +261,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	}
 
 	public static boolean needAllConfigBuild() {
-		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, false);
+		return getPreference(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, false);
 	}
 
 	public static void setAllConfigBuild(boolean enable) {
@@ -274,7 +277,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 */
 	public static boolean buildConfigResourceChanges() {
 		//bug 219337
-		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, false);
+		return getPreference(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, false);
 	}
 
 	/**
@@ -285,6 +288,14 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 */
 	public static void setBuildConfigResourceChanges(boolean enable) {
 		prefs.putBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);
+	}
+
+	private static boolean getPreference(String preferenceName, boolean defaultValue) {
+		IScopeContext[] contexts = {
+				InstanceScope.INSTANCE, // for preference page
+				DefaultScope.INSTANCE   // for product customization
+		};
+		return Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, preferenceName, defaultValue, contexts);
 	}
 
 	@SuppressWarnings("nls")

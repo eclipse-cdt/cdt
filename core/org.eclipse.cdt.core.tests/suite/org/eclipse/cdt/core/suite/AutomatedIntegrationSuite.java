@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.AllConstexprEvalTests;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
+import org.eclipse.cdt.core.preferences.tests.TestScopeOfBuildConfigResourceChangesPreference;
 import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
@@ -90,6 +91,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(EFSExtensionTests.suite());
 		suite.addTest(ByteUtilsTest.suite());
 		suite.addTest(UNCPathConverterTest.suite());
+		suite.addTest(TestScopeOfBuildConfigResourceChangesPreference.suite());
 
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

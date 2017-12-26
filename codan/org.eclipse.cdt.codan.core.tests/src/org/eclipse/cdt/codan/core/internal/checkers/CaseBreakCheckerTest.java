@@ -627,6 +627,11 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		pref.setValue(val);
 	}
 
+	private void setComment(String str) {
+		IProblemPreference pref = getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_NO_BREAK_COMMENT);
+		pref.setValue(str);
+	}
+
 	// void foo(int a) {
 	//   switch (a) {
 	//   case 1:
@@ -764,5 +769,36 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrorsOfKind(ER_ID);
+	}
+
+	// void foo(void) {
+	//  int a, b;
+	//  switch (a) {
+	//  case 1:
+	//    b = 2;
+	//    // lolo
+	//    /* fallthru */
+	//  case 2:
+	//    b = 2;
+	//    /* falls thru */
+	//    // lolo
+	//  case 3:
+	//    /* no break */
+	//    b = 2;
+	//    // loo
+	//  case 4:
+	//    b = 2;
+	//    // lolo
+	//    /* fallthrough */
+	//  case 5:
+	//    // lolo
+	//    b = 2;
+	//    /* fall-thru */
+	//  }
+	// }
+	public void testCommentsParam() throws Exception {
+		setComment("fall(s)?[ \\t-]*thr(ough|u)");
+		loadCodeAndRun(getAboveComment());
+		checkErrorLines(9, 14);
 	}
 }

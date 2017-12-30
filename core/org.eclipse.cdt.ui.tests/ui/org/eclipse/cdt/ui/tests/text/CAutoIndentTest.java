@@ -512,7 +512,44 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		// The brace was closed automatically.
 		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
 	}
-	
+
+	public void testSmartIndentAfterNoexcept_Bug529299() throws Exception {
+		AutoEditTester tester = createAutoEditTester();
+		
+		tester.type("void f() noexcept\n"); //$NON-NLS-1$
+		assertEquals(1, tester.getCaretLine());
+		tester.type('{');
+		// Brace is not indented
+		assertEquals(1, tester.getCaretColumn());
+		tester.type('\n');
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+
+		tester.reset();
+		tester.type("void f() noexcept(true)\n"); //$NON-NLS-1$
+		assertEquals(1, tester.getCaretLine());
+		tester.type('{');
+		// Brace is not indented
+		assertEquals(1, tester.getCaretColumn());
+		tester.type('\n');
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+	}
+
+	public void testSmartIndentAfterOverride_Bug491296() throws Exception {
+		AutoEditTester tester = createAutoEditTester();
+		
+		tester.reset();
+		tester.type("void f() override\n"); //$NON-NLS-1$
+		assertEquals(1, tester.getCaretLine());
+		tester.type('{');
+		// Brace is not indented
+		assertEquals(1, tester.getCaretColumn());
+		tester.type('\n');
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+	}
+
 	public void testSkipToStatementStartWhitesmiths_Bug311018() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
 		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));

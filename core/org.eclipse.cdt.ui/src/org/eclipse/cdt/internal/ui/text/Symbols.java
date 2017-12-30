@@ -72,5 +72,7 @@ public interface Symbols {
 	int TokenUSING= 1039;
 	int TokenTEMPLATE= 1040;
 	int TokenTYPENAME= 1041;
+	int TokenNOEXCEPT= 1042;
+	int TokenOVERRIDE= 1043;
 	int TokenIDENT= 2000;
 }

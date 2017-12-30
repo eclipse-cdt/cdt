@@ -630,6 +630,10 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenTEMPLATE;
 				if ("typename".equals(s)) //$NON-NLS-1$
 					return TokenTYPENAME;
+				if ("noexcept".equals(s)) //$NON-NLS-1$
+					return TokenNOEXCEPT;
+				if ("override".equals(s)) //$NON-NLS-1$
+					return TokenOVERRIDE;
 				break;
 			case 9:
 				if ("namespace".equals(s)) //$NON-NLS-1$

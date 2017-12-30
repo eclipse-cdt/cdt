@@ -1123,7 +1123,7 @@ public final class CIndenter {
 					return fPosition;
 				}
 				fPosition= scope;
-				if (looksLikeMethodDecl()) {
+				if (looksLikeMethodDecl() || fToken == Symbols.TokenNOEXCEPT) {
 					return skipToStatementStart(danglingElse, false);
 				}
 				if (fToken == Symbols.TokenCATCH) {
@@ -1139,6 +1139,11 @@ public final class CIndenter {
 			fLine= line;
 			// else: fall through to default
 			return skipToPreviousListItemOrListStart();
+		
+		case Symbols.TokenNOEXCEPT:
+		case Symbols.TokenOVERRIDE:
+			// Method declaration
+			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenCOMMA:
 			// Inside a list of some type.

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -1008,7 +1009,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							pdomBinding = createBinding(type, method, fileLocalRec);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
-							old.remove(pdomBinding);
+							old.remove((ICPPMethod) pdomBinding);
 
 							// Update the tags based on the tags from the new binding.  This was in
 							// PDOMBinding.update, but not all subclasses (e.g., PDOMCPPFunction)
@@ -1434,9 +1435,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 			if (doit) {
 				long rec= file.getLastUsingDirectiveRec();
-				PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
-						pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
-				file.setLastUsingDirective(ud.getRecord());
+				IASTFileLocation fileLoc = pdomName.getFileLocation();
+				if (fileLoc != null) {
+					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
+							pdomName.getBinding(), fileLoc.getNodeOffset());
+					file.setLastUsingDirective(ud.getRecord());
+				}
 			}
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier) parentNode;

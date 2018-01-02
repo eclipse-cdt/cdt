@@ -39,8 +39,13 @@ public class QuickFixUseDotOperator extends AbstractCodanCMarkerResolution {
 					region = dad.find(lineOffset + columnOffset, "->", //$NON-NLS-1$
 							/* forwardSearch */true, /* caseSensitive */true,
 							/* wholeWord */true, /* regExSearch */false);
+					if (region == null) {
+						CheckersUiActivator.log("QuickFixUseDotOperator failed to find '->'");  //$NON-NLS-1$
+						return;
+					}
 					document.replace(region.getOffset(), 2, "."); //$NON-NLS-1$
 				} catch (BadLocationException e) {
+					CheckersUiActivator.log(e);
 					return;
 				}
 			}

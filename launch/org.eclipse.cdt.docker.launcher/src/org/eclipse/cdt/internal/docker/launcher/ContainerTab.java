@@ -81,6 +81,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connection = connections[index];
 			connectionUri = connection.getUri();
 			if (!connectionName.equals(connection.getName())) {
+				setErrorMessage(null);
 				updateLaunchConfigurationDialog();
 				initializeImageCombo();
 			}
@@ -521,6 +522,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	public void changeEvent(IDockerConnection changedConnection, int type) {
 		String currUri = null;
 		int currIndex = 0;
+		setErrorMessage(null);
 		connections = DockerConnectionManager.getInstance().getConnections();
 		if (connection != null) {
 			currUri = connection.getUri();
@@ -542,7 +544,12 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connectionSelector.setText(connectionNames[index]);
 			connection = connections[index];
 			connectionUri = connection.getUri();
+			java.util.List<IDockerImage> images = connection.getImages();
+			if (images == null || images.size() == 0) {
+				setErrorMessage(Messages.ContainerTab_Error_No_Images);
+			}
 		} else {
+			setErrorMessage(Messages.ContainerTab_Error_No_Connections);
 			connection = null;
 			connectionUri = "";
 			connectionSelector.setText("");
@@ -552,7 +559,11 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 
 	public void listChanged(IDockerConnection c,
 			java.util.List<IDockerImage> list) {
+		setErrorMessage(null);
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
+		if (finalList.length == 0) {
+			setErrorMessage(Messages.ContainerTab_Error_No_Images);
+		}
 		if (c.getName().equals(connection.getName())) {
 			Display.getDefault().syncExec(new Runnable() {
 				@Override

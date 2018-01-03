@@ -16,6 +16,24 @@
       "revId": "fc25ed1ad5507986996953252ef5725b50f928b4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_95f3a85e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/ReturnTypeDeductionTests.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 155422
+      },
+      "writtenOn": "2018-01-03T10:35:38Z",
+      "side": 1,
+      "message": "Not really, this one can be removed I guess.\nJust fyi if you copy this code into CDT, you will see that the bar in return bar(n - 1); will get marked because it cannot find a match for it (Invalid arguments). This does only happen if it is called from a global context though. I\u0027ll open a new issue if one doesn\u0027t exist already.",
+      "parentUuid": "87929364_6bcbc24d",
+      "revId": "fc25ed1ad5507986996953252ef5725b50f928b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

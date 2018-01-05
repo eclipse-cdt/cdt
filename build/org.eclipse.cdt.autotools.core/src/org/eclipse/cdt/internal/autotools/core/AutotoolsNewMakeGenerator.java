@@ -51,6 +51,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.ITarget;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -113,6 +114,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private static final String TARGET_RUN_ALL_BUILDERS = "runAllBuilders";
 	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 	private static final String DEFAULT_AUTORECONF = "autoreconf"; //$NON-NLS-1$
+
+	public static final String RUN_IN_CONFIGURE_LAUNCHER = "org.eclipse.cdt.autotools.core.property.launchAutotoolsInContainer"; //$NON-NLS-1$
+
 
 	private IProject project;
 
@@ -341,6 +345,15 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		initializeBuildConfigDirs(icfg, toolsCfg);
 
 		ICommandLauncher configureLauncher = CommandLauncherManager.getInstance().getCommandLauncher(project);
+		IOptionalBuildProperties props = icfg.getOptionalBuildProperties();
+		boolean runInCfgLauncher = false;
+		if (props != null) {
+			String runInCfgLauncherProperty = props.getProperty(RUN_IN_CONFIGURE_LAUNCHER);
+			if (runInCfgLauncherProperty != null) {
+				runInCfgLauncher = Boolean.parseBoolean(runInCfgLauncherProperty);
+			}
+		}
+
 
 		// Create the top-level directory for the build output
 		if (!createDirectory(buildDir)) {
@@ -397,7 +410,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
 					}
 					makeargs[makeargs.length - 1] = target;
-					rc = runCommand(localCommandLauncher, makeCmd,
+					rc = runCommand(runInCfgLauncher ? configureLauncher : localCommandLauncher, makeCmd,
 							getProjectLocation(),
 							makeargs,
 							AutotoolsPlugin.getResourceString("MakeGenerator.clean.topdir"), //$NON-NLS-1$
@@ -447,7 +460,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 								System.arraycopy(newArgs, 0, makeargs, 0, newArgs.length);
 							}
 							makeargs[makeargs.length - 1] = target;
-							rc = runCommand(localCommandLauncher, makeCmd,
+							rc = runCommand(runInCfgLauncher ? configureLauncher : localCommandLauncher, makeCmd,
 									buildLocation,
 									makeargs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.clean.builddir", new String[]{buildDir}), //$NON-NLS-1$
@@ -509,7 +522,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					configStatus.delete();
 				// Get any user-specified arguments for autogen.
 				String[] autogenArgs = getAutogenArgs(autogenCmdParms);
-				rc = runScript(localCommandLauncher, autogenPath,
+				rc = runScript(runInCfgLauncher ? configureLauncher : localCommandLauncher, autogenPath,
 						autogenPath.removeLastSegments(1), autogenArgs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.autogen.sh", new String[]{buildDir}), //$NON-NLS-1$
 						errMsg, console, autogenEnvs, consoleStart);
@@ -532,7 +545,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 								reconfCmd = DEFAULT_AUTORECONF;
 							IPath reconfCmdPath = new Path(reconfCmd);
 							reconfArgs[0] = "-i"; //$NON-NLS-1$
-							rc = runScript(localCommandLauncher, reconfCmdPath,
+							rc = runScript(runInCfgLauncher ? configureLauncher : localCommandLauncher, reconfCmdPath,
 									getSourcePath(),
 									reconfArgs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$
@@ -565,7 +578,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				String[] makeargs = new String[1];
 				IPath makeCmd = builder.getBuildCommand();
 				makeargs[0] = "-f" + getMakefileCVSPath().toOSString(); //$NON-NLS-1$
-				rc = runCommand(localCommandLauncher, makeCmd,
+				rc = runCommand(runInCfgLauncher ? configureLauncher : localCommandLauncher, makeCmd,
 						getProjectLocation().append(buildDir),
 						makeargs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.makefile.cvs", new String[]{buildDir}), //$NON-NLS-1$
@@ -597,7 +610,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					reconfCmd = DEFAULT_AUTORECONF;
 				IPath reconfCmdPath = new Path(reconfCmd);
 				reconfArgs[0] = "-i"; //$NON-NLS-1$
-				rc = runScript(localCommandLauncher, reconfCmdPath,
+				rc = runScript(runInCfgLauncher ? configureLauncher : localCommandLauncher, reconfCmdPath,
 						getSourcePath(),
 						reconfArgs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$

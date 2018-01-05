@@ -99,6 +99,8 @@ public class Messages extends NLS {
 
 	public static String ContainerPropertyTab_Title;
 	public static String ContainerPropertyTab_Enable_Msg;
+	public static String ContainerPropertyTab_Run_Autotools_In_Container_Msg;
+	public static String ContainerPropertyTab_Run_Autotools_In_Container_Tooltip;
 
 	public static String ContainerCommandLauncher_image_msg;
 	public static String CommandLauncher_CommandCancelled;

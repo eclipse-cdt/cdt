@@ -1168,7 +1168,7 @@
 		  </enumeratedOptionValue>
 		      <enablement 
               	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              	attribute="defaultValue" 
               	value="gnu.c.debugging.level.none"
               	extensionAdjustment="false">
 			  	<checkBuildProperty 
@@ -1177,7 +1177,7 @@
 			  </enablement>
               <enablement 
               	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              	attribute="defaultValue" 
               	value="gnu.c.debugging.level.max"
               	extensionAdjustment="false">
 			  	<checkBuildProperty 
@@ -1546,7 +1546,7 @@
 		  </enumeratedOptionValue>
 		  	 <enablement 
               	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              	attribute="defaultValue" 
               	value="gnu.cpp.compiler.debugging.level.none"
               	extensionAdjustment="false">
 			  	<checkBuildProperty 
@@ -1555,7 +1555,7 @@
 			  </enablement>
               <enablement 
               	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              	attribute="defaultValue" 
               	value="gnu.cpp.compiler.debugging.level.max"
               	extensionAdjustment="false">
 			  	<checkBuildProperty 

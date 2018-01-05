@@ -659,6 +659,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	}
 
 	public void adjustOptions(boolean extensions){
+		optionMap = null;
 		IOption options[] = getOptions();
 
 		for (IOption opt : options) {

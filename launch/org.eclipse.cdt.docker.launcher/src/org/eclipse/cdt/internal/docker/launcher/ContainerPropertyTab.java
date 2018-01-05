@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.docker.launcher.ContainerCommandLauncher;
+import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.cdt.internal.docker.launcher.ContainerPropertyVolumesModel.MountType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -42,6 +43,9 @@ import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.property.Properties;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
@@ -88,19 +92,23 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	private final static String GNU_ELF_PARSER_ID = "org.eclipse.cdt.core.GNU_ELF"; //$NON-NLS-1$
 	private final static String ELF_PARSER_ID = "org.eclipse.cdt.core.ELF"; //$NON-NLS-1$
+	private static final String RUN_IN_CONFIGURE_LAUNCHER = "org.eclipse.cdt.autotools.core.property.launchAutotoolsInContainer"; //$NON-NLS-1$
 
 	private Combo imageCombo;
 	private Combo connectionSelector;
 	private Button enableButton;
+	private Button launchAutotoolsButton;
 	private Button addButton;
 	private IDockerConnection connection;
 	private IDockerConnection[] connections;
 	private IDockerImageListener containerTab;
+	private boolean isAutotoolsProject;
 
 	private String connectionName;
 	private String connectionUri = ""; //$NON-NLS-1$
 
 	private boolean initialEnabled;
+	private boolean initialAutotoolsLaunchEnabled;
 	private String initialConnection;
 	private String initialImageId;
 	private String initialVolumes;
@@ -235,6 +243,43 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		});
 
+		createVolumeSettingsContainer(usercomp);
+
+		try {
+			IProject project = iCfgd.getProjectDescription().getProject();
+			IProjectNature nature = project.getNature(
+					"org.eclipse.cdt.autotools.core.autotoolsNatureV2"); //$NON-NLS-1$
+			isAutotoolsProject = (nature != null);
+			if (isAutotoolsProject) {
+				launchAutotoolsButton = new Button(usercomp, SWT.CHECK);
+				launchAutotoolsButton.setText(
+						Messages.ContainerPropertyTab_Run_Autotools_In_Container_Msg);
+				launchAutotoolsButton.setToolTipText(
+						Messages.ContainerPropertyTab_Run_Autotools_In_Container_Tooltip);
+				gd = new GridData(GridData.FILL_HORIZONTAL);
+				gd.horizontalSpan = 5;
+				launchAutotoolsButton.setLayoutData(gd);
+				initializeLaunchAutotoolsButton();
+				launchAutotoolsButton
+						.addSelectionListener(new SelectionListener() {
+
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								setLaunchAutotoolsEnablement(
+										launchAutotoolsButton.getSelection());
+							}
+
+							@Override
+							public void widgetDefaultSelected(
+									SelectionEvent e) {
+								// ignore
+							}
+						});
+			}
+		} catch (CoreException e) {
+			DockerLaunchUIPlugin.log(e);
+		}
+
 		initializeEnablementButton();
 		enableButton.addSelectionListener(new SelectionListener() {
 
@@ -251,7 +296,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		});
 
-		createVolumeSettingsContainer(usercomp);
 	}
 
 	private void createVolumeSettingsContainer(final Composite container) {
@@ -597,6 +641,23 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
+	private void setLaunchAutotoolsEnablement(boolean enabled) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
+					.getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(RUN_IN_CONFIGURE_LAUNCHER,
+						Boolean.toString(launchAutotoolsButton.getSelection()));
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(RUN_IN_CONFIGURE_LAUNCHER,
+					Boolean.toString(launchAutotoolsButton.getSelection()));
+		}
+	}
+
 	private void setImageId(String imageId) {
 		if (iCfg instanceof IMultiConfiguration) {
 			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg)
@@ -630,6 +691,9 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private void setControlsEnabled(boolean enabled) {
 		imageCombo.setEnabled(enabled);
 		connectionSelector.setEnabled(enabled);
+		if (isAutotoolsProject) {
+			launchAutotoolsButton.setEnabled(enabled);
+		}
 		setVolumeControlsEnabled(new Button[] { addButton }, enabled);
 	}
 
@@ -644,6 +708,16 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 		enableButton.setSelection(initialEnabled);
 		setControlsEnabled(initialEnabled);
+	}
+
+	private void initializeLaunchAutotoolsButton() {
+		initialEnabled = false;
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
+		String savedEnabled = properties.getProperty(RUN_IN_CONFIGURE_LAUNCHER);
+		if (savedEnabled != null) {
+			initialAutotoolsLaunchEnabled = Boolean.parseBoolean(savedEnabled);
+		}
+		launchAutotoolsButton.setSelection(initialAutotoolsLaunchEnabled);
 	}
 
 	private void initializeConnectionSelector() {
@@ -871,6 +945,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				.getProperty(ContainerCommandLauncher.VOLUMES_ID);
 		initialSelectedVolumes = properties
 				.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
+		initialAutotoolsLaunchEnabled = Boolean.parseBoolean(
+				properties.getProperty(RUN_IN_CONFIGURE_LAUNCHER));
 		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgd)
 				.getLanguageSettingProviders();
 		for (ILanguageSettingsProvider provider : providers) {

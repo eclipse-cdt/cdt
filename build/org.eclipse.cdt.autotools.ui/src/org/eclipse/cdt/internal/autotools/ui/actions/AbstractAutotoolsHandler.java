@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.autotools.core.AutotoolsNewMakeGenerator;
+import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -300,9 +302,23 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 
 						ArrayList<String> additionalEnvs = new ArrayList<>();
 						String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
-						// Get a launcher for the config command...default non-remote to use local
-						// commands
-						RemoteCommandLauncher launcher = new RemoteCommandLauncher(new CommandLauncher());
+						// Get a launcher for the config command...default for non-remote is a local
+						// launcher, but user can override to perform all Autotool commands in a
+						// Container when build in Container is enabled so check optional build
+						// properties
+						IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+						boolean runInContainer = false;
+						if (props != null) {
+							String runInContainerProperty = props
+									.getProperty(AutotoolsNewMakeGenerator.RUN_IN_CONFIGURE_LAUNCHER);
+							if (runInContainerProperty != null) {
+								runInContainer = Boolean.parseBoolean(runInContainerProperty);
+							}
+						}
+						ICommandLauncher fallbackLauncher = runInContainer
+								? CommandLauncherManager.getInstance().getCommandLauncher(project)
+								: new CommandLauncher();
+						RemoteCommandLauncher launcher = new RemoteCommandLauncher(fallbackLauncher);
 						launcher.setProject(project);
 						// Set the environment
 						IEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider()

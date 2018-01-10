@@ -246,7 +246,9 @@ public class MakeBuilder extends ACBuilder {
 		if (info.appendEnvironment()) {
 			@SuppressWarnings({"unchecked", "rawtypes"})
 			Map<String, String> env = (Map)launcher.getEnvironment();
-			envMap.putAll(env);
+			if (env != null) {
+				envMap.putAll(env);
+			}
 		}
 		envMap.putAll(info.getExpandedEnvironment());
 		return envMap;

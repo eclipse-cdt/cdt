@@ -2495,4 +2495,70 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testNestedClassDefinedOutOfLine_502999() throws Exception {
 		checkBindings();
 	}
+	
+	//	class MyClass
+	//	{
+	//	public:
+	//	    MyClass( int i )
+	//	    {
+	//	    }
+	//	    static const MyClass CONSTANT_NAME1;
+	//	    static const MyClass CONSTANT_NAME2;
+	//	    static const MyClass CONSTANT_NAME3;
+	//	    static const MyClass CONSTANT_NAME4;
+	//	    static const MyClass CONSTANT_NAME5;
+	//	    static const MyClass CONSTANT_NAME6;
+	//	    static const MyClass CONSTANT_NAME7;
+	//	    static const MyClass CONSTANT_NAME8;
+	//	    static const MyClass CONSTANT_NAME9;
+	//	    static const MyClass CONSTANT_NAME10;
+	//	    static const MyClass CONSTANT_NAME11;
+	//	    static const MyClass CONSTANT_NAME12;
+	//	    static const MyClass CONSTANT_NAME13;
+	//	    static const MyClass CONSTANT_NAME14;
+	//	    static const MyClass CONSTANT_NAME15;
+	//	    static const MyClass CONSTANT_NAME16;
+	//	    static const MyClass CONSTANT_NAME17;
+	//	    static const MyClass CONSTANT_NAME18;
+	//	    static const MyClass CONSTANT_NAME19;
+	//	    static const MyClass CONSTANT_NAME20;
+	//	    static const MyClass CONSTANT_NAME21;
+	//	    static const MyClass CONSTANT_NAME22;
+	//	    static const MyClass CONSTANT_NAME23;
+	//	    static const MyClass CONSTANT_NAME24;
+	//	    static const MyClass CONSTANT_NAME25;
+	//	    static const MyClass CONSTANT_NAME26;
+	//	};
+	//
+	//	const MyClass MyClass::CONSTANT_NAME1( 1 );
+	//	const MyClass MyClass::CONSTANT_NAME2( 2 );
+	//	const MyClass MyClass::CONSTANT_NAME3( 3 );
+	//	const MyClass MyClass::CONSTANT_NAME4( 4 );
+	//	const MyClass MyClass::CONSTANT_NAME5( 5 );
+	//	const MyClass MyClass::CONSTANT_NAME6( 6 );
+	//	const MyClass MyClass::CONSTANT_NAME7( 7 );
+	//	const MyClass MyClass::CONSTANT_NAME8( 8 );
+	//	const MyClass MyClass::CONSTANT_NAME9( 9 );
+	//	const MyClass MyClass::CONSTANT_NAME10( 10 );
+	//	const MyClass MyClass::CONSTANT_NAME11( 11 );
+	//	const MyClass MyClass::CONSTANT_NAME12( 12 );
+	//	const MyClass MyClass::CONSTANT_NAME13( 13 );
+	//	const MyClass MyClass::CONSTANT_NAME14( 14 );
+	//	const MyClass MyClass::CONSTANT_NAME15( 15 );
+	//	const MyClass MyClass::CONSTANT_NAME16( 16 );
+	//	const MyClass MyClass::CONSTANT_NAME17( 17 );
+	//	const MyClass MyClass::CONSTANT_NAME18( 18 );
+	//	const MyClass MyClass::CONSTANT_NAME19( 19 );
+	//	const MyClass MyClass::CONSTANT_NAME20( 20 );
+	//	const MyClass MyClass::CONSTANT_NAME21( 21 );
+	//	const MyClass MyClass::CONSTANT_NAME22( 22 );
+	//	const MyClass MyClass::CONSTANT_NAME23( 23 );
+	//	const MyClass MyClass::CONSTANT_NAME24( 24 );
+	//	const MyClass MyClass::CONSTANT_NAME25( 25 );
+	//	const MyClass MyClass::CONSTANT_NAME26( 26 );
+	
+	//	// empty file
+	public void testOOM_529646() throws Exception {
+		checkBindings();
+	}
 }

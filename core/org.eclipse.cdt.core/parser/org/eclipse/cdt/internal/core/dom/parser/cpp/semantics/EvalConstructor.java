@@ -176,6 +176,9 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 		ICPPField[] fields = classType.getDeclaredFields();
 		for (ICPPField field : fields) {
+			if (field.isStatic()) {
+				continue;
+			}
 			final Map.Entry<IBinding, ICPPEvaluation> initializer =
 					getInitializerFromMemberInitializerList(field, exec);
 

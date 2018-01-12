@@ -751,10 +751,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private IASTNode templateArgument(ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
 		IToken argStart = mark();
+		int markBranchPoint = ((TemplateIdStrategy) strat).getCurrentBranchPoint();
 		ICPPASTTypeId typeId= null;
 		int lt1= 0;
 		try {
-			typeId= typeId(DeclarationOptions.TYPEID);
+			typeId= typeId(DeclarationOptions.TYPEID, strat);
 			lt1 = LT(1);
 		} catch (BacktrackException e) {
 			if (e.isFatal()) {
@@ -849,6 +850,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// Not a type-id, parse as expression.
 		backup(argStart);
+		((TemplateIdStrategy) strat).backupToBranchPoint(markBranchPoint);
 		IASTExpression expr= expression(ExprKind.eAssignment, BinaryExprCtx.eInTemplateID, null, strat);
 		if (LT(1) == IToken.tELLIPSIS) {
 			expr= addPackExpansion(expr, consume());
@@ -3058,21 +3060,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * 		{"enum"} enumSpecifier
 	 */
 	@Override
-	protected Decl declSpecifierSeq(final DeclarationOptions option) throws BacktrackException, EndOfFileException {
-		return declSpecifierSeq(option, false);
+	protected Decl declSpecifierSeq(final DeclarationOptions option, ITemplateIdStrategy strat) 
+			throws BacktrackException, EndOfFileException {
+		return declSpecifierSeq(option, false, strat);
 	}
 
 	private ICPPASTDeclSpecifier simpleTypeSpecifier() throws BacktrackException, EndOfFileException {
-		Decl d= declSpecifierSeq(null, true);
+		Decl d= declSpecifierSeq(null, true, null);
 		return (ICPPASTDeclSpecifier) d.fDeclSpec1;
 	}
 
 	private ICPPASTDeclSpecifier simpleTypeSpecifierSequence() throws BacktrackException, EndOfFileException {
-		Decl d= declSpecifierSeq(null, false);
+		Decl d= declSpecifierSeq(null, false, null);
 		return (ICPPASTDeclSpecifier) d.fDeclSpec1;
 	}
 
-	private Decl declSpecifierSeq(final DeclarationOptions option, final boolean single) throws BacktrackException, EndOfFileException {
+	private Decl declSpecifierSeq(final DeclarationOptions option, final boolean single,
+			ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException {
 		int storageClass = IASTDeclSpecifier.sc_unspecified;
 		int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
 		int options= 0;
@@ -3332,7 +3336,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						}
 					}
 
-					identifier= qualifiedName();
+					identifier= qualifiedName(CastExprCtx.eNotInBExpr, strat);
 					if (identifier.getLookupKey().length == 0 && LT(1) != IToken.tEOC)
 						throwBacktrack(LA(1));
 
@@ -4169,6 +4173,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	@Override
 	protected ICPPASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException {
+		return typeId(option, null);
+	}
+	
+	protected ICPPASTTypeId typeId(DeclarationOptions option, ITemplateIdStrategy strat) 
+			throws EndOfFileException, BacktrackException {
 		if (!canBeTypeSpecifier()) {
 			throwBacktrack(LA(1));
 		}
@@ -4177,7 +4186,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IASTDeclarator declarator = null;
 
 		try {
-			Decl decl= declSpecifierSequence_initDeclarator(option, false);
+			Decl decl= declSpecifierSequence_initDeclarator(option, false, strat);
 			declSpecifier= decl.fDeclSpec1;
 			declarator= decl.fDtor1;
 		} catch (FoundAggregateInitializer lie) {

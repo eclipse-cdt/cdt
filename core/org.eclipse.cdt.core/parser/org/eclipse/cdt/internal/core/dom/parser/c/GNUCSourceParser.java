@@ -911,7 +911,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	    SHORT=0x10,	UNSIGNED= 0x20, SIGNED=0x40, COMPLEX=0x80, IMAGINARY=0x100;
 
     @Override
-	protected Decl declSpecifierSeq(final DeclarationOptions declOption) throws BacktrackException, EndOfFileException {
+	protected Decl declSpecifierSeq(final DeclarationOptions declOption, ITemplateIdStrategy strat) 
+			throws BacktrackException, EndOfFileException {
         int storageClass= IASTDeclSpecifier.sc_unspecified;
         int simpleType= IASTSimpleDeclSpecifier.t_unspecified;
         int options= 0;

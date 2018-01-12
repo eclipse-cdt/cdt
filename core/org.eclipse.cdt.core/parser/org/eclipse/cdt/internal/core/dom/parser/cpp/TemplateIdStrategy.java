@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.ITem
  * When parsing, we potentially need to consider both possibilities for each use of '<'.
  *
  * An instance of this class is used to track alternative parses in a segment of code that includes one or
- * more uses of '<' preceded by names. An alternative consists of a choices (template-id or not) for each
+ * more uses of '<' preceded by names. An alternative consists of a choice (template-id or not) for each
  * name. At a given point in time, the instance has a notion of a current alternative, and a current
  * position within that alternative.
  *
@@ -144,5 +144,21 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 
 	public IASTName[] getTemplateNames() {
 		return ArrayUtil.trim(fTemplateNames);
+	}
+
+	/**
+	 * Sometimes, a BacktrackException can be thrown and handled during the processing
+	 * of a single alternative (that is, the exception does not bubble up all the way
+	 * to the point where setNextAlternative() would be called). In such a case, when
+	 * backtracking we need to restore the branch point that was active at the point
+	 * we're backing up to (otherwise, the current branch point could get out of sync
+	 * with the parsing position). These methods facilitate marking and backing up to
+	 * the current branch point for such situations. 
+	 */
+	public int getCurrentBranchPoint() {
+		return fCurrentBranchPoint;
+	}
+	public void backupToBranchPoint(int branchPoint) {
+		fCurrentBranchPoint = branchPoint;
 	}
 }

@@ -1631,19 +1631,32 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected abstract IASTDeclaration declaration(DeclarationOptions option) throws BacktrackException, EndOfFileException;
 
+    protected Decl declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException {
+    	return declSpecifierSeq(option, null);
+    }
+    
     /**
      * Parses for two alternatives of a declspec sequence. If there is a second alternative the token after the second alternative
      * is returned, such that the parser can continue after both variants.
      */
-    protected abstract Decl declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException;
+    protected abstract Decl declSpecifierSeq(DeclarationOptions option, ITemplateIdStrategy strat) 
+    		throws BacktrackException, EndOfFileException;
 
+    protected Decl declSpecifierSequence_initDeclarator(final DeclarationOptions option, 
+    		boolean acceptCompoundWithoutDtor) 
+			throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
+    	return declSpecifierSequence_initDeclarator(option, acceptCompoundWithoutDtor, null);
+    }
+    
     /**
      * Parses for two alternatives of a declspec sequence followed by a initDeclarator.
      * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
      * longer alternative is selected.
      */
-    protected Decl declSpecifierSequence_initDeclarator(final DeclarationOptions option, boolean acceptCompoundWithoutDtor) throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
-    	Decl result= declSpecifierSeq(option);
+    protected Decl declSpecifierSequence_initDeclarator(final DeclarationOptions option, 
+    		boolean acceptCompoundWithoutDtor, ITemplateIdStrategy strat) 
+			throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
+    	Decl result= declSpecifierSeq(option, strat);
 
 		final int lt1 = LTcatchEOF(1);
 		if (lt1 == IToken.tEOC)

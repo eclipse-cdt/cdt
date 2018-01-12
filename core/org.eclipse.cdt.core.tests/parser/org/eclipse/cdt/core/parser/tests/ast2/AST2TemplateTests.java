@@ -10537,4 +10537,18 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		IType waldo = helper.assertNonProblem("Waldo");
 		assertSameType(CommonCPPTypes.void_, waldo);
 	}
+	
+	//	template <int, int, int, int, int, int, int, int> int constant8f();
+	//
+	//	template <int i0, int i1, int i2, int i3>
+	//	void foo() {
+	//	    constant8f<
+	//	      i0 < 0, i0 < 0, 
+	//	      i1 < 0, i1 < 0,
+	//	      i2 < 0, i2 < 0,
+	//	      i3 < 0, i3 < 0>();
+	//	}
+	public void testTemplateIdAmbiguity_529696() throws Exception {
+		parseAndCheckBindings();
+	}
 }

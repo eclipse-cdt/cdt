@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -39,8 +38,9 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeAdapter;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -382,19 +382,18 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		treeEntries.setLinesVisible(true);
 
 		final TreeColumn treeCol = new TreeColumn(treeEntries, SWT.NONE);
-		treeEntries.addPaintListener(new PaintListener() {
+		treeEntries.addTreeListener(new TreeAdapter() {
 			@Override
-			public void paintControl(PaintEvent e) {
-				Point p = treeEntries.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (treeCol.getWidth() != p.x)
-					treeCol.setWidth(p.x);
+			public void treeExpanded(TreeEvent e) {
+				treeEntries.getDisplay().asyncExec(() -> {
+					treeCol.pack();
+				});
 			}
 		});
 
 		treeCol.setText(Messages.LanguageSettingsProviderTab_SettingEntries);
 
 		treeCol.setWidth(200);
-		treeCol.setResizable(false);
 		treeCol.setToolTipText(Messages.LanguageSettingsProviderTab_SettingEntriesTooltip);
 
 		treeEntriesViewer = new TreeViewer(treeEntries);

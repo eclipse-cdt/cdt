@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.docker.launcher;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -36,6 +42,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.linuxtools.docker.core.Activator;
 import org.eclipse.linuxtools.docker.core.IDockerContainerInfo;
 import org.eclipse.linuxtools.docker.core.IDockerNetworkSettings;
 import org.eclipse.linuxtools.docker.core.IDockerPortBinding;
@@ -290,6 +297,32 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						ILaunchConstants.ATTR_IMAGE, (String) null);
 				String connectionUri = configuration.getAttribute(
 						ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+				boolean isLocalConnection = true;
+				try {
+					Pattern ipaddrPattern = Pattern.compile(
+							"[a-z]*://([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)[:]*[0-9]*");
+					Matcher m = ipaddrPattern.matcher(connectionUri);
+					if (m.matches()) {
+						String ipaddr = m.group(1);
+						InetAddress addr = InetAddress.getByName(ipaddr);
+						if (addr.isAnyLocalAddress()
+								|| addr.isLoopbackAddress()) {
+							isLocalConnection = true;
+						} else {
+							// Check if the address is defined on any interface
+							try {
+								isLocalConnection = NetworkInterface
+										.getByInetAddress(addr) != null;
+							} catch (SocketException e) {
+								isLocalConnection = false;
+							}
+						}
+					}
+				} catch (UnknownHostException e) {
+					// should not happen
+					Activator.log(e);
+				}
+
 				boolean keepContainer = configuration.getAttribute(
 						ILaunchConstants.ATTR_KEEP_AFTER_LAUNCH, false);
 
@@ -332,7 +365,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 					wc.setAttribute(
 							ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 							IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-					if (job.getPorts() != null) {
+					if (job.getPorts() != null && isLocalConnection) {
 						Map<String, List<IDockerPortBinding>> hostPorts = job
 								.getPorts();
 						List<IDockerPortBinding> bindingList = hostPorts

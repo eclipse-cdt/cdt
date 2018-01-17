@@ -182,6 +182,10 @@ public class LaunchBarControl implements ILaunchBarListener {
 
 	@Override
 	public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
+		if (container == null || container.isDisposed()) {
+			return;
+		}
+
 		container.getDisplay().asyncExec(() -> {
 			if (configSelector != null) {
 				configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
@@ -191,13 +195,19 @@ public class LaunchBarControl implements ILaunchBarListener {
 				if (targetSelector == null || targetSelector.isDisposed()) {
 					createTargetSelector();
 					syncSelectors();
-					container.getParent().layout(true);
+					if (!container.isDisposed()) {
+						Composite parent = container.getParent();
+						parent.layout(true);
+					}
 				}
 			} else {
 				if (targetSelector != null && !targetSelector.isDisposed()) {
 					onLabel.dispose();
 					targetSelector.dispose();
-					container.getParent().layout(true);
+					if (!container.isDisposed()) {
+						Composite parent = container.getParent();
+						parent.layout(true);
+					}
 				}
 			}
 		});

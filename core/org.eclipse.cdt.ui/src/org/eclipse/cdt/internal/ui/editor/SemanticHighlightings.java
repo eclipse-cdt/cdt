@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -87,6 +88,8 @@ import org.eclipse.cdt.ui.text.ISemanticToken;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -1694,7 +1697,9 @@ public class SemanticHighlightings {
 			IASTNode node = token.getNode();
 			
 			// This highlighting only applies to function arguments.
-			boolean isFunctionArgument = (node instanceof IASTExpression) &&
+			// We also filter out C expressions at this stage, since references only exist in C++
+			// (and then we can cast to C++ AST node types without further checks below).
+			boolean isFunctionArgument = (node instanceof ICPPASTExpression) &&
 					                     (node.getParent() instanceof IASTFunctionCallExpression) &&
 					                     (node.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT);
 			if (!isFunctionArgument) {
@@ -1711,10 +1716,26 @@ public class SemanticHighlightings {
 			// Resolve the type of the function being called.
 			// Note that, in the case of a call to a template function or a set of overloaded functions,
 			// the function name expression will be an id-expression, and 
-			// CPPASTIdExpression.getExpressionType() will perform template instantiation and overload 
+			// CPPASTIdExpression.getEvaluation() will perform template instantiation and overload 
 			// resolution, and we'll get the instantiated function type.
+			// Note that we don't use CPPASTIdExpression.getExpressionType() because it typically turns 
+			// a potentially-useful FunctionSetType into the useless CPPDeferredFunction.FUNCTION_TYPE.
 			IASTFunctionCallExpression functionCall = ((IASTFunctionCallExpression) node.getParent());
-			IType functionType = functionCall.getFunctionNameExpression().getExpressionType();
+			ICPPASTExpression functionName = (ICPPASTExpression) functionCall.getFunctionNameExpression();
+			IType functionType = functionName.getEvaluation().getType();
+			// If the call itself occurs in a dependent context, the function type may be a FunctionSetType.
+			// Make a best-effort attempt to work with it.
+			if (functionType instanceof FunctionSetType) {
+				CPPFunctionSet functionSet = ((FunctionSetType) functionType).getFunctionSet();
+				if (functionSet == null) {
+					return false;
+				}
+				ICPPFunction[] functions = functionSet.getBindings();
+				if (functions.length != 1) {
+					return false;
+				}
+				functionType = functions[0].getType();
+			}
 			functionType = SemanticUtil.getNestedType(functionType, TDEF | REF);
 			if (!(functionType instanceof ICPPFunctionType)) {
 				return false;

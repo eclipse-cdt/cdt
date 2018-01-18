@@ -662,7 +662,21 @@ public class SemanticHighlightingTest extends TestCase {
 	//	void foo(unsigned i) {                           //$functionDeclaration,parameterVariable
 	//		__builtin_assume_aligned(i, 4);              //$problem,parameterVariable
 	//	}
-    public void testMisuseOfKnownBuiltin_512932() throws Exception {
+	public void testMisuseOfKnownBuiltin_512932() throws Exception {
+		makeAssertions();
+	}
+	
+	//	struct S {};                                     //$class
+	//
+	//	template <typename T>                            //$templateParameter
+	//	void bar(T, S&);                                 //$functionDeclaration,templateParameter,class
+	//
+	//	template <typename T>                            //$templateParameter
+	//	void foo(T t) {                                  //$functionDeclaration,templateParameter,parameterVariable
+	//	    S state;                                     //$class,localVariableDeclaration
+	//	    bar(t, state);                               //$function,parameterVariable,variablePassedByNonconstRef
+	//	}
+    public void testVariablePassedByNonConstRef_529958() throws Exception {
     	makeAssertions();
     }
 }

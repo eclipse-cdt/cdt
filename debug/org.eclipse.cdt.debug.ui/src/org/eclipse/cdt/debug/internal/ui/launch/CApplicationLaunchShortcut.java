@@ -63,6 +63,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
+	private final static String CONNECTION_URI = "org.eclipse.cdt.docker.launcher.connection_uri"; //$NON-NLS-1$
+	
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		searchAndLaunch(new Object[] { editor.getEditorInput() }, mode);
@@ -98,9 +100,12 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				IPath programPath = CDebugUtils.getProgramPath(config);
 				String projectName = CDebugUtils.getProjectName(config);
 				IPath name = bin.getResource().getProjectRelativePath();
-				if (programPath != null && programPath.equals(name)) {
-					if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
-						candidateConfigs.add(config);
+				// don't match any launch config that is used for a Container launch
+				if (config.getAttribute(CONNECTION_URI, "").isEmpty()) { //$NON-NLS-1$
+					if (programPath != null && programPath.equals(name)) {
+						if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
+							candidateConfigs.add(config);
+						}
 					}
 				}
 			}

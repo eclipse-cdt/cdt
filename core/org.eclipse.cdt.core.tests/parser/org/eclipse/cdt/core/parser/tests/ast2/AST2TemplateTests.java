@@ -10551,4 +10551,13 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testTemplateIdAmbiguity_529696() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <int...>
+	//	using index_sequence = int;
+	//
+	//	template <int... I>
+	//	void foo(index_sequence<I...>);
+	public void testTemplateAliasWithVariadicNonTypeArgs_530086() throws Exception {
+		parseAndCheckBindings();
+	}
 }

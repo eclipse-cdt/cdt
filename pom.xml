@@ -1,101 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.eclipse.tm.terminal</groupId>
-        <artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
-        <relativePath>admin/pom-build.xml</relativePath>
-    </parent>
+	<parent>
+		<groupId>org.eclipse.tm.terminal</groupId>
+		<artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
+		<version>4.4.0-SNAPSHOT</version>
+		<relativePath>admin/pom-build.xml</relativePath>
+	</parent>
 
-    <groupId>org.eclipse.tm.terminal</groupId>
-    <artifactId>terminal-parent</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>TM Terminal, Maven Master</name>
+	<groupId>org.eclipse.tm.terminal</groupId>
+	<artifactId>terminal-parent</artifactId>
+	<version>4.4.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>TM Terminal, Maven Master</name>
 
-    <modules>
-        <!-- Terminal Control features and plug-ins -->
-        <module>plugins/org.eclipse.tm.terminal.control</module>
+	<modules>
+		<!-- Terminal Control features and plug-ins -->
+		<module>plugins/org.eclipse.tm.terminal.control</module>
 
-        <module>features/org.eclipse.tm.terminal.control.feature</module>
-        <module>features/org.eclipse.tm.terminal.control.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.control.feature</module>
+		<module>features/org.eclipse.tm.terminal.control.sdk.feature</module>
 
-        <!-- Terminal Connector features and plug-ins -->
-        <module>plugins/org.eclipse.tm.terminal.connector.local</module>
-        <module>plugins/org.eclipse.tm.terminal.connector.process</module>
-        <module>plugins/org.eclipse.tm.terminal.connector.remote</module>
-        <module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
-        <module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
-        
-        <module>features/org.eclipse.tm.terminal.connector.local.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.ssh.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.telnet.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.telnet.sdk.feature</module>
+		<!-- Terminal Connector features and plug-ins -->
+		<module>plugins/org.eclipse.tm.terminal.connector.local</module>
+		<module>plugins/org.eclipse.tm.terminal.connector.process</module>
+		<module>plugins/org.eclipse.tm.terminal.connector.remote</module>
+		<module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
+		<module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
 
-        <!-- Terminals View features and plug-ins -->
-        <module>plugins/org.eclipse.tm.terminal.view.core</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.rse</module>
-        
-        <module>features/org.eclipse.tm.terminal.view.feature</module>
-        <module>features/org.eclipse.tm.terminal.view.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.view.rse.feature</module>
-        <module>features/org.eclipse.tm.terminal.view.rse.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.local.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.ssh.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.telnet.feature</module>
+		<module>features/org.eclipse.tm.terminal.connector.telnet.sdk.feature</module>
 
-        <!-- TM Terminal "all-in-one" features -->
-        <module>features/org.eclipse.tm.terminal.feature</module>
-        <module>features/org.eclipse.tm.terminal.sdk.feature</module>
+		<!-- Terminals View features and plug-ins -->
+		<module>plugins/org.eclipse.tm.terminal.view.core</module>
+		<module>plugins/org.eclipse.tm.terminal.view.ui</module>
+		<module>plugins/org.eclipse.tm.terminal.view.ui.rse</module>
 
-        <!-- TM Terminal Repository -->
-        <!-- Can only be built with cdtserial since it references cdtserial! -->
-        <!-- This is OK since older profiles are only for validation anyways. -->
-        <!-- <module>repos/org.eclipse.tm.terminal.repo</module>  -->
-    </modules>
+		<module>features/org.eclipse.tm.terminal.view.feature</module>
+		<module>features/org.eclipse.tm.terminal.view.sdk.feature</module>
+		<module>features/org.eclipse.tm.terminal.view.rse.feature</module>
+		<module>features/org.eclipse.tm.terminal.view.rse.sdk.feature</module>
 
-    <profiles>
-        <profile>
-	        <!--  The cdtserial connector can only be built with CDT Oxygen or newer. -->
-	        <id>cdtserial</id>
+		<!-- TM Terminal "all-in-one" features -->
+		<module>features/org.eclipse.tm.terminal.feature</module>
+		<module>features/org.eclipse.tm.terminal.sdk.feature</module>
+
+		<!-- TM Terminal Repository -->
+		<!-- Can only be built with cdtserial since it references cdtserial! -->
+		<!-- This is OK since older profiles are only for validation anyways. -->
+		<!-- <module>repos/org.eclipse.tm.terminal.repo</module> -->
+	</modules>
+
+	<profiles>
+		<profile>
+			<!-- The cdtserial connector can only be built with CDT Oxygen or newer. -->
+			<id>cdtserial</id>
 			<activation>
-				<!-- cdtserial is the future for master moving forward, so have it on by default. -->
-				<!-- This also affects the Gerrit validation job, which should work on cdtserial too. -->
+				<!-- cdtserial is the future for master moving forward, so have it on 
+					by default. -->
+				<!-- This also affects the Gerrit validation job, which should work on 
+					cdtserial too. -->
 				<activeByDefault>true</activeByDefault>
-				<property><name>!nocdtserial</name></property>
+				<property>
+					<name>!nocdtserial</name>
+				</property>
 			</activation>
-    	    <modules>
-		        <module>plugins/org.eclipse.tm.terminal.connector.cdtserial</module>
-		        <module>features/org.eclipse.tm.terminal.connector.cdtserial.feature</module>
-        		<module>features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
-		        <module>repos/org.eclipse.tm.terminal.repo</module>
+			<modules>
+				<module>plugins/org.eclipse.tm.terminal.connector.cdtserial</module>
+				<module>features/org.eclipse.tm.terminal.connector.cdtserial.feature</module>
+				<module>features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
+				<module>repos/org.eclipse.tm.terminal.repo</module>
 			</modules>
 		</profile>
-        <profile>
-	        <!--  The rxtxserial connector doesn't build on MacOSX. -->
-	        <id>rxtxserial</id>
+		<profile>
+			<!-- The rxtxserial connector doesn't build on MacOSX. -->
+			<id>rxtxserial</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
-				<property><name>!norxtx</name></property>
+				<property>
+					<name>!norxtx</name>
+				</property>
 			</activation>
-    	    <modules>
-		        <module>plugins/org.eclipse.tm.terminal.connector.serial</module>
-        		<module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
-		        <module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
+			<modules>
+				<module>plugins/org.eclipse.tm.terminal.connector.serial</module>
+				<module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
+				<module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
 			</modules>
 		</profile>
-        <profile>
-	        <!--  The tests are only built with the tests profile. -->
-	        <id>tests</id>
-    	    <modules>
-        	    <module>plugins/org.eclipse.tm.terminal.test</module>
+		<profile>
+			<!-- The tests are only built with the tests profile. -->
+			<id>tests</id>
+			<modules>
+				<module>plugins/org.eclipse.tm.terminal.test</module>
 			</modules>
 		</profile>
-    </profiles>
+	</profiles>
 </project>

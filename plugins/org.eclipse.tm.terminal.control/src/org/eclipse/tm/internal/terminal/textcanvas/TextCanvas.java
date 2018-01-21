@@ -382,6 +382,22 @@ public class TextCanvas extends GridCanvas {
 		fCellCanvasModel.setSelection(-1,-1,-1,-1);
 	}
 
+	/**
+	 * Collect and return all text present in the widget.
+	 *
+	 * <p>Individual lines of the returned text are separated by '\n'.
+	 *
+	 * <p>The method is primarily designed for test automation. Tests need
+	 * to check what happens in a terminal (e.g. if and how a CDT Debugger
+	 * Console reacts in a GDB session) and this method allows to read the
+	 * text present in the terminal.
+	 *
+	 * @since 4.3
+	 */
+	public String getAllText() {
+		return fCellCanvasModel.getAllText();
+	}
+
 	public boolean isEmpty() {
 		return false;
 	}

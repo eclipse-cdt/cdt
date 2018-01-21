@@ -277,6 +277,22 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	public String getSelectedText() {
 		return fCurrentSelection;
 	}
+
+	// helper to sanitize text copied out of a snapshot
+	private static String scrubLine(String text) {
+		// get rid of the empty space at the end of the lines
+		// text=text.replaceAll("\000+$","");  //$NON-NLS-1$//$NON-NLS-2$
+		// <J2ME-CDC-1.1 version>
+		int i = text.length() - 1;
+		while (i >= 0 && text.charAt(i) == '\000') {
+			i--;
+		}
+		text = text.substring(0, i + 1);
+		// </J2ME-CDC-1.1 version>
+		// null means space
+		return text.replace('\000', ' ');
+	}
+
 	/**
 	 * Calculates the currently selected text
 	 * @return the currently selected text
@@ -294,17 +310,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 					text=text.substring(0, Math.min(fSelectionEndColumn+1,text.length()));
 				if(line==fSelectionStartLine)
 					text=text.substring(Math.min(fSelectionStartCoumn,text.length()));
-				// get rid of the empty space at the end of the lines
-				// text=text.replaceAll("\000+$","");  //$NON-NLS-1$//$NON-NLS-2$
-				// <J2ME-CDC-1.1 version>
-				int i = text.length() - 1;
-				while (i >= 0 && text.charAt(i) == '\000') {
-					i--;
-				}
-				text = text.substring(0, i + 1);
-				// </J2ME-CDC-1.1 version>
-				// null means space
-				text=text.replace('\000', ' ');
+				text=scrubLine(text);
 			} else {
 				text=""; //$NON-NLS-1$
 			}
@@ -345,4 +351,30 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		}
 	}
 
+	@Override
+	public String getAllText() {
+
+		// Make a snapshot of the whole text data
+		ITerminalTextDataSnapshot snapshot = fSnapshot.getTerminalTextData().makeSnapshot();
+		snapshot.updateSnapshot(true);
+		snapshot.detach();
+
+		// Extract the data
+		StringBuffer sb = new StringBuffer();
+		for (int line = 0; line < snapshot.getHeight(); line++) {
+			char[] chars = snapshot.getChars(line);
+			String text;
+			if (chars != null) {
+				text = scrubLine(new String(chars)); // take care of NULs
+			} else {
+				text = ""; //$NON-NLS-1$ null arrays represent empty lines
+			}
+			sb.append(text);
+			// terminate lines except (1) the last one and (2) wrapped lines
+			if ((line < snapshot.getHeight() - 1) && !snapshot.isWrappedLine(line)) {
+				sb.append('\n');
+			}
+		}
+		return sb.toString();
+	}
 }

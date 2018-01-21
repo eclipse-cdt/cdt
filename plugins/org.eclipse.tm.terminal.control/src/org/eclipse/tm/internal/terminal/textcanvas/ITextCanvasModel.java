@@ -89,7 +89,7 @@ public interface ITextCanvasModel {
 	 *
 	 * <p>The method is primarily designed for test automation.
 	 *
-	 * @since 4.3
+	 * @since 4.4
 	 */
 	String getAllText();
 }

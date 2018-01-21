@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+     Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@
 <feature
       id="org.eclipse.tm.terminal.control.sdk.feature"
       label="%featureName"
-      version="4.3.0.qualifier"
+      version="4.4.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -32,7 +32,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.3"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.4"/>
    </url>
 
    <includes

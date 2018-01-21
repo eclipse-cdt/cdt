@@ -392,7 +392,7 @@ public class TextCanvas extends GridCanvas {
 	 * Console reacts in a GDB session) and this method allows to read the
 	 * text present in the terminal.
 	 *
-	 * @since 4.3
+	 * @since 4.4
 	 */
 	public String getAllText() {
 		return fCellCanvasModel.getAllText();

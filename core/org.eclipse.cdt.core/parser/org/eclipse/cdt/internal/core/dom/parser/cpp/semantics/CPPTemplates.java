@@ -2834,6 +2834,9 @@ public class CPPTemplates {
 			final IType paramType, ICPPTemplateArgument arg) throws DOMException {
 		// 14.1s8 function to pointer and array to pointer conversions.
 		IType a= arg.getTypeOfNonTypeValue();
+		if (a instanceof ICPPParameterPackType) {
+			a = ((ICPPParameterPackType) a).getType();
+		}
 		IType p;
 		if (paramType instanceof IFunctionType) {
 			p = new CPPPointerType(paramType);

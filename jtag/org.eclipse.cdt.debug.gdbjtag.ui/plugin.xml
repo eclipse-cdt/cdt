@@ -52,10 +52,18 @@
    <extension
          point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
       <device
-            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagConnectionImpl"
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDPipe"
             default_connection="| openocd --pipe"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCD"
             name="%OpenOCDPipe.name">
+      </device>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
+            name="%OpenOCDSocket.name">
       </device>
    </extension>
    <extension

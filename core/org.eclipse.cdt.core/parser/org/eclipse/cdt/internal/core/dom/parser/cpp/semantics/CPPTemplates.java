@@ -222,7 +222,7 @@ public class CPPTemplates {
 
 	// Used to indicate that two different packs with different sizes were found.
 	static final int PACK_SIZE_FAIL = -2;
-
+	
 	// Used to indicate that no template parameter packs were found.
 	static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 
@@ -1224,14 +1224,6 @@ public class CPPTemplates {
 		if (tpar.isParameterPack()) {
 			ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
 			if (args != null) {
-				// The arguments could be dependent, so they could themselves
-				// contain pack expansions.
-				for (ICPPTemplateArgument arg : args) {
-					if (arg.isPackExpansion()) {
-						return PACK_SIZE_DEFER;
-					}
-				}
-				
 				return args.length;
 			}
 			return PACK_SIZE_DEFER;

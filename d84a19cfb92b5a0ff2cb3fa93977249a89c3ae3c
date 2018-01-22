@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_ef5a347a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/language/settings/providers/LanguageSettingsEntriesTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 858
+      },
+      "writtenOn": "2018-01-22T09:23:28Z",
+      "side": 1,
+      "message": "This code is never executed because the languages tree has no nested items and therefore never gets treeExpanded events. The column now always stays at its initial 200 px width and the control gets a horizontal scroll bar even when it wouldn’t need one. (If someone has a huge font or extremely long language names they may even be truncated with no way out.) That seems like a regression to me. \n\nThe old code at least worked (for me), so I would rather not touch it, even though it would seem more natural to me to use a ControlListener for resize events rather than a PaintListener (but I have not tried that).",
+      "range": {
+        "startLine": 366,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 4
+      },
+      "revId": "d84a19cfb92b5a0ff2cb3fa93977249a89c3ae3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -43,6 +43,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -208,17 +210,9 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		if (fOperator == op_sizeofParameterPack) {
-			int packSize = determinePackSize(context.getParameterMap());
-			if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
-				return EvalFixed.INCOMPLETE;
-			} else if (packSize != CPPTemplates.PACK_SIZE_DEFER) {
-				return new EvalFixed(getType(), getValueCategory(), IntegralValue.create(packSize));
-			}
+			return instantiateSizeofParameterPack(context);
 		}
-		IType type = CPPTemplates.instantiateType(fOrigType, context);
-		if (type == fOrigType)
-			return this;
-		return new EvalUnaryTypeID(fOperator, type, getTemplateDefinition());
+		return instantiateBySubstitution(context);
 	}
 
 	@Override
@@ -234,5 +228,50 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	@Override
 	public boolean referencesTemplateParameter() {
 		return CPPTemplates.isDependentType(fOrigType);
+	}
+	
+	private ICPPEvaluation instantiateBySubstitution(InstantiationContext context) {
+		IType type = CPPTemplates.instantiateType(fOrigType, context);
+		if (type == fOrigType)
+			return this;
+		return new EvalUnaryTypeID(fOperator, type, getTemplateDefinition());
+	}
+	
+	private ICPPEvaluation instantiateSizeofParameterPack(InstantiationContext context) {
+		if (fOrigType instanceof ICPPTemplateParameter) {
+			ICPPTemplateParameter pack = (ICPPTemplateParameter) fOrigType;
+			if (pack.isParameterPack()) {
+				ICPPTemplateArgument[] args = context.getPackExpansion(pack);
+				if (args == null) {
+					return this;
+				}
+				int concreteArgCount = 0;
+				boolean havePackExpansion = false;
+				for (ICPPTemplateArgument arg : args) {
+					if (arg.isPackExpansion()) {
+						havePackExpansion = true;
+					} else {
+						concreteArgCount++;
+					}
+				}
+				if (havePackExpansion) {
+					// TODO(bug 530103): 
+					//   This will only handle correctly the case where there is a single argument
+					//   which is a pack expansion, and no concrete arguments.
+					//   To correctly handle cases with multiple pack expansions, or a mixture
+					//   of concrete arguments and pack expansions, we need to do the following:
+					//     - For each pack expansion, find the parameter pack P which it's
+					//       expanding (if it's expanding multiple parameter packs, any one
+					//       should be sufficient), and construct an EvalUnaryTypeId representing 
+					//       sizeof...(P).
+					//     - Construct an EvalBinary tree representing the sum of |concreteArgCount|
+					//       and the EvalUnaryTypeIds from the previous step.
+					return instantiateBySubstitution(context);
+				} else {
+					return new EvalFixed(getType(), getValueCategory(), IntegralValue.create(concreteArgCount));
+				}
+			}
+		}
+		return EvalFixed.INCOMPLETE;
 	}
 }

@@ -361,12 +361,13 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		columnLanguages.setResizable(false);
 		columnLanguages.setToolTipText(Messages.AbstractLangsListTab_Languages);
 
-		treeLanguages.addTreeListener(new TreeAdapter() {
+		treeLanguages.addPaintListener(new PaintListener() {
 			@Override
-			public void treeExpanded(TreeEvent e) {
-				treeLanguages.getDisplay().asyncExec(() -> {
-					columnLanguages.pack();
-				});
+			public void paintControl(PaintEvent e) {
+				int x = treeLanguages.getBounds().width - 5;
+				if (columnLanguages.getWidth() != x) {
+					columnLanguages.setWidth(x);
+				}
 			}
 		});
 	}

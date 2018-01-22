@@ -12632,4 +12632,19 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo4", 0);
 		helper.assertVariableValue("waldo5", 0);
 	}
+	
+	//  namespace x {
+	//  	void foo();
+	//	}
+	//	namespace x::y {
+	//  	void bar() {
+	//      	foo();
+	//  	}
+	//	}
+	//	int main() {
+	//  	x::y::bar();
+	//	}
+	public void testNestedNamespaceDefinition_490359() throws Exception {
+		parseAndCheckBindings();
+	}
 }

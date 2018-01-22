@@ -2638,9 +2638,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		consume(IToken.t_namespace);
 
 		// optional name
-		IASTName name = null;
+		ICPPASTName name = null;
 		if (LT(1) == IToken.tIDENTIFIER) {
-			name = identifier();
+			name = qualifiedName();
 			endOffset= calculateEndOffset(name);
 		} else {
 			name = getNodeFactory().newName();
@@ -2650,16 +2650,55 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		List<IASTAttributeSpecifier> attributeSpecifiers = __attribute_decl_seq(true, false);
 
 		if (LT(1) == IToken.tLBRACE) {
-			ICPPASTNamespaceDefinition ns = getNodeFactory().newNamespaceDefinition(name);
+			ICPPASTNamespaceDefinition outer = null;
+			ICPPASTNamespaceDefinition inner = null;
+			if (name instanceof ICPPASTQualifiedName) {
+				// Handle C++17 nested namespace definition.
+				ICPPASTNameSpecifier[] qualifier = ((ICPPASTQualifiedName) name).getQualifier();
+				for (ICPPASTNameSpecifier specifier : qualifier) {
+					if (!(specifier instanceof ICPPASTName)) {
+						// No decltype-specifiers in nested namespace definition.
+						throwBacktrack(specifier);
+						return null;
+					}
+					ICPPASTName segment = (ICPPASTName) specifier;
+					ICPPASTNamespaceDefinition ns = getNodeFactory().newNamespaceDefinition(segment);
+					if (outer == null || inner == null) {  // second half of condition is just to avoid warning
+						outer = ns;
+					} else {
+						inner.addDeclaration(ns);
+					}
+					inner = ns;
+				}
+			}
+			IASTName lastName = name.getLastName();
+			ICPPASTNamespaceDefinition ns = getNodeFactory().newNamespaceDefinition(lastName);
+			if (outer == null || inner == null) {  // second half of condition is just to avoid warning
+				outer = ns;
+			} else {
+				inner.addDeclaration(ns);
+			}
 			ns.setIsInline(isInline);
 			declarationListInBraces(ns, offset, DeclarationOptions.GLOBAL);
+			endOffset = getEndOffset();
+			if (ns != outer) {
+				// For a C++17 nested namespace definition, we need to set the offset/length of
+				// the enclosing namespace declaration nodes (declarationListInBraces() does it
+				// for the inner one).
+				for (IASTNode parent = ns.getParent(); parent != null; parent = parent.getParent()) {
+					setRange(parent, offset, endOffset);
+					if (parent == outer) {
+						break;
+					}
+				}
+			}
 			addAttributeSpecifiers(attributeSpecifiers, ns);
-			return ns;
+			return outer;
 		}
 
 		if (LT(1) == IToken.tASSIGN) {
 			endOffset= consume().getEndOffset();
-			if (name.toString() == null) {
+			if (name.toString() == null || name instanceof ICPPASTQualifiedName) {
 				throwBacktrack(offset, endOffset - offset);
 				return null;
 			}

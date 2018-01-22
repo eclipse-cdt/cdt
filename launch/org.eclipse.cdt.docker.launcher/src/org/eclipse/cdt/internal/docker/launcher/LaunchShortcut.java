@@ -299,7 +299,8 @@ public class LaunchShortcut implements ILaunchShortcut {
 						// if we have an active configuration with container
 						// build properties, make sure they match, otherwise
 						// add the launch config as a candidate
-						if (connectionUri.equals(config.getAttribute(
+						if (connectionUri != null
+								&& connectionUri.equals(config.getAttribute(
 								ILaunchConstants.ATTR_CONNECTION_URI,
 								connectionUri))) {
 							if (imageName.equals(config.getAttribute(

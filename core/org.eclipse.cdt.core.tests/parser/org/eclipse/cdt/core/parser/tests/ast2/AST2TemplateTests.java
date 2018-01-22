@@ -10557,7 +10557,23 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//
 	//	template <int... I>
 	//	void foo(index_sequence<I...>);
-	public void testTemplateAliasWithVariadicNonTypeArgs_530086() throws Exception {
+	public void testTemplateAliasWithVariadicNonTypeArgs_530086a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <int...>
+	//	struct integer_sequence {};
+	//
+	//	template <int... I>
+	//	using index_sequence = integer_sequence<I...>;
+	//
+	//	template <typename, int... I>
+	//	void bar(index_sequence<I...>);
+	//	 
+	//	void foo() {
+	//	    bar<int>(integer_sequence<0>{});
+	//	}
+	public void testTemplateAliasWithVariadicArgs_530086b() throws Exception {
 		parseAndCheckBindings();
 	}
 }

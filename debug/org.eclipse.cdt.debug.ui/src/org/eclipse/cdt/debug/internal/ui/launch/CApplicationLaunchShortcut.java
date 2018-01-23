@@ -101,7 +101,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				String projectName = CDebugUtils.getProjectName(config);
 				IPath name = bin.getResource().getProjectRelativePath();
 				// don't match any launch config that is used for a Container launch
-				if (config.getAttribute(CONNECTION_URI, "").isEmpty()) { //$NON-NLS-1$
+				String connectionURI = config.getAttribute(CONNECTION_URI, (String)null);
+				if (connectionURI == null) { //$NON-NLS-1$
 					if (programPath != null && programPath.equals(name)) {
 						if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
 							candidateConfigs.add(config);

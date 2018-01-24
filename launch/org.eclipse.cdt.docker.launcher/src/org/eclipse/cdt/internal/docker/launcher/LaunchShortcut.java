@@ -281,6 +281,22 @@ public class LaunchShortcut implements ILaunchShortcut {
 						imageName = props
 								.getProperty(ContainerCommandLauncher.IMAGE_ID);
 					}
+				} else {
+					IDockerConnection[] connections = DockerConnectionManager
+							.getInstance().getConnections();
+					if (connections != null && connections.length > 0) {
+						connectionUri = connections[0].getUri();
+						Preferences prefs = InstanceScope.INSTANCE
+								.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
+						imageName = prefs.get(PreferenceConstants.DEFAULT_IMAGE,
+								null);
+						if (imageName == null) {
+							List<IDockerImage> images = connections[0]
+									.getImages();
+							if (images != null && images.size() > 0)
+								imageName = images.get(0).repoTags().get(0);
+						}
+					}
 				}
 			}
 		}
@@ -302,9 +318,10 @@ public class LaunchShortcut implements ILaunchShortcut {
 						if (connectionUri != null
 								&& connectionUri.equals(config.getAttribute(
 								ILaunchConstants.ATTR_CONNECTION_URI,
-								connectionUri))) {
-							if (imageName.equals(config.getAttribute(
-									ILaunchConstants.ATTR_IMAGE, imageName))) {
+										(String) null))) {
+							if (imageName != null && imageName.equals(config
+									.getAttribute(ILaunchConstants.ATTR_IMAGE,
+											(String) null))) {
 								candidateConfigs.add(config);
 							}
 						}

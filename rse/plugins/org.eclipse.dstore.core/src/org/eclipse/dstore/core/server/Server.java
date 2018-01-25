@@ -62,7 +62,7 @@ public class Server implements Runnable
 			int major = Integer.parseInt(vers[1]);
 
 
-			if (version >= 1 && major >= 4)
+			if (version >= 9 || (version >= 1 && major >= 4))
 			{
 				// version is good
 			}

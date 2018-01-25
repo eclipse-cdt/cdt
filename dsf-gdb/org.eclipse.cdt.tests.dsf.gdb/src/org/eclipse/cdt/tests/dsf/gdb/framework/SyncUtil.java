@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Ericsson and others.
+ * Copyright (c) 2007, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,8 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
+import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -99,6 +101,7 @@ public class SyncUtil {
 	private static IGDBProcesses fProcessesService;
 
 	private static ISourceLookup fSourceLookup;
+	private static IDebugSourceFiles fDebugSourceFiles; 
 
 	// Initialize some common things, once the session has been established
 	public static void initialize(DsfSession session) throws Exception {
@@ -118,6 +121,7 @@ public class SyncUtil {
 				fMemory = tracker.getService(IMemory.class);
 				fCommandFactory = fGdbControl.getCommandFactory();
 				fSourceLookup = tracker.getService(ISourceLookup.class);
+				fDebugSourceFiles = tracker.getService(IDebugSourceFiles.class);
 
 				tracker.dispose();
 			}
@@ -990,6 +994,23 @@ public class SyncUtil {
 
 		fSourceLookup.getExecutor().execute(query);
 
+		return query.get();
+	}
+
+	/**
+	 * Get the sources from the debugger.
+	 * 
+	 * Wrapper around
+	 * {@link IDebugSourceFiles#getSources(IDMContext, DataRequestMonitor)}
+	 */
+	public static IDebugSourceFileInfo[] getSources(IDMContext ctx) throws Exception {
+		Query<IDebugSourceFileInfo[]> query = new Query<IDebugSourceFileInfo[]>() {
+			@Override
+			protected void execute(DataRequestMonitor<IDebugSourceFileInfo[]> rm) {
+				fDebugSourceFiles.getSources(ctx, rm);
+			}
+		};
+		fDebugSourceFiles.getExecutor().execute(query);
 		return query.get();
 	}
 }

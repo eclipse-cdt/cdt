@@ -116,6 +116,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecFile;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MiFileListExecSourceFiles;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileSymbolFile;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSet;
@@ -249,6 +250,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo;
 
 /**
  * Factory to create MI/CLI commands.
@@ -723,6 +725,11 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMIFileExecFile(ICommandControlDMContext dmc) {
 		return new MIFileExecFile(dmc);
 	}
+	
+	/** @since 5.5 */
+	public ICommand<MiSourceFilesInfo> createMiFileListExecSourceFiles(IDMContext ctx) {
+		return new MiFileListExecSourceFiles(ctx);
+	}	
 
 	public ICommand<MIInfo> createMIFileSymbolFile(ICommandControlDMContext dmc, String file) {
 		return new MIFileSymbolFile(dmc, file);

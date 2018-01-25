@@ -51,6 +51,8 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
+import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
+import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -1158,5 +1160,59 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * deadlocking.
 		 */
 		waitUntil("Timeout waiting for launches to terminate", () -> launch1.isTerminated() && launch2.isTerminated());
+	}
+
+	/**
+	 * Helper method that actually performs the test/assertions for
+	 * {@link IDebugSourceFiles#getSources(IDMContext, DataRequestMonitor)} tests.
+	 */
+	private void testGetSourcesListInner(String path) throws Throwable {
+		IDebugSourceFileInfo[] sources = SyncUtil.getSources(SyncUtil.getContainerContext());
+		String expectedPath = Paths.get(path, SOURCE_NAME).toString();
+		boolean anyMatch = Arrays.asList(sources).stream().anyMatch(source -> {
+			return source.getPath().equals(expectedPath);
+		});
+		assertTrue(anyMatch);
+	}
+
+	/**
+	 * Test for {@link IDebugSourceFiles#getSources(IDMContext, DataRequestMonitor)}
+	 * with source path substitution on. Therefore make sure there is an entry
+	 * for the resolved source path of {@value #SOURCE_NAME}
+	 */
+	private void testGetSourcesList(String execName) throws Throwable {
+		doMappingAndLaunch(execName, true);
+		testGetSourcesListInner(SOURCE_ABSPATH);
+	}
+
+	/**
+	 * Test for {@link IDebugSourceFiles#getSources(IDMContext, DataRequestMonitor)}
+	 * with no source path substitution on. Therefore make sure there is an entry
+	 * for the build path of {@value #SOURCE_NAME}
+	 */
+	@Test
+	public void testGetSourcesListNoSourceLookup() throws Throwable {
+		doLaunch(EXEC_PATH + EXEC_AC_NAME);
+		testGetSourcesListInner(BUILD_ABSPATH);
+	}
+
+	@Test
+	public void testGetSourcesListAC() throws Throwable {
+		testGetSourcesList(EXEC_AC_NAME);
+	}
+
+	@Test
+	public void testGetSourcesListAN() throws Throwable {
+		testGetSourcesList(EXEC_AN_NAME);
+	}
+
+	@Test
+	public void testGetSourcesListRC() throws Throwable {
+		testGetSourcesList(EXEC_RC_NAME);
+	}
+
+	@Test
+	public void testGetSourcesListRN() throws Throwable {
+		testGetSourcesList(EXEC_RN_NAME);
 	}
 }

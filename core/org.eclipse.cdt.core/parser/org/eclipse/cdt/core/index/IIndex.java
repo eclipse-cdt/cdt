@@ -68,7 +68,7 @@ public interface IIndex {
 	 * Constant to include potential matches in the results of a search.
 	 * An example of a potential match might be a function definition that does match
 	 * a declaration exactly in signature.
-	 * @since 6.4
+	 * @since 6.5
 	 */
 	final int FIND_POTENTIAL_MATCHES = 0x10;
 	/**

@@ -65,7 +65,7 @@ public class GdbFullCliConsole extends AbstractConsole implements IGDBDebuggerCo
     			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> setName(newName));
     		} catch (SWTException e) {
     			// display may be disposed, so ignore the exception
-    			if (e.code != SWT.ERROR_WIDGET_DISPOSED) {
+    			if (e.code != SWT.ERROR_WIDGET_DISPOSED && e.code != SWT.ERROR_DEVICE_DISPOSED) {
     				throw e;
     			}
     		}

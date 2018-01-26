@@ -75,7 +75,7 @@
         name="CDT"
         version="9.3"
         location="${workspace.location/../api.baseline}"
-        remoteURI="http://download.eclipse.org/tools/cdt/releases/9.3/cdt-9.3.3.zip"/>
+        remoteURI="http://download.eclipse.org/tools/cdt/releases/9.4/cdt-9.4.0/cdt-9.4.0.zip"/>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"

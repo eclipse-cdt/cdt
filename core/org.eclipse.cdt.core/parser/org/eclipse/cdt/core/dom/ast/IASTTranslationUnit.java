@@ -133,7 +133,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @param binding
 	 * @param permissive
 	 * @return Array of IASTName nodes for the binding's declaration
-	 * @since 6.4
+	 * @since 6.5
 	 */
 	public IASTName[] getDefinitionsInAST(IBinding binding, boolean permissive);
 

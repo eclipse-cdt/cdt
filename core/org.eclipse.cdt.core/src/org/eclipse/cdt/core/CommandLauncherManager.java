@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +34,8 @@ import org.eclipse.core.runtime.Platform;
  * @since 6.4
  */
 public class CommandLauncherManager {
+	
+	public final static String CONTAINER_BUILD_ENABLED = "container.build.enabled"; //$NON-NLS-1$
 	
 	private static CommandLauncherManager instance;
 	
@@ -187,6 +190,32 @@ public class CommandLauncherManager {
 		return new CommandLauncher();
 	}
 	
+	/**
+	 * Get a command launcher.
+	 * 
+	 * @param config - ICBuildConfiguration to determine launcher for.
+	 * @return an ICommandLauncher for running commands
+	 */
+	public ICommandLauncher getCommandLauncher(ICBuildConfiguration config) {
+		// loop through list of factories and return launcher returned with
+		// highest priority
+		int highestPriority = -1;
+		ICommandLauncher bestLauncher = null;
+		for (ICommandLauncherFactory factory : factories) {
+			ICommandLauncher launcher = factory.getCommandLauncher(config);
+			if (launcher != null) {
+				if (priorityMapping.get(factory) > highestPriority) {
+				   bestLauncher = launcher;
+				}
+			}
+		}
+		if (bestLauncher != null) {
+			return bestLauncher;
+		}
+		// default to local CommandLauncher
+		return new CommandLauncher();
+	}
+
 	/**
 	 * Get a command launcher.
 	 * 

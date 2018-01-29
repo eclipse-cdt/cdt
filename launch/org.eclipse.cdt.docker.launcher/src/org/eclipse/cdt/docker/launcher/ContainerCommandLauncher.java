@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ProcessClosure;
@@ -35,7 +37,8 @@ import org.osgi.service.prefs.Preferences;
 
 @SuppressWarnings("restriction")
 public class ContainerCommandLauncher
-		implements ICommandLauncher, IErrorMessageHolder {
+		implements ICommandLauncher, ICBuildCommandLauncher,
+		IErrorMessageHolder {
 
 	public final static String CONTAINER_BUILD_ENABLED = DockerLaunchUIPlugin.PLUGIN_ID
 			+ ".containerbuild.property.enablement"; //$NON-NLS-1$
@@ -55,6 +58,7 @@ public class ContainerCommandLauncher
 	private boolean fShowCommand;
 	private String fErrorMessage;
 	private Properties fEnvironment;
+	private ICBuildConfiguration fBuildConfig;
 
 	private String[] commandArgs;
 	private String fImageName = ""; //$NON-NLS-1$
@@ -79,6 +83,16 @@ public class ContainerCommandLauncher
 	@Override
 	public IProject getProject() {
 		return fProject;
+	}
+
+	@Override
+	public void setBuildConfiguration(ICBuildConfiguration config) {
+		this.fBuildConfig = config;
+	}
+
+	@Override
+	public ICBuildConfiguration getBuildConfiguration() {
+		return fBuildConfig;
 	}
 
 	@SuppressWarnings("unused")
@@ -236,17 +250,30 @@ public class ContainerCommandLauncher
 		boolean keepContainer = prefs.getBoolean(
 				PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 
-		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(fProject).getActiveConfiguration();
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
-		if (cfg == null) {
-			return null;
+		ICBuildConfiguration buildCfg = getBuildConfiguration();
+		String selectedVolumeString = null;
+		String connectionName = null;
+		String imageName = null;
+		if (buildCfg != null) {
+			selectedVolumeString = buildCfg.getProperty(SELECTED_VOLUMES_ID);
+			connectionName = buildCfg.getProperty(CONNECTION_ID);
+			imageName = buildCfg.getProperty(IMAGE_ID);
+		} else {
+			ICConfigurationDescription cfgd = CoreModel.getDefault()
+					.getProjectDescription(fProject).getActiveConfiguration();
+			IConfiguration cfg = ManagedBuildManager
+					.getConfigurationForDescription(cfgd);
+			if (cfg == null) {
+				return null;
+			}
+			IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+			selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
+			connectionName = props
+					.getProperty(ContainerCommandLauncher.CONNECTION_ID);
+			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		}
-		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 
 		// Add any specified volumes to additional dir list
-		String selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
 		if (selectedVolumeString != null && !selectedVolumeString.isEmpty()) {
 			String[] selectedVolumes = selectedVolumeString
 					.split(VOLUME_SEPARATOR_REGEX);
@@ -264,13 +291,9 @@ public class ContainerCommandLauncher
 			}
 		}
 
-		String connectionName = props
-				.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 		if (connectionName == null) {
 			return null;
 		}
-		String imageName = props
-				.getProperty(ContainerCommandLauncher.IMAGE_ID);
 		if (imageName == null) {
 			return null;
 		}

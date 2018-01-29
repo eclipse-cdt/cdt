@@ -16,10 +16,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncherFactory;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -80,6 +82,26 @@ public class ContainerCommandLauncherFactory
 		if (props != null) {
 			String enablementProperty = props.getProperty(
 					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+			if (enablementProperty != null) {
+				boolean enableContainer = Boolean
+						.parseBoolean(enablementProperty);
+				// enablement has occurred, we can return a
+				// ContainerCommandLauncher
+				if (enableContainer) {
+					return new ContainerCommandLauncher();
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public ICommandLauncher getCommandLauncher(ICBuildConfiguration cfgd) {
+		// check if container build enablement has been checked
+		Map<String, String> props = cfgd.getProperties();
+		if (props != null) {
+			String enablementProperty = props
+					.get(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
 			if (enablementProperty != null) {
 				boolean enableContainer = Boolean
 						.parseBoolean(enablementProperty);

@@ -82,7 +82,6 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			connectionUri = connection.getUri();
 			if (!connectionName.equals(connection.getName())) {
 				setErrorMessage(null);
-				updateLaunchConfigurationDialog();
 				initializeImageCombo();
 			}
 			connectionName = connection.getName();

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.cdt.meson.ui.properties.MesonPropertyPage"
+            id="org.eclipse.cdt.meson.ui.properties.mesonPropertyPage"
+            name="Meson">
+         <enabledWhen>
+            <and>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.eclipse.cdt.meson.core.mesonNature">
+               </test>
+            </and>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.meson.ui.MesonPreferencePage"
+            id="org.eclipse.cdt.meson.ui.page1"
+            name="%meson.preferences.name">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.tools.templates.ui.templates">
+      <tag
+            id="org.eclipse.cdt.meson.ui.tag"
+            label="Meson">
+      </tag>
+      <template
+            icon="icons/meson-logo.png"
+            id="org.eclipse.cdt.meson.ui.newProjectTemplate"
+            label="Meson Project"
+            wizard="org.eclipse.cdt.internal.meson.ui.NewMesonProjectWizard">
+         <description>
+            A Meson project with a Hello World executable to get started.
+         </description>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.meson.ui.tag">
+         </tagReference>
+      </template>
+      <template
+            icon="icons/meson-logo.png"
+            id="org.eclipse.cdt.meson.ui.emptyProjectTemplate"
+            label="Empty or Existing Meson Project"
+            wizard="org.eclipse.cdt.internal.meson.ui.EmptyMesonProjectWizard">
+         <description>
+            Create a Meson project with no files. Can be used to create one over existing content.
+         </description>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.meson.ui.tag">
+         </tagReference>
+      </template>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.launch.coreBuildTab">
+      <provider
+            nature="org.eclipse.cdt.meson.core.mesonNature"
+            priority="10"
+            tabClass="org.eclipse.cdt.internal.meson.ui.MesonBuildTab">
+      </provider>
+   </extension>
+
+</plugin>

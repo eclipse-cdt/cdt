@@ -74,6 +74,10 @@
 		<module>build/org.eclipse.cdt.cmake.ui</module>
 		<module>build/org.eclipse.cdt.cmake-feature</module>
 
+		<module>build/org.eclipse.cdt.meson.core</module>
+		<module>build/org.eclipse.cdt.meson.ui</module>
+		<module>build/org.eclipse.cdt.meson-feature</module>
+
 		<module>build/org.eclipse.cdt.core.autotools.core</module>
 		<module>build/org.eclipse.cdt.core.autotools.ui</module>
 		<module>build/org.eclipse.cdt.core.autotools-feature</module>

@@ -1,0 +1,7 @@
+<templateManifest>
+	<file src="/templates/simple/meson.build"
+		dest="/${projectName}/meson.build"/>
+	<file src="/templates/simple/main.c"
+		dest="/${projectName}/${projectName}.c"
+		open="true"/>
+</templateManifest>

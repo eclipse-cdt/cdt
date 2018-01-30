@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="toolChainProvider" name="Meson ToolChain File Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension
+         id="mesonNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.meson.core.MesonNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.internal.meson.core.MesonBuildConfigurationProvider"
+            id="org.eclipse.cdt.meson.core.provider"
+            natureId="org.eclipse.cdt.meson.core.mesonNature">
+      </provider>
+   </extension>
+</plugin>

@@ -64,7 +64,10 @@ public class QuickFixSuppressProblem extends AbstractAstRewriteQuickFix implemen
 
 	@Override
 	public void prepareFor(IMarker marker) {
-		problemName = getProblem(marker).getName();
+		IProblem problem = getProblem(marker);
+		if (problem != null) {
+			problemName = problem.getName();
+		}
 	}
 
 	@Override

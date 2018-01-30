@@ -37,7 +37,10 @@ public class AcInitElement extends AutoconfMacroElement {
 			if (this.getChildren().length < 2)
 				return;
 			
-			this.validateMultipleArguments();
+			// autoconf 2.67 onwards allows a more relaxed VERSION string format,
+			// so only validate arguments for earlier versions
+			if (VersionComparator.compare(version, AutotoolsPropertyConstants.AC_VERSION_2_67) < 0)
+				this.validateMultipleArguments();
 		}
 
 		return;

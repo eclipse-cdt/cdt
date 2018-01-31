@@ -362,4 +362,24 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testAliasTemplateReferencingSameName_518937() throws Exception {
 		checkBindings();
 	}
+	
+	//h1.h
+	//	class A {
+	//	    friend class B1;
+	//	};
+
+	//s1.cpp
+	//	#include "h1.h"
+
+	//h2.h
+	//	class B1 {};
+	//	class B2 {};
+
+	//s2.cpp *
+	//	#include "h2.h"
+	//	B1 b1;
+	//	B2 b2;
+	public void testClassFirstDeclaredAsFriend_530430() throws Exception {
+		checkBindings();
+	}
 }

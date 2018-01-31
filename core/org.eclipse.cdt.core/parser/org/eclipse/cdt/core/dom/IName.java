@@ -56,7 +56,7 @@ public interface IName {
 	public boolean isReference();
     
     /**
-     * Is this name being used in the AST as a reference rather than a declaration?
+     * Is this name being used in the AST as a definition rather than a declaration?
      * @return boolean
      */
     public boolean isDefinition();

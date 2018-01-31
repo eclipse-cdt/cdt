@@ -558,4 +558,15 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 			return v_private; // Fallback visibility
 		}
 	}
+
+	// Class specializations do not need to be marked "visible to ADL only"
+	// independent of their specialized class types, so they do not need
+	// to implement these methods.
+	@Override
+	public boolean isVisibleToAdlOnly() {
+		return false;
+	}
+	@Override
+	public void setVisibleToAdlOnly(boolean visibleToAdlOnly) throws CoreException {
+	}
 }

@@ -46,5 +46,11 @@ public interface IPDOMCPPClassType extends ICPPClassType, IPDOMBinding, IIndexTy
 	 * A class type is visible to ADL only if it's only declaration so far
 	 * is a friend declaration inside another class.
 	 */
-	default boolean isVisibleToAdlOnly() { return false; }
+	boolean isVisibleToAdlOnly();
+	
+	/**
+	 * Set whether this class type is visible to ADL only.
+	 * See isVisibleToAdlOnly().
+	 */
+	void setVisibleToAdlOnly(boolean visibleToAdlOnly) throws CoreException;
 }

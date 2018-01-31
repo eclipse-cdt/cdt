@@ -635,6 +635,26 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					addImplicitMethods(pdomBinding, (ICPPClassType) binding);
 				}
 			}
+			
+			// If we have a non-friend declaration of a class type, mark the class type
+			// as being fully visible (not just visible to ADL only). This is important
+			// in case the first declaration of the class type was a friend declaration,
+			// in which case it was initially marked as visible to ADL only.
+			if (pdomBinding instanceof IPDOMCPPClassType && (name.isDeclaration() || name.isDefinition())) {
+				boolean declaresFriend = false;
+				IASTNode parent = name.getParent();
+				if (parent instanceof ICPPASTQualifiedName) {
+					parent = parent.getParent();
+				}
+				if (parent instanceof ICPPASTElaboratedTypeSpecifier) {
+					if (((ICPPASTElaboratedTypeSpecifier) parent).isFriend()) {
+						declaresFriend = true;
+					}
+				}
+				if (!declaresFriend) {
+					((IPDOMCPPClassType) pdomBinding).setVisibleToAdlOnly(false);
+				}
+			}
 	
 			// Some of the nodes created during addImplicitMethods() can
 			// also schedule post-processes, so we need to run through

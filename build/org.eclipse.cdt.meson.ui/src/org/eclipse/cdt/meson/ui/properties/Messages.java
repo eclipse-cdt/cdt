@@ -23,6 +23,10 @@ public class Messages extends NLS {
 	public static String MesonPropertyPage_configure_failed;
 	public static String MesonPropertyPage_terminated_rc;
 	
+	public static String MesonPropertyPage_options_group;
+	public static String MesonPropertyPage_env_tooltip;
+	public static String MesonPropertyPage_env_label;
+	
 	public static String MesonPropertyPage_prefix_tooltip;
 	public static String MesonPropertyPage_libdir_tooltip;
 	public static String MesonPropertyPage_libexecdir_tooltip;

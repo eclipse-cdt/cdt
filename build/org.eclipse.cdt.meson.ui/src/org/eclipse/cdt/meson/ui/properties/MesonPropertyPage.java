@@ -45,11 +45,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
- * Property page for CMake projects. The only thing we have here at the moment is a button
- * to launch the CMake GUI configurator (cmake-qt-gui).
+ * Property page for Meson projects.  For unconfigured projects, we use the meson command and parse
+ * the output of the --help option.  Otherwise, we use the meson configure command to find current
+ * options and what may be changed via a meson configure call.
  * 
  * We assume that the build directory is in project/build/configname, which is where
  * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's 
@@ -61,6 +64,7 @@ public class MesonPropertyPage extends PropertyPage {
 	private List<IMesonPropertyPageControl> componentList = new ArrayList<>();
 	private boolean configured;
 	private CBuildConfiguration buildConfig;
+	private Text envText;
 	
 	@Override
 	protected Control createContents(Composite parent) {
@@ -97,25 +101,73 @@ public class MesonPropertyPage extends PropertyPage {
 				}
 
 			} else {
-				Map<String, String> argMap = new HashMap<>();
-				String mesonArgs = buildConfig.getProperty(IMesonConstants.MESON_ARGUMENTS);
-				if (mesonArgs != null) {
-					String[] argStrings = mesonArgs.split("\\s+");
-					for (String argString : argStrings) {
-						String[] s = argString.split("=");
-						if (s.length == 2) {
-							argMap.put(s[0], s[1]);
-						} else {
-							argMap.put(argString, "true");
+				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+				Process p = launcher.execute(new Path("meson"), new String[] { "-h"}, new String[0], sourceDir, new NullProgressMonitor());
+				ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+				ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+				int rc = -1;
+				try {
+					if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
+						p.waitFor();
+					}
+					rc = p.exitValue();
+				} catch (InterruptedException e) {
+					// ignore for now
+				}
+				if (rc == 0) {
+					Map<String, String> argMap = new HashMap<>();
+					String mesonArgs = buildConfig.getProperty(IMesonConstants.MESON_ARGUMENTS);
+					if (mesonArgs != null) {
+						String[] argStrings = mesonArgs.split("\\s+");
+						for (String argString : argStrings) {
+							String[] s = argString.split("=");
+							if (s.length == 2) {
+								argMap.put(s[0], s[1]);
+							} else {
+								argMap.put(argString, "true");
+							}
 						}
 					}
+					
+					Group group = new Group(composite, SWT.BORDER);
+					GridLayout layout = new GridLayout(2, true);
+					layout.marginLeft = 10;
+					layout.marginRight = 10;
+					group.setLayout(layout);
+					group.setLayoutData(new GridData(GridData.FILL_BOTH));
+					group.setText("Environment");
+
+					Label envLabel = new Label(group, SWT.NONE);
+					envLabel.setText(Messages.MesonPropertyPage_env_label);
+					GridData data = new GridData(GridData.FILL, GridData.FILL, true, false);
+					data.grabExcessHorizontalSpace = true;
+					data.horizontalSpan = 1;
+					envLabel.setLayoutData(data);
+
+					
+					String mesonEnv = buildConfig.getProperty(IMesonConstants.MESON_ENV);
+
+					envText = new Text(group, SWT.BORDER);
+					if (mesonEnv != null) {
+						envText.setText(mesonEnv);
+					}
+					envText.setToolTipText(Messages.MesonPropertyPage_env_tooltip);
+					data = new GridData(GridData.FILL, GridData.FILL, true, false);
+					data.grabExcessHorizontalSpace = true;
+					data.horizontalSpan = 1;
+					envText.setLayoutData(data);
+					
+					// default buildtype based on active build configuration
+					// user can always override and we will use override from then on
+					String defaultBuildType = "release"; //$NON-NLS-1$
+					if (configName.contains("debug")) { //$NON-NLS-1$
+						defaultBuildType = "debug"; //$NON-NLS-1$
+					}
+				    if (argMap.get("buildtype") == null) { //$NON-NLS-1$
+				    	argMap.put("buildtype", defaultBuildType); //$NON-NLS-1$
+				    }
+					componentList = parseHelpOutput(stdout, composite, argMap, defaultBuildType);
 				}
-				
-				String defaultBuildType = "release";
-				if (configName.contains("debug")) { //$NON-NLS-1$
-					defaultBuildType = "debug"; //$NON-NLS-1$
-				}
-				componentList = defaultOptions(composite, argMap, defaultBuildType);
 			}
 		} catch (CoreException e2) {
 			// TODO Auto-generated catch block
@@ -201,13 +253,84 @@ public class MesonPropertyPage extends PropertyPage {
 		} else {
 			StringBuilder mesonargs = new StringBuilder();
 			for (IMesonPropertyPageControl control : componentList) {
-				System.out.println(control.getUnconfiguredString());
 				mesonargs.append(control.getUnconfiguredString());
 				mesonargs.append(" "); //$NON-NLS-1$
 			}
 			buildConfig.setProperty(IMesonConstants.MESON_ARGUMENTS, mesonargs.toString());
+			buildConfig.setProperty(IMesonConstants.MESON_ENV, envText.getText().trim());
 		}
 		return true;
+	}
+	/**
+	 * Parse output of meson help call to determine options to show to user
+	 * @param stdout - ByteArrayOutputStream containing output of command
+	 * @param composite - Composite to add Controls to
+	 * @return - list of Controls
+	 */
+	List<IMesonPropertyPageControl> parseHelpOutput(ByteArrayOutputStream stdout, Composite composite, Map<String, String> argMap, String defaultBuildType) {
+		List<IMesonPropertyPageControl> controls = new ArrayList<>();
+		
+		Group group = new Group(composite, SWT.BORDER);
+		GridLayout layout = new GridLayout(2, true);
+		layout.marginLeft = 10;
+		layout.marginRight = 10;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group.setText(Messages.MesonPropertyPage_options_group);
+
+		try {
+			String output = stdout.toString(StandardCharsets.UTF_8.name()).replaceAll("\\r?\\n\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
+			String[] lines = output.split("--"); //$NON-NLS-1$
+			Pattern optionPattern = Pattern.compile("(([a-z-]+)\\s+(([A-Z_][A-Z_]+))?\\s*(\\{.*?\\})?([^\\[\\]]*))");
+			Pattern descPattern1 = Pattern.compile("([^\\.]+).*");
+			Pattern descPattern = Pattern.compile("([^\\(]*)(\\(default\\:\\s+([^\\)]+)\\).*)");
+			for (String line : lines) {
+//				System.out.println(line);
+				Matcher optionMatcher = optionPattern.matcher(line);
+				if (optionMatcher.matches() && !optionMatcher.group(2).equals("help")) {
+//					System.out.println("group 1 is " + (optionMatcher.group(1) != null ? optionMatcher.group(1).trim() : null));
+//					System.out.println("group 2 is " + (optionMatcher.group(2) != null ? optionMatcher.group(2).trim() : null));
+//					System.out.println("group 3 is " + (optionMatcher.group(3) != null ? optionMatcher.group(3).trim() : null));
+//					System.out.println("group 4 is " + (optionMatcher.group(4) != null ? optionMatcher.group(4).trim() : null));
+//					System.out.println("group 5 is " + (optionMatcher.group(5) != null ? optionMatcher.group(5).trim() : null));
+//					System.out.println("group 6 is " + (optionMatcher.group(6) != null ? optionMatcher.group(6).trim() : null));
+					if (optionMatcher.group(3) != null) {
+						String defaultValue = argMap.get(optionMatcher.group(2));
+						String description = optionMatcher.group(6);
+						Matcher m = descPattern1.matcher(optionMatcher.group(6));
+						if (m.matches()) {
+							description = m.group(1).trim();
+						}
+						IMesonPropertyPageControl control = new MesonPropertyText(group, optionMatcher.group(2), defaultValue, description);
+						controls.add(control);
+					} else if (optionMatcher.group(5) != null) {
+						String defaultValue = argMap.get(optionMatcher.group(2));
+						Matcher m = descPattern.matcher(optionMatcher.group(6));
+						if (m.matches()) {
+							String valueString = optionMatcher.group(5).replaceAll("\\{", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							valueString = valueString.replaceAll("\\}", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							String[] values = valueString.split(","); //$NON-NLS-1$
+							if (defaultValue == null) {
+								defaultValue = m.group(3).trim();
+							}
+							IMesonPropertyPageControl control = new MesonPropertyCombo(group, optionMatcher.group(2), values, defaultValue, m.group(1).trim());
+							controls.add(control);
+						}
+					} else {
+						boolean defaultValue = false;
+						if (argMap.containsKey(optionMatcher.group(2))) {
+							defaultValue = Boolean.getBoolean(argMap.get(optionMatcher.group(2)));
+						}
+						IMesonPropertyPageControl control = new MesonPropertySpecialCheckbox(group, optionMatcher.group(2), defaultValue, optionMatcher.group(6));
+						controls.add(control);
+					}
+				}
+				
+			}
+		} catch (UnsupportedEncodingException e) {
+			return controls;
+		}
+		return controls;
 	}
 	
 	/**
@@ -355,105 +478,4 @@ public class MesonPropertyPage extends PropertyPage {
 		return controls;
 	}
 	
-	/**
-	 * Create list of options for initial meson call
-	 * @param stdout - ByteArrayOutputStream containing output of command
-	 * @param composite - Composite to add Controls to
-	 * @return - list of Controls
-	 */
-	List<IMesonPropertyPageControl> defaultOptions(Composite composite, Map<String, String> argMap, String defaultBuildType) {
-		List<IMesonPropertyPageControl> controls = new ArrayList<>();
-		
-		Group group = new Group(composite, SWT.BORDER);
-		group.setLayout(new GridLayout(2, true));
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
-		group.setText("Options");
-
-		IMesonPropertyPageControl prefix = new MesonPropertyText(group, "prefix", argMap.get("--prefix"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_prefix_tooltip);
-		controls.add(prefix);
-		IMesonPropertyPageControl libdir = new MesonPropertyText(group, "libdir", argMap.get("--libdir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_libdir_tooltip);
-		controls.add(libdir);
-		IMesonPropertyPageControl libexecdir = new MesonPropertyText(group, "libexecdir", argMap.get("--libexecdir"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.MesonPropertyPage_libexecdir_tooltip);
-		controls.add(libexecdir);
-		IMesonPropertyPageControl bindir = new MesonPropertyText(group, "bindir", argMap.get("--bindir"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.MesonPropertyPage_bindir_tooltip);
-		controls.add(bindir);
-		IMesonPropertyPageControl sbindir = new MesonPropertyText(group, "sbindir", argMap.get("--sbindir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_sbindir_tooltip);
-		controls.add(sbindir);
-		IMesonPropertyPageControl includedir = new MesonPropertyText(group, "includedir", argMap.get("--includedir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_includedir_tooltip);
-		controls.add(includedir);
-		IMesonPropertyPageControl datadir = new MesonPropertyText(group, "datadir", argMap.get("--datadir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_datadir_tooltip);
-		controls.add(datadir);
-		IMesonPropertyPageControl mandir = new MesonPropertyText(group, "mandir", argMap.get("--mandir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_mandir_tooltip);
-		controls.add(mandir);
-		IMesonPropertyPageControl infodir = new MesonPropertyText(group, "infodir", argMap.get("--infodir"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.MesonPropertyPage_infodir_tooltip);
-		controls.add(infodir);
-		IMesonPropertyPageControl localedir = new MesonPropertyText(group, "localedir", argMap.get("--localedir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_localedir_tooltip);
-		controls.add(localedir);
-		IMesonPropertyPageControl sysconfdir = new MesonPropertyText(group, "sysconfdir", argMap.get("--sysconfdir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_sysconfdir_tooltip);
-		controls.add(sysconfdir);
-		IMesonPropertyPageControl localstatedir = new MesonPropertyText(group, "localstatedir", argMap.get("--localstatedir"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				Messages.MesonPropertyPage_localstatedir_tooltip);
-		controls.add(localstatedir);
-		IMesonPropertyPageControl sharedstatedir = new MesonPropertyText(group, "sharedstatedir", argMap.get("--sharedstatedir"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.MesonPropertyPage_sharedstatedir_tooltip);
-		controls.add(sharedstatedir);
-		IMesonPropertyPageControl buildtype = new MesonPropertyCombo(group, "buildtype", //$NON-NLS-1$ 
-				new String[] {"plain", "debug", "debugoptimized", "release", "minsize"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-				argMap.get("--buildtype") != null ? argMap.get("--buildtype") : defaultBuildType, //$NON-NLS-1$ //$NON-NLS-2$ 
-						Messages.MesonPropertyPage_buildtype_tooltip);
-		controls.add(buildtype);
-		IMesonPropertyPageControl strip = new MesonPropertySpecialCheckbox(group, "strip", argMap.get("--strip") != null, //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.MesonPropertyPage_strip_tooltip);
-		controls.add(strip);
-		IMesonPropertyPageControl unity = new MesonPropertyCombo(group, "unity", //$NON-NLS-1$ 
-				new String[] {"on", "off", "subprojects"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				argMap.get("--unity") != null ? argMap.get("--unity") : "off", //$NON-NLS-1$ //$NON-NLS-2$
-						Messages.MesonPropertyPage_unity_tooltip);
-		controls.add(unity);
-		IMesonPropertyPageControl werror = new MesonPropertySpecialCheckbox(group, "werror", //$NON-NLS-1$
-				argMap.get("--werror") != null, Messages.MesonPropertyPage_werror_tooltip); //$NON-NLS-1$
-		controls.add(werror);
-		IMesonPropertyPageControl layout = new MesonPropertyCombo(group, "layout", //$NON-NLS-1$ 
-				new String[] {"mirror", "flat"}, //$NON-NLS-1$ //$NON-NLS-2$
-				argMap.get("--mirror") != null ? argMap.get("--mirror") : "mirror", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-						Messages.MesonPropertyPage_layout_tooltip);
-		controls.add(layout);
-		IMesonPropertyPageControl default_library = new MesonPropertyCombo(group, "default-library", //$NON-NLS-1$
-				new String[] {"shared", "static"}, //$NON-NLS-1$ //$NON-NLS-2$
-				argMap.get("--default-library") != null ? argMap.get("--default-library") : "shared", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						Messages.MesonPropertyPage_default_library_tooltip);
-		controls.add(default_library);
-		IMesonPropertyPageControl warnlevel = new MesonPropertyCombo(group, "warnlevel", //$NON-NLS-1$
-				new String[] {"1","2","3"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				argMap.get("--warnlevel") != null ? argMap.get("--warnlevel") : "1", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-						Messages.MesonPropertyPage_warnlevel_tooltip);
-		controls.add(warnlevel);
-		IMesonPropertyPageControl stdsplit = new MesonPropertySpecialCheckbox(group, "stdsplit", //$NON-NLS-1$
-				argMap.get("--stdsplit") != null, Messages.MesonPropertyPage_stdsplit_tooltip); //$NON-NLS-1$
-		controls.add(stdsplit);
-		IMesonPropertyPageControl errorlogs = new MesonPropertySpecialCheckbox(group, "errorlogs", //$NON-NLS-1$
-				argMap.get("--errorlogs") != null, Messages.MesonPropertyPage_errorlogs_tooltip); //$NON-NLS-1$
-		controls.add(errorlogs);
-		IMesonPropertyPageControl cross_file = new MesonPropertyText(group, "cross-file", //$NON-NLS-1$ 
-				argMap.get("--cross-file"), Messages.MesonPropertyPage_cross_file_tooltip); //$NON-NLS-1$
-		controls.add(cross_file);
-		IMesonPropertyPageControl wrap_mode = new MesonPropertyCombo(group, "wrap-mode", //$NON-NLS-1$ 
-				new String[] {"default", "nofallback", "nodownload"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				argMap.get("--wrap-mode") != null ? argMap.get("--wrap-mode") : "default", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-				Messages.MesonPropertyPage_wrap_mode_tooltip);
-		controls.add(wrap_mode);
-
-		return controls;
-	}
 }

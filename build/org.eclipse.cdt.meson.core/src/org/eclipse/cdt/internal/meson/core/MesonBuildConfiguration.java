@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -139,11 +141,17 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				
 				argsList.add(getBuildDirectory().toString());
 
-				String envStr = getProperty(IMesonConstants.MESON_ENV);
-				String[] env = new String[0];
-				if (envStr != null) {
-					env = envStr.split(IMesonConstants.MESON_ENV_SEPARATOR); //$NON-NLS-1$
+				Map<String, String> envMap = System.getenv();
+				List<String> envList = new ArrayList<>();
+				for (Map.Entry<String, String> entry : envMap.entrySet()) {
+					envList.add(entry.getKey() + "=" + entry.getValue());
 				}
+				String envStr = getProperty(IMesonConstants.MESON_ENV);
+				if (envStr != null) {
+					envList.addAll(stripEnvVars(envStr));
+				}
+				String[] env = envList.toArray(new String[0]);
+
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
 				
 				launcher.setProject(getProject());
@@ -176,12 +184,8 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					buildCommand = "ninja";
 				}
 
-				
-				String envStr = getProperty(IMesonConstants.MESON_ENV);
 				String[] env = new String[0];
-				if (envStr != null) {
-					env = envStr.split(envStr);
-				}
+
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
 				
 				launcher.setProject(getProject());
@@ -195,7 +199,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				outStream.write(String.join(" ", ninjaPath.toString() + '\n')); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
 				
-				launcher.execute(ninjaPath, new String[0], env, workingDir, monitor);
+				launcher.execute(ninjaPath, new String[] {"-v"}, env, workingDir, monitor); //$NON-NLS-1$
 				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, errMsg));
@@ -294,6 +298,46 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 						Activator.errorStatus(String.format(Messages.MesonBuildConfiguration_ProcCompCmds, project.getName()), e));
 			}
 		}
+	}
+	
+	/**
+	 * Strip a command of VAR=VALUE pairs that appear ahead or behind the command and add
+	 * them to a list of environment variables.
+	 *
+	 * @param command - command to strip
+	 * @param envVars - ArrayList to add environment variables to
+	 * @return stripped command
+	 */
+	public static List<String> stripEnvVars(String envString) {
+		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\").*"); //$NON-NLS-1$
+		Pattern p2 = Pattern.compile("(\\w+[=]'.*?').*"); //$NON-NLS-1$
+		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+).*"); //$NON-NLS-1$
+		boolean finished = false;
+		List<String> envVars = new ArrayList<>();
+		while (!finished) {
+			Matcher m1 = p1.matcher(envString);
+			if (m1.matches()) {
+				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"","").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				String s = m1.group(1).trim();
+				envVars.add(s.replaceAll("\\\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				Matcher m2 = p2.matcher(envString);
+				if (m2.matches()) {
+					envString = envString.replaceFirst("\\w+[=]'.*?'", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+					String s = m2.group(1).trim();
+					envVars.add(s.replaceAll("'", "")); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					Matcher m3 = p3.matcher(envString);
+					if (m3.matches()) {
+						envString = envString.replaceFirst("\\w+[=][^\\s]+", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+						envVars.add(m3.group(1).trim());
+					} else {
+						finished = true;
+					}
+				}
+			}
+		}
+		return envVars;
 	}
 
 }

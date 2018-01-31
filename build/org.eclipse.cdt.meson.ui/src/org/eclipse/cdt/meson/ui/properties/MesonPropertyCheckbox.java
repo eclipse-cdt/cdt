@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
 	
@@ -26,11 +27,18 @@ public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
 		this.initialValue = initialValue;
 		checkbox = new Button(composite, SWT.CHECK);
 		GridData data = new GridData(GridData.FILL, GridData.FILL, true, false);
-		data.horizontalSpan = 2;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalSpan = 1;
 		checkbox.setText(name);
 		checkbox.setLayoutData(data);
 		checkbox.setSelection(initialValue);
 		checkbox.setToolTipText(tooltip);
+		GridData data2 = new GridData(GridData.FILL, GridData.FILL, true, false);
+		data2.grabExcessHorizontalSpace = true;
+		data2.horizontalSpan = 1;
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(tooltip);
+		label.setLayoutData(data2);
 	}
 
 

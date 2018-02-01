@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
@@ -114,6 +115,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
 					"stepSetSourceSubstitutePath",   //$NON-NLS-1$
+					"stepSetRemoteTimeout",   //$NON-NLS-1$
 					
 					// -environment-directory with a lot of paths could
 					// make setting breakpoint incredibly slow, which makes
@@ -504,6 +506,39 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			ISourceLookupDMContext sourceLookupCtx = (ISourceLookupDMContext) context;
 			sourceSubPath.initializeSourceSubstitutions(sourceLookupCtx, rm);
 		}
+	}
+
+	/**
+	 * Before starting a remote connection, set the gdb remotetimeout to the user
+	 * specified value.
+	 * 
+	 * @since 5.5
+	 */
+	@Execute
+	public void stepSetRemoteTimeout(RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.REMOTE) {
+			boolean remoteTimeoutEnabled = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+					LaunchUtils.getRemoteTimeoutEnabledDefault());
+			String remoteTimeoutValue = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+					LaunchUtils.getRemoteTimeoutValueDefault());
+			if (remoteTimeoutEnabled && remoteTimeoutValue != null && !remoteTimeoutValue.isEmpty()) {
+				fCommandControl.queueCommand(
+						fCommandFactory.createMIGDBSetRemoteTimeout(fCommandControl.getContext(), remoteTimeoutValue),
+						new ImmediateDataRequestMonitor<MIInfo>(rm) {
+							@Override
+							protected void handleError() {
+								IStatus status = getStatus();
+								MultiStatus ms = new MultiStatus(GdbPlugin.PLUGIN_ID, -1, new IStatus[] { status },
+										LaunchMessages.getString("FinalLaunchSequence.2"), null); //$NON-NLS-1$
+								rm.done(ms);
+							}
+						});
+				return;
+			}
+		}
+		rm.done();
 	}
 
 	private static final String INVALID = "invalid";   //$NON-NLS-1$

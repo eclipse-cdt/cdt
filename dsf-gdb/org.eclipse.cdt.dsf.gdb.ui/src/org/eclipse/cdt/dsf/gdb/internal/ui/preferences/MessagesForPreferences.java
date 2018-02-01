@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Ericsson and others.
+ * Copyright (c) 2009, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,8 @@ class MessagesForPreferences extends NLS {
 
 	public static String GdbConsolePreferencePage_InvertColors;
 	public static String GdbConsolePreferencePage_BufferLines;
+	public static String GdbDebugPreferencePage_remoteTimeout_label;
+	public static String GdbDebugPreferencePage_remoteTimeout_tooltip;
 	
 	static {
 		// initialize resource bundle

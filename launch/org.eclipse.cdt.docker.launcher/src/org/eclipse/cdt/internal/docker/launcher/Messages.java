@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013, 2015 Red Hat, Inc.
+ * Copyright (c) 2012, 2018 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,10 @@ public class Messages extends NLS {
 	public static String CommandLauncher_CommandCancelled;
 
 	public static String ContainerCommandLauncher_invalid_values;
+
+	public static String Gdbserver_Settings_Remotetimeout_label;
+
+	public static String Gdbserver_Settings_Remotetimeout_tooltip;
 
 	static {
 		// initialize resource bundle

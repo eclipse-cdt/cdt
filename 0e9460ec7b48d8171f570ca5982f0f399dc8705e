@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_0662eb31",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-01T20:52:44Z",
+      "side": 1,
+      "message": "Why api filters and not @since tags?",
+      "revId": "0e9460ec7b48d8171f570ca5982f0f399dc8705e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

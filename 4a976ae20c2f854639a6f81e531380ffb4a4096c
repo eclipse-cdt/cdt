@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_6965400e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-02-01T22:14:04Z",
+      "side": 1,
+      "message": "We must also set the remote timeout for remote non-attach sessions. Ref: org.eclipse.cdt.dsf.gdb.service.DebugNewProcessSequence.stepRemoteConnection(RequestMonitor)\n\nWe need to ensure that the remote timeout is set before the remote connection is initiated for both attach and non-attach cases.",
+      "range": {
+        "startLine": 512,
+        "startChar": 60,
+        "endLine": 512,
+        "endChar": 92
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_09383cf7",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-02-01T22:14:04Z",
+      "side": 1,
+      "message": "I would expect to see this setting within the \"Remote Target\" group and disabled when not making a remote connection.",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 94
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_293b38f5",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-02-01T22:14:04Z",
+      "side": 1,
+      "message": "\"(seconds)\" for consistency",
+      "range": {
+        "startLine": 69,
+        "startChar": 49,
+        "endLine": 69,
+        "endChar": 50
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_a9464873",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-02-01T22:14:04Z",
+      "side": 1,
+      "message": "I would be inclined to implement this as a \"Set remote timeout (seconds)\" setting and use a checkbox to enable/disable it for consistency. Compare with \"Set program counter at (hex)\" on the \"Startup\" page. If you don\u0027t check the box, no command is issued and the existing setting prevails.",
+      "range": {
+        "startLine": 70,
+        "startChar": 94,
+        "endLine": 70,
+        "endChar": 115
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

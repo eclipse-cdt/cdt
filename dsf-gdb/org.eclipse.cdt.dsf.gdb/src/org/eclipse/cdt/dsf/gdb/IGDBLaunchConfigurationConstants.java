@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017  Ericsson and others.
+ * Copyright (c) 2008, 2018  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.dsf.gdb;
 
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 
 
 public class IGDBLaunchConfigurationConstants {
@@ -133,7 +134,13 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.2
 	 */
 	public static final String ATTR_DEBUGGER_REMOTE_BINARY = GdbPlugin.PLUGIN_ID + ".REMOTE_BINARY"; //$NON-NLS-1$
-	
+
+	/**
+	 * Setting to set Remote Timeout in GDB to (set remotetimeout num), if present. If not present will not issue set
+	 * remotetimeout command. The value is a string and does not have to be a number (but it normally is).
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_TIMEOUT = GdbPlugin.PLUGIN_ID + ".REMOTE_TIMEOUT"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
@@ -261,5 +268,10 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	 // Bug 210366
 	public static final String DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT = "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"; //$NON-NLS-1$
-	
+
+	/**
+	 * The default value of {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT}. To get the user set workspace default see
+	 * {@link LaunchUtils#getRemoteTimeoutDefault()}
+	 */
+	public static final String DEBUGGER_REMOTE_TIMEOUT_DEFAULT = ""; //$NON-NLS-1$
 }

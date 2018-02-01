@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Ericsson and others.
+ * Copyright (c) 2009, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,4 +204,9 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final int CONSOLE_BUFFERLINES_DEFAULT = 1000;
 
+	/**
+	 * The value is a string specifying the default symbol to use for the main breakpoint.
+	 * @since 5.5
+	 */
+	public static final String PREF_DEFAULT_REMOTE_TIMEOUT = "defaultRemoteTimeout"; //$NON-NLS-1$
 }

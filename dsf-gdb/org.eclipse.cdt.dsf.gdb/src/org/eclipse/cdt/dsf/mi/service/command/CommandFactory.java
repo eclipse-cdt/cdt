@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 QNX Software Systems and others.
+ * Copyright (c) 2000, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,6 +137,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetRecordFullStopAtLimit;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetRemoteTimeout;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
@@ -834,7 +835,11 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMIGDBSetRecordFullStopAtLimit(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetRecordFullStopAtLimit(ctx, isSet);
 	}
-	
+
+	public ICommand<MIInfo> createMIGDBSetRemoteTimeout(ICommandControlDMContext ctx, String remoteTimeout) {
+		return new MIGDBSetRemoteTimeout(ctx, remoteTimeout);
+	}
+
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
 		return new MIGDBSetSchedulerLocking(ctx, mode);

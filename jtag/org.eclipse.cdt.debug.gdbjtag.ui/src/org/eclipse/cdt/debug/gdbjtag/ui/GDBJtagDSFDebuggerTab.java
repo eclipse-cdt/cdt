@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 QNX Software Systems and others.
+ * Copyright (c) 2007, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ICDTLaunchHelpContextIds;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -82,6 +83,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	private Text connection;
 	private String savedJtagDevice;
 	protected Button fUpdateThreadlistOnSuspend;
+	private Text remoteTimeout;
 
 	@Override
 	public String getName() {
@@ -102,13 +104,14 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		Composite comp = new Composite(sc, SWT.NONE);
 		sc.setContent(comp);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
 
 		Group group = new Group(comp, SWT.NONE);
 		layout = new GridLayout();
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
 		group.setText(Messages.getString("GDBJtagDebuggerTab.gdbSetupGroup_Text"));
 
@@ -123,6 +126,19 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fUpdateThreadlistOnSuspend.setLayoutData(gd);
+		
+		Label remoteTimeoutLabel = new Label(comp, SWT.NONE);
+		remoteTimeoutLabel.setText(Messages.getString("GDBJtagDebuggerTab.remoteTimeout"));
+		remoteTimeoutLabel.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
+		remoteTimeout = new Text(comp, SWT.BORDER);
+		gd = new GridData();
+		gd.widthHint = 125;
+		remoteTimeout.setLayoutData(gd);
+		remoteTimeout.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
+
 		// This checkbox needs an explanation. Attach context help to it.
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, "org.eclipse.cdt.dsf.gdb.ui.update_threadlist_button_context"); //$NON-NLS-1$
 		// Attach context help to this tab.
@@ -195,6 +211,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
 		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
 
@@ -231,7 +248,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
-		
+
 		remoteConnectionParameters = new Composite(group, SWT.NO_TRIM | SWT.NO_FOCUS);
 		remoteConnectParmsLayout = new StackLayout();
 		remoteConnectionParameters.setLayout(remoteConnectParmsLayout);
@@ -422,6 +439,9 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			boolean updateThreadsOnSuspend = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 					IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 			fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);
+			remoteTimeout
+					.setText(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT,
+							LaunchUtils.getRemoteTimeoutDefault()));
 
 			useRemoteChanged();
 		} catch (CoreException e) {
@@ -473,6 +493,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
                 fUpdateThreadlistOnSuspend.getSelection());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT,
+				remoteTimeout.getText().trim());
 	}
 
 	@Override

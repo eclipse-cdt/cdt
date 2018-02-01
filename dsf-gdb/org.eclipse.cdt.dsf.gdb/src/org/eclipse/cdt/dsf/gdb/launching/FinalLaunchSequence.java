@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Ericsson and others.
+ * Copyright (c) 2008, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
 					"stepSetSourceSubstitutePath",   //$NON-NLS-1$
+					"stepSetRemoteTimeout",   //$NON-NLS-1$
 					
 					// -environment-directory with a lot of paths could
 					// make setting breakpoint incredibly slow, which makes
@@ -504,6 +505,22 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			ISourceLookupDMContext sourceLookupCtx = (ISourceLookupDMContext) context;
 			sourceSubPath.initializeSourceSubstitutions(sourceLookupCtx, rm);
 		}
+	}
+
+	@Execute
+	public void stepSetRemoteTimeout(RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.REMOTE && fGDBBackend.getIsAttachSession()) {
+			String remoteTimeout = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT,
+					LaunchUtils.getRemoteTimeoutDefault());
+			if (remoteTimeout != null && !remoteTimeout.isEmpty()) {
+				fCommandControl.queueCommand(
+						fCommandFactory.createMIGDBSetRemoteTimeout(fCommandControl.getContext(), remoteTimeout),
+						new ImmediateDataRequestMonitor<MIInfo>(rm));
+				return;
+			}
+		}
+		rm.done();
 	}
 
 	private static final String INVALID = "invalid";   //$NON-NLS-1$

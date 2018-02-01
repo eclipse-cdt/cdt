@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017  Ericsson and others.
+ * Copyright (c) 2008, 2018  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.dsf.gdb;
 
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 
 
 public class IGDBLaunchConfigurationConstants {
@@ -133,7 +134,24 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 4.2
 	 */
 	public static final String ATTR_DEBUGGER_REMOTE_BINARY = GdbPlugin.PLUGIN_ID + ".REMOTE_BINARY"; //$NON-NLS-1$
-	
+
+	/**
+	 * Enablement setting to set Remote Timeout in GDB to (set remotetimeout num).
+	 * The value to use is in {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE}
+	 * 
+	 * @since 5.5
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED = GdbPlugin.PLUGIN_ID + ".REMOTE_TIMEOUT_ENABLED"; //$NON-NLS-1$
+
+	/**
+	 * Setting to set Remote Timeout in GDB to (set remotetimeout num) if enabled
+	 * with {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED} The value is a string and
+	 * does not have to be a number (but it normally is).
+	 * 
+	 * @since 5.5
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE = GdbPlugin.PLUGIN_ID + ".REMOTE_TIMEOUT_VALUE"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
@@ -261,5 +279,18 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	 // Bug 210366
 	public static final String DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT = "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"; //$NON-NLS-1$
-	
+
+	/**
+	 * The default value of {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED}. To get the user set workspace default see
+	 * {@link LaunchUtils#getRemoteTimeoutEnabledDefault()}
+	 * @since 5.5
+	 */
+	public static final boolean DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT = false;
+
+	/**
+	 * The default value of {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE}. To get the user set workspace default see
+	 * {@link LaunchUtils#getRemoteTimeoutValueDefault()}
+	 * @since 5.5
+	 */
+	public static final String DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT = ""; //$NON-NLS-1$
 }

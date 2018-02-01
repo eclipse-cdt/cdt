@@ -75,6 +75,10 @@ public class Messages extends NLS {
 
 	public static String RemoteRunLaunchDelegate_9;
 
+	public static String Remotetimeout_label;
+
+	public static String Remotetimeout_tooltip;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

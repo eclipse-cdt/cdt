@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,16 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.StringDialogField;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
@@ -39,6 +44,10 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 
 	private ComboDialogField fConnectionField;
 
+	protected SelectionButtonDialogField fRemoteTimeoutEnabledField;
+
+	protected StringDialogField fRemoteTimeoutValueField;
+
 	private String[] fConnections = new String[]{ CONNECTION_TCP, CONNECTION_SERIAL };
 
 	private TCPSettingsBlock fTCPBlock;
@@ -56,6 +65,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		fSerialBlock = new SerialPortSettingsBlock();
 		fTCPBlock.addObserver(this);
 		fSerialBlock.addObserver(this);
+		createRemoteTimeoutFields();
 	}
 
 	protected void createConnectionTab(TabFolder tabFolder) {
@@ -65,15 +75,23 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		((GridLayout)comp1.getLayout()).makeColumnsEqualWidth = false;
 		comp1.setFont(tabFolder.getFont());
 		tabItem.setControl(comp1);
-		Composite comp = ControlFactory.createCompositeEx(comp1, 2, GridData.FILL_BOTH);
+		Composite comp = ControlFactory.createCompositeEx(comp1, 3, GridData.FILL_BOTH);
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont(comp1.getFont());
-		fConnectionField.doFillIntoGrid(comp, 2);
+		fConnectionField.doFillIntoGrid(comp, 3);
 		((GridData)fConnectionField.getComboControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
+		fRemoteTimeoutEnabledField.doFillIntoGrid(comp, 1);
+		fRemoteTimeoutEnabledField.getSelectionButton(comp).setToolTipText(LaunchUIMessages.getString("GDBServerDebuggerPage.12")); //$NON-NLS-1$
+		fRemoteTimeoutValueField.doFillIntoGrid(comp, 2);
+		((GridData)fRemoteTimeoutValueField.getTextControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
+		PixelConverter converter = new PixelConverter(comp);
+		LayoutUtil.setWidthHint(fRemoteTimeoutValueField.getTextControl(null), converter.convertWidthInCharsToPixels(10));
+		fRemoteTimeoutValueField.getLabelControl(comp).setToolTipText(LaunchUIMessages.getString("GDBServerDebuggerPage.12")); //$NON-NLS-1$
+		fRemoteTimeoutValueField.getTextControl(comp).setToolTipText(LaunchUIMessages.getString("GDBServerDebuggerPage.12")); //$NON-NLS-1$
 		fConnectionStack = ControlFactory.createCompositeEx(comp, 1, GridData.FILL_BOTH);
 		StackLayout stackLayout = new StackLayout();
 		fConnectionStack.setLayout(stackLayout);
-		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
+		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 3;
 		fTCPBlock.createBlock(fConnectionStack);
 		fSerialBlock.createBlock(fConnectionStack);		
 	}
@@ -92,6 +110,27 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		});
 		return field;
 	}
+
+	private void createRemoteTimeoutFields() {
+		fRemoteTimeoutEnabledField = new SelectionButtonDialogField(SWT.CHECK);
+		fRemoteTimeoutEnabledField.setLabelText(LaunchUIMessages.getString("GDBServerDebuggerPage.11")); //$NON-NLS-1$
+		fRemoteTimeoutEnabledField.setDialogFieldListener(new IDialogFieldListener() {
+
+			@Override
+			public void dialogFieldChanged(DialogField f) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fRemoteTimeoutValueField = new StringDialogField();
+		fRemoteTimeoutValueField.setDialogFieldListener(new IDialogFieldListener() {
+
+			@Override
+			public void dialogFieldChanged(DialogField f) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fRemoteTimeoutEnabledField.attachDialogField(fRemoteTimeoutValueField);
+	}	
 
 	protected void connectionTypeChanged() {
 		connectionTypeChanged0();
@@ -131,8 +170,16 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 						return false;
 					}
 				}
-				return true;
 			}
+
+			if (fRemoteTimeoutEnabledField.isSelected()) {
+				if (fRemoteTimeoutValueField.getText().trim().isEmpty()) {
+					setErrorMessage(LaunchUIMessages.getString("GDBServerDebuggerPage.13")); //$NON-NLS-1$
+					return false;
+				}
+			}
+
+			return true;
 		}
 		return false;
 	}
@@ -150,8 +197,23 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		fTCPBlock.initializeFrom(configuration);
 		fSerialBlock.initializeFrom(configuration);
 		fConnectionField.selectItem((isTcp) ? 0 : 1);
+		initializeRemoteTimeout(configuration);
 		connectionTypeChanged0();
 		setInitializing(false);
+	}
+
+	private void initializeRemoteTimeout(ILaunchConfiguration configuration) {
+		if (fRemoteTimeoutEnabledField != null && fRemoteTimeoutValueField != null) {
+			try {
+				fRemoteTimeoutEnabledField.setSelection(configuration.getAttribute(
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+						LaunchUtils.getRemoteTimeoutEnabledDefault()));
+				fRemoteTimeoutValueField.setText(
+						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+								LaunchUtils.getRemoteTimeoutValueDefault()));
+			} catch (CoreException e) {
+			}
+		}
 	}
 
 	@Override
@@ -161,12 +223,20 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, fConnectionField.getSelectionIndex() == 0);
 		fTCPBlock.performApply(configuration);
 		fSerialBlock.performApply(configuration);
+		if (fRemoteTimeoutEnabledField != null)
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED, fRemoteTimeoutEnabledField.isSelected());
+		if (fRemoteTimeoutValueField != null)
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE, fRemoteTimeoutValueField.getText().trim());
 	}
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+				LaunchUtils.getRemoteTimeoutEnabledDefault());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+				LaunchUtils.getRemoteTimeoutValueDefault());
 		fTCPBlock.setDefaults(configuration);
 		fSerialBlock.setDefaults(configuration);
 	}

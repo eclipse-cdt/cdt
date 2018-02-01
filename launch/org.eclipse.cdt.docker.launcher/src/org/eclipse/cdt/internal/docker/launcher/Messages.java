@@ -107,6 +107,10 @@ public class Messages extends NLS {
 
 	public static String ContainerCommandLauncher_invalid_values;
 
+	public static String Gdbserver_Settings_Remotetimeout_label;
+
+	public static String Gdbserver_Settings_Remotetimeout_tooltip;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

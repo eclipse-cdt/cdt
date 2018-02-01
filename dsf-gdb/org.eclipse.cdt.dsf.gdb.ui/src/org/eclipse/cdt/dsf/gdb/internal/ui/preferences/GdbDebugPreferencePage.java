@@ -621,6 +621,17 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			addField(externalConsoleField);
     	}
 
+		final StringWithBooleanFieldEditor remoteTimeout = new StringWithBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
+				MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_label,
+				group1);
+		remoteTimeout.getCheckboxControl(group1).setToolTipText(MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_tooltip);
+		remoteTimeout.getTextControl(group1).setToolTipText(MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_tooltip);
+		remoteTimeout.fillIntoGrid(group1, 3);
+		addField(remoteTimeout);
+
+
 		group1.setLayout(groupLayout);
 
 		final Group group2= new Group(parent, SWT.NONE);

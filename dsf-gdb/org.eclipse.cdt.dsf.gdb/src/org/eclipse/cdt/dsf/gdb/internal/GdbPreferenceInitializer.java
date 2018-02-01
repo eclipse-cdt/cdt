@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Ericsson and others.
+ * Copyright (c) 2009, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,5 +50,7 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_HARDWARE, IGdbDebugPreferenceConstants.PREF_REVERSE_TRACE_METHOD_GDB_TRACE);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_CONSOLE_INVERTED_COLORS, IGdbDebugPreferenceConstants.CONSOLE_INVERTED_COLORS_DEFAULT);
 		node.putInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES, IGdbDebugPreferenceConstants.CONSOLE_BUFFERLINES_DEFAULT);		
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED, IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT);
+		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE, IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT);
 	}
 }

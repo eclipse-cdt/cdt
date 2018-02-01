@@ -48,7 +48,7 @@ public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
 		super.doFillIntoGrid(parent, numColumns);
 	}
 
-	private Button getCheckboxControl(Composite parent) {
+	public Button getCheckboxControl(Composite parent) {
 		if (fCheckbox == null) {
 			Composite inner= new Composite(parent, SWT.NULL);
 			final GridLayout layout= new GridLayout(2, false);

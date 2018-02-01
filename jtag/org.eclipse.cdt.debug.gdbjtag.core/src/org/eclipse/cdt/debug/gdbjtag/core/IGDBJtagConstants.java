@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2010 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     John Dallaway - Disable reset and halt by default, bug 529171
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -49,8 +50,8 @@ public interface IGDBJtagConstants {
 	/** @since 7.0 */ public static final String ATTR_USE_PROJ_BINARY_FOR_SYMBOLS = Activator.PLUGIN_ID + ".useProjBinaryForSymbols"; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String ATTR_USE_FILE_FOR_SYMBOLS = Activator.PLUGIN_ID + ".useFileForSymbols"; //$NON-NLS-1$
 
-	public static final boolean DEFAULT_DO_RESET = true;
-	public static final boolean DEFAULT_DO_HALT = true;
+	public static final boolean DEFAULT_DO_RESET = false;
+	public static final boolean DEFAULT_DO_HALT = false;
 	public static final int DEFAULT_DELAY = 3;
 	public static final boolean DEFAULT_LOAD_IMAGE = true;
 	public static final boolean DEFAULT_LOAD_SYMBOLS = true;

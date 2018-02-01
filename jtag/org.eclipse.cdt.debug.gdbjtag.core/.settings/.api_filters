@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.gdbjtag.core" version="2">
+    <resource path="src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConstants.java" type="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants">
+        <filter id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants"/>
+                <message_argument value="DEFAULT_DO_HALT"/>
+                <message_argument value="1"/>
+            </message_arguments>
+        </filter>
+        <filter id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants"/>
+                <message_argument value="DEFAULT_DO_RESET"/>
+                <message_argument value="1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

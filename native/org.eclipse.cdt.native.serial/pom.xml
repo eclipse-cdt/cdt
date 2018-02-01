@@ -11,8 +11,8 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>5.3.0-SNAPSHOT</version>
-  <artifactId>org.eclipse.cdt.core.linux</artifactId>
+  <version>1.1.0-SNAPSHOT</version>
+  <artifactId>org.eclipse.cdt.native.serial</artifactId>
   <packaging>eclipse-plugin</packaging>
 
 	<profiles>
@@ -34,8 +34,8 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/x86/libserial.so" />
 										</exec>
 									</target>
 								</configuration>
@@ -48,8 +48,8 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/x86/libserial.so" />
 											<arg value="clean" />
 										</exec>
 									</target>
@@ -81,8 +81,8 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86_64" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
 										</exec>
 									</target>
 								</configuration>
@@ -95,55 +95,8 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86_64" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build-native.linux.ppc</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.ppc</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
 											<arg value="clean" />
 										</exec>
 									</target>
@@ -175,8 +128,8 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/ppc64/libserial.so" />
 										</exec>
 									</target>
 								</configuration>
@@ -189,8 +142,8 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/ppc64/libserial.so" />
 											<arg value="clean" />
 										</exec>
 									</target>
@@ -222,8 +175,8 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64le" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
 										</exec>
 									</target>
 								</configuration>
@@ -236,8 +189,8 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64le" />
+										<exec executable="make" newenvironment="false" dir="./jni">
+											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
 											<arg value="clean" />
 										</exec>
 									</target>
@@ -252,46 +205,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-	<groupId>org.eclipse.tycho</groupId>
-	<artifactId>target-platform-configuration</artifactId>
-	<version>${tycho-version}</version>
-	<configuration>
-	  <resolver>p2</resolver>
-	  <pomDependencies>consider</pomDependencies>
-	  <environments>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>x86</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>x86_64</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>ppc</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>ppc64</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>ppc64le</arch>
-	    </environment>
-	  </environments>
-	</configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

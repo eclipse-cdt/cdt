@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Ericsson and others.
+ * Copyright (c) 2009, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -620,6 +620,17 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			externalConsoleField.fillIntoGrid(group1, 3);
 			addField(externalConsoleField);
     	}
+
+		final StringWithBooleanFieldEditor remoteTimeout = new StringWithBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
+				MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_label,
+				group1);
+		remoteTimeout.getCheckboxControl(group1).setToolTipText(MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_tooltip);
+		remoteTimeout.getTextControl(group1).setToolTipText(MessagesForPreferences.GdbDebugPreferencePage_remoteTimeout_tooltip);
+		remoteTimeout.fillIntoGrid(group1, 3);
+		addField(remoteTimeout);
+
 
 		group1.setLayout(groupLayout);
 

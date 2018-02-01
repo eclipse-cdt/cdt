@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Ericsson and others.
+ * Copyright (c) 2010, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -613,6 +613,26 @@ public class LaunchUtils {
 			}
 		}
     	return false;
+    }
+
+	/**
+	 * Returns workspace-level default for the remote timeout enablement
+	 * @since 5.5
+	 */
+	public static boolean getRemoteTimeoutEnabledDefault() {
+		return Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED,
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT, null);
+    }
+
+	/**
+	 * Returns workspace-level default for the remote timeout value
+	 * @since 5.5
+	 */
+	public static String getRemoteTimeoutValueDefault() {
+		return Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT, null);
     }
 }
 

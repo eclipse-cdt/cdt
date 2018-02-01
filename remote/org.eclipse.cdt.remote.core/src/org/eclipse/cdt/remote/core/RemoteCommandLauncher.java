@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.remote.internal.core.Activator;
@@ -112,6 +113,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	private final Properties fEnvironment = new Properties();
 	
 	public RemoteCommandLauncher() {
+		this.fLocalLauncher = new CommandLauncher();
 	}
 	
 	public RemoteCommandLauncher(ICommandLauncher localLauncher) {

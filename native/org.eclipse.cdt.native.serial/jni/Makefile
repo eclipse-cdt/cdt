@@ -16,6 +16,8 @@ endif
 
 OS_DIR = ../os
 
+CFLAGS += -fPIC -D_REENTRANT
+
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
 LIBS = \
@@ -37,7 +39,7 @@ endif
 all:	$(LIBS)
 
 clean :
-	rm $(LIBS)
+	$(RM) $(LIBS)
 
 rebuild: clean all
 
@@ -51,12 +53,20 @@ $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 
 $(OS_DIR)/linux/x86/libserial.so:	serial.c
 	mkdir -p $(dir $@)
-	gcc -m32 -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -shared -o $@ serial.c
+	gcc -m32 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
 	mkdir -p $(dir $@)
-	gcc -m64 -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -shared -o $@ serial.c
+	gcc -m64 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
+
+$(OS_DIR)/linux/ppc64/libserial.so:	serial.c
+	mkdir -p $(dir $@)
+	gcc -m64 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
+
+$(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
+	mkdir -p $(dir $@)
+	gcc -m64 -mcpu=power8 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 
 $(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
 	mkdir -p $(dir $@)
-	clang -fPIC -D_REENTRANT -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -dynamiclib -o $@ serial.c
+	clang $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ serial.c

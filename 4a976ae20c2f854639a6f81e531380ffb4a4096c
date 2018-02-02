@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "87929364_5a45a0ca",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-02T21:11:17Z",
+      "side": 1,
+      "message": "Thanks for looking at this. I saw that remote is not always on, what is the use case for non-remote use of the hardware debug launch?",
+      "parentUuid": "87929364_09383cf7",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 94
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87929364_293b38f5",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
         "patchSetId": 1
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "87929364_9a3f083d",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-02T21:11:17Z",
+      "side": 1,
+      "message": "Ah yes. I can see now that in here it is seconds, not s. Thanks for pointing that out. (This same line applies in three places, so I will make it seconds everywhere.",
+      "parentUuid": "87929364_293b38f5",
+      "range": {
+        "startLine": 69,
+        "startChar": 49,
+        "endLine": 69,
+        "endChar": 50
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87929364_a9464873",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
         "patchSetId": 1
@@ -82,6 +130,30 @@
       "writtenOn": "2018-02-01T22:14:04Z",
       "side": 1,
       "message": "I would be inclined to implement this as a \"Set remote timeout (seconds)\" setting and use a checkbox to enable/disable it for consistency. Compare with \"Set program counter at (hex)\" on the \"Startup\" page. If you don\u0027t check the box, no command is issued and the existing setting prevails.",
+      "range": {
+        "startLine": 70,
+        "startChar": 94,
+        "endLine": 70,
+        "endChar": 115
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_fadf2c84",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-02T21:11:17Z",
+      "side": 1,
+      "message": "Good idea. I will derive the checkbox from the emptyness of the setting at initializeFrom and then show an error if checked but the field is empty.",
+      "parentUuid": "87929364_a9464873",
       "range": {
         "startLine": 70,
         "startChar": 94,

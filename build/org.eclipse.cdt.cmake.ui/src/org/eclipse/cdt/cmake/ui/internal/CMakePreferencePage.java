@@ -100,11 +100,11 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					ICMakeToolChainFile file = wizard.getNewFile();
-					if (filesToRemove.containsKey(file.getPath())) {
-						filesToRemove.remove(file.getPath());
-					} else {
-						filesToAdd.put(file.getPath(), file);
+					ICMakeToolChainFile oldFile = manager.getToolChainFile(file.getPath());
+					if (oldFile != null) {
+						filesToRemove.put(oldFile.getPath(), oldFile);
 					}
+					filesToAdd.put(file.getPath(), file);
 					updateTable();
 				}
 			}
@@ -162,12 +162,12 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			files.put(file.getPath(), file);
 		}
 
-		for (ICMakeToolChainFile file : filesToAdd.values()) {
-			files.put(file.getPath(), file);
-		}
-
 		for (ICMakeToolChainFile file : filesToRemove.values()) {
 			files.remove(file.getPath());
+		}
+
+		for (ICMakeToolChainFile file : filesToAdd.values()) {
+			files.put(file.getPath(), file);
 		}
 
 		return files;
@@ -175,12 +175,12 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
-		for (ICMakeToolChainFile file : filesToAdd.values()) {
-			manager.addToolChainFile(file);
-		}
-
 		for (ICMakeToolChainFile file : filesToRemove.values()) {
 			manager.removeToolChainFile(file);
+		}
+
+		for (ICMakeToolChainFile file : filesToAdd.values()) {
+			manager.addToolChainFile(file);
 		}
 
 		filesToAdd.clear();

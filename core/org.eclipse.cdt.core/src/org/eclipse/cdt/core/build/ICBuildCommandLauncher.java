@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+/**
+ * @since 6.5
+ */
 public interface ICBuildCommandLauncher {
 	
 	/**

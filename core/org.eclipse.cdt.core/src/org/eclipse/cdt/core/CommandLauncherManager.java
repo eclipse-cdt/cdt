@@ -35,8 +35,6 @@ import org.eclipse.core.runtime.Platform;
  */
 public class CommandLauncherManager {
 	
-	public final static String CONTAINER_BUILD_ENABLED = "container.build.enabled"; //$NON-NLS-1$
-	
 	private static CommandLauncherManager instance;
 	
 	private List<ICommandLauncherFactory> factories = new ArrayList<>();
@@ -195,6 +193,7 @@ public class CommandLauncherManager {
 	 * 
 	 * @param config - ICBuildConfiguration to determine launcher for.
 	 * @return an ICommandLauncher for running commands
+	 * @since 6.5
 	 */
 	public ICommandLauncher getCommandLauncher(ICBuildConfiguration config) {
 		// loop through list of factories and return launcher returned with
@@ -202,10 +201,12 @@ public class CommandLauncherManager {
 		int highestPriority = -1;
 		ICommandLauncher bestLauncher = null;
 		for (ICommandLauncherFactory factory : factories) {
-			ICommandLauncher launcher = factory.getCommandLauncher(config);
-			if (launcher != null) {
-				if (priorityMapping.get(factory) > highestPriority) {
-				   bestLauncher = launcher;
+			if (factory instanceof ICommandLauncherFactory2) {
+				ICommandLauncher launcher = ((ICommandLauncherFactory2)factory).getCommandLauncher(config);
+				if (launcher != null) {
+					if (priorityMapping.get(factory) > highestPriority) {
+						bestLauncher = launcher;
+					}
 				}
 			}
 		}

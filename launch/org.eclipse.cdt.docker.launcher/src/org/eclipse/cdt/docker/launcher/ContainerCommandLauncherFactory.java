@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncherFactory;
+import org.eclipse.cdt.core.ICommandLauncherFactory2;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -37,7 +38,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 
 public class ContainerCommandLauncherFactory
-		implements ICommandLauncherFactory {
+		implements ICommandLauncherFactory, ICommandLauncherFactory2 {
 
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {

@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -118,7 +119,8 @@ public class CommandLauncherManager {
 			if (launcher != null) {
 				return launcher.getEnvironment();
 			}
-			return null;
+			// for backwards compatibility to ensure path is set up
+			return EnvironmentReader.getEnvVars();
 		}
 
 		@Override

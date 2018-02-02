@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "87929364_d53de3eb",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-02-02T22:03:53Z",
+      "side": 1,
+      "message": "A good question. Perhaps the original author intended to accommodate alternative connections from GDB to debug hardware via the initialisation commands box? For example: target rdi \u003cdevice\u003e",
+      "parentUuid": "87929364_5a45a0ca",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 94
+      },
+      "revId": "4a976ae20c2f854639a6f81e531380ffb4a4096c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87929364_293b38f5",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
         "patchSetId": 1

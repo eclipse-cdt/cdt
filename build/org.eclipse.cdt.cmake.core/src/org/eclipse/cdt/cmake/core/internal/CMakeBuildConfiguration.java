@@ -81,6 +81,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	public ICMakeToolChainFile getToolChainFile() {
+		return toolChainFile;
+	}
+
 	private void saveToolChainFile() {
 		Preferences settings = getSettings();
 		settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());

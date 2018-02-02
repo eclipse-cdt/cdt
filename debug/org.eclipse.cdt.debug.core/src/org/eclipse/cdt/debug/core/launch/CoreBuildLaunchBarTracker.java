@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -95,11 +96,37 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 					properties.putAll(target.getAttributes());
 					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 					if (!tcs.isEmpty()) {
-						IToolChain toolChain = tcs.iterator().next();
-						ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
-								mode.getIdentifier(), monitor);
+						ICBuildConfiguration buildConfig = null;
+
+						// First, see if any existing non default build configs match
+						configs: for (IBuildConfiguration config : finalProject.getBuildConfigs()) {
+							if (!config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+								ICBuildConfiguration testConfig = configManager.getBuildConfiguration(config);
+								if (testConfig != null) {
+									for (IToolChain tc : tcs) {
+										if (testConfig.getToolChain().equals(tc)) {
+											buildConfig = testConfig;
+											break configs;
+										}
+									}
+								}
+							}
+						}
+
+						if (buildConfig == null) {
+							for (IToolChain tc : tcs) {
+								IToolChain toolChain = tcs.iterator().next();
+								buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
+										mode.getIdentifier(), monitor);
+								if (buildConfig != null) {
+									break;
+								}
+							}
+						}
+
 						if (buildConfig != null
 								&& !buildConfig.getBuildConfiguration().equals(finalProject.getActiveBuildConfig())) {
+							// set it as active
 							IProjectDescription desc = finalProject.getDescription();
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);

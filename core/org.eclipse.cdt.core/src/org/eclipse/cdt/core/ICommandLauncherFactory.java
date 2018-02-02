@@ -37,15 +37,6 @@ public interface ICommandLauncherFactory {
 	public ICommandLauncher getCommandLauncher(ICConfigurationDescription cfgd);
 
 	/**
-	 * Get a Command Launcher for a build configuration descriptor
-	 * @param cfg - ICBuildConfiguration to get command launcher for
-	 * @return ICommandLauncher or null
-	 */
-	public default ICommandLauncher getCommandLauncher(ICBuildConfiguration cfg) {
-		return null;
-	}
-
-	/**
 	 * Register language setting entries for a project
 	 * @param project - IProject used in obtaining language setting entries
 	 * @param entries - List of language setting entries

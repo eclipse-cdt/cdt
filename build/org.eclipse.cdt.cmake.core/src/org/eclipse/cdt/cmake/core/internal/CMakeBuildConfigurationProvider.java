@@ -37,7 +37,8 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 	}
 
 	@Override
-	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
+	public synchronized ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name)
+			throws CoreException {
 		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
 			IToolChain toolChain = null;
 
@@ -66,7 +67,20 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 				return null;
 			}
 		} else {
-			return new CMakeBuildConfiguration(config, name);
+			CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name);
+			ICMakeToolChainFile tcFile = cmakeConfig.getToolChainFile();
+			IToolChain toolChain = cmakeConfig.getToolChain();
+			if (toolChain == null || tcFile == null) {
+				// config not complete?
+				return null;
+			}
+			if (!toolChain.equals(tcFile.getToolChain())) {
+				// toolchain changed
+				return new CMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
+						cmakeConfig.getLaunchMode());
+			} else {
+				return cmakeConfig;
+			}
 		}
 	}
 

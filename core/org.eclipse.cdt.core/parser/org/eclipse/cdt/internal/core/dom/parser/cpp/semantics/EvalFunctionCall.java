@@ -85,6 +85,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (fArguments.length > 0) {
 			if (fArguments[0] instanceof EvalMemberAccess) {
 				return ((EvalMemberAccess) fArguments[0]).getOwnerEval();
+			} else if (fArguments[0] instanceof EvalID) {
+				return ((EvalID) fArguments[0]).getFieldOwner();
 			}
 		}
 		
@@ -221,6 +223,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (args == fArguments)
 			return this;
 
+		ICPPEvaluation implicitThis = fImplicitThis;
+		
 		if (args[0] instanceof EvalFunctionSet && getOverload() == null) {
 			// Resolve the function using the parameters of the function call.
 			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
@@ -230,9 +234,19 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			if (args[0] == EvalFixed.INCOMPLETE) {
 				return args[0];
 			}
+			
+			// For functions sets of member functions, EvalFunctionSet does not store 
+			// the value of the object on which the member function is called.
+			// If this value was previously elided (not stored explicitly in
+			// fImplicitThis to avoid duplication with the copy stored in fArguments[0]),
+			// starts storing it in fImplicitThis because *someone* needs to store
+			// the value for correct constexpr evaluation.
+			if (implicitThis == null) {
+				implicitThis = getImplicitThis();
+			}
 		}
 
-		ICPPEvaluation newImplicitThis = fImplicitThis != null ? fImplicitThis.instantiate(context, maxDepth) : null;
+		ICPPEvaluation newImplicitThis = implicitThis != null ? implicitThis.instantiate(context, maxDepth) : null;
 		return new EvalFunctionCall(args, newImplicitThis, getTemplateDefinition());
 	}
 

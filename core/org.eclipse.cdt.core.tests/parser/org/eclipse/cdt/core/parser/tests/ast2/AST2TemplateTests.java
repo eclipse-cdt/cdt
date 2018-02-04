@@ -10576,4 +10576,79 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testTemplateAliasWithVariadicArgs_530086b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<bool, typename _Tp = void>
+	//	struct enable_if {};
+	//
+	//	template<typename _Tp>
+	//	struct enable_if<true, _Tp> { typedef _Tp type; };
+	//
+	//	template<typename _Tp> _Tp&& declval();
+	//
+	//	template<typename _Signature> class function;
+	//
+	//	template<typename _Res, typename... _ArgTypes>
+	//	class function<_Res(_ArgTypes...)>
+	//	{
+	//	  template<typename _Func,
+	//	           typename _Res2 = decltype(declval<_Func&>()(declval<_ArgTypes>()...))>
+	//	  struct _Callable { };
+	//
+	//	public:
+	//	  template<typename _Functor,
+	//	           typename = typename enable_if<_Callable<_Functor>::value, void>::type>
+	//	    function(_Functor);
+	//	};
+	//
+	//	void do_with_cql_env(function<void(int&)> func);
+	//
+	//	void test_range_queries() {
+	//	   do_with_cql_env([] (auto& e) {
+	//	        return e.create_table([](auto ks_name) {
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        }).then([&e] {
+	//	            return e.foo();
+	//	        });
+	//	    });
+	//	}
+	public void testLongDependentFunctionCallChain_530692() throws Exception {
+		parseAndCheckBindings();
+	}
 }

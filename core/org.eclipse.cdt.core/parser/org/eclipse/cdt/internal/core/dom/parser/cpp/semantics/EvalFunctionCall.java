@@ -85,6 +85,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (fArguments.length > 0) {
 			if (fArguments[0] instanceof EvalMemberAccess) {
 				return ((EvalMemberAccess) fArguments[0]).getOwnerEval();
+			} else if (fArguments[0] instanceof EvalID) {
+				return ((EvalID) fArguments[0]).getFieldOwner();
 			}
 		}
 		

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_7c8df7b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-05T12:08:50Z",
+      "side": 0,
+      "message": "I fixed sort ordering here.",
+      "revId": "5b29b5b5d8714a82b9d9667c7e61d44a554bec76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87929364_bc0affae",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/preferences/StringWithBooleanFieldEditor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-05T12:08:50Z",
+      "side": 0,
+      "message": "Changed to public to be consistent with other similar methods (like getLabelControl). Needed to be public so that I can set a tooltip on the control.",
+      "revId": "5b29b5b5d8714a82b9d9667c7e61d44a554bec76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

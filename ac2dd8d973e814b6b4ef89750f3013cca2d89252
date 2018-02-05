@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87929364_9c88e3aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-05T12:08:50Z",
+      "side": 1,
+      "message": "This bit of code provides a nicer error message in case the value/symbol passed to set remotetimeout fails. See the messages file, but it attempts to point back to the launch config/preferences in case of failure.",
+      "revId": "ac2dd8d973e814b6b4ef89750f3013cca2d89252",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

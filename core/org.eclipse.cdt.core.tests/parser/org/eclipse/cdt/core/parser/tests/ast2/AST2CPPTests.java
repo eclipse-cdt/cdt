@@ -12552,6 +12552,12 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
 	}
 	
+	//	void foo([[maybe_unused]] int a);
+	public void testCxx11AttributeBeforeParameterDeclaration_530729() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	
 	//	struct CType {
 	//	    char m_Array[4];
 	//	};

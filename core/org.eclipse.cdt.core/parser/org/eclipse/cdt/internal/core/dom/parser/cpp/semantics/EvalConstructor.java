@@ -117,6 +117,14 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	public IType getType() {
 		return fType;
 	}
+	
+	public ICPPConstructor getConstructor() {
+		return fConstructor;
+	}
+	
+	public ICPPEvaluation[] getArguments() {
+		return fArguments;
+	}
 
 	@Override
 	public IValue getValue() {

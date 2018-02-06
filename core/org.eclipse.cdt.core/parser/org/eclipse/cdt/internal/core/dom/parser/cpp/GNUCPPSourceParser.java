@@ -3048,6 +3048,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected ICPPASTParameterDeclaration parameterDeclaration() throws BacktrackException, EndOfFileException {
 		final int startOffset= LA(1).getOffset();
 
+		List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
+		
 		if (LT(1) == IToken.tLBRACKET && supportParameterInfoBlock) {
 			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET, 0);
 		}
@@ -3062,6 +3064,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			declSpec= lie.fDeclSpec;
 			declarator= addInitializer(lie, DeclarationOptions.PARAMETER);
 		}
+		
+		addAttributeSpecifiers(attributes, (ICPPASTDeclSpecifier) declSpec);
 
 		final ICPPASTParameterDeclaration parm = getNodeFactory().newParameterDeclaration(declSpec, declarator);
 		final int endOffset = figureEndOffset(declSpec, declarator);

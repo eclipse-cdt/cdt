@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2018 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.EFSExtensionProvider;
 import org.eclipse.cdt.internal.core.Cygwin;
@@ -22,7 +20,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Class to detect built-in compiler settings for Cygwin toolchain.

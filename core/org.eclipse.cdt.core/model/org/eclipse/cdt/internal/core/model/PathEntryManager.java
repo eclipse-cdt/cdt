@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000-2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
-import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.PathEntryContainerChanged;
@@ -77,7 +76,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**

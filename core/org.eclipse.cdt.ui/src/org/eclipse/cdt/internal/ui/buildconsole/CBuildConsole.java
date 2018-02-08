@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;

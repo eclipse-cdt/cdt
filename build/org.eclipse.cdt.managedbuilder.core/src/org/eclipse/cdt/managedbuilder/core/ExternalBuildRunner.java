@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Wind River Systems and others.
+ * Copyright (c) 2010, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,6 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
-import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;

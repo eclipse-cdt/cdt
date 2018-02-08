@@ -25,7 +25,7 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		for (String arg : args) {
-			if (arg.equals("-magic")) {
+			if (arg.equals("-magic")) { //$NON-NLS-1$
 				ByteBuffer b = ByteBuffer.allocate(4);
 				b.putInt(Protocol.MAGIC);
 				System.out.write(b.array());
@@ -40,5 +40,6 @@ public class Application implements IApplication {
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	public void stop() {
+		// Nothing
 	}
 }

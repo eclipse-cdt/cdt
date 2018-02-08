@@ -8,6 +8,7 @@
 package org.eclipse.remote.internal.proxy.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.internal.proxy.core.commands.ExecCommand;
+import org.eclipse.remote.internal.proxy.core.commands.ShellCommand;
 import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
@@ -29,6 +31,7 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final ProxyConnection proxyConnection;
 	private Map<String, String> remoteEnv;
+	private List<StreamChannel> streams = new ArrayList<>();
 	
 	public ProxyProcessBuilder(ProxyConnection connection, List<String> command) {
 		super(connection.getRemoteConnection(), command);
@@ -42,6 +45,17 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	public ProxyProcessBuilder(ProxyConnection connection, String... command) {
 		this(connection, Arrays.asList(command));
 	}
+	
+	/**
+	 * Constructor for creating command shell
+	 * @param connection
+	 */
+	public ProxyProcessBuilder(ProxyConnection connection) {
+		super(connection.getRemoteConnection(), (List<String>)null);
+		proxyConnection = connection;
+		redirectErrorStream(true);
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -76,41 +90,66 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	 */
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
-		final List<String> cmdArgs = command();
-		if (cmdArgs.size() < 1) {
-			throw new IndexOutOfBoundsException();
-		}
-		/*
-		 * If environment has not been touched, then don't send anything
-		 */
-		final Map<String, String> env = new HashMap<String, String>();
-		if (remoteEnv != null) {
-			env.putAll(remoteEnv);
-		}
-		final boolean append = (flags & IRemoteProcessBuilder.APPEND_ENVIRONMENT) != 0 || remoteEnv == null;
-		
 		final ProxyConnection conn = getRemoteConnection().getService(ProxyConnection.class);
 		if (conn == null) {
 			throw new IOException(Messages.ProxyProcessBuilder_0);
 		}
 		
-		final StreamChannel chanStdIO = conn.openChannel();
-		final StreamChannel chanStdErr = conn.openChannel();
-		final StreamChannel chanControl = conn.openChannel();
+		Job job;
 		
-		Job job = new Job("process executor") { //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				ExecCommand cmd = new ExecCommand(conn, cmdArgs, env, directory().toURI().getPath(), redirectErrorStream(), append, 
-						chanStdIO.getId(), chanStdErr.getId(), chanControl.getId());
-				try {
-					cmd.getResult(monitor);
-				} catch (ProxyException e) {
-					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage());
-				}
-				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+		final List<String> cmdArgs = command();
+		if (cmdArgs != null) {
+			if (cmdArgs.size() < 1) {
+				throw new IOException(Messages.ProxyProcessBuilder_1);
 			}
-		};
+			/*
+			 * If environment has not been touched, then don't send anything
+			 */
+			final Map<String, String> env = new HashMap<String, String>();
+			if (remoteEnv != null) {
+				env.putAll(remoteEnv);
+			}
+			
+			final boolean append = (flags & IRemoteProcessBuilder.APPEND_ENVIRONMENT) != 0 || remoteEnv == null;
+			
+			streams.add(conn.openChannel());
+			streams.add(conn.openChannel());
+			streams.add(conn.openChannel());
+			
+			job = new Job("process executor") { //$NON-NLS-1$
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					ExecCommand cmd = new ExecCommand(conn, cmdArgs, env, directory().toURI().getPath(), redirectErrorStream(), append, 
+							streams.get(0).getId(), streams.get(1).getId(), streams.get(2).getId());
+					try {
+						cmd.getResult(monitor);
+					} catch (ProxyException e) {
+						return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage());
+					}
+					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+				}
+			};
+		} else {
+			/*
+			 * Start command shell
+			 */
+			streams.add(conn.openChannel());
+			streams.add(conn.openChannel());
+			
+			job = new Job("process executor") { //$NON-NLS-1$
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					ShellCommand cmd = new ShellCommand(conn, streams.get(0).getId(), streams.get(1).getId());
+					try {
+						cmd.getResult(monitor);
+					} catch (ProxyException e) {
+						return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), e.getMessage());
+					}
+					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+				}
+			};
+		}
+		
 		job.schedule();
 		try {
 			job.join();
@@ -121,7 +160,10 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 			throw new IOException(job.getResult().getMessage());
 		}
 
-		ProxyProcess proc = new ProxyProcess(getRemoteConnection(), this, chanStdIO, chanStdErr, chanControl);
-		return proc;
+		return newRemoteProcess();
+	}
+
+	public List<StreamChannel> getStreams() {
+		return streams;
 	}
 }

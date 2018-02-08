@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
 import java.net.URI;
 
@@ -23,7 +23,7 @@ public class ServerPutInfoCommand extends AbstractServerCommand {
 	public ServerPutInfoCommand(IFileInfo info, int options, String path) {
 		this.info = info;
 		this.options = options;
-		this.uri = URI.create("file:" + path);
+		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
 	public void exec() throws ProxyException {

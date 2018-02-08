@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,8 +15,8 @@ import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.SerializableFileInfo;
+import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 public class ServerChildInfosCommand extends AbstractServerCommand {
@@ -45,7 +45,7 @@ public class ServerChildInfosCommand extends AbstractServerCommand {
 	
 	public ServerChildInfosCommand(StreamChannel chan, String path) {
 		this.out = chan.getOutputStream();
-		this.uri = URI.create("file:" + path);
+		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
 	public void exec() throws ProxyException {

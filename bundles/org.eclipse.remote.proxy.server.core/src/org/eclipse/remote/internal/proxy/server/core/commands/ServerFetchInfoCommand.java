@@ -5,41 +5,52 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.io.OutputStream;
+import java.net.URI;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.remote.proxy.protocol.core.SerializableFileInfo;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
-public class ServerGetEnvCommand extends AbstractServerCommand {
-
-	private final DataOutputStream result;
+public class ServerFetchInfoCommand extends AbstractServerCommand {
+	private IFileInfo info;
+	
+	private final URI uri;
+	private final OutputStream out;
 	
 	private class CommandRunner implements Runnable {
 		@Override
 		public void run() {
 			try {
-				Map<String,String> env = System.getenv();
-				result.writeInt(env.size());
-				for (Map.Entry<String, String> entry : env.entrySet()) {
-					result.writeUTF(entry.getKey());
-					result.writeUTF(entry.getValue());
-				}
+				DataOutputStream result = new DataOutputStream(out);
+				SerializableFileInfo sInfo = new SerializableFileInfo(info);
+				sInfo.writeObject(result);
 				result.flush();
 			} catch (IOException e) {
 				// Failed
+				e.printStackTrace();
 			}
 		}
 	}
 	
-	public ServerGetEnvCommand(StreamChannel chan) {
-		this.result = new DataOutputStream(chan.getOutputStream());
+	public ServerFetchInfoCommand(StreamChannel chan, String path) {
+		this.out = chan.getOutputStream();
+		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
 	public void exec() throws ProxyException {
+		try {
+			info = EFS.getStore(uri).fetchInfo();
+		} catch (CoreException e) {
+			throw new ProxyException(e.getMessage());
+		}
 		new Thread(new CommandRunner()).start();
 	}
 }

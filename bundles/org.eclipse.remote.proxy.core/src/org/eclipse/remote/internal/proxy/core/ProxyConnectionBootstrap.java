@@ -211,7 +211,7 @@ public class ProxyConnectionBootstrap {
 					int n;
 					while ((n = in.read(buf)) >= 0) {
 						if (n < 510) {
-							writer.write(encoder.encodeToString(Arrays.copyOf(buf, n)) + "\n");
+							writer.write(encoder.encodeToString(Arrays.copyOf(buf, n)) + "\n"); //$NON-NLS-1$
 						} else {
 							writer.write(encoder.encodeToString(buf));
 						}
@@ -311,7 +311,7 @@ public class ProxyConnectionBootstrap {
 				throw new RemoteConnectionException(Messages.ProxyConnectionBootstrap_8);
 			}
 			exec = (ChannelExec) session.openChannel("exec"); //$NON-NLS-1$
-			exec.setCommand("/bin/sh -l"); //$NON-NLS-1$
+			exec.setCommand("/bin/bash -l"); //$NON-NLS-1$
 			exec.connect();
 			return exec;
 		} catch (JSchException e) {

@@ -44,7 +44,6 @@ public class ChildInfosCommand extends AbstractCommand<IFileInfo[]> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("childinfos command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			

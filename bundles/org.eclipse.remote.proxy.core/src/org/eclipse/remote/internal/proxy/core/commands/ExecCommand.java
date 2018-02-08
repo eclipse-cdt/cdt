@@ -26,12 +26,12 @@ public class ExecCommand extends AbstractCommand<Void> {
 	private final String directory;
 	private final boolean appendEnv;
 	private final boolean redirect;
-	private final int chanA;
-	private final int chanB;
-	private final int chanC;
+	private final int cmdChan;
+	private final int ioChan;
+	private final int errChan;
 
 	public ExecCommand(ProxyConnection conn, List<String> command, Map<String, String> env, String directory, boolean redirect, boolean appendEnv,
-			int chanA, int chanB, int chanC) {
+			int cmdChan, int ioChan, int errChan) {
 		super(conn);
 		this.out = new DataOutputStream(conn.getCommandChannel().getOutputStream());
 		this.in = new DataInputStream(conn.getCommandChannel().getInputStream());
@@ -40,18 +40,18 @@ public class ExecCommand extends AbstractCommand<Void> {
 		this.directory = directory;
 		this.redirect = redirect;
 		this.appendEnv = appendEnv;
-		this.chanA = chanA;
-		this.chanB = chanB;
-		this.chanC = chanC;
+		this.cmdChan = cmdChan;
+		this.ioChan = ioChan;
+		this.errChan = errChan;
 	}
 
 	public Void call() throws ProxyException {
 		try {
 			out.writeByte(Protocol.PROTO_COMMAND);
 			out.writeShort(Protocol.CMD_EXEC);
-			out.writeByte(chanA);
-			out.writeByte(chanB);
-			out.writeByte(chanC);
+			out.writeByte(cmdChan);
+			out.writeByte(ioChan);
+			out.writeByte(errChan);
 			out.writeInt(command.size());
 			for (String arg : command) {
 				out.writeUTF(arg);
@@ -69,7 +69,6 @@ public class ExecCommand extends AbstractCommand<Void> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("exec command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 		} catch (IOException e) {

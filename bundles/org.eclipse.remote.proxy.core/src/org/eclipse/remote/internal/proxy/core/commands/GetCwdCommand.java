@@ -40,7 +40,6 @@ public class GetCwdCommand extends AbstractCommand<String> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("getcwd command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			

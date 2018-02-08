@@ -16,7 +16,6 @@
    <windowImages/>
 
    <launcher name="proxy">
-      <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
@@ -28,6 +27,8 @@
 
    <plugins>
       <plugin id="com.ibm.icu"/>
+      <plugin id="org.eclipse.cdt.core.macosx" fragment="true"/>
+      <plugin id="org.eclipse.cdt.core.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.native"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.expressions"/>
@@ -52,10 +53,6 @@
       <plugin id="org.eclipse.remote.proxy.protocol.core"/>
       <plugin id="org.eclipse.remote.proxy.server.core"/>
    </plugins>
-
-   <features>
-      <feature id="org.eclipse.remote.proxy"/>
-   </features>
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />

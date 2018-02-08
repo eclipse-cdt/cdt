@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
 import java.net.URI;
 
@@ -14,18 +14,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
-public class ServerMkdirCommand extends AbstractServerCommand {
+public class ServerDeleteCommand extends AbstractServerCommand {
 	private final int options;
 	private final URI uri;
 	
-	public ServerMkdirCommand(int options, String path) {
+	public ServerDeleteCommand(int options, String path) {
 		this.options = options;
-		this.uri = URI.create("file:" + path);
+		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
 	public void exec() throws ProxyException {
 		try {
-			EFS.getStore(uri).mkdir(options, new NullProgressMonitor());
+			EFS.getStore(uri).delete(options, new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new ProxyException(e.getMessage());
 		}

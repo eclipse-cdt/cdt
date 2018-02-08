@@ -37,8 +37,8 @@ import org.eclipse.remote.internal.proxy.core.commands.GetCwdCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetEnvCommand;
 import org.eclipse.remote.internal.proxy.core.commands.GetPropertiesCommand;
 import org.eclipse.remote.internal.proxy.core.messages.Messages;
-import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
+import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 import com.jcraft.jsch.ChannelShell;
@@ -48,7 +48,8 @@ import com.jcraft.jsch.ChannelShell;
  */
 public class ProxyConnection implements IRemoteConnectionControlService,
 		IRemoteConnectionChangeListener, IRemoteProcessService,
-		IRemoteCommandShellService, IRemoteConnectionHostService {
+		IRemoteCommandShellService, IRemoteConnectionHostService, 
+		IRemoteConnectionPropertyService {
 	// Connection Type ID
 	public static final String JSCH_ID = "org.eclipse.remote.Proxy"; //$NON-NLS-1$
 
@@ -72,7 +73,6 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 	private StreamChannelManager channelMux;
 	private StreamChannel commandChannel;
 	private boolean isOpen;
-	private boolean proxyRunning;
 	
 	private final IRemoteConnection fRemoteConnection;
 
@@ -133,7 +133,8 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 					|| IRemoteConnectionPropertyService.class.equals(service) 
 					|| IRemoteConnectionHostService.class.equals(service) 
 					|| IRemoteProcessService.class.equals(service)
-					|| IRemoteCommandShellService.class.equals(service)) {
+					|| IRemoteCommandShellService.class.equals(service) 
+					|| IRemoteConnectionPropertyService.class.equals(service)) {
 				return (T) connection.getService(ProxyConnection.class);
 			} else {
 				return null;
@@ -348,7 +349,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 
 	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {
-		throw new IOException("Not implemented yet");
+		return new ProxyProcessBuilder(this).start(flags);
 	}
 
 	@Override
@@ -453,5 +454,10 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
 			wc.setAttribute(USERNAME_ATTR, username);
 		}
+	}
+
+	@Override
+	public String getProperty(String key) {
+		return fProperties.get(key);
 	}
 }

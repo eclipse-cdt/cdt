@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class ServerGetPropertiesCommand extends AbstractServerCommand {
 				props.put(IRemoteConnection.OS_NAME_PROPERTY, System.getProperty(IRemoteConnection.OS_NAME_PROPERTY));
 				props.put(IRemoteConnection.OS_VERSION_PROPERTY, System.getProperty(IRemoteConnection.OS_VERSION_PROPERTY));
 				props.put(IRemoteConnection.OS_ARCH_PROPERTY, System.getProperty(IRemoteConnection.OS_ARCH_PROPERTY));
-				props.put(IRemoteConnection.LOCALE_CHARMAP_PROPERTY, System.getProperty("file.encoding"));
+				props.put(IRemoteConnection.LOCALE_CHARMAP_PROPERTY, System.getProperty("file.encoding")); //$NON-NLS-1$
 
 				result.writeInt(props.size());
 				for (Map.Entry<String, String> entry : props.entrySet()) {

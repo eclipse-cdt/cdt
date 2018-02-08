@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.remote.internal.proxy.core.ProxyConnection;
-import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.Protocol;
+import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 public class GetInputStreamCommand extends AbstractCommand<InputStream> {
@@ -47,7 +47,6 @@ public class GetInputStreamCommand extends AbstractCommand<InputStream> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("getinputstream command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			

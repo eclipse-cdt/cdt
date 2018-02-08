@@ -11,34 +11,31 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.remote.internal.proxy.core.ProxyConnection;
 import org.eclipse.remote.proxy.protocol.core.Protocol;
-import org.eclipse.remote.proxy.protocol.core.SerializableFileInfo;
-import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
-public class FetchInfoCommand extends AbstractCommand<IFileInfo> {
+public class ShellCommand extends AbstractCommand<Void> {
 
 	private final DataOutputStream out;
 	private final DataInputStream in;
-	private final String path;
+	private final int cmdChan;
+	private final int ioChan;
 
-	public FetchInfoCommand(ProxyConnection conn, String path) {
+	public ShellCommand(ProxyConnection conn, int cmdChan, int ioChan) {
 		super(conn);
 		this.out = new DataOutputStream(conn.getCommandChannel().getOutputStream());
 		this.in = new DataInputStream(conn.getCommandChannel().getInputStream());
-		this.path = path;
+		this.cmdChan = cmdChan;
+		this.ioChan = ioChan;
 	}
 
-	public IFileInfo call() throws ProxyException {
+	public Void call() throws ProxyException {
 		try {
-			final StreamChannel chan = openChannel();
-			
 			out.writeByte(Protocol.PROTO_COMMAND);
-			out.writeShort(Protocol.CMD_FETCHINFO);
-			out.writeByte(chan.getId());
-			out.writeUTF(path);
+			out.writeShort(Protocol.CMD_SHELL);
+			out.writeByte(cmdChan);
+			out.writeByte(ioChan);
 			out.flush();
 			
 			byte res = in.readByte();
@@ -46,14 +43,9 @@ public class FetchInfoCommand extends AbstractCommand<IFileInfo> {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
-			DataInputStream resultStream = new DataInputStream(chan.getInputStream());
-			SerializableFileInfo info = new SerializableFileInfo();
-			info.readObject(resultStream);
-			chan.close();
-			return info.getIFileInfo();
 		} catch (IOException e) {
 			throw new ProxyException(e.getMessage());
 		}
+		return null;
 	}
 }

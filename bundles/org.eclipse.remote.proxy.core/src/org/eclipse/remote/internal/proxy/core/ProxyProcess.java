@@ -12,18 +12,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
-import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
-import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcessControlService;
 import org.eclipse.remote.core.IRemoteProcessSignalService;
 import org.eclipse.remote.core.IRemoteProcessTerminalService;
-import org.eclipse.remote.internal.core.RemoteProcess;
+import org.eclipse.remote.proxy.protocol.core.Protocol;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 
-public class ProxyProcess extends RemoteProcess implements IRemoteProcessControlService, IRemoteProcessTerminalService {
+public class ProxyProcess implements IRemoteProcessControlService, IRemoteProcessTerminalService {
 	private IRemoteProcess remoteProcess;
+	
 	private final StreamChannel stdIOChan;
 	private final StreamChannel stdErrChan;
 	private final StreamChannel controlChan;
@@ -44,8 +44,8 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
-			if (ProxyProcess.class.equals(service) && remoteProcess instanceof ProxyProcess) {
-				return (T) remoteProcess;
+			if (ProxyProcess.class.equals(service)) {
+				return (T) new ProxyProcess(remoteProcess);
 			}
 			if (IRemoteProcessControlService.class.equals(service) || IRemoteProcessSignalService.class.equals(service)
 					|| IRemoteProcessTerminalService.class.equals(service)) {
@@ -55,17 +55,19 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 		}
 	}
 
-	public ProxyProcess(IRemoteConnection connection, IRemoteProcessBuilder builder, StreamChannel stdIO, StreamChannel stdErr, StreamChannel control) {
-		super(connection, builder);
-		stdIOChan = stdIO;
-		stdErrChan = stdErr;
-		controlChan = control;
-		cmdStream = new DataOutputStream(control.getOutputStream());
-		resultStream = new DataInputStream(control.getInputStream());
+	protected ProxyProcess(IRemoteProcess process) {
+		remoteProcess = process;
+		ProxyProcessBuilder builder = (ProxyProcessBuilder)process.getProcessBuilder();
+		List<StreamChannel> streams = builder.getStreams();
+		controlChan = streams.get(0);
+		stdIOChan = streams.get(1);
+		stdErrChan = streams.size() > 2 ? streams.get(2) : null;
+		cmdStream = new DataOutputStream(controlChan.getOutputStream());
+		resultStream = new DataInputStream(controlChan.getInputStream());
 		isCompleted = false;
 		exitValue = 0;
 		
-		cmdThread = new Thread("process " + builder.command().get(0) + " result reader") { //$NON-NLS-1$ //$NON-NLS-2$
+		cmdThread = new Thread("process result reader") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {
@@ -77,36 +79,15 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 				try {
 					stdIOChan.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					// Ignore
 				}
 				try {
-					stdErrChan.close();
+					if (stdErrChan != null) {
+						stdErrChan.close();
+					}
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					// Ignore
 				}
-//				if (stdout == null) {
-//					try {
-//						stdIOChan.getInputStream().close();
-//					} catch (IOException e) {
-//						// Ignore
-//					}
-//				}
-//				if (stdin == null) {
-//					try {
-//						stdIOChan.getOutputStream().close();
-//					} catch (IOException e) {
-//						// Ignore
-//					}
-//				}
-//				if (stderr == null) {
-//					try {
-//						stdErrChan.close();
-//					} catch (IOException e) {
-//						// Ignore
-//					}
-//				}
 				try {
 					controlChan.close();
 				} catch (IOException e) {
@@ -125,7 +106,7 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 	@Override
 	public void destroy() {
 		try {
-			cmdStream.writeByte(0);
+			cmdStream.writeByte(Protocol.CONTROL_KILL);
 			cmdStream.flush();
 		} catch (IOException e) {
 			isCompleted = true;
@@ -152,6 +133,19 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 	 */
 	@Override
 	public InputStream getErrorStream() {
+		if (stdErrChan == null) {
+			return new  InputStream() {
+				@Override
+				public int read() throws IOException {
+					return -1;
+				}
+
+				@Override
+				public int available() {
+					return 0;
+				}
+			};
+		}
 		return stdErrChan.getInputStream();
 	}
 
@@ -203,6 +197,15 @@ public class ProxyProcess extends RemoteProcess implements IRemoteProcessControl
 
 	@Override
 	public void setTerminalSize(int cols, int rows, int pwidth, int pheight) {
-		// Nothing?
+		try {
+			cmdStream.writeByte(Protocol.CONTROL_SETTERMINALSIZE);
+			cmdStream.writeInt(cols);
+			cmdStream.writeInt(rows);
+			cmdStream.writeInt(pwidth);
+			cmdStream.writeInt(pheight);
+			cmdStream.flush();
+		} catch (IOException e) {
+			// Dealt with somewhere else hopefully
+		}
 	}
 }

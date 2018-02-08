@@ -41,7 +41,6 @@ public class MkdirCommand extends AbstractCommand<Void> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("mkdir command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			return null;

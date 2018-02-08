@@ -16,6 +16,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_ID = "org.eclipse.remote.internal.proxy.core.messages.messages"; //$NON-NLS-1$
 
+	public static String AbstractCommand_0;
+
 	public static String AbstractRemoteCommand_format1;
 	public static String AbstractRemoteCommand_format2;
 	public static String AbstractRemoteCommand_Get_symlink_target;
@@ -55,6 +57,8 @@ public class Messages extends NLS {
 
 	public static String JschFileStore_A_file_of_name_already_exists;
 	public static String JschFileStore_The_parent_of_directory_does_not_exist;
+
+	public static String ProxyCommandShell_0;
 
 	public static String ProxyConnection_0;
 
@@ -97,6 +101,8 @@ public class Messages extends NLS {
 	public static String ProxyFileStore_7;
 
 	public static String ProxyProcessBuilder_0;
+
+	public static String ProxyProcessBuilder_1;
 
 	static {
 		// load message values from bundle file

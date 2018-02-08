@@ -42,7 +42,6 @@ public class GetPropertiesCommand extends AbstractCommand<Map<String, String>> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("getproperties command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			

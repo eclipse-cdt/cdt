@@ -16,18 +16,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.remote.internal.proxy.server.commands.AbstractServerCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerChildInfosCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerDeleteCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerExecCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerFetchInfoCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerGetCwdCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerGetEnvCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerGetInputStreamCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerGetOutputStreamCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerGetPropertiesCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerMkdirCommand;
-import org.eclipse.remote.internal.proxy.server.commands.ServerPutInfoCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.AbstractServerCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerChildInfosCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerDeleteCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerExecCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerFetchInfoCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerGetCwdCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerGetEnvCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerGetInputStreamCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerGetOutputStreamCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerGetPropertiesCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerMkdirCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerPutInfoCommand;
+import org.eclipse.remote.internal.proxy.server.core.commands.ServerShellCommand;
 import org.eclipse.remote.proxy.protocol.core.Protocol;
 import org.eclipse.remote.proxy.protocol.core.SerializableFileInfo;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
@@ -48,7 +49,7 @@ public class CommandServer implements Runnable {
 	}
 	
 	public void run() {
-		new Thread("cmd reader") {
+		new Thread("cmd reader") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {
@@ -117,6 +118,10 @@ public class CommandServer implements Runnable {
 			serverCmd = cmdExec(in);
 			break;
 
+		case Protocol.CMD_SHELL:
+			serverCmd = cmdShell(in);
+			break;
+
 		case Protocol.CMD_FETCHINFO:
 			serverCmd = cmdFetchInfo(in);
 			break;
@@ -151,16 +156,16 @@ public class CommandServer implements Runnable {
 			
 		default:
 			System.err.println("Invalid command ID: " + cmd);
-			throw new ProxyException("Invalid command ID: " + cmd);
+			throw new ProxyException("Invalid command ID: " + cmd); //$NON-NLS-1$
 		}
 		
 		serverCmd.exec();
 	}
 	
 	private AbstractServerCommand cmdExec(DataInputStream in) throws ProxyException, IOException {
-		int chanAId = in.readByte();
-		int chanBId = in.readByte();
-		int chanCId = in.readByte();
+		int cmdChanId = in.readByte();
+		int ioChanId = in.readByte();
+		int errChanId = in.readByte();
 		int length = in.readInt();
 		List<String> command = new ArrayList<String>(length);
 		for (int i = 0; i < length; i++) {
@@ -176,25 +181,30 @@ public class CommandServer implements Runnable {
 		String dir = in.readUTF();
 		boolean redirect = in.readBoolean();
 		boolean appendEnv = in.readBoolean();
-		System.err.print("dispatch: ");
-		for (String s:command) {
-			System.err.print(" " + s);
+		StreamChannel cmdChan = server.getChannel(cmdChanId);
+		StreamChannel ioChan = server.getChannel(ioChanId);
+		StreamChannel errChan= server.getChannel(errChanId);
+		if (cmdChan == null || ioChan == null || errChan == null) {
+			throw new ProxyException("Unable to locate channels for command"); //$NON-NLS-1$
 		}
-		System.err.println(" [" + chanAId + "," + chanBId+ ","+ chanCId + "]");
-		StreamChannel chanA = server.getChannel(chanAId);
-		StreamChannel chanB = server.getChannel(chanBId);
-		StreamChannel chanC= server.getChannel(chanCId);
-		if (chanA == null || chanB == null || chanC == null) {
-			throw new ProxyException("Unable to locate channels for command");
-		}
-		return new ServerExecCommand(command, env, dir, redirect, appendEnv, chanA, chanB, chanC);
+		return new ServerExecCommand(command, env, dir, redirect, appendEnv, cmdChan, ioChan, errChan);
 	}
 
+	private AbstractServerCommand cmdShell(DataInputStream in) throws ProxyException, IOException {
+		int cmdChanId = in.readByte();
+		int ioChanId = in.readByte();
+		StreamChannel cmdChan = server.getChannel(cmdChanId);
+		StreamChannel ioChan = server.getChannel(ioChanId);
+		if (cmdChan == null || ioChan == null) {
+			throw new ProxyException("Unable to locate channels for command"); //$NON-NLS-1$
+		}
+		return new ServerShellCommand(cmdChan, ioChan);
+	}
 	private AbstractServerCommand cmdGetCwd(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		return new ServerGetCwdCommand(chan);
 	}
@@ -203,7 +213,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		return new ServerGetEnvCommand(chan);
 	}
@@ -212,7 +222,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		return new ServerGetPropertiesCommand(chan);
 	}
@@ -221,7 +231,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		String path = in.readUTF();
 		return new ServerChildInfosCommand(chan, path);
@@ -231,7 +241,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		String path = in.readUTF();
 		return new ServerFetchInfoCommand(chan, path);
@@ -241,7 +251,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		int options = in.readInt();
 		String path = in.readUTF();
@@ -252,7 +262,7 @@ public class CommandServer implements Runnable {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
 		if (chan == null) {
-			throw new ProxyException("Unable to locate channel for command");
+			throw new ProxyException("Unable to locate channel for command"); //$NON-NLS-1$
 		}
 		int options = in.readInt();
 		String path = in.readUTF();

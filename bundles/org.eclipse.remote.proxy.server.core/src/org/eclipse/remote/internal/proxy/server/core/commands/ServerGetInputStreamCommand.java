@@ -5,16 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.remote.internal.proxy.server.commands;
+package org.eclipse.remote.internal.proxy.server.core.commands;
 
-import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
@@ -23,9 +22,9 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
  * TODO: Fix hang if command fails...
  *
  */
-public class ServerGetOutputStreamCommand extends AbstractServerCommand {
+public class ServerGetInputStreamCommand extends AbstractServerCommand {
 
-	private final InputStream in;
+	private final OutputStream out;
 	private final URI uri;
 	private final int options;
 	
@@ -46,9 +45,9 @@ public class ServerGetOutputStreamCommand extends AbstractServerCommand {
 				while ((n = in.read(buf)) >= 0) {
 					if (n > 0) {
 						out.write(buf, 0, n); // should block if no-one is reading
+						out.flush();
 					}
 				}
-				out.flush();
 			} catch (IOException e) {
 				// Finish
 			}
@@ -65,17 +64,17 @@ public class ServerGetOutputStreamCommand extends AbstractServerCommand {
 		}
 	}
 
-	public ServerGetOutputStreamCommand(StreamChannel chan, int options, String path) {
-		this.in = chan.getInputStream();
+	public ServerGetInputStreamCommand(StreamChannel chan, int options, String path) {
+		this.out = chan.getOutputStream();
 		this.options = options;
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
 	public void exec() throws ProxyException {
 		try {
-			OutputStream out = new BufferedOutputStream(EFS.getStore(uri).openOutputStream(options, new NullProgressMonitor()));
+			InputStream in = new BufferedInputStream(EFS.getStore(uri).openInputStream(options, new NullProgressMonitor()));
 			startForwarder(in, out);
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			throw new ProxyException(e.getMessage());
 		}
 	}

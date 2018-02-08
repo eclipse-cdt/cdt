@@ -47,7 +47,6 @@ public class PutInfoCommand extends AbstractCommand<Void> {
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
-				System.err.println("fetchinfo command failed:" + errMsg);
 				throw new ProxyException(errMsg);
 			}
 			return null;

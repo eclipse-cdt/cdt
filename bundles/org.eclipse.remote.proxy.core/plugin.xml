@@ -40,7 +40,7 @@
       </connectionService>
       <connectionService
             connectionTypeId="org.eclipse.remote.Proxy"
-            factory="org.eclipse.remote.internal.proxy.core.ProxyCommandShellService$Factory"
+            factory="org.eclipse.remote.internal.proxy.core.ProxyConnection$Factory"
             service="org.eclipse.remote.core.IRemoteCommandShellService">
       </connectionService>
       <processService
@@ -57,6 +57,11 @@
             connectionTypeId="org.eclipse.remote.Proxy"
             factory="org.eclipse.remote.internal.proxy.core.ProxyProcess$Factory"
             service="org.eclipse.remote.core.IRemoteProcessTerminalService">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.Proxy"
+            factory="org.eclipse.remote.internal.proxy.core.ProxyProcess$Factory"
+            service="org.eclipse.remote.internal.proxy.core.ProxyProcess">
       </processService>
    </extension>
    <extension

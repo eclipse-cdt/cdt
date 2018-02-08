@@ -19,6 +19,7 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.internal.proxy.core.ProxyConnection;
+import org.eclipse.remote.internal.proxy.core.messages.Messages;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
@@ -28,13 +29,9 @@ public abstract class AbstractCommand<T> implements Callable<T> {
 	private static ExecutorService executors = Executors.newSingleThreadExecutor();
 
 	private final ProxyConnection connection;
-	
 
 	private Future<T> asyncCmdInThread() throws ProxyException {
 		return executors.submit(this);
-	}
-
-	private void finalizeCmdInThread() {
 	}
 
 	public StreamChannel openChannel() throws IOException {
@@ -52,12 +49,8 @@ public abstract class AbstractCommand<T> implements Callable<T> {
 	public T getResult(IProgressMonitor monitor) throws ProxyException {
 		Future<T> future = null;
 		progressMonitor = SubMonitor.convert(monitor, 10);
-		try {
-			future = asyncCmdInThread();
-			return waitCmdInThread(future);
-		} finally {
-			finalizeCmdInThread();
-		}
+		future = asyncCmdInThread();
+		return waitCmdInThread(future);
 	}
 
 	private T waitCmdInThread(Future<T> future) throws ProxyException {
@@ -78,7 +71,7 @@ public abstract class AbstractCommand<T> implements Callable<T> {
 			Thread.currentThread().interrupt(); // set current thread flag
 		}
 		future.cancel(true);
-		throw new ProxyException("Operation cancelled by user");
+		throw new ProxyException(Messages.AbstractCommand_0);
 	}
 
 	@Override

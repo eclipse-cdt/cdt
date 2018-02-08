@@ -34,12 +34,12 @@
 	<repositories>
 		<repository>
 			<id>eclipse</id>
-			<url>http://download.eclipse.org/releases/neon/</url>
+			<url>http://download.eclipse.org/releases/oxygen/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

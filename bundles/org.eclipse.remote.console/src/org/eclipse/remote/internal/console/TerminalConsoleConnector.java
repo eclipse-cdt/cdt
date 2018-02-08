@@ -140,6 +140,11 @@ public class TerminalConsoleConnector {
 							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
 						}
 					}
+					
+					if (remoteProcess == null) {
+						disconnect();
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ConsoleMessages.TerminalConsoleConnector_0);
+					}
 
 					if (width > 0 || height > 0) {
 						IRemoteProcessTerminalService termService = remoteProcess.getService(IRemoteProcessTerminalService.class);

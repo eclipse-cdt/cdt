@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<prerequisites>
-		<maven>3.1.1</maven>
+		<maven>3.3.1</maven>
 	</prerequisites>
 
 	<groupId>org.eclipse.launchbar</groupId>

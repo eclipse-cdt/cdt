@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ public class CodanMarkerGenerator implements IMarkerGenerator {
 		IProblemLocationFactory factory = CodanRuntime.getInstance().getProblemLocationFactory();
 		if (info.file instanceof IFile)
 			return factory.createProblemLocation((IFile) info.file, info.startChar, info.endChar, info.lineNumber);
-		else
-			return new CodanProblemLocation(info.file, info.startChar, info.endChar, info.lineNumber);
+		return new CodanProblemLocation(info.file, info.startChar, info.endChar, info.lineNumber);
 	}
 }

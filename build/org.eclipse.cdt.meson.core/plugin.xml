@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="toolChainProvider" name="Meson ToolChain File Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension-point id="toolChainProvider" name="%extension-point.name" schema="schema/toolChainProvider.exsd"/>
    <extension
          id="mesonNature"
          point="org.eclipse.core.resources.natures">

@@ -23,7 +23,7 @@ public class MesonNature implements IProjectNature {
 
 	private IProject project;
 
-	public static void setupBuilder(IProjectDescription projDesc) throws CoreException {
+	public static void setupBuilder(IProjectDescription projDesc) {
 		ICommand command = projDesc.newCommand();
 		CBuilder.setupBuilder(command);
 		projDesc.setBuildSpec(new ICommand[] { command });

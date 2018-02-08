@@ -6,7 +6,7 @@
       <page
             class="org.eclipse.cdt.meson.ui.properties.MesonPropertyPage"
             id="org.eclipse.cdt.meson.ui.properties.mesonPropertyPage"
-            name="Meson">
+            name="%page.name">
          <enabledWhen>
             <and>
                <instanceof

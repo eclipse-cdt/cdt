@@ -16,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration;
@@ -51,7 +50,7 @@ public class RunNinjaCommandHandler extends AbstractMesonCommandHandler {
 		IProject project = getSelectedContainer().getAdapter(IProject.class);
 		console.start(project);
 		try {
-			ICBuildConfiguration buildConfig = ((CBuildConfiguration)project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+			ICBuildConfiguration buildConfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
 			
 			if (buildConfig instanceof MesonBuildConfiguration) {
 				MesonBuildConfiguration config = (MesonBuildConfiguration)buildConfig;

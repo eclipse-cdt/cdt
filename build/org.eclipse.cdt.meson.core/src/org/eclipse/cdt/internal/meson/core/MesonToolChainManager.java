@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.cdt.meson.core.IMesonToolChainFile;
@@ -191,7 +192,7 @@ public class MesonToolChainManager implements IMesonToolChainManager {
 		String id = toolchain.getId();
 
 		for (IMesonToolChainFile file : getToolChainFiles()) {
-			if (id.equals(file.getProperty(MesonBuildConfiguration.TOOLCHAIN_ID))) {
+			if (id.equals(file.getProperty(ICBuildConfiguration.TOOLCHAIN_ID))) {
 				return file;
 			}
 		}

@@ -65,13 +65,11 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 
 			if (toolChain != null) {
 				return new MesonBuildConfiguration(config, name, toolChain);
-			} else {
-				// No valid combinations
-				return null;
 			}
-		} else {
-			return new MesonBuildConfiguration(config, name);
+			// No valid combinations
+			return null;
 		}
+		return new MesonBuildConfiguration(config, name);
 	}
 
 	@Override

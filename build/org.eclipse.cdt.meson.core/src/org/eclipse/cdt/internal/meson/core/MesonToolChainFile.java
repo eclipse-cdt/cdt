@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.meson.core.Activator;
@@ -53,8 +54,8 @@ public class MesonToolChainFile implements IMesonToolChainFile {
 	public IToolChain getToolChain() throws CoreException {
 		if (toolchain == null) {
 			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
-			toolchain = tcManager.getToolChain(properties.get(MesonBuildConfiguration.TOOLCHAIN_TYPE),
-					properties.get(MesonBuildConfiguration.TOOLCHAIN_ID));
+			toolchain = tcManager.getToolChain(properties.get(ICBuildConfiguration.TOOLCHAIN_TYPE),
+					properties.get(ICBuildConfiguration.TOOLCHAIN_ID));
 
 			if (toolchain == null) {
 				Collection<IToolChain> tcs = tcManager.getToolChainsMatching(properties);

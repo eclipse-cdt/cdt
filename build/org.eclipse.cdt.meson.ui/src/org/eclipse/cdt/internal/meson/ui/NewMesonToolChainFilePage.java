@@ -12,12 +12,12 @@ package org.eclipse.cdt.internal.meson.ui;
 
 import java.nio.file.Paths;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.meson.core.IMesonToolChainFile;
 import org.eclipse.cdt.meson.core.IMesonToolChainManager;
 import org.eclipse.cdt.meson.core.Activator;
-import org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -113,8 +113,8 @@ public class NewMesonToolChainFilePage extends WizardPage {
 		IMesonToolChainFile file = manager.newToolChainFile(Paths.get(pathText.getText()));
 
 		IToolChain tc = toolchains[tcCombo.getSelectionIndex()];
-		file.setProperty(MesonBuildConfiguration.TOOLCHAIN_TYPE, tc.getTypeId());
-		file.setProperty(MesonBuildConfiguration.TOOLCHAIN_ID, tc.getId());
+		file.setProperty(ICBuildConfiguration.TOOLCHAIN_TYPE, tc.getTypeId());
+		file.setProperty(ICBuildConfiguration.TOOLCHAIN_ID, tc.getId());
 
 		return file;
 	}

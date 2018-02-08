@@ -29,7 +29,6 @@ import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.core.RemoteDebugOptions;
-import org.eclipse.remote.internal.core.RemoteProcess;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.Channel;
@@ -182,7 +181,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 			}
 			fChannel.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			fChannel.connect();
-			return new RemoteProcess(getRemoteConnection(), this);
+			return newRemoteProcess();
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());
 		} catch (JSchException e) {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.remote.internal.core.RemoteProcess;
 
 /**
  * Abstract base class for remote process builders. Implementors can use this class to provide a default implementation of a remote
@@ -194,5 +195,12 @@ public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuil
 	@Override
 	public IRemoteConnection getRemoteConnection() {
 		return fConnection;
+	}
+	
+	/**
+	 * @since 4.0
+	 */
+	protected IRemoteProcess newRemoteProcess() {
+		return new RemoteProcess(getRemoteConnection(), this);
 	}
 }

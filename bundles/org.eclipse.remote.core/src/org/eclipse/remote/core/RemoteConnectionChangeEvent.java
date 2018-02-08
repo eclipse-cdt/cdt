@@ -53,7 +53,7 @@ public class RemoteConnectionChangeEvent {
 
 	/**
 	 * Event indicating the connection attributes had changed.
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	public static final int ATTRIBUTES_CHANGED = 1 << 6;
 

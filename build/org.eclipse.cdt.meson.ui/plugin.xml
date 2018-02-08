@@ -74,5 +74,63 @@
             tabClass="org.eclipse.cdt.internal.meson.ui.MesonBuildTab">
       </provider>
    </extension>
+   <extension
+         id="org.eclipse.cdt.meson.ui.commands.ninja"
+         name="%meson.run.ninja.label"
+         point="org.eclipse.ui.commands">
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.internal.meson.ui.commands.RunNinjaCommandHandler"
+            commandId="org.eclipse.cdt.meson.ui.command.runninja">
+      </handler>
+   </extension>
+       <extension
+          point="org.eclipse.core.expressions.definitions">
+       <definition
+             id="org.eclipse.cdt.meson.ui.handlerEnablement">
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                     type="org.eclipse.core.resources.IResource">
+                     <test
+                          property="org.eclipse.core.resources.projectNature"
+                          value="org.eclipse.cdt.meson.core.mesonNature">
+                     </test>
+                  </adapt>
+               </iterate>
+            </with>
+       </definition>
+    </extension>
+    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <separator
+               name="mesonGroup"
+               visible="true">
+         </separator>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=mesonGroup">
+         <command
+               commandId="org.eclipse.cdt.meson.ui.command.runninja"
+               id="ninja"
+               label="%meson.run.ninja.label"
+               mnemonic="%meson.run.ninja.mnemonic"
+               style="push">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+      </menuContribution>
+    </extension>
+    
+   
 
 </plugin>

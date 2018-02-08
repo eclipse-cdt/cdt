@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -102,8 +100,13 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 	@Override
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
+		return build(kind, args, null, null, console, monitor);
+	}
+	
+	public IProject[] build(int kind, Map<String, String> args, String[] ninjaEnv, String[] ninjaArgs, IConsole console, IProgressMonitor monitor)
+			throws CoreException {
 		IProject project = getProject();
-		
+
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
@@ -117,7 +120,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			if (toolChainFile == null && !isLocal()) {
 				IMesonToolChainManager manager = Activator.getService(IMesonToolChainManager.class);
 				toolChainFile = manager.getToolChainFileFor(getToolChain());
-				
+
 				if (toolChainFile == null) {
 					// error
 					console.getErrorStream().write(Messages.MesonBuildConfiguration_NoToolchainFile);
@@ -133,12 +136,12 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 
 				List<String> argsList = new ArrayList<>();
-				
+
 				String userArgs = getProperty(IMesonConstants.MESON_ARGUMENTS);
 				if (userArgs != null) {
 					argsList.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
 				}
-				
+
 				argsList.add(getBuildDirectory().toString());
 
 				Map<String, String> envMap = System.getenv();
@@ -148,25 +151,25 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 				String envStr = getProperty(IMesonConstants.MESON_ENV);
 				if (envStr != null) {
-					envList.addAll(stripEnvVars(envStr));
+					envList.addAll(MesonUtils.stripEnvVars(envStr));
 				}
 				String[] env = envList.toArray(new String[0]);
 
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
-				
+
 				launcher.setProject(getProject());
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
 				}
 
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningMeson);
-				
+
 				org.eclipse.core.runtime.Path mesonPath = new org.eclipse.core.runtime.Path(path.toString());
 				outStream.write(String.join(" ", envStr != null ? envStr : "", //$NON-NLS-1$ //$NON-NLS-2$ 
 						mesonPath.toString(), userArgs, "\n")); //$NON-NLS-1$
 				outStream.write(getBuildDirectory() + "\n"); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().getParent().getParent().toString());
-				
+
 				launcher.execute(mesonPath, argsList.toArray(new String[0]), env, workingDir, monitor);
 				if (launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
@@ -178,28 +181,39 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
-				
+
 				String buildCommand = getProperty(IMesonConstants.BUILD_COMMAND);
 				if (buildCommand == null || buildCommand.isEmpty()) {
 					buildCommand = "ninja";
 				}
 
-				String[] env = new String[0];
+				Map<String, String> envMap = System.getenv();
+				List<String> envList = new ArrayList<>();
+				for (Map.Entry<String, String> entry : envMap.entrySet()) {
+					envList.add(entry.getKey() + "=" + entry.getValue());
+				}
+				if (ninjaEnv != null) {
+					envList.addAll(Arrays.asList(ninjaEnv));
+				}
+				String[] env = envList.toArray(new String[0]);
 
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
-				
+
 				launcher.setProject(getProject());
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
 				}
 
-				monitor.subTask(Messages.MesonBuildConfiguration_RunningMeson);
-				
+				monitor.subTask(Messages.MesonBuildConfiguration_RunningNinja);
+
 				org.eclipse.core.runtime.Path ninjaPath = new org.eclipse.core.runtime.Path(buildCommand);
-				outStream.write(String.join(" ", ninjaPath.toString() + '\n')); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
 				
-				launcher.execute(ninjaPath, new String[] {"-v"}, env, workingDir, monitor); //$NON-NLS-1$
+				if (ninjaArgs == null) {
+					ninjaArgs = new String[] {"-v"}; //$NON-NLS-1$
+				}
+
+				launcher.execute(ninjaPath, ninjaArgs, env, workingDir, monitor);
 				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, errMsg));
@@ -300,44 +314,6 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 	
-	/**
-	 * Strip a command of VAR=VALUE pairs that appear ahead or behind the command and add
-	 * them to a list of environment variables.
-	 *
-	 * @param command - command to strip
-	 * @param envVars - ArrayList to add environment variables to
-	 * @return stripped command
-	 */
-	public static List<String> stripEnvVars(String envString) {
-		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\").*"); //$NON-NLS-1$
-		Pattern p2 = Pattern.compile("(\\w+[=]'.*?').*"); //$NON-NLS-1$
-		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+).*"); //$NON-NLS-1$
-		boolean finished = false;
-		List<String> envVars = new ArrayList<>();
-		while (!finished) {
-			Matcher m1 = p1.matcher(envString);
-			if (m1.matches()) {
-				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"","").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-				String s = m1.group(1).trim();
-				envVars.add(s.replaceAll("\\\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				Matcher m2 = p2.matcher(envString);
-				if (m2.matches()) {
-					envString = envString.replaceFirst("\\w+[=]'.*?'", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-					String s = m2.group(1).trim();
-					envVars.add(s.replaceAll("'", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					Matcher m3 = p3.matcher(envString);
-					if (m3.matches()) {
-						envString = envString.replaceFirst("\\w+[=][^\\s]+", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-						envVars.add(m3.group(1).trim());
-					} else {
-						finished = true;
-					}
-				}
-			}
-		}
-		return envVars;
-	}
+
 
 }

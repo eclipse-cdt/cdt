@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String MesonBuildConfiguration_BuildingComplete;
 	public static String MesonBuildConfiguration_Cleaning;
 	public static String MesonBuildConfiguration_RunningMeson;
+	public static String MesonBuildConfiguration_RunningNinja;
 	public static String MesonBuildConfiguration_RunningMesonFailure;
 	public static String MesonBuildConfiguration_RunningNinjaFailure;
 	public static String MesonBuildConfiguration_NoToolchainFile;

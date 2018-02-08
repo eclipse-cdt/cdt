@@ -14,6 +14,8 @@ public interface IMesonConstants {
 	
 	public static final String MESON_ARGUMENTS = "meson.arguments"; //$NON-NLS-1$
 	public static final String MESON_ENV = "meson.environment"; //$NON-NLS-1$
+	public static final String NINJA_ENV = "meson.ninja.environment"; //$NON-NLS-1$
+	public static final String NINJA_ARGUMENTS = "meson.ninja.arguments"; //$NON-NLS-1$
 	public static final String MESON_ENV_SEPARATOR = "|"; //$NON-NLS-1$
 	String MESON_GENERATOR = "meson.generator"; //$NON-NLS-1$
 	String BUILD_COMMAND = "meson.command.build"; //$NON-NLS-1$

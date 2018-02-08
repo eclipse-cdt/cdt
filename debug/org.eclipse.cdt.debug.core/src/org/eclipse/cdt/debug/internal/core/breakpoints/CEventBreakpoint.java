@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 QNX Software Systems and others.
+ * Copyright (c) 2008, 2018 QNX Software Systems and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -41,7 +41,7 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		// default message, overridden by label provider, which would take care of translation
-		return "Event Breakpoint: " + getEventType(); //$NON-NLS-1$ //$NON-NLS-1$
+		return "Event Breakpoint: " + getEventType(); //$NON-NLS-1$ 
 	}
 
 	/**

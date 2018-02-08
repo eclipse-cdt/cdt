@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems and others.
+ * Copyright (c) 2006, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-	    DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+	    DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$
 
         fSourceDocumentProvider = new SourceDocumentProvider();
         

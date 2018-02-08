@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Nokia and others.
+ * Copyright (c) 2008, 2018 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ class ExecutablesViewerComparator extends ViewerComparator {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public int compare(Viewer viewer, Object e1, Object e2) {
 
 		if (category(e1) == 1 && category(e2) == 1) {

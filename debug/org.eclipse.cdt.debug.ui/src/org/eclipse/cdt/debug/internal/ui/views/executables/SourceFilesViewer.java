@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Nokia and others.
+ * Copyright (c) 2010, 2018 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,7 +197,6 @@ public class SourceFilesViewer extends BaseViewer {
 			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.ORG_LOCATION]) {
 
 				@Override
-				@SuppressWarnings("unchecked")
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if (e1 instanceof ITranslationUnit && e2 instanceof ITranslationUnit) {
 						ITranslationUnit entry1 = (ITranslationUnit) e1;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 Intel Corporation and others.
+ * Copyright (c) 2004, 2018 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IToolChain extends IBuildObject, IHoldsOptions {
+public interface IToolChain extends IHoldsOptions {
 	public static final String TOOL_CHAIN_ELEMENT_NAME = "toolChain";	//$NON-NLS-1$
 	public static final String OS_LIST = "osList";						//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$

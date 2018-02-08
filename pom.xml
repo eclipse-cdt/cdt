@@ -19,8 +19,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<target-platform>cdt-e4.4</target-platform>
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.4</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7</help-docs-eclipserun-repo>
 	</properties>
 
 	<licenses>
@@ -48,14 +47,9 @@
 			<url>http://download.eclipse.org/cbi/updates/license/</url>
 			<layout>p2</layout>
 		</repository>
-		<!-- repository>
-			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
-			<layout>p2</layout>
-		</repository-->
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.2/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.4/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

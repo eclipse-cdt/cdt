@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 Wind River Systems and others.
+ * Copyright (c) 2007, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,7 +196,7 @@ import com.ibm.icu.text.MessageFormat;
 @SuppressWarnings("restriction")
 public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, IDisassemblyPartCallback  {
 
-	final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
+	final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$
 
 	/**
 	 * Annotation model attachment key for breakpoint annotations.

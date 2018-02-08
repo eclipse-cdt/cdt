@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QNX Software Systems and others.
+ * Copyright (c) 2005, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				IPath name = bin.getResource().getProjectRelativePath();
 				// don't match any launch config that is used for a Container launch
 				String connectionURI = config.getAttribute(CONNECTION_URI, (String)null);
-				if (connectionURI == null) { //$NON-NLS-1$
+				if (connectionURI == null) {
 					if (programPath != null && programPath.equals(name)) {
 						if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
 							candidateConfigs.add(config);

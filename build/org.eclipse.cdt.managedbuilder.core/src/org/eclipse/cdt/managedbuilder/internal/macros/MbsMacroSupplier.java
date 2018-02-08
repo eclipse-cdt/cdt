@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -704,43 +702,6 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		return ManagedBuildManager.getBuildLocation(cfg, builder);
 	}
 
-	private IPath getOutputFilePath(IPath inputPath, IBuilder builder, IConfiguration cfg){
-		ITool buildTools[] = null;
-		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toString());
-		if(rcCfg != null) {
-			buildTools = rcCfg.getToolsToInvoke();
-		}
-		if (buildTools == null || buildTools.length == 0) {
-			buildTools = cfg.getFilteredTools();
-		}
-
-		String name = null;
-		IPath path = null;
-		for(int i = 0; i < buildTools.length; i++){
-			ITool tool = buildTools[i];
-			IInputType inputType = tool.getInputType(inputPath.getFileExtension());
-			if(inputType != null){
-				IOutputType prymOutType = tool.getPrimaryOutputType();
-				String names[] = prymOutType.getOutputNames();
-				if(names != null && names.length > 0)
-					name = names[0];
-			}
-		}
-		if(name != null){
-			IPath namePath = new Path(name);
-			if(namePath.isAbsolute()){
-				path = namePath;
-			}
-			else{
-				IPath cwd = getBuilderCWD(builder, cfg);
-				if(cwd != null)
-					path = cwd.append(namePath);
-			}
-		}
-		return path;
-
-	}
-
 	/* (non-Javadoc)
 	 * Returns the option that matches the option ID in this tool
 	 */
@@ -870,13 +831,6 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			} catch (CdtVariableException e){
 
 			}
-			return null;
-		}
-
-		public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException {
-		}
-
-		public IMacroContextInfo getMacroContextInfo() {
 			return null;
 		}
 	}

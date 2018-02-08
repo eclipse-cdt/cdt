@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2018 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,6 @@ public class EnvVarBuildPath implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getType()
-	 */
 	@Override
 	public int getType() {
 		return fType;
@@ -72,9 +69,6 @@ public class EnvVarBuildPath implements
 		this.fType = type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getVariableNames()
-	 */
 	@Override
 	public String[] getVariableNames() {
 		return fVariableNames;
@@ -95,9 +89,6 @@ public class EnvVarBuildPath implements
 		return names.split(NAME_SEPARATOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getPathDelimiter()
-	 */
 	@Override
 	public String getPathDelimiter() {
 		return fPathDelimiter;
@@ -115,19 +106,6 @@ public class EnvVarBuildPath implements
 		return BUILDPATH_INCLUDE;
 	}
 
-	private String convertPathTypeToString(int pathType){
-		switch(pathType){
-		case BUILDPATH_LIBRARY:
-			return TYPE_LIBRARY;
-		case BUILDPATH_INCLUDE:
-		default:
-			return TYPE_INCLUDE;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getBuildPathResolver()
-	 */
 	@Override
 	public IBuildPathResolver getBuildPathResolver() {
 		if(fBuildPathResolver == null && fBuildPathResolverElement != null){

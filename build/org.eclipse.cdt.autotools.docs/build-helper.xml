@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2012 Red Hat, Inc.
+    Copyright (c) 2012, 2018 Red Hat, Inc.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -17,15 +17,6 @@
 	<property name="autotools.help.doc.url.base" value="http://wiki.eclipse.org"/>
 	<property name="autotools.wiki.url.base" value="${autotools.help.doc.url.base}/CDT/Autotools"/>
 	<property name="imageFolder" value="images"/>
-
-	<path id="wikitext.tasks.classpath">
-		<!-- Replace dir with the dir you have wikitext installed into.-->
-		<fileset dir="/usr/share/eclipse/dropins/mylyn-docs-wikitext/eclipse/plugins">
-			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
-		</fileset>
-	</path>
-	<taskdef classpathref="wikitext.tasks.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties" />
-	<taskdef classpathref="wikitext.tasks.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
 
 	<target name="all" description="Generate Eclipse help content for the CDT Autotools user guide">
 		<mediawiki-to-eclipse-help wikiBaseUrl="${autotools.help.doc.url.base}" title="Autotools Plug-in User Guide" formatoutput="true" dest="." templateExcludes="*eclipseproject*">

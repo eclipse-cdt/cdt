@@ -103,14 +103,23 @@
                   <test property="org.eclipse.cdt.ui.checkPreference"
                         value="org.eclipse.core.resources/description.autobuilding=false"/>
                   <or>
-                     <reference
-                           definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor"/>
                      <with variable="selection">
                         <iterate ifEmpty="false">
                            <reference
                                  definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFile"/>
                         </iterate>
                      </with>
+                     <and>
+                        <reference
+                              definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor">
+                        </reference>
+                        <with
+                              variable="activePart">
+                           <instanceof
+                                 value="org.eclipse.ui.IEditorPart">
+                           </instanceof>
+                        </with>
+                     </and>
                   </or>
                </and>
             </visibleWhen>
@@ -124,14 +133,23 @@
                   <test property="org.eclipse.cdt.ui.checkPreference"
                         value="org.eclipse.core.resources/description.autobuilding=false"/>
                   <or>
-                     <reference
-                           definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor"/>
                      <with variable="selection">
                         <iterate ifEmpty="false">
                            <reference
                                  definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFile"/>
                         </iterate>
                      </with>
+                     <and>
+                        <reference
+                              definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor">
+                        </reference>
+                        <with
+                              variable="activePart">
+                           <instanceof
+                                 value="org.eclipse.ui.IEditorPart">
+                           </instanceof>
+                        </with>
+                     </and>
                   </or>
                </and>
             </visibleWhen>

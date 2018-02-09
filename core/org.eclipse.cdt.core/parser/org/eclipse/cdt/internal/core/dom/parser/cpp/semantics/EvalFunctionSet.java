@@ -264,10 +264,10 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		ICPPFunction[] originalFunctions = fFunctionSet.getBindings();
 		ICPPFunction[] functions = originalFunctions;
 		if (owner instanceof ICPPClassSpecialization && owner != originalOwner) {
+			ICPPClassSpecialization ownerClass = (ICPPClassSpecialization) owner;
 			functions = new ICPPFunction[originalFunctions.length];
 			for (int i = 0; i < originalFunctions.length; i++) {
-				functions[i] = (ICPPFunction) CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						originalFunctions[i]);
+				functions[i] = (ICPPFunction) ownerClass.specializeMember(originalFunctions[i]); 
 			}
 		}
 		// No need to instantiate the implied object type. An EvalFunctioNSet should only be created

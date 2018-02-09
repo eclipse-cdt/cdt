@@ -978,6 +978,16 @@ public class CPPTemplates {
 		return newVariable;
 	}
 
+	/**
+	 * IMPORTANT: Do NOT call this method directly, at least when (owner instanceof ICPPClassSpecialization).
+	 *            Use ICPPClassSpecialization.specializeMember(decl) instead.
+	 *            
+	 *            This ensures that the caching mechanism for member specializations implemented by
+	 *            ICPPClassSpecialization.specializeMember() is not bypassed.
+	 *            
+	 * TODO: Implement a caching mechanism for non-class owners, too, and make specializeMember()
+	 *       a method of ICPPSpecialization itself.
+	 */
 	public static IBinding createSpecialization(ICPPSpecialization owner, IBinding decl) {
 		IBinding spec = null;
 		final ICPPTemplateParameterMap tpMap= owner.getTemplateParameterMap();

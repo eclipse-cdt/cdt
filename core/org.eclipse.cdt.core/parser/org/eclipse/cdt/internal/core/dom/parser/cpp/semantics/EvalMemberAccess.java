@@ -388,7 +388,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		IBinding member = fMember;
 		IType ownerClass = SemanticUtil.getNestedType(ownerType, ALLCVQ);
 		if (ownerClass instanceof ICPPClassSpecialization) {
-			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerClass, fMember);
+			member = ((ICPPClassSpecialization) ownerClass).specializeMember(fMember);
 		}
 		ICPPEvaluation ownerEval = fOwnerEval;
 		if (ownerEval != null) {

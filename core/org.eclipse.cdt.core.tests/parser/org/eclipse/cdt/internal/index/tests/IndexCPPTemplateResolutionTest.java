@@ -3167,4 +3167,35 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationOfAnonymousClass_528456() throws Exception {
 		checkBindings();
 	}
+	
+	//	// empty file
+	
+	//	namespace std {
+	//	    template <class E>
+	//	    struct initializer_list {
+	//	        const E* array;
+	//	        int len;
+	//	        constexpr const E* begin() const { return array; }
+	//	        constexpr const E* end() const { return array + len; }
+	//	    };
+	//	}
+	//	template <typename Enum>
+	//	struct QFlags {
+	//	    int i;
+	//	    constexpr QFlags(std::initializer_list<Enum> flags)
+	//	         : i(initializer_list_helper(flags.begin(), flags.end())) {}
+	//	    constexpr static int initializer_list_helper(const Enum* it, const Enum* end) {
+	//	        return it == end ? 0 : (int(*it) | initializer_list_helper(it + 1, end));
+	//	    }
+	//	};
+	//	enum Option {
+	//	    ShowMessageBox = 0x02,
+	//	    Log = 0x04
+	//	};
+	//	struct MessageFunctionPrivate {
+	//	    QFlags<Option> Options{ShowMessageBox, Log};
+	//	};
+	public void testConstexprInitListConstructor_519091() throws Exception {
+		checkBindings();
+	}
 }

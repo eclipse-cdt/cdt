@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.eclipse.cdt.meson.ui.editor;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %vendorName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.ui.genericeditor;bundle-version="1.0.0",
+ org.eclipse.tm4e.ui;bundle-version="0.1.0",
+ org.eclipse.ui.editors;bundle-version="3.11.0",
+ org.eclipse.core.contenttype;bundle-version="3.6.0"
+Automatic-Module-Name: org.eclipse.cdt.meson.ui.editor

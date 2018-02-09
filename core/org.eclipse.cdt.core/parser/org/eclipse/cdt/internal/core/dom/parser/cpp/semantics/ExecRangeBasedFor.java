@@ -20,10 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
@@ -167,10 +169,17 @@ public class ExecRangeBasedFor implements ICPPExecution {
 		//       Alternatively, we could lower the range-based for loop into a regular for loop as
 		//       described in the standard (by constructing the corresponding executions and evaluations),
 		//       and the above instantiations will fall out of that automatically.
-		ICPPFunction newBegin = begin != null ? (ICPPFunction)CPPTemplates.createSpecialization(
-				context.getContextSpecialization(), begin) : null;
-		ICPPFunction newEnd = end != null ? (ICPPFunction)CPPTemplates.createSpecialization(
-				context.getContextSpecialization(), end) : null;
+		ICPPSpecialization owner = context.getContextSpecialization();
+		ICPPFunction newBegin = null;
+		ICPPFunction newEnd = null;
+		if (owner instanceof ICPPClassSpecialization) {
+			if (begin != null) {
+				newBegin = (ICPPFunction) ((ICPPClassSpecialization) owner).specializeMember(begin);
+			}
+			if (end != null) {
+				newEnd = (ICPPFunction) ((ICPPClassSpecialization) owner).specializeMember(end);
+			}
+		}
 		ICPPExecution newBodyExec = bodyExec.instantiate(context, maxDepth);
 
 		if (newDeclarationExec == declarationExec &&

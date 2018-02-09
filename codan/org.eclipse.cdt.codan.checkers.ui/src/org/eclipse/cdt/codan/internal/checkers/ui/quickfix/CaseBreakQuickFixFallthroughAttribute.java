@@ -29,6 +29,9 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 	@Override
 	public boolean isApplicable(IMarker marker) {
 		IProblem problem = getProblem(marker);
+		if (problem == null) {
+			return false;
+		}
 		RootProblemPreference map = (RootProblemPreference) problem.getPreference();
 		boolean enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX);
 		boolean last_case_enabled = (boolean) map.getChildValue(CaseBreakChecker.PARAM_LAST_CASE);

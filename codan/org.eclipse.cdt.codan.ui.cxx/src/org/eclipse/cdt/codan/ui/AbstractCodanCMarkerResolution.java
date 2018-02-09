@@ -275,6 +275,11 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 
 	public IProblem getProblem(IMarker marker) {
 		IResource resource = marker.getResource();
+		if (resource == null) {
+			// IMarker.getResource() is not supposed to return null,
+			// but it looks like it sometimes does (bug 529383).
+			return null;
+		}
 		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(resource);
 		String id = getProblemId(marker);
 		return profile.findProblem(id);

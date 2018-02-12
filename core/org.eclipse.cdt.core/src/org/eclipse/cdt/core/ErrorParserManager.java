@@ -79,6 +79,9 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 
 	private int nOpens;
 	private int lineCounter=0;
+	
+	private int errorCounter=0;
+	private int warningCounter=0;
 
 	private final IProject fProject;
 	private final IMarkerGenerator fMarkerGenerator;
@@ -603,8 +606,12 @@ outer:
 		fErrors.add(problemMarkerInfo);
 		problemMarkerInfo.setDeferDeDuplication(deferDeDuplication);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
-		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
+		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE
+				|| problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
 			hasErrors = true;
+			errorCounter++;
+		} else if (problemMarkerInfo.severity ==  IMarkerGenerator.SEVERITY_WARNING){
+			warningCounter++;
 		}
 	}
 
@@ -899,6 +906,14 @@ outer:
 				}
 			}
 		}
+	}
+	
+	public int getErrorCount() {
+		return errorCounter;
+	}
+	
+	public int getWarningCount() {
+		return warningCounter;
 	}
 
 	/**

@@ -455,10 +455,22 @@ public class BuildRunnerHelper implements Closeable {
 		Assert.isTrue(startTime != 0, "Start time must be set before calling this method."); //$NON-NLS-1$
 		Assert.isTrue(consoleInfo != null, "consoleInfo must be open with greetings(...) call before using this method."); //$NON-NLS-1$
 
+		//Count Errors/Warnings
+		int errorCount = errorParserManager.getErrorCount();
+		int warningCount = errorParserManager.getWarningCount();
+		
 		endTime = System.currentTimeMillis();
 		String duration = durationToString(endTime - startTime);
-		String msg = isCancelled ? CCorePlugin.getFormattedString("BuildRunnerHelper.buildCancelled", duration) //$NON-NLS-1$
-				: CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", duration); //$NON-NLS-1$
+		String msg = ""; //$NON-NLS-1$
+		if(isCancelled) {
+			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildCancelled", duration); //$NON-NLS-1$
+		} else if(errorCount > 0) {
+			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFailed", new String[] {duration, //$NON-NLS-1$
+					Integer.toString(errorCount), Integer.toString(warningCount)}); 
+		} else {
+			msg = CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", new String[] {duration, //$NON-NLS-1$
+					Integer.toString(errorCount), Integer.toString(warningCount)}); 
+		}
 		String goodbye = '\n' + timestamp(endTime) + msg + '\n';
 
 		try {

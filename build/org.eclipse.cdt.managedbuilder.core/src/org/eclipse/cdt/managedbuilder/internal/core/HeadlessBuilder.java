@@ -282,8 +282,15 @@ public class HeadlessBuilder implements IApplication {
 						if (commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
 							proj.build(buildType, CommonBuilder.BUILDER_ID, map, new SubProgressMonitor(monitor, 1));
 						} else {
+							//Combine command args with build args
+							Map<String, String> args = commands[i].getArguments();
+							if(args != null) {
+								args.putAll(map);
+							} else {
+								args = map;
+							}
 							proj.build(buildType, commands[i].getBuilderName(),
-							commands[i].getArguments(), new SubProgressMonitor(monitor, 1));
+									args, new SubProgressMonitor(monitor, 1));
 						}
 					}
 					monitor.done();

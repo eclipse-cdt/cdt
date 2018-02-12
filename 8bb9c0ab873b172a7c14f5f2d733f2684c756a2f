@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27b1cc7f_d53be272",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/BuildRunnerHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-02-12T13:59:32Z",
+      "side": 1,
+      "message": "Investigating why this shows with all lines changed. Does not in my local git repo",
+      "revId": "8bb9c0ab873b172a7c14f5f2d733f2684c756a2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

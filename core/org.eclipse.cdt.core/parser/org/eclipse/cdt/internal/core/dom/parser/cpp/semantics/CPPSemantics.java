@@ -1622,7 +1622,14 @@ public class CPPSemantics {
 				nodes= new IASTNode[] {initDeclaration};
 			}
 		} else if (parent instanceof ICPPASTSwitchStatement) {
-			nodes = new IASTNode[] { ((ICPPASTSwitchStatement) parent).getControllerDeclaration() };
+			ICPPASTSwitchStatement ifStatement = (ICPPASTSwitchStatement) parent;
+			final IASTStatement initStatement = ifStatement.getInitializerStatement();
+			final IASTDeclaration controllerDeclaration = ifStatement.getControllerDeclaration();
+			if (initStatement != null) {
+				nodes = new IASTNode[] {initStatement, controllerDeclaration};
+			} else {
+				nodes = new IASTNode[] {controllerDeclaration};
+			}
 		} else if (parent instanceof ICPPASTIfStatement) {
 			ICPPASTIfStatement ifStatement = (ICPPASTIfStatement) parent;
 			final IASTStatement initStatement = ifStatement.getInitializerStatement();

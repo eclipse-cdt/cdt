@@ -3312,4 +3312,63 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testIfInitStatementFormat_4() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void foo() {
+	//	switch (constexpr bool k = true; k) {
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (constexpr bool k = true; k) {
+	//	}
+	//}
+
+	public void testSwitchInitStatementFormat_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch 
+	//	(constexpr bool k = true; k) {
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (constexpr bool k = true; k) {
+	//	}
+	//}
+	public void testSwitchInitStatementFormat_2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch
+	//
+	//	
+	//  (constexpr bool k = true; k) {
+	//	}
+	//}
+
+	//void foo() {
+	//	switch
+	//
+	//	(constexpr bool k = true; k) {
+	//	}
+	//}
+	public void testSwitchInitStatementFormat_3() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch (constexpr bool k = true;k) {
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (constexpr bool k = true; k) {
+	//	}
+	//}
+	public void testSwitchInitStatementFormat_4() throws Exception {
+		assertFormatterResult();
+	}
 }

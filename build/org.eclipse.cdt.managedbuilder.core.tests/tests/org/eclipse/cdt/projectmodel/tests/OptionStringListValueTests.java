@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -279,6 +280,85 @@ public class OptionStringListValueTests extends TestCase {
 		ves = option.getBasicStringListValueElements();
 		assertTrue(Arrays.equals(updatedves, ves));
 		checkOptionValues(option);
+	}
+	
+	public void testSetToEmptyList_bug531106() throws Exception {
+		String projName = PROJ_NAME_PREFIX + "_bug531106";
+		IProject project = BuildSystemTestHelper.createProject(projName, null, "bug531106.tests.ptype");
+		ResourceHelper.addResourceCreated(project);
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+
+		ICProjectDescription des = mngr.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
+
+		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
+		IFolderInfo fInfo = cfg.getRootFolderInfo();
+
+		ITool tool = fInfo.getToolsBySuperClassId("bug531106.tests.tool")[0];
+		testSetToEmptyList_VerifyValueCount(fInfo, tool, 1);
+		
+		//Test clearing
+		IOption slOption = tool.getOptionBySuperClassId("bug531106.tests.option.stringList");
+		ManagedBuildManager.setOption(fInfo, tool, slOption, new OptionStringValue[0]);
+		IOption incPathOption = tool.getOptionBySuperClassId("bug531106.tests.option.incPath");
+		ManagedBuildManager.setOption(fInfo, tool, incPathOption, new OptionStringValue[0]);
+		IOption symbolsOption = tool.getOptionBySuperClassId("bug531106.tests.option.symbols");
+		ManagedBuildManager.setOption(fInfo, tool, symbolsOption, new OptionStringValue[0]);
+		IOption libsOption = tool.getOptionBySuperClassId("bug531106.tests.option.libs");
+		ManagedBuildManager.setOption(fInfo, tool, libsOption, new OptionStringValue[0]);
+		IOption userObjsOption = tool.getOptionBySuperClassId("bug531106.tests.option.userObjs");
+		ManagedBuildManager.setOption(fInfo, tool, userObjsOption, new OptionStringValue[0]);
+		IOption symFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.symFiles");
+		ManagedBuildManager.setOption(fInfo, tool, symFilesOption, new OptionStringValue[0]);
+		IOption incFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.incFiles");
+		ManagedBuildManager.setOption(fInfo, tool, incFilesOption, new OptionStringValue[0]);
+		IOption libPathsOption = tool.getOptionBySuperClassId("bug531106.tests.option.libPaths");
+		ManagedBuildManager.setOption(fInfo, tool, libPathsOption, new OptionStringValue[0]);
+		IOption libFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.libFiles");
+		ManagedBuildManager.setOption(fInfo, tool, libFilesOption, new OptionStringValue[0]);
+
+		testSetToEmptyList_VerifyValueCount(fInfo, tool, 0);
+
+		mngr.setProjectDescription(project, des);
+		ManagedBuildManager.saveBuildInfo(project, true);
+		
+		//Close & re-open project
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
+
+		//Reload config
+		des = mngr.getProjectDescription(project);
+		cfgDes = des.getConfigurations()[0];
+		cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
+
+		fDes = cfgDes.getRootFolderDescription();
+		fInfo = cfg.getRootFolderInfo();
+
+		tool = fInfo.getToolsBySuperClassId("bug531106.tests.tool")[0];
+		testSetToEmptyList_VerifyValueCount(fInfo, tool, 0);
+	}
+	
+	private void testSetToEmptyList_VerifyValueCount(IFolderInfo fInfo, ITool tool, int count) throws BuildException {
+		IOption slOption = tool.getOptionBySuperClassId("bug531106.tests.option.stringList");
+		assertEquals(count, slOption.getBasicStringListValueElements().length);
+		IOption incPathOption = tool.getOptionBySuperClassId("bug531106.tests.option.incPath");
+		assertEquals(count, incPathOption.getBasicStringListValueElements().length);
+		IOption symbolsOption = tool.getOptionBySuperClassId("bug531106.tests.option.symbols");
+		assertEquals(count, symbolsOption.getBasicStringListValueElements().length);
+		IOption libsOption = tool.getOptionBySuperClassId("bug531106.tests.option.libs");
+		assertEquals(count, libsOption.getBasicStringListValueElements().length);
+		IOption userObjsOption = tool.getOptionBySuperClassId("bug531106.tests.option.userObjs");
+		assertEquals(count, userObjsOption.getBasicStringListValueElements().length);
+		IOption symFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.symFiles");
+		assertEquals(count, symFilesOption.getBasicStringListValueElements().length);
+		IOption incFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.incFiles");
+		assertEquals(count, incFilesOption.getBasicStringListValueElements().length);
+		IOption libPathsOption = tool.getOptionBySuperClassId("bug531106.tests.option.libPaths");
+		assertEquals(count, libPathsOption.getBasicStringListValueElements().length);
+		IOption libFilesOption = tool.getOptionBySuperClassId("bug531106.tests.option.libFiles");
+		assertEquals(count, libFilesOption.getBasicStringListValueElements().length);
 	}
 	
 }

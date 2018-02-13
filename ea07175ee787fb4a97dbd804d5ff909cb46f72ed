@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc0c09ce_4b8447fc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-02-13T05:37:27Z",
+      "side": 1,
+      "message": "I\u0027m a bit curious...when can this happen?",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

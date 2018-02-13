@@ -34,6 +34,24 @@
       "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1f1a945_27c49c8a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-02-13T06:09:44Z",
+      "side": 1,
+      "message": "Maybe it\u0027s appropriate but it might hide a bigger bug. But you\u0027re in a better position to make that call :)",
+      "parentUuid": "e420fa8a_362aa23d",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

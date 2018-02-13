@@ -12025,6 +12025,39 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertEquals(IProblem.PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION, problems[0].getID());
 	}
 
+	// struct basic_string {
+	//   basic_string(char const * str, int len);
+	// };
+	// basic_string operator""s(char const * str, int len) {
+	//   return basic_string { str, len };
+	// }
+	// auto waldo = "Waldo"s;
+	public void testStringLiterals() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "basic_string");
+	}
+
+	// auto waldo = 1i + 1;
+	public void testComplexNumbersCompilerSupport1() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "_Complex int");
+	}
+
+	// auto waldo = 1j + 1;
+	public void testComplexNumbersCompilerSupport2() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "_Complex int");
+	}
+
+	// struct complex {
+	//   complex(unsigned long long real, unsigned long long imag);
+	//   complex operator+(unsigned long long);
+	// };
+	// complex operator""i(unsigned long long imag) {
+	//   return complex { 0, imag };
+	// }
+	// auto waldo = 1i + 1;
+	public void testComplexNumbersOverriddenCompilerSupport() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "complex");
+	}
+
 	// // Test name lacking a space
 	// int operator ""X(const char* s) { return 0; }
 	// int operator ""_X(const char* s) { return 0; }

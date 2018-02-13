@@ -549,6 +549,10 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTLiteralExpression(kind, rep.toCharArray());
 	}
 
+	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, char[] numericCompilerSuffixes) {
+		return new CPPASTLiteralExpression(kind, rep.toCharArray(), numericCompilerSuffixes);
+	}
+
 	@Override
 	public ICPPASTName newName() {
 		return new CPPASTName();

@@ -198,3 +198,22 @@ TestClass* tc = new TestClass();
 //%CPP
 int i = int(1);
 
+//!CPP LiteralExpression with string literal
+//%CPP
+int main()
+{
+    using namespace std::string_literals;
+    auto str = "foobar"s;
+}
+
+//!CPP LiteralExpression with user defined literal
+//%CPP
+constexpr long double operator ""_deg(long double deg)
+{
+    return deg * 3.141592 / 180;
+}
+
+int main()
+{
+    double x = 90.0_deg;
+}

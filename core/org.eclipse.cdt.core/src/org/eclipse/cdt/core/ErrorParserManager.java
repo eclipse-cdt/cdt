@@ -908,10 +908,16 @@ outer:
 		}
 	}
 	
+	/**
+	 * @since 6.5
+	 */
 	public int getErrorCount() {
 		return errorCounter;
 	}
 	
+	/**
+	 * @since 6.5
+	 */
 	public int getWarningCount() {
 		return warningCounter;
 	}

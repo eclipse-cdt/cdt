@@ -51,6 +51,8 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
+	private static final String IS_BUILTIN_EMPTY = "IS_BUILTIN_EMPTY";
+	private static final String IS_VALUE_EMPTY = "IS_VALUE_EMPTY";
 	// Static default return values
 	public static final String EMPTY_STRING = "";
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -642,17 +644,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				//  Note:  These string-list options do not load either the "value" or
 				//         "defaultValue" attributes.  Instead, the ListOptionValue children
 				//         are loaded in the value field.
-				List<OptionStringValue> vList = null;
-				List<OptionStringValue> biList = null;
+				List<OptionStringValue> vList = new ArrayList<OptionStringValue>();
+				List<OptionStringValue> biList = new ArrayList<OptionStringValue>();
 				configElements = element.getChildren();
 				for (ICStorageElement veNode : configElements) {
-					if (vList==null) {
-						vList = new ArrayList<OptionStringValue>();
-					}
-					if (biList==null) {
-						biList = new ArrayList<OptionStringValue>();
-					}
-
 					if (veNode.getName().equals(LIST_VALUE)) {
 						OptionStringValue ve = new OptionStringValue(veNode);
 						if(ve.isBuiltIn()) {
@@ -662,12 +657,30 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						}
 					}
 				}
-				if(vList != null && vList.size() != 0) {
+				
+				//Assume not empty unless specificaly flagged
+				boolean isValueEmpty = false;
+				boolean isBuiltinEmpty = false;
+				
+				if (element.getAttribute(IS_VALUE_EMPTY) != null) {
+					Boolean isEmpty = new Boolean(element.getAttribute(IS_VALUE_EMPTY));
+					if (isEmpty.booleanValue()) {
+						isValueEmpty = true;
+					}
+				}				
+				if (element.getAttribute(IS_BUILTIN_EMPTY) != null) {
+					Boolean isEmpty = new Boolean(element.getAttribute(IS_BUILTIN_EMPTY));
+					if (isEmpty.booleanValue()) {
+						isBuiltinEmpty = true;
+					}
+				}
+				
+				if(vList.size() != 0 || isValueEmpty) {
 					value = vList;
 				} else {
 					value = null;
 				}
-				if(biList != null && biList.size() != 0) {
+				if(biList.size() != 0 || isBuiltinEmpty) {
 					builtIns = biList;
 				} else {
 					builtIns = null;
@@ -883,14 +896,32 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						ICStorageElement valueElement = element.createChild(LIST_VALUE);
 						optValue.serialize(valueElement);
 					}
+					
+					if(stringList.isEmpty()) {
+						element.setAttribute(IS_VALUE_EMPTY, Boolean.TRUE.toString());	
+					} else {
+						element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());						
+					}
+				} else {
+					element.setAttribute(IS_VALUE_EMPTY, Boolean.FALSE.toString());					
 				}
+				
 				// Serialize the built-ins that have been overridden
 				if (builtIns != null) {
 					for (OptionStringValue optionValue : builtIns) {
 						ICStorageElement valueElement = element.createChild(LIST_VALUE);
 						optionValue.serialize(valueElement);
 					}
+					
+					if(builtIns.isEmpty()) {
+						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.TRUE.toString());	
+					} else {
+						element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());						
+					}
+				} else {
+					element.setAttribute(IS_BUILTIN_EMPTY, Boolean.FALSE.toString());					
 				}
+				
 				break;
 			}
 		}

@@ -234,6 +234,9 @@ public abstract class CSearchQuery implements ISearchQuery {
 			if (!filterName(name)) {
 				if (!isPolymorphicOnly || name.couldBePolymorphicMethodCall()) {
 					IASTFileLocation loc = name.getFileLocation();
+					if (loc == null) {
+						continue;
+					}
 					IIndexFile file = name.getFile();
 					Set<Match> matches = fileMatches.get(file);
 					if (matches == null) {

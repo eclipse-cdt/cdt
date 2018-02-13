@@ -5377,6 +5377,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		int startOffset;
 		startOffset = consume().getOffset();
 		consume(IToken.tLPAREN);
+
+		ICPPASTSwitchStatement switch_statement = getNodeFactory().newSwitchStatement();
+		// init-statement
+		IToken mark= mark();
+		try {
+			IASTStatement statement = initStatement();
+			switch_statement.setInitializerStatement(statement);
+		} catch (BacktrackException e) {
+			backup(mark);
+		}
+
 		IASTNode switch_condition = cppStyleCondition(IToken.tRPAREN);
 		switch (LT(1)) {
 		case IToken.tRPAREN:
@@ -5389,7 +5400,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		IASTStatement switch_body = parseSwitchBody();
-		ICPPASTSwitchStatement switch_statement = getNodeFactory().newSwitchStatement();
 		((ASTNode) switch_statement).setOffsetAndLength(startOffset,
 				(switch_body != null ? calculateEndOffset(switch_body) : LA(1).getEndOffset()) - startOffset);
 		if (switch_condition instanceof IASTExpression) {

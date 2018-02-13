@@ -134,6 +134,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -3588,23 +3589,43 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return PROCESS_SKIP;
 	}
 
+	private void beginSwitchClause() {
+		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
+		if (preferences.insert_space_after_opening_paren_in_switch) {
+			scribe.space();
+		}
+	}
+
 	private int visit(IASTSwitchStatement node) {
 		final int headerIndent= scribe.numberOfIndentations;
 		// 'switch' keyword
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_switch);
 		}
-		// Controller expression
 		IASTExpression controllerExpression = node.getControllerExpression();
-		if (!doNodesHaveSameOffset(node, controllerExpression)) {
-			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
-			if (preferences.insert_space_after_opening_paren_in_switch) {
-				scribe.space();
+		try {
+			// optional init-statement
+			if(node instanceof ICPPASTSwitchStatement) {
+				IASTStatement initStatement = ((ICPPASTSwitchStatement) node).getInitializerStatement();
+				if (initStatement != null) {
+					beginSwitchClause();
+					fHasClauseInitStatement = true;
+					initStatement.accept(this);
+					if (preferences.insert_space_after_semicolon_in_for) {
+						scribe.space();
+					}
+				}
 			}
-		}
-		controllerExpression.accept(this);
-		if (peekNextToken() == Token.tRPAREN) {
-			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
+			// Controller expression
+			if (!doNodesHaveSameOffset(node, controllerExpression) && !fHasClauseInitStatement) {
+				beginSwitchClause();
+			}
+			controllerExpression.accept(this);
+			if (peekNextToken() == Token.tRPAREN) {
+				scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
+			}
+		} finally {
+			fHasClauseInitStatement = false;
 		}
 		// switch body
 		String brace_position = preferences.brace_position_for_switch;

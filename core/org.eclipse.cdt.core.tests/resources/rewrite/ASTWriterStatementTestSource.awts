@@ -401,3 +401,24 @@ void f()
     if constexpr (;k == 42){
     }
 }
+
+//!Switch with emtpy init statement
+//%CPP
+void f()
+{
+    constexpr int k{42};
+    switch (;k){
+        case 42:
+            break;
+    }
+}
+
+//!Switch with init statement
+//%CPP
+void f()
+{
+    switch (constexpr int k{42};k){
+        case 42:
+            break;
+    }
+}

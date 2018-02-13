@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.tools.templates.ui.internal.Activator;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -85,6 +86,11 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 
 	@Override
 	public void init(IWorkbench workbench) {
+		try {
+			toolChains = new ArrayList<>(manager.getAllToolChains());
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
 	}
 
 	private static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -130,12 +136,6 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		availTable.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				toolChains = new ArrayList<IToolChain>();
-				try {
-					toolChains.addAll(manager.getAllToolChains());
-				} catch (CoreException e) {
-					CUIPlugin.log(e.getStatus());
-				}
 				return toolChains.toArray();
 			}
 		});

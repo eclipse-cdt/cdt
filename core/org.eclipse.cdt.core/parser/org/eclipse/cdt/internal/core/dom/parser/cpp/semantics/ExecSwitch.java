@@ -17,18 +17,27 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
 public class ExecSwitch implements ICPPExecution {
+	private final ICPPExecution initStmtExec;
 	private final ICPPEvaluation controllerExprEval;
 	private final ExecSimpleDeclaration controllerDeclExec;
 	private final ICPPExecution[] bodyStmtExecutions;
 
-	public ExecSwitch(ICPPEvaluation controllerExprEval, ExecSimpleDeclaration controllerDeclExec, ICPPExecution[] bodyStmtExecutions) {
+	public ExecSwitch(ICPPExecution initStmtExec, ICPPEvaluation controllerExprEval, ExecSimpleDeclaration controllerDeclExec, ICPPExecution[] bodyStmtExecutions) {
+		this.initStmtExec = initStmtExec;
 		this.controllerExprEval = controllerExprEval;
 		this.controllerDeclExec = controllerDeclExec;
 		this.bodyStmtExecutions = bodyStmtExecutions;
 	}
 
+	private void executeInitStatement(ActivationRecord record, ConstexprEvaluationContext context) {
+		if (initStmtExec != null) {
+			EvalUtil.executeStatement(initStmtExec, record, context);
+		}
+	}
+
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+		executeInitStatement(record, context);
 		final int caseIndex = getMatchingCaseIndex(record, context);
 		for (int i = caseIndex; i < bodyStmtExecutions.length; ++i) {
 			ICPPExecution stmtExec = bodyStmtExecutions[i];
@@ -72,6 +81,7 @@ public class ExecSwitch implements ICPPExecution {
 
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
+		ICPPExecution newInitStmtExec = initStmtExec != null ? initStmtExec.instantiate(context, maxDepth) : null;
 		ICPPEvaluation newControllerExprEval = controllerExprEval != null ? controllerExprEval.instantiate(context, maxDepth) : null;
 		ExecSimpleDeclaration newControllerDeclExec = controllerDeclExec != null ? (ExecSimpleDeclaration) controllerDeclExec.instantiate(context, maxDepth) : null;
 		ICPPExecution[] newBodyStmtExecutions = new ICPPExecution[bodyStmtExecutions.length];
@@ -85,15 +95,16 @@ public class ExecSwitch implements ICPPExecution {
 			newBodyStmtExecutions[i] = newBodyStmtExec;
 		}
 
-		if (newControllerExprEval == controllerExprEval && newControllerDeclExec == controllerDeclExec && !executionsDidChange) {
+		if (newInitStmtExec == initStmtExec && newControllerExprEval == controllerExprEval && newControllerDeclExec == controllerDeclExec && !executionsDidChange) {
 			return this;
 		}
-		return new ExecSwitch(newControllerExprEval, newControllerDeclExec, newBodyStmtExecutions);
+		return new ExecSwitch(newInitStmtExec, newControllerExprEval, newControllerDeclExec, newBodyStmtExecutions);
 	}
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putShort(ITypeMarshalBuffer.EXEC_SWITCH);
+		buffer.marshalExecution(initStmtExec, includeValue);
 		buffer.marshalEvaluation(controllerExprEval, includeValue);
 		buffer.marshalExecution(controllerDeclExec, includeValue);
 		buffer.putInt(bodyStmtExecutions.length);
@@ -103,6 +114,7 @@ public class ExecSwitch implements ICPPExecution {
 	}
 
 	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
+		ICPPExecution initStmtExec = buffer.unmarshalExecution();
 		ICPPEvaluation controllerExprEval = buffer.unmarshalEvaluation();
 		ExecSimpleDeclaration controllerDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
 		int len = buffer.getInt();
@@ -110,6 +122,6 @@ public class ExecSwitch implements ICPPExecution {
 		for (int i = 0; i < bodyStmtExecutions.length; i++) {
 			bodyStmtExecutions[i] = buffer.unmarshalExecution();
 		}
-		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);
+		return new ExecSwitch(initStmtExec, controllerExprEval, controllerDeclExec, bodyStmtExecutions);
 	}
 }

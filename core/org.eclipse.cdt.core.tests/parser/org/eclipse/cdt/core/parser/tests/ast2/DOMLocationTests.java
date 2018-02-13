@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -701,6 +702,26 @@ public class DOMLocationTests extends AST2TestBase {
         ICPPASTDeclarator declarator = (ICPPASTDeclarator) definition.getDeclarators()[0];
         String rawDeclarator = "foo()"; //$NON-NLS-1$
         assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testSwitchInitStatement_1() throws Exception {
+        String code = "void foo() { switch (int i = 1; i) {} }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+        IASTSwitchStatement statement = (IASTSwitchStatement) body.getStatements()[0];
+        String rawDeclarator = "switch (int i = 1; i) {}"; //$NON-NLS-1$
+        assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
+    }
+
+    public void testSwitchInitStatement_2() throws Exception {
+        String code = "void foo() { char c = 'a'; switch (; c) {} }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        ICPPASTFunctionDefinition definition = (ICPPASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+        IASTSwitchStatement statement = (IASTSwitchStatement) body.getStatements()[1];
+        String rawDeclarator = "switch (; c) {}"; //$NON-NLS-1$
+        assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
     }
 
     public void testIfInitStatement_1() throws Exception {

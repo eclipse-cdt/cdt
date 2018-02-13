@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSwitch;
  */
 public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPASTSwitchStatement, ICPPExecutionOwner {
 	private IScope scope;
+	private IASTStatement initStatement;
     private IASTExpression controllerExpression;
     private IASTDeclaration controllerDeclaration;
     private IASTStatement body;
@@ -55,12 +56,30 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 	@Override
 	public CPPASTSwitchStatement copy(CopyStyle style) {
 		CPPASTSwitchStatement copy = new CPPASTSwitchStatement();
+		copy.setInitializerStatement(initStatement == null ?
+				null : initStatement.copy(style));
 		copy.setControllerDeclaration(controllerDeclaration == null ?
 				null : controllerDeclaration.copy(style));
 		copy.setControllerExpression(controllerExpression == null ?
 				null : controllerExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
 		return copy(copy, style);
+	}
+
+	@Override
+	public IASTStatement getInitializerStatement() {
+		return initStatement;
+	}
+
+	@Override
+	public void setInitializerStatement(IASTStatement statement) {
+        assertNotFrozen();
+        this.initStatement = statement;
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(INIT_STATEMENT);
+			statement = null;
+		}
 	}
 
 	@Override
@@ -105,6 +124,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 		}
 
         if (!acceptByAttributeSpecifiers(action)) return false;
+        if (initStatement != null && !initStatement.accept(action)) return false;
         if (controllerExpression != null && !controllerExpression.accept(action)) return false;
         if (controllerDeclaration != null && !controllerDeclaration.accept(action)) return false;
         if (body != null && !body.accept(action)) return false;
@@ -121,6 +141,12 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
+		if (initStatement == child) {
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+			initStatement = (IASTStatement) other;
+			return;
+		}
 		if (body == child) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
@@ -162,6 +188,7 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 
 	@Override
 	public ICPPExecution getExecution() {
+		ICPPExecution initStmtExec = EvalUtil.getExecutionFromStatement(getInitializerStatement());
 		ICPPASTExpression controllerExpr = (ICPPASTExpression) getControllerExpression();
 		ICPPExecutionOwner controllerDecl = (ICPPExecutionOwner) getControllerDeclaration();
 		ICPPEvaluation controllerExprEval = controllerExpr != null ? controllerExpr.getEvaluation() : null;
@@ -178,6 +205,6 @@ public class CPPASTSwitchStatement extends CPPASTAttributeOwner implements ICPPA
 		for (int i = 0; i < bodyStmts.length; i++) {
 			bodyStmtExecutions[i] = EvalUtil.getExecutionFromStatement(bodyStmts[i]);
 		}
-		return new ExecSwitch(controllerExprEval, controllerDeclExec, bodyStmtExecutions);
+		return new ExecSwitch(initStmtExec, controllerExprEval, controllerDeclExec, bodyStmtExecutions);
 	}
 }

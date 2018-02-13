@@ -1930,18 +1930,30 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IASTLiteralExpression literalExpr = null;
 		IASTLiteralExpression literalExprWithRange = null;
 
+		ICPPNodeFactory nodeFactory = getNodeFactory();
+		
 		switch (LT(1)) {
 		case IToken.tINTEGER:
 			t = consume();
-			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage());
+			// Fix for bug 527844 adapted to the 9.4 branch only, to avoid API changes.
+			if (nodeFactory instanceof CPPNodeFactory) {
+				literalExpr = ((CPPNodeFactory) nodeFactory)
+						.newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage(), additionalNumericalSuffixes);
+			} else {
+				literalExpr = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage());
+			}
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			((CPPASTLiteralExpression) literalExpr).calculateSuffix(additionalNumericalSuffixes);
 			break;
 		case IToken.tFLOATINGPT:
 			t = consume();
-			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage());
+			// Fix for bug 527844 adapted to the 9.4 branch only, to avoid API changes.
+			if (nodeFactory instanceof CPPNodeFactory) {
+				literalExpr = ((CPPNodeFactory) nodeFactory)
+						.newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage(), additionalNumericalSuffixes);
+			} else {
+				literalExpr = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage());
+			}
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			((CPPASTLiteralExpression) literalExpr).calculateSuffix(additionalNumericalSuffixes);
 			break;
 		case IToken.tSTRING:
 		case IToken.tLSTRING:
@@ -1949,9 +1961,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tUTF32STRING:
 		case IToken.tUSER_DEFINED_STRING_LITERAL:
 			literalExprWithRange = stringLiteral();
-			if (supportUserDefinedLiterals) {
-				 ((CPPASTLiteralExpression) literalExprWithRange).calculateSuffix();
-			}
 			break;
 		case IToken.tCHAR:
 		case IToken.tLCHAR:
@@ -1962,9 +1971,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			literalExpr = getNodeFactory().newLiteralExpression(
 					IASTLiteralExpression.lk_char_constant, t.getImage());
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
-			if (supportUserDefinedLiterals) {
-				((CPPASTLiteralExpression) literalExprWithRange).calculateSuffix();
-			}
 			break;
 		case IToken.t_false:
 			t = consume();
@@ -2033,7 +2039,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					return literalExprWithRange;
 				}
 				IToken opName = consume(IToken.tIDENTIFIER);
-				((CPPASTLiteralExpression) literalExprWithRange).addSuffix(opName.getCharImage());
+				((CPPASTLiteralExpression) literalExprWithRange).setSuffix(opName.getCharImage());
 				setRange(literalExprWithRange, offset, opName.getEndOffset());
 			}
 		}

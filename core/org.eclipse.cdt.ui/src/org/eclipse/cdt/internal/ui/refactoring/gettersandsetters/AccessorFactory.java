@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.parser.Keywords;
 
@@ -220,8 +221,7 @@ public abstract class AccessorFactory {
 			CPPASTName parameterName = getSetterParameterName();
 			if (Arrays.equals(fieldName.getSimpleID(), parameterName.getSimpleID())) {
 				CPPASTFieldReference fieldRef = new CPPASTFieldReference();
-				CPPASTLiteralExpression litExpr = new CPPASTLiteralExpression();
-				litExpr.setValue(Keywords.cTHIS); 
+				CPPASTLiteralExpression litExpr = new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_this, Keywords.cTHIS);
 				fieldRef.setFieldOwner(litExpr);
 				fieldRef.setIsPointerDereference(true);
 				fieldRef.setFieldName(fieldName.copy(CopyStyle.withLocations));

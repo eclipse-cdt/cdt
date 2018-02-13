@@ -106,6 +106,24 @@
       "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a438545_b7e8a7d1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T22:16:32Z",
+      "side": 1,
+      "message": "I don\u0027t know how much knowing the class of \"name\" would help. ASTNode.getFileLocation() and PDOMName.getFileLocation() both have codepaths that return null. Knowing that it was one of the other still doesn\u0027t really tell us whether the situation is expected, and if not, where the problem lies.",
+      "parentUuid": "d048f590_81199bf6",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

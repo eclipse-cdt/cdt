@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "378372e2_cc5b31ae",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPNodeFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:47:56Z",
+      "side": 1,
+      "message": "This function has no callers. Why is it being added?",
+      "revId": "d172c08b49664516de9e7d7843c5147b159702cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d29a42dc_04206e5b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPNodeFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:47:56Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "d172c08b49664516de9e7d7843c5147b159702cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cca9b086_49d5ce15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTIfStatement.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:47:56Z",
+      "side": 1,
+      "message": "If the ICPPNodeFactory methods are removed, then these new constructors aren\u0027t necessary either.",
+      "revId": "d172c08b49664516de9e7d7843c5147b159702cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0179bc55_f568cbb9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecIf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:47:56Z",
+      "side": 1,
+      "message": "Please add a comment saying that we can\u0027t just \"return newThenClauseExec\" here, because the condition might have side effects so it needs to be preserved in the instantiated execution even if one of its branch has become null.",
+      "revId": "d172c08b49664516de9e7d7843c5147b159702cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72f35593_335a0915",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecIf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:47:56Z",
+      "side": 1,
+      "message": "Booleans like this can be packed into the same short as the execution type (ITypeMarshalBuffer.EXEC_IF), you don\u0027t need to take up a byte for them.\n\nSee EvalID.marshal() for an example.",
+      "revId": "d172c08b49664516de9e7d7843c5147b159702cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -133,7 +134,7 @@ public class ToolChainManager implements IToolChainManager {
 	public void addToolChain(IToolChain toolChain) {
 		Map<String, IToolChain> type = toolChains.get(toolChain.getTypeId());
 		if (type == null) {
-			type = new HashMap<>();
+			type = new LinkedHashMap<>(); // use LinkedHashMap so input order is maintained
 			toolChains.put(toolChain.getTypeId(), type);
 		}
 		type.put(toolChain.getId(), toolChain);

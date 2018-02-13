@@ -9,6 +9,8 @@ package org.eclipse.cdt.build.gcc.core.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 
 	public static final String ID = "org.eclipse.cdt.build.gcc.core.gccPathProvider"; //$NON-NLS-1$
 
-	private static final Pattern gccPattern = Pattern.compile("(.*-)?gcc(\\.exe)?"); //$NON-NLS-1$
+	private static final Pattern gccPattern = Pattern.compile("gcc(\\.exe)?"); //$NON-NLS-1$
+	private static final Pattern tupledGccPattern = Pattern.compile("(.*-)?gcc(\\.exe)?"); //$NON-NLS-1$
 	private static final Pattern clangPattern = Pattern.compile("clang(\\.exe)?"); //$NON-NLS-1$
 
 	@Override
@@ -40,6 +43,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 	@Override
 	public void init(IToolChainManager manager) {
 		String path = System.getenv("PATH"); //$NON-NLS-1$
+		List<IToolChain> tupledList = new ArrayList<>();
 		for (String dirStr : path.split(File.pathSeparator)) {
 			File dir = new File(dirStr);
 			if (dir.isDirectory()) {
@@ -48,7 +52,8 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 						continue;
 					}
 					Matcher matcher = gccPattern.matcher(file.getName());
-					if (matcher.matches()) {
+					Matcher matcher2 = tupledGccPattern.matcher(file.getName());
+					if (matcher.matches() || matcher2.matches()) {
 						try {
 							GCCInfo info = new GCCInfo(file.toString());
 							if (info.target != null && info.version != null) {
@@ -71,7 +76,12 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 									try {
 										if (manager.getToolChain(gcc.getTypeId(), gcc.getId()) == null) {
 											// Only add if another provider hasn't already added it
-											manager.addToolChain(gcc);
+											if (matcher.matches()) {
+												manager.addToolChain(gcc);
+											} else {
+												// add to tupled list to register later
+												tupledList.add(gcc);
+											}
 										}
 									} catch (CoreException e) {
 										CCorePlugin.log(e.getStatus());
@@ -80,7 +90,7 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 							}
 						} catch (IOException e) {
 							Activator.log(e);
-						}
+						}						
 					} else {
 						matcher = clangPattern.matcher(file.getName());
 						if (matcher.matches()) {
@@ -92,6 +102,11 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 					}
 				}
 			}
+		}
+		// add tupled toolchains last so we won't find any local compiler as a tupled chain before the normal
+		// defaults (e.g. don't want to find x86_64-redhat-linux-gcc before gcc if looking for a local toolchain)
+		for (IToolChain t : tupledList) {
+			manager.addToolChain(t);
 		}
 	}
 

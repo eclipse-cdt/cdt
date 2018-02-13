@@ -70,6 +70,24 @@
       "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a983763_73df8cab",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T18:54:54Z",
+      "side": 1,
+      "message": "The thing is, I don\u0027t really have a way of discovering the underlying bug (if any) without a user giving me steps to reproduce the problem.\n\nWith this fix in place, a user will still experience a problem (an expected search result missing) which they can report, but at least we don\u0027t fail the whole search job due to an exception.",
+      "parentUuid": "c1f1a945_27c49c8a",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

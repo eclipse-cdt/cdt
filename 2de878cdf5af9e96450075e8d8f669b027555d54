@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a36a136b_3bac2738",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecSwitch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T23:12:33Z",
+      "side": 1,
+      "message": "This null check isn\u0027t needed, EvalUtil.executeStatement() does nothing when given a null execution.",
+      "revId": "2de878cdf5af9e96450075e8d8f669b027555d54",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

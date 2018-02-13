@@ -16,6 +16,24 @@
       "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e420fa8a_362aa23d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-02-13T06:00:33Z",
+      "side": 1,
+      "message": "The documentation for IASTNode.getFileLocation() says:\n\n     * The method may return {@code null} in case the node does not have a file-location. This\n     * is for instance the case for built-in macro names or empty names for anonymous type\n     * declarations.\n\nIt\u0027s not entirely clear to me why such a name would end up here, but a user submitted an error report about an NPE here, so adding a check seems appropriate.",
+      "parentUuid": "cc0c09ce_4b8447fc",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

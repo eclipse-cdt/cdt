@@ -32,12 +32,6 @@ public class ExecIf implements ICPPExecution {
 		this.elseClauseExec = elseClauseExec;
 	}
 
-	private void executeInitStatement(ActivationRecord record, ConstexprEvaluationContext context) {
-		if (initStmtExec != null) {
-			EvalUtil.executeStatement(initStmtExec, record, context);
-		}
-	}
-
 	private boolean conditionSatisfied(ActivationRecord record, ConstexprEvaluationContext context) {
 		if (conditionExprEval != null) {
 			return EvalUtil.conditionExprSatisfied(conditionExprEval, record, context);
@@ -49,7 +43,7 @@ public class ExecIf implements ICPPExecution {
 
 	@Override
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
-		executeInitStatement(record, context);
+		EvalUtil.executeStatement(initStmtExec, record, context);
 		if (conditionSatisfied(record, context)) {
 			return EvalUtil.executeStatement(thenClauseExec, record, context);
 		} else if (elseClauseExec != null) {

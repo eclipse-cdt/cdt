@@ -292,10 +292,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 9.5 development (version not supported on the 9.4.x branch)
 	 *  212.0 - C++ constexpr if and if init-statement evaluation
+	 *  213.0 - C++ switch init-statement evaluation
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(212, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(212, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(212, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(213, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(213, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(213, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

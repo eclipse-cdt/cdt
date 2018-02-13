@@ -244,4 +244,46 @@ public class SwitchStatementTests extends TestBase {
 	public void testSwitchWithNestedContinueStatement() throws Exception {
 		assertEvaluationEquals(3);
 	}
+
+	//	constexpr int triple(int x) {
+	//		return x * 3;
+	//	}
+	//	constexpr int f(int y) {
+	//		switch(int x = triple(y); x) {
+	//			case 9:
+	//				return 1;
+	//			case 12:
+	//				return 2;
+	//			case 15:
+	//				return 3;
+	//			default:
+	//				return 4;
+	//		}
+	//	}
+
+	//	constexpr int x = f(5);
+	public void testDeclarationInSwitchInitStatement() throws Exception {
+		assertEvaluationEquals(3);
+	}
+
+	//	constexpr int triple(int x) {
+	//		return x * 3;
+	//	}
+	//	constexpr int f(int y) {
+	//		switch(; int x = triple(y)) {
+	//			case 9:
+	//				return 1;
+	//			case 12:
+	//				return 2;
+	//			case 15:
+	//				return 3;
+	//			default:
+	//				return 4;
+	//		}
+	//	}
+
+	//	constexpr int x = f(5);
+	public void testDeclarationInSwitchStatementControllerEmptyInit() throws Exception {
+		assertEvaluationEquals(3);
+	}
 }

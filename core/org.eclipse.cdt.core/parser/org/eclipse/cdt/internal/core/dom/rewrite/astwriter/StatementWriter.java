@@ -365,6 +365,10 @@ public class StatementWriter extends NodeWriter {
 		scribe.noNewLines();
 		if (switchStatement instanceof ICPPASTSwitchStatement) {
 			ICPPASTSwitchStatement cppSwitchStatement = (ICPPASTSwitchStatement) switchStatement;
+			IASTStatement initStatement = cppSwitchStatement.getInitializerStatement();
+			if (initStatement != null) {
+				writeStatement(initStatement, false);
+			}
 			if (cppSwitchStatement.getControllerDeclaration() == null) {
 				cppSwitchStatement.getControllerExpression().accept(visitor);
 			} else {

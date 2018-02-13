@@ -52,6 +52,24 @@
       "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1de04b5_b9edee1d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-02-13T16:27:04Z",
+      "side": 1,
+      "message": "I guess maybe it\u0027s possible that a plugin would have it\u0027s own \"name\" type and return null? This makes me think the null check is good.",
+      "parentUuid": "c1f1a945_27c49c8a",
+      "revId": "ea07175ee787fb4a97dbd804d5ff909cb46f72ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

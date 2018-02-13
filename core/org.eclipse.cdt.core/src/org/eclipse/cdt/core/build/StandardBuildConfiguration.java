@@ -264,11 +264,12 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				Process process = processBuilder.start();
 				IConsoleParser[] consoleParsers = new IConsoleParser[] { epm, this };
 				watchProcess(process, consoleParsers);
+				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+				outStream.write(String.format(Messages.StandardBuildConfiguration_1, epm.getErrorCount(), 
+						epm.getWarningCount(), buildDir.toString()));
 			}
 
-			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-			outStream.write(String.format(Messages.StandardBuildConfiguration_1, buildDir.toString()));
 
 			return new IProject[] { project };
 		} catch (IOException e) {

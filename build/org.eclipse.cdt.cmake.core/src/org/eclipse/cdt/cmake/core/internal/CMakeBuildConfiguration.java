@@ -200,14 +200,15 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				watchProcess(process, new IConsoleParser[] { epm });
+
+				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+				// Load compile_commands.json file
+				processCompileCommandsFile(monitor);
+
+				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(), 
+						epm.getWarningCount(), buildDir.toString()));
 			}
-
-			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-			// Load compile_commands.json file
-			processCompileCommandsFile(monitor);
-
-			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			return new IProject[] { project };
 		} catch (IOException e) {

@@ -41,7 +41,7 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 	}
 
 	@Override
-	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
+	public synchronized ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
 			IToolChain toolChain = null;
 
@@ -69,7 +69,19 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 			// No valid combinations
 			return null;
 		}
-		return new MesonBuildConfiguration(config, name);
+		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name);
+		IMesonToolChainFile tcFile = mesonConfig.getToolChainFile();
+		IToolChain toolChain = mesonConfig.getToolChain();
+		if (toolChain == null || tcFile == null) {
+			// config not complete?
+			return null;
+		}
+		if (!toolChain.equals(tcFile.getToolChain())) {
+			// toolchain changed
+			return new MesonBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
+					mesonConfig.getLaunchMode());
+		}
+		return mesonConfig;
 	}
 
 	@Override
@@ -90,6 +102,7 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 			Collection<IMesonToolChainFile> files = manager.getToolChainFilesMatching(properties);
 			if (!files.isEmpty()) {
 				file = files.iterator().next();
+				toolChain = file.getToolChain();
 			}
 		}
 

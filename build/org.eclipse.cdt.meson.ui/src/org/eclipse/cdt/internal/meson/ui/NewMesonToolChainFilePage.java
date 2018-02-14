@@ -113,6 +113,7 @@ public class NewMesonToolChainFilePage extends WizardPage {
 		IMesonToolChainFile file = manager.newToolChainFile(Paths.get(pathText.getText()));
 
 		IToolChain tc = toolchains[tcCombo.getSelectionIndex()];
+
 		file.setProperty(ICBuildConfiguration.TOOLCHAIN_TYPE, tc.getTypeId());
 		file.setProperty(ICBuildConfiguration.TOOLCHAIN_ID, tc.getId());
 

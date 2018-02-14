@@ -29,8 +29,8 @@ parent_is_not_orphan () {
 
 do_check() {
 	java_vers=`java -version 2>&1`
-	major=`expr "$java_vers" : "java version \"\([0-9]*\)\.[0-9]*.*\""`
-	minor=`expr "$java_vers" : "java version \"[0-9]*\.\([0-9]*\).*\""`
+	major=`expr "$java_vers" : ".* version \"\([0-9]*\)\.[0-9]*.*\""`
+	minor=`expr "$java_vers" : ".* version \"[0-9]*\.\([0-9]*\).*\""`
 	if test "$major" -ge 2 -o "$minor" -ge 8; then
 		:
 	else

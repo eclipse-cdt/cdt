@@ -104,11 +104,11 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					IMesonToolChainFile file = wizard.getNewFile();
-					if (filesToRemove.containsKey(file.getPath())) {
-						filesToRemove.remove(file.getPath());
-					} else {
-						filesToAdd.put(file.getPath(), file);
+					IMesonToolChainFile oldFile = manager.getToolChainFile(file.getPath());
+					if (oldFile != null) {
+						filesToRemove.put(oldFile.getPath(), oldFile);
 					}
+					filesToAdd.put(file.getPath(), file);
 					updateTable();
 				}
 			}
@@ -166,12 +166,12 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 			files.put(file.getPath(), file);
 		}
 
-		for (IMesonToolChainFile file : filesToAdd.values()) {
-			files.put(file.getPath(), file);
-		}
-
 		for (IMesonToolChainFile file : filesToRemove.values()) {
 			files.remove(file.getPath());
+		}
+		
+		for (IMesonToolChainFile file : filesToAdd.values()) {
+			files.put(file.getPath(), file);
 		}
 
 		return files;
@@ -179,14 +179,14 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
-		for (IMesonToolChainFile file : filesToAdd.values()) {
-			manager.addToolChainFile(file);
-		}
-
 		for (IMesonToolChainFile file : filesToRemove.values()) {
 			manager.removeToolChainFile(file);
 		}
 
+		for (IMesonToolChainFile file : filesToAdd.values()) {
+			manager.addToolChainFile(file);
+		}
+		
 		filesToAdd.clear();
 		filesToRemove.clear();
 		

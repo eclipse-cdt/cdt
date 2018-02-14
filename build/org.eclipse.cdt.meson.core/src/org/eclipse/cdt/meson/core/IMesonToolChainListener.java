@@ -14,6 +14,6 @@ package org.eclipse.cdt.meson.core;
  */
 public interface IMesonToolChainListener {
 
-	void handleCMakeToolChainEvent(MesonToolChainEvent event);
+	void handleMesonToolChainEvent(MesonToolChainEvent event);
 
 }

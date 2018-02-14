@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.cdt.meson.core.IMesonConstants;
@@ -89,6 +91,10 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 		}
+	}
+
+	public IMesonToolChainFile getToolChainFile() {
+	    return toolChainFile;
 	}
 
 	private boolean isLocal() throws CoreException {
@@ -314,6 +320,5 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 	
-
 
 }

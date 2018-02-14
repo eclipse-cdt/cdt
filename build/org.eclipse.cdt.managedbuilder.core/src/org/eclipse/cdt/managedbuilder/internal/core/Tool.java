@@ -2438,8 +2438,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	@Override
 	public boolean setToolCommand(String cmd) {
+		String currentCommand = getToolCommand();
 		if (cmd == null && command == null) return false;
-		if (cmd == null || command == null || !cmd.equals(command)) {
+		if (cmd == null || currentCommand == null || !cmd.equals(currentCommand)) {
 			command = cmd;
 			isDirty = true;
 			setRebuildState(true);
@@ -2454,8 +2455,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	@Override
 	public void setCommandLinePattern(String pattern) {
+		String currentPattern = getCommandLinePattern();
 		if (pattern == null && commandLinePattern == null) return;
-		if (pattern == null || commandLinePattern == null || !pattern.equals(commandLinePattern)) {
+		if (pattern == null || currentPattern == null || !pattern.equals(currentPattern)) {
 			commandLinePattern = pattern;
 			setRebuildState(true);
 			isDirty = true;
@@ -3889,26 +3891,28 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	void removeErrorParsers(Set<String> set){
-		Set<String> oldSet = contributeErrorParsers(null);
-		if(oldSet == null)
-			oldSet = new HashSet<String>();
+		if(set != null && !set.isEmpty()) {
+			Set<String> oldSet = contributeErrorParsers(null);
+			if(oldSet == null)
+				oldSet = new HashSet<String>();
 
-		oldSet.removeAll(set);
-		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
+			oldSet.removeAll(set);
+			setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
+		}
 	}
 
 	public void setErrorParserList(String[] ids) {
 		if(ids == null){
-			errorParserIds = null;
+			setErrorParserIds(null);
 		} else if(ids.length == 0){
-			errorParserIds = EMPTY_STRING;
+			setErrorParserIds(EMPTY_STRING);
 		} else {
 			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$
 			}
-			errorParserIds = buf.toString();
+			setErrorParserIds(buf.toString());
 		}
 	}
 

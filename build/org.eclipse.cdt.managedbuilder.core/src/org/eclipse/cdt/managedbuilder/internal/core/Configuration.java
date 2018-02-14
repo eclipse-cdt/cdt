@@ -1545,8 +1545,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
     @Override
 	public void setPrebuildStep(String step) {
+    	String currentPrebuildStep = getPrebuildStep();
         if (step == null && prebuildStep == null) return;
-        if (prebuildStep == null || step == null || !prebuildStep.equals(step)) {
+        if (currentPrebuildStep == null || step == null || !currentPrebuildStep.equals(step)) {
             prebuildStep = step;
 //			rebuildNeeded = true;
             isDirty = true;
@@ -1556,8 +1557,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
     @Override
 	public void setPostbuildStep(String step) {
+    	String currentPostbuildStep  = getPostbuildStep();
         if (step == null && postbuildStep == null) return;
-        if (postbuildStep == null || step == null || !postbuildStep.equals(step)) {
+        if (currentPostbuildStep == null || step == null || !currentPostbuildStep.equals(step)) {
             postbuildStep = step;
 //    		rebuildNeeded = true;
             isDirty = true;
@@ -1566,8 +1568,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
     @Override
 	public void setPreannouncebuildStep(String announceStep) {
+    	String currentPreannouncebuildStep  = getPreannouncebuildStep();
         if (announceStep == null && preannouncebuildStep == null) return;
-        if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
+        if (currentPreannouncebuildStep == null || announceStep == null || !currentPreannouncebuildStep.equals(announceStep)) {
             preannouncebuildStep = announceStep;
 //    		rebuildNeeded = true;
             isDirty = true;
@@ -1576,8 +1579,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
     @Override
 	public void setPostannouncebuildStep(String announceStep) {
+    	String currentAnnounceStep = getPostannouncebuildStep();
         if (announceStep == null && postannouncebuildStep == null) return;
-        if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
+        if (currentAnnounceStep == null || announceStep == null || !currentAnnounceStep.equals(announceStep)) {
             postannouncebuildStep = announceStep;
 //    		rebuildNeeded = true;
             isDirty = true;
@@ -2307,16 +2311,16 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	public void setErrorParserAttribute(String[] ids) {
 		if(ids == null){
-			errorParserIds = null;
+			setErrorParserIds(null);
 		} else if(ids.length == 0){
-			errorParserIds = EMPTY_STRING;
+			setErrorParserIds(EMPTY_STRING);
 		} else {
 			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$
 			}
-			errorParserIds = buf.toString();
+			setErrorParserIds(buf.toString());
 		}
 	}
 
@@ -2326,12 +2330,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			//reset
 			resetErrorParsers();
 		} else {
-			resetErrorParsers();
-			Set<String> oldSet = contributeErrorParsers(null, true);
-			if(oldSet != null) {
-				oldSet.removeAll(Arrays.asList(ids));
-				removeErrorParsers(oldSet);
-			}
 			setErrorParserAttribute(ids);
 		}
 	}
@@ -2346,17 +2344,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 
 	void removeErrorParsers(Set<String> set){
-		Set<String> oldSet = contributeErrorParsers(null, false);
-		if(oldSet == null)
-			oldSet = new LinkedHashSet<String>();
+		if (set != null && set.isEmpty()) {
+			Set<String> oldSet = contributeErrorParsers(null, false);
+			if (oldSet == null)
+				oldSet = new LinkedHashSet<String>();
 
-		oldSet.removeAll(set);
-		setErrorParserAttribute(oldSet.toArray(new String[oldSet.size()]));
+			oldSet.removeAll(set);
+			setErrorParserAttribute(oldSet.toArray(new String[oldSet.size()]));
 
-		IResourceInfo rcInfos[] = getResourceInfos();
-		for(int i = 0; i < rcInfos.length; i++){
-			ResourceInfo rcInfo = (ResourceInfo)rcInfos[i];
-			rcInfo.removeErrorParsers(set);
+			IResourceInfo rcInfos[] = getResourceInfos();
+			for (int i = 0; i < rcInfos.length; i++) {
+				ResourceInfo rcInfo = (ResourceInfo) rcInfos[i];
+				rcInfo.removeErrorParsers(set);
+			}
 		}
 	}
 

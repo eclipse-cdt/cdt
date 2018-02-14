@@ -2478,19 +2478,20 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 	void removeErrorParsers(FolderInfo info, Set<String> set){
-		Set<String> oldSet = contributeErrorParsers(info, null, false);
-		if(oldSet == null)
-			oldSet = new HashSet<String>();
+		if (set != null && !set.isEmpty()) {
+			Set<String> oldSet = contributeErrorParsers(info, null, false);
+			if (oldSet == null)
+				oldSet = new HashSet<String>();
 
-		oldSet.removeAll(set);
-		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
+			oldSet.removeAll(set);
+			setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 
-		info.removeErrorParsers(info.getFilteredTools(), set);
+			info.removeErrorParsers(info.getFilteredTools(), set);
 
-
-		if(info.isRoot()){
-			Builder builder = (Builder)info.getParent().getEditableBuilder();
-			builder.removeErrorParsers(set);
+			if (info.isRoot()) {
+				Builder builder = (Builder) info.getParent().getEditableBuilder();
+				builder.removeErrorParsers(set);
+			}
 		}
 	}
 

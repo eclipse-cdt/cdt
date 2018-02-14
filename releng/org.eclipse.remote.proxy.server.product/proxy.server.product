@@ -29,6 +29,7 @@
       <plugin id="com.ibm.icu"/>
       <plugin id="org.eclipse.cdt.core.macosx" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.cdt.core.linux.ppc64le" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.native"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.expressions"/>

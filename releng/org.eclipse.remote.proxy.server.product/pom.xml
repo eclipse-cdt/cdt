@@ -68,6 +68,8 @@
 								<tasks>
 									<copy file="${project.build.directory}/products/proxy.server-linux.gtk.x86_64.tar.gz"
 										tofile="${basedir}/../org.eclipse.remote.proxy.server.linux.x86_64/proxy.server.tar.gz"/>
+									<copy file="${project.build.directory}/products/proxy.server-linux.gtk.ppc64le.tar.gz"
+										tofile="${basedir}/../org.eclipse.remote.proxy.server.linux.ppc64le/proxy.server.tar.gz"/>
 									<copy file="${project.build.directory}/products/proxy.server-macosx.cocoa.x86_64.tar.gz"
 										tofile="${basedir}/../org.eclipse.remote.proxy.server.macosx.x86_64/proxy.server.tar.gz"/>
 								</tasks>

@@ -55,6 +55,7 @@
 		<module>../../bundles/org.eclipse.remote.proxy.server.core</module>
 		<module>../../releng/org.eclipse.remote.proxy.server.product</module>
 		<module>../../releng/org.eclipse.remote.proxy.server.linux.x86_64</module>
+		<module>../../releng/org.eclipse.remote.proxy.server.linux.ppc64le</module>
 		<module>../../releng/org.eclipse.remote.proxy.server.macosx.x86_64</module>
 		<!-- Main feature -->
 		<module>../../features/org.eclipse.remote-feature</module>
@@ -125,6 +126,11 @@
 							<os>linux</os>
 							<ws>gtk</ws>
 							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>ppc64le</arch>
 						</environment>
 						<environment>
 							<os>win32</os>

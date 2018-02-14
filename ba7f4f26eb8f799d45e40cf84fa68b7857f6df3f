@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d264b8b_e77e67d5",
+        "filename": "build/org.eclipse.cdt.meson.ui/src/org/eclipse/cdt/internal/meson/ui/wizards/RunNinjaPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-02-14T11:17:54Z",
+      "side": 1,
+      "message": "This comment seems unrelated to the code.",
+      "revId": "ba7f4f26eb8f799d45e40cf84fa68b7857f6df3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

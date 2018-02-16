@@ -43,7 +43,7 @@ public class ExcludedFileDecorator implements ILightweightLabelDecorator {
 			if (desc == null)
 				return;
 			ICConfigurationDescription conf = desc.getDefaultSettingConfiguration();
-			ICSourceEntry[] entries = conf.getSourceEntries();
+			ICSourceEntry[] entries = conf != null ? conf.getSourceEntries() : new ICSourceEntry[0];
 			boolean isUnderSourceRoot = false;
 			IPath fullPath = resource.getFullPath();
 			for (ICSourceEntry icSourceEntry : entries) {

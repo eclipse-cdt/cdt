@@ -885,6 +885,7 @@
    </extension>
    <extension
          id="cBuilder"
+         name="%CBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder
             callOnEmptyDelta="true"

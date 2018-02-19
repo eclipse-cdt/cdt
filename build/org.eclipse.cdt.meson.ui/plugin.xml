@@ -70,14 +70,15 @@
          point="org.eclipse.cdt.launch.coreBuildTab">
       <provider
             nature="org.eclipse.cdt.meson.core.mesonNature"
-            priority="10"
             tabClass="org.eclipse.cdt.internal.meson.ui.MesonBuildTab">
       </provider>
    </extension>
    <extension
-         id="org.eclipse.cdt.meson.ui.commands.ninja"
-         name="%meson.run.ninja.label"
          point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.cdt.meson.ui.command.runninja"
+            name="%meson.run.ninja.label">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -95,12 +96,11 @@
                <count
                      value="1">
                </count>
-               <iterate
-                     ifEmpty="false"
-                     operator="and">
+               <iterate ifEmpty="false">
                   <adapt
                      type="org.eclipse.core.resources.IResource">
                      <test
+                     	  forcePluginActivation="true"
                           property="org.eclipse.core.resources.projectNature"
                           value="org.eclipse.cdt.meson.core.mesonNature">
                      </test>
@@ -126,7 +126,24 @@
                label="%meson.run.ninja.label"
                mnemonic="%meson.run.ninja.mnemonic"
                style="push">
-            <visibleWhen checkEnabled="true"/>
+			<visibleWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate ifEmpty="false">
+                  <adapt
+                     type="org.eclipse.core.resources.IResource">
+                     <test
+                     	  forcePluginActivation="true"
+                          property="org.eclipse.core.resources.projectNature"
+                          value="org.eclipse.cdt.meson.core.mesonNature">
+                     </test>
+                  </adapt>
+               </iterate>
+            </with>
+		   </visibleWhen>
          </command>
       </menuContribution>
     </extension>

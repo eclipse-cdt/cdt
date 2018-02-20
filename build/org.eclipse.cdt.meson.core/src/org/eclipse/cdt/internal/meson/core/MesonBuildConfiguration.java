@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -27,7 +26,6 @@ import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.cdt.meson.core.IMesonConstants;
@@ -99,8 +97,9 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 	private boolean isLocal() throws CoreException {
 		IToolChain toolchain = getToolChain();
-		return Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
-				&& Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH));
+		return (Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
+				|| "linux-container".equals(toolchain.getProperty(IToolChain.ATTR_OS))) //$NON-NLS-1$
+				&& (Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH)));
 	}
 
 	@Override
@@ -136,25 +135,23 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 			boolean runMeson = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
 			if (runMeson) { // $NON-NLS-1$
-				Path path = findCommand("meson"); //$NON-NLS-1$
-				if (path == null) {
-					path = Paths.get("meson"); //$NON-NLS-1
-				}
-
 				List<String> argsList = new ArrayList<>();
+				
+				argsList.add("-c"); //$NON-NLS-1$
+				
+				StringBuilder b = new StringBuilder();
+				b.append("meson"); //$NON-NLS-1$
 
 				String userArgs = getProperty(IMesonConstants.MESON_ARGUMENTS);
 				if (userArgs != null) {
-					argsList.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
+					b.append(" "); //$NON-NLS-1$
+					b.append(userArgs);
 				}
+				b.append(" "); //$NON-NLS-1$
+				b.append(getBuildDirectory().toString());
+				argsList.add(b.toString());
 
-				argsList.add(getBuildDirectory().toString());
-
-				Map<String, String> envMap = System.getenv();
 				List<String> envList = new ArrayList<>();
-				for (Map.Entry<String, String> entry : envMap.entrySet()) {
-					envList.add(entry.getKey() + "=" + entry.getValue());
-				}
 				String envStr = getProperty(IMesonConstants.MESON_ENV);
 				if (envStr != null) {
 					envList.addAll(MesonUtils.stripEnvVars(envStr));
@@ -170,18 +167,21 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningMeson);
 
-				org.eclipse.core.runtime.Path mesonPath = new org.eclipse.core.runtime.Path(path.toString());
+				org.eclipse.core.runtime.Path shPath = new org.eclipse.core.runtime.Path("/bin/sh"); //$NON-NLS-1$
 				outStream.write(String.join(" ", envStr != null ? envStr : "", //$NON-NLS-1$ //$NON-NLS-2$ 
-						mesonPath.toString(), userArgs, "\n")); //$NON-NLS-1$
-				outStream.write(getBuildDirectory() + "\n"); //$NON-NLS-1$
+						"sh -c \"meson", userArgs != null ? userArgs : "", getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().getParent().getParent().toString());
-
-				launcher.execute(mesonPath, argsList.toArray(new String[0]), env, workingDir, monitor);
-				if (launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
-					String errMsg = launcher.getErrorMessage();
+				Process p = launcher.execute(shPath, argsList.toArray(new String[0]), env, workingDir, monitor);
+				if (p == null || launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+					String errMsg = p == null ? "" : launcher.getErrorMessage(); //$NON-NLS-1$
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningMesonFailure, errMsg));
 					return null;
 				}
+			}
+			
+			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
+				console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_NoNinjaFile, "")); //$NON-NLS-1$
+				return null;
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
@@ -190,14 +190,10 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				String buildCommand = getProperty(IMesonConstants.BUILD_COMMAND);
 				if (buildCommand == null || buildCommand.isEmpty()) {
-					buildCommand = "ninja";
+					buildCommand = "ninja"; //$NON-NLS-1$
 				}
 
-				Map<String, String> envMap = System.getenv();
 				List<String> envList = new ArrayList<>();
-				for (Map.Entry<String, String> entry : envMap.entrySet()) {
-					envList.add(entry.getKey() + "=" + entry.getValue());
-				}
 				if (ninjaEnv != null) {
 					envList.addAll(Arrays.asList(ninjaEnv));
 				}
@@ -212,15 +208,25 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningNinja);
 
-				org.eclipse.core.runtime.Path ninjaPath = new org.eclipse.core.runtime.Path(buildCommand);
+				org.eclipse.core.runtime.Path shPath = new org.eclipse.core.runtime.Path("sh"); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
 				
+				List<String> argList = new ArrayList<>();
+				argList.add("-c"); //$NON-NLS-1$
+				StringBuilder b = new StringBuilder();
+				b.append(buildCommand);
 				if (ninjaArgs == null) {
-					ninjaArgs = new String[] {"-v"}; //$NON-NLS-1$
+					b.append(" -v"); //$NON-NLS-1$
+				} else {
+					for (String arg : ninjaArgs) {
+						b.append(" "); //$NON-NLS-1$
+						b.append(arg);
+					}
 				}
+				argList.add(b.toString());
 
-				launcher.execute(ninjaPath, ninjaArgs, env, workingDir, monitor);
-				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+				Process p = launcher.execute(shPath, argList.toArray(new String[0]), env, workingDir, monitor);
+				if (p != null && launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, errMsg));
 					return null;

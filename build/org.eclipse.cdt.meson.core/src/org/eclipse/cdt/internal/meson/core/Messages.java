@@ -23,6 +23,7 @@ public class Messages extends NLS {
 	public static String MesonBuildConfiguration_RunningMesonFailure;
 	public static String MesonBuildConfiguration_RunningNinjaFailure;
 	public static String MesonBuildConfiguration_NoToolchainFile;
+	public static String MesonBuildConfiguration_NoNinjaFile;
 	public static String MesonBuildConfiguration_ProcCompCmds;
 	public static String MesonBuildConfiguration_ProcCompJson;
 

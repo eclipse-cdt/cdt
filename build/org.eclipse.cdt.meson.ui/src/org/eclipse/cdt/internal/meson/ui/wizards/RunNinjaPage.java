@@ -22,21 +22,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A standard file selection dialog which solicits a list of files from the user.
- * The <code>getResult</code> method returns the selected files.
+ * A Wizard dialog page to allow a user to specify environment variables
+ * and options for a ninja command to be run against the active
+ * build configuration for the project.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * <p>
- * Example:
- * <pre>
- *	FileSelectionDialog dialog =
- *		new FileSelectionDialog(getShell(), rootElement, msg);
- *	dialog.setInitialSelections(selectedResources);
- *	dialog.open();
- *	return dialog.getResult();
- * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunNinjaPage extends WizardPage {
@@ -91,10 +83,18 @@ public class RunNinjaPage extends WizardPage {
 		setControl(composite);
 	}
 
+	/**
+	 * Return the user-specified environment variables (NAME=VALUE pairs)
+	 * @return the environment String
+	 */
 	public String getEnvStr() {
 		return envText.getText();
 	}
 	
+	/**
+	 * Return the user-specified ninja arguments
+	 * @return the ninja arg String
+	 */
 	public String getNinjaArgs() {
 		return ninjaArgs.getText();
 	}

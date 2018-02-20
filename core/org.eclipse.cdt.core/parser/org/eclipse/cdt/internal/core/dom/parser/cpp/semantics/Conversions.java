@@ -631,18 +631,23 @@ public class Conversions {
 		return cost;
 	}
 
-	// 13.3.1.7 Initialization by list-initialization
+	// [over.match.list] Initialization by list-initialization
 	static Cost listInitializationOfClass(EvalInitList arg, ICPPClassType t, boolean isDirect, boolean deferUDC) throws DOMException {
 		if (deferUDC) {
 			Cost c= new Cost(arg.getType(), t, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(isDirect ? DeferredUDC.DIRECT_LIST_INIT_OF_CLASS : DeferredUDC.LIST_INIT_OF_CLASS);
 			return c;
 		}
+		
+		// p1: When objects of non-aggregate class type are list-initialized,
+		// [...] overload resoution selects the constructor in two phases:
 
-		// If T has an initializer-list constructor
+		//   - Initially, the candidate functions are the initializer-
+	    //     list constructors of the class T and the argument list
+	    //     consists of the initializer list as a single argument.
+		
 		ICPPConstructor usedCtor= null;
 		Cost bestCost= null;
-		boolean hasInitListConstructor= false;
 		final ICPPConstructor[] constructors = t.getConstructors();
 		ICPPConstructor[] ctors= constructors;
 		for (ICPPConstructor ctor : ctors) {
@@ -658,7 +663,6 @@ public class Conversions {
 				if (parTypes.length > 0) {
 					final IType target = parTypes[0];
 					if (getInitListType(target) != null) {
-						hasInitListConstructor= true;
 						Cost cost= listInitializationSequence(arg, target, UDCMode.FORBIDDEN, isDirect);
 						if (cost.converts()) {
 							int cmp= cost.compareTo(bestCost);
@@ -674,10 +678,7 @@ public class Conversions {
 				}
 			}
 		}
-		if (hasInitListConstructor) {
-			if (bestCost == null)
-				return Cost.NO_CONVERSION;
-
+		if (bestCost != null) {
 			if (!bestCost.isAmbiguousUDC() && !isDirect) {
 				if (usedCtor != null && usedCtor.isExplicit()) {
 					bestCost.setRank(Rank.NO_MATCH);
@@ -691,7 +692,12 @@ public class Conversions {
 			return bestCost;
 		}
 
-		// No initializer-list constructor
+		//   - If no viable initializer-list constructor is found,
+	    //     overload resolution is performed again, where the
+	    //     candidate functions are all the constructors of the
+	    //     class T and the argument list consists of the elements
+	    //     of the initializer list.
+
 		LookupData data= new LookupData(t.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint());
     	final ICPPEvaluation[] expandedArgs = arg.getClauses();
 		data.setFunctionArguments(false, expandedArgs);

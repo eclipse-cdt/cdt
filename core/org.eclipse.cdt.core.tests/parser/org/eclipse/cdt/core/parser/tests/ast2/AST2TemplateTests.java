@@ -10651,4 +10651,35 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testLongDependentFunctionCallChain_530692() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	namespace std {
+	//	    template <class E>
+	//	    struct initializer_list {
+	//	        E* array;
+	//	        unsigned long len;
+	//	    };
+	//	}
+	//
+	//	template <typename T>
+	//	struct vector {
+	//	    vector(std::initializer_list<T>);
+	//
+	//	    template <typename InputIterator>
+	//	    vector(InputIterator, InputIterator);
+	//	};
+	//
+	//	struct mystring {
+	//	    mystring(const char*);
+	//	};
+	//
+	//	void foo(vector<mystring>);
+	//
+	//	int main() {
+	//	    char** begin;
+	//	    char** end;
+	//	    foo({begin, end});
+	//	}
+	public void testOverloadResolutionWithInitializerList_531322() throws Exception {
+		parseAndCheckBindings();
+	}
 }

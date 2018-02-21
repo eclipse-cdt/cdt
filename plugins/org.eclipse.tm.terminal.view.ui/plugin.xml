@@ -68,7 +68,7 @@
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.TaskList"
+               relative="org.eclipse.ui.console.ConsoleView"
                visible="false">
          </view>
       </perspectiveExtension>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.rse_0.0.0.jar" id="org.eclipse.rse" version="0.0.0">
+   <feature id="org.eclipse.rse">
       <category name="rse_38_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_0.0.0.jar" id="org.eclipse.rse.sdk" version="0.0.0">
+   <feature id="org.eclipse.rse.sdk">
       <category name="rse_38_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals_0.0.0.jar" id="org.eclipse.rse.terminals" version="0.0.0">
+   <feature id="org.eclipse.rse.terminals">
       <category name="rse_38_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
+   <feature id="org.eclipse.rse.useractions">
       <category name="rse_38_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_0.0.0.jar" id="org.eclipse.rse.examples" version="0.0.0">
+   <feature id="org.eclipse.rse.examples">
       <category name="rse_38_optional"/>
    </feature>
-   <feature url="features/org.eclipse.rse.scp_0.0.0.jar" id="org.eclipse.rse.scp" version="0.0.0">
+   <feature id="org.eclipse.rse.scp">
       <category name="rse_38_optional"/>
    </feature>
    

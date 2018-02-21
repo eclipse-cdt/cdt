@@ -9,9 +9,6 @@
    <feature url="features/org.eclipse.rse.terminals_0.0.0.jar" id="org.eclipse.rse.terminals" version="0.0.0">
       <category name="rse_38_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals.source_0.0.0.jar" id="org.eclipse.rse.terminals.source" version="0.0.0">
-      <category name="rse_38_main"/>
-   </feature>
    <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
       <category name="rse_38_main"/>
    </feature>

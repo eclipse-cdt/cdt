@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2017 Eclipse Foundation and others.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+ 
+  Contributors:
+    Nick Boldt (Red Hat) - initial implementation
+    Rob Stryker (Red Hat) - initial implementation
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.tm.rse</groupId>
+    <artifactId>org.eclipse.tm.rse</artifactId>
+    <version>3.6.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.eclipse.tm.rse</groupId>
+  <artifactId>org.eclipse.tm.rse.plugins</artifactId>
+  <version>3.6.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>org.eclipse.dstore.core</module>
+    <module>org.eclipse.dstore.extra</module>
+    <module>org.eclipse.rse</module>
+    <module>org.eclipse.rse.connectorservice.dstore</module>
+    <module>org.eclipse.rse.connectorservice.local</module>
+    <module>org.eclipse.rse.connectorservice.ssh</module>
+    <module>org.eclipse.rse.connectorservice.telnet</module>
+    <module>org.eclipse.rse.core</module>
+    <module>org.eclipse.rse.dstore.security</module>
+    <module>org.eclipse.rse.efs</module>
+    <module>org.eclipse.rse.efs.ui</module>
+    <module>org.eclipse.rse.files.ui</module>
+    <module>org.eclipse.rse.importexport</module>
+    <module>org.eclipse.rse.processes.ui</module>
+    <module>org.eclipse.rse.sdk</module>
+    <module>org.eclipse.rse.services</module>
+    <module>org.eclipse.rse.services.dstore</module>
+    <module>org.eclipse.rse.services.files.ftp</module>
+    <module>org.eclipse.rse.services.local</module>
+    <module>org.eclipse.rse.services.ssh</module>
+    <module>org.eclipse.rse.services.telnet</module>
+    <module>org.eclipse.rse.shells.ui</module>
+    <module>org.eclipse.rse.subsystems.files.core</module>
+    <module>org.eclipse.rse.subsystems.files.dstore</module>
+    <module>org.eclipse.rse.subsystems.files.ftp</module>
+    <module>org.eclipse.rse.subsystems.files.local</module>
+    <module>org.eclipse.rse.subsystems.files.scp</module>
+    <module>org.eclipse.rse.subsystems.files.ssh</module>
+    <module>org.eclipse.rse.subsystems.processes.core</module>
+    <module>org.eclipse.rse.subsystems.processes.dstore</module>
+    <module>org.eclipse.rse.subsystems.processes.local</module>
+    <module>org.eclipse.rse.subsystems.processes.shell.linux</module>
+    <module>org.eclipse.rse.subsystems.shells.core</module>
+    <module>org.eclipse.rse.subsystems.shells.dstore</module>
+    <module>org.eclipse.rse.subsystems.shells.local</module>
+    <module>org.eclipse.rse.subsystems.shells.ssh</module>
+    <module>org.eclipse.rse.subsystems.shells.telnet</module>
+    <module>org.eclipse.rse.subsystems.terminals.core</module>
+    <module>org.eclipse.rse.subsystems.terminals.ssh</module>
+    <module>org.eclipse.rse.terminals.ui</module>
+    <module>org.eclipse.rse.ui</module>
+    <module>org.eclipse.rse.ui.capabilities</module>
+    <module>org.eclipse.rse.useractions</module>
+    <module>org.eclipse.rse.useractions.sdk</module>
+  </modules>
+</project>

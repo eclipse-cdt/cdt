@@ -39,30 +39,6 @@
          id="org.eclipse.rse"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.rse.core.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.dstore.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.ftp.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.local.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.ssh.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.telnet.source"
-         version="0.0.0"/>
-
    <plugin
          id="org.eclipse.rse.sdk"
          download-size="7"

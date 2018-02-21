@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!--
+  Copyright (c) 2012, 2013 Eclipse Foundation and others.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+ 
+  Contributors:
+    Thanh Ha (Eclipse Foundation) - initial implementation
+    Nick Boldt (Red Hat Inc.) - support for Tycho 1.0 and upstream component builds
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.tm</groupId>
+    <artifactId>tm-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+  </parent>
+
+
+  <groupId>org.eclipse.tm.rse</groupId>
+  <artifactId>org.eclipse.tm.rse</artifactId>
+  <version>3.6.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+   <modules>
+     <module>doc</module>
+     <module>examples</module>
+     <module>features</module>
+     <module>plugins</module>
+     <module>tests</module>
+     <module>site</module>
+    </modules>
+</project>

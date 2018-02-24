@@ -51,7 +51,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
 public class PDOMASTAdapter {
-	private static class AnonymousASTName implements IASTName {
+	private static class AnonymousASTName implements IASTName, IPDOMAdaptedASTNode {
 		private IASTName fDelegate;
 		private IASTFileLocation fLocation;
 
@@ -291,6 +291,11 @@ public class PDOMASTAdapter {
 		@Override
 		public IASTNode getOriginalNode() {
 			return this;
+		}
+
+		@Override
+		public IASTNode getDelegate() {
+			return fDelegate;
 		}
 	}
 

@@ -244,6 +244,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeS
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMAdaptedASTNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -2014,7 +2015,11 @@ public class CPPSemantics {
 	}
 
 	public static boolean declaredBefore(Object obj, IASTNode node, boolean indexBased) {
-		if (node == null)
+		if (node instanceof IPDOMAdaptedASTNode) {
+			// Get the underlying ASTNode.
+			node = ((IPDOMAdaptedASTNode) node).getDelegate();
+		}
+		if (!(node instanceof ASTNode))
 			return true;
 
 		// The pointOfRef and pointOfDecl variables contain node offsets scaled by a factor of two.

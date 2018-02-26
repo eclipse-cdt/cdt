@@ -12,11 +12,11 @@
 
 	<properties>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
-		<tycho-version>1.0.0</tycho-version>
-		<tycho-extras-version>1.0.0</tycho-extras-version>
+		<tycho-version>1.1.0</tycho-version>
+		<tycho-extras-version>1.1.0</tycho-extras-version>
 		<maven-resources-version>2.6</maven-resources-version>
-		<!-- TODO: switch to 4.8 after June 27, 2018 -->
-		<sdk-version>4.8milestones</sdk-version>
+		<!-- TODO: use 4.8milestones? or switch to 4.8 after June 27, 2018 -->
+		<sdk-version>4.8-I-builds</sdk-version>
 
 		<!-- Set up the default target platform to build against -->
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>

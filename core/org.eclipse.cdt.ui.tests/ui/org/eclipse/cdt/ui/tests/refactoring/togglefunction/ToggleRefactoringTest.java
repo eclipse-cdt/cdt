@@ -3551,4 +3551,21 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testToggleWithTemplateArgumentDependentQualifierInReturnType_399931() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.c
+	//void /*$*/freefunction/*$$*/(int x __attribute__((unused))) {
+	//	return;
+	//}
+	//====================
+	//#include "A.h"
+	//
+
+	//A.h
+	//====================
+	//void freefunction(int x __attribute__((unused))) {
+	//	return;
+	//}
+	public void testFreeFunctionFromHeaderToImplInC_531701() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

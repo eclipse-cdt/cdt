@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAttribute;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -65,7 +64,11 @@ public class AttributeWriter extends NodeWriter {
 		IASTAttribute[] innerAttributes = specifier.getAttributes();
 		for (int i = 0; i < innerAttributes.length; i++) {
 			IASTAttribute innerAttribute = innerAttributes[i];
-			writeAttribute((CPPASTAttribute)innerAttribute);
+			if (innerAttribute instanceof ICPPASTAttribute) {
+				writeAttribute((ICPPASTAttribute) innerAttribute);
+			} else {
+				writeAttribute(innerAttribute);
+			}
 			if (i < innerAttributes.length - 1) {
 				scribe.print(',');
 				scribe.printSpace();
@@ -91,12 +94,7 @@ public class AttributeWriter extends NodeWriter {
 		scribe.print(CLOSING_SQUARE_BRACKET);
 	}
 
-	private void writeAttribute(ICPPASTAttribute attribute) {
-		char[] scope = attribute.getScope();
-		if (scope != null) {
-			scribe.print(scope);
-			scribe.print(COLON_COLON);
-		}
+	private void writeAttribute(IASTAttribute attribute) {
 		scribe.print(attribute.getName());
 
 		IASTToken argumentClause = attribute.getArgumentClause();
@@ -105,11 +103,27 @@ public class AttributeWriter extends NodeWriter {
 			printTokens(argumentClause);
 			scribe.print(CLOSING_PARENTHESIS);
 		}
+	}
 
+	private void writeAttributeScope(ICPPASTAttribute attribute) {
+		char[] scope = attribute.getScope();
+		if (scope != null) {
+			scribe.print(scope);
+			scribe.print(COLON_COLON);
+		}
+	}
+
+	private void writeAttributeVarArgs(ICPPASTAttribute attribute) {
 		if (attribute.hasPackExpansion()) {
 			scribe.printSpace();
 			scribe.print(VAR_ARGS);
 		}
+	}
+
+	private void writeAttribute(ICPPASTAttribute attribute) {
+		writeAttributeScope(attribute);
+		writeAttribute((IASTAttribute) attribute);
+		writeAttributeVarArgs(attribute);
 	}
 
 	protected void printTokens(IASTToken token) {

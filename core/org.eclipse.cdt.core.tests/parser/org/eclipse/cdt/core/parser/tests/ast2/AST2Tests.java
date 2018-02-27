@@ -100,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -7715,5 +7716,33 @@ public class AST2Tests extends AST2TestBase {
     public void testMemberAccessOnPointerType_526857() throws Exception {
     	BindingAssertionHelper helper = getAssertionHelper(C);
     	helper.assertProblem("s.waldo", "waldo");
+    }
+    
+	//  struct gendisk {
+	//   struct request_queue *queue;
+	//  };
+	//
+	//  typedef struct request_queue request_queue_t;
+	//
+	//  typedef void (request_fn_proc) (request_queue_t *q);
+	//
+	//  struct request_queue {
+	//      request_fn_proc *request_fn;
+	//  };
+	//
+	//  int main() {
+	//      struct gendisk *gd = 0;
+	//
+	//      // The expression type of *gd->queue-request_fn is a CProblemType
+	//      // with message "Failure to determine type of expression"
+	//      (*gd->queue->request_fn)(0);
+	//
+	//      return 0;
+	//  }
+    public void testProblemExpressionType_403153() throws Exception {
+    	BindingAssertionHelper helper = getAssertionHelper(C);
+    	IASTExpression expr = helper.assertNode("*gd->queue->request_fn");
+    	assertNotNull(expr);
+    	assertFalse(expr.getExpressionType() instanceof IProblemType);
     }
 }

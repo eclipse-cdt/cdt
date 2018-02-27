@@ -1145,6 +1145,14 @@ public class CVisitor extends ASTQueries {
 	private static IASTNode findDefinition(IASTNode decl, char[] declName, int beginAtLoc) {
 		IASTNode blockItem = getContainingBlockItem(decl);
 		IASTNode parent = blockItem.getParent();
+		if (parent instanceof IASTCompositeTypeSpecifier) {
+			// C does not have a notion of structure scope.
+			// Types names declared in a structure have file scope.
+			parent = parent.getParent();  // This will be the declaration
+			if (parent != null) {
+				parent = parent.getParent();
+			}
+		}
 		IASTNode[] list = null;
 		if (parent instanceof IASTCompoundStatement) {
 			IASTCompoundStatement compound = (IASTCompoundStatement) parent;

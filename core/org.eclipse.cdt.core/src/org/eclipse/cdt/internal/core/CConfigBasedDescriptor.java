@@ -510,21 +510,27 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 								Node parentProxy = (Node)Proxy.newProxyInstance(Node.class.getClassLoader(), new Class[]{Node.class}, new InvocationHandler(){
 									@Override
 									public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-										Method realMethod = parent.getClass().getMethod(method.getName(), method.getParameterTypes());
-										synchronized (xmlEl) {
-											// Handle the remove child case
-											if (method.getName().equals("removeChild")) { //$NON-NLS-1$
-												if (args[0] instanceof Element && ((Element)args[0]).getAttribute(
-														XmlStorage.MODULE_ID_ATTRIBUTE).length() > 0) {
-													ICStorageElement removed = removeProjectStorageElement(((Element)args[0]).getAttribute(
-															XmlStorage.MODULE_ID_ATTRIBUTE));
-													if (removed != null)
-														return ((XmlStorageElement)((SynchronizedStorageElement)removed).getOriginalElement()).fElement;
-													return null;
+										// Require the lock before locking the element
+										fLock.acquire();
+										try {
+											Method realMethod = parent.getClass().getMethod(method.getName(), method.getParameterTypes());
+											synchronized (xmlEl) {
+												// Handle the remove child case
+												if (method.getName().equals("removeChild")) { //$NON-NLS-1$
+													if (args[0] instanceof Element && ((Element)args[0]).getAttribute(
+															XmlStorage.MODULE_ID_ATTRIBUTE).length() > 0) {
+														ICStorageElement removed = removeProjectStorageElement(((Element)args[0]).getAttribute(
+																XmlStorage.MODULE_ID_ATTRIBUTE));
+														if (removed != null)
+															return ((XmlStorageElement)((SynchronizedStorageElement)removed).getOriginalElement()).fElement;
+														return null;
+													}
 												}
+												// else return the realMethod
+												return realMethod.invoke(parent, args);
 											}
-											// else return the realMethod
-											return realMethod.invoke(parent, args);
+										} finally {
+											fLock.release();
 										}
 									}
 								});

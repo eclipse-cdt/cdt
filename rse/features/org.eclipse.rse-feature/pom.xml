@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse</artifactId>
-  <version>3.7.3-SNAPSHOT</version>
+  <version>3.7.100-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   
   <build>

@@ -12,12 +12,12 @@
  *     QNX Software Systems - [271628] NPE in configs for project that failed to convert
  *     James Blackburn (Broadcom Corp.)
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 406545
+*     cartu38 opendev (STMicroelectronics) - Bug 531915
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +79,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -1155,16 +1156,10 @@ implements
 	private Image getIcon(IConfigurationElement config) {
 		ImageDescriptor idesc = null;
 		URL url = null;
-		try {
-			String iconName = config.getAttribute(IMAGE_NAME);
-			if (iconName != null) {
-				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getEntry("/"); //$NON-NLS-1$
-				url = new URL(pluginInstallUrl, iconName);
-				if (loadedIcons.containsKey(url))
-					return loadedIcons.get(url);
-				idesc = ImageDescriptor.createFromURL(url);
-			}
-		} catch (MalformedURLException exception) {}
+		String iconName = config.getAttribute(IMAGE_NAME);
+		if (iconName != null) {
+			idesc = AbstractUIPlugin.imageDescriptorFromPlugin(Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getSymbolicName(), iconName);
+		}
 		if (idesc == null)
 			return null;
 		Image img = idesc.createImage();

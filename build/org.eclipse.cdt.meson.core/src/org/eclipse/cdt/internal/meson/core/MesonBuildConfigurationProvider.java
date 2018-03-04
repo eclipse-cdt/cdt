@@ -72,11 +72,11 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name);
 		IMesonToolChainFile tcFile = mesonConfig.getToolChainFile();
 		IToolChain toolChain = mesonConfig.getToolChain();
-		if (toolChain == null || tcFile == null) {
-			// config not complete?
+		if (toolChain == null) {
+			// config not complete
 			return null;
 		}
-		if (!toolChain.equals(tcFile.getToolChain())) {
+		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
 			// toolchain changed
 			return new MesonBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
 					mesonConfig.getLaunchMode());
@@ -109,13 +109,19 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 		// create config
 		StringBuilder configName = new StringBuilder("meson."); //$NON-NLS-1$
 		configName.append(launchMode);
-		if (os != null) {
+		if ("linux-container".equals(os)) { //$NON-NLS-1$
+			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
 			configName.append('.');
-			configName.append(os);
-		}
-		if (arch != null && !arch.isEmpty()) {
-			configName.append('.');
-			configName.append(arch);
+			configName.append(osConfigName);
+		} else {
+			if (os != null) {
+				configName.append('.');
+				configName.append(os);
+			}
+			if (arch != null && !arch.isEmpty()) {
+				configName.append('.');
+				configName.append(arch);
+			}
 		}
 		String name = configName.toString();
 		int i = 0;

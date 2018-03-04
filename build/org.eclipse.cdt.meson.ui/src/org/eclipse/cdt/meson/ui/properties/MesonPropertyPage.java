@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.meson.core.IMesonConstants;
@@ -65,6 +66,7 @@ public class MesonPropertyPage extends PropertyPage {
 	private boolean configured;
 	private CBuildConfiguration buildConfig;
 	private Text envText;
+	private Text projText;
 	
 	@Override
 	protected Control createContents(Composite parent) {
@@ -84,25 +86,39 @@ public class MesonPropertyPage extends PropertyPage {
 			if (configured) {
 
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-				Process p = launcher.execute(new Path("meson"), new String[] { "configure",  buildDir}, new String[0], sourceDir, new NullProgressMonitor());
-				ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-				ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-				int rc = -1;
-				try {
-					if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
-						p.waitFor();
+				launcher.setProject(project);
+				if (launcher instanceof ICBuildCommandLauncher) {
+					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+				}
+				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", "meson configure " + buildDir}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						new String[0], sourceDir, new NullProgressMonitor());
+				if (p != null) {
+					ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+					ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+					int rc = -1;
+					try {
+						if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
+							p.waitFor();
+						}
+						rc = p.exitValue();
+					} catch (InterruptedException e) {
+						// ignore for now
 					}
-					rc = p.exitValue();
-				} catch (InterruptedException e) {
-					// ignore for now
+					if (rc == 0) {
+						componentList = parseConfigureOutput(stdout, composite);
+					}
 				}
-				if (rc == 0) {
-					componentList = parseConfigureOutput(stdout, composite);
-				}
-
 			} else {
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-				Process p = launcher.execute(new Path("meson"), new String[] { "-h"}, new String[0], sourceDir, new NullProgressMonitor());
+				launcher.setProject(project);
+				if (launcher instanceof ICBuildCommandLauncher) {
+					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+				}
+				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", "meson -h"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						new String[0], sourceDir, new NullProgressMonitor());
+				if (p == null) {
+					return null;
+				}
 				ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 				ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 				int rc = -1;
@@ -118,13 +134,13 @@ public class MesonPropertyPage extends PropertyPage {
 					Map<String, String> argMap = new HashMap<>();
 					String mesonArgs = buildConfig.getProperty(IMesonConstants.MESON_ARGUMENTS);
 					if (mesonArgs != null) {
-						String[] argStrings = mesonArgs.split("\\s+");
+						String[] argStrings = mesonArgs.split("\\s+"); //$NON-NLS-1$
 						for (String argString : argStrings) {
-							String[] s = argString.split("=");
+							String[] s = argString.split("="); //$NON-NLS-1$
 							if (s.length == 2) {
 								argMap.put(s[0], s[1]);
 							} else {
-								argMap.put(argString, "true");
+								argMap.put(argString, "true"); //$NON-NLS-1$
 							}
 						}
 					}
@@ -135,7 +151,7 @@ public class MesonPropertyPage extends PropertyPage {
 					layout.marginRight = 10;
 					group.setLayout(layout);
 					group.setLayoutData(new GridData(GridData.FILL_BOTH));
-					group.setText("Environment");
+					group.setText(Messages.MesonPropertyPage_env_group);
 
 					Label envLabel = new Label(group, SWT.NONE);
 					envLabel.setText(Messages.MesonPropertyPage_env_label);
@@ -156,6 +172,33 @@ public class MesonPropertyPage extends PropertyPage {
 					data.grabExcessHorizontalSpace = true;
 					data.horizontalSpan = 1;
 					envText.setLayoutData(data);
+					
+					group = new Group(composite, SWT.BORDER);
+					layout = new GridLayout(2, true);
+					layout.marginLeft = 10;
+					layout.marginRight = 10;
+					group.setLayout(layout);
+					group.setLayoutData(new GridData(GridData.FILL_BOTH));
+					group.setText(Messages.MesonPropertyPage_project_group);
+
+					Label projLabel = new Label(group, SWT.NONE);
+					projLabel.setText(Messages.MesonPropertyPage_project_label);
+					data = new GridData(GridData.FILL, GridData.FILL, true, false);
+					data.grabExcessHorizontalSpace = true;
+					data.horizontalSpan = 1;
+					projLabel.setLayoutData(data);
+
+					String mesonProjOptions = buildConfig.getProperty(IMesonConstants.MESON_PROJECT_OPTIONS);
+					
+					projText = new Text(group, SWT.BORDER);
+					if (mesonProjOptions != null) {
+						projText.setText(mesonProjOptions);
+						}
+					projText.setToolTipText(Messages.MesonPropertyPage_project_tooltip);
+					data = new GridData(GridData.FILL, GridData.FILL, true, false);
+					data.grabExcessHorizontalSpace = true;
+					data.horizontalSpan = 1;
+					projText.setLayoutData(data);
 					
 					// default buildtype based on active build configuration
 					// user can always override and we will use override from then on
@@ -195,13 +238,14 @@ public class MesonPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		List<String> args = new ArrayList<>();
 		if (configured) {
+			args.add("meson"); //$NON-NLS-1$
 			args.add("configure"); //$NON-NLS-1$
 			for (IMesonPropertyPageControl control : componentList) {
 				if (control.isValueChanged()) {
 					args.add(control.getConfiguredString()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			if (args.size() == 1) {
+			if (args.size() == 2) {
 				return true;
 			}
 			try {
@@ -209,8 +253,17 @@ public class MesonPropertyPage extends PropertyPage {
 				IPath sourceDir = project.getLocation();
 				String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-				args.add(buildDir);
-				Process p = launcher.execute(new Path("meson"), args.toArray(new String[0]), new String[0], sourceDir, new NullProgressMonitor());
+				launcher.setProject(project);
+				if (launcher instanceof ICBuildCommandLauncher) {
+					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+				}
+				StringBuilder b = new StringBuilder();
+				for (String arg : args) {
+					b.append(arg);
+					b.append(" "); //$NON-NLS-1$
+				}
+				b.append(buildDir);
+				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", b.toString() }, new String[0], sourceDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
 				int rc = -1;
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(project);
@@ -258,6 +311,7 @@ public class MesonPropertyPage extends PropertyPage {
 			}
 			buildConfig.setProperty(IMesonConstants.MESON_ARGUMENTS, mesonargs.toString());
 			buildConfig.setProperty(IMesonConstants.MESON_ENV, envText.getText().trim());
+			buildConfig.setProperty(IMesonConstants.MESON_PROJECT_OPTIONS, projText.getText().trim());
 		}
 		return true;
 	}

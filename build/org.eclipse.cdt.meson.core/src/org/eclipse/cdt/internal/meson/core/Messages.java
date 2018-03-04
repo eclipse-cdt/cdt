@@ -20,10 +20,12 @@ public class Messages extends NLS {
 	public static String MesonBuildConfiguration_Cleaning;
 	public static String MesonBuildConfiguration_RunningMeson;
 	public static String MesonBuildConfiguration_RunningNinja;
+	public static String MesonBuildConfiguration_RefreshingScannerInfo;
 	public static String MesonBuildConfiguration_RunningMesonFailure;
 	public static String MesonBuildConfiguration_RunningNinjaFailure;
 	public static String MesonBuildConfiguration_NoToolchainFile;
 	public static String MesonBuildConfiguration_NoNinjaFile;
+	public static String MesonBuildConfiguration_NoNinjaFileToClean;
 	public static String MesonBuildConfiguration_ProcCompCmds;
 	public static String MesonBuildConfiguration_ProcCompJson;
 

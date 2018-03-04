@@ -38,7 +38,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -147,6 +150,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					b.append(" "); //$NON-NLS-1$
 					b.append(userArgs);
 				}
+				String projOptions = getProperty(IMesonConstants.MESON_PROJECT_OPTIONS);
+				if (projOptions != null) {
+					b.append(" "); //$NON-NLS-1$
+					b.append(projOptions);
+				}
 				b.append(" "); //$NON-NLS-1$
 				b.append(getBuildDirectory().toString());
 				argsList.add(b.toString());
@@ -169,7 +177,8 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				org.eclipse.core.runtime.Path shPath = new org.eclipse.core.runtime.Path("/bin/sh"); //$NON-NLS-1$
 				outStream.write(String.join(" ", envStr != null ? envStr : "", //$NON-NLS-1$ //$NON-NLS-2$ 
-						"sh -c \"meson", userArgs != null ? userArgs : "", getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						"sh -c \"meson", userArgs != null ? userArgs : "", projOptions != null ? projOptions : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().getParent().getParent().toString());
 				Process p = launcher.execute(shPath, argsList.toArray(new String[0]), env, workingDir, monitor);
 				if (p == null || launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
@@ -235,8 +244,8 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-			// Load compile_commands.json file
-			processCompileCommandsFile(monitor);
+			// Process compile_commands.json file and generate Scanner info
+			refreshScannerInfo();
 
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
 
@@ -255,6 +264,13 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			ConsoleOutputStream outStream = console.getOutputStream();
 
 			Path buildDir = getBuildDirectory();
+			
+			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
+			
+			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
+				console.getOutputStream().write(Messages.MesonBuildConfiguration_NoNinjaFileToClean);
+				return;
+			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
@@ -263,16 +279,16 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				String cleanCommand = getProperty(IMesonConstants.CLEAN_COMMAND);
 				if (cleanCommand == null) {
-					cleanCommand = "ninja clean"; //$NON-NLS-1$
+					cleanCommand = "ninja clean -v"; //$NON-NLS-1$
 				}
 				String[] command = cleanCommand.split(" "); //$NON-NLS-1$
 
-				Path cmdPath = findCommand(command[0]);
-				if (cmdPath != null) {
-					command[0] = cmdPath.toString();
-				}
+				IPath cmd = new org.eclipse.core.runtime.Path("sh");
+				
+				List<String> argList = new ArrayList<>();
+				argList.add("-c"); //$NON-NLS-1$
+				argList.add(cleanCommand);
 
-				IPath cmd = new org.eclipse.core.runtime.Path(command[0]);
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
 
 				launcher.setProject(getProject());
@@ -280,17 +296,13 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
 				}
 
-				String[] commandargs = new String[0];
-				if (command.length > 1) {
-					commandargs = Arrays.copyOfRange(command, 1, command.length);
-				}
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(buildDir.toString());
 
 				String[] env = new String[0];
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				launcher.execute(cmd, commandargs, env, workingDir, monitor);
-				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+				Process p = launcher.execute(cmd, argList.toArray(new String[0]), env, workingDir, monitor);
+				if (p == null || launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, errMsg));
 					return;
@@ -303,6 +315,23 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	@Override
+	public void refreshScannerInfo() throws CoreException {
+		Job job = new Job(Messages.MesonBuildConfiguration_RefreshingScannerInfo) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					processCompileCommandsFile(monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		// TODO: should this have a scheduling rule??
+		job.schedule();
+	}
+	
 	private void processCompileCommandsFile(IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$

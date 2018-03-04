@@ -877,6 +877,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 			return false;
 		}
 	}
+	
+	/**
+	 * @since 6.5
+	 */
+	@Override
+	public void refreshScannerInfo() throws CoreException {
+		// do nothing by default
+	}
 
 	@Override
 	public void shutdown() {

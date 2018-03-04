@@ -296,6 +296,35 @@ public class CommandLauncherManager {
 		return bestLauncherFactory;
 	}
 	
+	private ICommandLauncherFactory getBestFactory(ICBuildConfiguration config) {
+		// loop through list of factories and return launcher returned with
+		// highest priority
+		int highestPriority = -1;
+		ICommandLauncherFactory bestLauncherFactory = null;
+		for (ICommandLauncherFactory factory : factories) {
+			if (factory instanceof ICommandLauncherFactory2) {
+				ICommandLauncher launcher = ((ICommandLauncherFactory2)factory).getCommandLauncher(config);
+				if (launcher != null) {
+					if (priorityMapping.get(factory) > highestPriority) {
+						bestLauncherFactory = factory;
+					}
+				}
+			}
+		}
+		return bestLauncherFactory;
+	}
+	
+	/**
+	 * @since 6.5
+	 */
+	public List<String> processIncludePaths(ICBuildConfiguration config, List<String> includePaths) {
+		ICommandLauncherFactory factory = getBestFactory(config);
+		if (factory != null && factory instanceof ICommandLauncherFactory2) {
+		    return ((ICommandLauncherFactory2)factory).verifyIncludePaths(config, includePaths);
+		}
+		return includePaths;
+	}
+	
 	public void setLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries) {
 		ICommandLauncherFactory factory = getBestFactory(project);
 		if (factory != null) {

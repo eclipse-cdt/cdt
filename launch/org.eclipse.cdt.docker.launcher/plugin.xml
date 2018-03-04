@@ -113,5 +113,47 @@
             weight="020">
       </tab>
    </extension>
-  
+     <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.docker.launcher.launchTargetType.container"
+            provider="org.eclipse.cdt.docker.launcher.ContainerTargetTypeProvider">
+      </launchTargetType>
+   </extension>
+   <extension
+        point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+     <launchTargetTypeUI
+           id="org.eclipse.cdt.docker.launcher.launchTargetType.container"
+           labelProvider="org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerTargetLabelProvider">
+     </launchTargetTypeUI>
+     <wizard2
+           class="org.eclipse.cdt.internal.docker.launcher.ui.launchbar.NewContainerTargetWizard"
+           icon="icons/repository-middle.gif"
+           id="org.eclipse.cdt.docker.launcher.launchTargetType.container"
+           name="%ContainerTarget.name">
+     </wizard2>
+  </extension>
+   <extension
+         point="org.eclipse.cdt.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerGCCToolChainProvider"
+            id="org.eclipse.cdt.docker.launcher.gcc.provider">
+      </provider>
+      <type
+            id="org.eclipse.cdt.build.gcc"
+            name="GCC">
+      </type>
+      <type
+            id="org.eclipse.cdt.build.clang"
+            name="clang">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+     <configProvider
+           class="org.eclipse.cdt.internal.docker.launcher.ui.launchbar.CoreBuildContainerLaunchConfigProvider"
+           descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+           priority="15">
+     </configProvider>
+  </extension>
 </plugin>

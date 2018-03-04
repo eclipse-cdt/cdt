@@ -13,6 +13,7 @@ import java.util.Properties;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ProcessClosure;
@@ -88,6 +89,13 @@ public class ContainerCommandLauncher
 	@Override
 	public void setBuildConfiguration(ICBuildConfiguration config) {
 		this.fBuildConfig = config;
+		if (fProject == null) {
+			try {
+				fProject = config.getBuildConfiguration().getProject();
+			} catch (CoreException e) {
+				// ignore
+			}
+		}
 	}
 
 	@Override
@@ -135,6 +143,16 @@ public class ContainerCommandLauncher
 		return null;
 	}
 
+	private boolean isSystemDir(IPath p) {
+		String firstSegment = p.segment(0);
+		if (firstSegment.equals("usr") || firstSegment.equals("opt") //$NON-NLS-1$ //$NON-NLS-2$
+				|| firstSegment.equals("bin") || firstSegment.equals("etc") //$NON-NLS-1$ //$NON-NLS-2$
+				|| firstSegment.equals("sbin")) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env,
 			IPath workingDirectory, IProgressMonitor monitor)
@@ -157,21 +175,21 @@ public class ContainerCommandLauncher
 
 		ArrayList<String> commandSegments = new ArrayList<>();
 
-		StringBuilder b = new StringBuilder();
+		List<String> cmdList = new ArrayList<>();
+
 		String commandString = commandPath.toPortableString();
 		if (commandPath.getDevice() != null) {
 			commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
 		}
-		b.append(commandString);
+		cmdList.add(commandString);
 		commandSegments.add(commandString);
 		for (String arg : args) {
-			b.append(" "); //$NON-NLS-1$
 			String realArg = VariablesPlugin.getDefault()
 					.getStringVariableManager().performStringSubstitution(arg);
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				// check if file exists and if so, add an additional directory
 				IPath p = new Path(realArg);
-				if (p.isValidPath(realArg) && p.getDevice() != null) {
+				if (p.isValidPath(realArg) && p.getDevice() != null && !isSystemDir(p)) {
 					File f = p.toFile();
 					String modifiedArg = realArg;
 					// if the directory of the arg as a file exists, we mount it
@@ -192,7 +210,7 @@ public class ContainerCommandLauncher
 				// check if file directory exists and if so, add an additional
 				// directory
 				IPath p = new Path(realArg);
-				if (p.isValidPath(realArg)) {
+				if (p.isValidPath(realArg) && !isSystemDir(p)) {
 					File f = p.toFile();
 					if (f.isFile()) {
 						f = f.getParentFile();
@@ -202,18 +220,11 @@ public class ContainerCommandLauncher
 					}
 				}
 			}
-			b.append(realArg);
+			cmdList.add(realArg);
 			commandSegments.add(realArg);
 		}
 		
 		commandArgs = commandSegments.toArray(new String[0]);
-
-		String commandDir = commandPath.removeLastSegments(1).toString();
-		if (commandDir.isEmpty()) {
-			commandDir = null;
-		} else if (commandPath.getDevice() != null) {
-			commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
-		}
 
 		IProject[] referencedProjects = fProject.getReferencedProjects();
 		for (IProject referencedProject : referencedProjects) {
@@ -226,8 +237,6 @@ public class ContainerCommandLauncher
 			additionalDirs
 					.add(referencedProjectPath);
 		}
-
-		String command = b.toString();
 
 		String workingDir = workingDirectory.makeAbsolute().toPortableString();
 		if (workingDirectory.toPortableString().equals(".")) { //$NON-NLS-1$
@@ -255,9 +264,12 @@ public class ContainerCommandLauncher
 		String connectionName = null;
 		String imageName = null;
 		if (buildCfg != null) {
-			selectedVolumeString = buildCfg.getProperty(SELECTED_VOLUMES_ID);
-			connectionName = buildCfg.getProperty(CONNECTION_ID);
-			imageName = buildCfg.getProperty(IMAGE_ID);
+			IToolChain toolChain = buildCfg.getToolChain();
+			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
+			connectionName = toolChain
+					.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+			imageName = toolChain
+					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault()
 					.getProjectDescription(fProject).getActiveConfiguration();
@@ -301,8 +313,7 @@ public class ContainerCommandLauncher
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject,
 				this,
-				command,
-				commandDir,
+				cmdList,
 				workingDir,
 				additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode,

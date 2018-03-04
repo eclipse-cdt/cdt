@@ -93,7 +93,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					Map<String, String> properties = new HashMap<>();
-					properties.putAll(target.getAttributes());
+					properties.putAll(lastTarget.getAttributes());
 					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 					if (!tcs.isEmpty()) {
 						ICBuildConfiguration buildConfig = null;
@@ -130,6 +130,8 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 							IProjectDescription desc = finalProject.getDescription();
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);
+							// build config has changed so Scanner Info may change too which would affect indexing
+							buildConfig.refreshScannerInfo();
 						}
 					}
 

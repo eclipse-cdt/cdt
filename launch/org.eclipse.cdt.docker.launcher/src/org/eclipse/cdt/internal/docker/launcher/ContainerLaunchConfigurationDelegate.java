@@ -23,12 +23,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.docker.launcher.ContainerTargetTypeProvider;
 import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
+import org.eclipse.cdt.docker.launcher.IContainerLaunchTarget;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +52,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.linuxtools.docker.core.Activator;
 import org.eclipse.linuxtools.docker.core.IDockerContainerInfo;
 import org.eclipse.linuxtools.docker.core.IDockerNetworkSettings;
@@ -169,6 +181,14 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						.getAttribute(
 								ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 								(String) null);
+				// if we don't have a working directory, the default is to use
+				// the project
+				if (workingDir == null && projectName != null) {
+					IProject project = ResourcesPlugin.getWorkspace().getRoot()
+							.getProject(projectName);
+					workingDir = project.getLocation().toOSString();
+				}
+
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);
 					if (workingPath.getDevice() != null) {
@@ -258,6 +278,13 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						.getAttribute(
 								ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 								(String) null);
+				// if we don't have a working directory, the default is to use
+				// the project
+				if (workingDir == null && projectName != null) {
+					IProject project = ResourcesPlugin.getWorkspace().getRoot()
+							.getProject(projectName);
+					workingDir = project.getLocation().toOSString();
+				}
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);
 					if (workingPath.getDevice() != null) {
@@ -490,6 +517,122 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 			return null;
 
 		return inputString.replaceAll(" ", "\\\\ "); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public static IProject getProject(ILaunchConfiguration configuration)
+			throws CoreException {
+		// TODO - make sure this is really the correct project
+		return configuration.getMappedResources()[0].getProject();
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	protected ICBuildConfigurationManager configManager = CDebugCorePlugin
+			.getService(ICBuildConfigurationManager.class);
+	/**
+	 * @since 1.2
+	 */
+	protected IToolChainManager toolChainManager = CDebugCorePlugin
+			.getService(IToolChainManager.class);
+
+	/*
+	 * @since 1.2
+	 */
+	protected ICBuildConfiguration getBuildConfiguration(
+			ILaunchConfiguration configuration, String mode,
+			ILaunchTarget target, IProgressMonitor monitor)
+			throws CoreException {
+		IProject project = getProject(configuration);
+		String toolchainId = configuration
+				.getAttribute(ICBuildConfiguration.TOOLCHAIN_ID, (String) null);
+		if (toolchainId != null) {
+			String providerId = configuration
+					.getAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
+			IToolChain toolchain = toolChainManager.getToolChain(providerId,
+					toolchainId);
+			if (toolchain != null) {
+				return configManager.getBuildConfiguration(project, toolchain,
+						mode, monitor);
+			}
+		}
+
+		// Pick the first one that matches
+		Map<String, String> properties = new HashMap<>();
+		properties.putAll(target.getAttributes());
+		for (IToolChain toolChain : toolChainManager
+				.getToolChainsMatching(properties)) {
+			ICBuildConfiguration buildConfig = configManager
+					.getBuildConfiguration(project, toolChain, mode, monitor);
+			if (buildConfig != null) {
+				return buildConfig;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean buildForLaunch(ILaunchConfiguration configuration,
+			String mode, IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject(configuration);
+		String name = configuration.getName();
+		Pattern p = Pattern.compile(".*?\\[([^\\]]+)\\](.*)"); //$NON-NLS-1$
+		Matcher m = p.matcher(name);
+		if (m.matches()) {
+			ILaunchTargetManager targetManager = CCorePlugin
+					.getService(ILaunchTargetManager.class);
+			ILaunchTarget target = null;
+			ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(
+					ContainerTargetTypeProvider.TYPE_ID);
+			for (ILaunchTarget t : targets) {
+				if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "")
+						.replaceAll(":", "_").equals(m.group(1))) {
+					target = t;
+					break;
+				}
+			}
+			if (target != null) {
+				ICBuildConfiguration cconfig = getBuildConfiguration(
+						configuration, mode, target, monitor);
+				if (cconfig != null) {
+					IProjectDescription desc = project.getDescription();
+					desc.setActiveBuildConfig(
+							cconfig.getBuildConfiguration().getName());
+					project.setDescription(desc, monitor);
+				}
+			}
+		}
+
+		return super.buildForLaunch(configuration, mode, monitor);
+	}
+
+	@Override
+	public boolean preLaunchCheck(ILaunchConfiguration config, String mode,
+			IProgressMonitor monitor) throws CoreException {
+		String projectName = config.getAttribute(
+				ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+				(String) null);
+		IProject project = null;
+		if (projectName == null) {
+			IResource[] resources = config.getMappedResources();
+			if (resources != null && resources.length > 0
+					&& resources[0] instanceof IProject) {
+				project = (IProject) resources[0];
+			}
+			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+					project.getName());
+			wc.doSave();
+		} else {
+			projectName = projectName.trim();
+			if (!projectName.isEmpty()) {
+				project = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(projectName);
+			}
+		}
+
+		return super.preLaunchCheck(config, mode, monitor);
 	}
 
 	@Override

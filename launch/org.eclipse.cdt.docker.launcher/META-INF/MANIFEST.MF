@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.cdt.docker.launcher;singleton:=true
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin
 Bundle-Vendor: %Plugin.vendor
 Bundle-Localization: plugin
@@ -27,7 +27,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.beans,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding;bundle-version="1.6.0",
- org.eclipse.core.databinding.property;bundle-version="1.6.0"
+ org.eclipse.core.databinding.property;bundle-version="1.6.0",
+ org.eclipse.launchbar.ui;bundle-version="2.2.0",
+ com.google.gson
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.docker.launcher,

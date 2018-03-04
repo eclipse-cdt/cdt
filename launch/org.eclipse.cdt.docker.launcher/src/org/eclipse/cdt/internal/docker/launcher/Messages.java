@@ -105,6 +105,8 @@ public class Messages extends NLS {
 	public static String ContainerCommandLauncher_image_msg;
 	public static String CommandLauncher_CommandCancelled;
 
+	public static String ContainerTarget_name;
+
 	public static String ContainerCommandLauncher_invalid_values;
 
 	public static String Gdbserver_Settings_Remotetimeout_label;

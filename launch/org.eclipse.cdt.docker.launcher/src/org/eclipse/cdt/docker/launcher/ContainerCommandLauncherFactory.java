@@ -16,13 +16,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncherFactory;
 import org.eclipse.cdt.core.ICommandLauncherFactory2;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
@@ -98,20 +99,18 @@ public class ContainerCommandLauncherFactory
 
 	@Override
 	public ICommandLauncher getCommandLauncher(ICBuildConfiguration cfgd) {
-		// check if container build enablement has been checked
-		Map<String, String> props = cfgd.getProperties();
-		if (props != null) {
-			String enablementProperty = props
-					.get(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-			if (enablementProperty != null) {
-				boolean enableContainer = Boolean
-						.parseBoolean(enablementProperty);
-				// enablement has occurred, we can return a
-				// ContainerCommandLauncher
-				if (enableContainer) {
+		// check if container linux os is set
+		IToolChain toolchain;
+		try {
+			toolchain = cfgd.getToolChain();
+			if (toolchain != null) {
+				if (ContainerTargetTypeProvider.CONTAINER_LINUX
+						.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
 					return new ContainerCommandLauncher();
 				}
 			}
+		} catch (CoreException e) {
+			DockerLaunchUIPlugin.log(e);
 		}
 		return null;
 	}
@@ -211,6 +210,112 @@ public class ContainerCommandLauncherFactory
 			}
 		}
 
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	@Override
+	public List<String> verifyIncludePaths(ICBuildConfiguration cfgd, List<String> includePaths) {
+		IToolChain toolchain = null;
+		boolean isContainerEnabled = false;
+		try {
+			toolchain = cfgd.getToolChain();
+			if (toolchain != null) {
+				if (ContainerTargetTypeProvider.CONTAINER_LINUX
+						.equals(toolchain.getProperty(IToolChain.ATTR_OS))) {
+					isContainerEnabled = true;
+				}
+			}
+		} catch (CoreException e) {
+			DockerLaunchUIPlugin.log(e);
+		}
+
+		if (isContainerEnabled) {
+			String connectionName = toolchain
+					.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
+			String imageName = toolchain
+					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			if (connectionName == null || connectionName.isEmpty()
+					|| imageName == null || imageName.isEmpty()) {
+				DockerLaunchUIPlugin.logErrorMessage(
+						Messages.ContainerCommandLauncher_invalid_values);
+				return includePaths;
+			}
+			ContainerLauncher launcher = new ContainerLauncher();
+			if (includePaths.size() > 0) {
+				// Create a directory to put the header files for
+				// the image. Use the connection name to form
+				// the directory name as the connection may be
+				// connected to a different repo using the same
+				// image name.
+				IPath pluginPath = Platform
+						.getStateLocation(Platform
+								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+						.append("HEADERS"); //$NON-NLS-1$
+				pluginPath.toFile().mkdir();
+				pluginPath = pluginPath.append(getCleanName(connectionName));
+				pluginPath.toFile().mkdir();
+				// To allow the user to later manage the headers, store
+				// the
+				// real connection name in a file.
+				IPath connectionNamePath = pluginPath.append(".name"); //$NON-NLS-1$
+				File f = connectionNamePath.toFile();
+				try {
+					f.createNewFile();
+					try (FileWriter writer = new FileWriter(f);
+							BufferedWriter bufferedWriter = new BufferedWriter(
+									writer);) {
+						bufferedWriter.write(connectionName);
+						bufferedWriter.newLine();
+					} catch (IOException e) {
+						DockerLaunchUIPlugin.log(e);
+						return includePaths;
+					}
+					pluginPath = pluginPath.append(getCleanName(imageName));
+					pluginPath.toFile().mkdir();
+					// To allow the user to later manage the headers,
+					// store the
+					// real image name in a file.
+					IPath imageNamePath = pluginPath.append(".name"); //$NON-NLS-1$
+					f = imageNamePath.toFile();
+					f.createNewFile();
+					try (FileWriter writer = new FileWriter(f);
+							BufferedWriter bufferedWriter = new BufferedWriter(
+									writer);) {
+						bufferedWriter.write(imageName);
+						bufferedWriter.newLine();
+					} catch (IOException e) {
+						DockerLaunchUIPlugin.log(e);
+						return includePaths;
+					}
+				} catch (IOException e) {
+					DockerLaunchUIPlugin.log(e);
+					return includePaths;
+				}
+				IPath hostDir = pluginPath;
+				int status = launcher.fetchContainerDirsSync(connectionName,
+						imageName, includePaths, hostDir);
+				if (status == 0) {
+					Set<String> copiedVolumes = launcher
+							.getCopiedVolumes(connectionName, imageName);
+					List<String> newEntries = new ArrayList<>();
+
+					for (String path : includePaths) {
+						if (copiedVolumes.contains(path)) {
+							IPath newPath = hostDir.append(path);
+							String newEntry = newPath.toOSString();
+							newEntries.add(newEntry);
+						} else {
+							newEntries.add(path);
+						}
+					}
+					return newEntries;
+				}
+
+			}
+		}
+		return includePaths;
 	}
 
 	@Override

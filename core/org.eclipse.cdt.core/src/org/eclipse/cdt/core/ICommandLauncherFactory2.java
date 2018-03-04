@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 
 /**
@@ -26,6 +28,16 @@ public interface ICommandLauncherFactory2 {
 	 */
 	public default ICommandLauncher getCommandLauncher(ICBuildConfiguration cfg) {
 		return null;
+	}
+	
+	/**
+	 * Process include paths and if necessary copy header files as needed.
+	 * @param cfg - ICBuildConfiguration to process includes for
+	 * @param includes List of include paths to process
+	 * @return processed List of include paths
+	 */
+	public default List<String> verifyIncludePaths(ICBuildConfiguration cfg, List<String> includes) {
+		return includes;
 	}
 
 }

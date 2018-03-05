@@ -12,6 +12,19 @@
    </extension>
 
    <extension point="org.eclipse.ui.viewActions">
+      <!-- Breakpoints View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.update.Refresh"
+            targetID="org.eclipse.debug.ui.BreakpointView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.breakpoints.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
       <!-- Variables View menu contributions -->
       <viewContribution
             id="org.eclipse.cdt.dsf.debug.ui.viewmodel.variables.update.Refresh"

@@ -45,6 +45,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -388,4 +389,26 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 			rm.done( true );
 		}
     }
+
+	@Override
+	public void refresh() {
+		super.refresh();
+		try {
+			fSession.getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(),
+							fSession.getId());
+					MIBreakpointsSynchronizer breakpointsSynchronizer = tracker
+							.getService(MIBreakpointsSynchronizer.class);
+					if (breakpointsSynchronizer != null) {
+						breakpointsSynchronizer.flushCache(null);
+					}
+					tracker.dispose();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed, ignore.
+		}
+	}
 }

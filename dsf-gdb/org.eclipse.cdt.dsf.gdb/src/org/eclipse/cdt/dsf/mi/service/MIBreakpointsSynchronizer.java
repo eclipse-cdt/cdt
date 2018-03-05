@@ -19,16 +19,21 @@ package org.eclipse.cdt.dsf.mi.service;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -48,8 +53,10 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -65,6 +72,7 @@ import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManage
 import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.WhileSteppingAction;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager.IMIBreakpointsTrackingListener;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -101,7 +109,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 4.2
  */
-public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMIBreakpointsTrackingListener {
+public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMIBreakpointsTrackingListener, ICachingService {
 
 	// Catchpoint expressions
     private static final String CE_EXCEPTION_CATCH = "exception catch"; //$NON-NLS-1$
@@ -148,6 +156,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		MIBreakpoint created;
 		MIBreakpoint modified;
 		String deleted;
+		static class BreakpointEventSynchronize {
+			IBreakpointsTargetDMContext dmc;
+			MIBreakListInfo list;
+		}
+		BreakpointEventSynchronize synchronize;
 	}
 
 	/**
@@ -155,7 +168,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 	 * 
 	 * @see MIBreakpointsSynchronizer class documentation for design comments
 	 */
-	private Queue<BreakpointEvent> fBreakpointEvents = new LinkedList<>();
+	private Deque<BreakpointEvent> fBreakpointEvents = new LinkedList<>();
 
 	/**
 	 * True if the delayed events processing task is idle. If idle, a new event
@@ -297,9 +310,107 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			doTargetBreakpointDeleted(event.deleted, rm);
 		} else if (event.modified != null) {
 			doTargetBreakpointModified(event.modified, rm);
+		} else if (event.synchronize != null) {
+			doTargetBreakpointsSynchronized(event.synchronize.dmc, event.synchronize.list, rm);
 		} else {
 			rm.done();
 		}
+	}
+
+	/**
+	 * The effect of flushing the cache of the synchronizer is to recollect all
+	 * breakpoint info from GDB and update the IBreakpoints and MIBreakpointManager
+	 * services too.
+	 * 
+	 * Note that an optimization in the number of calls to synchronize can be done, see
+	 * synchronize's removeBpsForAllDmcs parameter.
+	 */
+	@Override
+	public void flushCache(IDMContext context) {
+		Collection<IBreakpointsTargetDMContext> contexts;
+		IBreakpointsTargetDMContext breakpointsTargetDMContext = DMContexts.getAncestorOfType(context,
+				IBreakpointsTargetDMContext.class);
+		if (breakpointsTargetDMContext != null) {
+			contexts = Arrays.asList(breakpointsTargetDMContext);
+		} else {
+			contexts = getBreakpointsManager().getTrackedBreakpointTargetContexts();
+		}
+
+		for (IBreakpointsTargetDMContext bpContext : contexts) {
+			synchronize(bpContext, false);
+		}
+	}
+
+	/**
+	 * Synchronize the breakpoint state with the back end. This is done by issuing a
+	 * -break-list to the backend and adding that result to the list of queue'd
+	 * events from the backend. When this entry in the queue is processed, it
+	 * converts itself to a series of new events that represent the difference
+	 * between the state in the breakpoint manager and GDB.
+	 * 
+	 * @param bpContext
+	 *            context to issue MI Break List on
+	 * @param removeBpsForAllDmcs
+	 *            If the break list command returns breakpoints for all contexts,
+	 *            pass true. If false, the synchronizer assumes only bps not listed
+	 *            for bpContext will be removed. This provides an optimization to
+	 *            prevent issuing createMIBreakList multiple times that will return
+	 *            the same value. (Note that using a CommandCache will not achieve
+	 *            the optimization because each call to createMIBreakList is a
+	 *            different context.)
+	 * @since 5.5
+	 */
+	protected void synchronize(IBreakpointsTargetDMContext bpContext, boolean removeBpsForAllDmcs) {
+		fConnection.queueCommand(fConnection.getCommandFactory().createMIBreakList(bpContext),
+				new DataRequestMonitor<MIBreakListInfo>(getExecutor(), null) {
+					@Override
+					protected void handleSuccess() {
+						BreakpointEvent event = new BreakpointEvent();
+						event.synchronize = new BreakpointEvent.BreakpointEventSynchronize();
+						event.synchronize.dmc = removeBpsForAllDmcs ? null : bpContext;
+						event.synchronize.list = getData();
+						queueEvent(event);
+					}
+				});
+	}
+
+	private void doTargetBreakpointsSynchronized(IBreakpointsTargetDMContext breakpointsContext, MIBreakListInfo data,
+			RequestMonitor rm) {
+		final MIBreakpointsManager bm = getBreakpointsManager();
+		Map<IBreakpointsTargetDMContext, Map<IBreakpointDMContext, ICBreakpoint>> bpToPlatformMaps = bm
+				.getBPToPlatformMaps();
+		Stream<IBreakpointDMContext> breakpointsKnownToManager = bpToPlatformMaps.entrySet().stream()
+				.flatMap(m -> m.getValue().keySet().stream());
+		Collector<MIBreakpointDMContext, ?, Map<IBreakpointsTargetDMContext, String>> collector = Collectors.toMap(
+				(MIBreakpointDMContext dmc) -> DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class),
+				(MIBreakpointDMContext dmc) -> dmc.getReference());
+		Map<IBreakpointsTargetDMContext, String> numbersKnownToManager = breakpointsKnownToManager
+				.filter(MIBreakpointDMContext.class::isInstance).map(MIBreakpointDMContext.class::cast)
+				.collect(collector);
+
+		for (MIBreakpoint miBpt : data.getMIBreakpoints()) {
+			String number = miBpt.getNumber();
+			if (numbersKnownToManager.values().remove(number)) {
+				BreakpointEvent event = new BreakpointEvent();
+				event.modified = miBpt;
+				fBreakpointEvents.addFirst(event);
+			} else { 
+				BreakpointEvent event = new BreakpointEvent();
+				event.created = miBpt;
+				fBreakpointEvents.addFirst(event);
+			}
+		}
+		for (Entry<IBreakpointsTargetDMContext, String> entry : numbersKnownToManager.entrySet()) {
+			IBreakpointsTargetDMContext dmc = entry.getKey();
+			String number = entry.getValue();
+			if (number != null && !number.isEmpty() && (breakpointsContext == null || breakpointsContext.equals(dmc))) { 
+				BreakpointEvent event = new BreakpointEvent();
+				event.deleted = number;
+				fBreakpointEvents.addFirst(event);
+			}
+		}
+		
+		rm.done();
 	}
 
 	public void targetBreakpointCreated(final MIBreakpoint miBpt) {
@@ -1869,4 +1980,5 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 				 (CE_EXCEPTION_CATCH.equals(miBpt.getExpression()) || 
 				  CE_EXCEPTION_THROW.equals(miBpt.getExpression()))));
 	}
+
 }

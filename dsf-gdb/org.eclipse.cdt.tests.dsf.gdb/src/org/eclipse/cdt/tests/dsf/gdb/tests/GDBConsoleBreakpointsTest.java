@@ -35,13 +35,16 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsAddedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -104,6 +107,8 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	private DsfServicesTracker fServicesTracker;
     protected IBreakpointsTargetDMContext fBreakpointsDmc;
 	private IGDBControl fCommandControl;
+	private IBreakpoints fBreakpointService;
+	private MIBreakpointsSynchronizer fBreakpointsSynchronizer;
 
 	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<IBreakpointsChangedEvent>();
 
@@ -122,6 +127,12 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
         		    
                 fCommandControl = fServicesTracker.getService(IGDBControl.class);
                 Assert.assertTrue(fCommandControl != null);
+
+                fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+                Assert.assertTrue(fBreakpointService != null);
+                
+                fBreakpointsSynchronizer = fServicesTracker.getService(MIBreakpointsSynchronizer.class);
+                Assert.assertTrue(fBreakpointsSynchronizer != null);
 
                 // Register to breakpoint events
                 fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
@@ -488,7 +499,32 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
   		}
 	}
 
-	private void testConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
+	/**
+	 * Run a set of console breakpoint tests, twice. Once using events from GDB, and
+	 * then again with manual refreshes to make sure we get the same results.
+	 */
+	private void testConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes)
+			throws Throwable {
+		testConsoleBreakpointStandard(type, attributes, () -> {
+		});
+		fBreakpointEvents.clear();
+
+		/*
+		 * Run the test without the breakpoints service handling the updates via async
+		 * messages to ensure we end up with the same behaviour from refreshing
+		 * manually. Because we want to test the manual refreshing behaviour, we need to
+		 * stop listening to those async messages to do that we temporarily remove the
+		 * breakpoint service from the event listeners
+		 */
+		fCommandControl.removeEventListener((IEventListener) fBreakpointService);
+		try {
+			testConsoleBreakpointStandard(type, attributes, () -> fBreakpointsSynchronizer.flushCache(null));
+		} finally {
+			fCommandControl.addEventListener((IEventListener) fBreakpointService);
+		}
+	}
+
+	private void testConsoleBreakpointStandard(Class<? extends ICBreakpoint> type, Map<String, Object> attributes, Runnable flushCache) throws Throwable {
 		// Set a console breakpoint and verify that 
 		// the corresponding platform breakpoint is created 
 		// and its install count is 1 if the breakpoint is installed
@@ -497,6 +533,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		setConsoleBreakpoint(type, attributes);
 		MIBreakpoint[] miBpts = getTargetBreakpoints();
 		Assert.assertTrue(miBpts.length == 1);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
 		ICBreakpoint plBpt = findPlatformBreakpoint(type, attributes);
@@ -518,12 +555,14 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		// Disable the console breakpoint and verify that 
 		// the platform breakpoint is disabled.
 		enableConsoleBreakpoint(miBpts[0].getNumber(), false);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(!plBpt.isEnabled());
 
 		// Enable the console breakpoint and verify that 
 		// the platform breakpoint is enabled.
 		enableConsoleBreakpoint(miBpts[0].getNumber(), true);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.isEnabled());
 
@@ -531,6 +570,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		// verify that the platform breakpoint's ignore count 
 		// is updated.
 		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 5);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getIgnoreCount() == 5);
 
@@ -538,6 +578,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		// verify that the platform breakpoint's ignore count 
 		// is updated.
 		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 0);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getIgnoreCount() == 0);
 
@@ -545,6 +586,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		// verify that the platform breakpoint's condition 
 		// is updated.
 		setConsoleBreakpointCondition(miBpts[0].getNumber(), "path==0");
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getCondition().equals("path==0"));
 
@@ -552,12 +594,14 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		// verify that the platform breakpoint's condition 
 		// is updated.
 		setConsoleBreakpointCondition(miBpts[0].getNumber(), "");
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.getCondition().isEmpty());
 
 		// Delete the console breakpoint and verify that 
 		// the install count of the platform breakpoint is 0.
 		deleteConsoleBreakpoint(miBpts[0].getNumber());
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
 		plBpt = findPlatformBreakpoint(type, attributes);
@@ -578,6 +622,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		setConsoleBreakpoint(type, attributes);
 		miBpts = getTargetBreakpoints();
 		Assert.assertTrue(miBpts.length == 1);
+		flushCache.run();
 		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
 		

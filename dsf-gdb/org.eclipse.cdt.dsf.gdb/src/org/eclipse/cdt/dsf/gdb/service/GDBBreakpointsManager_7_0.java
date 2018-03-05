@@ -78,8 +78,8 @@ public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
 			// Process created.
 			IContainerDMContext containerWithPid = (IContainerDMContext)e.getDMContext();
 			
-			assert getPlatformToAttributesMaps().keySet().size() == 1;  // Only one process for GDB 7.0 and 7.1
-			for (IBreakpointsTargetDMContext oldBpTarget : getPlatformToAttributesMaps().keySet()) {
+			assert getTrackedBreakpointTargetContexts().size() == 1;  // Only one process for GDB 7.0 and 7.1
+			for (IBreakpointsTargetDMContext oldBpTarget : getTrackedBreakpointTargetContexts()) {
 				assert oldBpTarget instanceof IContainerDMContext;
 				assert !containerWithPid.equals(oldBpTarget);  // BpTarget does not have pid, while new container does
 

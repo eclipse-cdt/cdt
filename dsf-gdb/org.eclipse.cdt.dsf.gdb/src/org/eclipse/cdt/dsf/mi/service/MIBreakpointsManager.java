@@ -23,6 +23,7 @@ package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -588,6 +589,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 });
         }
     }
+
+	/**
+	 * Return the collection of tracked target breakpoint contexts. Use this method
+	 * instead of implying the installed collection from the various maps contained
+	 * in the manager.
+	 * 
+	 * @since 5.5
+	 */
+	protected Collection<IBreakpointsTargetDMContext> getTrackedBreakpointTargetContexts() {
+		return fPlatformToAttributesMaps.keySet();
+	}
 
     ///////////////////////////////////////////////////////////////////////////
     // Back-end interface functions
@@ -1371,9 +1383,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 						rm.done();
                 					}
                 				};
-                				countingRm.setDoneCount(fPlatformToAttributesMaps.size());
+                				countingRm.setDoneCount(getTrackedBreakpointTargetContexts().size());
 
-                                for (final IBreakpointsTargetDMContext dmc : fPlatformToAttributesMaps.keySet()) {
+                                for (final IBreakpointsTargetDMContext dmc : getTrackedBreakpointTargetContexts()) {
                                     boolean filtered = isBreakpointEntirelyFiltered(dmc, (ICBreakpoint)breakpoint);
                                     if (!filtered) {
                                         determineDebuggerPath(dmc, attrs,
@@ -1462,13 +1474,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                 }
                             }
                         };
-                        countingRm.setDoneCount(fPlatformToAttributesMaps.size());
+                        countingRm.setDoneCount(getTrackedBreakpointTargetContexts().size());
 
                         // Mark the breakpoint as being updated and go
                         fPendingRequests.add(breakpoint);
                         
                         // Modify the breakpoint in all the execution contexts
-                        for (final IBreakpointsTargetDMContext dmc : fPlatformToAttributesMaps.keySet()) {
+                        for (final IBreakpointsTargetDMContext dmc : getTrackedBreakpointTargetContexts()) {
                             determineDebuggerPath(dmc, attrs,
                                 new RequestMonitor(getExecutor(), countingRm) {
                                     @Override
@@ -1505,10 +1517,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                 }
                             }
                         };
-                        countingRm.setDoneCount(fPlatformToAttributesMaps.size());
+                        countingRm.setDoneCount(getTrackedBreakpointTargetContexts().size());
 
                         // Remove the breakpoint in all the execution contexts
-                        for (IBreakpointsTargetDMContext dmc : fPlatformToAttributesMaps.keySet()) {
+                        for (IBreakpointsTargetDMContext dmc : getTrackedBreakpointTargetContexts()) {
                             if (fPlatformToAttributesMaps.get(dmc).containsKey(breakpoint)) {
                                 uninstallBreakpoint(dmc, (ICBreakpoint) breakpoint, countingRm);
                             }

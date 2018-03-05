@@ -26,11 +26,11 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
-import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -62,7 +62,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @since 2.1
  */ 
-public class BreakpointVMProvider extends AbstractVMProvider 
+public class BreakpointVMProvider extends AbstractCachingVMProvider 
 {
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
         @Override
@@ -376,5 +376,11 @@ public class BreakpointVMProvider extends AbstractVMProvider
             cache.reset();
         }
         fContainerBreakpointsCacheMap.clear();
+    }
+
+    @Override
+    public void refresh() {
+    	flushCaches();
+    	super.refresh();
     }
 }

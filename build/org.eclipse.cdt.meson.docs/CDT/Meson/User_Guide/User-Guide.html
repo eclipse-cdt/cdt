@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Meson Plug-in User Guide</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Meson Plug-in User Guide</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left"></td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Supported-Environments.html" title="Supported Environments">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top"></td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Supported Environments</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Introduction">Introduction</h1>
+		<p>The Meson feature for Eclipse is an optional feature of the CDT (C/C++ Development Tools) that adds support for maintaining and
+			building C/C++ projects that use the Meson build system.  The Meson build system is akin to Autotools in that a project is configured before building.  Like Autotools, configuration involves testing the build system and toolsets supported.  Once configured, the project is built by a second tool, akin to the Make tool used in Autotools.  While Meson supports more than one Make-like tool to build the project, the CDT Meson plug-ins currently only have support for "ninja".</p>
+		<p>The configuration data for the project is stored in a file called: "meson.build".  This file contains directives that are interpreted by the <b>meson</b> command.  Directives include which languages are used, what executables/targets are created, sources, special configuration options, and any special build-time tests among other things.  Many tests are automatic so the configuration file does not require much.</p>
+		<p>The following is a sample <i>meson.build</i> file:</p>
+		<p><code>
+			project('hello', 'c')
+			<br/>
+			executable('hello', 'hello.c')
+</code>
+		</p>
+		<p>This file tells <i>meson</i> that the project name hello is a C project and that it creates a single executable called <i>hello</i> which is formed from <i>hello.c</i>.  Meson will find the C compiler, etc.. needed to build this project on this build machine.</p>
+		<p>Running meson in the directory containing <i>meson.build</i> will create a <i>ninja.build</i> file in the <b>build</b> directory (or specified build directory).</p>
+		<p>For more details see: 
+			<a href="http://mesonbuild.com/">http://mesonbuild.com/</a>
+		</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left"></td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Supported-Environments.html" title="Supported Environments">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top"></td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Supported Environments</td>
+			</tr>
+		</table>
+	</body>
+</html>

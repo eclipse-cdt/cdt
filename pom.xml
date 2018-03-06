@@ -75,6 +75,7 @@
 		<module>build/org.eclipse.cdt.cmake-feature</module>
 
 		<module>build/org.eclipse.cdt.meson.core</module>
+		<module>build/org.eclipse.cdt.meson.docs</module>
 		<module>build/org.eclipse.cdt.meson.ui</module>
 		<module>build/org.eclipse.cdt.meson.ui.editor</module>
 		<module>build/org.eclipse.cdt.meson-feature</module>

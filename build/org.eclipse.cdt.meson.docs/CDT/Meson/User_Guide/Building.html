@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Meson Plug-in User Guide - Building</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Building</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Updating-This-Document.html" title="Updating This Document">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Configuration</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Updating This Document</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Building">Building</h1>
+		<p>There are a number of ways to build the Meson project.</p>
+		<p>Using the Launch bar, just hit the hammer: 
+			<img border="0" src="images/MesonHammerIcon.png"/> icon and the project will be built appropriately for the launch type.  If the project is unconfigured, any options specified in the Property Page are used to run the <i>meson</i> command.  Otherwise, just the buildtype is defaulted according to the launch target in the Launch bar (run = release, debug = debug).
+		</p>
+		<p>If any errors occur during the <i>meson</i> stage, they are reported and the build is stopped.  Otherwise, the <i>ninja</i> command is run and the results output to the build console.</p>
+		<p>
+			<img border="0" src="images/MesonLaunchbarBuild.png"/>
+		</p>
+		<p>The build can also be started using the Eclipse hammer: 
+			<img border="0" src="images/MesonHammerIcon.png"/> icon or via Project -&gt; Build.
+		</p>
+		<p>Cleaning the project is done using Project -&gt; Clean.  The clean operation performs a <i>meson clean</i> command for the active configuration.</p>
+		<p>
+			<img border="0" src="images/MesonCleanBuild.png"/>
+		</p>
+		<p>If the user needs to build a different target (e.g. <i>install</i>) or specify environment variables to ninja, then they must use the <b>Run ninja</b> context menu item that is available when right-clicking on a project or file in the project in the Project Explorer View.  This brings up the <i>Run Ninja</i> dialog.</p>
+		<p>
+			<img border="0" src="images/MesonRunNinja.png"/>
+		</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Meson Plug-in User Guide">
+						<img alt="Meson Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Updating-This-Document.html" title="Updating This Document">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Configuration</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Updating This Document</td>
+			</tr>
+		</table>
+	</body>
+</html>

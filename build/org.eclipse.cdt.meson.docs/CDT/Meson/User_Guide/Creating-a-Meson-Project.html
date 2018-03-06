@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Meson Plug-in User Guide - Creating a Meson Project</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Creating a Meson Project</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Supported-Environments.html" title="Supported Environments">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Supported Environments</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Configuration</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Creating_a_Meson_Project">Creating a Meson Project</h1>
+		<p>To create a Meson project, use File -&gt; New -&gt; C/C++ Project  Either find the Meson projects in the list of all projects or click on <b>Meson</b> in the left-hand column to filter out non-Meson projects.</p>
+		<p>
+			<img border="0" src="images/MesonNewProjectDialog.png"/>
+		</p>
+		<p>There are two choices: Empty Project or Meson Project.  Since Meson projects configure whether they support C, C++, or both, there is no need to specify a language as is done for the old Managed Build projects.  The Empty Project template means that no files will be supplied to the new project while the Meson Project is a sample C hello world program that uses Meson for configuring the build.  </p>
+		<p>To use a Meson project you have checked out in your system, choose the Empty Project template and then change the location of the project to point to where the project exists on your system.</p>
+		<p>
+			<img border="0" src="images/MesonExistingProject.png"/>
+		</p>
+		<p>The Meson plug-ins will perform builds in the <b>build</b> directory with a separate directory per configuration. (e.g. {$Project}/build/default).  By default, there are two basic configurations, <b>run</b> and <b>debug</b>.  </p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Supported-Environments.html" title="Supported Environments">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Meson Plug-in User Guide">
+						<img alt="Meson Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Supported Environments</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Configuration</td>
+			</tr>
+		</table>
+	</body>
+</html>

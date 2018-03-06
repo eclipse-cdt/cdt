@@ -170,7 +170,7 @@ public class BinaryRunner {
 			isStopped= true;	// make sure job is not scheduled afterwards
 			runnerJob.cancel();
 		}
-		waitIfRunning();
+		// waitIfRunning();
 	}
 
 	private class Visitor implements IResourceProxyVisitor {

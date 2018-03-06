@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3350b27_59419701",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/breakpoints/BreakpointVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-03-06T10:27:25Z",
+      "side": 1,
+      "message": "This is a big change.",
+      "range": {
+        "startLine": 65,
+        "startChar": 42,
+        "endLine": 65,
+        "endChar": 67
+      },
+      "revId": "01e96ff5d3bdfff7a842840b1c95be6b9ccfdf61",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

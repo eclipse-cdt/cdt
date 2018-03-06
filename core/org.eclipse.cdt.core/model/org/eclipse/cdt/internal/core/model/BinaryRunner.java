@@ -163,14 +163,13 @@ public class BinaryRunner {
 	}
 
 	/**
-	 * Cancels the binary runner and waits until it is stopped.
+	 * Cancels the binary runner
 	 */
 	public void stop() {
 		synchronized (runnerJob) {
 			isStopped= true;	// make sure job is not scheduled afterwards
 			runnerJob.cancel();
 		}
-		waitIfRunning();
 	}
 
 	private class Visitor implements IResourceProxyVisitor {

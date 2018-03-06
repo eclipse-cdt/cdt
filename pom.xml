@@ -75,6 +75,7 @@
 		<module>build/org.eclipse.cdt.cmake-feature</module>
 
 		<module>build/org.eclipse.cdt.meson.core</module>
+		<module>build/org.eclipse.cdt.meson.docs</module>
 		<module>build/org.eclipse.cdt.meson.ui</module>
 		<module>build/org.eclipse.cdt.meson.ui.editor</module>
 		<module>build/org.eclipse.cdt.meson-feature</module>
@@ -571,6 +572,7 @@
 						<configuration>
 							<excludes>
 								<plugin id="org.eclipse.cdt.autotools.docs"/>
+								<plugin id="org.eclipse.cdt.meson.docs"/>
 								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
 								<plugin id="org.eclipse.cdt.core.linux.ppc64"/>
 								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>

@@ -16,6 +16,24 @@
       "revId": "7271146acb5ab2ff0a0507a1c990b2470ba1100c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0657711_81a57adf",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ICommandLauncherFactory2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2018-03-06T19:00:29Z",
+      "side": 1,
+      "message": "Admittedly you\u0027re right.  Originally, I was striving to keep a single extension point and class to instantiate.  The logic to determine which extension to use would be the same so it would be duplicated.  I could create a HeaderFileManager and break out/copy the header file stuff into a separate extension if that would make it better.  AFAIK, only the Intel folks have written their own extension.  This would mean using the CommandLauncherManager to run the scannerinfo compile and the HeaderFileManager to verify/copy.  For a minor release, I would only be able to move the new stuff for Core Build.  Let me know.",
+      "parentUuid": "10d7fb77_a529db6d",
+      "revId": "7271146acb5ab2ff0a0507a1c990b2470ba1100c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

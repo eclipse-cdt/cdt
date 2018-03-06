@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10d7fb77_a529db6d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ICommandLauncherFactory2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2018-03-06T16:16:13Z",
+      "side": 1,
+      "message": "I still find it very weird that a command launcher verifies include paths. Include paths have little to do with launching commands. But if you don\u0027t think there\u0027s a better home for this, I\u0027ll live with it.",
+      "revId": "7271146acb5ab2ff0a0507a1c990b2470ba1100c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

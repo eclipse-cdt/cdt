@@ -26,6 +26,7 @@
 	        <configuration>
 	            <excludes>
 	                <plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
+	                <plugin id="org.eclipse.remote.proxy.server.linux.ppc64le"/>
 	                <plugin id="org.eclipse.remote.proxy.server.macosx.x86_64"/>
 	            </excludes>
 	        </configuration>

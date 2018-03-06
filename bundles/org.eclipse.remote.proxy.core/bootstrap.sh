@@ -29,6 +29,12 @@ parent_is_not_orphan () {
 
 do_check() {
 	java_vers=`java -version 2>&1`
+	case "$java_vers" in
+	*"not found")
+		echo "fail:could not find a valid java installation"
+		return
+		;;
+	esac
 	major=`expr "$java_vers" : ".* version \"\([0-9]*\)\.[0-9]*.*\""`
 	minor=`expr "$java_vers" : ".* version \"[0-9]*\.\([0-9]*\).*\""`
 	if test "$major" -ge 2 -o "$minor" -ge 8; then

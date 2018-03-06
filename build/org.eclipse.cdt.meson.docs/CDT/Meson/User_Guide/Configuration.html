@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Meson Plug-in User Guide - Configuration</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Configuration</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Creating-a-Meson-Project.html" title="Creating a Meson Project">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Building.html" title="Building">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Creating a Meson Project</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Building</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Configuration">Configuration</h1>
+		<p>To specify configuration options, go to Project -&gt; Properties -&gt; Meson</p>
+		<p>The <b>meson</b> command without arguments can only be run for a build directory once.  After it has been run once, a user may use the <b>meson configure</b> command to change some parameters of the configuration.  Thus, there are two UI pages presented to the user:</p>
+		<ol>
+			<li>specifying options for meson prior to the first configuration/build</li>
+			<li>specifying options for meson configure after the project has been configured at least once</li>
+		</ol>
+		<p>Before the first configuration, the Meson plug-ins use the output of the <i>meson -h</i> command and parses the output to create the UI page.</p>
+		<p>
+			<img border="0" src="images/MesonUnconfiguredPropertyPage.png"/>
+		</p>
+		<p>Parameters that have a set of values are presented as a combo, boolean options are presented as a checkbox, and string options are presented as text boxes.  In addition, the user may specify Project specific options and Environment variables.  Project specified options are created in a special file called <b>meson_options.txt</b> and are set like a compiler flag (-Dname[=value]).  The project specified options are not parsed by the Meson plug-ins so the user must know what is possible ahead of configuration.  Environment variables are specified as NAME=VALUE pairs and are used during the <i>meson</i> command (e.g. CC=/my/dir/gcc).</p>
+		<p>By default, the meson buildtype parameter is set based on the active configuration launch type (run = release, debug = debug).  The user can override this prior to configuration and change the build type as needed (e.g. debugoptimized or plain).  Likewise, the user can simply change the launch type using the Launch bar.</p>
+		<p>After configuration, the Meson plug-in uses the output of <i>meson configure</i> to get the set of options that can be changed and parses them to create the UI page.  Project options are returned as part of the output and are parsed like any other option (presented either as a combo, checkbox, or text entry).</p>
+		<p>
+			<img border="0" src="images/MesonConfigurePropertyPage.png"/>
+		</p>
+		<p>Hitting the <b>Apply</b> or <b>Apply and Close</b> buttons will end up running the <i>meson configure</i> command immediately with any options that have been changed in the dialog.</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Creating-a-Meson-Project.html" title="Creating a Meson Project">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Meson Plug-in User Guide">
+						<img alt="Meson Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Building.html" title="Building">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Creating a Meson Project</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Building</td>
+			</tr>
+		</table>
+	</body>
+</html>

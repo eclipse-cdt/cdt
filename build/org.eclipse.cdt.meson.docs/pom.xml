@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.cdt</groupId>
+    <artifactId>cdt-parent</artifactId>
+    <version>9.5.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>org.eclipse.cdt.meson.docs</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+	<profiles>
+		<profile>
+			<id>build-doc</id>
+			<activation>
+				<property>
+					<name>!skipDoc</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-eclipserun-plugin</artifactId>
+						<version>${tycho-extras-version}</version>
+						<configuration>
+							<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile build-index.xml build.index</appArgLine>
+							<dependencies>
+								<dependency>
+									<artifactId>org.apache.ant</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.help.base</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.ant.core</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+							</dependencies>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>eclipse-run</goal>
+								</goals>
+								<phase>compile</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>regenHelp</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>helpdocs</id>
+								<phase>generate-resources</phase>
+								<configuration>
+									<target>
+										<taskdef classpathref="maven.plugin.classpath"
+											resource="org/eclipse/mylyn/wikitext/mediawiki/ant/tasks.properties" />
+										<taskdef classpathref="maven.plugin.classpath"
+											resource="org/eclipse/mylyn/wikitext/ant/tasks.properties" />
+										<ant antfile="build-helper.xml" target="all" />
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.eclipse.mylyn.docs</groupId>
+								<artifactId>org.eclipse.mylyn.wikitext.mediawiki.ant</artifactId>
+								<version>3.0.23</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>fake-doc</id>
+			<activation>
+				<property>
+					<name>skipDoc</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<configuration>
+									<target>
+										<touch file="index/indexed_docs" mkdirs="true"/>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat, Inc.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        Red Hat - initial API and implementation
+ -->
+<project name="org.eclipse.cdt.meson.docs" default="all">
+    <description>
+            Generate Eclipse help content for the CDT meson user guide
+    </description>
+
+	<property name="meson.help.doc.url.base" value="http://wiki.eclipse.org"/>
+	<property name="meson.wiki.url.base" value="${meson.help.doc.url.base}/CDT/Meson"/>
+	<property name="imageFolder" value="images"/>
+
+	<target name="all" description="Generate Eclipse help content for the CDT Meson user guide">
+		<mediawiki-to-eclipse-help wikiBaseUrl="${meson.help.doc.url.base}" title="Meson Plug-in User Guide" formatoutput="true" dest="." templateExcludes="*eclipseproject*">
+
+			<path name="CDT/Meson/User_Guide" title="Meson Plug-in User Guide" generateToc="false"/>
+			<stylesheet url="book.css" />
+			<pageAppendum>
+= Updating This Document =
+				
+This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit 
+http://wiki.eclipse.org/CDT/Meson/User_Guide
+            </pageAppendum>
+		</mediawiki-to-eclipse-help>
+		<replace file="CDT/Meson/User_Guide/User-Guide.html" token="{{#eclipseproject:tools.cdt}}" value=""/>
+	    <antcall target="test" />
+	</target>
+
+	<target name="test" description="verify that all of the HTML files are well-formed XML">
+		<echo level="info">
+Validating help content XML and HTML files: The Eclipse help system expects well-formed XML
+			
+If validation fails it is because either:
+			
+* the userguide source code is poorly formed, or
+* the WikiText MediaWiki parser has a bug
+			
+Problems with userguide source are usually caused by improper use of HTML markup in the MediaWiki source,
+or inadvertently starting a line with a space character (in MediaWiki this starts a preformatted block)
+		</echo>
+
+		<!-- 
+		Don't bother with DTD validation: we only care if the files are well-formed.
+		We therefore provide an empty DTD 
+		-->
+		<echo file="tmp/__empty.dtd" message="" />
+		<xmlvalidate lenient="true">
+			<fileset dir="CDT">
+				<include name="**/*.html" />
+			</fileset>
+			<dtd publicid="-//W3C//DTD XHTML 1.0 Transitional//EN" location="${basedir}/tmp/__empty.dtd" />
+		</xmlvalidate>
+		<delete dir="tmp"/>
+	</target>
+</project>

@@ -178,8 +178,10 @@ public class CommandLauncherManager {
 		for (ICommandLauncherFactory factory : factories) {
 			ICommandLauncher launcher = factory.getCommandLauncher(project);
 			if (launcher != null) {
-				if (priorityMapping.get(factory) > highestPriority) {
+				int factoryPriority = priorityMapping.get(factory);
+				if (factoryPriority > highestPriority) {
 				   bestLauncher = launcher;
+				   highestPriority = factoryPriority;
 				}
 			}
 		}
@@ -206,8 +208,10 @@ public class CommandLauncherManager {
 			if (factory instanceof ICommandLauncherFactory2) {
 				ICommandLauncher launcher = ((ICommandLauncherFactory2)factory).getCommandLauncher(config);
 				if (launcher != null) {
-					if (priorityMapping.get(factory) > highestPriority) {
+					int factoryPriority = priorityMapping.get(factory);
+					if (factoryPriority > highestPriority) {
 						bestLauncher = launcher;
+						highestPriority = factoryPriority;
 					}
 				}
 			}
@@ -233,8 +237,10 @@ public class CommandLauncherManager {
 		for (ICommandLauncherFactory factory : factories) {
 			ICommandLauncher launcher = factory.getCommandLauncher(cfgd);
 			if (launcher != null) {
-				if (priorityMapping.get(factory) > highestPriority) {
+				int factoryPriority = priorityMapping.get(factory);
+				if (factoryPriority > highestPriority) {
 				   bestLauncher = launcher;
+				   highestPriority = factoryPriority;
 				}
 			}
 		}

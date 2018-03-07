@@ -12,21 +12,18 @@
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.cdt.codan.internal.checkers.ui.Messages;
-import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.IDocument;
 
 /**
  * Quick fix for catch by value
  */
-public class CatchByConstReferenceQuickFix extends AbstractCodanCMarkerResolution {
+public class CatchByConstReferenceQuickFix extends CatchByReferenceQuickFix {
 	@Override
 	public String getLabel() {
 		return Messages.CatchByConstReferenceQuickFix_Message;
 	}
 
 	@Override
-	public void apply(IMarker marker, IDocument document) {
-		CatchByReferenceQuickFix.applyCatchByReferenceQuickFix(marker, document, true);
+	protected boolean shouldDeclareConst() {
+		return true;
 	}
 }

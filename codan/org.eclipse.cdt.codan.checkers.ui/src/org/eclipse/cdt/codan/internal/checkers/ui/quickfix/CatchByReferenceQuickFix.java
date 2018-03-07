@@ -10,65 +10,97 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.cdt.codan.internal.checkers.ui.Messages;
-import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
+import org.eclipse.cdt.codan.ui.AbstractAstRewriteQuickFix;
+import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Quick fix for catch by value
  */
-public class CatchByReferenceQuickFix extends AbstractCodanCMarkerResolution {
+public class CatchByReferenceQuickFix extends AbstractAstRewriteQuickFix {
 	@Override
 	public String getLabel() {
 		return Messages.CatchByReferenceQuickFix_Message;
 	}
 
 	@Override
-	public void apply(IMarker marker, IDocument document) {
-		applyCatchByReferenceQuickFix(marker, document, false);
-	}
+	public void modifyAST(IIndex index, IMarker marker) {
+		IASTSimpleDeclaration declaration = getDeclaration(index, marker);
+		if (declaration == null) {
+			CheckersUiActivator.log("Could not find declaration"); //$NON-NLS-1$
+			return;
+		}
 
-	static void applyCatchByReferenceQuickFix(IMarker marker, IDocument document, boolean addConst) {
+		IASTTranslationUnit ast = declaration.getTranslationUnit();
+		ASTRewrite rewrite = ASTRewrite.create(ast);
+
+		getNewDeclSpecifier(declaration).ifPresent(ds -> rewrite.replace(declaration.getDeclSpecifier(), ds, null));
+		rewrite.replace(declaration.getDeclarators()[0], getNewDeclarator(declaration), null);
+
 		try {
-			int left = marker.getAttribute(IMarker.CHAR_START, -1);
-			int right = marker.getAttribute(IMarker.CHAR_END, -1);
-			String inStr = document.get(left, right - left);
-			document.replace(left, right - left, getCatchByReferenceString(inStr, addConst));
-		} catch (BadLocationException e) {
+			rewrite.rewriteAST().perform(new NullProgressMonitor());
+		} catch (CoreException e) {
 			CheckersUiActivator.log(e);
 		}
 	}
-	
+
 	/**
-	 * Returns a catch by reference string from a catch by value string
+	 * Calculate the new IASTDeclSpecifier for the changed declaration
+	 * <p>
+	 * Subclasses can override this method to provide custom behavior.
+	 * </p>
+	 * 
+	 * @param declaration The original declaration
+	 * @return A, possibly empty, {@link Optional} containing the new
+	 *         IASTDeclSpecifier
 	 */
-	static private String getCatchByReferenceString(String inStr, boolean addConst) {
-		StringBuilder stringBuilder = new StringBuilder(inStr.length() + 10);
-		if (addConst) {
-			stringBuilder.append("const ");	 //$NON-NLS-1$
-		}
-		
-		String typename;
-		int space = inStr.lastIndexOf(' ');
-		boolean hasDeclName = space != -1;
-		if (hasDeclName) {
-			typename = inStr.substring(0,space);
-		} else {
-			typename = inStr;
-		}
-		stringBuilder.append(typename);
-		
-		stringBuilder.append(" &"); //$NON-NLS-1$
-		
-		if (hasDeclName) {
-			stringBuilder.append(" "); //$NON-NLS-1$
-			String declname = inStr.substring(space+1);
-			stringBuilder.append(declname);
-		}
-		
-		return stringBuilder.toString();
+	protected Optional<IASTDeclSpecifier> getNewDeclSpecifier(IASTSimpleDeclaration declaration) {
+		return Optional.empty();
 	}
+
+	private static IASTDeclarator getNewDeclarator(IASTSimpleDeclaration declaration) {
+		ICPPNodeFactory nodeFactory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
+		ICPPASTReferenceOperator reference = nodeFactory.newReferenceOperator(false);
+		IASTDeclarator declarator = declaration.getDeclarators()[0];
+		IASTDeclarator replacement = declarator.copy(CopyStyle.withLocations);
+		replacement.addPointerOperator(reference);
+		return replacement;
+	}
+
+	private IASTSimpleDeclaration getDeclaration(IIndex index, IMarker marker) {
+		try {
+			ITranslationUnit tu = getTranslationUnitViaEditor(marker);
+			IASTTranslationUnit ast = tu.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+			int start = marker.getAttribute(IMarker.CHAR_START, -1);
+			int end = marker.getAttribute(IMarker.CHAR_END, -1);
+			if (start != -1 && end != -1) {
+				IASTNode node = ast.getNodeSelector(null).findNode(start, end - start);
+				while (node != null && !(node instanceof IASTSimpleDeclaration)) {
+					node = node.getParent();
+				}
+				return (IASTSimpleDeclaration) node;
+			}
+		} catch (CoreException e) {
+			CheckersUiActivator.log(e);
+		}
+		return null;
+	}
+
 }

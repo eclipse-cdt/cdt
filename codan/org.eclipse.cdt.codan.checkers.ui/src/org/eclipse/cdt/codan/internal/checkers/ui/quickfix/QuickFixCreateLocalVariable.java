@@ -77,10 +77,26 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 
 	@Override
 	public boolean isApplicable(IMarker marker) {
-		if (isCodanProblem()) {
-			String problemArgument = getProblemArgument(marker, 1);
-			return problemArgument.contains(":func"); //$NON-NLS-1$
+		ITranslationUnit tu = getTranslationUnitViaEditor(marker);
+		IIndex index;
+		try {
+			index = getIndexFromMarker(marker);
+			index.acquireReadLock();
+		} catch (InterruptedException | CoreException e) {
+			CheckersUiActivator.log(e);
+			return false;
 		}
-		return true; // gcc problem that matched the pattern
+
+		try {
+			IASTTranslationUnit ast = tu.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+			IASTName name = getASTNameFromMarker(marker, ast);
+			return name == null && CxxAstUtils.getEnclosingStatement(name) != null;
+		} catch (CoreException e) {
+			CheckersUiActivator.log(e);
+		} finally {
+			index.releaseReadLock();
+		}
+
+		return false;
 	}
 }

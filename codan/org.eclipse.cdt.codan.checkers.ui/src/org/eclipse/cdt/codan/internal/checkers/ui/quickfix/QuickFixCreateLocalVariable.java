@@ -44,7 +44,7 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 			return;
 		}
 		IASTName astName;
-		if (isCodanProblem()) {
+		if (isCodanProblem(marker)) {
 			astName = getASTNameFromMarker(marker, ast);
 		} else {
 			astName = getAstNameFromProblemArgument(marker, ast, 0);
@@ -77,7 +77,7 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 
 	@Override
 	public boolean isApplicable(IMarker marker) {
-		if (isCodanProblem()) {
+		if (isCodanProblem(marker)) {
 			String problemArgument = getProblemArgument(marker, 1);
 			return problemArgument.contains(":func"); //$NON-NLS-1$
 		}

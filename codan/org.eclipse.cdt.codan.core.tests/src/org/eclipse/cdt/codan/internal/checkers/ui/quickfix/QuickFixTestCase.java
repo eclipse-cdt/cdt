@@ -11,6 +11,8 @@
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
@@ -35,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 public abstract class QuickFixTestCase extends CheckerTestCase {
 	AbstractCodanCMarkerResolution quickFix;
 	Display display;
+	Map<IMarker, Boolean> isApplicableMap;
 
 	/**
 	 * Dispatch ui events for at least msec - milliseconds
@@ -73,6 +76,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		super.setUp();
 		quickFix = createQuickFix();
 		display = PlatformUI.getWorkbench().getDisplay();
+		isApplicableMap = new HashMap<>();
 		closeWelcome();
 		IPreferenceStore store = CodanUIActivator.getDefault().getPreferenceStore(cproject.getProject());
 		// turn off editor reconciler
@@ -109,6 +113,22 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		return new TextSelection(code.indexOf(string), string.length());
 	}
 
+	/**
+	 * Calculate for which markers in the current test the QuickFix under test is
+	 * applicable.
+	 *
+	 * @return A map reflecting for which markers the QuickFix is applicable.
+	 */
+	public Map<IMarker, Boolean> calculateQuickFixApplicability() {
+		runCodan();
+		Display.getDefault().syncExec(() -> {
+			for (IMarker marker : markers) {
+				isApplicableMap.put(marker, quickFix.isApplicable(marker));
+			}
+		});
+		return isApplicableMap;
+	}
+
 	public String runQuickFixOneFile() throws IOException, CoreException {
 		// need to load before running codan because otherwise marker is lost when doing quick fix 8[]
 		runCodan();
@@ -123,6 +143,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 			public void run() {
 				for (int i = 0; i < markers.length; i++) {
 					IMarker marker = markers[i];
+					isApplicableMap.put(marker, quickFix.isApplicable(marker));
 					quickFix.run(marker);
 					dispatch(0);
 				}
@@ -138,6 +159,16 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 	 */
 	public void assertContainedIn(String expected, String result) {
 		assertTrue("Text <" + expected + "> not found in <" + result + ">", result.contains(expected)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	/**
+	 * Assert whether or not the QuickFix under test was applicable for all markers
+	 * in the test code.
+	 */
+	public void assertIsApplicateForAllMarkers(boolean expected) {
+		for (IMarker marker : markers) {
+			assertEquals(expected, (boolean) isApplicableMap.get(marker));
+		}
 	}
 
 	/**

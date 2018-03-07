@@ -42,7 +42,7 @@ public class QuickFixRenameMember extends AbstractAstRewriteQuickFix {
 			return;
 		}
 		IASTName astName;
-		if (isCodanProblem()) {
+		if (isCodanProblem(marker)) {
 			astName = getASTNameFromMarker(marker, ast);
 		} else {
 			astName = getAstNameFromProblemArgument(marker, ast, 1);

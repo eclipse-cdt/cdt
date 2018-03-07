@@ -42,7 +42,7 @@ public class QuickFixAddSemicolon extends AbstractAstRewriteQuickFix {
 			return;
 		}
 		IASTNode astNode = null;
-		if (isCodanProblem())
+		if (isCodanProblem(marker))
 			return;
 		
 		// We need to back up in the file

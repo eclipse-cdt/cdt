@@ -7,10 +7,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
+import org.eclipse.cdt.codan.internal.checkers.CaseBreakChecker;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 
+@SuppressWarnings("restriction")
 public class CaseBreakQuickFixFallthroughAttributeTest extends QuickFixTestCase {
-	@SuppressWarnings("restriction")
+
+	private boolean wasEnabled;
+
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		wasEnabled = (boolean) getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX).getValue();
+		setPreferenceValue(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX, true);
+	}
+
+	@Override
+	public void tearDown() throws Exception {
+		setPreferenceValue(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_ENABLE_FALLTHROUGH_QUICKFIX, wasEnabled);
+		super.tearDown();
+	}
+
 	@Override
 	protected AbstractCodanCMarkerResolution createQuickFix() {
 		return new CaseBreakQuickFixFallthroughAttribute();

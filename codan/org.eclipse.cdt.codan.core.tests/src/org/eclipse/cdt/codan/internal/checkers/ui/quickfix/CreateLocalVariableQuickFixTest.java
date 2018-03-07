@@ -98,4 +98,22 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 		String result = runQuickFixOneFile();
 		assertContainedIn("char aChar", result); //$NON-NLS-1$
 	}
+
+	//int global = undefined;
+	public void testIsNotApplicableInGlobalScope_525250() throws Exception {
+		loadcode(getAboveComment());
+		indexFiles();
+		calculateQuickFixApplicability();
+		assertIsApplicableForAllMarkers(false);
+	}
+
+	//class Test{
+	//  int mem = var;
+	//};
+	public void testIsNotApplicableInClassScope_525250() throws Exception {
+		loadcode(getAboveComment());
+		indexFiles();
+		calculateQuickFixApplicability();
+		assertIsApplicableForAllMarkers(false);
+	}
 }

@@ -75,6 +75,20 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 		return position;
 	}
 
+	/**
+	 * Check if the given marker is associated with a Codan problem
+	 * @since 3.4
+	 */
+	public boolean isCodanProblem(IMarker marker) {
+		return getProblemId(marker) != null;
+	}
+
+	/**
+	 * @deprecated Does not work as expected when called
+	 *             in {@link #isApplicable(IMarker)}, use
+	 *             {@link #isCodanProblem(IMarker)} instead
+	 */
+	@Deprecated
 	public boolean isCodanProblem() {
 		return codanProblem;
 	}

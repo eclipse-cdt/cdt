@@ -90,7 +90,8 @@ public class ContainerPropertyVolumesModel
 						selectedDataVolumes.remove(dvm);
 					}
 					final List<DataVolumeModel> volumes = new ArrayList<>();
-					for (String volume : this.imageInfo.config().volumes()) {
+					for (String volume : this.imageInfo.config().volumes()
+							.keySet()) {
 						volumes.add(new DataVolumeModel(volume));
 					}
 					setDataVolumes(volumes);

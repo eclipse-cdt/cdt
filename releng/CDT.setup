@@ -66,7 +66,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Oxygen"
+      defaultValue="Photon"
       storageURI="scope://Workspace"/>
   <stream name="master">
     <setupTask
@@ -167,54 +167,37 @@
             name="org.eclipse.tools.templates.ui"/>
         <requirement
             name="org.eclipse.ui.trace"/>
+        <requirement
+            name="tm-feature.feature.group"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Neon">
+            name="Photon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20170307180635/repository/"/>
-          <repository
-              url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
-          <repository
-              url="http://download.eclipse.org/tm/updates/4.0/"/>
-          <repository
-              url="http://download.eclipse.org/eclipse/updates/4.6/"/>
-          <repository
-              url="http://download.eclipse.org/tools/ptp/builds/remote/neon/milestones"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
-          <repository
-              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
-          <repository
-              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
-          <repository
-              url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
-        </repositoryList>
-        <repositoryList
-            name="Oxygen">
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/S20180302171354/repository"/>
           <repository
               url="http://download.eclipse.org/technology/swtbot/snapshots/"/>
-          <repository
-              url="http://download.eclipse.org/tm/updates/4.0/"/>
-          <repository
-              url="http://download.eclipse.org/eclipse/updates/4.7/"/>
           <repository
               url="http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones"/>
           <repository
+              url="http://download.eclipse.org/releases/photon"/>
+          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+              url="http://download.eclipse.org/eclipse/updates/4.8milestones/"/>
           <repository
               url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
           <repository
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
+              url="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/I-3.10.0-20180201205936/repository"/>
+          <repository
+              url="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
+          <repository
               url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+          <repository
+              url="http://download.eclipse.org/tm4e/snapshots/"/>
         </repositoryList>
       </targlet>
     </setupTask>

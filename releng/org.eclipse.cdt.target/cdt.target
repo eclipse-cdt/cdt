@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="24">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="25">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.antlr.runtime" version="0.0.0"/>
@@ -15,7 +15,7 @@
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.freemarker" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20180302171354/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
@@ -32,7 +32,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- Needed for org.eclipse.emf.edit -->
 <!-- Need to pull in org.eclipse.cdt.utils.pty for org.eclipse.remote.core to build -->
-<repository location="http://download.eclipse.org/releases/oxygen"/>
+<repository location="http://download.eclipse.org/releases/photon"/>
 </location>
 
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
@@ -43,7 +43,7 @@
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.7/"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.8milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
@@ -56,13 +56,13 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.9.0/S-3.9.0M5-20170201000249/repository/"/>
+<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/I-3.10.0-20180201205936/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
 <unit id="org.eclipse.tm.terminal.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tm/terminal/updates/4.3milestones/"/>
+<repository location="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>

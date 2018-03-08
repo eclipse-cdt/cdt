@@ -183,8 +183,8 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="javax.servlet.jsp"/>
       <plugin id="javax.xml"/>
       <plugin id="org.apache.batik.css"/>
+      <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.batik.util"/>
-      <plugin id="org.apache.batik.util.gui"/>
       <plugin id="org.apache.commons.codec"/>
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
@@ -195,7 +195,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.apache.lucene.analyzers-common"/>
       <plugin id="org.apache.lucene.analyzers-smartcn"/>
       <plugin id="org.apache.lucene.core"/>
-      <plugin id="org.apache.lucene.misc"/>
       <plugin id="org.eclipse.cdt.core"/>
       <plugin id="org.eclipse.cdt.core.linux" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.linux.x86" fragment="true"/>

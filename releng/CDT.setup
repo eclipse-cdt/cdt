@@ -73,7 +73,7 @@
         xsi:type="pde:APIBaselineTask"
         id="baseline"
         name="CDT"
-        version="9.3"
+        version="9.4"
         location="${workspace.location/../api.baseline}"
         remoteURI="http://download.eclipse.org/tools/cdt/releases/9.4/cdt-9.4.0/cdt-9.4.0.zip"/>
     <setupTask

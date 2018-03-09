@@ -55,8 +55,9 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 		if (obj instanceof Collection) {
 			Collection<Object> c = (Collection<Object>)obj;
 			Object[] objArray = c.toArray();
-			if (objArray.length > 0)
+			if (objArray.length > 0) {
 				obj = objArray[0];
+			}
 		}
 		if (obj instanceof ICElement) {
 			if ( obj instanceof ICContainer || obj instanceof ICProject) {
@@ -79,8 +80,6 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 		return fContainer;
 	}
 	
-	public final String SHELL_COMMAND = "sh"; //$NON-NLS-1$
-
 	protected void showError(String title, String content) {
 		MessageDialog.openError(new Shell(), title, content);
 	}
@@ -174,10 +173,11 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 			// Skip white-space
 			while (Character.isWhitespace(ch)) {
 				++i;
-				if (i < rawArgList.length())
+				if (i < rawArgList.length()) {
 					ch = rawArgList.charAt(i);
-				else // Otherwise we are done
+				} else { // Otherwise we are done
 					return argList;
+				}
 			}
 
 			// Simplistic parser. We break up into strings delimited
@@ -188,22 +188,21 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 			boolean inString = false;
 			while (i < rawArgList.length()) {
 				ch = rawArgList.charAt(i);
-				if (ch == '\\') // escape character
+				if (ch == '\\') { // escape character
 					++i; // skip over the next character
-				else if (ch == '\"') { // double quotes
+				} else if (ch == '\"') { // double quotes
 					inString = !inString;
-				} else if (Character.isWhitespace(ch)) {
-					if (!inString) {
-						argList.add(rawArgList.substring(lastArgIndex, i));
-						break;
-					}
+				} else if (Character.isWhitespace(ch) && !inString) {
+					argList.add(rawArgList.substring(lastArgIndex, i));
+					break;
 				}
 				++i;
 			}
 			// Look for the case where we ran out of chars for the last
 			// token.
-			if (i >= rawArgList.length())
+			if (i >= rawArgList.length()) {
 				argList.add(rawArgList.substring(lastArgIndex));
+			}
 			++i;
 		}
 		return argList;

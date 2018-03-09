@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.meson.ui.wizards;
 
 import org.eclipse.osgi.util.NLS;
 
-public class WizardMessages extends NLS {
+public final class WizardMessages extends NLS {
 
 	public static String RunNinjaPage_name;
 	public static String RunNinjaPage_description;

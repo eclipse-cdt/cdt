@@ -48,8 +48,8 @@ public class SWTImagesFactory {
 
 	private static ImageDescriptor createManaged(ImageRegistry registry,
 			String prefix, String name) {
-		ImageDescriptor result = ImageDescriptor.createFromURL(makeIconFileURL(
-				prefix, name.substring(NAME_PREFIX_LENGTH)));
+		ImageDescriptor result = ImageDescriptor
+				.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 		registry.put(name, result);
 		return result;
 	}
@@ -85,8 +85,9 @@ public class SWTImagesFactory {
 	 */
 	public static void setImageDescriptors(IAction action, String type,
 			String relPath) {
-		if (relPath.startsWith(NAME_PREFIX))
+		if (relPath.startsWith(NAME_PREFIX)) {
 			relPath = relPath.substring(NAME_PREFIX_LENGTH);
+		}
 		action.setDisabledImageDescriptor(create("d" + type, relPath)); //$NON-NLS-1$
 		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 

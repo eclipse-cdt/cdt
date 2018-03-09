@@ -40,7 +40,7 @@ public interface IMesonPropertyPageControl {
 	 * Get the command line parameter if already configured
 	 * @return String containing command-line for configured build dir
 	 */
-	public default String getConfiguredString() {
+	default String getConfiguredString() {
 		return "-D" + getFieldName() + "=" + getFieldValue(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
@@ -48,8 +48,7 @@ public interface IMesonPropertyPageControl {
 	 * Get the command line parameter if never configured
 	 * @return String containing command-line parm for configured build dir
 	 */
-	public default String getUnconfiguredString() {
-		// TODO Auto-generated method stub
+	default String getUnconfiguredString() {
 		return "--" + getFieldName() + "=" + getFieldValue(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

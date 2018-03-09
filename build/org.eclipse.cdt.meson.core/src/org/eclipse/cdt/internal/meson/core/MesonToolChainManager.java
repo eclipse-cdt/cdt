@@ -214,7 +214,7 @@ public class MesonToolChainManager implements IMesonToolChainManager {
 		for (IMesonToolChainListener listener : listeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
-				public void run() throws Exception {
+				public void run() {
 					listener.handleMesonToolChainEvent(event);
 				}
 

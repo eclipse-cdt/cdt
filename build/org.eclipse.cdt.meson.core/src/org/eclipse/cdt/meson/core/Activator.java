@@ -136,13 +136,15 @@ public class Activator implements BundleActivator {
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
-		if (e instanceof CoreException)
+		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
-		else
+		} else {
 			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
+		}
 		log(status);
 	}
 
@@ -153,12 +155,12 @@ public class Activator implements BundleActivator {
 	}
 
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {
+	public void start(BundleContext bundleContext) {
 		Activator.context = bundleContext;
 	}
 
 	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(BundleContext bundleContext) {
 		Activator.context = null;
 		plugin = null;
 	}

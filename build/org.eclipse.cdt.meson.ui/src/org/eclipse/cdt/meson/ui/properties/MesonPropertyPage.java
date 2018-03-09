@@ -339,15 +339,8 @@ public class MesonPropertyPage extends PropertyPage {
 			Pattern descPattern1 = Pattern.compile("([^\\.]+).*");
 			Pattern descPattern = Pattern.compile("([^\\(]*)(\\(default\\:\\s+([^\\)]+)\\).*)");
 			for (String line : lines) {
-//				System.out.println(line);
 				Matcher optionMatcher = optionPattern.matcher(line);
 				if (optionMatcher.matches() && !optionMatcher.group(2).equals("help")) {
-//					System.out.println("group 1 is " + (optionMatcher.group(1) != null ? optionMatcher.group(1).trim() : null));
-//					System.out.println("group 2 is " + (optionMatcher.group(2) != null ? optionMatcher.group(2).trim() : null));
-//					System.out.println("group 3 is " + (optionMatcher.group(3) != null ? optionMatcher.group(3).trim() : null));
-//					System.out.println("group 4 is " + (optionMatcher.group(4) != null ? optionMatcher.group(4).trim() : null));
-//					System.out.println("group 5 is " + (optionMatcher.group(5) != null ? optionMatcher.group(5).trim() : null));
-//					System.out.println("group 6 is " + (optionMatcher.group(6) != null ? optionMatcher.group(6).trim() : null));
 					if (optionMatcher.group(3) != null) {
 						String defaultValue = argMap.get(optionMatcher.group(2));
 						String description = optionMatcher.group(6);

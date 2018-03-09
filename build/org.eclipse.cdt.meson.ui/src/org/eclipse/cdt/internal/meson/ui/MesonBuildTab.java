@@ -19,8 +19,7 @@ import org.eclipse.cdt.meson.core.IMesonConstants;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -65,21 +64,13 @@ public class MesonBuildTab extends CommonBuildTab {
 
 		unixGenButton = new Button(genComp, SWT.RADIO);
 		unixGenButton.setText(Messages.MesonBuildTab_UnixMakefiles);
-		unixGenButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		unixGenButton
+				.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 
 		ninjaGenButton = new Button(genComp, SWT.RADIO);
 		ninjaGenButton.setText(Messages.MesonBuildTab_Ninja);
-		ninjaGenButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		ninjaGenButton
+				.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateLaunchConfigurationDialog()));
 
 		label = new Label(mesonGroup, SWT.NONE);
 		label.setText(Messages.MesonBuildTab_MesonArgs);

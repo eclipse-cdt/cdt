@@ -577,6 +577,11 @@
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="condition_variable,ctgmath,cuchar,scoped_allocator,cstdalign,shared_mutex"/>
    </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="any,optional,variant,memory_resource,string_view,charconv,filesystem"/>
+   </extension> 
  
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->

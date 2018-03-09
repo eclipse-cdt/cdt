@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.cdt.meson.core.IMesonToolChainFile;
 import org.eclipse.cdt.meson.core.IMesonToolChainManager;
-import org.eclipse.cdt.meson.core.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -29,8 +29,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -97,22 +96,19 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 		Button addButton = new Button(buttonsComp, SWT.PUSH);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		addButton.setText(Messages.MesonPreferencePage_Add);
-		addButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				NewMesonToolChainFileWizard wizard = new NewMesonToolChainFileWizard();
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				if (dialog.open() == Window.OK) {
-					IMesonToolChainFile file = wizard.getNewFile();
-					IMesonToolChainFile oldFile = manager.getToolChainFile(file.getPath());
-					if (oldFile != null) {
-						filesToRemove.put(oldFile.getPath(), oldFile);
-					}
-					filesToAdd.put(file.getPath(), file);
-					updateTable();
+		addButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			NewMesonToolChainFileWizard wizard = new NewMesonToolChainFileWizard();
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			if (dialog.open() == Window.OK) {
+				IMesonToolChainFile file = wizard.getNewFile();
+				IMesonToolChainFile oldFile = manager.getToolChainFile(file.getPath());
+				if (oldFile != null) {
+					filesToRemove.put(oldFile.getPath(), oldFile);
 				}
+				filesToAdd.put(file.getPath(), file);
+				updateTable();
 			}
-		});
+		}));
 
 		removeButton = new Button(buttonsComp, SWT.PUSH);
 		removeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));

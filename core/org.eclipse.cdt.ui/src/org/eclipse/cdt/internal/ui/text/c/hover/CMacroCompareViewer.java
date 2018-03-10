@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
 
@@ -118,7 +119,11 @@ class CMacroCompareViewer extends CMergeViewer {
 	
 	public CMacroCompareViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
-		fChangeBackground= new Color(parent.getDisplay(), CHANGE_COLOR);
+		RGB expansionHighlight = CMacroCompareViewer.createColor(getPreferenceStore(), 
+				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE);
+		if(expansionHighlight == null)
+			expansionHighlight = CHANGE_COLOR;
+		fChangeBackground= new Color(parent.getDisplay(), expansionHighlight);
 		fLeftHighlighter= new ReplaceEditsHighlighter(fChangeBackground, true);
 		fRightHighlighter= new ReplaceEditsHighlighter(fChangeBackground, false);
 		fViewerIndex= 0;

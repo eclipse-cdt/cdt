@@ -59,14 +59,12 @@ public class ToolChainManager implements IToolChainManager {
 				switch (element.getName()) {
 				case "provider": //$NON-NLS-1$
 					// TODO check for enablement
-					try {
+					SafeRunner.run(() -> {
 						IToolChainProvider provider = (IToolChainProvider) element
 								.createExecutableExtension("class"); //$NON-NLS-1$
 						providers.put(element.getAttribute("id"), provider); //$NON-NLS-1$
-						provider.init(this);
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
+						provider.init(ToolChainManager.this);
+					});
 					break;
 				case "type": //$NON-NLS-1$
 					toolChainTypeNames.put(element.getAttribute("id"), element.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -169,8 +167,12 @@ public class ToolChainManager implements IToolChainManager {
 		if (provider == null) {
 			IConfigurationElement element = providerElements.get(providerId);
 			if (element != null) {
-				provider = (IToolChainProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
-				providers.put(providerId, provider);
+				SafeRunner.run(() ->{
+					IToolChainProvider provider2 = (IToolChainProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
+					providers.put(providerId, provider2);
+					provider2.init(ToolChainManager.this);
+				});
+				return providers.get(providerId);
 			}
 		}
 		return provider;

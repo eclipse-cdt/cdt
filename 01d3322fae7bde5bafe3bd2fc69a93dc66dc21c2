@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "74c5fd2f_1a117ab4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/build/ToolChainManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-03-10T00:17:44Z",
+      "side": 1,
+      "message": "This catches all exceptions and selected errors and logs them.",
+      "revId": "01d3322fae7bde5bafe3bd2fc69a93dc66dc21c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28050261_c72ca04d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/build/ToolChainManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-03-10T00:17:44Z",
+      "side": 1,
+      "message": "this code no longer throws CoreException. The method can return null (it always could, now just more cases it can).",
+      "range": {
+        "startLine": 164,
+        "startChar": 65,
+        "endLine": 164,
+        "endChar": 78
+      },
+      "revId": "01d3322fae7bde5bafe3bd2fc69a93dc66dc21c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "006062eb_f99dfeab",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/build/ToolChainManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-03-10T00:17:44Z",
+      "side": 1,
+      "message": "I added a missing init here.",
+      "revId": "01d3322fae7bde5bafe3bd2fc69a93dc66dc21c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

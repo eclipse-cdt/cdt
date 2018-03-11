@@ -14,12 +14,12 @@
 	<version>2.2.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.tests.dsf.gdb</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	
+
 	<properties>
 		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
 		<dsf.gdb.tests.gdbTestSuite>AutomatedSuite.java</dsf.gdb.tests.gdbTestSuite>
 		<dsf.gdb.tests.timeout.multiplier>1</dsf.gdb.tests.timeout.multiplier>
-		<cdt.tests.dsf.gdb.versions>gdb.8.0</cdt.tests.dsf.gdb.versions>
+		<cdt.tests.dsf.gdb.versions>gdb.8.1</cdt.tests.dsf.gdb.versions>
 		<skipTests>${dsf-gdb.skip.tests}</skipTests>
 	</properties>
 	<build>

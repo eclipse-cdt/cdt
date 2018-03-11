@@ -24,7 +24,6 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,65 +56,22 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.gdb.service.GDBRegisters;
-import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class MIRegistersTest extends BaseParametrizedTestCase {
-	// Static list of register names as obtained directly from GDB.
-	// We make it static it does not get re-set for every test
-	protected static List<String> fRegisterNames = null;
-
-	@BeforeClass
-	public static void initializeGlobals() {
-		// In case we run multiple GDB versions of this test
-		// in the same suite, we need to re-initialize the registers
-		// as they may change between GDB versions.
-		fRegisterNames = null;
-	}
-
-	protected List<String> get_X86_REGS() throws Throwable {
-		if (fRegisterNames == null) {
-			// The tests must run on different machines, so the set of registers can change.
-			// To deal with this we ask GDB for the list of registers.
-			// Note that we send an MI Command in this code and do not use the IRegister service;
-			// this is because we want to test the service later, comparing it to what we find
-			// by asking GDB directly.
-			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
-				@Override
-				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
-					IMICommandControl controlService = fServicesTracker.getService(IMICommandControl.class);
-					IContainerDMContext containerDmc = DMContexts.getAncestorOfType(fCompositeDmc, IContainerDMContext.class);
-					controlService.queueCommand(controlService.getCommandFactory().createMIDataListRegisterNames(containerDmc), rm);
-				}
-			};
-			fSession.getExecutor().execute(query);
-
-			MIDataListRegisterNamesInfo data = query.get();
-			String[] names = data.getRegisterNames();
-
-			// Remove registers with empty names since the service also
-			// remove them. I don't know why GDB returns such empty names.
-			fRegisterNames = new LinkedList<String>();
-			for (String name : names) {
-				if (!name.isEmpty()) {
-					fRegisterNames.add(name);
-				}
-			}
-		}
-		return fRegisterNames;
+	protected List<String> getRegistersFromGdb() throws Throwable {
+		return SyncUtil.getRegistersFromGdb(getGdbVersion(), fCompositeDmc);
 	}
 
 	/*
@@ -214,7 +170,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		IRegisterDMContext[] regContexts = queryRegisters.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
-		assertEquals("Wrong number of registers", get_X86_REGS().size(), regContexts.length);
+		assertEquals("Wrong number of registers", getRegistersFromGdb().size(), regContexts.length);
 
 		return regContexts;
 	}
@@ -242,7 +198,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
      */
     private IRegisterDMContext[] getTargetRegisters(final IFrameDMContext frameDmc) throws Throwable {
     	IRegisterDMContext[] regContexts = getRegisters(new CompositeDMContext(new IDMContext[] { fCompositeDmc, frameDmc}));
-    	assertEquals("Wrong number of registers", get_X86_REGS().size(), regContexts.length);
+    	assertEquals("Wrong number of registers", getRegistersFromGdb().size(), regContexts.length);
     	
     	return regContexts;
     }
@@ -265,7 +221,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		final IRegisterDMContext[] regDMCs = getAllRegisters(frameDmc);
-		assertEquals("Wrong number of registers", get_X86_REGS().size(), regDMCs.length);
+		assertEquals("Wrong number of registers", getRegistersFromGdb().size(), regDMCs.length);
 	}
 
 	@Test
@@ -273,7 +229,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		final IRegisterDMContext[] regDMCs = getAllRegisters(frameDmc);
-		List<String> regNames = get_X86_REGS();
+		List<String> regNames = getRegistersFromGdb();
 
         IRegisterDMData[] datas = getRegistersData(regDMCs);
         
@@ -547,7 +503,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private String resolveStackPointerName() throws Throwable {
-		List<String> regNames = get_X86_REGS();
+		List<String> regNames = getRegistersFromGdb();
 		
 		// for 64 bits
 		String sp_name = "rsp";

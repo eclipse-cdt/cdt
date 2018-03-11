@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -37,22 +38,18 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters2;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
-import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -106,53 +103,12 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	//**************************************************************************************
 	// Utility methods
 	//**************************************************************************************
-	
-	// Static list of register names as obtained directly from GDB.
-	// We make it static so it does not get re-set for every test
-	protected static List<String> fRegisterNames = null;
-	
-	@BeforeClass
- 	public static void initializeGlobals() {
-		// In case we run multiple GDB versions of this test
-		// in the same suite, we need to re-initialize the registers
-		// as they may change between GDB versions.
-		fRegisterNames = null;
-	}
-
-	protected List<String> get_X86_REGS() throws Throwable {
-		
-		if (fRegisterNames == null) {
-			// The tests must run on different machines, so the set of registers can change.
-			// To deal with this we ask GDB for the list of registers.
-			// Note that we send an MI Command in this code and do not use the IRegister service;
-			// this is because we want to test the service later, comparing it to what we find
-			// by asking GDB directly.
-			final IContainerDMContext container = SyncUtil.getContainerContext();
-			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
-				@Override
-				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
-					IMICommandControl controlService = fServicesTracker.getService(IMICommandControl.class);
-					controlService.queueCommand(
-							controlService.getCommandFactory().createMIDataListRegisterNames(container), rm);
-				}
-			};
-			fSession.getExecutor().execute(query);
-
-			MIDataListRegisterNamesInfo data = query.get();
-			String[] names = data.getRegisterNames();
-
-			// Remove registers with empty names since the service also
-			// remove them.  I don't know why GDB returns such empty names.
-			fRegisterNames = new LinkedList<String>();
-			for (String name : names) {
-				if (!name.isEmpty()) {
-					// Add the '$' prefix
-					fRegisterNames.add("$"+name);
-				}
-			}
-		}
-		// Return a copy since it will be modified by each test
-		return new LinkedList<String>(fRegisterNames);
+	/**
+	 * Return a new, mutable list with '$' prefixed on each register
+	 */
+	protected List<String> getRegistersFromGdb() throws Throwable {
+		List<String> registersFromGdb = SyncUtil.getRegistersFromGdb(getGdbVersion(), SyncUtil.getContainerContext());
+		return registersFromGdb.stream().map(n -> "$" + n).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	final static String[] fAllVariables = new String[] { "firstarg", "firstvar", "ptrvar", "secondarg", "secondvar", "var", "var2" };
@@ -343,7 +299,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	public void testMatchAllRegs() throws Throwable {
 		final String exprString = "$*";
 		final String exprString2 = "=$*";
-		List<String> regList = get_X86_REGS();
+		List<String> regList = getRegistersFromGdb();
 		Collections.sort(regList);
 		final String[] children = regList.toArray(new String[0]);
 
@@ -1060,7 +1016,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testGroupAllRegsAllLocals() throws Throwable {
 		final String exprString = "$*; *";
-		List<String> list = get_X86_REGS();
+		List<String> list = getRegistersFromGdb();
 		Collections.sort(list);
 		list.addAll(Arrays.asList(fAllVariables));
 		final String[] children = list.toArray(new String[list.size()]);
@@ -1083,7 +1039,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testGroupAllLocalsAllRegs() throws Throwable {
 		final String exprString = "*; $*";
-		List<String> list = get_X86_REGS();
+		List<String> list = getRegistersFromGdb();
 		Collections.sort(list);
 		list.addAll(0, Arrays.asList(fAllVariables));
 		final String[] children = list.toArray(new String[list.size()]);
@@ -1123,7 +1079,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testGroupOneLocalAllReg() throws Throwable {
 		final String exprString = "firstvar; $*";
-		List<String> list = get_X86_REGS();
+		List<String> list = getRegistersFromGdb();
 		Collections.sort(list);
 		list.addAll(0, Arrays.asList(new String[] { "firstvar" }));
 		final String[] children = list.toArray(new String[list.size()]);
@@ -1205,7 +1161,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testSortedAllReg() throws Throwable {
 		final String exprString = "$*";
-		List<String> regList = get_X86_REGS();
+		List<String> regList = getRegistersFromGdb();
 		Collections.sort(regList);
 		final String[] children = regList.toArray(new String[0]);
 
@@ -1250,7 +1206,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testSeparatlySorted() throws Throwable {
 		final String exprString = "$*; *";
-		List<String> list = get_X86_REGS();
+		List<String> list = getRegistersFromGdb();
 		Collections.sort(list);
 		List<String> localsList = Arrays.asList(fAllVariables);
 		Collections.sort(localsList);

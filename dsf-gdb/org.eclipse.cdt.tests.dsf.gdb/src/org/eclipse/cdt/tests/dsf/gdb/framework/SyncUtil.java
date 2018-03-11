@@ -16,13 +16,16 @@
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -74,6 +77,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil.DefaultTimeouts.ETimeout;
@@ -100,11 +104,18 @@ public class SyncUtil {
 
 	private static ISourceLookup fSourceLookup;
 
+	// Static list of register names as obtained directly from GDB.
+	// We make it static, key'ed on each version of gdb, so it does not
+	// get re-set for every test.
+	// Each version of GDB can expose the set of register differently
+	private static Map<String, List<String>> fRegisterNames = new HashMap<>();
+
 	// Initialize some common things, once the session has been established
 	public static void initialize(DsfSession session) throws Exception {
 		fSession = session;
 
 		Runnable runnable = new Runnable() {
+
 			@Override
 			public void run() {
 				DsfServicesTracker tracker = new DsfServicesTracker(
@@ -856,6 +867,49 @@ public class SyncUtil {
     	IVariableDMData[] result = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
     	return result;
     }
+
+    /**
+     * Get the registers directly from GDB (without using the registers service)
+     * @param gdbVersion
+     * @param context
+     * @return
+     * @throws Throwable
+     */
+	public static List<String> getRegistersFromGdb(String gdbVersion, IDMContext context) throws Throwable {
+		if (!fRegisterNames.containsKey(gdbVersion)) {
+			// The tests must run on different machines, so the set of registers can change.
+			// To deal with this we ask GDB for the list of registers.
+			// Note that we send an MI Command in this code and do not use the IRegister service;
+			// this is because we want to test the service later, comparing it to what we find
+			// by asking GDB directly.
+			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
+					IContainerDMContext containerDmc = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
+					fGdbControl.queueCommand(
+							fGdbControl.getCommandFactory().createMIDataListRegisterNames(containerDmc), rm);
+				}
+			};
+			fSession.getExecutor().execute(query);
+
+			MIDataListRegisterNamesInfo data = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+			String[] names = data.getRegisterNames();
+
+			// Remove registers with empty names since the service also
+			// remove them. I don't know why GDB returns such empty names.
+			List<String> registerNames = new LinkedList<String>();
+			for (String name : names) {
+				if (!name.isEmpty()) {
+					registerNames.add(name);
+				}
+			}
+			assertNotEquals(
+					"Test does not make sense, and has probably completely failed, as there are no register names",
+					Collections.emptyList(), registerNames);
+			fRegisterNames.put(gdbVersion, registerNames);
+		}
+		return fRegisterNames.get(gdbVersion);
+	}
 
 	/**
 	 * Read data from memory.

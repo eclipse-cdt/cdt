@@ -15,7 +15,7 @@
 	<name>Remote Parent</name>
 
 	<properties>
-		<remote-release>nightly</remote-release>
+		<remote-release>3.0.0</remote-release>
 		<tycho-version>0.26.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>

@@ -10,13 +10,13 @@
 
 	<groupId>org.eclipse.remote</groupId>
 	<artifactId>remote-parent</artifactId>
-	<version>2.1.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Remote Parent</name>
 
 	<properties>
 		<remote-release>nightly</remote-release>
-		<tycho-version>0.24.0</tycho-version>
+		<tycho-version>0.26.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>
 		<platform-version>4.5</platform-version>
@@ -43,13 +43,24 @@
 
 	<modules>
 		<module>../../releng/org.eclipse.remote.target</module>
-		<!-- Remote feature -->
+		<!-- Remote bundles -->
 		<module>../../bundles/org.eclipse.remote.core</module>
 		<module>../../bundles/org.eclipse.remote.jsch.core</module>
 		<module>../../bundles/org.eclipse.remote.jsch.ui</module>
 		<module>../../bundles/org.eclipse.remote.ui</module>
+		<!-- Proxy bundles -->
+		<module>../../bundles/org.eclipse.remote.proxy.core</module>
+		<module>../../bundles/org.eclipse.remote.proxy.ui</module>
+		<module>../../bundles/org.eclipse.remote.proxy.protocol.core</module>
+		<module>../../bundles/org.eclipse.remote.proxy.server.core</module>
+		<module>../../releng/org.eclipse.remote.proxy.server.product</module>
+		<module>../../releng/org.eclipse.remote.proxy.server.linux.x86_64</module>
+		<module>../../releng/org.eclipse.remote.proxy.server.linux.ppc64le</module>
+		<module>../../releng/org.eclipse.remote.proxy.server.macosx.x86_64</module>
+		<!-- Main feature -->
 		<module>../../features/org.eclipse.remote-feature</module>
-		<module>../../releng/org.eclipse.remote.repo</module>
+		<!-- Proxy feature -->
+		<module>../../features/org.eclipse.remote.proxy-feature</module>
 		<!-- Console Terminal feature -->
 		<module>../../bundles/org.eclipse.remote.console</module>
 		<module>../../features/org.eclipse.remote.console-feature</module>
@@ -63,6 +74,8 @@
 		<module>../../features/org.eclipse.remote.telnet-feature</module>
 		<!-- Documentation -->
 		<module>../../bundles/org.eclipse.remote.doc.isv</module>
+		<!-- Repository -->
+		<module>../../releng/org.eclipse.remote.repo</module>
 	</modules>
 
 	<repositories>
@@ -115,6 +128,11 @@
 							<arch>x86_64</arch>
 						</environment>
 						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>ppc64le</arch>
+						</environment>
+						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86</arch>
@@ -143,8 +161,8 @@
 						<artifact>
 							<groupId>org.eclipse.remote</groupId>
 							<artifactId>org.eclipse.remote.target</artifactId>
-							<version>2.1.0-SNAPSHOT</version>
-							<classifier>neon</classifier>
+							<version>3.0.0-SNAPSHOT</version>
+							<classifier>oxygen</classifier>
 						</artifact>
 				  </target>
 				</configuration>
@@ -176,6 +194,12 @@
 						<goals>
 							<goal>source-feature</goal>
 						</goals>
+			            <configuration>
+							<excludes>
+								<plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
+								<plugin id="org.eclipse.remote.doc.isv"/>
+							</excludes>
+			            </configuration>
 					</execution>
 				</executions>
 			</plugin>

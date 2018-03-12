@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.eclipse.remote</groupId>
     <artifactId>remote-parent</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
   </parent>
 
@@ -20,13 +20,11 @@
         <version>${tycho-extras-version}</version>
         <configuration>
            <outputDirectory>${basedir}/html/reference/api</outputDirectory>
-           <!-- TODO: bump tycho-extras version. Excludes option requires >= 0.23
            <javadocOptions>
                <excludes>
                    <exclude>org.eclipse.remote.internal.*</exclude>
                </excludes>
            </javadocOptions>
-           -->
         </configuration>
         <executions>
             <execution>

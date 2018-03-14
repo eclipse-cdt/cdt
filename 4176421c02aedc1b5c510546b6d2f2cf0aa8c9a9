@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3701278_13769527",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-14T04:18:04Z",
+      "side": 1,
+      "message": "\"only updated\"",
+      "range": {
+        "startLine": 10,
+        "startChar": 60,
+        "endLine": 10,
+        "endChar": 71
+      },
+      "revId": "4176421c02aedc1b5c510546b6d2f2cf0aa8c9a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6a56cd3_e0672341",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-14T04:18:04Z",
+      "side": 1,
+      "message": "\"using a cached result\"",
+      "range": {
+        "startLine": 13,
+        "startChar": 35,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "4176421c02aedc1b5c510546b6d2f2cf0aa8c9a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "61e77c5b_ed924970",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-14T04:18:04Z",
+      "side": 1,
+      "message": "(Update the method name to assertIsApplicableForAllMarkers() in the commit message as well.)",
+      "revId": "4176421c02aedc1b5c510546b6d2f2cf0aa8c9a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "620c943e_a80f3bb9",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixTestCase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-14T04:18:04Z",
+      "side": 1,
+      "message": "I think we should only run the quick fix if it\u0027s applicable. (If that causes any existing tests to fail, that may indicate a bug.)",
+      "revId": "4176421c02aedc1b5c510546b6d2f2cf0aa8c9a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63bb0877_1b730c51",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixTestCase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-14T04:18:04Z",
+      "side": 1,
+      "message": "Let\u0027s call this assertIsApplicableForAllMarkers()",
+      "range": {
+        "startLine": 168,
+        "startChar": 13,
+        "endLine": 168,
+        "endChar": 43
+      },
+      "revId": "4176421c02aedc1b5c510546b6d2f2cf0aa8c9a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

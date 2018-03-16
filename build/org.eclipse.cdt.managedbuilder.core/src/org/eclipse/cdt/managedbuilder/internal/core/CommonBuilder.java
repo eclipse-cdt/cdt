@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 Intel Corporation and others.
+ * Copyright (c) 2007, 2021 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
  * Umair Sair (Mentor Graphics) - Project dependencies are not built in the correct order (bug 546407)
  * Umair Sair (Mentor Graphics) - Setting current project for markers creation (bug 545976)
+ * Torbjörn Svensson (STMicroelectronics) - bug #571134
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -61,6 +62,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IIncrementalProjectBuilder2;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -83,7 +85,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
-public class CommonBuilder extends ACBuilder {
+public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuilder2 {
 
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
 	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error ["; //$NON-NLS-1$
@@ -1033,16 +1035,22 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	@Override
-	protected void clean(IProgressMonitor monitor) throws CoreException {
+	protected final void clean(IProgressMonitor monitor) throws CoreException {
+		throw new IllegalStateException(
+				"Unexpcted/incorrect call to old clean method. Client code must call clean(Map,IProgressMonitor)"); //$NON-NLS-1$
+	}
+
+	@Override
+	public void clean(Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (DEBUG_EVENTS)
-			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, args);
 
 		IProject curProject = getProject();
 
 		if (!isCdtProjectCreated(curProject))
 			return;
 
-		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, null);
+		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, args);
 		for (IBuilder builder : builders) {
 			CfgBuildInfo bInfo = new CfgBuildInfo(builder, true);
 			clean(bInfo, monitor);

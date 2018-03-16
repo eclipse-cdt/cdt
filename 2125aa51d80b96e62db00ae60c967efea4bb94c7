@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50037c8d_e614f3c1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CatchByReferenceQuickFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-03-16T16:27:48Z",
+      "side": 1,
+      "message": "CatchByReferenceQuickFix and CatchByConstReferenceQuickFix seems to be flawed design. Can\u0027t the quickfixes be configured somehow?\n\nAnyway, I would push applyConst down to CatchByConstReferenceQuickFix, as that seems to be the location to handle the const case. This will need an empty implementation of applyConst here. Maybe rename: replaceDeclSpecifier.",
+      "range": {
+        "startLine": 65,
+        "startChar": 19,
+        "endLine": 65,
+        "endChar": 37
+      },
+      "revId": "2125aa51d80b96e62db00ae60c967efea4bb94c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94566eb3_bdf67fae",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CatchByReferenceQuickFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-03-16T16:27:48Z",
+      "side": 1,
+      "message": "Could be static.",
+      "range": {
+        "startLine": 69,
+        "startChar": 14,
+        "endLine": 69,
+        "endChar": 24
+      },
+      "revId": "2125aa51d80b96e62db00ae60c967efea4bb94c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "26e375dc_f6966a8a",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/CatchByReferenceQuickFixTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-03-16T16:27:48Z",
+      "side": 1,
+      "message": "There should be a test that verifies the adherence of the const placement settings.",
+      "range": {
+        "startLine": 91,
+        "startChar": 1,
+        "endLine": 91,
+        "endChar": 2
+      },
+      "revId": "2125aa51d80b96e62db00ae60c967efea4bb94c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11,6 +11,7 @@
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *                                Save build output (bug 294106)
  * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
+ * Torbjörn Svensson (STMicroelectronics) - bug #330204
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1032,15 +1033,21 @@ public class CommonBuilder extends ACBuilder {
 
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
+		Map<String, String> args = null;
+		clean(args, monitor);
+	}
+
+	@Override
+	protected void clean(Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (DEBUG_EVENTS)
-			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, args);
 
 		IProject curProject = getProject();
 
 		if(!isCdtProjectCreated(curProject))
 			return;
 
-		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, null);
+		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, args);
 		for (IBuilder builder : builders) {
 			CfgBuildInfo bInfo = new CfgBuildInfo(builder, true);
 			clean(bInfo, monitor);

@@ -4739,4 +4739,34 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//struct IO_FILE {
+	//};
+	//typedef struct IO_FILE FILE;
+	//
+	//int main() {
+	//	FILE* f;
+	//	if (/*$*/f/*$$*/ == 0) {
+	//	} // extract f
+	//	return 0;
+	//}
+	//====================
+	//struct IO_FILE {
+	//};
+	//typedef struct IO_FILE FILE;
+	//
+	//FILE* extracted(FILE* f) {
+	//	return f;
+	//}
+	//
+	//int main() {
+	//	FILE* f;
+	//	if (extracted(f) == 0) {
+	//	} // extract f
+	//	return 0;
+	//}
+	public void testExtractFunction_Bug396349() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

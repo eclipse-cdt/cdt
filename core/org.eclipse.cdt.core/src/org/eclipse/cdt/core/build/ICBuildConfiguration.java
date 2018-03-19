@@ -126,13 +126,6 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Refresh the Scanner info
-	 * 
-	 * @since 6.5
-	 */
-	void refreshScannerInfo() throws CoreException;
-
-	/**
 	 * The binaries produced by the build.
 	 * 
 	 * @return binaries produced by the build.

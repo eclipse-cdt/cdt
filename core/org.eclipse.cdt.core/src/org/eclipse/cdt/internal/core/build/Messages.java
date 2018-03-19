@@ -14,6 +14,7 @@ public class Messages extends NLS {
 	public static String CBuildConfiguration_CreateJob;
 	public static String CBuildConfiguration_ToolchainMissing;
 	public static String CBuildConfiguration_Location;
+	public static String CBuildConfiguration_RunningScannerInfo;
 	public static String CBuilder_ExceptionWhileBuilding;
 	public static String CBuilder_ExceptionWhileBuilding2;
 	public static String CBuilder_NotConfiguredCorrectly;

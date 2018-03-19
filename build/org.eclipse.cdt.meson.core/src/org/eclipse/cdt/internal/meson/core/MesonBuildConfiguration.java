@@ -336,6 +336,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
 		if (Files.exists(commandsFile)) {
+			List<Job> jobsList = new ArrayList<>();
 			monitor.setTaskName(Messages.MesonBuildConfiguration_ProcCompJson);
 			try (FileReader reader = new FileReader(commandsFile.toFile())) {
 				Gson gson = new Gson();
@@ -345,7 +346,14 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					dedupedCmds.put(command.getFile(), command);
 				}
 				for (CompileCommand command : dedupedCmds.values()) {
-					processLine(command.getCommand());
+					processLine(command.getCommand(), jobsList);
+				}
+				for (Job j : jobsList) {
+					try {
+						j.join();
+					} catch (InterruptedException e) {
+						// ignore
+					}
 				}
 				shutdown();
 			} catch (IOException e) {

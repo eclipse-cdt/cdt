@@ -80,6 +80,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -100,7 +101,8 @@ import com.google.gson.JsonParseException;
  * @since 6.0
  */
 public abstract class CBuildConfiguration extends PlatformObject
-		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser, IElementChangedListener {
+		implements ICBuildConfiguration, ICBuildConfiguration2, IMarkerGenerator, 
+		IConsoleParser, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
@@ -110,6 +112,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
 	private String launchMode;
+	
+	private Object scannerInfoLock = new Object();
 
 	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
 	private ScannerInfoCache scannerInfoCache;
@@ -613,31 +617,33 @@ public abstract class CBuildConfiguration extends PlatformObject
 	/**
 	 * @since 6.1
 	 */
-	protected synchronized void loadScannerInfoCache() {
-		if (scannerInfoCache == null) {
-			File cacheFile = getScannerInfoCacheFile();
-			if (cacheFile.exists()) {
-				try (FileReader reader = new FileReader(cacheFile)) {
-					GsonBuilder gsonBuilder = new GsonBuilder();
-					gsonBuilder.registerTypeAdapter(IExtendedScannerInfo.class,
-							new IExtendedScannerInfoCreator());
-					Gson gson = gsonBuilder.create();
-					scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
-				} catch (IOException e) {
-					CCorePlugin.log(e);
+	protected void loadScannerInfoCache() {
+		synchronized (scannerInfoLock) {
+			if (scannerInfoCache == null) {
+				File cacheFile = getScannerInfoCacheFile();
+				if (cacheFile.exists()) {
+					try (FileReader reader = new FileReader(cacheFile)) {
+						GsonBuilder gsonBuilder = new GsonBuilder();
+						gsonBuilder.registerTypeAdapter(IExtendedScannerInfo.class,
+								new IExtendedScannerInfoCreator());
+						Gson gson = gsonBuilder.create();
+						scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
+					} catch (IOException e) {
+						CCorePlugin.log(e);
+						scannerInfoCache = new ScannerInfoCache();
+					}
+				} else {
 					scannerInfoCache = new ScannerInfoCache();
 				}
-			} else {
-				scannerInfoCache = new ScannerInfoCache();
+				scannerInfoCache.initCache();
 			}
-			scannerInfoCache.initCache();
 		}
 	}
 
 	/**
 	 * @since 6.1
 	 */
-	protected void saveScannerInfoCache() {
+	protected synchronized void saveScannerInfoCache() {
 		File cacheFile = getScannerInfoCacheFile();
 		if (!cacheFile.getParentFile().exists()) {
 			try {
@@ -650,7 +656,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 		try (FileWriter writer = new FileWriter(getScannerInfoCacheFile())) {
 			Gson gson = new Gson();
-			gson.toJson(scannerInfoCache, writer);
+			synchronized (scannerInfoLock) {
+				gson.toJson(scannerInfoCache, writer);
+			}
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
@@ -694,7 +702,10 @@ public abstract class CBuildConfiguration extends PlatformObject
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		loadScannerInfoCache();
-		IExtendedScannerInfo info = scannerInfoCache.getScannerInfo(resource);
+		IExtendedScannerInfo info = null;
+		synchronized (scannerInfoLock) {
+			info = scannerInfoCache.getScannerInfo(resource);
+		}
 		if (info == null) {
 			ICElement celement = CCorePlugin.getDefault().getCoreModel().create(resource);
 			if (celement instanceof ITranslationUnit) {
@@ -702,7 +713,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 					ITranslationUnit tu = (ITranslationUnit) celement;
 					info = getToolChain().getDefaultScannerInfo(getBuildConfiguration(),
 							getBaseScannerInfo(resource), tu.getLanguage(), getBuildDirectoryURI());
-					scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
+					synchronized (scannerInfoLock) {
+						scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
+					}
 					saveScannerInfoCache();
 				} catch (CoreException e) {
 					CCorePlugin.log(e.getStatus());
@@ -731,12 +744,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 				IResource resource = delta.getElement().getResource();
 				if (resource.getProject().equals(getProject())) {
 					loadScannerInfoCache();
-					if (scannerInfoCache.hasResource(DEFAULT_COMMAND, resource)) {
-						scannerInfoCache.removeResource(resource);
-					} else {
-						// Clear the whole command and exit the delta
-						scannerInfoCache.removeCommand(DEFAULT_COMMAND);
-						return;
+					synchronized (scannerInfoLock) {
+						if (scannerInfoCache.hasResource(DEFAULT_COMMAND, resource)) {
+							scannerInfoCache.removeResource(resource);
+						} else {
+							// Clear the whole command and exit the delta
+							scannerInfoCache.removeCommand(DEFAULT_COMMAND);
+							return;
+						}
 					}
 				}
 			}
@@ -852,19 +867,27 @@ public abstract class CBuildConfiguration extends PlatformObject
 
 				for (IResource resource : resources) {
 					loadScannerInfoCache();
-					if (scannerInfoCache.hasCommand(commandStrings)) {
-						if (!scannerInfoCache.hasResource(commandStrings, resource)) {
-							scannerInfoCache.addResource(commandStrings, resource);
-							infoChanged = true;
+					boolean hasCommand = true;
+					synchronized (scannerInfoLock) {
+						if (scannerInfoCache.hasCommand(commandStrings)) {
+							if (!scannerInfoCache.hasResource(commandStrings, resource)) {
+								scannerInfoCache.addResource(commandStrings, resource);
+								infoChanged = true;
+							}
+						} else {
+							hasCommand = false;
 						}
-					} else {
+					}
+					if (!hasCommand) {
 						Path commandPath = findCommand(command.get(0));
 						if (commandPath != null) {
 							command.set(0, commandPath.toString());
 							IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(),
 									command, null, resource, getBuildDirectoryURI());
-							scannerInfoCache.addScannerInfo(commandStrings, info, resource);
-							infoChanged = true;
+							synchronized (scannerInfoLock) {
+								scannerInfoCache.addScannerInfo(commandStrings, info, resource);
+								infoChanged = true;
+							}
 						}
 					}
 				}
@@ -877,7 +900,125 @@ public abstract class CBuildConfiguration extends PlatformObject
 			return false;
 		}
 	}
+
+	private class ScannerInfoJob extends Job {
+		private IToolChain toolchain;
+		private List<String> command;
+		private List<String> commandStrings;
+		private IResource resource;
+		private URI buildDirectoryURI;
+		
+		public ScannerInfoJob(String msg, IToolChain toolchain, List<String> command, IResource resource,
+				URI buildDirectoryURI, List<String> commandStrings) {
+			super(msg);
+			this.toolchain = toolchain;
+			this.command = command;
+			this.commandStrings = commandStrings;
+			this.resource = resource;
+			this.buildDirectoryURI = buildDirectoryURI;
+		}
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			IExtendedScannerInfo info = toolchain.getScannerInfo(getBuildConfiguration(),
+					command, null, resource, buildDirectoryURI);
+			synchronized (scannerInfoLock) {
+				scannerInfoCache.addScannerInfo(commandStrings, info, resource);
+				infoChanged = true;
+			}
+			return Status.OK_STATUS;
+		}
+	}
 	
+	/**
+	 * Process a compile line for Scanner info in a separate job
+	 * 
+	 * @param line - line to process
+	 * @param jobsArray - array of Jobs to keep track of open scanner info jobs
+	 * @return - true if line processed, false otherwise
+	 * 
+	 * @since 6.5
+	 */
+	protected boolean processLine(String line, List<Job> jobsArray) {
+		// Split line into args, taking into account quotes
+		List<String> command = stripArgs(line);
+		
+		// Make sure it's a compile command
+		String[] compileCommands = toolChain.getCompileCommands();
+		boolean found = false;
+		loop:
+		for (String arg : command) {
+			// TODO we should really ask the toolchain, not all args start with '-'
+			if (arg.startsWith("-")) { //$NON-NLS-1$
+				// option found, missed our command
+				return false;
+			}
+
+			for (String cc : compileCommands) {
+				if (arg.endsWith(cc)
+						&& (arg.equals(cc) || arg.endsWith("/" + cc) || arg.endsWith("\\" + cc))) { //$NON-NLS-1$ //$NON-NLS-2$
+					found = true;
+					break loop;
+				}
+			}
+
+
+			if (Platform.getOS().equals(Platform.OS_WIN32) && !arg.endsWith(".exe")) { //$NON-NLS-1$
+				// Try with exe
+				arg = arg + ".exe"; //$NON-NLS-1$
+				for (String cc : compileCommands) {
+					if (arg.endsWith(cc)
+							&& (arg.equals(cc) || arg.endsWith("/" + cc) || arg.endsWith("\\" + cc))) { //$NON-NLS-1$ //$NON-NLS-2$
+						found = true;
+						break loop;
+					}
+				}
+			}
+		}
+
+		if (!found) {
+			return false;
+		}
+
+		try {
+			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
+			if (resources != null && resources.length > 0) {
+				List<String> commandStrings = toolChain.stripCommand(command, resources);
+
+				for (IResource resource : resources) {
+					loadScannerInfoCache();
+					boolean hasCommand = true;
+					synchronized (scannerInfoLock) {
+						if (scannerInfoCache.hasCommand(commandStrings)) {
+							if (!scannerInfoCache.hasResource(commandStrings, resource)) {
+								scannerInfoCache.addResource(commandStrings, resource);
+								infoChanged = true;
+							}
+						} else {
+							hasCommand = false;
+						}
+					}
+					if (!hasCommand) {
+						Path commandPath = findCommand(command.get(0));
+						if (commandPath != null) {
+							command.set(0, commandPath.toString());
+							Job job = new ScannerInfoJob(String.format(Messages.CBuildConfiguration_RunningScannerInfo, resource), 
+									getToolChain(), command, resource, getBuildDirectoryURI(), commandStrings);
+							job.schedule();
+							jobsArray.add(job);
+						}
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+
 	/**
 	 * @since 6.5
 	 */

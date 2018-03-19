@@ -4739,4 +4739,27 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//#include <cstdio>
+	//int main() {
+	//	int a = 0;
+	//	printf(/*$*/"%d"/*$$*/, a); // extract "%d"
+	//	return 0;
+	//}
+	//====================
+	//#include <cstdio>
+	//
+	//const char* extracted() {
+	//	return "%d";
+	//}
+	//
+	//int main() {
+	//	int a = 0;
+	//	printf(extracted(), a); // extract "%d"
+	//	return 0;
+	//}
+	public void testFunctionExtraction_Bug396344() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

@@ -96,6 +96,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
     
     @Override
 	public void doBeforeTest() throws Exception {
+		assumeLocalSession();
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some 

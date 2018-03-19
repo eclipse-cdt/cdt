@@ -45,7 +45,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -150,7 +149,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		Assume.assumeTrue("Skipping non-remote", remote);
+		assumeRemoteSession();
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();

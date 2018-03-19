@@ -4739,4 +4739,40 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//#include <cstdio>
+	//typedef struct len {
+	//	int l[1];
+	//} le;
+	//
+	//int main() {
+	//	le i;
+	//	le *p;
+	//	p = &i;
+	//	/*$*/p->l/*$$*/[0] = 1; // extract p->l without subscript
+	//	printf("%d", p->l[0]);
+	//	return 0;
+	//}
+	//====================
+	//#include <cstdio>
+	//typedef struct len {
+	//	int l[1];
+	//} le;
+	//
+	//int* extracted(le* p) {
+	//	return p->l;
+	//}
+	//
+	//int main() {
+	//	le i;
+	//	le *p;
+	//	p = &i;
+	//	extracted(p)[0] = 1; // extract p->l without subscript
+	//	printf("%d", p->l[0]);
+	//	return 0;
+	//}
+	public void testExtractFunctionReturnType_Bug396342() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

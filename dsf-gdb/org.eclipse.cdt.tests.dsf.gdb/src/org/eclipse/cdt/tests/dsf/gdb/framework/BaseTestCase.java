@@ -367,7 +367,8 @@ public class BaseTestCase {
     	launchAttributes.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
-    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
+    	// Using a port of 0 here means gdbserver will allocate the port number
+    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "0");
     	launchAttributes.put(ITestConstants.LAUNCH_GDB_SERVER, true);
 
     	initializeLaunchAttributes();
@@ -612,44 +613,57 @@ public class BaseTestCase {
 		removeAllPlatformBreakpoints();
 	}
 
- 	/**
- 	 * This method start gdbserver on the localhost.
- 	 * If the user specified a different host, things won't work.
- 	 */
- 	private void launchGdbServer() {
- 		// First check if we should not launch gdbserver even for a remote session
- 		if (launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER).equals(false)) {
- 			if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Forcing to not start gdbserver for this test\n");
- 			return;
- 		}
+	/**
+	 * This method start gdbserver on the localhost. If the user specified a
+	 * different host, things won't work.
+	 */
+	private void launchGdbServer() throws Exception {
+		// First check if we should not launch gdbserver even for a remote session
+		if (launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER).equals(false)) {
+			if (GdbDebugOptions.DEBUG)
+				GdbDebugOptions.trace("Forcing to not start gdbserver for this test\n");
+			return;
+		}
 
- 		if (isRemoteSession()) {
- 			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
- 				String server = (String)launchAttributes.get(ATTR_DEBUG_SERVER_NAME);
- 				String port = (String)launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
- 				String program = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
- 				String commandLine = server + " :" + port + " " + program;
- 				try {
- 					if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Starting gdbserver with command: " + commandLine + "\n");
+		if (isRemoteSession()) {
+			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
+				String server = (String) launchAttributes.get(ATTR_DEBUG_SERVER_NAME);
+				String port = (String) launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
+				String program = (String) launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
+				String commandLine = server + " :" + port + " " + program;
+				try {
+					if (GdbDebugOptions.DEBUG)
+						GdbDebugOptions.trace("Starting gdbserver with command: " + commandLine + "\n");
 
- 					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
-                    Reader r = new InputStreamReader(gdbserverProc.getErrorStream());
-                    BufferedReader reader = new BufferedReader(r);
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                    	if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(line + "\n");
-                        line = line.trim();
-                        if (line.startsWith("Listening on port")) {
-                            break;
-                        }
-                    }
- 				} catch (Exception e) {
- 					GdbDebugOptions.trace("Error while launching command: " + commandLine + "\n");
- 					e.printStackTrace();
- 					assert false;
- 				}
- 			}
- 		}
+					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
+					Reader r = new InputStreamReader(gdbserverProc.getErrorStream());
+					BufferedReader reader = new BufferedReader(r);
+					String line;
+					while ((line = reader.readLine()) != null) {
+						if (GdbDebugOptions.DEBUG)
+							GdbDebugOptions.trace(line + "\n");
+						line = line.trim();
+						final String LISTENING_ON_PORT = "Listening on port ";
+						if (line.startsWith(LISTENING_ON_PORT)) {
+							String portString = line.substring(LISTENING_ON_PORT.length());
+							// make sure this is really a port number
+							try {
+								Integer.parseInt(portString);
+							} catch (NumberFormatException nfe) {
+								throw new Exception("Expected a number for the port gdbserver is listening to, got '"
+										+ portString + "'");
+							}
+							if (GdbDebugOptions.DEBUG)
+								GdbDebugOptions.trace("gdbserver running and listening in port: " + portString + "\n");
+							launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, portString);
+							break;
+						}
+					}
+				} catch (Exception e) {
+					throw new Exception("Error while launching command for gdbserver: " + commandLine + "\n", e);
+				}
+			}
+		}
 	}
 
 	/**

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildConfiguration2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
@@ -131,7 +132,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);
 							// build config has changed so Scanner Info may change too which would affect indexing
-							buildConfig.refreshScannerInfo();
+							((ICBuildConfiguration2)buildConfig).refreshScannerInfo();
 						}
 					}
 

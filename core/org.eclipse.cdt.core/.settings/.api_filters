@@ -4,12 +4,6 @@
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.build.ICBuildConfiguration"/>
-                <message_argument value="TOOLCHAIN_ID"/>
-            </message_arguments>
-        </filter>
-        <filter id="403767336">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.core.build.ICBuildConfiguration"/>
                 <message_argument value="TOOLCHAIN_TYPE"/>
             </message_arguments>
         </filter>

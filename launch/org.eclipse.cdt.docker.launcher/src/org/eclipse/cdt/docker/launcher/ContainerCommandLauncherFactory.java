@@ -41,8 +41,11 @@ import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 public class ContainerCommandLauncherFactory
 		implements ICommandLauncherFactory, ICommandLauncherFactory2 {
 
+	private IProject project;
+
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {
+		this.project = project;
 		// check if container build enablement has been checked
 		ICConfigurationDescription cfgd = CoreModel.getDefault()
 				.getProjectDescription(project)
@@ -80,6 +83,7 @@ public class ContainerCommandLauncherFactory
 		if (cfg == null) {
 			return null;
 		}
+		this.project = (IProject) cfg.getManagedProject().getOwner();
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
 		if (props != null) {
 			String enablementProperty = props.getProperty(
@@ -99,6 +103,11 @@ public class ContainerCommandLauncherFactory
 
 	@Override
 	public ICommandLauncher getCommandLauncher(ICBuildConfiguration cfgd) {
+		try {
+			this.project = cfgd.getBuildConfiguration().getProject();
+		} catch (CoreException e1) {
+			return null;
+		}
 		// check if container linux os is set
 		IToolChain toolchain;
 		try {
@@ -201,10 +210,12 @@ public class ContainerCommandLauncherFactory
 							return;
 						}
 						IPath hostDir = pluginPath;
+						List<String> excludeList = new ArrayList<>();
+						excludeList.add(project.getLocation().toString());
 						@SuppressWarnings("unused")
 						int status = launcher.fetchContainerDirs(connectionName,
 								imageName,
-								paths, hostDir);
+								paths, excludeList, hostDir);
 					}
 				}
 			}
@@ -294,8 +305,11 @@ public class ContainerCommandLauncherFactory
 					return includePaths;
 				}
 				IPath hostDir = pluginPath;
+				// exclude project directories from any copying operation
+				List<String> excludeList = new ArrayList<>();
+				excludeList.add(project.getLocation().toString());
 				int status = launcher.fetchContainerDirsSync(connectionName,
-						imageName, includePaths, hostDir);
+						imageName, includePaths, excludeList, hostDir);
 				if (status == 0) {
 					Set<String> copiedVolumes = launcher
 							.getCopiedVolumes(connectionName, imageName);

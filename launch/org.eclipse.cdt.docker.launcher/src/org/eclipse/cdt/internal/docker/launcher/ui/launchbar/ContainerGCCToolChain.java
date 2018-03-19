@@ -383,8 +383,6 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain 
 				return null;
 			}
 
-			// process.waitFor();
-
 			// Scan for the scanner info
 			Map<String, String> symbols = new HashMap<>();
 			List<String> includePath = new ArrayList<>();

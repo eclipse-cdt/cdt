@@ -41,7 +41,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 	@Parameter public String parameter;
 	// other fields
 	private String gdbVersionPostfix; // this is how we want to invoke it
-	protected boolean remote; // this is if we want remote tests (gdbserver)
+	protected Boolean remote; // this is if we want remote tests (gdbserver) -- it is null until we have made the determination
 
 	protected static List<String> calculateVersions() {
 		if (globalVersion != null) {
@@ -140,6 +140,30 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 		// return if it has to be same of higher
 		return LaunchUtils.compareVersions(checkVersion, gdbVersion) <= 0;
+	}
+
+	/**
+	 * Assumption to make sure test only runs on remote test session.
+	 * 
+	 * This method is better than {@link #isRemoteSession()} as it can be called
+	 * at any time and does not require launch attributes to be set-up
+	 */
+	public void assumeRemoteSession() {
+		// remote is calculated as side-effect of parsing GDB version parameters
+		getGdbVersionParameter();
+		Assume.assumeTrue("Skipping non-remote tests", remote);
+	}
+
+	/**
+	 * Assumption to make sure test only runs on non-remote test session.
+	 * 
+	 * This method is better than {@link #isRemoteSession()} as it can be called
+	 * at any time and does not require launch attributes to be set-up
+	 */
+	public void assumeLocalSession() {
+		// remote is calculated as side-effect of parsing GDB version parameters
+		getGdbVersionParameter();
+		Assume.assumeFalse("Skipping remote tests", remote);
 	}
 
 	public void assumeGdbVersionAtLeast(String checkVersion) {

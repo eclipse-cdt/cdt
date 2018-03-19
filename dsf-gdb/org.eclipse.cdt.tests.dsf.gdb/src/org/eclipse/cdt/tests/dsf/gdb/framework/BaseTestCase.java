@@ -176,6 +176,11 @@ public class BaseTestCase {
 
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
 
+    /**
+     * Return whether this is a remote session.
+     * 
+     * WARNING: This method must only be called after launch attributes are initialized.
+     */
     public boolean isRemoteSession() {
 		return launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
 	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);

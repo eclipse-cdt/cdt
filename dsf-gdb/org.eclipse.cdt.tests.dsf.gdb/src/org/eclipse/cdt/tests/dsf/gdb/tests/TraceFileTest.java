@@ -69,8 +69,11 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	private final static String EXEC_NAME = "TracepointTestApp.exe";
 	private final static String TRACE_NAME = "trace";
 	private final static String TRACE_FILE_PATH = EXEC_PATH + TRACE_NAME;
-	private final static int LINE_NUMBER_1 = 17;
-	private final static int LINE_NUMBER_2 = 24;
+	// Breakpoint tags in TracepointTestApp.cc
+	public static final String[] LINE_TAGS = new String[] {
+			"IF_X_NE_A",
+			"INCR_X",
+	};
 	private final static String END_FUNCTION = "lastCall";
 	private final static String TEVAL_STRING = "a";
 	private final static String COLLECT_STRING1 = "x";
@@ -87,6 +90,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
     @Override
 	public void doBeforeTest() throws Exception {
+		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
     	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
     	removeTeminatedLaunchesBeforeTest();
     	// Suppress settings of the launch attributes and launching.
@@ -231,23 +235,17 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		// This test requires the presence of tracepoints created by another test.
 		// To allow our current test to be independent, we explicitly call
     	// the required test ourselves.
-    	try {
-    		testTraceFile();
-    		suppressRemoveAllPlatformBreakpoints = true;
-    		try {
-	    		// Cleanup the interim launch that we just caused
-	    		doAfterTest();
-	    		// Setup for the upcoming launch
-	    		doBeforeTest();
-    		} finally {
-    			suppressRemoveAllPlatformBreakpoints = false;
-    		}
-    	} catch (Throwable t) {
-    		// If we cannot setup properly, ignore the test using the
-    		// assume check below.  The reason for the failure could be a missing
-    		// gdbserver, and we don't want to fail a local test due to that
-    		Assume.assumeTrue("Cannot properly setup test", false);
-    	}
+		testTraceFile();
+		suppressRemoveAllPlatformBreakpoints = true;
+		try {
+    		// Cleanup the interim launch that we just caused
+    		doAfterTest();
+    		// Setup for the upcoming launch
+    		clearLineTags();
+    		doBeforeTest();
+		} finally {
+			suppressRemoveAllPlatformBreakpoints = false;
+		}
 
 		// Verify that actions and tracepoints required for this test are in place.
     	checkActionsAndTracepoints();
@@ -323,7 +321,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
     private void checkTracepoint(ICTracepoint tracepoint) throws Throwable {
     	TracepointActionManager tam = TracepointActionManager.getInstance();
 		assertTrue(SOURCE_NAME.equals(new Path(tracepoint.getFileName()).lastSegment()));
-		assertTrue(LINE_NUMBER_1 == tracepoint.getLineNumber() || LINE_NUMBER_2 == tracepoint.getLineNumber());
+		assertTrue(getLineForTag("IF_X_NE_A") == tracepoint.getLineNumber() || getLineForTag("INCR_X") == tracepoint.getLineNumber());
 		String[] actionNames =
 			((String)tracepoint.getMarker().getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE)).split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 		for (String name : actionNames) {
@@ -456,11 +454,11 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
-		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
+		attributes.put(MIBreakpoints.LINE_NUMBER, getLineForTag("IF_X_NE_A"));
 		attributes.put(MIBreakpoints.COMMANDS, evalAction.getName());
 		insertBreakpoint(fBreakpointsDmc, attributes);
 
-		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_2);
+		attributes.put(MIBreakpoints.LINE_NUMBER, getLineForTag("INCR_X"));
 		attributes.put(MIBreakpoints.COMMANDS,
 			String.format("%s%s%s", collectAction1.getName(),
 					TracepointActionManager.TRACEPOINT_ACTION_DELIMITER, collectAction2.getName()));

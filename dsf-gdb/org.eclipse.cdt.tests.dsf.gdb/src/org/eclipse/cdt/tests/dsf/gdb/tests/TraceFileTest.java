@@ -90,6 +90,8 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
     @Override
 	public void doBeforeTest() throws Exception {
+		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
+    	assumeRemoteSession();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
     	assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
     	removeTeminatedLaunchesBeforeTest();
@@ -341,9 +343,6 @@ public class TraceFileTest extends BaseParametrizedTestCase {
     	// Set launch attributes
 		super.setLaunchAttributes();
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
-		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
 

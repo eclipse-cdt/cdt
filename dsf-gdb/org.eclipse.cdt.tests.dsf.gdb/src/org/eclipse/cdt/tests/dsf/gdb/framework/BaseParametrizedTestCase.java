@@ -195,9 +195,10 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		assumeGdbVersionAtLeast(gdbVersionPostfix);
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbPath);
 		setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, gdbServerPath);
-		if (remote)
+		if (remote) {
 			setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+		}
 	}
 	
 	@Override

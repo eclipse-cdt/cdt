@@ -164,6 +164,8 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
+		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
+		assumeRemoteSession();
 		super.doBeforeTest();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
@@ -202,10 +204,6 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		super.setLaunchAttributes();
 
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
-
-		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 
 		// To test both fast and normal tracepoints, we use the FAST_THEN_NORMAL setting
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,

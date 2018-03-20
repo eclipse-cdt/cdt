@@ -149,10 +149,10 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1000 );
 
 		// Setup a remote launch so that it sends a "-target-remote" as part of the 
-		// launch steps.
+		// launch steps...
 		setLaunchAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, 
 				            IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE );
-		// We won't start gdbserver, so the command will timeout
+		// ... but we won't start gdbserver, so the command will timeout
 		setLaunchAttribute( ITestConstants.LAUNCH_GDB_SERVER, false);
 		
 		try {

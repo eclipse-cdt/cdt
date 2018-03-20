@@ -110,8 +110,6 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 
 	/*
 	 * Return whether thread names are reported by the debugger.
-	 *
-	 * This defaults to false, and is overridden for specific versions of gdb.
 	 */
 	protected boolean threadNamesSupported() {
 		return !runningOnWindows() && !isRemoteSession();

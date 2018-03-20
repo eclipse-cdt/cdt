@@ -706,12 +706,15 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		// on an instruction < 4 bytes long. We can use that to verify how big
 		// each instruction is.
 
+		// The disassembly does not give the required information on older GDBs.
+		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
+
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		Query<MIInfo> query = new Query<MIInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIInterpreterExecConsole(containerDmc, "disassemble /rs foo"), rm);
+						fCommandFactory.createMIInterpreterExecConsole(containerDmc, "disassemble /rm foo"), rm);
 			}
 		};
 		fGdbControl.getExecutor().execute(query);

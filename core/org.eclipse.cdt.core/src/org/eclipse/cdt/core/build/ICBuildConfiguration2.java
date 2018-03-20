@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
-import org.eclipse.core.runtime.CoreException;
-
 /**
  * @since 6.5
  */
 public interface ICBuildConfiguration2 {
 
 	/**
-	 * Refresh the Scanner info
+	 * Mark the Build Configuration as active
 	 */
-	void refreshScannerInfo() throws CoreException;
+	void setActive();
 
 }

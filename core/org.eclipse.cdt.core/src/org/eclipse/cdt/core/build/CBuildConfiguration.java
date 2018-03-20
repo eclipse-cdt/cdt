@@ -1023,7 +1023,19 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * @since 6.5
 	 */
 	@Override
-	public void refreshScannerInfo() throws CoreException {
+	public void setActive() {
+		try {
+			refreshScannerInfo();
+		} catch (CoreException e) {
+			// do nothing
+		}
+	}
+	
+	/**
+	 * @since 6.5
+	 * @throws CoreException
+	 */
+	protected void refreshScannerInfo() throws CoreException {
 		// do nothing by default
 	}
 

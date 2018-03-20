@@ -115,8 +115,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 						}
 
 						if (buildConfig == null) {
-							for (IToolChain tc : tcs) {
-								IToolChain toolChain = tcs.iterator().next();
+							for (IToolChain toolChain : tcs) {
 								buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
 										mode.getIdentifier(), monitor);
 								if (buildConfig != null) {
@@ -131,8 +130,8 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 							IProjectDescription desc = finalProject.getDescription();
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);
-							// build config has changed so Scanner Info may change too which would affect indexing
-							((ICBuildConfiguration2)buildConfig).refreshScannerInfo();
+							// notify the active build config that it is active
+							((ICBuildConfiguration2)buildConfig).setActive();
 						}
 					}
 

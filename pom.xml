@@ -477,13 +477,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<!-- Newer versions are not compatible with SonarQube running at Eclipse.
-				   Check version requirements here:
-				   https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+Maven#AnalyzingwithSonarQubeScannerforMaven-Compatibility
-				   And version of sonar @ eclipse here:
-				   https://sonar.eclipse.org/
-				    -->
-				<version>3.3.0.603</version>
+				<version>2.4</version>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>

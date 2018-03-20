@@ -263,6 +263,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			} else if (finder.containsBreak()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Break);
 				break;
+			} else if (finder.containsCase()) {
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Case);
+				break;
 			}
 		}
 

@@ -4739,4 +4739,43 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//int main() {
+	//	char c = 'A';
+	//	switch (c) {
+	//	/*$*/case 'A':/*$$*/
+	//		break;
+	//	}
+	//	return 0;
+	//}
+	public void testExtractFunction_Bug396353_1() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c = 'A';
+	//	/*$*/switch (c) {
+	//	case 'A':
+	//		break;
+	//	}/*$$*/
+	//	return 0;
+	//}
+	//====================
+	//void extracted(char c) {
+	//	switch (c) {
+	//	case 'A':
+	//		break;
+	//	}
+	//}
+	//
+	//int main() {
+	//	char c = 'A';
+	//	extracted(c);
+	//	return 0;
+	//}
+	public void testExtractFunction_Bug396353_2() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

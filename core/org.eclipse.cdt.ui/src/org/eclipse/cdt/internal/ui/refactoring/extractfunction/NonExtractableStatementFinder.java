@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 class NonExtractableStatementFinder extends ASTVisitor {
 	private boolean containsContinueStmt;
 	private boolean containsBreakStmt;
+	private boolean containsCaseStmt;
 	
 	{
 		shouldVisitStatements = true;
@@ -48,6 +50,9 @@ class NonExtractableStatementFinder extends ASTVisitor {
 				statement instanceof IASTSwitchStatement) {
 			// Extracting a whole loop or switch statement is allowed.
 			return ASTVisitor.PROCESS_SKIP;
+		} else if (statement instanceof IASTCaseStatement) {
+			containsCaseStmt = true;
+			return ASTVisitor.PROCESS_SKIP;
 		}
 		return ASTVisitor.PROCESS_CONTINUE;
 	}
@@ -58,5 +63,9 @@ class NonExtractableStatementFinder extends ASTVisitor {
 	
 	public boolean containsBreak() {
 		return containsBreakStmt;
+	}
+
+	public boolean containsCase() {
+		return containsCaseStmt;
 	}
 }

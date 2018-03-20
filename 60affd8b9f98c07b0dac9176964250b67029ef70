@@ -16,6 +16,24 @@
       "revId": "60affd8b9f98c07b0dac9176964250b67029ef70",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7c65532_c130b237",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/launch/CoreBuildLaunchBarTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2018-03-20T17:06:29Z",
+      "side": 1,
+      "message": "I like the idea.  I can make the change.  In regards to using an ICBuildConfiguration2 interface, the API tools demanded a major release bump so I didn\u0027t want any cross-project release test flagging this.  I can change the method in ICBuildConfiguration2 to be setActive() which does make more sense.  I can then make the  refreshScannerInfo() method protected and not exposed as part of the public API.",
+      "parentUuid": "388db9a0_6ca1f4b6",
+      "revId": "60affd8b9f98c07b0dac9176964250b67029ef70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

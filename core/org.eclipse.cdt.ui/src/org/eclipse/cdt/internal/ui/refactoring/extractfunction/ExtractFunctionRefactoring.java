@@ -186,7 +186,11 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				return initStatus;
 			}
 
-			checkForNonExtractableStatements(container, initStatus);
+			SelectionChecker selectionChecker = new SelectionChecker(container);
+			if (!selectionChecker.check()) {
+				initStatus.addFatalError(selectionChecker.getErrorMessage());
+				return initStatus;
+			}
 
 			List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
 			if (returnValueCandidates.size() > 1) {
@@ -251,29 +255,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 		if (candidate != null)
 			candidate.setReturnValue(true);
-	}
-
-	private void checkForNonExtractableStatements(NodeContainer container, RefactoringStatus status) {
-		NonExtractableStatementFinder finder = new NonExtractableStatementFinder();
-		for (IASTNode node : container.getNodesToWrite()) {
-			node.accept(finder);
-			if (finder.containsContinue()) {
-				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Continue);
-				break;
-			} else if (finder.containsBreak()) {
-				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Break);
-				break;
-			}
-		}
-
-		ReturnStatementFinder returnFinder = new ReturnStatementFinder();
-		for (IASTNode node : container.getNodesToWrite()) {
-			node.accept(returnFinder);
-			if (returnFinder.containsReturn()) {
-				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
-				break;
-			}
-		}
 	}
 
 	private ICPPASTFunctionDeclarator getDeclaration(IASTNode node) {

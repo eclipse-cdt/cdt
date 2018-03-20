@@ -4739,4 +4739,153 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	/*$*/loop: ++n;
+	//	if (n < 10)
+	//		goto loop;/*$$*/
+	//}
+	//====================
+	//void extracted(int n) {
+	//	loop: ++n;
+	//	if (n < 10)
+	//		goto loop;
+	//}
+	//
+	//int main() {
+	//	int n = 0;
+	//	extracted(n);
+	//}
+	public void testExtractFunction_Bug396354_1() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}/*$$*/
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}
+	//}
+	public void testExtractFunction_Bug396354_2() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(int n, int c) {
+	//	loop: if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	extracted(n, c);
+	//}
+	public void testExtractFunction_Bug396354_3() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	loop1:
+	//	/*$*/loop2:
+	//	if (n < 10) {
+	//		 n++;
+	//		 goto loop2;
+	//	}
+	//	if (c < 10) {
+	//		 c++;
+	//		 goto loop1;
+	//	}/*$$*/
+	//}
+	public void testExtractFunction_Bug396354_4() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop1:
+	//	loop2:
+	//	if (n < 10) {
+	//		 n++;
+	//		 goto loop2;
+	//	}/*$$*/
+	//	if (c < 10) {
+	//		 c++;
+	//		 goto loop1;
+	//	}
+	//}
+	public void testExtractFunction_Bug396354_5() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int loop1 = 0;
+	//	int loop2 = 1;
+	//	/*$*/loop1:
+	//	loop2:
+	//	if (loop1 < 10) {
+	//		loop1++;
+	//		goto loop2;
+	//	}
+	//	if (loop2 < 10) {
+	//		loop2++;
+	//		goto loop1;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(int loop1, int loop2) {
+	//	loop1: loop2: if (loop1 < 10) {
+	//		loop1++;
+	//		goto loop2;
+	//	}
+	//	if (loop2 < 10) {
+	//		loop2++;
+	//		goto loop1;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int loop1 = 0;
+	//	int loop2 = 1;
+	//	extracted(loop1, loop2);
+	//}
+	public void testExtractFunction_Bug396354_6() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

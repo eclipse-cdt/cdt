@@ -30,6 +30,7 @@ final class Messages extends NLS {
 	public static String ExtractFunctionRefactoring_Error_Return;
 	public static String ExtractFunctionRefactoring_Error_Continue;
 	public static String ExtractFunctionRefactoring_Error_Break;
+	public static String ExtractFunctionRefactoring_IllegalGotoSelection;
 	public static String ExtractFunctionInputPage_description;
 	public static String ExtractFunctionInputPage_access_modifier;
 	public static String ExtractFunctionInputPage_public;

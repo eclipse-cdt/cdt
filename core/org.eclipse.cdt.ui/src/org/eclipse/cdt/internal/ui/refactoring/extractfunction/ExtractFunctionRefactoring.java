@@ -187,6 +187,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			}
 
 			checkForNonExtractableStatements(container, initStatus);
+			checkForIllegalGotoSelection();
 
 			List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
 			if (returnValueCandidates.size() > 1) {
@@ -273,6 +274,16 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
 				break;
 			}
+		}
+	}
+
+	private void checkForIllegalGotoSelection() {
+		IllegalGotoSelectionFinder illegalGotoSelectionFinder = new IllegalGotoSelectionFinder();
+		for (IASTNode node : container.getNodesToWrite()) {
+			node.accept(illegalGotoSelectionFinder);
+		}
+		if (illegalGotoSelectionFinder.containsIllegalSelection()) {
+			initStatus.addFatalError(Messages.ExtractFunctionRefactoring_IllegalGotoSelection);
 		}
 	}
 

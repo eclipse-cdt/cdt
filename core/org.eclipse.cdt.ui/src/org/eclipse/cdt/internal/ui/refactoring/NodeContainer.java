@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -174,7 +175,7 @@ public class NodeContainer {
 							nameInfo.setMustBeReturnValue(true);
 							interfaceNames.add(nameInfo);
 						}
-					} else {
+					} else if (!(declarationName.getParent() instanceof IASTLabelStatement)) {
 						IASTDeclarator declarator = (IASTDeclarator) declarationName.getParent();
 						if (!hasReferenceOperator(declarator)) {
 							for (NameInformation n2 : names) {

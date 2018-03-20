@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
@@ -290,25 +291,39 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 					// Iterate through the events in the queue and check if
 					// they can be skipped.  If they can be skipped, then just
 					// mark their RM as done.  Stop iterating through the queue
-					// if an event that cannot be skipped is encountered.
-					while (!queue.fEventQueue.isEmpty()) {
-						EventInfo eventToSkipInfo = queue.fEventQueue.get(queue.fEventQueue.size() - 1);
+					// if an event that cannot be skipped is encountered unless
+					// we can check next.
+					ListIterator<EventInfo> li = queue.fEventQueue.listIterator(queue.fEventQueue.size());
+					while (li.hasPrevious()) {
+						EventInfo eventToSkipInfo = li.previous();
 
-						if (canSkipHandlingEvent(event, eventToSkipInfo.fEvent)) {
+						SKIP_RESULT canSkipHandlingEvent = canSkipHandlingEventUnified(event, eventToSkipInfo.fEvent);
+						if (canSkipHandlingEvent == SKIP_RESULT.SKIP) {
 							if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null
 									|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 								trace(event, eventToSkipInfo.fEvent, proxyStrategy, EventHandlerAction.skipped);
 							}
-							queue.fEventQueue.remove(queue.fEventQueue.size() - 1);
+							li.remove();
 							eventToSkipInfo.fClientRm.done();
+						} else if (canSkipHandlingEvent == SKIP_RESULT.NEXT) {
+							if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null
+									|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+								trace(event, eventToSkipInfo.fEvent, proxyStrategy, EventHandlerAction.next);
+							}
+							continue;
 						} else {
+							if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null
+									|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+								trace(event, eventToSkipInfo.fEvent, proxyStrategy, EventHandlerAction.not_skipped);
+							}
 							break;
 						}
 					}
 					// If the queue is empty check if the current event
 					// being processed can be skipped.  If so, cancel its
 					// processing
-					if (queue.fEventQueue.isEmpty() && canSkipHandlingEvent(event, queue.fCurrentEvent.fEvent)) {
+					if (queue.fEventQueue.isEmpty()
+							&& canSkipHandlingEventUnified(event, queue.fCurrentEvent.fEvent) == SKIP_RESULT.SKIP) {
 						if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null
 								|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 							trace(event, queue.fCurrentEvent.fEvent, proxyStrategy, EventHandlerAction.canceled);
@@ -319,6 +334,8 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 					if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null
 							|| getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
 						trace(event, null, proxyStrategy, EventHandlerAction.queued);
+						trace("Queue size: " + queue.fEventQueue.size(), null, proxyStrategy, //$NON-NLS-1$
+								EventHandlerAction.queued);
 					}
 					queue.fEventQueue.add(new EventInfo(event, crm));
 				} else {
@@ -423,9 +440,91 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * @param eventToSkip Event which is currently at the end of the queue.
 	 * @return True if the event at the end of the queue can be skipped in
 	 * favor of the new event.
+	 * @see #canSkipHandlingEvent2(Object, Object) for a more fine fine grained
+	 * skipping implementation
+	 * @deprecated New implementations should implement {@link #canSkipHandlingEvent2(Object, Object)}
 	 */
+	@Deprecated
 	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
 		return false;
+	}
+
+	/**
+	 * Return options for {@link AbstractVMProvider#canSkipHandlingEvent2(Object, Object)}
+	 */
+	public enum SKIP_RESULT {
+		/**
+		 * For extenders that use the now deprecated
+		 * {@link AbstractVMProvider#canSkipHandlingEvent(Object, Object)} the
+		 * canSkipHandlingEvent2 should return {@link #USE_BOOLEAN_CAN_SKIP} value to
+		 * cause the handleEvent to call the deprecated canSkipHandlingEvent. The base
+		 * class, AbstractVMProvider, returns this value to support existing extenders.
+		 */
+		USE_BOOLEAN_CAN_SKIP,
+
+		/**
+		 * Return {@link #SKIP} to indicate that the current event in the queue can
+		 * be discarded.
+		 *
+		 * This value is the equivalent of the deprecated {@link AbstractVMProvider#canSkipHandlingEvent(Object, Object)}
+		 * returning true.
+		 */
+		SKIP,
+
+		/**
+		 * Return {@link #DONT_SKIP} to indicate that the current event in the queue
+		 * is important and that the new event must run after it. This will stop
+		 * further processing of the queue.
+		 *
+		 * This value is the equivalent of the deprecated {@link AbstractVMProvider#canSkipHandlingEvent(Object, Object)}
+		 * returning false.
+		 */
+		DONT_SKIP,
+
+		/**
+		 * Return {@link #NEXT} to indicate that the next event in the queue should be considered for skipping and that
+		 * the current event in the queue should be run. This return value is useful for events that are not related
+		 * to each other that both need to be run. Unlike {@link #DONT_SKIP} the other events in the queue are still
+		 * considered for skipping.
+		 *
+		 * This value has no equivalent to the deprecated {@link AbstractVMProvider#canSkipHandlingEvent(Object, Object)}
+		 * method.
+		 */
+		NEXT
+	}
+
+	/**
+	 * This method is used to handle legacy overriders of {@link #canSkipHandlingEvent(Object, Object)}
+	 */
+	private SKIP_RESULT canSkipHandlingEventUnified(Object newEvent, Object eventInQueue) {
+		SKIP_RESULT canSkipHandlingEvent2 = canSkipHandlingEvent2(newEvent, eventInQueue);
+		if (canSkipHandlingEvent2 == SKIP_RESULT.USE_BOOLEAN_CAN_SKIP) {
+			return canSkipHandlingEvent(newEvent, eventInQueue) ? SKIP_RESULT.SKIP : SKIP_RESULT.DONT_SKIP;
+		}
+		return canSkipHandlingEvent2;
+	}
+
+	/**
+	 * Determines whether processing of a given event can be skipped.  This
+	 * method is called when there are multiple events waiting to be processed
+	 * by the provider.  As new events are received from the model, they are
+	 * compared with the events in the queue using this method, events at the
+	 * end of the queue are tested for removal.  If this method returns that a
+	 * given event can be skipped in favor of the new event, the skipped event
+	 * is removed from the queue.  This process is repeated with the new event
+	 * until an event which cannot be stopped is found or the queue goes empty.
+	 * <p>
+	 * This method may be overriden by specific view model provider
+	 * implementations extending this abstract class.
+	 * </p>
+	 * @param newEvent New event that was received from the model.
+	 * @param eventToSkip Event which is currently in the queue.
+	 * @return whether the event in the queue can be skipped, and if not skipped
+	 * whether to keep looking at further events earlier in the queue,
+	 * see {@link SKIP_RESULT} for details on return option.
+	 */
+	protected SKIP_RESULT canSkipHandlingEvent2(Object newEvent, Object eventInQueue) {
+		return SKIP_RESULT.USE_BOOLEAN_CAN_SKIP;
 	}
 
 	/** @since 1.1 */
@@ -802,7 +901,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * Used for tracing event handling
 	 */
 	private enum EventHandlerAction {
-		received, queued, processing, firedDeltaFor, skipped, canceled
+		received, queued, processing, firedDeltaFor, skipped, next, not_skipped, canceled
 	}
 
 	/**
@@ -824,7 +923,8 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 		StringBuilder str = new StringBuilder();
 		str.append(DsfPlugin.getDebugTime());
 		str.append(' ');
-		if (action == EventHandlerAction.skipped || action == EventHandlerAction.canceled) {
+		if (action == EventHandlerAction.skipped || action == EventHandlerAction.canceled
+				|| action == EventHandlerAction.next || action == EventHandlerAction.not_skipped) {
 			str.append(LoggingUtils.toString(this)).append(' ').append(action).append(" event ") //$NON-NLS-1$
 					.append(LoggingUtils.toString(skippedOrCanceledEvent)).append(" because of event ") //$NON-NLS-1$
 					.append(LoggingUtils.toString(event));

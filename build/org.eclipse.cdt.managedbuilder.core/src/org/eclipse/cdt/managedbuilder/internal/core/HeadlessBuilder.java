@@ -14,6 +14,7 @@
  *                                    to exit code
  *     R. Zulliger, C. Walther (Indel AG) - Bug 355609 Disable indexer
  *     John Dallaway - Bug 513763 Save workspace on conclusion
+ *     Torbjörn Svensson (STMicroelectronics) - bug #330204
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -264,43 +265,14 @@ public class HeadlessBuilder implements IApplication {
 	 */
 	private void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
 		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
-			final IProject proj = entry.getKey();
 			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
 
 			IConfiguration[] configs = new IConfiguration[cfgDescs.size()];
 			int i = 0;
 			for (ICConfigurationDescription cfgDesc : cfgDescs)
 				configs[i++] = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
-			final Map<String, String> map = BuilderFactory.createBuildArgs(configs);
 
-			IWorkspaceRunnable op = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ICommand[] commands = proj.getDescription().getBuildSpec();
-					monitor.beginTask("", commands.length); //$NON-NLS-1$
-					for (int i = 0; i < commands.length; i++) {
-						if (commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
-							proj.build(buildType, CommonBuilder.BUILDER_ID, map, new SubProgressMonitor(monitor, 1));
-						} else {
-							//Combine command args with build args
-							Map<String, String> args = commands[i].getArguments();
-							if(args != null) {
-								args.putAll(map);
-							} else {
-								args = map;
-							}
-							proj.build(buildType, commands[i].getBuilderName(),
-									args, new SubProgressMonitor(monitor, 1));
-						}
-					}
-					monitor.done();
-				}
-			};
-			try {
-				ResourcesPlugin.getWorkspace().run(op, monitor);
-			} finally {
-				monitor.done();
-			}
+			ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true, buildType);
 		}
 	}
 

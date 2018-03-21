@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.xlc.feature"
       label="%featureName"
-      version="9.4.3.qualifier"
+      version="9.4.4.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.managedbuilder.xlc.core"
       license-feature="org.eclipse.license"

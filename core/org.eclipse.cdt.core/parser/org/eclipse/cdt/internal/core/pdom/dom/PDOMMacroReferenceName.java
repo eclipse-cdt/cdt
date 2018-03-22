@@ -56,8 +56,8 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 
 		// Record our location in the file
 		IASTFileLocation fileloc = name.getFileLocation();
-		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
-		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
+		db.putInt(record + NODE_OFFSET_OFFSET, fileloc != null ? fileloc.getNodeOffset() : 0);
+		db.putShort(record + NODE_LENGTH_OFFSET, fileloc != null ? (short) fileloc.getNodeLength() : 0);
 		container.addReference(this);
 		
 		if (caller != null) {

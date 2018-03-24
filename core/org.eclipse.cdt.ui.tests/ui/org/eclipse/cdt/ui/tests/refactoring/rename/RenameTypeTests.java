@@ -2277,6 +2277,58 @@ public class RenameTypeTests extends RenameTestBase {
         assertTotalChanges(countOccurrences(contents, "String"), ch);
     }
 
+    public void testRenameClassFromCtor() throws Exception {
+        StringWriter writer = new StringWriter();
+        writer.write("class String              \n"); //$NON-NLS-1$
+        writer.write("{                         \n"); //$NON-NLS-1$
+        writer.write("public:                   \n"); //$NON-NLS-1$
+        writer.write("  String();               \n"); //$NON-NLS-1$
+        writer.write("  String(const String &other); \n"); //$NON-NLS-1$
+        writer.write("  ~String();                   \n"); //$NON-NLS-1$
+        writer.write("  String &operator=(const String &other); \n"); //$NON-NLS-1$
+        writer.write("};                        \n"); //$NON-NLS-1$
+        writer.write("  String::String() {}     \n"); //$NON-NLS-1$
+        writer.write("  String::String(const String &other) {}; \n"); //$NON-NLS-1$
+        writer.write("  String::~String() {};                   \n"); //$NON-NLS-1$
+        writer.write("  String& String::operator=(const String &other) \n"); //$NON-NLS-1$
+        writer.write("     {return *this;}                      \n"); //$NON-NLS-1$
+        String contents = writer.toString();
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
+
+        int offset= contents.indexOf("String()"); //$NON-NLS-1$
+        
+        RefactoringStatus status= checkConditions(cpp, offset, "CString");  //$NON-NLS-1$
+        assertRefactoringOk(status);
+        Change ch= getRefactorChanges(cpp, offset, "CString"); //$NON-NLS-1$
+        assertTotalChanges(countOccurrences(contents, "String"), ch); //$NON-NLS-1$
+    }
+
+    public void testRenameClassFromDtor() throws Exception {
+        StringWriter writer = new StringWriter();
+        writer.write("class String              \n"); //$NON-NLS-1$
+        writer.write("{                         \n"); //$NON-NLS-1$
+        writer.write("public:                   \n"); //$NON-NLS-1$
+        writer.write("  String();               \n"); //$NON-NLS-1$
+        writer.write("  String(const String &other); \n"); //$NON-NLS-1$
+        writer.write("  ~String();                   \n"); //$NON-NLS-1$
+        writer.write("  String &operator=(const String &other); \n"); //$NON-NLS-1$
+        writer.write("};                        \n"); //$NON-NLS-1$
+        writer.write("  String::String() {}     \n"); //$NON-NLS-1$
+        writer.write("  String::String(const String &other) {}; \n"); //$NON-NLS-1$
+        writer.write("  String::~String() {};                   \n"); //$NON-NLS-1$
+        writer.write("  String& String::operator=(const String &other) \n"); //$NON-NLS-1$
+        writer.write("     {return *this;}                      \n"); //$NON-NLS-1$
+        String contents = writer.toString();
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
+
+        int offset= contents.indexOf("~String") + 1; //$NON-NLS-1$
+        
+        RefactoringStatus status= checkConditions(cpp, offset, "CString");  //$NON-NLS-1$
+        assertRefactoringOk(status);
+        Change ch= getRefactorChanges(cpp, offset, "CString"); //$NON-NLS-1$
+        assertTotalChanges(countOccurrences(contents, "String"), ch); //$NON-NLS-1$
+    }
+
     public void testUsingDeclaration_332895() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write("namespace ns {            \n");

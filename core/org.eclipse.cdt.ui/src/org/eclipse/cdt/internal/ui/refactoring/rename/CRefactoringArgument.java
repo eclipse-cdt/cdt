@@ -94,8 +94,12 @@ public class CRefactoringArgument {
     	return fLength;
     }
 
-    public void setName(IASTName name) {
+    public void setName(String name) {
         fText= name.toString();
+    }
+    
+    public void setName(IASTName name) {
+    	setName(name.toString());
     }
     
     public void setBinding(IASTTranslationUnit tu, IBinding binding, IScope scope) {

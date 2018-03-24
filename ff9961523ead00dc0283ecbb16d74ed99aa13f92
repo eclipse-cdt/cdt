@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26d43d63_7e43feb8",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/rename/RenameTypeTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2306,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-24T01:54:44Z",
+      "side": 1,
+      "message": "It might be useful to add a test for the case where there is a space after the \u0027~\u0027 in the destructor name.",
+      "revId": "ff9961523ead00dc0283ecbb16d74ed99aa13f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d635a83f_06787ce5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRenameProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-24T01:54:44Z",
+      "side": 1,
+      "message": "ICPPMethod has an isDestructor() method that can be used instead of checking for \u0027~\u0027 manually.\n\nThere are also some extra spaces in this condition.",
+      "revId": "ff9961523ead00dc0283ecbb16d74ed99aa13f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5244cd7_02017762",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRenameProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-24T01:54:44Z",
+      "side": 1,
+      "message": "The scope of the method was the class scope, but the scope of the class would be the enclosing scope. Since we\u0027re renaming the class, we probably want to use the latter, so instead of \u0027fArgument.getScope()\u0027 we should pass \u0027newBinding.getScope()\u0027.",
+      "revId": "ff9961523ead00dc0283ecbb16d74ed99aa13f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7415a3f3_1862ff35",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRenameProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-24T01:54:44Z",
+      "side": 1,
+      "message": "C++ allows spaces between the \u0027~\u0027 and the class name in a destructor name. We don\u0027t want to insert those spaces during the refactoring.\n\nTo avoid that, we could call trim() on the resulting string, or use \u0027newBinding.getName()\u0027 to obtain the class name.",
+      "revId": "ff9961523ead00dc0283ecbb16d74ed99aa13f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12a879b5_228d21b1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRenameProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-03-24T01:54:44Z",
+      "side": 1,
+      "message": "The only thing CRefactoringArgument.setName() does with the passed IASTName is call toString() on it.\n\nRather than creating a CPPASTName, let\u0027s just add a setName(String) overload to CRefactoringArgument, so as to avoid misleading someone extending CRefactoringArgument in the future that we are passing a real AST node that\u0027s hooked up to the rest of the AST.",
+      "revId": "ff9961523ead00dc0283ecbb16d74ed99aa13f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

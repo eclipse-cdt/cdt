@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.meson.ui.tests;
 
-import static org.eclipse.swtbot.eclipse.finder.matchers.WidgetMatcherFactory.withPartName;
+import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRegex;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePageRule;
 import org.eclipse.cdt.meson.core.MesonNature;
@@ -31,16 +33,21 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 @SuppressWarnings("nls")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NewMesonProjectTest {
 
 	private static SWTWorkbenchBot bot;
-	
+
 	@ClassRule
 	public static CloseWelcomePageRule closeWelcomePage = new CloseWelcomePageRule(
 			CloseWelcomePageRule.CDT_PERSPECTIVE_ID);
@@ -49,6 +56,7 @@ public class NewMesonProjectTest {
 	public static void beforeClass() {
 		SWTBotPreferences.TIMEOUT = 50000;
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
+		SWTBotPreferences.PLAYBACK_DELAY = 500;
 		bot = new SWTWorkbenchBot();
 	}
 
@@ -57,15 +65,10 @@ public class NewMesonProjectTest {
 		ISystemSettings settings = SystemControl.getSystemSettings();
 		settings.setSendMode(SendMode.NEVER);
 		bot.resetWorkbench();
-
-		for (SWTBotView view : bot.views(withPartName("Welcome"))) {
-			view.close();
-		}
-		
 	}
 
 	@Test(timeout = 120000)
-	public void createCMakeProject() throws Exception {
+	public void addNewMesonProject() throws Exception {
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
 			bot.perspectiveByLabel("C/C++").activate();
@@ -89,23 +92,22 @@ public class NewMesonProjectTest {
 
 		// Select the shell again since magic wizardry happened
 		SWTBotShell newProjectShell = bot.shell("New Meson Project").activate();
+		bot.waitUntil(Conditions.shellIsActive("New Meson Project"));
+		newProjectShell.setFocus();
 
 		// Create the project
 		String projectName = "MesonTestProj";
-		bot.textWithLabel("Project name:").typeText(projectName);
+		bot.sleep(2000);
+		SWTBotText text = bot.textWithLabel("Project name:");
+		text.setText(projectName);
 		bot.button("Finish").click();
-		
-		newProjectShell.setFocus();
+
 		bot.waitUntil(Conditions.shellCloses(newProjectShell));
-		
-//		return;
-		
-//		// Make sure it shows up in Project Explorer
+
+		// Make sure it shows up in Project Explorer
 		SWTBotView explorer = bot.viewByPartName("Project Explorer");
 		explorer.show();
 		explorer.setFocus();
-		explorer.bot().tree().getTreeItem(projectName).select();
-		
 
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -119,4 +121,102 @@ public class NewMesonProjectTest {
 		assertTrue(project.hasNature(MesonNature.ID));
 	}
 
+	@Test
+	public void buildMesonProject() throws Exception {
+		String projectName = "MesonTestProj";
+		// Make sure the project indexer completes. At that point we're stable.
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		ICProject cproject = CoreModel.getDefault().create(project);
+
+		// open C++ perspective
+		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
+			bot.perspectiveByLabel("C/C++").activate();
+		}
+
+		// Make sure it shows up in Project Explorer
+		SWTBotView explorer = bot.viewByPartName("Project Explorer");
+		explorer.show();
+		explorer.setFocus();
+		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
+		proj.contextMenu("Build Project").click();
+
+		boolean foundExecutable = false;
+		while (!foundExecutable) {
+			IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
+			if (binaries.length > 0) {
+				for (IBinary binary : binaries) {
+					if (binary.getResource().getName().startsWith(projectName)) {
+						foundExecutable = true;
+					}
+				}
+			}
+			bot.sleep(1000);
+		}
+		assertTrue(foundExecutable);
+		
+		// check the build console output
+		SWTBotView console = bot.viewByPartName("Console");
+		console.show();
+		console.setFocus();
+		String output = console.bot().styledText().getText();
+
+		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
+		
+		assertEquals("Building in: /home/jjohnstn/junit-workspace/MesonTestProj/build/default", lines[0]);
+		assertEquals(" sh -c \"meson   /home/jjohnstn/junit-workspace/MesonTestProj\"", lines[1]);
+		assertEquals("The Meson build system", lines[2]);
+		assertTrue(lines[3].startsWith("Version:"));
+		assertEquals("Source dir: /home/jjohnstn/junit-workspace/MesonTestProj", lines[4]);
+		assertEquals("Build dir: /home/jjohnstn/junit-workspace/MesonTestProj/build/default", lines[5]);
+		assertEquals("Build type: native build", lines[6]);
+		assertEquals("Project name: MesonTestProj", lines[7]);
+		assertTrue(lines[8].startsWith("Native C compiler: cc"));
+		assertEquals("Build targets in project: 1", lines[11]);
+		assertTrue(lines[12].startsWith("[1/2] cc  -IMesonTestProj@exe"));
+		assertTrue(lines[13].startsWith("[2/2] cc  -o MesonTestProj"));
+		assertEquals("Build complete: /home/jjohnstn/junit-workspace/MesonTestProj/build/default", lines[14]);
+	}
+	
+	@Test
+	public void runMesonProject() throws Exception {
+		String projectName = "MesonTestProj";
+		// Make sure the project indexer completes. At that point we're stable.
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		CoreModel.getDefault().create(project);
+
+		// open C++ perspective
+		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
+			bot.perspectiveByLabel("C/C++").activate();
+		}
+
+		// Make sure it shows up in Project Explorer
+		SWTBotView explorer = bot.viewByPartName("Project Explorer");
+		explorer.show();
+		explorer.setFocus();
+		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
+
+		proj.expand();
+		proj.expandNode("Binaries");
+		
+		SWTBotTreeItem binaries = proj.getNode("Binaries").select();
+		binaries.getNode(0).contextMenu("Run As").menu(withRegex(".*Local C.*"), false, 0).click();
+		bot.sleep(4000);
+		
+		SWTBotView console = bot.viewByPartName("Console");
+		console.show();
+		console.setFocus();
+		String output = "";
+		
+		boolean done = false;
+		while (!done) {
+			// check the build console output
+			output = console.bot().styledText().getText();
+			if (output.startsWith("Hello") || !output.startsWith("Building in")) {
+				done = true;
+			}
+			bot.sleep(2000);
+		}
+		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
+		assertEquals("Hello World", lines[0]);
+	}
 }

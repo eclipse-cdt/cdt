@@ -262,7 +262,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
-
+			
 			Path buildDir = getBuildDirectory();
 			
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
@@ -308,6 +308,8 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return;
 				}
 			}
+			
+			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

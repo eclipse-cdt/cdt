@@ -228,27 +228,6 @@ public class RenameRegressionTests extends RenameTestBase {
         assertChange(changes, file, contents.indexOf("method1();//res2"), 7, "ooga");
     }
 
-    public void testConstructor_26() throws Exception {
-        StringWriter writer = new StringWriter();
-        writer.write("class Boo{                   \n");
-        writer.write("  Boo(){}//vp1,res1  \n");
-        writer.write("};                           \n");
-        writer.write("void f() {                   \n");
-        writer.write("   Boo a = new Boo();                    \n");
-        writer.write("}                            \n");
-
-        String contents = writer.toString();
-        IFile file = importFile("t.cpp", contents);
-        int offset =  contents.indexOf("Boo(){}") ;
-        try {
-            getRefactorChanges(file, offset, "ooga");
-        } catch (AssertionFailedError e) {
-            assertTrue(e.getMessage().startsWith("Input check on ooga failed."));
-            return;
-        }
-        fail ("An error should have occurred in the input check.");
-    }
-
     // The constructor name is accepted, but the refactoring doesn't remove the return
     // type and there is a compile error. Renaming to a constructor should be disabled.
     // However, the UI does display the error in the preview panel. Defect 78769 states
@@ -272,28 +251,6 @@ public class RenameRegressionTests extends RenameTestBase {
         } catch (AssertionFailedError e) {
             //test passes
             assertTrue(e.getMessage().startsWith("Input check on Boo failed."));
-            return;
-        }
-        fail ("An error should have occurred in the input check.");
-    }
-
-    public void testDestructor_28() throws Exception {
-        StringWriter writer = new StringWriter();
-        writer.write("class Boo{           \n");
-        writer.write("  ~Boo(){}//vp1      \n");
-        writer.write("};                   \n");
-        writer.write("void f() {           \n");
-        writer.write("   Boo a ;           \n");
-        writer.write("   a.~Boo();         \n");
-        writer.write("}                    \n");
-
-        String contents = writer.toString();
-        IFile file = importFile("t.cpp", contents);
-        int offset =  contents.indexOf("~Boo(){}") ;
-        try {
-            getRefactorChanges(file, offset, "ooga");
-        } catch (AssertionFailedError e) {
-            assertTrue(e.getMessage().startsWith("Input check on ooga failed."));
             return;
         }
         fail ("An error should have occurred in the input check.");

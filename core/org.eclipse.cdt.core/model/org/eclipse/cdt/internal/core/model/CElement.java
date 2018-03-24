@@ -292,7 +292,11 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public CElementInfo getElementInfo() throws CModelException {
-		return getElementInfo(null);
+		CElementInfo result = getElementInfo(null);
+		if (this instanceof Namespace) {
+			System.out.println("retrieved SMI " + System.identityHashCode(result) + " for Namespace element");
+		}
+		return result;
 	}
 
 	public CElementInfo getElementInfo (IProgressMonitor monitor) throws CModelException {

@@ -34,6 +34,9 @@ class SourceManipulationInfo extends CElementInfo {
 
 	protected SourceManipulationInfo(CElement element) {
 		super(element);
+		if (element instanceof Namespace) {
+			System.err.println("creating SMI " + System.identityHashCode(this) + " for Namespace element");
+		}
 		setIsStructureKnown(true);
 	}
 
@@ -51,6 +54,9 @@ class SourceManipulationInfo extends CElementInfo {
 	}
 
 	public void setIdPos(int startPos, int length) {
+		if (element instanceof Namespace) {
+			System.out.println("adding idStartPos = " + startPos + " to SMI " + System.identityHashCode(this));
+		}
 		fIdStartPos= startPos;
 		fIdLength= length;
 	}

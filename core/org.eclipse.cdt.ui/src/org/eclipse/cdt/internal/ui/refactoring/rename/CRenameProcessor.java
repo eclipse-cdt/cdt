@@ -30,10 +30,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 
 /**
  * This is the processor used for the rename. It decides which of the delegates to
@@ -120,6 +126,8 @@ public class CRenameProcessor extends RenameProcessor {
         if (path == null) {
             return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameTopProcessor_error_renameWithoutSourceFile);
         }
+
+        updateBinding();
         
         fDelegate= createDelegate();
         if (fDelegate == null) {
@@ -130,6 +138,24 @@ public class CRenameProcessor extends RenameProcessor {
         fInitialConditionsStatus.merge(status);
         return fInitialConditionsStatus;
     }
+
+	/**
+	 * Change the binding for the renaming of constructors and destructor to the class.  
+	 */
+	private void updateBinding() {
+		IBinding binding= fArgument.getBinding();
+        if (binding instanceof ICPPConstructor  ||  (binding instanceof ICPPMethod  &&  fArgument.getName().startsWith("~"))) { //$NON-NLS-1$
+        	// Switch binding to class level when constructor or destructor selected
+        	IBinding newBinding = ((ICPPMember) binding).getClassOwner();
+        	fArgument.setBinding(fArgument.getTranslationUnit(), newBinding, fArgument.getScope());
+        	
+        	if (fArgument.getName().startsWith("~")) { //$NON-NLS-1$
+        		//  Remove the '~' from the destructor name
+        		String className = fArgument.getName().substring(1);
+        		fArgument.setName(new CPPASTName(className.toCharArray()));
+        	}
+        }
+	}
 
     private CRenameProcessorDelegate createDelegate() {
         switch (fArgument.getArgumentKind()) {

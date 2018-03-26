@@ -125,6 +125,9 @@ output-1 text
 *.pda text
 *.rts text
 test_commands text
+Banana text
+cstdlib text
+vector text
 
 # Other special files
 cdtOptions text

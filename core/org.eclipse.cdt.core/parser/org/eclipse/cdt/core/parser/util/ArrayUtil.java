@@ -72,7 +72,7 @@ public abstract class ArrayUtil {
 		if (obj == null)
 			return array;
 		if (array == null || array.length == 0) {
-			Class<? extends Object> c = array != null ? array.getClass().getComponentType() : Object.class;
+			Class<? extends Object> c = array != null ? array.getClass().getComponentType() : obj.getClass();
 			array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
 			array[0] = obj;
 			return array;
@@ -457,7 +457,7 @@ public abstract class ArrayUtil {
 	 * of the non-{@code null} elements.
 	 *
 	 * If there are no {@code null}s in the original array then the original array is returned.
-
+	 *
 	 * Note that this method should only be used when the placement of {@code null}s within
 	 * the array is unknown (due to performance efficiency).
 	 */

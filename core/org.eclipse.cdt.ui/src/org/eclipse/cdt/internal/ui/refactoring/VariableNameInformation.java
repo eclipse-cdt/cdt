@@ -16,6 +16,7 @@
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class VariableNameInformation {
 		usedNames.add(name);
 	}
 
-	public void addNamesToUsedNames(List<String> names) {
+	public void addNamesToUsedNames(Collection<String> names) {
 		usedNames.addAll(names);
 	}
 }

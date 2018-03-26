@@ -343,7 +343,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	@Override
 	public final IBinding[] getBindings(ScopeLookupData lookup) {
 		char[] c = lookup.getLookupKey();
-		Object[] obj = null;
+		Object[] obj = {};
 
 		populateCache();
 		for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {

@@ -16,15 +16,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -145,5 +148,42 @@ public class NodeHelper {
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
 		return ASTQueries.findAncestorWithType(node, ICPPASTTemplateDeclaration.class) != null;
+	}
+
+	public static boolean isAssignment(IASTNode node) {
+		if (node instanceof IASTExpressionStatement)
+			node = ((IASTExpressionStatement) node).getExpression();
+		if (node instanceof IASTBinaryExpression) {
+			IASTBinaryExpression binExpr = (IASTBinaryExpression) node;
+			int operator = binExpr.getOperator();
+			if (operator == IASTBinaryExpression.op_binaryAndAssign
+					|| operator == IASTBinaryExpression.op_binaryOrAssign
+					|| operator == IASTBinaryExpression.op_binaryXorAssign
+					|| operator == IASTBinaryExpression.op_divideAssign
+					|| operator == IASTBinaryExpression.op_minusAssign
+					|| operator == IASTBinaryExpression.op_moduloAssign
+					|| operator == IASTBinaryExpression.op_multiplyAssign
+					|| operator == IASTBinaryExpression.op_plusAssign
+					|| operator == IASTBinaryExpression.op_shiftLeftAssign
+					|| operator == IASTBinaryExpression.op_shiftRightAssign) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isIncrementOrDecrement(IASTNode node) {
+		if (node instanceof IASTExpressionStatement)
+			node = ((IASTExpressionStatement) node).getExpression();
+		if (node instanceof IASTUnaryExpression) {
+			IASTUnaryExpression unaryExpr = (IASTUnaryExpression) node;
+			int operator = unaryExpr.getOperator();
+			if (operator == IASTUnaryExpression.op_postFixDecr
+					|| operator == IASTUnaryExpression.op_postFixIncr
+					|| operator == IASTUnaryExpression.op_prefixDecr
+					|| operator == IASTUnaryExpression.op_prefixIncr)
+				return true;
+		}
+		return false;
 	}
 }

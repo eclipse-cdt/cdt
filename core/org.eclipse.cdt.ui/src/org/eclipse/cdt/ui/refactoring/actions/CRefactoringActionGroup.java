@@ -115,7 +115,9 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private CRenameAction fRenameAction;
     private RefactoringAction fExtractConstantAction;
     private RefactoringAction fExtractLocalVariableAction;
+    private RefactoringAction fMoveTypeAction;
     private RefactoringAction fExtractFunctionAction;
+    private RefactoringAction fInlineAction;
 	private RefactoringAction fToggleFunctionAction;
     private RefactoringAction fHideMethodAction;
 	private IWorkbenchSite fSite;
@@ -161,6 +163,14 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
         	fExtractFunctionAction = new ExtractFunctionAction();
 			fExtractFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_FUNCTION);
 			fAllActions.add(fExtractFunctionAction);
+
+		fMoveTypeAction= new MoveTypeAction();
+		fMoveTypeAction.setActionDefinitionId(ICEditorActionDefinitionIds.MOVE_TYPE);
+		fAllActions.add(fMoveTypeAction);
+
+		fInlineAction = new InlineLocalVariableAction();
+			fInlineAction.setActionDefinitionId(ICEditorActionDefinitionIds.INLINE_LOCAL_VARIABLE);
+			fAllActions.add(fInlineAction);
 
 			fToggleFunctionAction = new ToggleFunctionAction();
 			fToggleFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_FUNCTION);
@@ -208,6 +218,8 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_CONSTANT, fExtractConstantAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_LOCAL_VARIABLE, fExtractLocalVariableAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
+		setActionHandler(actionBar, CdtActionConstants.MOVE_TYPE, fMoveTypeAction);
+		setActionHandler(actionBar, CdtActionConstants.INLINE_LOCAL_VARIABLE, fInlineAction);
 		setActionHandler(actionBar, CdtActionConstants.TOGGLE_FUNCTION, fToggleFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
 	}
@@ -240,6 +252,8 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			addAction(refactorSubmenu, fExtractConstantAction);
 			addAction(refactorSubmenu, fExtractLocalVariableAction);
 			addAction(refactorSubmenu, fExtractFunctionAction);
+			addAction(refactorSubmenu, fMoveTypeAction);
+			addAction(refactorSubmenu, fInlineAction);
 			addAction(refactorSubmenu, fToggleFunctionAction);
 			addAction(refactorSubmenu, fHideMethodAction);
 			refactorSubmenu.add(new Separator(GROUP_REORG2));

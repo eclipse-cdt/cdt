@@ -279,6 +279,13 @@ public class CdtActionConstants {
 	public static final String EXTRACT_LOCAL_VARIABLE= "org.eclipse.cdt.ui.actions.ExtractLocalVariable"; //$NON-NLS-1$
 	
 	/**
+	 * Refactor menu: name of standard Extract Type global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.ExtractLocalVariable"</code>).
+     * @since 6.5
+	 */
+	public static final String MOVE_TYPE= "org.eclipse.cdt.ui.actions.MoveType"; //$NON-NLS-1$
+
+	/**
 	 * Refactor menu: name of standard Hide Method global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.HideMethod"</code>).
 	 */
@@ -327,6 +334,13 @@ public class CdtActionConstants {
 	 * (value <code>"org.eclipse.cdt.ui.actions.Inline"</code>).
 	 */
 	public static final String INLINE= "org.eclipse.cdt.ui.actions.Inline"; //$NON-NLS-1$
+
+	/**
+	 * Refactor menu: name of standard Inline global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.InlineLocalVariable"</code>).
+	 * @since 6.5
+	 */
+	public static final String INLINE_LOCAL_VARIABLE= "org.eclipse.cdt.ui.actions.InlineLocalVariable"; //$NON-NLS-1$
 
 	/**
 	 * Refactor menu: name of standard Extract Interface global action

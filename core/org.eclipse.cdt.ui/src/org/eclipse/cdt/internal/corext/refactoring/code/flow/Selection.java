@@ -154,7 +154,7 @@ public class Selection {
 	public boolean liesOutside(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
 		int nodeStart= location.getNodeOffset();
-		return fEnd < nodeStart || nodeStart + location.getNodeLength() < fStart; 
+		return fEnd < nodeStart || nodeStart + location.getNodeLength() < fStart;
 	}
 
 	@Override

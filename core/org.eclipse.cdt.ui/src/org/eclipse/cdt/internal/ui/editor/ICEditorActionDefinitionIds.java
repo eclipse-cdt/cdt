@@ -115,10 +115,22 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String EXTRACT_LOCAL_VARIABLE= "org.eclipse.cdt.ui.refactor.extract.local.variable"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the refactor -> extract type action
+	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.type"</code>).
+	 */
+	public static final String MOVE_TYPE= "org.eclipse.cdt.ui.refactor.move.type"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the refactor -> extract function action (value
 	 * <code>"org.eclipse.cdt.ui.refactor.extract.function"</code>).
 	 */
 	public static final String EXTRACT_FUNCTION = "org.eclipse.cdt.ui.refactor.extract.function"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the refactor -> inline action (value
+	 * <code>"org.eclipse.cdt.ui.refactor.inline.local.variable"</code>).
+	 */
+	public static final String INLINE_LOCAL_VARIABLE = "org.eclipse.cdt.ui.refactor.inline.local.variable"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the refactor -> toggle function action (value

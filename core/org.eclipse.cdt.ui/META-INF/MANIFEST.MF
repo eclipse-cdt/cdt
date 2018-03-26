@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.ui; singleton:=true
-Bundle-Version: 6.3.1.qualifier
+Bundle-Version: 6.4.0.qualifier
 Bundle-Activator: org.eclipse.cdt.ui.CUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -44,6 +44,8 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.ui.refactoring.hidemethod;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.implementmethod;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.includes;x-friends:="org.eclipse.cdt.ui.tests",
+ org.eclipse.cdt.internal.ui.refactoring.inlinelocalvariable,
+ org.eclipse.cdt.internal.ui.refactoring.movetype;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.rename;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.togglefunction;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.utils;x-friends:="org.eclipse.cdt.ui.tests",
@@ -127,3 +129,5 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[5.2.0,7.0.0)",
  org.eclipse.tools.templates.ui;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.eclipse.cdt.codan.core.cxx,
+ org.eclipse.cdt.codan.internal.checkers

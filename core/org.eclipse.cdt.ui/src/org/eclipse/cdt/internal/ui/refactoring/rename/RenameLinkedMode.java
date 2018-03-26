@@ -203,7 +203,7 @@ public class RenameLinkedMode {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 					if (astRoot == null)
 						return Status.CANCEL_STATUS;
-					
+
 					IASTNodeSelector selector= astRoot.getNodeSelector(null);
 					IASTName name= selector.findEnclosingName(secectionOffset, selectionLength);
 					if (name != null) {
@@ -426,10 +426,10 @@ public class RenameLinkedMode {
 		IWorkingCopy workingCopy = getWorkingCopy();
         IResource resource= workingCopy.getResource();
         if (!(resource instanceof IFile)) {
-        	return null;
+		return null;
         }
-    	CRefactoringArgument arg=
-    		new CRefactoringArgument((IFile) resource, fOriginalSelection.x, fOriginalSelection.y);
+	CRefactoringArgument arg=
+		new CRefactoringArgument((IFile) resource, fOriginalSelection.x, fOriginalSelection.y);
         CRenameProcessor processor= new CRenameProcessor(CRefactory.getInstance(), arg);
         processor.setReplacementText(newName);
         CRenameRefactoringPreferences preferences = new CRenameRefactoringPreferences();
@@ -525,7 +525,7 @@ public class RenameLinkedMode {
 		}
 		return GPPLanguage.getDefault();
 	}
-	
+
 	public boolean isOriginalName() {
 		try {
 			String newName= fNamePosition.getContent();

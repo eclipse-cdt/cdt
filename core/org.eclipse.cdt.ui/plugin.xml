@@ -1822,6 +1822,20 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.inline.local.variable"
+               label="%Refactoring.inlineLocalVariable.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.InlineLocalVariable"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.move.type"
+               label="%Refactoring.moveType.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.MoveType"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.extract.function"
                label="%Refactoring.extractFunction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
@@ -2710,6 +2724,16 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
      <key
+            sequence="M2+M3+F"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.move.type"/>
+     <key
+            sequence="M2+M3+I"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.inline.local.variable"/>
+     <key
             platform="carbon"
             sequence="M2+M3+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -3162,6 +3186,14 @@
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactoring.command.ExtractLocalVariable"
             name="%refactoringExtractLocalVariable.label"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactoring.command.MoveType"
+            name="%refactoringMoveType.label"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactoring.command.InlineLocalVariable"
+            name="%refactoringInlineLocalVariable.label"/>
 	  <command
 	        categoryId="org.eclipse.cdt.ui.category.refactoring"
 	        id="org.eclipse.cdt.ui.refactor.hide.method"   
@@ -3186,6 +3218,16 @@
             description="%ActionDefinition.extractFunction.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.function"/>
+      <command
+            name="%ActionDefinition.moveType.name"
+            description="%ActionDefinition.moveType.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.move.type"/>
+	  <command
+            name="%ActionDefinition.inlineLocalVariable.name"
+            description="%ActionDefinition.inlineLocalVariable.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.inline.local.variable"/>
       <command
             name="%ActionDefinition.toggleFunction.name"
             description="%ActionDefinition.toggleFunction.description"
@@ -4453,6 +4495,10 @@
       <contribution
             class="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringContribution"
             id="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.movetype.MoveTypeRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.movetype.MoveTypeRefactoring">
       </contribution>
       <contribution
             class="org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoringContribution"

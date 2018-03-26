@@ -32,11 +32,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation.Indirection;
@@ -89,17 +92,30 @@ public abstract class FunctionExtractor {
 		for (IASTParameterDeclaration param : getParameterDeclarations(allUsedNames, nodeFactory)) {
 			declarator.addParameterDeclaration(param);
 		}
-		
 		return declarator;
 	}
-	
-	public List<IASTParameterDeclaration> getParameterDeclarations(
-			Collection<NameInformation> parameterNames, INodeFactory nodeFactory) {
-		List<IASTParameterDeclaration> result = new ArrayList<>(parameterNames.size());		
+
+	public List<IASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> parameterNames,
+			INodeFactory nodeFactory) {
+		List<IASTParameterDeclaration> result = new ArrayList<>(parameterNames.size());
 		for (NameInformation param : parameterNames) {
 			result.add(param.getParameterDeclaration(nodeFactory));
 		}
 		return result;
+	}
+
+	public IASTDeclSpecifier createAutoSpecifier(INodeFactory nodeFactory) {
+		IASTSimpleDeclSpecifier sd = nodeFactory.newSimpleDeclSpecifier();
+		sd.setType(IASTSimpleDeclSpecifier.t_auto);
+		return sd;
+	}
+
+	public IASTDeclSpecifier createAutoRefRefDeclSpecifier(INodeFactory nodeFactory,
+			List<IASTPointerOperator> pointerOperators) {
+		pointerOperators.clear();
+		pointerOperators.add(new CPPASTReferenceOperator(false));
+		pointerOperators.add(new CPPASTReferenceOperator(false));
+		return createAutoSpecifier(nodeFactory);
 	}
 
 	/**

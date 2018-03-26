@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 public class ExtractFunctionInformation {
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
+	private Predicate<String> nameUsedChecker = (String) -> false;
 	private String methodName;
 	private boolean replaceDuplicates;
 	private List<NameInformation> parameters;
@@ -145,5 +147,13 @@ public class ExtractFunctionInformation {
 			return declSpecifier == null || !declSpecifier.isConst();
 		}
 		return false;
+	}
+
+	public void setNameUsedChecker(Predicate<String> nameOccupiedChecker) {
+		this.nameUsedChecker = nameOccupiedChecker;
+	}
+
+	public boolean isNameUsed(String name) {
+		return nameUsedChecker.test(name);
 	}
 }

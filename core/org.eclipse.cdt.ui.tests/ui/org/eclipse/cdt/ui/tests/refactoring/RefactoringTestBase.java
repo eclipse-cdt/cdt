@@ -15,18 +15,24 @@ package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -41,6 +47,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextSelection;
@@ -95,6 +102,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 				: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin",
 						IPDOMManager.ID_NO_INDEXER);
 		TestScannerProvider.sLocalIncludes = new String[] { cproject.getProject().getLocation().toOSString() };
+
+		setUpAdditionalIncludeFolders();
 
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
@@ -151,8 +160,26 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		if (selectedFile == null && !testFiles.isEmpty()) {
 			selectedFile = testFiles.iterator().next();
 		}
+
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
+	}
+
+	private void setUpAdditionalIncludeFolders() throws CModelException {
+		final String[] absolutePaths = Arrays.stream(additionalIncludePaths()).map(p -> new File(p).getAbsolutePath())
+				.toArray(String[]::new);
+		if (absolutePaths.length == 0) {
+			return;
+		}
+		final IPathEntry[] pathEntries = cproject.getRawPathEntries();
+		IPathEntry[] newPathEntries = new IPathEntry[pathEntries.length + absolutePaths.length];
+		newPathEntries = ArrayUtil.addAll(newPathEntries, pathEntries);
+		newPathEntries = ArrayUtil.addAll(newPathEntries, Arrays.stream(absolutePaths)
+				.map(p -> CoreModel.newIncludeEntry(Path.EMPTY, null, new Path(p), true)).toArray(IPathEntry[]::new));
+		cproject.setRawPathEntries(newPathEntries, new NullProgressMonitor());
+		ICModelStatus status = CoreModel.validatePathEntries(cproject, newPathEntries);
+		assertTrue(status.isOK());
+		TestScannerProvider.sIncludes = ArrayUtil.addAll(TestScannerProvider.sIncludes, absolutePaths);
 	}
 
 	@Override
@@ -167,6 +194,15 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	protected void assertRefactoringSuccess() throws Exception {
 		executeRefactoring(true);
 		compareFiles();
+	}
+
+	/**
+	 * Override this if the tests need additional includes paths.
+	 *
+	 * @return An array of relative path {@link String} otherwise. Empty per default.
+	 */
+	protected String[] additionalIncludePaths() {
+		return new String[] {};
 	}
 
 	protected void assertRefactoringFailure() throws Exception {

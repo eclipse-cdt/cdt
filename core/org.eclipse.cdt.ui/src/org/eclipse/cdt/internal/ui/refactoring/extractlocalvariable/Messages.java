@@ -24,6 +24,7 @@ final class Messages extends NLS {
 	public static String ReplaceExpression;
 	public static String TooManyExpressionsSelected;
 	public static String VariableName;
+	public static String InputPage_ExtractAllOccurrences;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

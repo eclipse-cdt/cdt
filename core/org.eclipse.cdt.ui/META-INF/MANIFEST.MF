@@ -44,6 +44,8 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.ui.refactoring.hidemethod;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.implementmethod;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.includes;x-friends:="org.eclipse.cdt.ui.tests",
+ org.eclipse.cdt.internal.ui.refactoring.inlinelocalvariable,
+ org.eclipse.cdt.internal.ui.refactoring.movetype;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.rename;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.togglefunction;x-friends:="org.eclipse.cdt.ui.tests",
  org.eclipse.cdt.internal.ui.refactoring.utils;x-friends:="org.eclipse.cdt.ui.tests",
@@ -128,3 +130,5 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[6.6.0,7.0.0)",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.cdt.ui
+Import-Package: org.eclipse.cdt.codan.core.cxx,
+ org.eclipse.cdt.codan.internal.checkers

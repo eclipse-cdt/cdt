@@ -84,7 +84,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation nameInfo,
 			List<IASTPointerOperator> pointerOperators) {
-		IType returnType = determineReturnType(extractedNode); 
+		IType returnType = determineReturnType(extractedNode);
 		INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
 		DeclarationGenerator generator = DeclarationGenerator.create(factory);
 		IASTDeclarator declarator = generator.createDeclaratorFromType(returnType, null);
@@ -96,6 +96,9 @@ public class ExpressionExtractor extends FunctionExtractor {
 		List<ITypedef> typedefs = getTypedefs(extractedNode);
 		if (extractedNode instanceof IASTExpression) {
 			IType expressionType = ((IASTExpression) extractedNode).getExpressionType();
+			while (expressionType instanceof ITypedef) {
+				expressionType = ((ITypedef) expressionType).getType();
+			}
 			for (ITypedef typedef : typedefs) {
 				if (typedef.getType().isSameType(expressionType)) {
 					return typedef;

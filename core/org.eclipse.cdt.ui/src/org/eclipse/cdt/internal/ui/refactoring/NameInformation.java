@@ -57,6 +57,7 @@ public class NameInformation {
 	private boolean isWriteAccess;
 	private boolean passOutputByPointer;
 	private boolean isReturnValue;
+	private boolean isLValue;
 	private String newName;
 	private int newOrder;
 	private boolean isDeleted;
@@ -106,6 +107,23 @@ public class NameInformation {
 	void setOutput(boolean isOutput) {
 		this.isOutput = isOutput;
 		indirection = null;
+	}
+
+	public void setLvalue(boolean isArraySubscript) {
+		if(!(isArraySubscript && getDeclarator() instanceof IASTArrayDeclarator)) {
+			boolean isCpp = declarationName.getTranslationUnit() instanceof ICPPASTTranslationUnit;
+			if (isCpp) {
+				indirection = Indirection.REFERENCE;
+			} else {
+				indirection = Indirection.POINTER;
+			}
+		}
+		isWriteAccess = true;
+		isLValue = true;
+	}
+
+	public boolean isLValue() {
+		return isLValue;
 	}
 
 	public boolean isOutputParameter() {

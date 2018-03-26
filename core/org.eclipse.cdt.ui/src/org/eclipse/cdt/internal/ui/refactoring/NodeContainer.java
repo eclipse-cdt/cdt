@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -167,6 +169,7 @@ public class NodeContainer {
 			interfaceNames = new ArrayList<NameInformation>();
 
 			for (NameInformation nameInfo : names) {
+
 				IASTName declarationName = nameInfo.getDeclarationName();
 				if (declarations.add(declarationName)) {
 					if (isDeclaredInSelection(nameInfo)) {
@@ -174,21 +177,26 @@ public class NodeContainer {
 							nameInfo.setMustBeReturnValue(true);
 							interfaceNames.add(nameInfo);
 						}
-					} else {
-						IASTDeclarator declarator = (IASTDeclarator) declarationName.getParent();
-						if (!hasReferenceOperator(declarator)) {
-							for (NameInformation n2 : names) {
-								if (n2.getDeclarationName() == declarationName) {
-									int flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
-									if ((flag & PDOMName.WRITE_ACCESS) != 0) {
-										nameInfo.setWriteAccess(true);
-										break;
+					} else if (!(declarationName.getParent() instanceof IASTLabelStatement)){
+						if (ASTQueries.findAncestorWithType(nameInfo.getName(), ICPPASTLambdaExpression.class) != null){
+							nameInfo.setWriteAccess(true);
+							nameInfo.setOutput(true);
+						} else {
+							IASTDeclarator declarator = (IASTDeclarator) declarationName.getParent();
+							if (!hasReferenceOperator(declarator)) {
+								for (NameInformation n2 : names) {
+									if (n2.getDeclarationName() == declarationName) {
+										int flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
+										if ((flag & PDOMName.WRITE_ACCESS) != 0) {
+											nameInfo.setWriteAccess(true);
+											break;
+										}
 									}
 								}
-							}
-							if (nameInfo.isWriteAccess() &&
-									externalReads.contains(nameInfo.getName().resolveBinding())) {
-								nameInfo.setOutput(true);
+								if (nameInfo.isWriteAccess()
+										&& externalReads.contains(nameInfo.getName().resolveBinding())) {
+									nameInfo.setOutput(true);
+								}
 							}
 						}
 						interfaceNames.add(nameInfo);
@@ -196,7 +204,6 @@ public class NodeContainer {
 				}
 			}
 		}
-
 		return interfaceNames;
 	}
 

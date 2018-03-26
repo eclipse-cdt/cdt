@@ -97,6 +97,8 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 
 		textField = createTextInputField(result, SWT.BORDER);
 		textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		textField.setText(info.getMethodName());
+		textField.setSelection(textField.getText().length());
 
 		layouter.perform(label, textField, 1);
 
@@ -257,6 +259,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 
 		int top = signaturePreview.getTextWidget().getTopPixel();
 		String signature = refactoring.getSignature(methodName);
+
 		signaturePreviewDocument.set(signature);
 		signaturePreview.getTextWidget().setTopPixel(top);
 	}
@@ -280,7 +283,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		if (visible) {
 			if (firstTime) {
 				firstTime = false;
-				setPageComplete(false);
+				setPageComplete(validatePage(true));
 				updatePreview(getText());
 				textField.setFocus();
 			} else {
@@ -323,6 +326,10 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		String methodName = getText();
 		if (methodName.isEmpty()) {
 			result.addFatalError(Messages.ExtractFunctionInputPage_validation_empty_function_name);
+			return result;
+		}
+		if (info.isNameUsed(methodName)) {
+			result.addWarning(Messages.ExtractFunctionRefactoring_FunctionAmbiguity);
 			return result;
 		}
 		result.merge(refactoring.checkMethodName());

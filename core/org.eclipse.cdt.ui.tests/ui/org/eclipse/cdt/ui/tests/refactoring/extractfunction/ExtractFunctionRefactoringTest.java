@@ -19,6 +19,8 @@ import java.util.Map;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionInformation;
@@ -53,6 +55,12 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 
 	public static Test suite() {
 		return suite(ExtractFunctionRefactoringTest.class);
+	}
+
+	@Override
+	public void setUp() throws Exception {
+		setIncludeFolder("resources/includes/");
+		super.setUp();
 	}
 
 	@Override
@@ -101,6 +109,10 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 
 	private String getName(NameInformation nameInfo) {
 		return String.valueOf(nameInfo.getName().getSimpleID());
+	}
+
+	private void allowNameComputation() {
+		CPPASTNameBase.sAllowNameComputation = true;
 	}
 
 	//A.h
@@ -4738,5 +4750,3499 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//}
 	public void testExtractWithAutoVar() throws Exception {
 		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int foo() {
+	//	return 42;
+	//}
+	//
+	//int main() {
+	//	int a = /*$*/foo()/*$$*/;
+	//}
+	//====================
+	//int foo() {
+	//	return 42;
+	//}
+	//
+	//int extracted() {
+	//	return foo();
+	//}
+	//
+	//int main() {
+	//	int a = extracted();
+	//}
+	public void testExtractFunctionCallExpression_Bug396338() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int foo() {
+	//	return 42;
+	//}
+	//
+	//int main() {
+	//	int a = /*$*/foo/*$$*/();
+	//}
+	public void testExtractFunctionName_Bug396338() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int foo(int a) {
+	//	return a + 5;
+	//}
+	//
+	//int main() {
+	//	int a = foo(/*$*/2/*$$*/);
+	//}
+	//====================
+	//int foo(int a) {
+	//	return a + 5;
+	//}
+	//
+	//constexpr int extracted() {
+	//	return 2;
+	//}
+	//
+	//int main() {
+	//	int a = foo(extracted());
+	//}
+	public void testExtractFunctionParameter_Bug396338() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c { 'A' };
+	//	switch (c) {
+	//	case /*$*/'A'/*$$*/:
+	//		break;
+	//	}
+	//}
+	//====================
+	//constexpr char extracted() {
+	//	return 'A';
+	//}
+	//
+	//int main() {
+	//	char c { 'A' };
+	//	switch (c) {
+	//	case extracted():
+	//		break;
+	//	}
+	//}
+	public void testExtractLiteralExpressionInCaseStatement_Bug396351() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c = 'A';
+	//	switch (c) {
+	//	/*$*/case 'A':/*$$*/
+	//		break;
+	//	}
+	//}
+	//
+	public void testExtractCaseStatement_Bug396353() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c { 'A' };
+	//	switch (c) {
+	//	/*$*/case 'A':
+	//		break;/*$$*/
+	//	}
+	//}
+	//
+	public void testExtractCaseAndBreakStatement_Bug396353() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c { 'A' };
+	//	/*$*/switch (c) {
+	//	case 'A':
+	//		break;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(char c) {
+	//	switch (c) {
+	//	case 'A':
+	//		break;
+	//	}
+	//}
+	//
+	//int main() {
+	//	char c { 'A' };
+	//	extracted(c);
+	//}
+	public void testExtractWholeSwitchStatement_Bug396353() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	/*$*/loop: ++n;
+	//	if (n < 10)
+	//		goto loop;/*$$*/
+	//}
+	//====================
+	//void extracted(int n) {
+	//	loop: ++n;
+	//	if (n < 10)
+	//		goto loop;
+	//}
+	//
+	//int main() {
+	//	int n = 0;
+	//	extracted(n);
+	//}
+	public void testExtractLabelStatementAndCorrespondingGotoStatement_Bug396354() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	loop: ++n;
+	//	if (n < 10)
+	//		/*$*/goto loop;/*$$*/
+	//}
+	public void testExtractGotoStatementWithoutLabelStatement_Bug396354() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}/*$$*/
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}
+	//}
+	//
+	public void testExtractLabelStatementButNotAllGotoStatements_Bug396354() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(int n, int c) {
+	//	loop: if (n < 10) {
+	//		n++;
+	//		goto loop;
+	//	}
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	extracted(n, c);
+	//}
+	public void testExtractLabelStatementAndAllGotoStatements_Bug396354() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	loop1:
+	//	/*$*/loop2:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop2;
+	//	}
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop1;
+	//	}/*$$*/
+	//}
+	public void testExtractOneCompleteOneWithoutLabelStatement_Bug396354() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int n = 0;
+	//	int c = 1;
+	//	/*$*/loop1:
+	//	loop2:
+	//	if (n < 10) {
+	//		n++;
+	//		goto loop2;
+	//	}/*$$*/
+	//	if (c < 10) {
+	//		c++;
+	//		goto loop1;
+	//	}
+	//}
+	public void testExtractBothLabelsButOnlyOneWithAllGotoStatements_Bug396354() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int loop1 = 0;
+	//	int loop2 = 1;
+	//	/*$*/loop1:
+	//	loop2:
+	//	if (loop1 < 10) {
+	//		loop1++;
+	//		goto loop2;
+	//	}
+	//	if (loop2 < 10) {
+	//		loop2++;
+	//		goto loop1;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(int loop1, int loop2) {
+	//	loop1: loop2: if (loop1 < 10) {
+	//		loop1++;
+	//		goto loop2;
+	//	}
+	//	if (loop2 < 10) {
+	//		loop2++;
+	//		goto loop1;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int loop1 = 0;
+	//	int loop2 = 1;
+	//	extracted(loop1, loop2);
+	//}
+	public void testExtractAllGotosAndLabelStatments_Bug396354() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//   auto lambda = /*$*/[] () {std::cout << "hello\n";};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted() {
+	//	return []() {std::cout << "hello\n";};
+	//}
+	//
+	//int main() {
+	//	auto lambda = extracted();
+	//}
+	public void testExtractLambdaExpressionNoCaptureNoParameter_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//   auto lambda = /*$*/[] (auto a, auto b) {std::cout << a + b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted() {
+	//	return [](auto a, auto b) {std::cout << a + b << '\n';};
+	//}
+	//
+	//int main() {
+	//	auto lambda = extracted();
+	//}
+	public void testExtractLambdaExpressionParametersByValue_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//   auto lambda = /*$*/[] (auto &a, auto &b) {std::cout << ++a << " " << ++b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted() {
+	//	return [](auto& a, auto& b) {std::cout << ++a << " " << ++b << '\n';};
+	//}
+	//
+	//int main() {
+	//	auto lambda = extracted();
+	//}
+	public void testExtractLambdaExpressionParametersByReference_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a{5};
+	//	int b{4};
+	//	auto lambda = /*$*/[a, b] () {std::cout << a + b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a, int& b) {
+	//	return [a, b]() {std::cout << a + b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a{5};
+	//	int b{4};
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionValuesCaptured_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a{5};
+	//	int b{4};
+	//	auto lambda = /*$*/[&a, &b] () {std::cout << ++a << " " << ++b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a, int& b) {
+	//	return [&a, &b]() {std::cout << ++a << " " << ++b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a{5};
+	//	int b{4};
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionReferencesCaptured_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[=] () {std::cout << a + b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a, int& b) {
+	//	return [=]() {std::cout << a + b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionEverythingCapturedByValue_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[&] () {std::cout << ++a << " " << ++b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a, int& b) {
+	//	return [&]() {std::cout << ++a << " " << ++b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionEverythingCapturedByReference_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[=, &b] () {std::cout << a << " " << ++b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& b, int& a) {
+	//	return [=, &b]() {std::cout << a << " " << ++b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(b, a);
+	//}
+	public void testExtractLambdaExpressionCapturedByReferenceEverythingElseByValue_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[&, b] () {std::cout << ++a << " " << b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& b, int& a) {
+	//	return [&, b]() {std::cout << ++a << " " << b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(b, a);
+	//}
+	public void testExtractLambdaExpressionCapturedByValueEverythingElseByReference_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	auto lambda = /*$*/[a] (auto b) {std::cout << a+b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a) {
+	//	return [a](auto b) {std::cout << a + b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	auto lambda = extracted(a);
+	//}
+	public void testExtractLambdaExpressionCapturedByValueAndOneParameter_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[=] () mutable {std::cout << ++a << " " << ++b << '\n';};/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//auto extracted(int& a, int& b) {
+	//	return [=]() mutable {std::cout << ++a << " " << ++b << '\n';};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionEverythingCapturedByValueAndMutable_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = /*$*/[=] (int c) {return a + b + c;};/*$$*/
+	//}
+	//====================
+	//auto extracted(int& a, int& b) {
+	//	return [=](int c) {return a + b + c;
+	//	};
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	int b { 3 };
+	//	auto lambda = extracted(a, b);
+	//}
+	public void testExtractLambdaExpressionWithReturnStatement_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//Example.cpp
+	//#include "Example.h"
+	//#include <iostream>
+	//
+	//void Example::foo() {
+	//	int a { 4 };
+	//	auto lambda = /*$*/[=] (int b) {std::cout << a + b;};/*$$*/
+	//}
+	//====================
+	//#include "Example.h"
+	//#include <iostream>
+	//
+	//auto Example::extracted(int& a) {
+	//	return [=](int b) {std::cout << a + b;};
+	//}
+	//
+	//void Example::foo() {
+	//	int a { 4 };
+	//	auto lambda = extracted(a);
+	//}
+
+	//Example.h
+	//class Example {
+	//public:
+	//	void foo();
+	//};
+	//====================
+	//class Example {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	auto extracted(int& a);
+	//};
+	public void testExtractLambdaExpressionInsideMemberFunction_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//Example.cpp
+	//#include "Example.h"
+	//#include <iostream>
+	//
+	//void Example::foo() {
+	//	int a { 4 };
+	//	auto lambda = /*$*/[=] (int b) {std::cout << a + b + c;};/*$$*/
+	//}
+	//====================
+	//#include "Example.h"
+	//#include <iostream>
+	//
+	//auto Example::extracted(int& a) {
+	//	return [=](int b) {std::cout << a + b + c;};
+	//}
+	//
+	//void Example::foo() {
+	//	int a { 4 };
+	//	auto lambda = extracted(a);
+	//}
+
+	//Example.h
+	//class Example {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	int c { 3 };
+	//};
+	//====================
+	//class Example {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	int c { 3 };
+	//
+	//	auto extracted(int& a);
+	//};
+	public void testExtractLambdaExpressionInsideMemberFunctionThatUsesMembers_Bug491274() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { };
+	//	/*$*/a++;/*$$*/
+	//	std::cout << a;
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//int extracted(int a) {
+	//	a++;
+	//	return a;
+	//}
+	//
+	//int main() {
+	//	int a { };
+	//	a = extracted(a);
+	//	std::cout << a;
+	//}
+	public void testExtractVariableUsedInBinaryExpressionAfter_Bug509060() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { };
+	//	/*$*/a++;/*$$*/
+	//	std::cout << a << '\n';
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//int extracted(int a) {
+	//	a++;
+	//	return a;
+	//}
+	//
+	//int main() {
+	//	int a { };
+	//	a = extracted(a);
+	//	std::cout << a << '\n';
+	//}
+	public void testExtractVariableUsedInNestedBinaryExpressionAfter_Bug509060() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { };
+	//	int b { };
+	//	/*$*/a++;
+	//	b++;/*$$*/
+	//	std::cout << a << b;
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//int extracted(int a, int& b) {
+	//	a++;
+	//	b++;
+	//	return a;
+	//}
+	//
+	//int main() {
+	//	int a { };
+	//	int b { };
+	//	a = extracted(a, b);
+	//	std::cout << a << b;
+	//}
+	public void testExtractTwoVariablesUsedInNestedBinaryExpressionAfter_Bug509060() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//class A {
+	//public:
+	//	void foo();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//class A {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	std::string extracted(std::string string);
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//#include <iostream>
+	//
+	//void A::foo() {
+	//	std::string string { "Hello" };
+	//	/*$*/string += " World";
+	//	string += "!\n";/*$$*/
+	//	std::cout << string;
+	//}
+	//====================
+	//#include "A.h"
+	//#include <iostream>
+	//
+	//std::string A::extracted(std::string string) {
+	//	string += " World";
+	//	string += "!\n";
+	//	return string;
+	//}
+	//
+	//void A::foo() {
+	//	std::string string { "Hello" };
+	//	string = extracted(string);
+	//	std::cout << string;
+	//}
+	public void testAdditionalNamespace_Bug507113() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <string>
+	//
+	//void foo() {
+	//	std::string somestr;
+	//	/*$*/somestr += "a";
+	//	somestr += "a";
+	//	somestr += "a";/*$$*/
+	//}
+	//====================
+	//#include <string>
+	//
+	//void extracted(std::string somestr) {
+	//	somestr += "a";
+	//	somestr += "a";
+	//	somestr += "a";
+	//}
+	//
+	//void foo() {
+	//	std::string somestr;
+	//	extracted(somestr);
+	//}
+	public void testExtractStringInFunction_Bug507113() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//void A::foo() {
+	//	std::string somestr;
+	//	/*$*/somestr += "a";
+	//	somestr += "a";
+	//	somestr += "a";/*$$*/
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//void A::extracted(std::string somestr) {
+	//	somestr += "a";
+	//	somestr += "a";
+	//	somestr += "a";
+	//}
+	//
+	//void A::foo() {
+	//	std::string somestr;
+	//	extracted(somestr);
+	//}
+
+	//A.h
+	//#include <string>
+	//
+	//class A {
+	//public:
+	//	void foo();
+	//};
+	//====================
+	//#include <string>
+	//
+	//class A {
+	//public:
+	//	void foo();
+	//
+	//private:
+	//	void extracted(std::string somestr);
+	//};
+	public void testExtractStringInMemberFunction_Bug507113() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int x;
+	//	int *px;
+	//	px = /*$*/&x/*$$*/;
+	//}
+	//====================
+	//int* extracted(int& x) {
+	//	return &x;
+	//}
+	//
+	//int main() {
+	//	int x;
+	//	int *px;
+	//	px = extracted(x);
+	//}
+	public void testExtractUnaryExpression_Bug396355() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main(){
+	//	int a{};
+	//	/*$*/a/*$$*/ = 2;
+	//}
+	//====================
+	//int& extracted(int& a) {
+	//	return a;
+	//}
+	//
+	//int main(){
+	//	int a{};
+	//	extracted(a) = 2;
+	//}
+	public void testExtractIdExpression_Bug396336() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a[12];
+	//	/*$*/a[2]/*$$*/ = 2;
+	//}
+	//====================
+	//int& extracted(int a[12]) {
+	//	return a[2];
+	//}
+	//
+	//int main() {
+	//	int a[12];
+	//	extracted(a) = 2;
+	//}
+	public void testExtractArraySubscriptExpression_Bug396336() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int& getRef(int& a){
+	//	return a;
+	//}
+	//
+	//int main(){
+	//	int a{3};
+	//	/*$*/getRef(a)/*$$*/ = 2;
+	//}
+	//====================
+	//int& getRef(int& a){
+	//	return a;
+	//}
+	//
+	//int& extracted(int& a) {
+	//	return getRef(a);
+	//}
+	//
+	//int main(){
+	//	int a{3};
+	//	extracted(a) = 2;
+	//}
+	public void testExtractFunctionCallExpression_Bug396336() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main() {
+	//	std::vector<int> v { 1, 2, 3 };
+	//	/*$*/*(v.begin() + 1)/*$$*/ = 2;
+	//}
+	//====================
+	//#include <vector>
+	//
+	//int& extracted(std::vector<int>& v) {
+	//	return *(v.begin() + 1);
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v { 1, 2, 3 };
+	//	extracted(v) = 2;
+	//}
+	public void testExtractUnaryExpression_Bug396336() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main() {
+	//	std::vector<int> v { 1, 2, 3 };
+	//	/*$*/v[2]/*$$*/ = 2;
+	//}
+	//====================
+	//#include <vector>
+	//
+	//int& extracted(std::vector<int>& v) {
+	//	return v[2];
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v { 1, 2, 3 };
+	//	extracted(v) = 2;
+	//}
+	public void testExtractArraySubscriptExpressionVector_Bug396336() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//template<class T> class Calc {
+	//public:
+	//	Calc(int id){ID = id;};
+	//	T add(T a, T b){return a + b;};
+	//	int ID;
+	//};
+	//
+	//int main() {
+	//	Calc<int> calc(5);
+	//	Calc<int> calc2(4);
+	//	/*$*/calc/*$$*/ = calc2;
+	//}
+	//====================
+	//template<class T> class Calc {
+	//public:
+	//	Calc(int id){ID = id;};
+	//	T add(T a, T b){return a + b;};
+	//	int ID;
+	//};
+	//
+	//auto&& extracted(Calc<int>& calc) {
+	//	return calc;
+	//}
+	//
+	//int main() {
+	//	Calc<int> calc(5);
+	//	Calc<int> calc2(4);
+	//	extracted(calc) = calc2;
+	//}
+	public void testExtractIdExpressionTemplate_Bug396336() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c = 'A';
+	//	switch (c) {
+	//	case 'A':
+	//		break;
+	//	/*$*/default:/*$$*/
+	//		break;
+	//	}
+	//}
+	public void testExtractDefaultStatement() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	char c = 'A';
+	//	/*$*/switch (c) {
+	//	case 'A':
+	//		break;
+	//	default:
+	//		break;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(char c) {
+	//	switch (c) {
+	//	case 'A':
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
+	//
+	//int main() {
+	//	char c = 'A';
+	//	extracted(c);
+	//}
+	public void testSwitchWithDefaultStatement() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		if (b < 10){
+	//			/*$*/return 12;/*$$*/
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return 14;
+	//}
+	//====================
+	//int extracted() {
+	//	return 12;
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		if (b < 10){
+	//			return extracted();
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return 14;
+	//}
+	public void testExtractSingleReturnStatement_1() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		if (b < 10){
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	/*$*/return 14;/*$$*/
+	//}
+	//====================
+	//int extracted() {
+	//	return 14;
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		if (b < 10){
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return extracted();
+	//}
+	public void testExtractSingleReturnStatement_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		/*$*/if (b < 10) {
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}/*$$*/
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return 14;
+	//}
+	//====================
+	//int extracted(int b) {
+	//	if (b < 10) {
+	//		return 12;
+	//	} else {
+	//		return 18;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	if (a < 20) {
+	//		return extracted(b);
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return 14;
+	//}
+	public void testExtractIfElse() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	/*$*/if (a < 20) {
+	//		if (b < 10) {
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//	return 14;/*$$*/
+	//}
+	//====================
+	//int extracted(int a, int b) {
+	//	if (a < 20) {
+	//		if (b < 10) {
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}
+	//
+	//	return 14;
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	return extracted(a, b);
+	//}
+	public void testExtractReturnOutsideIfElse_1() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	/*$*/if (a < 20) {
+	//		if (b < 10) {
+	//			b = 10;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		a = 56;
+	//	}
+	//	return 14;/*$$*/
+	//}
+	//====================
+	//int extracted(int a, int b) {
+	//	if (a < 20) {
+	//		if (b < 10) {
+	//			b = 10;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		a = 56;
+	//	}
+	//
+	//	return 14;
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	return extracted(a, b);
+	//}
+	public void testExtractReturnOutsideIfElse_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	/*$*/if (a < 20) {
+	//		if (b < 10) {
+	//			return 12;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		a = 56;
+	//	}/*$$*/
+	//}
+	public void testExtractIfElseThatDoesntReturn() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	/*$*/if (a < 20) {
+	//		if (b < 10) {
+	//			b = 10;
+	//		} else {
+	//			return 18;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}/*$$*/
+	//}
+	public void testExtractIfElseThatDoesntReturnInInnerIf() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 10 };
+	//	int b { 14 };
+	//	/*$*/if (a < 20) {
+	//		if (b < 10) {
+	//			return 12;
+	//		} else {
+	//			b = 10;
+	//		}
+	//	} else if (a > 56) {
+	//		return 42;
+	//	}/*$$*/
+	//}
+	public void testExtractIfElseThatDoesntReturnInInnerElse() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 4) {
+	//		return 1;
+	//	}
+	//	/*$*/if (a < 100) {
+	//		return 10;
+	//	}
+	//	return 100;/*$$*/
+	//}
+	//====================
+	//int extracted(int a) {
+	//	if (a < 100) {
+	//		return 10;
+	//	}
+	//	return 100;
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 4) {
+	//		return 1;
+	//	}
+	//	return extracted(a);
+	//}
+	public void testExtractIfWithReturnOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <stdexcept>
+	//
+	//int main() {
+	//	int a { 14 };
+	//	/*$*/if (a >= 0) {
+	//		return 12;
+	//	} else {
+	//		throw std::invalid_argument("negative value");
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <stdexcept>
+	//
+	//int extracted(int a) {
+	//	if (a >= 0) {
+	//		return 12;
+	//	} else {
+	//		throw std::invalid_argument("negative value");
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 14 };
+	//	return extracted(a);
+	//}
+	public void testExtractReturnAndThrow() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <cstdlib>
+	//
+	//int main() {
+	//	int a { 14 };
+	//	/*$*/if (a >= 0) {
+	//		return 12;
+	//	} else {
+	//		std::abort();
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <cstdlib>
+	//
+	//int extracted(int a) {
+	//	if (a >= 0) {
+	//		return 12;
+	//	} else {
+	//		std::abort();
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 14 };
+	//	return extracted(a);
+	//}
+	public void testExtractReturnAndNoReturnAttribute() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//struct Clock {
+	//	unsigned int hours;
+	//	unsigned int minutes;
+	//};
+	//
+	//Clock functionWithCustomType(int a) {
+	//	/*$*/Clock clock;
+	//	if (a < 20) {
+	//		clock.hours = 12;
+	//	} else {
+	//		clock.hours = 15;
+	//	}
+	//	return clock;/*$$*/
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	Clock c = functionWithCustomType(a);
+	//}
+	//====================
+	//struct Clock {
+	//	unsigned int hours;
+	//	unsigned int minutes;
+	//};
+	//
+	//Clock extracted(int a) {
+	//	Clock clock;
+	//	if (a < 20) {
+	//		clock.hours = 12;
+	//	} else {
+	//		clock.hours = 15;
+	//	}
+	//	return clock;
+	//}
+	//
+	//Clock functionWithCustomType(int a) {
+	//	return extracted(a);
+	//}
+	//
+	//int main() {
+	//	int a { 10 };
+	//	Clock c = functionWithCustomType(a);
+	//}
+	public void testExtractReturnCustomType() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 20 };
+	//	/*$*/for (int i { 0 }; i < 10; i++){
+	//		a += i;
+	//		if (a > 150) {
+	//			return 150;
+	//		}
+	//	}/*$$*/
+	//}
+	public void testExtractReturnInFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 20 };
+	//	int i { };
+	//	/*$*/while (i < 10){
+	//		a += i;
+	//		if (i > 150) {
+	//			return 150;
+	//		}
+	//		i++;
+	//	}/*$$*/
+	//}
+	public void testExtractReturnInWhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 20 };
+	//	int i { };
+	//	/*$*/do {
+	//		a += i;
+	//		if (i > 150) {
+	//			return 150;
+	//		}
+	//		i++;
+	//	} while (i < 10);/*$$*/
+	//}
+	public void testExtractReturnInDoWhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 20 };
+	//	std::vector<int> v {1, 2, 3};
+	//	/*$*/for (int i : v) {
+	//		a += i;
+	//		if (a > 150) {
+	//          return 150;
+	//		}
+	//	}/*$$*/
+	//}
+	public void testExtractReturnInRangeBasedFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	default:
+	//		return 1000;
+	//	}/*$$*/
+	//}
+	//====================
+	//int extracted(int a) {
+	//	switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	default:
+	//		return 1000;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	return extracted(a);
+	//}
+	public void testExtractSwitchReturnInAllCases() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//	case 2:
+	//		return 100;
+	//	default:
+	//		return 1000;
+	//	}/*$$*/
+	//}
+	//====================
+	//int extracted(int a) {
+	//	switch (a) {
+	//	case 1:
+	//	case 2:
+	//		return 100;
+	//	default:
+	//		return 1000;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	return extracted(a);
+	//}
+	public void testExtractSwitchFallThroughReturnInFollowingCase() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//		break;
+	//	default:
+	//		return 1000;
+	//	}/*$$*/
+	//}
+	//====================
+	//int extracted(int a) {
+	//	switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//		break;
+	//	default:
+	//		return 1000;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	return extracted(a);
+	//}
+	public void testExtractSwitchBreakAfterReturn() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	}/*$$*/
+	//}
+	public void testExtractSwitchWithoutDefault() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		break;
+	//	default:
+	//		return 1000;
+	//	}/*$$*/
+	//}
+	public void testExtractSwitchOneCaseDoesntReturn() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//	case 2:
+	//		break;
+	//	default:
+	//		return 1000;
+	//	}/*$$*/
+	//}
+	public void testExtractSwitchWithFallThroughButNoReturnInCaseAfter() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	default:
+	//	}/*$$*/
+	//}
+	public void testExtractSwitchWithDefaultThatDoesntReturn() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	default:
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	}/*$$*/
+	//}
+	//====================
+	//int extracted(int a) {
+	//	switch (a) {
+	//	default:
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//		return 100;
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	return extracted(a);
+	//}
+	public void testExtractSwitchWithDefaulFirst() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/switch (a) {
+	//	default:
+	//	case 1:
+	//		return 10;
+	//	case 2:
+	//	}/*$$*/
+	//}
+	public void testExtractSwithWithDefaultFirstAndCaseWithoutReturn() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; /*$*/i < 100;/*$$*/ i++)
+	//		sum += i;
+	//}
+	//====================
+	//bool extracted(int i) {
+	//	return i < 100;
+	//}
+	//
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; extracted(i); i++)
+	//		sum += i;
+	//}
+	public void testExtractStatementInForHead() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (/*$*/int i = 0; i < 100;/*$$*/ i++)
+	//		sum += i;
+	//}
+	public void testExtractMoreThanOneStatementInForHead_1() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; /*$*/i < 100; i++/*$$*/)
+	//		sum += i;
+	//}
+	public void testExtractMoreThanOneStatementInForHead_2() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (/*$*/int i = 0; i < 100; i++/*$$*/)
+	//		sum += i;
+	//}
+	public void testExtractMoreThanOneStatementInForHead_3() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	/*$*/int sum { };
+	//	for (int i = 0;/*$$*/ i < 100; i++)
+	//		sum += i;
+	//}
+	public void testExtractStatementInForHeadOneBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; i < 100; /*$*/i++)
+	//		sum += i;/*$$*/
+	//}
+	public void testExtractStatementInForHeadOneInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; i < 100; i++)
+	//		/*$*/sum += i;/*$$*/
+	//}
+	//====================
+	//int extracted(int sum, int i) {
+	//	sum += i;
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; i < 100; i++)
+	//		sum = extracted(sum, i);
+	//}
+	public void testExtractStatementInsideFor() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	for (int i = 0; i < 100; i++)
+	//		/*$$*/sum += i;
+	//	++sum;/*$*/
+	//}
+	public void testExtractStatementInsideForOneOutside() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { }, fac { 1 };
+	//	/*$*/for (int i = 0; i < 100; i++) {
+	//		sum += i;/*$$*/
+	//		fac *= i;
+	//	}
+	//}
+	public void testExtractIncompleteFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	/*$*/for (int i = 0; i < 100; i++)
+	//		sum += i;/*$$*/
+	//	int r { sum };
+	//}
+	//====================
+	//int extracted(int sum) {
+	//	for (int i = 0; i < 100; i++)
+	//		sum += i;
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int sum { };
+	//	sum = extracted(sum);
+	//	int r { sum };
+	//}
+	public void testExtractFor() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int sum { };
+	//	/*$*/for (int i = 0; i < 100; i++)
+	//		sum += i;
+	//	++sum;/*$$*/
+	//	int r { sum };
+	//}
+	//====================
+	//int extracted(int sum) {
+	//	for (int i = 0; i < 100; i++)
+	//		sum += i;
+	//	++sum;
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int sum { };
+	//	sum = extracted(sum);
+	//	int r { sum };
+	//}
+	public void testExtractForAndOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJ { };
+	//	for (int i = 0; i < 100; /*$*/i++)
+	//		for (int j = 0;/*$$*/ j < 100; j++)
+	//			++productIxJ;
+	//}
+	public void testExtractStatementsInDifferentForHeads() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJ { };
+	//	for (int i = 0; i < 100; /*$*/i++)
+	//		for (int j = 0; j < 100; j++)
+	//			++productIxJ;/*$$*/
+	//}
+	public void testExtractStatementInForHeadAndInnerfor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJ { };
+	//	for (int i = 0; i < 100; i++) {
+	//		/*$*/for (int j = 0; j < 100; j++) {
+	//			++productIxJ;
+	//		}/*$$*/
+	//	}
+	//}
+	//====================
+	//int extracted(int productIxJ) {
+	//	for (int j = 0; j < 100; j++) {
+	//		++productIxJ;
+	//	}
+	//	return productIxJ;
+	//}
+	//
+	//int main() {
+	//	int productIxJ { };
+	//	for (int i = 0; i < 100; i++) {
+	//		productIxJ = extracted(productIxJ);
+	//	}
+	//}
+	public void testExtractInnerFor() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJplusI { };
+	//	for (int i = 0; i < 100; i++) {
+	//		/*$*/for (int j = 0; j < 100; j++) {
+	//			++productIxJplusI;
+	//		}
+	//		++productIxJplusI;/*$$*/
+	//	}
+	//}
+	//====================
+	//int extracted(int productIxJplusI) {
+	//	for (int j = 0; j < 100; j++) {
+	//		++productIxJplusI;
+	//	}
+	//	++productIxJplusI;
+	//	return productIxJplusI;
+	//}
+	//
+	//int main() {
+	//	int productIxJplusI { };
+	//	for (int i = 0; i < 100; i++) {
+	//		productIxJplusI = extracted(productIxJplusI);
+	//	}
+	//}
+	public void testExtractInnerForAndOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJplusI { };
+	//	/*$*/for (int i = 0; i < 100; i++) {
+	//		for (int j = 0; j < 100; j++) {
+	//			++productIxJplusI;
+	//		}/*$$*/
+	//		++productIxJplusI;
+	//	}
+	//}
+	public void testExtractIncompleteForWithInnerFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int productIxJplusI { };
+	//	/*$*/for (int i = 0; i < 100; i++)
+	//		for (int j = 0; j < 100; j++)
+	//			++productIxJplusI;
+	//		++productIxJplusI;/*$$*/
+	//	int r { productIxJplusI };
+	//}
+	//====================
+	//int extracted(int productIxJplusI) {
+	//	for (int i = 0; i < 100; i++)
+	//		for (int j = 0; j < 100; j++)
+	//			++productIxJplusI;
+	//	++productIxJplusI;
+	//	return productIxJplusI;
+	//}
+	//
+	//int main() {
+	//	int productIxJplusI { };
+	//	productIxJplusI = extracted(productIxJplusI);
+	//	int r { productIxJplusI };
+	//}
+	public void testExtractTwoForStatements() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	while (/*$*/i > 0/*$$*/) {
+	//		sum += i;
+	//	}
+	//}
+	//====================
+	//bool extracted(int i) {
+	//	return i > 0;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	while (extracted(i)) {
+	//		sum += i;
+	//	}
+	//}
+	public void testExtractExpressionInWhileHead() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	while (i > /*$*/0) {
+	//		sum += i;/*$$*/
+	//	}
+	//}
+	public void testExtractLiteralInWhileHeadOneStatementInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	/*$*/int sum { } ;
+	//	while (i > 0/*$$*/) {
+	//		sum += i;
+	//	}
+	//}
+	public void testExtractExpressionInWhileHeadOneStatementBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	while (i > 0) {
+	//		/*$*/sum += i;/*$$*/
+	//	}
+	//}
+	//====================
+	//int extracted(int sum, int i) {
+	//	sum += i;
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	while (i > 0) {
+	//		sum = extracted(sum, i);
+	//	}
+	//}
+	public void testExtractStatementInsideWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	while (i > 0) {
+	//		/*$*/sum += i;
+	//	}
+	//	++sum;/*$$*/
+	//}
+	public void testExtractExpressionInsideWhileHeadOneStatementOutside() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } , fak { 1 };
+	//	/*$*/while (i > 0) {
+	//		sum += i;/*$$*/
+	//		fak *= i;
+	//	}
+	//}
+	public void testExtractIncompleteWhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	/*$*/while (i > 0) {
+	//		sum += i;
+	//	}/*$$*/
+	//	int r { sum };
+	//}
+	//====================
+	//int extracted(int i, int sum) {
+	//	while (i > 0) {
+	//		sum += i;
+	//	}
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	sum = extracted(i, sum);
+	//	int r { sum };
+	//}
+	public void testExtractWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	/*$*/while (i > 0) {
+	//		sum += i;
+	//	}
+	//	int r { sum };/*$$*/
+	//	++r;
+	//}
+	//====================
+	//int extracted(int i, int sum) {
+	//	while (i > 0) {
+	//		sum += i;
+	//	}
+	//	int r { sum };
+	//	return r;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { } ;
+	//	int r = extracted(i, sum);
+	//	++r;
+	//}
+	public void testExtractWhileOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (/*$*/i > 0) {
+	//		int j { 100 };
+	//		while (j > 0)/*$$*/ {
+	//			++productIxJ;
+	//			j--;
+	//		}
+	//		i--;
+	//	}
+	//}
+	public void testExtractExpressionsInDifferentWhileHeads() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (/*$*/i > 0) {
+	//		int j { 100 };
+	//		while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}/*$$*/
+	//		i--;
+	//	}
+	//}
+	public void testExtractExpressionInWhileHeadAndInnerwhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (i > 0) {
+	//		int j { 100 };
+	//		/*$*/while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}/*$$*/
+	//		i--;
+	//	}
+	//}
+	//====================
+	//int extracted(int j, int& productIxJ) {
+	//	while (j > 0) {
+	//		++productIxJ;
+	//		j--;
+	//	}
+	//	return j;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (i > 0) {
+	//		int j { 100 };
+	//		j = extracted(j, productIxJ);
+	//		i--;
+	//	}
+	//}
+	public void testExtractInnerWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (i > 0) {
+	//		int j { 100 };
+	//		/*$*/while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}
+	//		i--;/*$$*/
+	//	}
+	//}
+	//====================
+	//int extracted(int j, int& productIxJ, int& i) {
+	//	while (j > 0) {
+	//		++productIxJ;
+	//		j--;
+	//	}
+	//	i--;
+	//	return j;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	while (i > 0) {
+	//		int j { 100 };
+	//		j = extracted(j, productIxJ, i);
+	//	}
+	//}
+	public void testExtractInnerWhileOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	/*$*/while (i > 0) {
+	//		int j { 100 };
+	//		while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}/*$$*/
+	//		i--;
+	//	}
+	//	++productIxJ;
+	//}
+	public void testExtractIncompleteWhileWithInnerWhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	/*$*/while (i > 0) {
+	//		int j { 100 };
+	//		while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}
+	//		i--;
+	//	}/*$$*/
+	//	int r { productIxJ};
+	//}
+	//====================
+	//int extracted(int i, int productIxJ) {
+	//	while (i > 0) {
+	//		int j { 100 };
+	//		while (j > 0) {
+	//			++productIxJ;
+	//			j--;
+	//		}
+	//		i--;
+	//	}
+	//	return productIxJ;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { } ;
+	//	productIxJ = extracted(i, productIxJ);
+	//	int r { productIxJ};
+	//}
+	public void testExtractTwoWhileStatements() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (/*$*/a > 100/*$$*/) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//bool extracted(int a) {
+	//	return a > 100;
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (extracted(a)) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractExpressionInsideIfHead() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	/*$*/int a { 5 };
+	//	if (a > 100/*$$*/) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractExpressionInsideIfHeadOneStatementBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (/*$*/a > 100) {
+	//		std::cout/*$$*/ << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractExpressionInsideIfHeadOneStatementInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		/*$*/std::cout << "> 100\n";/*$$*/
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted() {
+	//	std::cout << "> 100\n";
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		extracted();
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractStatementInsideIf() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		/*$*/std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";/*$$*/
+	//	}
+	//}
+	public void testExtractStatementInsideElseOneBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		/*$*/std::cout << "<= 50\n";
+	//	}
+	//	std::cout << "end\n";/*$$*/
+	//}
+	public void testExtractStatementInsideElseOneOutside() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a  { 2 };
+	//	/*$*/if (a > 10) {
+	//		std::cout << "a > 10\n";
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted(int a) {
+	//	if (a > 10) {
+	//		std::cout << "a > 10\n";
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a  { 2 };
+	//	extracted(a);
+	//}
+	public void testExtractIfClauseThatDoesntHaveElseClause() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	}/*$$*/ else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractIfClauseOnly() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	}/*$$*/ else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractIfElseIfWithoutElse() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted(int a) {
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	extracted(a);
+	//}
+	public void testExtractIf() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} /*$*/else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	}/*$$*/ else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractElseIfWithoutElse() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	}/*$*/ else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted(int a) {
+	//	if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else
+	//		extracted(a);
+	//}
+	public void testExtractElseIfElse() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else /*$*/if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted(int a) {
+	//	if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else
+	//		extracted(a);
+	//}
+	public void testExtractInnerIf() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else /*$*/if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//	std::cout << "end\n";/*$$*/
+	//}
+	public void testExtractInnerIfAndStatementOutside() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	/*$*/if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//	std::cout << "end\n";/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted(int a) {
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//
+	//	std::cout << "end\n";
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	extracted(a);
+	//}
+	public void testExtractIfAndOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (/*$*/a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50/*$$*/) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}
+	//}
+	public void testExtractExpressionsInDifferentIfHeads() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (/*$*/a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		std::cout << "<= 50\n";
+	//	}/*$$*/
+	//}
+	public void testExtractExpressionInIfHeadAndElseIf() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} /*$*/else {
+	//		std::cout << "<= 50\n";
+	//	}/*$$*/
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted() {
+	//	std::cout << "<= 50\n";
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		extracted();
+	//	}
+	//}
+	public void testExtractElseWithParenthesis() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <iostream>
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		/*$*/std::cout << "<= 50\n";/*$$*/
+	//	}
+	//}
+	//====================
+	//#include <iostream>
+	//
+	//void extracted() {
+	//	std::cout << "<= 50\n";
+	//}
+	//
+	//int main() {
+	//	int a { 5 };
+	//	if (a > 100) {
+	//		std::cout << "> 100\n";
+	//	} else if (a > 50) {
+	//		std::cout << "> 50\n";
+	//	} else {
+	//		extracted();
+	//	}
+	//}
+	public void testExtractElseWithoutParenthesis() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		sum += i;
+	//		--i;
+	//	} while (/*$*/i > 0/*$$*/);
+	//}
+	//====================
+	//bool extracted(int i) {
+	//	return i > 0;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		sum += i;
+	//		--i;
+	//	} while (extracted(i));
+	//}
+	public void testExtractExpressionInDoWhileHead() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		sum += i;
+	//		/*$*/--i;
+	//	} while (i > 0)/*$$*/;
+	//}
+	public void testExtractExpressionInDoWhileHeadOneStatementInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		/*$*/sum += i;/*$$*/
+	//		--i;
+	//	} while (i > 0);
+	//}
+	//====================
+	//int extracted(int sum, int i) {
+	//	sum += i;
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		sum = extracted(sum, i);
+	//		--i;
+	//	} while (i > 0);
+	//}
+	public void testExtractStatementInsideDoWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do {
+	//		sum += i;
+	//		/*$*/--i;
+	//	} while (i > 0);
+	//	int r { sum };/*$$*/
+	//}
+	public void testExtractStatementInsideDoWhileOneStatementAfter() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	/*$*/int sum { };
+	//	do {
+	//		sum += i;/*$$*/
+	//		--i;
+	//	} while (i > 0);
+	//}
+	public void testExtractStatementInsideDoWhileOneStatementBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	do /*$*/{
+	//		sum += i;
+	//		--i;
+	//	} while (i > 0);/*$$*/
+	//}
+	public void testExtractDoWhileWithoutDo() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	/*$*/do {
+	//		sum += i;
+	//		--i;
+	//	} while (i > 0);/*$$*/
+	//	int r { sum };
+	//}
+	//====================
+	//int extracted(int sum, int i) {
+	//	do {
+	//		sum += i;
+	//		--i;
+	//	} while (i > 0);
+	//	return sum;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	sum = extracted(sum, i);
+	//	int r { sum };
+	//}
+	public void testExtractDoWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	/*$*/do {
+	//		sum += i;
+	//		--i;
+	//	} while (i > 0);
+	//	int r { sum };/*$$*/
+	//	++r;
+	//}
+	//====================
+	//int extracted(int sum, int i) {
+	//	do {
+	//		sum += i;
+	//		--i;
+	//	} while (i > 0);
+	//	int r { sum };
+	//	return r;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int sum { };
+	//	int r = extracted(sum, i);
+	//	++r;
+	//}
+	public void testExtractDoWhileOneŜtatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (/*$*/j > 0);
+	//		--i;
+	//	} while (i > 0);/*$$*/
+	//}
+	public void testExtractExpressionsInDifferentDoWhileHeads() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		/*$*/do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (j > 0);/*$$*/
+	//		--i;
+	//	} while (i > 0);
+	//}
+	//====================
+	//int extracted(int productIxJ, int& j) {
+	//	do {
+	//		++productIxJ;
+	//		--j;
+	//	} while (j > 0);
+	//	return productIxJ;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		productIxJ = extracted(productIxJ, j);
+	//		--i;
+	//	} while (i > 0);
+	//}
+	public void testExtractInnerDoWhile() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		/*$*/do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (j > 0);
+	//		--i;/*$$*/
+	//	} while (i > 0);
+	//}
+	//====================
+	//int extracted(int productIxJ, int& j, int& i) {
+	//	do {
+	//		++productIxJ;
+	//		--j;
+	//	} while (j > 0);
+	//	--i;
+	//	return productIxJ;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		productIxJ = extracted(productIxJ, j, i);
+	//	} while (i > 0);
+	//}
+	public void testExtractInnerDoWhileOneStatementOutside() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	do {
+	//		int j { 100 };
+	//		/*$*/do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (j > 0);
+	//		--i;
+	//	} while (i > 0);/*$$*/
+	//}
+	public void testExtractIncompleteDoWhileOneinnerDoWhile() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	/*$*/do {
+	//		int j { 100 };
+	//		do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (j > 0);
+	//		--i;
+	//	} while (i > 0);/*$$*/
+	//	int r { productIxJ };
+	//}
+	//====================
+	//int extracted(int productIxJ, int i) {
+	//	do {
+	//		int j { 100 };
+	//		do {
+	//			++productIxJ;
+	//			--j;
+	//		} while (j > 0);
+	//		--i;
+	//	} while (i > 0);
+	//	return productIxJ;
+	//}
+	//
+	//int main() {
+	//	int i { 100 };
+	//	int productIxJ { };
+	//	productIxJ = extracted(productIxJ, i);
+	//	int r { productIxJ };
+	//}
+	public void testExtractTwoDoWhileStatements() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	/*$*/struct Banana {
+	//		int weight;
+	//	};/*$$*/
+	//	Banana b1;
+	//	Banana b2;
+	//	int weightTotal = b1.weight + b2.weight;
+	//}
+	public void testExtractDeclarationStatementwithCompositeTypeSpecifier() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	struct Banana {
+	//		int weight;
+	//	};
+	//	Banana b1;
+	//	Banana b2;
+	//	/*$*/int weightTotal = b1.weight + b2.weight;/*$$*/
+	//}
+	public void testExtractDeclarationStatementWithFieldReference() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	/*$*/enum Color {
+	//		green, blue, red
+	//	};/*$$*/
+	//	Color bg = green;
+	//}
+	public void testExtractEnumerationSpecifierWithSurroundingDeclarationStatement() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//int main() {
+	//	enum Color {
+	//		green, blue, red
+	//	};
+	//	/*$*/Color bg = green;/*$$*/
+	//}
+	public void testExtractDeclarationStatementWithNamedTypeSpecifier() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	for (/*$*/int v : v1) {
+	//		sum += v;/*$$*/
+	//	}
+	//}
+	public void testExtractRangeBasedForHeadOneStatementInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : /*$*/v1) {
+	//		sum += v;/*$$*/
+	//	}
+	//}
+	public void testExtractExpressionInRangeBasedForHeadOneStatementInBody() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	/*$*/std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v/*$$*/ : v1) {
+	//		sum += v;
+	//	}
+	//}
+	//====================
+	//#include <vector>
+	//
+	//std::vector<int> extracted() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	return v1;
+	//}
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 = extracted();
+	//	for (int v : v1) {
+	//		sum += v;
+	//	}
+	//}
+	public void testExtractDeclarationInRangeBasedForHeadOneStatementBefore() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	/*$*/std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : v1/*$$*/) {
+	//		sum += v;
+	//	}
+	//}
+	public void testExtractRangeBasedForHeadOneStatementBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : v1) {
+	//		/*$*/sum += v;/*$$*/
+	//	}
+	//}
+	//====================
+	//#include <vector>
+	//
+	//int extracted(int sum, int v) {
+	//	sum += v;
+	//	return sum;
+	//}
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : v1) {
+	//		sum = extracted(sum, v);
+	//	}
+	//}
+	public void testExtractStatementInsideRangeBasedFor() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	/*$*/std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : v1) {
+	//		sum += v;/*$$*/
+	//	}
+	//}
+	public void testExtractStatementInsideRangeBasedForOneStatementBefore() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	for (int v : v1) {
+	//		/*$*/sum += v;
+	//	}
+	//	int r { sum };/*$$*/
+	//}
+	public void testExtractStatementInsideRangeBasedForOneStatementAfter() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	int sum1 { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	/*$*/for (int v : v1) {
+	//		sum += v;/*$$*/
+	//		sum1 += v;
+	//	}
+	//}
+	public void testExtractIncompleteRangeBasedFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	/*$*/for (int v : v1) {
+	//		sum += v;
+	//	}/*$$*/
+	//	int r { sum };
+	//}
+	//====================
+	//#include <vector>
+	//
+	//int extracted(std::vector<int> v1, int sum) {
+	//	for (int v : v1) {
+	//		sum += v;
+	//	}
+	//	return sum;
+	//}
+	//
+	//int main(){
+	//	int sum { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	sum = extracted(v1, sum);
+	//	int r { sum };
+	//}
+	public void testExtractRangeBasedFor() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main(){
+	//	int sum { };
+	//	int sum1 { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	/*$*/for (int v : v1) {
+	//		sum += v;
+	//	}
+	//	int r { sum };/*$$*/
+	//	++r;
+	//}
+	//====================
+	//#include <vector>
+	//
+	//int extracted(std::vector<int> v1, int sum) {
+	//	for (int v : v1) {
+	//		sum += v;
+	//	}
+	//	int r { sum };
+	//	return r;
+	//}
+	//
+	//int main(){
+	//	int sum { };
+	//	int sum1 { };
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	int r = extracted(v1, sum);
+	//	++r;
+	//}
+	public void testExtractRangeBasedForOneStatementAfter() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : /*$*/v1) {
+	//		for (int i2 /*$$*/: v2) {
+	//			r.push_back(i1 * i2);
+	//		}
+	//	}
+	//}
+	//====================
+	//#include <vector>
+	//
+	//auto&& extracted(std::vector<int>& v1) {
+	//	return v1;
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : extracted(v1)) {
+	//		for (int i2 : v2) {
+	//			r.push_back(i1 * i2);
+	//		}
+	//	}
+	//}
+	public void testExtractExpressionOfRangeBasedForDeclarationFromOther() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : /*$*/v1) {
+	//		for (int i2 : v2) {
+	//			r.push_back(i1 * i2);
+	//		}/*$$*/
+	//	}
+	//}
+	public void testExtractExpressionInRangeBasedForHeadInnerRangeBasedFor() throws Exception {
+		assertRefactoringFailure();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : v1) {
+	//		/*$*/for (int i2 : v2) {
+	//			r.push_back(i1 * i2);
+	//		}/*$$*/
+	//	}
+	//}
+	//====================
+	//#include <vector>
+	//
+	//void extracted(std::vector<int> v2, std::vector<int> r, int i1) {
+	//	for (int i2 : v2) {
+	//		r.push_back(i1 * i2);
+	//	}
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : v1) {
+	//		extracted(v2, r, i1);
+	//	}
+	//}
+	public void testExtractInnerRangeBasedFor() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//#include <iostream>
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : v1) {
+	//		/*$*/for (int i2 : v2) {
+	//			r.push_back(i1 * i2);
+	//		}
+	//		std::cout << "inner end\n";/*$$*/
+	//	}
+	//}
+	//====================
+	//#include <vector>
+	//#include <iostream>
+	//
+	//void extracted(std::vector<int> v2, std::vector<int> r, int i1) {
+	//	for (int i2 : v2) {
+	//		r.push_back(i1 * i2);
+	//	}
+	//	std::cout << "inner end\n";
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : v1) {
+	//		extracted(v2, r, i1);
+	//	}
+	//}
+	public void testExtractInnerRangeBasedForAndStatementAfter() throws Exception {
+		allowNameComputation();
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//#include <vector>
+	//#include <iostream>
+	//
+	//void extracted(int i1, int i2, std::vector<int>& r) {
+	//	r.push_back(i1 * i2);
+	//	std::cout << "1 completed\n";
+	//}
+	//
+	//int main() {
+	//	std::vector<int> v1 { 1, 2, 3 };
+	//	std::vector<int> v2 { 1, 2, 3 };
+	//	std::vector<int> r { };
+	//
+	//	for (int i1 : v1) {
+	//		for (int i2 : v2) {
+	//			extracted(i1, i2, r);
+	//		}
+	//	}
+	//}
+	public void testIncompleteRangeBasedForInnerRangebBsedFor() throws Exception {
+		assertRefactoringFailure();
 	}
 }

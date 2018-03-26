@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URI;
@@ -24,6 +25,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextSelection;
@@ -40,8 +42,10 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
@@ -75,6 +79,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	private TestSourceFile selectedFile;
 	private TextSelection selection;
 	private TestSourceFile historyScript;
+	private String includeFolderPath;
 
     protected RefactoringTestBase() {
 		super();
@@ -92,6 +97,10 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		TestScannerProvider.sLocalIncludes = new String[] { cproject.getProject().getLocation().toOSString() };
+
+		if (includeFolderPath != null) {
+			includeFolder();
+		}
 
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
@@ -149,8 +158,23 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		if (selectedFile == null && !testFiles.isEmpty()) {
 			selectedFile = testFiles.iterator().next();
 		}
+
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
+	}
+
+	private void includeFolder() throws CModelException {
+		File file = new File(includeFolderPath);
+		IPathEntry[] pathEntries = cproject.getRawPathEntries();
+		final IPathEntry[] newPathEntries = new IPathEntry[pathEntries.length + 1];
+		for (int i = 0; i < pathEntries.length; i++) {
+			newPathEntries[i] = pathEntries[i];
+		}
+		newPathEntries[pathEntries.length] = CoreModel.newIncludeEntry(Path.EMPTY, null, new Path(file.getAbsolutePath()), true);
+		cproject.setRawPathEntries(newPathEntries, new NullProgressMonitor());
+		CoreModel.validatePathEntries(cproject, newPathEntries);
+		String[] array = new String[] {file.getAbsolutePath()};
+		TestScannerProvider.sIncludes = array;
 	}
 
 	@Override
@@ -399,6 +423,9 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		return buffer.toString().replace("\r", "");
 	}
 
+	public void setIncludeFolder(String includeFolderPath) {
+		this.includeFolderPath = includeFolderPath;
+	}
 	protected void resetPreferences() {
 		getPreferenceStore().setToDefault(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER);
 	}

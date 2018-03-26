@@ -36,13 +36,20 @@ public abstract class RefactoringRunner {
 
 	public abstract void run();
 
+	protected void attachContextToRefactoring(CRefactoring refactoring) {
+		new CRefactoringContext(refactoring);
+	}
+
 	protected final void run(RefactoringWizard wizard, CRefactoring refactoring, int saveMode) {
-		CRefactoringContext context = new CRefactoringContext(refactoring);
+
+		if (refactoring.refactoringContext == null) {
+			attachContextToRefactoring(refactoring);
+		}
+
 		try {
-			RefactoringStarter starter = new RefactoringStarter();
-			starter.activate(wizard, shellProvider.getShell(), refactoring.getName(), saveMode);
+			new RefactoringStarter().activate(wizard, shellProvider.getShell(), refactoring.getName(), saveMode);
 		} finally {
-			context.dispose();
+			refactoring.refactoringContext.dispose();
 		}
 	}
 }

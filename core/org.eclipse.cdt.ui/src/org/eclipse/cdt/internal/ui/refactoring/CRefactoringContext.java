@@ -116,9 +116,7 @@ public class CRefactoringContext extends RefactoringContext {
 		if (isDisposed())
 			throw new IllegalStateException("CRefactoringContext is already disposed."); //$NON-NLS-1$
 		if (fIndex == null) {
-			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			IIndex index = CCorePlugin.getIndexManager().getIndex(projects,
-					IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
+			IIndex index = acquireIndex();
 			try {
 				index.acquireReadLock();
 			} catch (InterruptedException e) {
@@ -127,6 +125,11 @@ public class CRefactoringContext extends RefactoringContext {
 			fIndex = index;
 		}
 		return fIndex;
+	}
+
+	protected IIndex acquireIndex() throws CoreException {
+		ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+		return CCorePlugin.getIndexManager().getIndex(projects, IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 	}
 
 	@Override

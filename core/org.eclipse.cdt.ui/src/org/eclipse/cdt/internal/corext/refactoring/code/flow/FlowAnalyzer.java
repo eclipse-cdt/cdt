@@ -215,7 +215,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	//---- Helpers to access flow analysis objects ----------------------------------------
 
 	protected FlowInfo getFlowInfo(IASTNode node) {
-		return fData.remove(node);
+		return fData.get(node);
 	}
 
 	protected void setFlowInfo(IASTNode node, FlowInfo info) {

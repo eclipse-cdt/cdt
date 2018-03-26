@@ -1,0 +1,19 @@
+#ifndef VECTOR_
+#define VECTOR_
+
+namespace std {
+template<class T> class vector {
+	struct Iterator{
+		T& operator*(){};
+		Iterator& operator++(){};
+		bool operator!=(const Iterator &rhs){};
+	};
+public:
+	Iterator begin(){};
+	Iterator end(){};
+	T& operator[](unsigned int index){};
+	T& at(unsigned int index){};
+};
+}
+
+#endif /* VECTOR_ */

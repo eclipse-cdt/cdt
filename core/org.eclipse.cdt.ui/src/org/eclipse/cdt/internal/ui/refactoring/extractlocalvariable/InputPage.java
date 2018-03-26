@@ -25,8 +25,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -39,7 +42,7 @@ import org.eclipse.swt.widgets.Text;
 public class InputPage extends UserInputWizardPage {
 	private static final String PAGE_NAME = "InputPage"; //$NON-NLS-1$
 
-	private VariableNameInformation info;
+	private ExtractLocalVariableInfo info;
 	private InputForm control;
 
 	public InputPage() {
@@ -61,6 +64,16 @@ public class InputPage extends UserInputWizardPage {
 			public void modifyText(ModifyEvent e) {
 				info.setName(control.getVariableNameText().getText());
 				checkName();
+			}
+		});
+
+		Button checkbox = control.getReplaceAllButton();
+		checkbox.setSelection(info.isReplaceAllOccurrences());
+		checkbox.setText(Messages.InputPage_ExtractAllOccurrences);
+		checkbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				info.setReplaceAllOccurrences(checkbox.getSelection());
 			}
 		});
 
@@ -92,19 +105,25 @@ public class InputPage extends UserInputWizardPage {
 
 	private static class InputForm extends Composite {
 		LabeledTextField variableName;
+		Button replaceAllOccurencesButton;
 
 		InputForm(Composite parent, String label) {
 			super(parent, SWT.NONE);
-			FillLayout layout = new FillLayout(SWT.HORIZONTAL);
+			FillLayout layout = new FillLayout(SWT.VERTICAL);
 			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			gridData.horizontalAlignment = GridData.FILL;
 			setLayoutData(gridData);
 			setLayout(layout);
 			variableName = new LabeledTextField(this, label, ""); //$NON-NLS-1$
+			replaceAllOccurencesButton = new Button(this, SWT.CHECK);
 		}
 
 		Text getVariableNameText() {
 			return variableName.getText();
+		}
+
+		Button getReplaceAllButton() {
+			return replaceAllOccurencesButton;
 		}
 	}
 }

@@ -96,6 +96,9 @@ public class ExpressionExtractor extends FunctionExtractor {
 		List<ITypedef> typedefs = getTypedefs(extractedNode);
 		if (extractedNode instanceof IASTExpression) {
 			IType expressionType = ((IASTExpression) extractedNode).getExpressionType();
+			while (expressionType instanceof ITypedef) {
+				expressionType = ((ITypedef) expressionType).getType();
+			}
 			for (ITypedef typedef : typedefs) {
 				if (typedef.getType().isSameType(expressionType)) {
 					return typedef;

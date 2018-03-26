@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -138,8 +140,18 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 			boolean runMeson = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
 			if (runMeson) { // $NON-NLS-1$
+				org.eclipse.core.runtime.Path cmdPath = new org.eclipse.core.runtime.Path("/bin/sh"); //$NON-NLS-1$
+				
 				List<String> argsList = new ArrayList<>();
 				
+				// if we have env variables, use "env" command with modifications specified after to
+				// add to environment without replacing it (e.g. losing default path)
+				String envStr = getProperty(IMesonConstants.MESON_ENV);
+				if (envStr != null) {
+					cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
+					argsList.addAll(MesonUtils.stripEnvVars(envStr));
+					argsList.add("/bin/sh"); //$NON-NLS-1$
+				}
 				argsList.add("-c"); //$NON-NLS-1$
 				
 				StringBuilder b = new StringBuilder();
@@ -159,28 +171,20 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				b.append(getBuildDirectory().toString());
 				argsList.add(b.toString());
 
-				List<String> envList = new ArrayList<>();
-				String envStr = getProperty(IMesonConstants.MESON_ENV);
-				if (envStr != null) {
-					envList.addAll(MesonUtils.stripEnvVars(envStr));
-				}
-				String[] env = envList.toArray(new String[0]);
-
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
-
+				
 				launcher.setProject(getProject());
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
 				}
-
+				
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningMeson);
 
-				org.eclipse.core.runtime.Path shPath = new org.eclipse.core.runtime.Path("/bin/sh"); //$NON-NLS-1$
-				outStream.write(String.join(" ", envStr != null ? envStr : "", //$NON-NLS-1$ //$NON-NLS-2$ 
+				outStream.write(String.join(" ", envStr != null ? ("env " + envStr) : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						"sh -c \"meson", userArgs != null ? userArgs : "", projOptions != null ? projOptions : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().getParent().getParent().toString());
-				Process p = launcher.execute(shPath, argsList.toArray(new String[0]), env, workingDir, monitor);
+				Process p = launcher.execute(cmdPath, argsList.toArray(new String[0]), new String[0], workingDir, monitor);
 				if (p == null || launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = p == null ? "" : launcher.getErrorMessage(); //$NON-NLS-1$
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningMesonFailure, errMsg));

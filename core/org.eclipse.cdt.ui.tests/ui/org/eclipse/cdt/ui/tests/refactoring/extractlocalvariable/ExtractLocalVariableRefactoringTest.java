@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocal
 public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	private String extractedVariableName;
 	private ExtractLocalVariableRefactoring refactoring;
+	private boolean replaceAllOccurences = true;
 
 	public ExtractLocalVariableRefactoringTest() {
 		super();
@@ -49,8 +50,10 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected void simulateUserInput() {
-		if (extractedVariableName != null)
+		if (extractedVariableName != null) {
 			refactoring.getRefactoringInfo().setName(extractedVariableName);
+		}
+		refactoring.getRefactoringInfo().setReplaceAllOccurrences(replaceAllOccurences);
 	}
 
 	//A.cpp
@@ -279,7 +282,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//const volatile int* k;
 	//
 	//void foo() {
-	//	/*$*/k;/*$$*/
+	//	/*$*/k/*$$*/;
 	//}
 	//====================
 	//const volatile int* k;
@@ -590,6 +593,202 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//	t0;
 	//}
 	public void testTemplateWithFunctionArgument_487186() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { /*$*/a + 3/*$$*/ };
+	//	}
+	//	int c { a + 3 };
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	int i = a + 3;
+	//	if (i) {
+	//		int b { i };
+	//	}
+	//	int c { i };
+	//}
+	public void testMultipleOccurences_1() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	int b { };
+	//	if (a + 2) {
+	//		b = /*$*/a + 2/*$$*/;
+	//	}
+	//	a++;
+	//	int c = a + 2;
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	int b { };
+	//	if (a + 2) {
+	//		int i = a + 2;
+	//		b = i;
+	//	}
+	//	a++;
+	//	int c = a + 2;
+	//}
+	public void testMultipleOccurences_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	int b { };
+	//	if (a + 2) {
+	//		b = /*$*/a + 2/*$$*/;
+	//	}
+	//	int c = a + 2;
+	//	a++;
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	int b { };
+	//	int i = a + 2;
+	//	if (i) {
+	//		b = i;
+	//	}
+	//	int c = i;
+	//	a++;
+	//}
+	public void testMultipleOccurences_3() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { /*$*/a + 3/*$$*/ };
+	//	}
+	//	int c { a + 3 };
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int i = a + 3;
+	//		int b { i };
+	//	}
+	//	int c { a + 3 };
+	//}
+	public void testOneOccurence_1() throws Exception {
+		replaceAllOccurences = false;
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { a + 3 };
+	//	}
+	//	int c { /*$*/a + 3/*$$*/ };
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { a + 3 };
+	//	}
+	//	int i = a + 3;
+	//	int c { i };
+	//}
+	public void testOneOccurence_2() throws Exception {
+		replaceAllOccurences = false;
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 3 };
+	//	if (a > 1) {
+	//		;
+	//	} else if (/*$*/a > 2/*$$*/) {
+	//		;
+	//	}
+	//}
+	//====================
+	//int main() {
+	//	int a { 3 };
+	//	bool i = a > 2;
+	//	if (a > 1) {
+	//		;
+	//	} else if (i) {
+	//		;
+	//	}
+	//}
+	public void testElseIf() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	if (/*$*/a + 3/*$$*/) {
+	//		int b { a + 3 };
+	//	}
+	//	int c { a + 3 };
+	//	for (int i = 0; i < 10; i++){
+	//		int a = i;
+	//		int b = a + 3;
+	//	}
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	int a0 = a + 3;
+	//	if (a0) {
+	//		int b { a0 };
+	//	}
+	//	int c { a0 };
+	//	for (int i = 0; i < 10; i++){
+	//		int a = i;
+	//		int b = a + 3;
+	//	}
+	//}
+	public void testOuter() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { a + 3 };
+	//	}
+	//	int c { a + 3 };
+	//	for (int i = 0; i < 10; i++){
+	//		int a = i;
+	//		int b = /*$*/a + 3/*$$*/;
+	//	}
+	//}
+	//====================
+	//int main() {
+	//	int a { 4 };
+	//	if (a + 3) {
+	//		int b { a + 3 };
+	//	}
+	//	int c { a + 3 };
+	//	for (int i = 0; i < 10; i++){
+	//		int a = i;
+	//		int a0 = a + 3;
+	//		int b = a0;
+	//	}
+	//}
+	public void testInner() throws Exception {
 		assertRefactoringSuccess();
 	}
 }

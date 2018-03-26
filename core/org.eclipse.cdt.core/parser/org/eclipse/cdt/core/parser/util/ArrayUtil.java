@@ -69,7 +69,7 @@ public abstract class ArrayUtil {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
-    		Class<? extends Object> c = array != null ? array.getClass().getComponentType() : Object.class;
+    		Class<? extends Object> c = array != null ? array.getClass().getComponentType() : obj.getClass();
     		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;

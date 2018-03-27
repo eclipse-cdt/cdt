@@ -46,7 +46,7 @@ public interface IMesonPropertyPageControl {
 	
 	/**
 	 * Get the command line parameter if never configured
-	 * @return String containing command-line parm for configured build dir
+	 * @return String containing command-line parm for unconfigured build dir
 	 */
 	default String getUnconfiguredString() {
 		return "--" + getFieldName() + "=" + getFieldValue(); //$NON-NLS-1$ //$NON-NLS-2$

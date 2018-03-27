@@ -134,13 +134,15 @@ public class MesonPropertyPage extends PropertyPage {
 					Map<String, String> argMap = new HashMap<>();
 					String mesonArgs = buildConfig.getProperty(IMesonConstants.MESON_ARGUMENTS);
 					if (mesonArgs != null) {
-						String[] argStrings = mesonArgs.split("\\s+"); //$NON-NLS-1$
+						String[] argStrings = mesonArgs.split("--"); //$NON-NLS-1$
 						for (String argString : argStrings) {
-							String[] s = argString.split("="); //$NON-NLS-1$
-							if (s.length == 2) {
-								argMap.put(s[0], s[1]);
-							} else {
-								argMap.put(argString, "true"); //$NON-NLS-1$
+							if (!argString.isEmpty()) {
+								String[] s = argString.split("="); //$NON-NLS-1$
+								if (s.length == 2) {
+									argMap.put(s[0], s[1].trim());
+								} else {
+									argMap.put(argString.trim(), "true"); //$NON-NLS-1$
+								}
 							}
 						}
 					}
@@ -306,8 +308,10 @@ public class MesonPropertyPage extends PropertyPage {
 		} else {
 			StringBuilder mesonargs = new StringBuilder();
 			for (IMesonPropertyPageControl control : componentList) {
-				mesonargs.append(control.getUnconfiguredString());
-				mesonargs.append(" "); //$NON-NLS-1$
+				if (!control.getUnconfiguredString().isEmpty()) {
+					mesonargs.append(control.getUnconfiguredString());
+					mesonargs.append(" "); //$NON-NLS-1$
+				}
 			}
 			buildConfig.setProperty(IMesonConstants.MESON_ARGUMENTS, mesonargs.toString());
 			buildConfig.setProperty(IMesonConstants.MESON_ENV, envText.getText().trim());
@@ -366,7 +370,7 @@ public class MesonPropertyPage extends PropertyPage {
 					} else {
 						boolean defaultValue = false;
 						if (argMap.containsKey(optionMatcher.group(2))) {
-							defaultValue = Boolean.getBoolean(argMap.get(optionMatcher.group(2)));
+							defaultValue = Boolean.parseBoolean(argMap.get(optionMatcher.group(2)));
 						}
 						IMesonPropertyPageControl control = new MesonPropertySpecialCheckbox(group, optionMatcher.group(2), defaultValue, optionMatcher.group(6));
 						controls.add(control);

@@ -272,10 +272,9 @@ public class MesonPropertyPage extends PropertyPage {
 				try (OutputStream stdout = console.getOutputStream()) {
 					OutputStream stderr = stdout;
 					StringBuilder buf = new StringBuilder();
-					buf.append("meson");
 					for (String arg : args) {
-						buf.append(" "); //$NON-NLS-1$
 						buf.append(arg);
+						buf.append(" "); //$NON-NLS-1$
 					}
 					buf.append(System.lineSeparator());
 					stdout.write(buf.toString().getBytes());

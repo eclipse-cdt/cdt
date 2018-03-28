@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePageRule;
 import org.eclipse.cdt.meson.core.MesonNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.epp.logging.aeri.core.ISystemSettings;
 import org.eclipse.epp.logging.aeri.core.SendMode;
 import org.eclipse.epp.logging.aeri.core.SystemControl;
@@ -124,10 +125,6 @@ public class NewMesonConfigureTest {
 	@Test
 	public void attemptMesonConfiguration() throws Exception {
 		String projectName = "MesonTestProj2";
-		// Make sure the project indexer completes. At that point we're stable.
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		ICProject cproject = CoreModel.getDefault().create(project);
-
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
 			bot.perspectiveByLabel("C/C++").activate();
@@ -190,6 +187,8 @@ public class NewMesonConfigureTest {
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
+		
+		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
@@ -224,29 +223,30 @@ public class NewMesonConfigureTest {
 		
 		bot.sleep(2000);
 		
-		assertEquals("Building in: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[0]);
-		assertEquals("env CFLAGS=\"-DJeff\" sh -c \"meson --backend=ninja --buildtype=debug --unity=off --werror --layout=mirror --default-library=shared --warnlevel=2   /home/jjohnstn/junit-workspace/MesonTestProj2\"", lines[1]);
+		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
+		assertEquals("env CFLAGS=\"-DJeff\" sh -c \"meson --backend=ninja --buildtype=debug --unity=off --werror --layout=mirror --default-library=shared --warnlevel=2   " + projectPath + "\"", lines[1]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
-		assertEquals("Source dir: /home/jjohnstn/junit-workspace/MesonTestProj2", lines[4]);
-		assertEquals("Build dir: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[5]);
+		assertEquals("Source dir: " + projectPath, lines[4]);
+		assertEquals("Build dir: " + projectPath + "/build/default", lines[5]);
 		assertEquals("Build type: native build", lines[6]);
 		assertEquals("Project name: MesonTestProj2", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
 		assertEquals("Build targets in project: 1", lines[12]);
-		assertTrue(lines[13].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
-		assertTrue(lines[13].contains("-Werror"));
-		assertTrue(lines[14].startsWith("FAILED"));
-		assertTrue(lines[17].contains("Werror=unused-parameter"));
-		assertEquals("Build complete: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[lines.length-1]);
+		int index = 0;
+		if (!lines[13].startsWith("[1/2]")) {
+			index = 1;
+		}
+		assertTrue(lines[13+index].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
+		assertTrue(lines[13+index].contains("-Werror"));
+		assertTrue(lines[14+index].startsWith("FAILED"));
+		assertTrue(lines[17+index].contains("Werror=unused-parameter"));
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	
 	@Test
 	public void configureAfterBuild() throws Exception {
 		String projectName = "MesonTestProj2";
-		// Make sure the project indexer completes. At that point we're stable.
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		ICProject cproject = CoreModel.getDefault().create(project);
 
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
@@ -314,6 +314,8 @@ public class NewMesonConfigureTest {
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
+		
+		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
@@ -349,18 +351,18 @@ public class NewMesonConfigureTest {
 
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
 		
-		assertEquals("Building in: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[0]);
+		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
-		assertEquals("Source dir: /home/jjohnstn/junit-workspace/MesonTestProj2", lines[4]);
-		assertEquals("Build dir: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[5]);
+		assertEquals("Source dir: " + projectPath, lines[4]);
+		assertEquals("Build dir: " + projectPath + "/build/default", lines[5]);
 		assertEquals("Build type: native build", lines[6]);
 		assertEquals("Project name: MesonTestProj2", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
 		assertEquals("Build targets in project: 1", lines[11]);
-		assertTrue(lines[12].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
-		assertTrue(lines[13].startsWith("[2/2] cc  -o MesonTestProj2"));
-		assertEquals("Build complete: /home/jjohnstn/junit-workspace/MesonTestProj2/build/default", lines[lines.length-1]);
+		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj2@exe"));
+		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj2"));
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 
 	@Test

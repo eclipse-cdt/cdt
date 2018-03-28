@@ -207,9 +207,6 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 
 				List<String> envList = new ArrayList<>();
-				if (ninjaEnv != null) {
-					envList.addAll(Arrays.asList(ninjaEnv));
-				}
 				String[] env = envList.toArray(new String[0]);
 
 				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
@@ -221,10 +218,18 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningNinja);
 
-				org.eclipse.core.runtime.Path shPath = new org.eclipse.core.runtime.Path("sh"); //$NON-NLS-1$
+				org.eclipse.core.runtime.Path cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
 				
 				List<String> argList = new ArrayList<>();
+				
+				if (ninjaEnv != null) {
+					for (String envVar : ninjaEnv) {
+						argList.addAll(MesonUtils.stripEnvVars(envVar));
+					}
+				}
+
+				argList.add("sh"); //$NON-NLS-1$
 				argList.add("-c"); //$NON-NLS-1$
 				StringBuilder b = new StringBuilder();
 				b.append(buildCommand);
@@ -238,7 +243,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 				argList.add(b.toString());
 
-				Process p = launcher.execute(shPath, argList.toArray(new String[0]), env, workingDir, monitor);
+				Process p = launcher.execute(cmdPath, argList.toArray(new String[0]), env, workingDir, monitor);
 				if (p != null && launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					String errMsg = launcher.getErrorMessage();
 					console.getErrorStream().write(String.format(Messages.MesonBuildConfiguration_RunningNinjaFailure, errMsg));
@@ -287,9 +292,10 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				}
 				String[] command = cleanCommand.split(" "); //$NON-NLS-1$
 
-				IPath cmd = new org.eclipse.core.runtime.Path("sh");
+				IPath cmd = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
 				
 				List<String> argList = new ArrayList<>();
+				argList.add("sh"); //$NON-NLS-1$
 				argList.add("-c"); //$NON-NLS-1$
 				argList.add(cleanCommand);
 

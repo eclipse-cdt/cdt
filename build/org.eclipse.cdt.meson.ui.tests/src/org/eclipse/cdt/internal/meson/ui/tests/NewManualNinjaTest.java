@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.meson.ui.tests;
 
-import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRegex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePageRule;
 import org.eclipse.cdt.meson.core.MesonNature;
@@ -31,6 +30,7 @@ import org.eclipse.epp.logging.aeri.core.SendMode;
 import org.eclipse.epp.logging.aeri.core.SystemControl;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -47,7 +47,7 @@ import org.junit.runners.MethodSorters;
 
 @SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class NewMesonProjectTest {
+public class NewManualNinjaTest {
 
 	private static SWTWorkbenchBot bot;
 
@@ -99,7 +99,7 @@ public class NewMesonProjectTest {
 		newProjectShell.setFocus();
 
 		// Create the project
-		String projectName = "MesonTestProj";
+		String projectName = "MesonTestProj3";
 		bot.sleep(2000);
 		SWTBotText text = bot.textWithLabel("Project name:");
 		text.setText(projectName);
@@ -123,10 +123,10 @@ public class NewMesonProjectTest {
 		// Make sure it has the right nature
 		assertTrue(project.hasNature(MesonNature.ID));
 	}
-
+	
 	@Test
 	public void buildMesonProject() throws Exception {
-		String projectName = "MesonTestProj";
+		String projectName = "MesonTestProj3";
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		ICProject cproject = CoreModel.getDefault().create(project);
@@ -145,49 +145,46 @@ public class NewMesonProjectTest {
 		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
 		proj.contextMenu("Build Project").click();
 
-		boolean foundExecutable = false;
-		while (!foundExecutable) {
-			IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
-			if (binaries.length > 0) {
-				for (IBinary binary : binaries) {
-					if (binary.getResource().getName().startsWith(projectName)) {
-						foundExecutable = true;
-					}
-				}
-			}
-			bot.sleep(1000);
+		// Make sure the project indexer completes. At that point we're stable.
+		IIndexManager indexManager = CCorePlugin.getIndexManager();
+		while (!indexManager.isProjectContentSynced(cproject)) {
+			Thread.sleep(1000);
 		}
-		assertTrue(foundExecutable);
 		
 		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
-		String output = console.bot().styledText().getText();
-
-		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
+		
+		String[] lines = new String[0];
+		
+		while (lines.length < 12) {
+			String output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(2000);
+		}
+		
+		bot.sleep(2000);
 		
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
-		assertEquals(" sh -c \"meson   " + projectPath + "\"", lines[1]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
 		assertEquals("Source dir: " + projectPath, lines[4]);
 		assertEquals("Build dir: " + projectPath + "/build/default", lines[5]);
 		assertEquals("Build type: native build", lines[6]);
-		assertEquals("Project name: MesonTestProj", lines[7]);
+		assertEquals("Project name: MesonTestProj3", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
-		assertEquals("Build targets in project: 1", lines[11]);
-		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
-		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj"));
 		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	
 	@Test
-	public void runMesonProject() throws Exception {
-		String projectName = "MesonTestProj";
+	public void manualNinja() throws Exception {
+		// check the build console output
+		String projectName = "MesonTestProj3";
 		// Make sure the project indexer completes. At that point we're stable.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		CoreModel.getDefault().create(project);
+		
+		IPath projectPath = project.getLocation();
 
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
@@ -199,77 +196,92 @@ public class NewMesonProjectTest {
 		explorer.show();
 		explorer.setFocus();
 		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
-
-		proj.expand();
-		proj.expandNode("Binaries");
+		proj.contextMenu("Run ninja").click();
 		
-		SWTBotTreeItem binaries = proj.getNode("Binaries").select();
-		binaries.getNode(0).contextMenu("Run As").menu(withRegex(".*Local C.*"), false, 0).click();
-		bot.sleep(4000);
+		bot.sleep(2000);
 		
-		SWTBotView console = bot.viewByPartName("Console");
-		console.show();
-		console.setFocus();
-		String output = "";
+		SWTBotShell shell = bot.activeShell();
 		
-		boolean done = false;
-		while (!done) {
-			// check the build console output
-			output = console.bot().styledText().getText();
-			if (output.startsWith("Hello") || !output.startsWith("Building in")) {
-				done = true;
-			}
-			bot.sleep(2000);
-		}
-		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
-		assertEquals("Hello World", lines[0]);
-	}
-	
-	@Test
-	public void tryCleaningMesonProject() throws Exception {
-		String projectName = "MesonTestProj";
-		// Make sure the project indexer completes. At that point we're stable.
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		CoreModel.getDefault().create(project);
-		
-		// open C++ perspective
-		if (!"C/C++".equals(bot.activePerspective().getLabel())) {
-			bot.perspectiveByLabel("C/C++").activate();
+		while (!shell.getText().trim().isEmpty()) {
+			bot.sleep(1000);
+			shell = bot.activeShell();
 		}
 		
-		bot.sleep(1000);
+		SWTBot shellBot = shell.bot();
 		
-		IPath projectPath = project.getLocation();
+		shellBot.textWithLabel("Environment:").setText("CFLAGS=\"-DJeff2\"");
+		shellBot.textWithLabel("Options:").setText("clean");
 		
-		SWTBotShell mainShell = bot.shell("junit-workspace - Eclipse Platform");
-
-		// use mainShell to get Project menu because it will be found somewhere else
-		bot.menu(mainShell).menu("Project").menu("Clean...").click();
-		bot.waitUntil(Conditions.shellIsActive("Clean"));
-		bot.shell("Clean").activate();
-		
-		SWTBotShell shell = bot.shell("Clean");
-		shell.bot().checkBox("Clean all projects").deselect();
-		
-		shell.bot().button("Clean").click();
+		shellBot.button("Finish").click();
 		
 		bot.waitUntil(Conditions.shellCloses(shell));
 		
-		// check the build console output
 		SWTBotView console = bot.viewByPartName("Console");
 		console.show();
 		console.setFocus();
-		String output = console.bot().styledText().getText();
-		
-		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
-		
-		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
-		assertEquals("ninja clean -v", lines[1]);
-		assertEquals("[1/1] ninja -t clean", lines[2]);
-		assertEquals("Cleaning... 3 files.", lines[3]);
-		assertEquals("Build complete: " + projectPath + "/build/default", lines[4]);
 
+		String[] lines = new String[0];
+
+		while (lines.length < 4) {
+			String output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(2000);
+		}
+
+		bot.sleep(2000);
+
+		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
+		assertEquals("[1/1] Cleaning.", lines[1]);
+		assertEquals("Cleaning... 3 files.", lines[2]);
+		assertEquals("Build complete: " + projectPath + "/build/default", lines[3]);
+		
+		// Make sure it shows up in Project Explorer
+		explorer = bot.viewByPartName("Project Explorer");
+		explorer.show();
+		explorer.setFocus();
+		proj = explorer.bot().tree().getTreeItem(projectName).select();
+		proj.contextMenu("Run ninja").click();
+		
+		shell = bot.activeShell();
+		
+		while (!shell.getText().trim().isEmpty()) {
+			bot.sleep(1000);
+			shell = bot.activeShell();
+		}
+		
+		shellBot = shell.bot();
+		
+		// verify last parameters are still present
+		assertEquals("CFLAGS=\"-DJeff2\"",shellBot.textWithLabel("Environment:").getText());
+		assertEquals("clean", shellBot.textWithLabel("Options:").getText());
+		
+		shellBot.button("Cancel").click();
+		
+		bot.waitUntil(Conditions.shellCloses(shell));
+		
+		// Make sure it shows up in Project Explorer
+		explorer = bot.viewByPartName("Project Explorer");
+		explorer.show();
+		explorer.setFocus();
+		proj = explorer.bot().tree().getTreeItem(projectName).select();
+
+		proj.expand();
+		bot.sleep(500);
+		proj.expandNode("Binaries");
+		
+		SWTBotTreeItem binaries = proj.getNode("Binaries").select();
+		List<String> binarynodes = binaries.getNodes();
+		
+		// make sure that we no longer have the binary after the clean occurs
+		for (String node : binarynodes) {
+			if (node.contains(projectName)) {
+				fail();
+			}
+		}
+
+		
 	}
 
 	
 }
+	

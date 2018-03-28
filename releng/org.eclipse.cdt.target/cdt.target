@@ -15,7 +15,12 @@
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.freemarker" version="0.0.0"/>
+<unit id="org.assertj" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20180302171354/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/technology/epp/logging/stable/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>

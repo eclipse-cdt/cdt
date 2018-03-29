@@ -14,8 +14,6 @@ import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRe
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -241,7 +239,8 @@ public class NewMesonProjectTest {
 		
 		IPath projectPath = project.getLocation();
 		
-		SWTBotShell mainShell = bot.shell("junit-workspace - Eclipse Platform");
+		
+		SWTBotShell mainShell = bot.activeShell();
 
 		// use mainShell to get Project menu because it will be found somewhere else
 		bot.menu(mainShell).menu("Project").menu("Clean...").click();

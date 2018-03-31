@@ -274,7 +274,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			return rtype;
 		} 
 		
-		throw new CompositingNotImplementedError();
+		throw new CompositingNotImplementedError(rtype.getClass().getName());
 	}
 	
 	public ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
@@ -553,7 +553,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			return e;
 		}
 		
-		throw new CompositingNotImplementedError();
+		throw new CompositingNotImplementedError(eval.getClass().getName());
 	}
 
 	private ICPPEvaluation[] getCompositeEvaluationArray(ICPPEvaluation[] array) {

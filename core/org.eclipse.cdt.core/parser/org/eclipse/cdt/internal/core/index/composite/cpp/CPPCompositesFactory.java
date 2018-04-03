@@ -108,6 +108,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.InitializerListType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.CIndex;
@@ -269,6 +270,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPUnaryTypeTransformation typeTransformation= (ICPPUnaryTypeTransformation) rtype;
 			IType operand = getCompositeType(typeTransformation.getOperand());
 			return new CPPUnaryTypeTransformation(typeTransformation.getOperator(), operand);
+		}
+		if (rtype instanceof InitializerListType) {
+			EvalInitList e = ((InitializerListType) rtype).getEvaluation();
+			EvalInitList e2 = (EvalInitList) getCompositeEvaluation(e);
+			if (e2 != e)
+				return new InitializerListType(e2);
+			return rtype;
 		}
 		if (rtype instanceof IBasicType || rtype == null || rtype instanceof ISemanticProblem) {
 			return rtype;

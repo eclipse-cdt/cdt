@@ -508,31 +508,31 @@
 <!-- =================================================================================== -->
    <extension point="org.eclipse.core.contenttype.contentTypes">
 	  <!-- declares a content type for C source files -->
-	  <content-type id="cSource" name="%cSourceName"
+	  <content-type id="cSource" name="C Source File"
          base-type="org.eclipse.core.runtime.text"
          file-extensions="c"
          priority="high"/>
 	  <!-- declares a content type for C header files -->
-      <content-type id="cHeader" name="%cHeaderName" 
+      <content-type id="cHeader" name="C Header File"
           base-type="org.eclipse.cdt.core.cSource"
 		  file-extensions="h"          
           priority="high"/>
 	  <!-- declares a content type for C++ source files -->
-      <content-type id="cxxSource" name="%cxxSourceName" 
+      <content-type id="cxxSource" name="C++ Source File"
           base-type="org.eclipse.cdt.core.cSource"
 		  file-extensions="C,cpp,cxx,cc,c++"
           priority="high"/>
 	  <!-- declares a content type for C++ header files -->
-      <content-type id="cxxHeader" name="%cxxHeaderName" 
+      <content-type id="cxxHeader" name="C++ Header File"
           base-type="org.eclipse.cdt.core.cxxSource"
 		  file-extensions="h,hpp,hh,hxx,inc"          
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
-      <content-type id="asmSource" name="%asmSourceName" 
+      <content-type id="asmSource" name="Assembly Source File"
           base-type="org.eclipse.core.runtime.text"
           file-extensions="S,s,asm,ASM"
           priority="high"/>
-      <content-type id="binaryFile" name="%binaryFileName"
+      <content-type id="binaryFile" name="Binary File"
           priority="high"/>
    </extension>
 

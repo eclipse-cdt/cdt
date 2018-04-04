@@ -202,25 +202,25 @@
 	  <content-type
          base-type="org.eclipse.cdt.core.binaryFile"
          id="compiledObjectFile"
-         name="%objectFileName"
+         name="Object File"
          priority="high"/>
 	  <!-- declares a content type for executable files -->
       <content-type
             base-type="org.eclipse.cdt.core.binaryFile"
             id="executableFile"
-            name="%executableName"
+            name="Executable File"
             priority="high"/>
 	  <!-- declares a content type for static libraries -->
       <content-type
             base-type="org.eclipse.cdt.core.binaryFile"
             id="staticLibrary"
-            name="%staticLibraryName"
+            name="Static Library"
             priority="high"/>
 	  <!-- declares a content type for shared libraries -->
       <content-type
             base-type="org.eclipse.cdt.core.binaryFile"
             id="sharedLibrary"
-            name="%sharedLibraryName"
+            name="Shared Library"
             priority="high"/>
   </extension>
 

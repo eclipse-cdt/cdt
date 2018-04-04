@@ -22,6 +22,7 @@ public class Messages extends NLS {
 	public static String StandardBuildConfiguration_0;
 	public static String StandardBuildConfiguration_1;
 	public static String StandardBuildConfiguration_CommandNotFound;
+	public static String StandardBuildConfiguration_Failure;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

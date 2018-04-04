@@ -322,6 +322,33 @@ public class ContainerCommandLauncher
 		return fProcess;
 	}
 
+	private String calculateImageName() {
+		ICBuildConfiguration buildCfg = getBuildConfiguration();
+		String imageName = ""; //$NON-NLS-1$
+
+		if (buildCfg != null) {
+			IToolChain toolChain;
+			try {
+				toolChain = buildCfg.getToolChain();
+			} catch (CoreException e) {
+				return imageName;
+			}
+			imageName = toolChain
+					.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+		} else {
+			ICConfigurationDescription cfgd = CoreModel.getDefault()
+					.getProjectDescription(fProject).getActiveConfiguration();
+			IConfiguration cfg = ManagedBuildManager
+					.getConfigurationForDescription(cfgd);
+			if (cfg == null) {
+				return imageName;
+			}
+			IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
+		}
+		return imageName;
+	}
+
 	/**
 	 * Parse array of "ENV=value" pairs to Properties.
 	 */
@@ -425,6 +452,12 @@ public class ContainerCommandLauncher
 				// ignore
 			}
 		}
+	}
+
+	@Override
+	public String getConsoleHeader() {
+		return NLS.bind(Messages.ContainerCommandLauncher_image_msg,
+				calculateImageName()) + NEWLINE;
 	}
 
 	protected void printCommandLine(OutputStream os) {

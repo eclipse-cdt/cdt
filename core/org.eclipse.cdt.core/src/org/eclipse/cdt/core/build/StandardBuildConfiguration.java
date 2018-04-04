@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -38,6 +40,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * A Standard Build Configuration that simply calls a specified command for
@@ -229,47 +233,71 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 			ConsoleOutputStream outStream = console.getOutputStream();
+			
+			IPath cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
 
 			Path buildDir = getBuildDirectory();
+			
+			List<String> argList = new ArrayList<>();
+			for (IEnvironmentVariable var : envVars) {
+				argList.add(var.getName() + "=" + var.getValue()); //$NON-NLS-1$
+			}
+			
+			argList.add("sh"); //$NON-NLS-1$
+			argList.add("-c"); //$NON-NLS-1$
+			
+			StringBuffer s = new StringBuffer();
+			s.append("make"); //$NON-NLS-1$
 
 			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
-			Path make = findCommand(buildCommand[0]);
-			if (make == null) {
-				console.getErrorStream()
-						.write(String.format(Messages.StandardBuildConfiguration_CommandNotFound, buildCommand[0]));
-				return null;
-			}
-
-			List<String> command = new ArrayList<>();
-			command.add(make.toString());
 			if (!getBuildContainer().equals(getProject())) {
 				Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 				Path relative = getBuildDirectory().relativize(makefile);
-				command.add("-f"); //$NON-NLS-1$
-				command.add(relative.toString());
+				s.append(" "); //$NON-NLS-1$
+				s.append("-f"); //$NON-NLS-1$
+				s.append(" "); //$NON-NLS-1$
+				s.append(relative.toString());
 			}
+			
 			for (int i = 1; i < buildCommand.length; i++) {
-				command.add(buildCommand[i]);
+				s.append(" "); //$NON-NLS-1$
+				s.append(buildCommand[i]);
 			}
+			
+			argList.add(s.toString());
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getProject().getLocationURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
 				// run make
-				console.getOutputStream().write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
-				ProcessBuilder processBuilder = new ProcessBuilder(command)
-						.directory(getBuildDirectory().toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
+				console.getOutputStream().write(String.format("%s\n", String.join(" ", argList))); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
+				
+				launcher.setProject(getProject());
+				if (launcher instanceof ICBuildCommandLauncher) {
+					((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
+					console.getOutputStream().write(((ICBuildCommandLauncher)launcher).getConsoleHeader());
+				}
+				
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+
+				Process p = launcher.execute(cmdPath, argList.toArray(new String[0]), new String[0], workingDir, monitor);
+				if (p == null) {
+					console.getErrorStream().write(String.format(Messages.StandardBuildConfiguration_Failure, "")); //$NON-NLS-1$
+					return null;
+				}
+
 				IConsoleParser[] consoleParsers = new IConsoleParser[] { epm, this };
-				watchProcess(process, consoleParsers);
+				List<Job> jobList = new ArrayList<>();
+				watchProcess(p, consoleParsers, jobList);
+
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 				outStream.write(String.format(Messages.StandardBuildConfiguration_1, epm.getErrorCount(), 
 						epm.getWarningCount(), buildDir.toString()));
 			}
-
 
 			return new IProject[] { project };
 		} catch (IOException e) {
@@ -286,28 +314,44 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			ConsoleOutputStream outStream = console.getOutputStream();
 
-			List<String> command;
+			IPath cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
+
+			List<String> argList = new ArrayList<>();
+			for (IEnvironmentVariable var : envVars) {
+				argList.add(var.getName() + "=" + var.getValue()); //$NON-NLS-1$
+			}
+			
 			if (cleanCommand != null) {
-				command = Arrays.asList(cleanCommand);
+				argList.addAll(Arrays.asList(cleanCommand));
 			} else {
-				command = new ArrayList<>();
-				command.add(findCommand("make").toString()); //$NON-NLS-1$
+				argList.add("make"); //$NON-NLS-1$
 				if (!getBuildContainer().equals(getProject())) {
 					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 					Path relative = getBuildDirectory().relativize(makefile);
-					command.add("-f"); //$NON-NLS-1$
-					command.add(relative.toString());
+					argList.add("-f"); //$NON-NLS-1$
+					argList.add(relative.toString());
 				}
-				command.add("clean"); //$NON-NLS-1$
+				argList.add("clean"); //$NON-NLS-1$
 			}
 
 			// run make
-			outStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
-			ProcessBuilder processBuilder = new ProcessBuilder(command)
-					.directory(getBuildDirectory().toFile());
-			setBuildEnvironment(processBuilder.environment());
-			Process process = processBuilder.start();
-			watchProcess(process, console);
+			outStream.write(String.format("%s\n", String.join(" ", argList))); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
+			
+			launcher.setProject(getProject());
+			if (launcher instanceof ICBuildCommandLauncher) {
+				((ICBuildCommandLauncher)launcher).setBuildConfiguration(this);
+			}
+			
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+
+			Process p = launcher.execute(cmdPath, argList.toArray(new String[0]), new String[0], workingDir, monitor);
+			if (p == null || launcher.waitAndRead(outStream, outStream, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
+				String errMsg = p == null ? "" : launcher.getErrorMessage(); //$NON-NLS-1$
+				console.getErrorStream().write(String.format(Messages.StandardBuildConfiguration_Failure, errMsg));
+				return;
+			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

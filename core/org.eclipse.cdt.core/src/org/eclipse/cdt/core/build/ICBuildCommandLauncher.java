@@ -28,5 +28,10 @@ public interface ICBuildCommandLauncher {
 	 * @param config - CBuildConfiguration to register
 	 */
 	public void setBuildConfiguration(ICBuildConfiguration config);
+	
+	/**
+	 * Get any special console header (e.g. Container Image used)
+	 */
+	public String getConsoleHeader();
 
 }

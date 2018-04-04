@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.IConsoleParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -102,7 +103,7 @@ import com.google.gson.JsonParseException;
  */
 public abstract class CBuildConfiguration extends PlatformObject
 		implements ICBuildConfiguration, ICBuildConfiguration2, IMarkerGenerator, 
-		IConsoleParser, IElementChangedListener {
+		IConsoleParser2, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
@@ -499,6 +500,26 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 	
 	/**
+	 * @since 6.5
+	 */
+	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, List<Job> jobList)
+			throws CoreException {
+		new ReaderThread(process.getInputStream(), consoleParsers, jobList).start();
+		new ReaderThread(process.getErrorStream(), consoleParsers, jobList).start();
+		try {
+			int rc = process.waitFor();
+			for (Job j : jobList) {
+				j.join();
+			}
+			shutdown();
+			return rc;
+		} catch (InterruptedException e) {
+			CCorePlugin.log(e);
+			return -1;
+		}
+	}
+
+	/**
 	 * @since 6.4
 	 */
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers)
@@ -517,17 +538,24 @@ public abstract class CBuildConfiguration extends PlatformObject
 		private final BufferedReader in;
 		private final IConsoleParser[] consoleParsers;
 		private final PrintStream out;
+		private final List<Job> jobList;
 
 		public ReaderThread(InputStream in, IConsoleParser[] consoleParsers) {
+			this(in, consoleParsers, null);
+		}
+
+		public ReaderThread(InputStream in, IConsoleParser[] consoleParsers, List<Job> jobList) {
 			this.in = new BufferedReader(new InputStreamReader(in));
 			this.out = null;
 			this.consoleParsers = consoleParsers;
+			this.jobList = jobList;
 		}
 
 		public ReaderThread(InputStream in, OutputStream out) {
 			this.in = new BufferedReader(new InputStreamReader(in));
 			this.out = new PrintStream(out);
 			this.consoleParsers = null;
+			this.jobList = null;
 		}
 		
 		@Override
@@ -538,7 +566,13 @@ public abstract class CBuildConfiguration extends PlatformObject
 						for (IConsoleParser consoleParser : consoleParsers) {
 							// Synchronize to avoid interleaving of lines
 							synchronized (consoleParser) {
-								consoleParser.processLine(line);
+								// if we have an IConsoleParser2, use the processLine method that
+								// takes a job list (Container Build support)
+								if (jobList != null && consoleParser instanceof IConsoleParser2) {
+									((IConsoleParser2)consoleParser).processLine(line, jobList);
+								} else {
+									consoleParser.processLine(line);
+								}
 							}
 						}
 					}
@@ -939,7 +973,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * 
 	 * @since 6.5
 	 */
-	protected boolean processLine(String line, List<Job> jobsArray) {
+	@Override
+	public boolean processLine(String line, List<Job> jobsArray) {
 		// Split line into args, taking into account quotes
 		List<String> command = stripArgs(line);
 		
@@ -1036,7 +1071,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * @throws CoreException
 	 */
 	protected void refreshScannerInfo() throws CoreException {
-		// do nothing by default
+		CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(getProject()));
+		infoChanged = false;
 	}
 
 	@Override

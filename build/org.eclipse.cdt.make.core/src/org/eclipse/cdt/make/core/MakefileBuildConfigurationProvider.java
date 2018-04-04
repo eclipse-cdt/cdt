@@ -43,14 +43,20 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 		StringBuilder configName = new StringBuilder("make."); //$NON-NLS-1$
 		configName.append(launchMode);
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
-		if (os != null) {
+		if ("linux-container".equals(os)) { //$NON-NLS-1$
+			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
 			configName.append('.');
-			configName.append(os);
-		}
-		String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
-		if (arch != null && !arch.isEmpty()) {
-			configName.append('.');
-			configName.append(arch);
+			configName.append(osConfigName);
+		} else {
+			if (os != null) {
+				configName.append('.');
+				configName.append(os);
+			}
+			String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
+			if (arch != null && !arch.isEmpty()) {
+				configName.append('.');
+				configName.append(arch);
+			}
 		}
 		String name = configName.toString();
 		int i = 0;

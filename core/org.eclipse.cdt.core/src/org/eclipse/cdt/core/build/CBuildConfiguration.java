@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.IConsoleParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -102,7 +103,7 @@ import com.google.gson.JsonParseException;
  */
 public abstract class CBuildConfiguration extends PlatformObject
 		implements ICBuildConfiguration, ICBuildConfiguration2, IMarkerGenerator, 
-		IConsoleParser, IElementChangedListener {
+		IConsoleParser2, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 
@@ -473,6 +474,32 @@ public abstract class CBuildConfiguration extends PlatformObject
 		}
 		return null;
 	}
+	
+	/**
+	 * @since 6.5
+	 */
+	public Process startBuildProcess(List<String> commands, IEnvironmentVariable[] envVars, IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
+		Process process = null;
+		IToolChain tc = getToolChain();
+		if (tc instanceof IToolChain2) {
+			process = ((IToolChain2)tc).startBuildProcess(this, commands, getBuildDirectory().toString(), envVars, console, monitor);
+		} else {
+			// verify command can be found locally on path
+			Path commandPath = findCommand(commands.get(0));
+			if (commandPath == null) {
+				console.getErrorStream()
+				.write(String.format(Messages.CBuildConfiguration_CommandNotFound, commands.get(0)));
+				return null;
+			}
+			commands.set(0, commandPath.toString());
+
+			ProcessBuilder processBuilder = new ProcessBuilder(commands)
+					.directory(getBuildDirectory().toFile());
+			setBuildEnvironment(processBuilder.environment());
+			process = processBuilder.start();
+		}
+		return process;
+	}
 
 	@Deprecated
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, IConsole console)
@@ -503,8 +530,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 */
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers)
 			throws CoreException {
-		new ReaderThread(process.getInputStream(), consoleParsers).start();
-		new ReaderThread(process.getErrorStream(), consoleParsers).start();
+		new ReaderThread(this, process.getInputStream(), consoleParsers).start();
+		new ReaderThread(this, process.getErrorStream(), consoleParsers).start();
 		try {
 			return process.waitFor();
 		} catch (InterruptedException e) {
@@ -514,11 +541,13 @@ public abstract class CBuildConfiguration extends PlatformObject
 	}
 
 	private static class ReaderThread extends Thread {
+		CBuildConfiguration config;
 		private final BufferedReader in;
 		private final IConsoleParser[] consoleParsers;
 		private final PrintStream out;
 
-		public ReaderThread(InputStream in, IConsoleParser[] consoleParsers) {
+		public ReaderThread(CBuildConfiguration config, InputStream in, IConsoleParser[] consoleParsers) {
+			this.config = config;
 			this.in = new BufferedReader(new InputStreamReader(in));
 			this.out = null;
 			this.consoleParsers = consoleParsers;
@@ -528,23 +557,41 @@ public abstract class CBuildConfiguration extends PlatformObject
 			this.in = new BufferedReader(new InputStreamReader(in));
 			this.out = new PrintStream(out);
 			this.consoleParsers = null;
+			this.config = null;
 		}
 		
 		@Override
 		public void run() {
+			List<Job> jobList = new ArrayList<>();
 			try {
 				for (String line = in.readLine(); line != null; line = in.readLine()) {
 					if (consoleParsers != null) {
 						for (IConsoleParser consoleParser : consoleParsers) {
 							// Synchronize to avoid interleaving of lines
 							synchronized (consoleParser) {
-								consoleParser.processLine(line);
+								// if we have an IConsoleParser2, use the processLine method that
+								// takes a job list (Container Build support)
+								if (consoleParser instanceof IConsoleParser2) {
+									((IConsoleParser2)consoleParser).processLine(line, jobList);
+								} else {
+									consoleParser.processLine(line);
+								}
 							}
 						}
 					}
 					if (out != null) {
 						out.println(line);
 					}
+				}
+				for (Job j : jobList) {
+					try {
+						j.join();
+					} catch (InterruptedException e) {
+						// ignore
+					}
+				}
+				if (config != null) {
+				  config.shutdown();
 				}
 			} catch (IOException e) {
 				CCorePlugin.log(e);
@@ -939,7 +986,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * 
 	 * @since 6.5
 	 */
-	protected boolean processLine(String line, List<Job> jobsArray) {
+	@Override
+	public boolean processLine(String line, List<Job> jobsArray) {
 		// Split line into args, taking into account quotes
 		List<String> command = stripArgs(line);
 		
@@ -1036,7 +1084,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * @throws CoreException
 	 */
 	protected void refreshScannerInfo() throws CoreException {
-		// do nothing by default
+		CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(getProject()));
+		infoChanged = false;
 	}
 
 	@Override

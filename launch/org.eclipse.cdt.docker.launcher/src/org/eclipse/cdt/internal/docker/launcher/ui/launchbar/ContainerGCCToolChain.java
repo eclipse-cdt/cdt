@@ -29,8 +29,10 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChain2;
 import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.docker.launcher.ContainerCommandLauncher;
 import org.eclipse.cdt.docker.launcher.ContainerTargetTypeProvider;
 import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
@@ -48,6 +51,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
@@ -59,7 +63,8 @@ import org.eclipse.linuxtools.docker.ui.Activator;
  * 
  * @since 1.2
  */
-public class ContainerGCCToolChain extends PlatformObject implements IToolChain {
+public class ContainerGCCToolChain extends PlatformObject
+		implements IToolChain, IToolChain2 {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.docker.launcher.gcc"; //$NON-NLS-1$
 
@@ -599,6 +604,49 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain 
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
+	}
+
+	@Override
+	public Process startBuildProcess(ICBuildConfiguration config,
+			List<String> command, String buildDirectory,
+			IEnvironmentVariable[] envVars, IConsole console,
+			IProgressMonitor monitor) throws CoreException, IOException {
+
+		IPath cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
+
+		List<String> argList = new ArrayList<>();
+		for (IEnvironmentVariable var : envVars) {
+			argList.add(var.getName() + "=" + var.getValue()); //$NON-NLS-1$
+		}
+
+		argList.add("sh"); //$NON-NLS-1$
+		argList.add("-c"); //$NON-NLS-1$
+
+		StringBuffer buf = new StringBuffer();
+		for (String s : command) {
+			buf.append(s);
+			buf.append(" "); //$NON-NLS-1$
+		}
+		buf.deleteCharAt(buf.length() - 1); // remove last blank;
+		argList.add(buf.toString());
+
+		ICommandLauncher launcher = CommandLauncherManager.getInstance()
+				.getCommandLauncher(config);
+
+		launcher.setProject(config.getBuildConfiguration().getProject());
+		if (launcher instanceof ICBuildCommandLauncher) {
+			((ICBuildCommandLauncher) launcher).setBuildConfiguration(config);
+			console.getOutputStream().write(
+					((ICBuildCommandLauncher) launcher).getConsoleHeader());
+		}
+
+		org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+				buildDirectory);
+
+		Process p = launcher.execute(cmdPath, argList.toArray(new String[0]),
+				new String[0], workingDir, monitor);
+
+		return p;
 	}
 
 }

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -377,7 +378,15 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
-			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
+			IBinding paramOwnerBinding = buffer.unmarshalBinding();
+			if (paramOwnerBinding instanceof IProblemBinding) {
+				// The parameter owner could not be stored in the index.
+				// If this happens, it's almost certainly a bug, but the severity
+				// is mitigated by returning a problem evaluation instead of just
+				// trying to cast to ICPPFunction and throwing a ClassCastException.
+				return EvalFixed.INCOMPLETE;
+			}
+			ICPPFunction parameterOwner= (ICPPFunction) paramOwnerBinding;
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
 			IBinding templateDefinition= buffer.unmarshalBinding();

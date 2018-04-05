@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -377,7 +379,16 @@ public class EvalBinding extends CPPDependentEvaluation {
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		if ((firstBytes & ITypeMarshalBuffer.FLAG1) != 0) {
-			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
+			IBinding paramOwnerBinding = buffer.unmarshalBinding();
+			if (paramOwnerBinding instanceof IProblemBinding) {
+				// The parameter owner could not be stored in the index.
+				// If this happens, it's almost certainly a bug, but the severity
+				// is mitigated by returning a problem evaluation instead of just
+				// trying to cast to ICPPFunction and throwing a ClassCastException.
+				CCorePlugin.log("An EvalBinding had a parameter owner that could not be stored in the index");  //$NON-NLS-1$
+				return EvalFixed.INCOMPLETE;
+			}
+			ICPPFunction parameterOwner= (ICPPFunction) paramOwnerBinding;
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
 			IBinding templateDefinition= buffer.unmarshalBinding();

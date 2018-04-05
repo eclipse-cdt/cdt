@@ -2973,6 +2973,12 @@ public class CPPTemplates {
 				return ((InitializerListType) t).getEvaluation().isTypeDependent();
 			} else if (t instanceof IBinding) {
 				IBinding owner = ((IBinding) t).getOwner();
+				if (owner instanceof IFunction) {
+					if (owner instanceof ICPPFunctionTemplate) {
+						return true;
+					}
+					owner = owner.getOwner();
+				}
 				if (owner instanceof ICPPClassTemplate)
 					return true;
 				return (owner instanceof IType) && owner != t && isDependentType((IType) owner);

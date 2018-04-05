@@ -3198,4 +3198,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testConstexprInitListConstructor_519091() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <typename T> T&& declval();
+	//	  
+	//	template <typename Value, typename Func, 
+	//	          typename Requires = decltype(declval<Func>()(declval<Value>()))>
+	//	void apply(Value, Func);
+	//
+	//	template <typename T>
+	//	void callInTemplateContext(int i) {
+	//	    return apply(i, [](int x) { return T(x); });
+	//	}
+	//
+	//	void consume(int);
+	//	void callInCpp1(int i);
+	
+	//	void callInCpp1(int i) {
+	//	    apply(i, &consume);
+	//	}
+	public void testClassCastException_533216() throws Exception {
+		checkBindings();
+	}
 }

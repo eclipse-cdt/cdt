@@ -66,8 +66,6 @@ public class DeclaratorWriter extends NodeWriter {
 			writeFieldDeclarator((IASTFieldDeclarator) declarator);
 		} else if (declarator instanceof ICASTKnRFunctionDeclarator) {
 			writeCKnRFunctionDeclarator((ICASTKnRFunctionDeclarator) declarator);
-		} else if (declarator instanceof ICPPASTDeclarator) {
-			writeCPPDeclarator((ICPPASTDeclarator) declarator);
 		} else {
 			writeDefaultDeclarator(declarator);
 		}
@@ -79,6 +77,7 @@ public class DeclaratorWriter extends NodeWriter {
 	protected void writeDefaultDeclarator(IASTDeclarator declarator) {
 		IASTPointerOperator[] pointOps = declarator.getPointerOperators();
 		writePointerOperators(declarator, pointOps);
+		writeParameterPack(declarator);
 		IASTName name = declarator.getName();
 		name.accept(visitor);
 		writeNestedDeclarator(declarator);
@@ -94,6 +93,14 @@ public class DeclaratorWriter extends NodeWriter {
 			writeGCCAttributes(operator, EnumSet.noneOf(SpaceLocation.class));
 			writePointerOperator(operator);
 			writeCPPAttributes(operator, EnumSet.noneOf(SpaceLocation.class));
+		}
+	}
+
+	private void writeParameterPack(IASTDeclarator declarator) {
+		if (declarator instanceof ICPPASTDeclarator) {			
+			if (((ICPPASTDeclarator) declarator).declaresParameterPack()) {
+				scribe.print(VAR_ARGS);
+			}
 		}
 	}
 
@@ -329,12 +336,5 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeKnRParameterNames(ICASTKnRFunctionDeclarator knrFunct, IASTName[] parameterNames) {
 		writeNodeList(parameterNames);
-	}
-
-	protected void writeCPPDeclarator(ICPPASTDeclarator declarator) {
-		if (declarator.declaresParameterPack()) {
-			scribe.print(VAR_ARGS);
-		}
-		writeDefaultDeclarator(declarator);
 	}
 }

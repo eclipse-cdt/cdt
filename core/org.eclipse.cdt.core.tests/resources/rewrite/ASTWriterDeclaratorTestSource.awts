@@ -178,3 +178,49 @@ constexpr long double operator ""_deg(long double deg)
 {
     return deg * 3.141592 / 180;
 }
+
+//!Memberfunction with varargs parameter without pointer ops
+//%CPP
+struct Foo
+{
+    template<typename... ARGS> 
+    void bar(ARGS... args)
+    {
+    }
+};
+
+//!Memberfunction with varargs parameter with pointer ops
+//%CPP
+struct Foo
+{
+    template<typename... ARGS> 
+    void bar(ARGS&&... args)
+    {
+    }
+};
+
+//!Template function with varargs parameter without pointer ops
+//%CPP
+template<typename... ARGS> 
+void foo(ARGS... args)
+{
+}
+
+//!Template function with varargs parameter with pointer ops
+//%CPP
+template<typename... ARGS> 
+void foo(ARGS&&... args)
+{
+}
+
+//!Function with varargs parameter without pointer ops
+//%CPP
+void foo(int arg, ...)
+{
+}
+
+//!Function with varargs parameter with pointer ops
+//%CPP
+void foo(int&& arg, ...)
+{
+}

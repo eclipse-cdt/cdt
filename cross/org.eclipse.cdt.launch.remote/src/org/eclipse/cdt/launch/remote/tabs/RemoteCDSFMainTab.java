@@ -43,9 +43,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.dialogs.RemoteResourceBrowser;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -344,6 +346,20 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	protected void handleRemoteBrowseSelected() {
 		IRemoteConnection currentConnectionSelected = getCurrentConnection();
+		
+		// Try to open the connection before showing RemoteResourceBrowser
+		if (currentConnectionSelected != null && !currentConnectionSelected.isOpen()) {
+			if (currentConnectionSelected.getConnectionType().hasService(IRemoteUIConnectionService.class)) {
+				
+				IRemoteUIConnectionService uiConnService = currentConnectionSelected.getConnectionType().getService(IRemoteUIConnectionService.class);
+				uiConnService.openConnectionWithProgress(getShell(), new ProgressMonitorDialog(getShell()), currentConnectionSelected);
+				
+				// Don't show RemoteResourceBrowser if the connection cannot be opened
+				if (!currentConnectionSelected.isOpen())
+					return;
+			}
+		}
+		
 		RemoteResourceBrowser b = new RemoteResourceBrowser(getControl().getShell(),
 				SWT.NONE);
 		b.setConnection(currentConnectionSelected);

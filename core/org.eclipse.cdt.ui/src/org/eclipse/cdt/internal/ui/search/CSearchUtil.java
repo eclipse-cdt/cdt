@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Niefer (Rational Software) - initial implementation
+ *     Torbjörn Svensson (STMicroelectronics) - bug #533379
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -92,9 +93,11 @@ public class CSearchUtil {
 	 */
 	public static String adjustSearchStringForOperators(String searchStr) {
 		int operatorIndex = searchStr.indexOf("operator");  //$NON-NLS-1$
-		int operatorCharIndex = operatorIndex + 8;  // "operator" is 8 characters
-		if (operatorCharIndex < searchStr.length() && isOperatorChar(searchStr.charAt(operatorCharIndex))) {
-			searchStr = searchStr.substring(0, operatorCharIndex) + ' ' + searchStr.substring(operatorCharIndex);
+		if (operatorIndex >= 0) { // Only do this if string actually contains "operator"
+			int operatorCharIndex = operatorIndex + 8;  // "operator" is 8 characters
+			if (operatorCharIndex < searchStr.length() && isOperatorChar(searchStr.charAt(operatorCharIndex))) {
+				searchStr = searchStr.substring(0, operatorCharIndex) + ' ' + searchStr.substring(operatorCharIndex);
+			}
 		}
 		return searchStr;
 	}

@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.utils.Platform;
@@ -34,6 +36,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -43,6 +46,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	public static final String CMAKE_GENERATOR = "cmake.generator"; //$NON-NLS-1$
 	public static final String CMAKE_ARGUMENTS = "cmake.arguments"; //$NON-NLS-1$
+	public static final String CMAKE_ENV = "cmake.environment"; //$NON-NLS-1$
 	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
@@ -97,8 +101,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private boolean isLocal() throws CoreException {
 		IToolChain toolchain = getToolChain();
-		return Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
-				&& Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH));
+		return (Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
+				|| "linux-container".equals(toolchain.getProperty(IToolChain.ATTR_OS))) //$NON-NLS-1$
+				&& (Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH)));
 	}
 
 	@Override
@@ -142,16 +147,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			}
 
 			if (runCMake) { // $NON-NLS-1$
+				
 				List<String> command = new ArrayList<>();
 
-				// TODO location of CMake out of preferences if not found here
-				Path cmakePath = findCommand("cmake"); //$NON-NLS-1$
-				if (cmakePath != null) {
-					command.add(cmakePath.toString());
-				} else {
-					command.add("cmake"); //$NON-NLS-1$
-				}
-
+				command.add("cmake"); //$NON-NLS-1$
 				command.add("-G"); //$NON-NLS-1$
 				command.add(generator);
 
@@ -164,8 +163,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				case "debug": //$NON-NLS-1$
 					command.add("-DCMAKE_BUILD_TYPE=Debug"); //$NON-NLS-1$
 					break;
+				case "run": //$NON-NLS-1$
+					command.add("-DCMAKE_BUILD_TYPE=Release"); //$NON-NLS-1$
+					break;
 				}
-
 				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
 				
 				String userArgs = getProperty(CMAKE_ARGUMENTS);
@@ -175,31 +176,59 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				command.add(new File(project.getLocationURI()).getAbsolutePath());
 
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, console);
+
+				Process p = startBuildProcess(command, new IEnvironmentVariable[0], console, monitor);
+				if (p == null) {
+					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+					return null;
+				}
+				
+				watchProcess(p, console);
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
 				
+				List<String> command = new ArrayList<>();
+				
+				String envStr = getProperty(CMAKE_ENV);
+				List<IEnvironmentVariable> envVars = new ArrayList<>();
+				if (envStr != null) {
+					List<String> envList = CMakeUtils.stripEnvVars(envStr);
+					for (String s : envList) {
+						int index = s.indexOf("="); //$NON-NLS-1$
+						if (index == -1) {
+							envVars.add(new EnvironmentVariable(s));
+						} else {
+							envVars.add(new EnvironmentVariable(s.substring(0, index), s.substring(index + 1)));
+						}
+					}
+				}
+				
 				String buildCommand = getProperty(BUILD_COMMAND);
-				String[] command = buildCommand != null && !buildCommand.trim().isEmpty() ? buildCommand.split(" ") //$NON-NLS-1$
-						: new String[] { "cmake", "--build", "." }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-				Path cmdPath = findCommand(command[0]);
-				if (cmdPath != null) {
-					command[0] = cmdPath.toString();
+				if (buildCommand == null) {
+					command.add("cmake"); //$NON-NLS-1$
+					command.add("--build"); //$NON-NLS-1$
+					command.add("."); //$NON-NLS-1$
+					if ("Ninja".equals(generator)) {
+						command.add("--"); //$NON-NLS-1$
+						command.add("-v"); //$NON-NLS-1$
+					}
+				} else {
+					command.addAll(Arrays.asList(buildCommand.split(" "))); //$NON-NLS-1$
 				}
 
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm });
+				
+				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), console, monitor);
+				if (p == null) {
+					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+					return null;
+				}
+
+				watchProcess(p, new IConsoleParser[] { epm });
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -233,26 +262,34 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				return;
 			}
 
+			List<String> command = new ArrayList<>();
 			String cleanCommand = getProperty(CLEAN_COMMAND);
 			if (cleanCommand == null) {
 				if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
-					cleanCommand = "ninja clean"; //$NON-NLS-1$
+					command.add("ninja"); //$NON-NLS-1$
+					command.add("clean"); //$NON-NLS-1$
 				} else {
-					cleanCommand = "make clean"; //$NON-NLS-1$
+					command.add("make"); //$NON-NLS-1$
+					command.add("clean"); //$NON-NLS-1$
 				}
-			}
-			String[] command = cleanCommand.split(" "); //$NON-NLS-1$
+		 	} else {
+		 		command.addAll(Arrays.asList(cleanCommand.split(" "))); //$NON-NLS-1$
+		 	}
+			
+			IEnvironmentVariable[] env = new IEnvironmentVariable[0];
 
-			Path cmdPath = findCommand(command[0]);
-			if (cmdPath != null) {
-				command[0] = cmdPath.toString();
-			}
-
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-			Process process = processBuilder.start();
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-			watchProcess(process, console);
-
+			
+			Process p = startBuildProcess(command, env, console, monitor);
+			if (p == null) {
+				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+				return;
+			}
+			
+			watchProcess(p, console);
+			
+			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete); 
+	
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
 			throw new CoreException(Activator.errorStatus(String.format(Messages.CMakeBuildConfiguration_Cleaning, project.getName()), e));
@@ -263,6 +300,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
 		if (Files.exists(commandsFile)) {
+			List<Job> jobsList = new ArrayList<>();
 			monitor.setTaskName(Messages.CMakeBuildConfiguration_ProcCompJson);
 			try (FileReader reader = new FileReader(commandsFile.toFile())) {
 				Gson gson = new Gson();
@@ -272,7 +310,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					dedupedCmds.put(command.getFile(), command);
 				}
 				for (CompileCommand command : dedupedCmds.values()) {
-					processLine(command.getCommand());
+					processLine(command.getCommand(), jobsList);
+				}
+				for (Job j : jobsList) {
+					try {
+						j.join();
+					} catch (InterruptedException e) {
+						// ignore
+					}
 				}
 				shutdown();
 			} catch (IOException e) {

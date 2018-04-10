@@ -108,13 +108,19 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		// create config
 		StringBuilder configName = new StringBuilder("cmake."); //$NON-NLS-1$
 		configName.append(launchMode);
-		if (os != null) {
+		if ("linux-container".equals(os)) { //$NON-NLS-1$
+			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
 			configName.append('.');
-			configName.append(os);
-		}
-		if (arch != null && !arch.isEmpty()) {
-			configName.append('.');
-			configName.append(arch);
+			configName.append(osConfigName);
+		} else {
+			if (os != null) {
+				configName.append('.');
+				configName.append(os);
+			}
+			if (arch != null && !arch.isEmpty()) {
+				configName.append('.');
+				configName.append(arch);
+			}
 		}
 		String name = configName.toString();
 		int i = 0;

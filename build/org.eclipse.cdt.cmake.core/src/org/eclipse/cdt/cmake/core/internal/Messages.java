@@ -14,11 +14,13 @@ public class Messages extends NLS {
 	public static String CMakeBuildConfiguration_Building;
 	public static String CMakeBuildConfiguration_BuildingIn;
 	public static String CMakeBuildConfiguration_BuildingComplete;
+	public static String CMakeBuildConfiguration_BuildComplete;
 	public static String CMakeBuildConfiguration_Cleaning;
 	public static String CMakeBuildConfiguration_NotFound;
 	public static String CMakeBuildConfiguration_NoToolchainFile;
 	public static String CMakeBuildConfiguration_ProcCompCmds;
 	public static String CMakeBuildConfiguration_ProcCompJson;
+	public static String CMakeBuildConfiguration_Failure;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

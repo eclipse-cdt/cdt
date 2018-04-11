@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c2a09a2_1c2a8a50",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2018-04-11T15:51:48Z",
+      "side": 1,
+      "message": "Are you assuming sh is available on all platforms? That\u0027s not true with Windows.",
+      "revId": "ebf88a8930302c2c07c0065408903e5cce6effb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

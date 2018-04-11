@@ -16,6 +16,24 @@
       "revId": "ebf88a8930302c2c07c0065408903e5cce6effb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1718742a_c86bf532",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2018-04-11T16:32:55Z",
+      "side": 1,
+      "message": "I thought it was available in Cygwin and mingW based on some changes that you suggested in the following bug for Autotools\n\nhttps://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d343731\n\nor are you referring to Windows without Cygwin or mingW available?\n\nIs the Autotools code in error?",
+      "parentUuid": "3c2a09a2_1c2a8a50",
+      "revId": "ebf88a8930302c2c07c0065408903e5cce6effb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

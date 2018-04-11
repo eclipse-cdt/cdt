@@ -34,6 +34,24 @@
       "revId": "ebf88a8930302c2c07c0065408903e5cce6effb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57a77044_c2961544",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2018-04-11T17:01:03Z",
+      "side": 1,
+      "message": "CMake is very different from autotools. The requirements are different.\n\nThere is nothing about CMake and Ninja that requires a shell environment. We also want to support CMake with the MS tools once we get a debug environment that can support them.\n\nFor my current setup, I\u0027m using the tools from scoop.sh which actually seems to be the best environment for Windows and it\u0027s all native, no Unixy shell required.\n\nThat\u0027s why I wanted this stuff localized to the toolchain, which can be made aware what environment the tools are running. Different toolchains should be able to launch commands in different ways without affecting the core logic for the build configurations.",
+      "parentUuid": "1718742a_c86bf532",
+      "revId": "ebf88a8930302c2c07c0065408903e5cce6effb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

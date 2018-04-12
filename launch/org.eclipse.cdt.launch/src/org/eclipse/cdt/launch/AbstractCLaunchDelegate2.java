@@ -10,6 +10,7 @@
  *     James Blackburn (Broadcom Corp.)
  *     Marc Khouzam (Ericsson) - Modernize Run launch (bug 464636)
  *     Philip Langer (EclipseSource Services GmbH) - bug 506843
+ *     Samuel Hultgren (STMicroelectronics) - bug 533499
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -183,8 +184,8 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		if (markers.length > 0) {
 			for (IMarker marker : markers) {
 				Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-				if (severity != null) {
-					return severity.intValue() >= IMarker.SEVERITY_ERROR;
+				if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
+					return true;
 				}
 			}
 		}

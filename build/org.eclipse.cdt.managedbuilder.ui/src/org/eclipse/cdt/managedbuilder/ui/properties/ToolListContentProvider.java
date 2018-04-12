@@ -9,6 +9,7 @@
  * Timesys - Initial API and implementation
  * IBM Rational Software
  * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
+ * Torbjörn Svensson (STMicroelectronics) - bug #533473
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -60,8 +61,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			//  Create an element for each one
 			for (int i=0; i<toolChainCategories.length; i++) {
 				ToolListElement e = new ToolListElement(null, toolChain, toolChainCategories[i]);
-				elementList.add(e);
-				createChildElements(e);
+				IOptionCategoryApplicability applicabilityCalculator = toolChainCategories[i].getApplicabilityCalculator();
+				if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, e.getHoldOptions(), e.getOptionCategory())) {
+					elementList.add(e);
+					createChildElements(e);
+				}
 			}
 			//  Get the tools to be displayed
 			filteredTools = config.getFilteredTools();

@@ -1186,6 +1186,16 @@ The path is relative to the plug-in directory which defines .buildDefinitions.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="applicabilityCalculator" type="string">
+            <annotation>
+               <documentation>
+                  Optional class which is used to determine dynamically at runtime whether the option category is visible.  This class must implement the IOptionCategoryApplicability interface.  If no calculator is specified then the option category is always visible.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.IOptionCategoryApplicability"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -1451,7 +1461,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="applicabilityCalculator" type="string">
             <annotation>
                <documentation>
-                  Optional class which is used to determine dynamically at runtime whether the option is visible, enabled, and used in command line generation.  This class must impelment the IOptionApplicability interface.  If no calculator is specified then the option is always visible, enabled, and used in command line generation.
+                  Optional class which is used to determine dynamically at runtime whether the option is visible, enabled, and used in command line generation.  This class must implement the IOptionApplicability interface.  If no calculator is specified then the option is always visible, enabled, and used in command line generation.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IOptionApplicability"/>

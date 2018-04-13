@@ -9,6 +9,7 @@
  * Wind River Systems - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
  * IBM Corporation
+ * Samuel Hultgren (STMicroelectronics) - bug #217674
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -130,7 +131,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				if (dBuilder != null) {
 					status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				} else {
-					status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly);
+					status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly, cBS);
 					// Bug 403670:
 					// Make sure the build configuration's rebuild status is updated with the result of
 					// this successful build.  In the non-parallel case this happens within dBuilder.build

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Samuel Hultgren (STMicroelectronics) - bug #217674
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -62,6 +63,8 @@ public class ParallelBuilder {
 	protected HashSet<BuildQueueElement> unsorted = new HashSet<BuildQueueElement>();
 	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<IBuildStep, BuildQueueElement>();
 	protected LinkedList<BuildQueueElement> queue = new LinkedList<BuildQueueElement>();
+	private IResourceRebuildStateContainer fRebuildStateContainer;
+	private IBuildDescription fDes;
 
 	/**
 	 * This class implements queue element
@@ -202,9 +205,33 @@ public class ParallelBuilder {
 	 * compilation errors encountered
 	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
 	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
-	 *         ParallelBuilder#STATUS_INVALID}. *
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 * @see #build(IBuildDescription, IPath, GenDirInfo, OutputStream, OutputStream, IProgressMonitor, boolean, boolean, IResourceRebuildStateContainer)
 	 */
 	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err, IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally) {
+		return build(des, cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally, null);
+	}
+
+	/**
+	 * Build process is divided into following steps:
+	 * 1. Resources enqueueing & levelling
+	 * 2. Queue sorting
+	 * 3. Queue dispatching
+	 *
+	 * @param des Build description
+	 * @param cwd Working directory
+	 * @param dirs GenDirInfo?
+	 * @param out Output stream
+	 * @param err Error output stream
+	 * @param monitor Progress monitor
+	 * @param resumeOnErrors If true, build process will not stop when
+	 * compilation errors encountered
+	 * @param rs Rebuild state container
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err, IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally, IResourceRebuildStateContainer rs) {
 		IConfiguration cfg = des.getConfiguration();
 		if(dirs == null) dirs = new GenDirInfo(cfg);
 		if(cwd == null)  cwd = des.getDefaultBuildDirLocation();
@@ -212,7 +239,9 @@ public class ParallelBuilder {
 		if (cfg instanceof Configuration) {
 			threads = ((Configuration)cfg).getParallelNumber();
 		}
-		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally);
+
+		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally, rs, des);
+		builder.initRebuildStates();
 		builder.enqueueAll(des);
 		builder.sortQueue();
 		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
@@ -220,13 +249,56 @@ public class ParallelBuilder {
 		int status = builder.dispatch(buildProcessManager);
 		lastThreadsUsed = buildProcessManager.getThreadsUsed();
 		monitor.done();
+
+		if (status == IBuildModelBuilder.STATUS_OK) {
+			builder.clearRebuildStates();
+		}
+
 		return status;
+	}
+
+	private void initRebuildStates() {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		fRebuildStateContainer.setState(0);
+
+		IBuildResource[] rcs = fDes.getResources();
+		putAll(fRebuildStateContainer, rcs, IRebuildState.NEED_REBUILD, true);
+	}
+
+	private void clearRebuildStates() {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		fRebuildStateContainer.setState(0);
+	}
+
+	private static void putAll(IResourceRebuildStateContainer cbs, IBuildResource[] rcs, int state, boolean rebuildRcOnly) {
+		for (IBuildResource rc : rcs) {
+			if (rebuildRcOnly && !rc.needsRebuild()) {
+				continue;
+			}
+
+			if (!rc.isProjectResource()) {
+				continue;
+			}
+
+			IPath fullPath = rc.getFullPath();
+			if (fullPath == null) {
+				continue;
+			}
+
+			cbs.setStateForFullPath(fullPath, state);
+		}
 	}
 
 	/**
 	 * Initializes parallel builder
 	 */
-	protected ParallelBuilder(IPath _cwd, GenDirInfo _dirs, OutputStream _out, OutputStream _err, IProgressMonitor _monitor, boolean _resumeOnErrors, boolean _buildIncrementally) {
+	protected ParallelBuilder(IPath _cwd, GenDirInfo _dirs, OutputStream _out, OutputStream _err, IProgressMonitor _monitor, boolean _resumeOnErrors, boolean _buildIncrementally, IResourceRebuildStateContainer _fRebuildStateContainer, IBuildDescription _fDes) {
 		cwd = _cwd;
 		dirs = _dirs;
 		out = _out;
@@ -234,6 +306,8 @@ public class ParallelBuilder {
 		monitor = _monitor;
 		resumeOnErrors = _resumeOnErrors;
 		buildIncrementally = _buildIncrementally;
+		fRebuildStateContainer = _fRebuildStateContainer;
+		fDes = _fDes;
 	}
 	
 	/**
@@ -483,6 +557,23 @@ public class ParallelBuilder {
 				catch (CoreException e) {}
 			}
 		}
+
+		clearStepRebuildStep(step);
+	}
+
+	/**
+	 * Clear rebuild state for the step
+	 */
+	protected void clearStepRebuildStep(IBuildStep step) {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		// Clear the rebuildstate for the step
+		IBuildResource outres[] = step.getOutputResources();
+		putAll(fRebuildStateContainer, outres, 0, false);
+		IBuildResource inres[] = step.getInputResources();
+		putAll(fRebuildStateContainer, inres, 0, false);
 	}
 
 	

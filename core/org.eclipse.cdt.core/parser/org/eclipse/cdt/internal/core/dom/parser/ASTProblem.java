@@ -100,6 +100,8 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ParserProblemFactory.error.syntax.missingSemicolon")); //$NON-NLS-1$
     	errorMessages.put(Integer.valueOf(TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT_EXCEEDED), 
     			ParserMessages.getString("ParserProblemFactory.error.syntax.templateArgumentNestingDepthLimitExceeded")); //$NON-NLS-1$
+    	errorMessages.put(Integer.valueOf(INVALID_ATTRIBUTE_LOCATION), 
+    			ParserMessages.getString("ParserProblemFactory.error.syntax.attributeLocationError")); //$NON-NLS-1$
 	}
 
     private final int id;

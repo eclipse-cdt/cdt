@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -36,12 +37,14 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.NodeWriter.SpaceLocation;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -273,10 +276,12 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		writeLeadingComments(parameterDeclaration);
+		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {			
+			attributeWriter.writeAttributes((ICPPASTParameterDeclaration) parameterDeclaration, EnumSet.of(SpaceLocation.AFTER));
+		}
 		if (!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
 			parameterDeclaration.getDeclSpecifier().accept(this);
 			IASTDeclarator declarator = getParameterDeclarator(parameterDeclaration);
-
 			spaceNeededBeforeName = true;
 			declarator.accept(this);
 		}

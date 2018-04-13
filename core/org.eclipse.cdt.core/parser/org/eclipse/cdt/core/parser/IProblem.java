@@ -355,7 +355,13 @@ public interface IProblem {
 	 * @since 5.3
 	 */
 	public final static int MISSING_SEMICOLON = SYNTAX_RELATED | 0x002;
-	
+
+	/**
+	 * Missing semicolon.
+	 * @since 6.5
+	 */
+	public final static int INVALID_ATTRIBUTE_LOCATION = SYNTAX_RELATED | 0x003;
+
 	/**
 	 * The parser's template argument nesting depth limit was exceeded.
 	 * @since 6.4

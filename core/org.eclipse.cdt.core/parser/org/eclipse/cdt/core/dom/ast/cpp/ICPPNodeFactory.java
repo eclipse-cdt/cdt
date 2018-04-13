@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeToken;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
@@ -153,8 +154,15 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	/**
 	 * @since 5.2
+	 * @deprecated Pass the scope IToken instead of a boolean. The value -1 is used for null token.
 	 */
+	@Deprecated
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
+
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeToken scopeToken, IASTName name, ICPPASTDeclSpecifier baseType);
 
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 

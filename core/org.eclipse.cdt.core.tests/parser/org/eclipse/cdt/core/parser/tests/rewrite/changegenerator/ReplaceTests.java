@@ -19,6 +19,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -53,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -1015,6 +1019,237 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclarator declarator) {
 				addModification(null, ModificationKind.REPLACE, declarator, declarator.copy());
 				return PROCESS_SKIP;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo]] int hs = 5;
+	public void testAttribute_Bug533552_1() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy(CopyStyle.withLocations));
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo]] int hs = 5;
+	public void testAttribute_Bug533552_2() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//char** f;
+
+	//char** f;
+	public void testAttribute_Bug533552_3a() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//char**__attribute__((aligned(8))) f;
+
+	//char**__attribute__((aligned(8))) f;
+	public void testAttribute_Bug533552_3b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//char*__attribute__((aligned(8)))* f;
+
+	//char*__attribute__((aligned(8)))* f;
+	public void testAttribute_Bug533552_3c() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//__declspec(dllimport) class X {
+	//} varX;
+
+	//__declspec(dllimport) class X {
+	//} varX;
+	public void testAttribute_Bug533552_4() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//int __declspec(selectany)* pi2 = 0;
+
+	//int __declspec(selectany)* pi2 = 0;
+	public void testAttribute_Bug533552_5() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//__declspec(thread) int tls_i = 1;
+
+	//__declspec(thread) int tls_i = 1;
+	public void testAttribute_Bug533552_6() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//auto Sqr = [](int t) __declspec(code_seg("PagedMem")) -> int {
+	//	return t * t;
+	//};
+
+	//auto Sqr = [](int t) __declspec(code_seg("PagedMem")) -> int {
+	//	return t * t;
+	//};
+	public void testAttribute_Bug533552_7() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				addModification(null, ModificationKind.REPLACE, declaration, declaration.copy());
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo, bar]] int hs = 5;
+	public void testAttribute_Bug533552_8() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
+				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
+				IASTAttributeList attributeSpecifierList = (IASTAttributeList) newDeclaration.getAttributeSpecifiers()[0];
+				attributeSpecifierList.addAttribute(newAttribute);
+
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int);
+	//};
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int) = 0;
+	//};
+	public void testPureVirtualFunction() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarators = true;
+			}
+
+			@Override
+			public int visit(IASTDeclarator declarator) {
+				if (declarator instanceof ICPPASTFunctionDeclarator) {
+					ICPPASTFunctionDeclarator newDeclarator = (ICPPASTFunctionDeclarator) declarator.copy(CopyStyle.withLocations);
+					newDeclarator.setPureVirtual(true);
+					addModification(null, ModificationKind.REPLACE, declarator, newDeclarator);
+				}
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//namespace FOO {
+	//
+	//}
+
+	//inline namespace FOO {
+	//
+	//}
+	public void testInlineNamespace() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitNamespaces = true;
+			}
+
+			@Override
+			public int visit(ICPPASTNamespaceDefinition declaration) {
+				ICPPASTNamespaceDefinition newDeclaration = declaration.copy(CopyStyle.withLocations);
+				newDeclaration.setIsInline(true);
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
 			}
 		});
 	}

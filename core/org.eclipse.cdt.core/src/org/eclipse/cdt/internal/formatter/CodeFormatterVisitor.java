@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -1090,6 +1091,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (!enterNode(node)) { return PROCESS_SKIP; }
 		final int line= scribe.line;
 		// namespace <name>
+		if (node.isInline()) {
+			scribe.printNextToken(Token.t_inline, false);
+			scribe.space();
+		}
 		scribe.printNextToken(Token.t_namespace, false);
 		scribe.space();
 		node.getName().accept(this);
@@ -1547,11 +1552,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					name.accept(this);
 				}
 				scribe.printNextToken(Token.tSTAR, false);
+				for (IASTAttributeSpecifier attributeSpecifier : pointer.getAttributeSpecifiers()) {
+					formatRaw(attributeSpecifier);
+				}
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}
 			} else {
 				scribe.printNextToken(Token.tSTAR, false);
+				for (IASTAttributeSpecifier attributeSpecifier : pointer.getAttributeSpecifiers()) {
+					formatRaw(attributeSpecifier);
+				}
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}

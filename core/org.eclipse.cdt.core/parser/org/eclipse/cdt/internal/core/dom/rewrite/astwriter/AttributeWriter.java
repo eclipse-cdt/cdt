@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTDeclspecList;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAttribute;
@@ -42,6 +44,8 @@ public class AttributeWriter extends NodeWriter {
 			writeAttributeSpecifier((ICPPASTAttributeList) attribute);
 		} else if (attribute instanceof IGCCASTAttributeList) {
 			writeGCCAttributeSpecifier((IGCCASTAttributeList) attribute);
+		} else if (attribute instanceof IGCCASTDeclspecList) {
+			writeMSDecltypeSpecifier((IGCCASTDeclspecList) attribute);
 		} else if (attribute instanceof IASTAlignmentSpecifier) {
 			writeAlignmentSpecifier((IASTAlignmentSpecifier) attribute);
 		}
@@ -62,7 +66,20 @@ public class AttributeWriter extends NodeWriter {
 		scribe.print(GCCKeywords.__ATTRIBUTE__);
 		scribe.print(OPENING_PARENTHESIS);
 		scribe.print(OPENING_PARENTHESIS);
-		IASTAttribute[] innerAttributes = specifier.getAttributes();
+		writeAttributeOrDeclspec(specifier);
+		scribe.print(CLOSING_PARENTHESIS);
+		scribe.print(CLOSING_PARENTHESIS);
+	}
+
+	private void writeMSDecltypeSpecifier(IGCCASTDeclspecList specifier) {
+		scribe.print(GCCKeywords.__DECLSPEC);
+		scribe.print(OPENING_PARENTHESIS);
+		writeAttributeOrDeclspec(specifier);
+		scribe.print(CLOSING_PARENTHESIS);
+	}
+
+	private void writeAttributeOrDeclspec(IASTAttributeList attributeList) {
+		IASTAttribute[] innerAttributes = attributeList.getAttributes();
 		for (int i = 0; i < innerAttributes.length; i++) {
 			IASTAttribute innerAttribute = innerAttributes[i];
 			writeAttribute((CPPASTAttribute)innerAttribute);
@@ -71,10 +88,8 @@ public class AttributeWriter extends NodeWriter {
 				scribe.printSpace();
 			}
 		}
-		scribe.print(CLOSING_PARENTHESIS);
-		scribe.print(CLOSING_PARENTHESIS);
 	}
-
+	
 	private void writeAttributeSpecifier(ICPPASTAttributeList specifier) {
 		scribe.print(OPENING_SQUARE_BRACKET);
 		scribe.print(OPENING_SQUARE_BRACKET);

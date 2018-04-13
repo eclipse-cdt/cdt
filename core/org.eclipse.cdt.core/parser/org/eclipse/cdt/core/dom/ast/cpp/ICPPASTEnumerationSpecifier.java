@@ -24,6 +24,15 @@ public interface ICPPASTEnumerationSpecifier extends IASTEnumerationSpecifier, I
 	public static final ASTNodeProperty BASE_TYPE = new ASTNodeProperty(
 			"ICPPASTEnumerationSpecifier.BASE_TYPE [ICPPASTDeclSpecifier]"); //$NON-NLS-1$
 
+	/**
+	 * @since 6.5
+	 */
+	public enum ScopeToken {
+		CLASS,
+		STRUCT,
+		NONE
+	}
+
 	@Override
 	public ICPPASTEnumerationSpecifier copy();
 
@@ -35,9 +44,22 @@ public interface ICPPASTEnumerationSpecifier extends IASTEnumerationSpecifier, I
 
 	/**
 	 * Not allowed on frozen AST.
+	 * @deprecated Use setScopeToken instead
 	 */
+	@Deprecated
 	public void setIsScoped(boolean isScoped);
-	
+
+	/**
+	 * Not allowed on frozen AST.
+	 * @since 6.5
+	 */
+	public void setScopeToken(ScopeToken scopeToken);
+
+	/**
+	 * @since 6.5
+	 */
+	public ScopeToken getScopeToken();
+
 	/**
 	 * An enum is scoped if it uses the enumeration head {@code enum class} or {@code enum struct}.
 	 */

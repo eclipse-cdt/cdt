@@ -862,7 +862,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         for (;;) {
         	// __attribute__ in-between pointers
-            __attribute_decl_seq(supportAttributeSpecifiers, false);
+            List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, false);
 
             IToken mark = mark();
             IToken last = null;
@@ -902,6 +902,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             po.setConst(isConst);
             po.setVolatile(isVolatile);
             po.setRestrict(isRestrict);
+            addAttributeSpecifiers(attributes, po);
             pointerOps.add(po);
         }
     }
@@ -1152,12 +1153,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     			case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
 	    			if (!supportAttributeSpecifiers)
 	    				throwBacktrack(LA(1));
-	    			attributes = CollectionUtils.merge(attributes,  __attribute_decl_seq(true, false));
+	    			attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(true, false));
 	    			break;
     			case IGCCToken.t__declspec: // __declspec precedes the identifier
 	    			if (identifier != null || !supportDeclspecSpecifiers)
 	    				throwBacktrack(LA(1));
-	    			__attribute_decl_seq(false, true);
+	    			attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(false, true));
 	    			break;
 
     			case IGCCToken.t_typeof:
@@ -1299,7 +1300,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         // if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         // class name
         IASTName name = null;
@@ -1308,7 +1309,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         // if __attribute__ or __declspec occurs after struct/union/class identifier and before the { or ;
-        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
         if (LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
@@ -1321,6 +1322,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
         ICASTCompositeTypeSpecifier result = getNodeFactory().newCompositeTypeSpecifier(classKind, name);
         declarationListInBraces(result, offset, DeclarationOptions.C_MEMBER);
+        addAttributeSpecifiers(attributes, result);
         return result;
     }
 
@@ -1345,11 +1347,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         // if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IASTName name = identifier();
         ICASTElaboratedTypeSpecifier result = getNodeFactory().newElaboratedTypeSpecifier(eck, name);
-        ((ASTNode) result).setOffsetAndLength(t.getOffset(), calculateEndOffset(name) - t.getOffset());
+        setRange(result, t.getOffset(), calculateEndOffset(name));
+        addAttributeSpecifiers(attributes, result);
         return result;
     }
 
@@ -1517,20 +1520,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     		consume();
     		endOffset= asmExpression(null).getEndOffset();
 
-    		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+    		CollectionUtils.merge(attributes,
+    				__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
     	}
 
         for (IASTPointerOperator po : pointerOps) {
 			result.addPointerOperator(po);
 		}
 
-        if (attributes != null) {
-        	for (IASTAttributeSpecifier specifier : attributes) {
-        		result.addAttributeSpecifier(specifier);
-        	}
-        }
-
-        ((ASTNode) result).setOffsetAndLength(startingOffset, endOffset - startingOffset);
+        setRange(result, startingOffset, endOffset);
+        addAttributeSpecifiers(attributes, result);
         return result;
     }
 

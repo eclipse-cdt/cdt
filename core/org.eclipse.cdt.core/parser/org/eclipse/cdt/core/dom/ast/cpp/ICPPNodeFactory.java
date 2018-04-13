@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeToken;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
@@ -153,8 +154,16 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	/**
 	 * @since 5.2
+	 * @deprecated Use {@code newEnumerationSpecifier(ScopeToken, IASTName, ICPPASTDeclSpecifier)} instead.
+	 * If {@code isScoped == true} is passed, the {@code ScopeToken.CLASS} scope token is assumed.
 	 */
+	@Deprecated
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
+
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeToken scopeToken, IASTName name, ICPPASTDeclSpecifier baseType);
 
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 
@@ -327,6 +336,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.2
 	 */
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
+
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition);
 
 	public ICPPASTSwitchStatement newSwitchStatement();
 

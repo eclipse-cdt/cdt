@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeToken;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
@@ -375,14 +376,21 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
+	@Deprecated
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name,
 			ICPPASTDeclSpecifier baseType) {
 		return new CPPASTEnumerationSpecifier(isScoped, name, baseType);
 	}
 
 	@Override
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeToken scopeToken, IASTName name,
+			ICPPASTDeclSpecifier baseType) {
+		return new CPPASTEnumerationSpecifier(scopeToken, name, baseType);
+	}
+
+	@Override
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
-		return new CPPASTEnumerationSpecifier(false, name, null);
+		return new CPPASTEnumerationSpecifier(ScopeToken.NONE, name, null);
 	}
 
 	@Override
@@ -728,6 +736,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition,
 			ICPPASTLiteralExpression message) {
 		return new CPPASTStaticAssertionDeclaration(condition, message);
+	}
+
+	@Override
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition) {
+		return new CPPASTStaticAssertionDeclaration(condition);
 	}
 
 	@Override

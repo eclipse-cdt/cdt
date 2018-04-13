@@ -14,24 +14,35 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import static org.eclipse.cdt.core.dom.ast.IASTLiteralExpression.lk_integer_constant;
 import static org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind.REPLACE;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -40,22 +51,35 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -64,6 +88,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+
+import junit.framework.TestSuite;
 
 public class ReplaceTests extends ChangeGeneratorTest {
 
@@ -1017,5 +1043,547 @@ public class ReplaceTests extends ChangeGeneratorTest {
 				return PROCESS_SKIP;
 			}
 		});
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (1) [[bar]] {
+	//	case 1:
+	//		[[fallthrough]];
+	//	case 2:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (1) [[bar]] {
+	//	case 1:
+	//		[[fallthrough]];
+	//	[[foo2]] case 2:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1d() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch ([[asdf]] int i; 1) [[bar]] {
+	//	case 1:
+	//		[[fallthrough]];
+	//	[[foo2]] case 2:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1e() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch ([[asdf]] int i; 1) [[bar]] {
+	//	case 1:
+	//		[[fallthrough]];
+	//	[[foo2]] case 2:
+	//		break;
+	//	[[foo3]] default:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1f() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch ([[asdf]] int i; 1) [[bar]] {
+	//	[[foobar]] case 1:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_1g() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTCaseStatement));
+	}
+
+	//[[foo]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_2a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_2b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int [[asdf]] hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_2c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_3a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//enum [[foo]] : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_3b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_3c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//char**[[aligned(8)]] f;
+	public void testCopyReplaceAttribute_Bug533552_4a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//char**__attribute__((aligned(8))) f;
+	public void testCopyReplaceAttribute_Bug533552_4b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//char*__attribute__((aligned(8)))* f;
+	public void testCopyReplaceAttribute_Bug533552_4c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//__declspec(dllimport) class X {
+	//} varX;
+	public void testCopyReplaceAttribute_Bug533552_5() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//int __declspec(selectany)* pi2 = 0;
+	public void testCopyReplaceAttribute_Bug533552_6() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//__declspec(thread) int tls_i = 1;
+	public void testCopyReplaceAttribute_Bug533552_7() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//auto Sqr = [](int t) __declspec(code_seg("PagedMem")) -> int {
+	//	return t * t;
+	//};
+	public void testCopyReplaceAttribute_Bug533552_8() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTLambdaExpression));
+	}
+
+	//auto k = new int[1][[foo]][[bar]][2][[foo, bar]];
+	public void testCopyReplaceAttribute_Bug533552_9() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//void f() {
+	//	[[foo]] for (;;) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTForStatement));
+	}
+
+	//void f() {
+	//	[[foo]] for (;;) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTForStatement));
+	}
+
+	//void f() {
+	//	[[foo]] for ([[foo2]] int i = 0;;) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTForStatement));
+	}
+
+	//void f() {
+	//	[[foo]] while ([[foo2]] int i = 0) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10d() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTWhileStatement));
+	}
+
+	//void f() {
+	//	[[foo]] do [[bar]] {
+	//	} while (true);
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10e() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDoStatement));
+	}
+
+	//void f() {
+	//	std::vector<int> arr { };
+	//	[[foo]] for (auto k : arr) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_10f() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTRangeBasedForStatement));
+	}
+
+	//auto f = []() [[foo]] {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_11a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTLambdaExpression));
+	}
+
+	//auto f = []() [[foo]] -> int {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_11b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTLambdaExpression));
+	}
+
+	//void f() {
+	//	[[foo]] if (1) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_12a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTIfStatement));
+	}
+
+	//void f() {
+	//	[[foo]] if ([[bar]] int i; i == 0) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_12b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTIfStatement));
+	}
+
+	//void f() {
+	//	[[foo]] if ([[bar]] int i = 1) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_12c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTIfStatement));
+	}
+
+	//void f() {
+	//	[[foo]] try {
+	//	} catch (...) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_13a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTTryBlockStatement));
+	}
+
+	//void f() {
+	//	[[foo]] try {
+	//	} catch ([[bar]] int) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_13b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTTryBlockStatement));
+	}
+
+	//void f([[foo]] int i) {
+	//}
+	public void testCopyReplaceAttribute_Bug533552_14a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTFunctionDefinition));
+	}
+
+	//void f([[foo]] int i, int j, [[foobar]] int k) {
+	//}
+	public void testCopyReplaceAttribute_Bug533552_14b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTFunctionDefinition));
+	}
+
+	//namespace [[foo]] {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug533552_15a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//inline namespace [[foo]] {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug533552_15b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//inline namespace [[foo]] FOO {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug533552_15c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//inline namespace [[foo]] FOO __attribute__((__visibility__("default"))) {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug533552_15d() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//using container [[foo]] = std::vector;
+	public void testCopyReplaceAttribute_Bug533552_16a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTAliasDeclaration));
+	}
+
+	//[[foo]] using namespace FOO;
+	public void testCopyReplaceAttribute_Bug533552_16b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTUsingDirective));
+	}
+
+	//[[foo]] asm("");
+	public void testCopyReplaceAttribute_Bug533552_17() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTASMDeclaration));
+	}
+
+	//class [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum struct [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum class [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18d() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18e() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18f() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//	TEST [[bar]]
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18g() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//	TEST [[bar]], ASDF [[foobar]]
+	//};
+	public void testCopyReplaceAttribute_Bug533552_18h() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] continue;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_19a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTContinueStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_19b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTBreakStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] return;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_19c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTReturnStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] goto asdf;
+	//	}
+	//	asdf: ;
+	//}
+	public void testCopyReplaceAttribute_Bug533552_19d() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTGotoStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] goto asdf;
+	//	}
+	//	[[bar]] asdf: ;
+	//}
+	public void testCopyReplaceAttribute_Bug533552_19e() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTLabelStatement));
+	}
+
+	//void f() {
+	//	switch(true) {
+	//	[[foo]] default:
+	//		;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_20() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDefaultStatement));
+	}
+
+	//void f() {
+	//	[[foo]] if constexpr (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug533552_21() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTIfStatement));
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo, bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_1() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
+				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
+				IASTAttributeList attributeSpecifierList = (IASTAttributeList) newDeclaration.getAttributeSpecifiers()[0];
+				attributeSpecifierList.addAttribute(newAttribute);
+
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo]][[bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_2() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
+				ICPPASTAttributeList newAttributeList = factory.newAttributeList();
+				newAttributeList.addAttribute(newAttribute);
+				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
+				newDeclaration.addAttributeSpecifier(newAttributeList);
+
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int);
+	//};
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int) = 0;
+	//};
+	public void testPureVirtualFunction() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarators = true;
+			}
+
+			@Override
+			public int visit(IASTDeclarator declarator) {
+				if (declarator instanceof ICPPASTFunctionDeclarator) {
+					ICPPASTFunctionDeclarator newDeclarator = (ICPPASTFunctionDeclarator) declarator.copy(CopyStyle.withLocations);
+					newDeclarator.setPureVirtual(true);
+					addModification(null, ModificationKind.REPLACE, declarator, newDeclarator);
+				}
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//namespace FOO {
+	//
+	//}
+
+	//inline namespace FOO {
+	//
+	//}
+	public void testInlineNamespace() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitNamespaces = true;
+			}
+
+			@Override
+			public int visit(ICPPASTNamespaceDefinition declaration) {
+				ICPPASTNamespaceDefinition newDeclaration = declaration.copy(CopyStyle.withLocations);
+				newDeclaration.setIsInline(true);
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//void f(int ... a) {
+	//	if (sizeof...(a)) {
+	//	}
+	//}
+	public void testIndendtionSizeofParampack() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//void f() {
+	//	static_assert(true, "Foo");
+	//}
+	public void testStaticAssertString() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclarationStatement));
+	}
+
+	//void f() {
+	//	static_assert(true);
+	//}
+	public void testStaticAssertNoString() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclarationStatement));
 	}
 }

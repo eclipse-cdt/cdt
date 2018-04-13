@@ -21,19 +21,19 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent {
 
 	private IASTExpression fCondition;
-	private final ICPPASTLiteralExpression fMessage;
+	private ICPPASTLiteralExpression fMessage;
+
+	public CPPASTStaticAssertionDeclaration(IASTExpression condition) {
+		this(condition, null);
+	}
 
 	public CPPASTStaticAssertionDeclaration(IASTExpression condition, ICPPASTLiteralExpression message) {
-		fCondition= condition;
-		fMessage= message;
-        if (condition != null) {
+		fCondition = condition;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
 		}
-        if (message != null) {
-        	message.setParent(this);
-        	message.setPropertyInParent(MESSAGE);
-		}
+		setMessage(message);
 	}
 
 	@Override
@@ -46,6 +46,15 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 		return fMessage;
 	}
 
+	@Override
+	public void setMessage(ICPPASTLiteralExpression message) {
+		assertNotFrozen();
+		fMessage = message;
+		if (message != null) {
+			message.setParent(this);
+			message.setPropertyInParent(MESSAGE);
+		}
+	}
 
 	@Override
 	public CPPASTStaticAssertionDeclaration copy() {

@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		implements IASTInternalEnumerationSpecifier, ICPPASTEnumerationSpecifier {
-	private boolean fIsScoped;
+	private ScopeToken fScopeToken;
 	private boolean fIsOpaque;
 	private IASTName fName;
 	private ICPPASTDeclSpecifier fBaseType;
@@ -40,8 +40,13 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTEnumerationSpecifier() {
 	}
 
+	@Deprecated
 	public CPPASTEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType) {
-		fIsScoped= isScoped;
+		this(isScoped ? ScopeToken.CLASS : ScopeToken.NONE, name, baseType);
+	}
+
+	public CPPASTEnumerationSpecifier(ScopeToken scopeToken, IASTName name, ICPPASTDeclSpecifier baseType) {
+		setScopeToken(scopeToken);
 		setName(name);
 		setBaseType(baseType);
 	}
@@ -53,7 +58,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
-		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped,
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fScopeToken,
 				fName == null ? null : fName.copy(style),
 				fBaseType == null ? null : fBaseType.copy(style));
 		copy.fIsOpaque = fIsOpaque;
@@ -154,14 +159,25 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	@Override
+	@Deprecated
 	public void setIsScoped(boolean isScoped) {
+		setScopeToken(isScoped ? ScopeToken.CLASS : ScopeToken.NONE);
+	}
+
+	@Override
+	public void setScopeToken(ScopeToken scopeToken) {
 		assertNotFrozen();
-		fIsScoped= isScoped;
+		fScopeToken = scopeToken;
+	}
+
+	@Override
+	public ScopeToken getScopeToken() {
+		return fScopeToken;
 	}
 
 	@Override
 	public boolean isScoped() {
-		return fIsScoped;
+		return fScopeToken != ScopeToken.NONE;
 	}
 
 	@Override

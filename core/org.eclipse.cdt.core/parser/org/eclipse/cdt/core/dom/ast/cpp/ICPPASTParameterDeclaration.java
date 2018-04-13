@@ -11,13 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter, IASTParameterDeclaration {
+public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter, IASTParameterDeclaration, IASTAttributeOwner {
 	/**
 	 * @since 5.2
 	 */

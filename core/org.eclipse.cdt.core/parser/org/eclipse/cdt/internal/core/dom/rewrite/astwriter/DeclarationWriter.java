@@ -34,8 +34,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
@@ -45,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTASMDeclaration;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -103,6 +106,8 @@ public class DeclarationWriter extends NodeWriter {
 			writeVisibilityLabel((ICPPASTVisibilityLabel) declaration);
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			writeAliasDeclaration((ICPPASTAliasDeclaration) declaration);
+		} else if (declaration instanceof ICPPASTStaticAssertDeclaration) {
+			writeStaticAssertDeclaration((ICPPASTStaticAssertDeclaration) declaration);
 		}
 
 		writeTrailingComments(declaration, addNewLine);
@@ -126,6 +131,20 @@ public class DeclarationWriter extends NodeWriter {
 		if (aliasedType != null) {
 			aliasedType.accept(visitor);
 		}
+		scribe.printSemicolon();
+	}
+
+	private void writeStaticAssertDeclaration(ICPPASTStaticAssertDeclaration staticAssertDeclaration) {
+		scribe.print(Keywords.STATIC_ASSERT);
+		scribe.print('(');
+		staticAssertDeclaration.getCondition().accept(visitor);
+		ICPPASTLiteralExpression message = staticAssertDeclaration.getMessage();
+		if (message != null) {
+			scribe.print(',');
+			scribe.printSpace();
+			message.accept(visitor);
+		}
+		scribe.print(')');
 		scribe.printSemicolon();
 	}
 
@@ -197,7 +216,11 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeNamespaceDefinition(ICPPASTNamespaceDefinition namespaceDefinition) {
+		if (namespaceDefinition.isInline()) {
+			scribe.printStringSpace(Keywords.INLINE);
+		}
 		scribe.printStringSpace(Keywords.NAMESPACE);
+		writeCPPAttributes(namespaceDefinition, EnumSet.of(SpaceLocation.AFTER));
 		namespaceDefinition.getName().accept(visitor);
 		writeGCCAttributes(namespaceDefinition, EnumSet.of(SpaceLocation.BEFORE));
 		if (!hasTrailingComments(namespaceDefinition.getName())) {
@@ -270,6 +293,9 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeASMDeclatation(IASTASMDeclaration asmDeclaration) {
+		if (asmDeclaration instanceof CPPASTASMDeclaration) {
+			writeAttributes((CPPASTASMDeclaration) asmDeclaration, EnumSet.of(SpaceLocation.AFTER));
+		}
 		scribe.print(ASM_START);
 		scribe.print(asmDeclaration.getAssembly());
 		scribe.print(ASM_END);

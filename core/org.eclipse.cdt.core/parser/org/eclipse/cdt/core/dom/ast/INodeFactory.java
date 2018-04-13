@@ -17,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.ms.IMSASTDeclspecList;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
@@ -120,6 +121,11 @@ public interface INodeFactory {
 	 * @since 6.0
 	 */
 	public IGCCASTAttributeList newGCCAttributeList();
+
+	/**
+	 * @since 6.5
+	 */
+	public IMSASTDeclspecList newMSDeclspecList();
 
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
 

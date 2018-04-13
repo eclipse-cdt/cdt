@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.ms.IMSASTDeclspecList;
 
 /**
  * Abstract base class for node factories.
@@ -45,5 +46,10 @@ public abstract class NodeFactory implements INodeFactory {
 	@Override
 	public IGCCASTAttributeList newGCCAttributeList() {
 		return new GCCASTAttributeList();
+	}
+
+	@Override
+	public IMSASTDeclspecList newMSDeclspecList() {
+		return new MSASTDeclspecList();
 	}
 }

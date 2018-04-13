@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.EnumSet;
 
-import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -35,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.GCCKeywords;
@@ -171,9 +171,7 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeElaboratedTypeSec(IASTElaboratedTypeSpecifier elabType) {
 		scribe.printStringSpace(getElabTypeString(elabType.getKind()));
-		if (elabType instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) elabType, EnumSet.of(SpaceLocation.AFTER));
-		}
+		writeAttributes(elabType, EnumSet.of(SpaceLocation.AFTER));
 		elabType.getName().accept(visitor);
 	}
 
@@ -228,10 +226,32 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumSpec(IASTEnumerationSpecifier enumSpec) {
 		scribe.printStringSpace(Keywords.ENUM);
-		if (enumSpec instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) enumSpec, EnumSet.of(SpaceLocation.AFTER));
+		boolean isCppEnum = enumSpec instanceof ICPPASTEnumerationSpecifier;
+		if (isCppEnum) {
+			ICPPASTEnumerationSpecifier cppEnumSpec = (ICPPASTEnumerationSpecifier) enumSpec;
+			if (cppEnumSpec.isScoped()) {
+				switch (cppEnumSpec.getScopeToken()) {
+				case CLASS:
+					scribe.printStringSpace(Keywords.CLASS);
+					break;
+				case STRUCT:
+					scribe.printStringSpace(Keywords.STRUCT);
+					break;
+				default:
+					break;
+				}
+			}
+			writeAttributes(cppEnumSpec, EnumSet.of(SpaceLocation.AFTER));
 		}
 		enumSpec.getName().accept(visitor);
+		if (isCppEnum) {
+			ICPPASTDeclSpecifier baseType = ((ICPPASTEnumerationSpecifier) enumSpec).getBaseType();
+			if (baseType != null) {
+				scribe.print(SPACE_COLON_SPACE);
+				writeDelcSpec(baseType);
+				scribe.printSpace();
+			}
+		}
 		scribe.print('{');
 		scribe.printSpace();
 		IASTEnumerator[] enums = enumSpec.getEnumerators();
@@ -246,7 +266,7 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumerator(IASTEnumerator enumerator) {
 		enumerator.getName().accept(visitor);
-		
+		writeAttributes(enumerator, EnumSet.of(SpaceLocation.BEFORE));
 		IASTExpression value = enumerator.getValue();
 		if (value != null) {
 			scribe.print(EQUALS);
@@ -257,9 +277,7 @@ public class DeclSpecWriter extends NodeWriter {
 	private void writeCompositeTypeSpecifier(IASTCompositeTypeSpecifier compDeclSpec) {
 		boolean hasTrailingComments = hasTrailingComments(compDeclSpec.getName());
 		scribe.printStringSpace(getCPPCompositeTypeString(compDeclSpec.getKey()));
-		if (compDeclSpec instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) compDeclSpec, EnumSet.of(SpaceLocation.AFTER));
-		}
+		writeAttributes(compDeclSpec, EnumSet.of(SpaceLocation.AFTER));
 		compDeclSpec.getName().accept(visitor);
 		if (compDeclSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cppComp = (ICPPASTCompositeTypeSpecifier) compDeclSpec;
@@ -295,13 +313,13 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 
 		if (hasFreestandingComments(compDeclSpec)) {
-			writeFreestandingComments(compDeclSpec);			
+			writeFreestandingComments(compDeclSpec);
 		}
 		scribe.decrementIndentationLevel();
 		scribe.print('}');
 
 		if (hasTrailingComments(compDeclSpec)) {
-			writeTrailingComments(compDeclSpec);			
+			writeTrailingComments(compDeclSpec);
 		}
 	}
 

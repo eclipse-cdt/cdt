@@ -13,15 +13,16 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.ms.IMSASTDeclspecList;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAttribute;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -42,6 +43,8 @@ public class AttributeWriter extends NodeWriter {
 			writeAttributeSpecifier((ICPPASTAttributeList) attribute);
 		} else if (attribute instanceof IGCCASTAttributeList) {
 			writeGCCAttributeSpecifier((IGCCASTAttributeList) attribute);
+		} else if (attribute instanceof IMSASTDeclspecList) {
+			writeMSDeclspecSpecifier((IMSASTDeclspecList) attribute);
 		} else if (attribute instanceof IASTAlignmentSpecifier) {
 			writeAlignmentSpecifier((IASTAlignmentSpecifier) attribute);
 		}
@@ -62,17 +65,28 @@ public class AttributeWriter extends NodeWriter {
 		scribe.print(GCCKeywords.__ATTRIBUTE__);
 		scribe.print(OPENING_PARENTHESIS);
 		scribe.print(OPENING_PARENTHESIS);
-		IASTAttribute[] innerAttributes = specifier.getAttributes();
+		writeAttributeOrDeclspec(specifier);
+		scribe.print(CLOSING_PARENTHESIS);
+		scribe.print(CLOSING_PARENTHESIS);
+	}
+
+	private void writeMSDeclspecSpecifier(IMSASTDeclspecList specifier) {
+		scribe.print(GCCKeywords.__DECLSPEC);
+		scribe.print(OPENING_PARENTHESIS);
+		writeAttributeOrDeclspec(specifier);
+		scribe.print(CLOSING_PARENTHESIS);
+	}
+
+	private void writeAttributeOrDeclspec(IASTAttributeList attributeList) {
+		IASTAttribute[] innerAttributes = attributeList.getAttributes();
 		for (int i = 0; i < innerAttributes.length; i++) {
 			IASTAttribute innerAttribute = innerAttributes[i];
-			writeAttribute((CPPASTAttribute)innerAttribute);
+			writeAttribute(innerAttribute);
 			if (i < innerAttributes.length - 1) {
 				scribe.print(',');
 				scribe.printSpace();
 			}
 		}
-		scribe.print(CLOSING_PARENTHESIS);
-		scribe.print(CLOSING_PARENTHESIS);
 	}
 
 	private void writeAttributeSpecifier(ICPPASTAttributeList specifier) {
@@ -81,7 +95,7 @@ public class AttributeWriter extends NodeWriter {
 		IASTAttribute[] innerAttributes = specifier.getAttributes();
 		for (int i = 0; i < innerAttributes.length; i++) {
 			IASTAttribute innerAttribute = innerAttributes[i];
-			writeAttribute((ICPPASTAttribute)innerAttribute);
+			writeAttribute(innerAttribute);
 			if (i < innerAttributes.length - 1) {
 				scribe.print(',');
 				scribe.printSpace();
@@ -91,12 +105,27 @@ public class AttributeWriter extends NodeWriter {
 		scribe.print(CLOSING_SQUARE_BRACKET);
 	}
 
-	private void writeAttribute(ICPPASTAttribute attribute) {
+	private void writeAttributeScope(ICPPASTAttribute attribute) {
 		char[] scope = attribute.getScope();
 		if (scope != null) {
 			scribe.print(scope);
 			scribe.print(COLON_COLON);
 		}
+	}
+
+	private void writeAttributeVarArgs(ICPPASTAttribute attribute) {
+		if (attribute.hasPackExpansion()) {
+			scribe.printSpace();
+			scribe.print(VAR_ARGS);
+		}
+	}
+
+	private void writeAttribute(IASTAttribute attribute) {
+		boolean isCppAttribute = attribute instanceof ICPPASTAttribute;
+		if (isCppAttribute) {
+			writeAttributeScope((ICPPASTAttribute) attribute);
+		}
+
 		scribe.print(attribute.getName());
 
 		IASTToken argumentClause = attribute.getArgumentClause();
@@ -106,9 +135,8 @@ public class AttributeWriter extends NodeWriter {
 			scribe.print(CLOSING_PARENTHESIS);
 		}
 
-		if (attribute.hasPackExpansion()) {
-			scribe.printSpace();
-			scribe.print(VAR_ARGS);
+		if (isCppAttribute) {
+			writeAttributeVarArgs((ICPPASTAttribute) attribute);
 		}
 	}
 

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.GCCKeywords;
@@ -228,10 +229,32 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumSpec(IASTEnumerationSpecifier enumSpec) {
 		scribe.printStringSpace(Keywords.ENUM);
-		if (enumSpec instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) enumSpec, EnumSet.of(SpaceLocation.AFTER));
+		boolean isCppEnum = enumSpec instanceof ICPPASTEnumerationSpecifier;
+		if (isCppEnum) {
+			ICPPASTEnumerationSpecifier cppEnumSpec = (ICPPASTEnumerationSpecifier) enumSpec;
+			if (cppEnumSpec.isScoped()) {
+				switch (cppEnumSpec.getScopeToken()) {
+				case CLASS:
+					scribe.printStringSpace(Keywords.CLASS);
+					break;
+				case STRUCT:
+					scribe.printStringSpace(Keywords.STRUCT);
+					break;
+				default:
+					break;
+				}
+			}
+			writeAttributes(cppEnumSpec, EnumSet.of(SpaceLocation.AFTER));
 		}
 		enumSpec.getName().accept(visitor);
+		if (isCppEnum) {
+			ICPPASTDeclSpecifier baseType = ((ICPPASTEnumerationSpecifier) enumSpec).getBaseType();
+			if (baseType != null) {
+				scribe.print(SPACE_COLON_SPACE);
+				writeDelcSpec(baseType);
+				scribe.printSpace();
+			}
+		}
 		scribe.print('{');
 		scribe.printSpace();
 		IASTEnumerator[] enums = enumSpec.getEnumerators();
@@ -246,7 +269,7 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumerator(IASTEnumerator enumerator) {
 		enumerator.getName().accept(visitor);
-		
+		writeAttributes(enumerator, EnumSet.of(SpaceLocation.BEFORE));
 		IASTExpression value = enumerator.getValue();
 		if (value != null) {
 			scribe.print(EQUALS);

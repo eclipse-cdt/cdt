@@ -69,7 +69,7 @@ public abstract class ASTAttributeList extends ASTNode implements IASTAttributeL
 		copy.attributes = ArrayUtil.trim(attributes, true);
 		for (int i = 0; i < copy.attributes.length; i++) {
 			IASTAttribute attributeCopy = copy.attributes[i].copy(style);
-			attributeCopy.setParent(this);
+			attributeCopy.setParent(copy);
 			copy.attributes[i] = attributeCopy;
 		}
 		return super.copy(copy, style);

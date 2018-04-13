@@ -11,6 +11,8 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -124,5 +126,26 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode
 	public boolean isParameterPack() {
 		Assert.isLegal(false);
 		return true;
+	}
+
+	@Override
+	public IASTAttributeSpecifier[] getAttributeSpecifiers() {
+		return fParameterDecl.getAttributeSpecifiers();
+	}
+
+	@Override
+	public void addAttributeSpecifier(IASTAttributeSpecifier attributeSpecifier) {
+		fParameterDecl.addAttributeSpecifier(attributeSpecifier);
+	}
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return fParameterDecl.getAttributes();
+	}
+
+	@Override
+	@Deprecated
+	public void addAttribute(IASTAttribute attribute) {
+		fParameterDecl.addAttribute(attribute);
 	}
 }

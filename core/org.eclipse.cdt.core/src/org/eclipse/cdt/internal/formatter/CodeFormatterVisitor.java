@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -109,11 +111,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
@@ -347,12 +351,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * Formats a trailing semicolon.
 	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
-	private class ClosingParensesisTailFormatter implements Runnable {
+	private class ClosingParenthesisTailFormatter implements Runnable {
 		private final boolean spaceBeforeClosingParen;
 		private final Runnable continuationFormatter;
 		private final int parenPosition;
 
-		public ClosingParensesisTailFormatter(boolean spaceBeforeClosingParen,
+		public ClosingParenthesisTailFormatter(boolean spaceBeforeClosingParen,
 				Runnable tailFormatter) {
 			this.spaceBeforeClosingParen = spaceBeforeClosingParen;
 			this.continuationFormatter = tailFormatter;
@@ -1089,6 +1093,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	public int visit(ICPPASTNamespaceDefinition node) {
 		if (!enterNode(node)) { return PROCESS_SKIP; }
 		final int line= scribe.line;
+		if (node.isInline()) {
+			scribe.printNextToken(Token.t_inline, false);
+			scribe.space();
+		}
 		// namespace <name>
 		scribe.printNextToken(Token.t_namespace, false);
 		scribe.space();
@@ -1097,7 +1105,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// member declarations
 		IASTDeclaration[] memberDecls= node.getDeclarations();
 		formatLeftCurlyBrace(line, preferences.brace_position_for_namespace_declaration);
-		formatOpeningBrace(preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
+		formatOpeningBrace(node, preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
 		if (preferences.indent_body_declarations_compare_to_namespace_header) {
 			scribe.indent();
 		}
@@ -1127,7 +1135,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		} else {
 			// TLETODO [formatter] need options for linkage specification
 			formatLeftCurlyBrace(line, preferences.brace_position_for_namespace_declaration);
-			formatOpeningBrace(preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
+			formatOpeningBrace(null, preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
 			if (preferences.indent_body_declarations_compare_to_namespace_header) {
 				scribe.indent();
 			}
@@ -1194,6 +1202,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * </pre>
 	 */
 	private int visit(ICPPASTUsingDirective node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_using);
 		scribe.printNextToken(Token.t_namespace, true);
 		scribe.space();
@@ -1526,6 +1535,31 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return -1;
 	}
 
+	/**
+	 * Formats the attributes of a given attribute owner.
+	 *
+	 * @param owner Node containing attributes
+	 * @param printLeadingSpace Print a space before the first attribute
+	 * @param printTrailingSpace Print a space after the last attribute
+	 */
+	private void formatAttributes(IASTAttributeOwner owner, boolean printLeadingSpace, boolean printTrailingSpace) {
+		if (owner == null) {
+			return;
+		}
+		IASTAttributeSpecifier[] attributeSpecifiers = owner.getAttributeSpecifiers();
+		if (attributeSpecifiers.length > 0) {
+			if (printLeadingSpace) {
+				scribe.space();
+			}
+			for (IASTAttributeSpecifier attributeSpecifier : attributeSpecifiers) {
+				formatRaw(attributeSpecifier);
+			}
+			if (printTrailingSpace) {
+				scribe.space();
+			}
+		}
+	}
+
 	private void formatPointers(IASTPointerOperator[] pointers) {
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
@@ -1547,11 +1581,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					name.accept(this);
 				}
 				scribe.printNextToken(Token.tSTAR, false);
+				formatAttributes(pointer, false, false);
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}
 			} else {
 				scribe.printNextToken(Token.tSTAR, false);
+				formatAttributes(pointer, false, false);
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}
@@ -1789,7 +1825,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// Member declarations
 		IASTDeclaration[] memberDecls= node.getMembers();
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
-		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+		formatOpeningBrace(null, preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
 		if (preferences.indent_body_declarations_compare_to_access_specifier) {
 			scribe.indent();
 		}
@@ -1862,7 +1898,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// Member declarations
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
-		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+		formatOpeningBrace(node, preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
 		final int braceIndent= scribe.numberOfIndentations;
 		if (braceIndent > headerIndent) {
 			scribe.unIndent();
@@ -1992,7 +2028,19 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
-		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+		ICPPASTEnumerationSpecifier cppNode = null;
+		if (node instanceof ICPPASTEnumerationSpecifier) {
+			cppNode = (ICPPASTEnumerationSpecifier) node;
+			formatAttributes(cppNode, true, false);
+			ICPPASTDeclSpecifier baseType = cppNode.getBaseType();
+			if (baseType != null) {
+				scribe.space();
+				scribe.printNextToken(Token.tCOLON);
+				scribe.space();
+				baseType.accept(this);
+			}
+		}
+		formatOpeningBrace(cppNode, preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
 		final int braceIndent= scribe.numberOfIndentations;
 
 		scribe.startNewLine();
@@ -2047,7 +2095,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (encloseInParen) {
 			boolean spaceBeforeClosingParen = elements.isEmpty() && !addEllipsis ?
 					options.fSpaceBetweenEmptyParen : options.fSpaceBeforeClosingParen;
-			tailFormatter = new ClosingParensesisTailFormatter(spaceBeforeClosingParen, tailFormatter);
+			tailFormatter = new ClosingParenthesisTailFormatter(spaceBeforeClosingParen, tailFormatter);
 		}
 
 		if (!elements.isEmpty() || addEllipsis) {
@@ -2131,6 +2179,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICPPASTTryBlockStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_try, scribe.printComment());
 		final IASTStatement tryBody= node.getTryBody();
 		if (tryBody != null) {
@@ -2198,6 +2247,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTBreakStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_break);
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
@@ -2556,7 +2606,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			final int line= scribe.line;
 	        final String brace_position= preferences.brace_position_for_initializer_list;
 			formatLeftCurlyBrace(line, brace_position);
-	        formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_initializer_list);
+	        formatOpeningBrace(null, brace_position, preferences.insert_space_before_opening_brace_in_initializer_list);
 	        if (preferences.insert_new_line_after_opening_brace_in_initializer_list) {
 	        	scribe.startNewLine();
 	        }
@@ -2626,9 +2676,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		case IASTUnaryExpression.op_sizeofParameterPack:
 			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
 			scribe.printNextToken(Token.tELIPSE, scribe.printComment());
-			if (peekNextToken() != Token.tLPAREN) {
-				scribe.space();
-			}
+			scribe.printNextToken(Token.tLPAREN);
 			operand.accept(this);
 			break;
 		case IASTUnaryExpression.op_throw:
@@ -2991,7 +3039,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
         final String brace_position= preferences.brace_position_for_initializer_list;
 		formatLeftCurlyBrace(line, brace_position);
-        formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_initializer_list);
+        formatOpeningBrace(null, brace_position, preferences.insert_space_before_opening_brace_in_initializer_list);
         if (preferences.insert_new_line_after_opening_brace_in_initializer_list) {
         	scribe.printNewLine();
         }
@@ -3096,6 +3144,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTContinueStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_continue);
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
@@ -3103,6 +3152,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTDoStatement node) {
+		formatAttributes(node, false, true);
 		int token = peekNextToken();
 		if (token == Token.t_do) {
 			scribe.printNextToken(token);
@@ -3136,6 +3186,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTNullStatement node) {
 		if (!fHasClauseInitStatement && nodeOffset(node) == getCurrentPosition()) {
+			formatAttributes(node, false, false);
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 			scribe.printTrailingComment();
 		}
@@ -3169,6 +3220,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTForStatement node) {
 		if (!startsWithMacroExpansion(node)) {
+			formatAttributes(node, false, true);
 			scribe.printNextToken(Token.t_for);
 		}
 	    final int line = scribe.line;
@@ -3186,7 +3238,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				tailFormatter = new TrailingTokenFormatter(Token.tLBRACE, nodeOffset(body),
 						preferences.insert_space_before_opening_brace_in_block, false);
 			}
-			tailFormatter = new ClosingParensesisTailFormatter(
+			tailFormatter = new ClosingParenthesisTailFormatter(
 					preferences.insert_space_before_closing_paren_in_for, tailFormatter);
 		}
 
@@ -3269,6 +3321,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICPPASTRangeBasedForStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_for);
 		final int line = scribe.line;
 		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
@@ -3305,6 +3358,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTIfStatement node) {
 		if (!startsWithMacroExpansion(node)) {
+			formatAttributes(node, false, true);
 			scribe.printNextToken(Token.t_if);
 		}
 		IASTNode condition = node.getConditionExpression();
@@ -3343,7 +3397,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					tailFormatter = new TrailingTokenFormatter(Token.tLBRACE, nodeOffset(thenStatement),
 							preferences.insert_space_before_opening_brace_in_block, false);
 				}
-				tailFormatter = new ClosingParensesisTailFormatter(
+				tailFormatter = new ClosingParenthesisTailFormatter(
 						preferences.insert_space_before_closing_paren_in_if, tailFormatter);
 				scribe.setTailFormatter(tailFormatter);
 				if (condition == null || condition instanceof IASTProblemHolder) {
@@ -3541,6 +3595,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTReturnStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_return);
 		final IASTExpression expression = node.getReturnValue();
 		if (expression != null) {
@@ -3560,6 +3615,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTLabelStatement node) {
 		// TLETODO [formatter] label indentation
+		formatAttributes(node, false, true);
 		node.getName().accept(this);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_labeled_statement);
 		if (preferences.insert_space_after_colon_in_labeled_statement) {
@@ -3571,6 +3627,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTCaseStatement node) {
 		IASTExpression constant = node.getExpression();
+		formatAttributes(node, false, true);
 		if (constant == null) {
 			scribe.printNextToken(Token.t_default);
 			scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_default);
@@ -3584,6 +3641,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTDefaultStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_default);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_default);
 		return PROCESS_SKIP;
@@ -3598,6 +3656,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTSwitchStatement node) {
 		final int headerIndent= scribe.numberOfIndentations;
+		formatAttributes(node, false, true);
 		// 'switch' keyword
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_switch);
@@ -3632,7 +3691,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		int braceIndent = -1;
 		IASTStatement bodyStmt= node.getBody();
 		if (!startsWithMacroExpansion(bodyStmt)) {
-			formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_switch);
+			formatOpeningBrace(bodyStmt, brace_position, preferences.insert_space_before_opening_brace_in_switch);
 			scribe.startNewLine();
 			braceIndent= scribe.numberOfIndentations;
 			if (braceIndent > headerIndent) {
@@ -3776,6 +3835,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTWhileStatement node) {
+		formatAttributes(node, false, true);
 		scribe.printNextToken(Token.t_while);
 		final int line = scribe.line;
 		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_while);
@@ -4178,7 +4238,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.printComment();
 			}
 		} else if (getCurrentPosition() <= nodeOffset(block)) {
-			formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
+			formatOpeningBrace(block, block_brace_position, insertSpaceBeforeOpeningBrace);
 		}
 	}
 
@@ -4232,13 +4292,14 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
     }
 
-	private void formatOpeningBrace(String bracePosition, boolean insertSpaceBeforeBrace) {
+	private void formatOpeningBrace(IASTAttributeOwner owner, String bracePosition, boolean insertSpaceBeforeBrace) {
 		if (DefaultCodeFormatterConstants.NEXT_LINE.equals(bracePosition)) {
 			scribe.startNewLine();
 		} else if (DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(bracePosition)) {
 			scribe.startNewLine();
 			scribe.indent();
 		}
+		formatAttributes(owner, insertSpaceBeforeBrace, insertSpaceBeforeBrace);
 		int token = peekNextToken();
 		if (token == Token.tLBRACE) {
 			scribe.printNextToken(token, insertSpaceBeforeBrace);

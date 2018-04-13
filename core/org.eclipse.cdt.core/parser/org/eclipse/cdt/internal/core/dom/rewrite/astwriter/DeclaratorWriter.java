@@ -75,13 +75,19 @@ public class DeclaratorWriter extends NodeWriter {
 	}
 
 	protected void writeDefaultDeclarator(IASTDeclarator declarator) {
+		boolean parentIsFunctionDeclarator = declarator.getParent() instanceof ICPPASTFunctionDeclarator;
+		if (parentIsFunctionDeclarator) {
+			writeAttributes(declarator, EnumSet.noneOf(SpaceLocation.class));
+		}
 		IASTPointerOperator[] pointOps = declarator.getPointerOperators();
 		writePointerOperators(declarator, pointOps);
 		writeParameterPack(declarator);
 		IASTName name = declarator.getName();
 		name.accept(visitor);
 		writeNestedDeclarator(declarator);
-		writeAttributes(declarator, EnumSet.of(SpaceLocation.BEFORE));
+		if (!parentIsFunctionDeclarator) {
+			writeAttributes(declarator, EnumSet.of(SpaceLocation.BEFORE));
+		}
 		IASTInitializer init = getInitializer(declarator);
 		if (init != null) {
 			init.accept(visitor);
@@ -90,9 +96,8 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writePointerOperators(IASTDeclarator declarator, IASTPointerOperator[] pointOps) {
 		for (IASTPointerOperator operator : pointOps) {
-			writeGCCAttributes(operator, EnumSet.noneOf(SpaceLocation.class));
 			writePointerOperator(operator);
-			writeCPPAttributes(operator, EnumSet.noneOf(SpaceLocation.class));
+			writeAttributes(operator, EnumSet.noneOf(SpaceLocation.class));
 		}
 	}
 
@@ -170,10 +175,6 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);
 		}
-		writeVirtualSpecifiers(funcDec);
-		if (funcDec.isPureVirtual()) {
-			scribe.print(PURE_VIRTUAL);
-		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification(), funcDec.getNoexceptExpression());
 		writeAttributes(funcDec, EnumSet.of(SpaceLocation.BEFORE));
 		if (funcDec.getTrailingReturnType() != null) {
@@ -181,6 +182,10 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(ARROW_OPERATOR);
 			scribe.printSpace();
 			funcDec.getTrailingReturnType().accept(visitor);
+		}
+		writeVirtualSpecifiers(funcDec);
+		if (funcDec.isPureVirtual()) {
+			scribe.print(PURE_VIRTUAL);
 		}
 	}
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b44c44_7cc08277",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-04-14T18:02:59Z",
+      "side": 1,
+      "message": "I\u0027m not sure this is the right approach. Should the preferences be saved using the \"id\" and not the \"name\" ? I guess this would break backward compatibility?",
+      "revId": "8ac30d3a76b9f5be97785240d17e70abfb312c76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

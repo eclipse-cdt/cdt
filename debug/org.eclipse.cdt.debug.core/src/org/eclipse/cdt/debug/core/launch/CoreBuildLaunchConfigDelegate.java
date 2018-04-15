@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.core.launch;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
 import org.eclipse.core.resources.IProject;
@@ -101,10 +103,22 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	protected IBinary getBinary(ICBuildConfiguration buildConfig) throws CoreException {
 		IBinary[] binaries = buildConfig.getBuildOutput();
 		IBinary exeFile = null;
+
+		binaryLoop:
 		for (IBinary binary : binaries) {
 			if (binary.isExecutable()) {
 				exeFile = binary;
 				break;
+			} else if (binary.isSharedLib()) {
+				// a shared object with a main function can be launched
+				List<ICElement> functions = binary.getChildrenOfType(IBinary.C_FUNCTION);
+				for (ICElement function : functions) {
+					String fname = function.getElementName(); 
+					if ("main".equals(fname)) { //$NON-NLS-1$
+						exeFile = binary;
+						break binaryLoop;
+					}
+				}
 			}
 		}
 		if (exeFile == null) {

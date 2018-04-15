@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -91,6 +92,21 @@ public class Binary extends Openable implements IBinary {
 
 	@Override
 	public boolean isExecutable() {
+		if (getType() == IBinaryFile.SHARED) {
+			try {
+				// a shared object with a main function can be launched
+				List<ICElement> functions = getChildrenOfType(IBinary.C_FUNCTION);
+				for (ICElement function : functions) {
+					String fname = function.getElementName(); 
+					if ("main".equals(fname)) { //$NON-NLS-1$
+						return true;
+					}
+				}
+			} catch (CModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return getType() == IBinaryFile.EXECUTABLE;
 	}
 

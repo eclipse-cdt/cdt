@@ -91,6 +91,21 @@ public class Binary extends Openable implements IBinary {
 
 	@Override
 	public boolean isExecutable() {
+		if (getType() == IBinaryFile.SHARED) {
+			// a shared object with a main function can be launched
+			IBinaryObject binaryObj = getBinaryObject();
+			if (binaryObj != null) {
+				ISymbol[] symbols = binaryObj.getSymbols();
+				if (symbols != null) {
+					for (ISymbol sym : symbols) {
+						if ("main".equals(sym.getName()) && //$NON-NLS-1$
+								sym.getType() == ISymbol.FUNCTION ) {
+							return true;
+						}
+					}
+				}
+			}
+		}
 		return getType() == IBinaryFile.EXECUTABLE;
 	}
 

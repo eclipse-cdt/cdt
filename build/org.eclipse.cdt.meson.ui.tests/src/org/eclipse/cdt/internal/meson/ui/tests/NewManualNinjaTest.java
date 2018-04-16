@@ -158,13 +158,13 @@ public class NewManualNinjaTest {
 		
 		String[] lines = new String[0];
 		
-		while (lines.length < 12) {
+		while (lines.length < 15) {
 			String output = console.bot().styledText().getText();
 			lines = output.split("\\r?\\n"); //$NON-NLS-1$
 			bot.sleep(2000);
 		}
 		
-		bot.sleep(2000);
+		bot.sleep(3000);
 		
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("The Meson build system", lines[2]);

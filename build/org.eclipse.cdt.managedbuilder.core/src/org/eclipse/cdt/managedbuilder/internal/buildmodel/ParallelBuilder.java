@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * Samuel Hultgren (STMicroelectronics) - bug #217674
+ * Torbjörn Svensson (STMicroelectronics) - bug #528940
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -28,6 +29,8 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -232,6 +235,7 @@ public class ParallelBuilder {
 	 *         ParallelBuilder#STATUS_INVALID}.
 	 */
 	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err, IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally, IResourceRebuildStateContainer rs) {
+		int status = IBuildModelBuilder.STATUS_OK;
 		IConfiguration cfg = des.getConfiguration();
 		if(dirs == null) dirs = new GenDirInfo(cfg);
 		if(cwd == null)  cwd = des.getDefaultBuildDirLocation();
@@ -241,20 +245,98 @@ public class ParallelBuilder {
 		}
 
 		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally, rs, des);
+
+		status = builder.executePreBuildStep();
+		if (status != IBuildModelBuilder.STATUS_OK) {
+			return status;
+		}
+
 		builder.initRebuildStates();
 		builder.enqueueAll(des);
 		builder.sortQueue();
 		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
 		BuildProcessManager buildProcessManager = new BuildProcessManager(out, err, true, threads);
-		int status = builder.dispatch(buildProcessManager);
+		status = builder.dispatch(buildProcessManager);
 		lastThreadsUsed = buildProcessManager.getThreadsUsed();
 		monitor.done();
 
 		if (status == IBuildModelBuilder.STATUS_OK) {
 			builder.clearRebuildStates();
+			status = builder.executePostBuildStep();
 		}
 
 		return status;
+	}
+
+	/**
+	 * Executes all pre build commands
+	 *
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executePreBuildStep() {
+		// Ensure that the target directory exist
+		cwd.toFile().mkdirs();
+
+		// Validate that the CWD is an actual directory
+		if (cwd.toFile().exists() && !cwd.toFile().isDirectory()) {
+			printMessage(ManagedMakeMessages.getFormattedString("ParallelBuilder.missingOutDir", "" + cwd), err); //$NON-NLS-1$ //$NON-NLS-2$
+			return IBuildModelBuilder.STATUS_ERROR_BUILD;
+		}
+
+		return executeStep(fDes.getInputStep());
+	}
+
+	/**
+	 * Executes all post build commands
+	 *
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executePostBuildStep() {
+		return executeStep(fDes.getOutputStep());
+	}
+
+	/**
+	 * Execute all the commands associated with step
+	 *
+	 * @param step The build step
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executeStep(IBuildStep step) {
+		if (hasResourceToBuild() && step != null) {
+			IProject project = (IProject)fDes.getConfiguration().getOwner();
+			IBuildCommand[] bcs = step.getCommands(cwd, null, null, true);
+			for (IBuildCommand bc : bcs) {
+				CommandBuilder cb = new CommandBuilder(bc, fRebuildStateContainer, project);
+				int status = cb.build(out, err, monitor);
+				if (status != IBuildModelBuilder.STATUS_OK) {
+					return status;
+				}
+			}
+		}
+
+		return IBuildModelBuilder.STATUS_OK;
+	}
+
+	/**
+	 * Checks if there is one or more resource that needs to be built
+	 *
+	 * @return True if one or more resource that needs to be built
+	 */
+	protected boolean hasResourceToBuild() {
+		if (buildIncrementally && fDes instanceof BuildDescription) {
+			IResourceDelta delta = ((BuildDescription) fDes).getDelta();
+			if (delta != null && delta.getAffectedChildren() != null && delta.getAffectedChildren().length <= 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private void initRebuildStates() {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "834aca14_9076fb91",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-18T21:19:42Z",
+      "side": 1,
+      "message": "This looks fine.",
+      "revId": "72a51e79d9694032b967c19b789b58701a297eee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

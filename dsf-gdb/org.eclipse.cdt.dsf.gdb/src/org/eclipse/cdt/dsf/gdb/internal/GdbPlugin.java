@@ -10,11 +10,14 @@
  *     Abeer Bagul (Tensilica) - Updated error message (Bug 339048)
  *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic tracing option (Bug 379169)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
+ *     Torbjörn Svensson (STMicroelectronics) - Bug 533766
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
@@ -133,11 +136,13 @@ public class GdbPlugin extends Plugin {
                 // The Query.get() method is a synchronous call which blocks until the 
                 // query completes.  
                 try {
-                    launchShutdownQuery.get();
+                    launchShutdownQuery.get(1, TimeUnit.MINUTES);
                 } catch (InterruptedException e) { 
                     getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "InterruptedException while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
                 } catch (ExecutionException e) {
                     getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Exception while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
+                } catch (TimeoutException e) {
+                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "TimeoutException while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
                 }
             }
         }

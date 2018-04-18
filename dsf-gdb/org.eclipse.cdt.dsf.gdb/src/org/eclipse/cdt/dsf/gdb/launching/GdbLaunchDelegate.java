@@ -16,6 +16,7 @@
  * Marc Khouzam (Ericsson) - Cleanup the launch if it is cancelled (Bug 374374)
  * Marc-Andre Laperle      - Bug 382462
  * Marc Khouzam (Ericsson - Show GDB version in debug view node label (Bug 455408)
+ * Samuel Hultgren (STMicroelectronics) - Bug 533769
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -230,7 +231,12 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+            final Throwable cause = e1.getCause();
+            String message = ""; //$NON-NLS-1$
+            if (cause != null) {
+                message = ":\n\n" + cause.getMessage(); //$NON-NLS-1$
+            }
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence" + message, cause)); //$NON-NLS-1$
         } catch (CancellationException e1) {
         	// Launch aborted, so exit cleanly
         	return;

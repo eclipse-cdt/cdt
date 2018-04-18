@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson				- Modified for handling of execution contexts
+ *     STMicroelectronics   - Added constructor to limit scope (Bug 533771)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -40,6 +41,12 @@ public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo>
 
     public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues) {
         super(frameDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+
+    /** @since 5.5 */
+    public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues, int low, int high) {
+        super(frameDmc, "-stack-list-arguments",  //$NON-NLS-1$
+                        new String[] { showValues ? "1" : "0", Integer.toString(low), Integer.toString(high)}); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues, int low, int high) {

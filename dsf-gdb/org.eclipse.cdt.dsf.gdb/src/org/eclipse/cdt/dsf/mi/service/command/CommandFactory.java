@@ -27,6 +27,7 @@
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
  *     Intel Corporation - Added Reverse Debugging BTrace support
+ *     Samuel Hultgren (STMicroelectronics) - Bug 533771
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -975,6 +976,10 @@ public class CommandFactory {
 
 	public ICommand<MIStackListArgumentsInfo> createMIStackListArguments(IFrameDMContext frameDmc, boolean showValues) {
 		return new MIStackListArguments(frameDmc, showValues);
+	}
+
+	public ICommand<MIStackListArgumentsInfo> createMIStackListArguments(IFrameDMContext frameDmc, boolean showValues, int low, int high) {
+		return new MIStackListArguments(frameDmc, showValues, low, high);
 	}
 
 	public ICommand<MIStackListArgumentsInfo> createMIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues, int low, int high) {

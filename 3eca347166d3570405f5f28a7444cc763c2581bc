@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d35f332f_9516fad5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-18T15:54:44Z",
+      "side": 1,
+      "message": "Please add a null pointer check on e1.getCause(), we don\u0027t want an exception happening in our exception handling code.",
+      "revId": "3eca347166d3570405f5f28a7444cc763c2581bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

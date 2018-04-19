@@ -1108,6 +1108,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
                 hasDot= true;
                 continue;
 
+            // C++14 literal separator
+            case '\'':
+                continue;
+
             // check for exponent or hex digit
             case 'E': case 'e':
                 if (isHex && !hasExponent) {

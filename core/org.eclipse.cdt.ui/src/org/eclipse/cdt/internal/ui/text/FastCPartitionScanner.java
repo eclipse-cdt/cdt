@@ -320,6 +320,12 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					}
 					
 				case '\'':
+					// C++14 literal separators
+					if (fLast == IDENT) {
+						fTokenLength++;
+						break;
+					}
+
 					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0) {
 						return preFix(CCODE, CHARACTER, NONE, 1);

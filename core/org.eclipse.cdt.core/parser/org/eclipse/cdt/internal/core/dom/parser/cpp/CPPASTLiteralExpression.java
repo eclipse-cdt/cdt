@@ -634,8 +634,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		 */
 		char c = value[++i];
 		if (isHexDigit(c)) {
-			while (isHexDigit(c) && i < value.length) {
-				c = value[++i];
+			while (i < value.length) {
+				if (isHexDigit(c)) {
+					c = value[++i];
+				} else if (c == '\'') {
+					i++;
+					continue;
+				} else {
+					break;
+				}
 			}
 			if (c == '.') {
 				// Could be GCC's hex float

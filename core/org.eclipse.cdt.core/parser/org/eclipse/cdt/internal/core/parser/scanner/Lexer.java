@@ -1033,7 +1033,11 @@ final public class Lexer implements ITokenSequence {
             		break;
             	}
             	break;
-            
+
+			// C++ 14 literal separator
+			case '\'':
+				break;
+
             case END_OF_INPUT:
 				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, 

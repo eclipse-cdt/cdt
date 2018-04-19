@@ -453,6 +453,14 @@ public class LexerTests extends BaseTestCase {
 		}
 	}
 	
+	public void testNumberSeparator() throws Exception {
+		String n = "123'456";
+
+		init(n);
+		integer(n);
+		eof();
+	}
+
 	public void testCharLiteral() throws Exception {
 		String lit= "'abc0123\\'\".:; \\\\'";
 		init(lit);

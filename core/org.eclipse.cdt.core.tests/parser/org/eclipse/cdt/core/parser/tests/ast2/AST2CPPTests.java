@@ -12653,4 +12653,16 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testNestedNamespaceDefinition_490359() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int l_a = 0b01'100'100'100;
+	//	constexpr int l_b = 1'123'456;
+	//	constexpr int l_c = 0x1000'1000;
+	//	constexpr int l_d = 0111'1000;
+	public void testLiteralDecimalSeparators_519062() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("l_a", 804);
+		helper.assertVariableValue("l_b", 1123456);
+		helper.assertVariableValue("l_c", 268439552);
+		helper.assertVariableValue("l_d", 299520);
+	}
 }

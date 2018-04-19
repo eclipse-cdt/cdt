@@ -511,8 +511,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				*   0
 				*   octal-literal octal-digit
 				*/
-				while (isOctal(c) && i < value.length) {
-					c = value[++i];
+				while (i < value.length) {
+					if (isOctal(c)) {
+						c = value[++i];
+					} else if (c == '\'') {
+						i++;
+						continue;
+					} else {
+						break;
+					}
 				}
 				break;
 			case '.':
@@ -539,8 +546,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			*    decimal-literal digit
 			*/
 			c = value[i];
-			while (Character.isDigit(c) && i < value.length) {
-				c = value[++i];
+			while (i < value.length) {
+				if (Character.isDigit(c)) {
+					c = value[++i];
+				} else if (c == '\'') {
+					i++;
+					continue;
+				} else {
+					break;
+				}
 			}
 
 			return handleDecimalOrExponent(value, c, i);
@@ -570,8 +584,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	 */
 	private static int afterDecimalPoint(char[] value, int i) {
 		char c = value[++i];
-		while (Character.isDigit(c) && i < value.length) {
-			c = value[++i];
+		while (i < value.length) {
+			if (Character.isDigit(c)) {
+				c = value[++i];
+			} else if (c == '\'') {
+				i++;
+				continue;
+			} else {
+				break;
+			}
 		}
 
 		if ((c | 0x20) == 'e') {
@@ -592,8 +613,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			c = value[++i];
 		}
 
-		while (Character.isDigit(c) && i < value.length) {
-			c = value[++i];
+		while (i < value.length) {
+			if (Character.isDigit(c)) {
+				c = value[++i];
+			} else if (c == '\'') {
+				i++;
+				continue;
+			} else {
+				break;
+			}
 		}
 		// If there were no digits following the 'e' then we have
 		// D.De or .De which is a UDL on a double
@@ -606,7 +634,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		char c = value[++i];
 
 		if (c == '1' || c == '0') {
-			while (c == '1' || c == '0' && i < value.length) {
+			while (c == '1' || c == '0' || c == '\'' && i < value.length) {
 				c = value[i++];
 			}
 			if (Character.isDigit(c)) {
@@ -615,8 +643,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			} else if (c == '.') {
 				// no such thing as binary floating point
 				c = value[++i];
-				while (Character.isDigit(c) && i < value.length) {
-					c = value[i++];
+				while (i < value.length) {
+					if (Character.isDigit(c)) {
+						c = value[i++];
+					} else if (c == '\'') {
+						i++;
+						continue;
+					} else {
+						break;
+					}
 				}
 			}
 		} else {
@@ -634,8 +669,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		 */
 		char c = value[++i];
 		if (isHexDigit(c)) {
-			while (isHexDigit(c) && i < value.length) {
-				c = value[++i];
+			while (i < value.length) {
+				if (isHexDigit(c)) {
+					c = value[++i];
+				} else if (c == '\'') {
+					i++;
+					continue;
+				} else {
+					break;
+				}
 			}
 			if (c == '.') {
 				// Could be GCC's hex float
@@ -655,8 +697,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		// 0xHHH.
 		char c = value[++i];
 		if (isHexDigit(c)) {
-			while (isHexDigit(c) && i < value.length) {
-				c = value[++i];
+			while (i < value.length) {
+				if (isHexDigit(c)) {
+					c = value[++i];
+				} else if (c == '\'') {
+					i++;
+					continue;
+				} else {
+					break;
+				}
 			}
 
 			if ((c | 0x20) == 'p') {
@@ -683,8 +732,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 
 		if (Character.isDigit(c)) {
-			while (Character.isDigit(c) && i < value.length) {
-				c = value[++i];
+			while (i < value.length) {
+				if (Character.isDigit(c)) {
+					c = value[++i];
+				} else if (c == '\''){
+					i++;
+					continue;
+				} else {
+					break;
+				}
 			}
 		} else {
 			return i - 1;

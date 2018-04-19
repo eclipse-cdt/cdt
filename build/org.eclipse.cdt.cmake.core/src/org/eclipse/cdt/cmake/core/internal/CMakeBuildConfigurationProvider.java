@@ -66,21 +66,20 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 				// No valid combinations
 				return null;
 			}
+		}
+		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name);
+		ICMakeToolChainFile tcFile = cmakeConfig.getToolChainFile();
+		IToolChain toolChain = cmakeConfig.getToolChain();
+		if (toolChain == null) {
+			// config not complete
+			return null;
+		}
+		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
+			// toolchain changed
+			return new CMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
+					cmakeConfig.getLaunchMode());
 		} else {
-			CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name);
-			ICMakeToolChainFile tcFile = cmakeConfig.getToolChainFile();
-			IToolChain toolChain = cmakeConfig.getToolChain();
-			if (toolChain == null || tcFile == null) {
-				// config not complete?
-				return null;
-			}
-			if (!toolChain.equals(tcFile.getToolChain())) {
-				// toolchain changed
-				return new CMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
-						cmakeConfig.getLaunchMode());
-			} else {
-				return cmakeConfig;
-			}
+			return cmakeConfig;
 		}
 	}
 

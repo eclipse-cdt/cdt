@@ -511,7 +511,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				*   0
 				*   octal-literal octal-digit
 				*/
-				while (isOctal(c) && i < value.length) {
+				while (isOctalOrSeparator(c) && i < value.length) {
 					c = value[++i];
 				}
 				break;
@@ -539,7 +539,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			*    decimal-literal digit
 			*/
 			c = value[i];
-			while (Character.isDigit(c) && i < value.length) {
+			while (isDigitOrSeparator(c) && i < value.length) {
 				c = value[++i];
 			}
 
@@ -570,7 +570,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	 */
 	private static int afterDecimalPoint(char[] value, int i) {
 		char c = value[++i];
-		while (Character.isDigit(c) && i < value.length) {
+		while (isDigitOrSeparator(c) && i < value.length) {
 			c = value[++i];
 		}
 
@@ -592,7 +592,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			c = value[++i];
 		}
 
-		while (Character.isDigit(c) && i < value.length) {
+		while (isDigitOrSeparator(c) && i < value.length) {
 			c = value[++i];
 		}
 		// If there were no digits following the 'e' then we have
@@ -606,7 +606,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		char c = value[++i];
 
 		if (c == '1' || c == '0') {
-			while (c == '1' || c == '0' && i < value.length) {
+			while (c == '1' || c == '0' || c == '\'' && i < value.length) {
 				c = value[i++];
 			}
 			if (Character.isDigit(c)) {
@@ -615,7 +615,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			} else if (c == '.') {
 				// no such thing as binary floating point
 				c = value[++i];
-				while (Character.isDigit(c) && i < value.length) {
+				while (isDigitOrSeparator(c) && i < value.length) {
 					c = value[i++];
 				}
 			}
@@ -633,8 +633,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		 *   hexadecimal-literal hexadecimal-digit
 		 */
 		char c = value[++i];
-		if (isHexDigit(c)) {
-			while (isHexDigit(c) && i < value.length) {
+		if (isHexDigitOrSeparator(c)) {
+			while (isHexDigitOrSeparator(c) && i < value.length) {
 				c = value[++i];
 			}
 			if (c == '.') {
@@ -654,8 +654,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private static int hexFloatAfterDecimal(char[] value, int i) {
 		// 0xHHH.
 		char c = value[++i];
-		if (isHexDigit(c)) {
-			while (isHexDigit(c) && i < value.length) {
+		if (isHexDigitOrSeparator(c)) {
+			while (isHexDigitOrSeparator(c) && i < value.length) {
 				c = value[++i];
 			}
 
@@ -683,7 +683,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		}
 
 		if (Character.isDigit(c)) {
-			while (Character.isDigit(c) && i < value.length) {
+			while (isDigitOrSeparator(c) && i < value.length) {
 				c = value[++i];
 			}
 		} else {
@@ -692,13 +692,17 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return i;
 	}
 
-	private static boolean isHexDigit(char c) {
-		c |= 0x20;
-		return ((c <= 'f' && c >= 'a') || (c <= '9' && c >= '0'));
+	private static boolean isHexDigitOrSeparator(char c) {
+		char lc = Character.toLowerCase(c);
+		return (lc <= 'f' && lc >= 'a') || (c <= '9' && c >= '0') || (c == '\'');
 	}
 
-	private static boolean isOctal(final char c) {
-		return c >= '0' && c <= '7';
+	private static boolean isOctalOrSeparator(final char c) {
+		return (c >= '0' && c <= '7') || (c == '\'');
+	}
+
+	private static boolean isDigitOrSeparator(final char c) {
+		return Character.isDigit(c) || (c == '\'');
 	}
 
 	/**

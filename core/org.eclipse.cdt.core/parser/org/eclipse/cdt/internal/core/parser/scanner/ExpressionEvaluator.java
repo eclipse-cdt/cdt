@@ -439,6 +439,10 @@ public class ExpressionEvaluator {
 		int i = from;
 		if (from != to) {
 			for (; i < to; i++) {
+				if (tokenImage[i] == '\'') {
+					continue;
+				}
+
 				int digit = getDigit(tokenImage[i]);
 				if (digit >= base) {
 					break;

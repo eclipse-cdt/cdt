@@ -323,6 +323,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportUTFLiterals = configuration.supportUTFLiterals();
         fLexOptions.fSupportRawStringLiterals = configuration.supportRawStringLiterals();
         fLexOptions.fSupportUserDefinedLiterals = configuration.supportUserDefinedLiterals();
+        fLexOptions.fSupportDigitSeparators = configuration.supportDigitSeparators();
         if (info instanceof ExtendedScannerInfo)
         	fLexOptions.fIncludeExportPatterns = ((ExtendedScannerInfo) info).getIncludeExportPatterns();
         fLocationMap= new LocationMap(fLexOptions);
@@ -1070,6 +1071,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             	switch (image[pos]) {
                 case '0': case'1':
                 	continue;
+                case '\'':
+                	continue;
                 case 'e': case 'E':
                 case '.':
                 	handleProblem(IProblem.SCANNER_FLOAT_WITH_BAD_PREFIX, "0b".toCharArray(), number.getOffset(), number.getEndOffset()); //$NON-NLS-1$
@@ -1107,6 +1110,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
                 }
                 hasDot= true;
                 continue;
+
+            // C++14 literal separator
+            case '\'':
+            	if (fLexOptions.fSupportDigitSeparators) {
+                    continue;
+            	} else {
+            		break loop;
+            	}
 
             // check for exponent or hex digit
             case 'E': case 'e':

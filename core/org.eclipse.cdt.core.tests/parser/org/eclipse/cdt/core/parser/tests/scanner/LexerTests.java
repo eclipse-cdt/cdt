@@ -34,6 +34,7 @@ public class LexerTests extends BaseTestCase {
 		NO_MINMAX.fSupportMinAndMax= false;
 		SLASH_PERCENT.fSupportSlashPercentComments= true;
 		CPP_OPTIONS.fSupportRawStringLiterals= true;
+		CPP_OPTIONS.fSupportDigitSeparators= true;
 	}
 	
 	static String TRIGRAPH_REPLACES_CHARS= "#^[]|{}~\\";
@@ -452,7 +453,15 @@ public class LexerTests extends BaseTestCase {
 			eof();
 		}
 	}
-	
+
+	public void testNumberSeparator() throws Exception {
+		String n = "123'456";
+
+		init(n, CPP_OPTIONS);
+		integer(n);
+		eof();
+	}
+
 	public void testCharLiteral() throws Exception {
 		String lit= "'abc0123\\'\".:; \\\\'";
 		init(lit);

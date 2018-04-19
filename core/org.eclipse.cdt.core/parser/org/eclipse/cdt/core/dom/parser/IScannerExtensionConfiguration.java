@@ -120,4 +120,10 @@ public interface IScannerExtensionConfiguration {
 	 * @since 5.11
 	 */
 	public boolean supportUserDefinedLiterals();
+
+	/**
+	 * Support for C++14 digit separators in integer literals
+	 * @since 6.5
+	 */
+	public boolean supportDigitSeparators();
 }

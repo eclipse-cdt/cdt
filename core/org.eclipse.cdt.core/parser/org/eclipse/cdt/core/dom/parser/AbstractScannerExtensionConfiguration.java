@@ -120,7 +120,12 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public boolean supportUserDefinedLiterals() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean supportDigitSeparators() {
+		return false;
+	}
+
 	@Override
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return fAddPreprocessorKeywords;

@@ -16,6 +16,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
@@ -46,7 +48,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class CBuildConfigurationManager implements ICBuildConfigurationManager, IResourceChangeListener {
+public class CBuildConfigurationManager implements ICBuildConfigurationManager, ICBuildConfigurationManager2, IResourceChangeListener {
 
 	private static class Provider {
 		private String id;
@@ -177,6 +179,59 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		CModelManager.getDefault().resetBinaryParser(buildConfig.getProject());
 	}
 
+	@Override
+	public void recheckConfigs() {
+		initProviders();
+		ICBuildConfiguration config = null;
+		Set<IProject> projects = new HashSet<>();
+		synchronized (configs) {
+			Iterator<IBuildConfiguration> iterator = noConfigs.iterator();
+			while (iterator.hasNext()) {
+				IBuildConfiguration buildConfig = iterator.next();
+				String configName = null;
+				ICBuildConfigurationProvider provider = null;
+				if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
+					configName = ICBuildConfiguration.DEFAULT_NAME;
+					try {
+						provider = getProvider(buildConfig.getProject());
+					} catch (CoreException e) {
+						continue;
+					}
+				} else {
+					String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
+					if (segments.length == 2) {
+						String providerId = segments[0];
+						configName = segments[1];
+						Provider delegate = getProviderDelegate(providerId);
+						if (delegate != null && delegate.supports(buildConfig.getProject())) {
+							provider = delegate.getProvider();
+						}
+					}
+				}
+
+				if (provider != null) {
+					try {
+						config = provider.getCBuildConfiguration(buildConfig, configName);
+					} catch (CoreException e) {
+						// do nothing
+					}
+					if (config != null) {
+						iterator.remove();
+						projects.add(buildConfig.getProject());
+						configs.put(buildConfig, config);
+					}
+				}
+
+			}
+		}
+		
+		for (IProject project : projects) {
+			// Do this outside of the synchronized block to avoid deadlock with
+			// BinaryRunner
+			CModelManager.getDefault().resetBinaryParser(project);
+		}
+	}
+	
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IBuildConfiguration buildConfig) throws CoreException {
 		initProviders();

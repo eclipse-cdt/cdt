@@ -478,11 +478,11 @@ public abstract class CBuildConfiguration extends PlatformObject
 	/**
 	 * @since 6.5
 	 */
-	public Process startBuildProcess(List<String> commands, IEnvironmentVariable[] envVars, IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
+	public Process startBuildProcess(List<String> commands, IEnvironmentVariable[] envVars, IPath buildDirectory, IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
 		Process process = null;
 		IToolChain tc = getToolChain();
 		if (tc instanceof IToolChain2) {
-			process = ((IToolChain2)tc).startBuildProcess(this, commands, getBuildDirectory().toString(), envVars, console, monitor);
+			process = ((IToolChain2)tc).startBuildProcess(this, commands, buildDirectory.toString(), envVars, console, monitor);
 		} else {
 			// verify command can be found locally on path
 			Path commandPath = findCommand(commands.get(0));
@@ -494,8 +494,13 @@ public abstract class CBuildConfiguration extends PlatformObject
 			commands.set(0, commandPath.toString());
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands)
-					.directory(getBuildDirectory().toFile());
-			setBuildEnvironment(processBuilder.environment());
+					.directory(buildDirectory.toFile());
+			// Override environment variables
+			Map<String, String> environment = processBuilder.environment();
+			for (IEnvironmentVariable envVar : envVars) {
+				environment.put(envVar.getName(), envVar.getValue());
+			}
+			setBuildEnvironment(environment);
 			process = processBuilder.start();
 		}
 		return process;
@@ -515,10 +520,20 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 * @since 6.4
 	 */
 	protected int watchProcess(Process process, IConsole console) throws CoreException {
-		new ReaderThread(process.getInputStream(), console.getOutputStream()).start();
-		new ReaderThread(process.getErrorStream(), console.getErrorStream()).start();
+		Thread t1 = new ReaderThread(process.getInputStream(), console.getOutputStream());
+		t1.start();
+		Thread t2 = new ReaderThread(process.getErrorStream(), console.getErrorStream());
+		t2.start();
 		try {
-			return process.waitFor();
+			int rc = process.waitFor();
+			// Allow reader threads the chance to process all output to console
+			while (t1.isAlive()) {
+				Thread.sleep(100);
+			}
+			while (t2.isAlive()) {
+				Thread.sleep(100);
+			}
+			return rc;
 		} catch (InterruptedException e) {
 			CCorePlugin.log(e);
 			return -1;
@@ -530,10 +545,20 @@ public abstract class CBuildConfiguration extends PlatformObject
 	 */
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers)
 			throws CoreException {
-		new ReaderThread(this, process.getInputStream(), consoleParsers).start();
-		new ReaderThread(this, process.getErrorStream(), consoleParsers).start();
+		Thread t1 = new ReaderThread(this, process.getInputStream(), consoleParsers);
+		t1.start();
+		Thread t2 = new ReaderThread(this, process.getErrorStream(), consoleParsers);
+		t2.start();
 		try {
-			return process.waitFor();
+			int rc = process.waitFor();
+			// Allow reader threads the chance to process all output to console
+			while (t1.isAlive()) {
+				Thread.sleep(100);
+			}
+			while (t2.isAlive()) {
+				Thread.sleep(100);
+			}
+			return rc;
 		} catch (InterruptedException e) {
 			CCorePlugin.log(e);
 			return -1;

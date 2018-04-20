@@ -478,11 +478,11 @@ public abstract class CBuildConfiguration extends PlatformObject
 	/**
 	 * @since 6.5
 	 */
-	public Process startBuildProcess(List<String> commands, IEnvironmentVariable[] envVars, IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
+	public Process startBuildProcess(List<String> commands, IEnvironmentVariable[] envVars, IPath buildDirectory, IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
 		Process process = null;
 		IToolChain tc = getToolChain();
 		if (tc instanceof IToolChain2) {
-			process = ((IToolChain2)tc).startBuildProcess(this, commands, getBuildDirectory().toString(), envVars, console, monitor);
+			process = ((IToolChain2)tc).startBuildProcess(this, commands, buildDirectory.toString(), envVars, console, monitor);
 		} else {
 			// verify command can be found locally on path
 			Path commandPath = findCommand(commands.get(0));
@@ -494,7 +494,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 			commands.set(0, commandPath.toString());
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands)
-					.directory(getBuildDirectory().toFile());
+					.directory(buildDirectory.toFile());
 			setBuildEnvironment(processBuilder.environment());
 			process = processBuilder.start();
 		}

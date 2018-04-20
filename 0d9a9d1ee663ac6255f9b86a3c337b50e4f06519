@@ -16,6 +16,24 @@
       "revId": "0d9a9d1ee663ac6255f9b86a3c337b50e4f06519",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36f4f7d1_02f447ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-04-20T17:04:30Z",
+      "side": 1,
+      "message": "I can confirm that the standalone debugger work correctly. I can also confirm that a C/C++ Application launch from the IDE with unspecified project and absolute path to executable works correctly.\n\nThe DebugStringVariableSubstitutor class is intended to accommodate a null project parameter.",
+      "parentUuid": "363092d3_9fd03fc4",
+      "revId": "0d9a9d1ee663ac6255f9b86a3c337b50e4f06519",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

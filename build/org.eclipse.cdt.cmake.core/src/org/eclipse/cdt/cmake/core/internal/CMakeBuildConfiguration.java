@@ -178,7 +178,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
-				Process p = startBuildProcess(command, new IEnvironmentVariable[0], console, monitor);
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 					return null;
@@ -222,7 +223,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 				
-				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), console, monitor);
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 					return null;
@@ -280,7 +282,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 			
-			Process p = startBuildProcess(command, env, console, monitor);
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+			Process p = startBuildProcess(command, env, workingDir, console, monitor);
 			if (p == null) {
 				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 				return;

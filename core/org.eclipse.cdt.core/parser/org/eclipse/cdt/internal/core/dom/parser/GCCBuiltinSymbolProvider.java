@@ -128,10 +128,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("void*", 		"__builtin_frame_address",  "unsigned int");
 
 		// __sync Builtins (https://gcc.gnu.org/onlinedocs/gcc/_005f_005fsync-Builtins.html)
-		String[] types= {"int", "long", "long long", "unsigned int", "unsigned long", "unsigned long long"};
+		String[] types= {"int", "long", "long long", "unsigned int", "unsigned long", "unsigned long long", "void*"};
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
-			String typePtr= "volatile " + type + "*";
+			String typePtr= type + " volatile *";
 			function(type, 	"__sync_fetch_and_add", typePtr, type, "...");
 			function(type, 	"__sync_fetch_and_sub", typePtr, type, "...");
 			function(type, 	"__sync_fetch_and_or", typePtr, type, "...");
@@ -154,7 +154,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		// __atomic Builtins (https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html)
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
-			String typePtr= "volatile " + type + "*";
+			String typePtr= type + " volatile *";
 			function(type, 		"__atomic_load_n", typePtr, "int");
 			function("void", 	"__atomic_load", typePtr, typePtr, "int");
 			function("void", 	"__atomic_store_n", typePtr, type, "int");
@@ -544,9 +544,17 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			isConst= true;
 			tstr= tstr.substring(6);
 		}
+		if (tstr.endsWith("const")) {
+			isConst= true;
+			tstr= tstr.substring(0, tstr.length() - 5).trim();
+		}
 		if (tstr.startsWith("volatile ")) {
 			isVolatile= true;
 			tstr= tstr.substring(9);
+		}
+		if (tstr.endsWith("volatile")) {
+			isVolatile= true;
+			tstr= tstr.substring(0, tstr.length() - 8).trim();
 		}
 		int q= 0;
 		if (tstr.startsWith("signed ")) {
@@ -601,6 +609,11 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 					new CPointerType(new CFunctionType(rt, IType.EMPTY_TYPE_ARRAY), 0);
 		} else if (tstr.equals("size_t")) {
 			t= toType("unsigned long");
+		} else if (tstr.equals("void*")) {
+			// This can occur inside a qualifier type in which case it's not handled
+			// by the general '*' check above.
+			t= fCpp ? new CPPPointerType(new CPPBasicType(Kind.eVoid, q))
+					: new CPointerType(new CBasicType(Kind.eVoid, q), 0);
 		} else {
 			throw new IllegalArgumentException(type);
 		}

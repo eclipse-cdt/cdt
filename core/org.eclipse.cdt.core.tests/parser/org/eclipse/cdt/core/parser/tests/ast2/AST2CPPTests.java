@@ -11268,6 +11268,15 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testGNUSyncBuiltins_389578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	int main() {
+	//		void* p;
+	//		__sync_bool_compare_and_swap(&p, p, p);
+	//		__sync_fetch_and_add(&p, p, 2);
+	//	}
+	public void testGNUSyncBuiltinsOnVoidPtr_533822() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 
 	//	// __int128_t and __uint128_t are available but are not keywords.
 	//	void a() {

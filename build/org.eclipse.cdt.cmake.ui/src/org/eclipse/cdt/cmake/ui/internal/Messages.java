@@ -32,8 +32,8 @@ public class Messages extends NLS {
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Title;
 	public static String CMakePropertyPage_FailedToGetOS_Body;
 	public static String CMakePropertyPage_FailedToGetOS_Title;
-	public static String CMakePropertyPage_FailedToGetCMakeConfiguration_Body;
-	public static String CMakePropertyPage_FailedToGetCMakeConfiguration_Title;
+	public static String CMakePropertyPage_FailedToFetchCMakeConfiguration_Body;
+	public static String CMakePropertyPage_FailedToFetchCMakeConfiguration_Title;
 	public static String CMakePropertyPage_FailedToConfigure;
 	public static String CMakePropertyPage_Terminated;
 	public static String CMakePropertyPage_LaunchCMakeGui;

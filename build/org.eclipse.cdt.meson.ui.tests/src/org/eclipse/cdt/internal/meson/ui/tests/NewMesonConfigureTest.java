@@ -215,11 +215,14 @@ public class NewMesonConfigureTest {
 		
 		String[] lines = new String[0];
 		
-		while (lines.length < 16) {
+		int counter = 0;
+		while (lines.length < 18 && counter++ < 100) {
 			String output = console.bot().styledText().getText();
 			lines = output.split("\\r?\\n"); //$NON-NLS-1$
 			bot.sleep(2000);
 		}
+		
+		assertTrue(lines.length > 17);
 		
 		bot.sleep(2000);
 		

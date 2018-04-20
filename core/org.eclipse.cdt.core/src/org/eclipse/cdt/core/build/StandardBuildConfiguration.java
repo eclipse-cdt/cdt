@@ -255,7 +255,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				// run make
 				console.getOutputStream().write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
 				
-				Process p = startBuildProcess(command, envVars, console, monitor);
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+				Process p = startBuildProcess(command, envVars, workingDir, console, monitor);
 				
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.StandardBuildConfiguration_Failure, "")); //$NON-NLS-1$
@@ -270,7 +271,6 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				outStream.write(String.format(Messages.StandardBuildConfiguration_1, epm.getErrorCount(), 
 						epm.getWarningCount(), buildDir.toString()));
 			}
-
 			return new IProject[] { project };
 		} catch (IOException e) {
 			throw new CoreException(
@@ -315,7 +315,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			// run make
 			outStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			Process p = startBuildProcess(command, envVars, console, monitor);
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+			Process p = startBuildProcess(command, envVars, workingDir, console, monitor);
 			if (p == null) {
 				console.getErrorStream().write(String.format(Messages.StandardBuildConfiguration_Failure, "")); //$NON-NLS-1$
 				return;

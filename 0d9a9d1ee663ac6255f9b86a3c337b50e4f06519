@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "363092d3_9fd03fc4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-20T16:14:05Z",
+      "side": 1,
+      "message": "Does this work with project-less debugging? Is there a potential NPE?",
+      "revId": "0d9a9d1ee663ac6255f9b86a3c337b50e4f06519",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

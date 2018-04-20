@@ -84,6 +84,24 @@
       "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f31f4e2c_186922dc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 36529
+      },
+      "writtenOn": "2018-04-20T14:57:19Z",
+      "side": 1,
+      "message": "If I understand these internals correctly, it\u0027s responsible for text coloring. I\u0027ve removed the change so now parts of numbers (and all code after such literal) are occasionally blue.",
+      "parentUuid": "f9a2a12e_09afbc3a",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

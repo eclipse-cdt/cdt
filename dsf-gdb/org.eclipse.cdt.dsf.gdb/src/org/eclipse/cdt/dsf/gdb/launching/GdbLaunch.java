@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems and others.
+ * Copyright (c) 2006, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Marc Khouzam (Ericsson) - Fix NPE for partial launches (Bug 368597)
  *     Marc Khouzam (Ericsson) - Create the gdb process through the process factory (Bug 210366)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
+ *     John Dallaway - Resolve variables using launch context (Bug 399460)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.cdt.debug.internal.core.DebugStringVariableSubstitutor;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -478,7 +480,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 						getDefaultGDBPath());
 			}
 			if (gdb != null) {
-				gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);
+				IProject project = getProject();
+				gdb = new DebugStringVariableSubstitutor(project).performStringSubstitution(gdb);
 				return new Path(gdb);
 			} else {
 				return null;

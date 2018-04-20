@@ -262,6 +262,13 @@ public class NewMesonProjectTest {
 		
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
 		
+		int counter = 0;
+		while (lines.length < 5 && counter++ < 100) {
+			output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(2000);
+		}
+	
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("ninja clean -v", lines[1]);
 		assertEquals("[1/1] ninja -t clean", lines[2]);

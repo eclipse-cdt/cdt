@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15f99ad2_85d6df14",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/LexerTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-20T05:37:01Z",
+      "side": 1,
+      "message": "It would be good to have some additional tests for this.\n\nIn particular, it would be good to test:\n\n  - that digit separators in different positions\n    do not affect the value of the constant\n\n  - that the type of the constant is determined\n    correctly in the presence of digit separators\n\n(I suspect that the latter is broken for non-hex literals, due to the changes to CPPASTLiteralExpression being incomplete.)\n\nThe easiest place to write these tests is probably AST2CPPTests.java. We can have some code that declares some const variables, with declared type \"auto\", whose initializers use various digit separators. We can check that the types and values of the variables are as expected (see BindingAssertionHelper.assertVariableType() and assertVariableValue()).",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1f401b3_03ed938d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-20T05:37:01Z",
+      "side": 1,
+      "message": "Why is it that only probablyHex() needs a modification, and not probablyBinary(), or some of the loops directly in integerLiteral()?",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fbb3fa9_2d35d057",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1113,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-20T05:37:01Z",
+      "side": 1,
+      "message": "As in Lexer.java, we should only accept this if fLexOptions.fSupportDigitSeparators is true.",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1de485fe_179591f6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-20T05:37:01Z",
+      "side": 1,
+      "message": "This will accept C++14 digit separators in C files as well.\n\nOur practice so far has been not to accept new C++ lexical syntax in C files. This is implemented via the LexerOptions near the top of this file. We should probably add a new field to that, fSupportDigitSeparators. Note that the flags are set in the CPreprocessor constructor based on the IScannerExtensionConfiguration. We will need to add a new method IScannerExtensionConfiguration.supportDigitSeparators(). Similar to user-defined literals, GNUScannerExtensionConfiguration can contain the default implementation which would return false, and GPPScannerExtensionConfiguration can override it to return true.\n\nHere, we would check fOptions.fSupportDigitSeparators. If it\u0027s false, we should set isPartOfNumber\u003dfalse before breaking.",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9a2a12e_09afbc3a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-20T05:37:01Z",
+      "side": 1,
+      "message": "Do you know what the consequences would be if we just omit this change? It would make the failing tests pass.",
+      "revId": "982fb30fed31070430c0e6c01626873c8461f3f9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

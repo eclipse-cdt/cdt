@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5ebb43a_56fcb133",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12661,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-21T06:18:06Z",
+      "side": 1,
+      "message": "Thanks for adding this test. As mentioned in the other review, it would be good to also have tests for correct resolution of the type based on the suffix. That would look something like this:\n\n  auto foo \u003d 1\u0027123\u0027456ul;\n  ...\n  helper.assertVariableType(\"foo\", CPPBasicType.UNSIGNED_LONG);\n\n(I just tried this and the assertion fails - the type is deduced as \"int\", suggesting that the suffix was not processed correctly.)",
+      "revId": "313b8c8d7c7fa2fa2d79ce43e0b352749410a78e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4baffc75_f077cb23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTLiteralExpression.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-21T06:18:06Z",
+      "side": 1,
+      "message": "I think we could get the same effect without as much repetition, by writing functions called \u0027isOctalOrSeparator\u0027, \u0027isDigitOrSeparator\u0027, and \u0027isHexDigitOrSeparator\u0027, and using those functions instead of \u0027isOctal\u0027, \u0027Character.isDigit\u0027, and \u0027isHexDigit\u0027 (respectively), while otherwise leaving the loop in its previous form.",
+      "revId": "313b8c8d7c7fa2fa2d79ce43e0b352749410a78e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

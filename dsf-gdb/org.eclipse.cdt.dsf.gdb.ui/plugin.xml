@@ -296,6 +296,14 @@
             name="%view.osresources.name"
             icon="icons/full/view16/osresources_view.gif">
       </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.DebugSourcesView"
+            icon="icons/full/view16/debugsources_view.gif"
+            id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view"
+            name="Debug Sources"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

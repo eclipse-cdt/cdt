@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4293eb53_4b4e571c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T13:00:28Z",
+      "side": 1,
+      "message": "Avoid overriding the data model for view model information. If an ArrayContentProvider is not sufficient, please create a provider that understands that the input (using a special marker) is in the initializing state.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42977706_7abfd007",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T13:00:28Z",
+      "side": 1,
+      "message": "I would make this an enum.\n\nHowever, a more generic option is to use Function\u003cObject,Comparable\u003e to represent each column. That would make this class not have any mention of IDebugSourceFileInfo.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d34c414_b2da978a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T13:00:28Z",
+      "side": 1,
+      "message": "I would make this a boolean or an enum.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4f8eef0_9179bf3c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T13:00:28Z",
+      "side": 1,
+      "message": "comment does not match code. I would either remove the comment or change it to just \"// New column\"",
+      "range": {
+        "startLine": 42,
+        "startChar": 24,
+        "endLine": 42,
+        "endChar": 33
+      },
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e11beba_b6427934",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T13:00:28Z",
+      "side": 1,
+      "message": "AFAICT this only exists to fit in an initializing message in the sources view. If that is the case, this should not be created and the sources view should handle the view model issue itself.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

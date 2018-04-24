@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "81fcafe7_016c8430",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-24T19:58:20Z",
+      "side": 1,
+      "message": "will be fixed in the next patch",
+      "parentUuid": "4293eb53_4b4e571c",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42977706_7abfd007",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-04-24T13:00:28Z",
       "side": 1,
       "message": "I would make this an enum.\n\nHowever, a more generic option is to use Function\u003cObject,Comparable\u003e to represent each column. That would make this class not have any mention of IDebugSourceFileInfo.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17fc365c_e50fba45",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-24T19:58:20Z",
+      "side": 1,
+      "message": "Could you give me an example of such code?",
+      "parentUuid": "42977706_7abfd007",
       "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
       "writtenOn": "2018-04-24T13:00:28Z",
       "side": 1,
       "message": "AFAICT this only exists to fit in an initializing message in the sources view. If that is the case, this should not be created and the sources view should handle the view model issue itself.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f45fb8c_c3c303b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-24T19:58:20Z",
+      "side": 1,
+      "message": "fixed in next patch",
+      "parentUuid": "0e11beba_b6427934",
       "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

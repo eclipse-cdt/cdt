@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "caec9f8f_8c0b8094",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-04-24T14:45:56Z",
+      "side": 1,
+      "message": "any reason to require 3.3.1? Just curious as it may force some people to upgrade needlessly.",
+      "revId": "f52ace875c491920554aabd5279f3ea83aafd37e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

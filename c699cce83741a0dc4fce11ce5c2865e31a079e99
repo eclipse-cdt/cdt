@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "69b85d28_6ec219b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-04-24T21:45:13Z",
+      "side": 1,
+      "message": "public class DebugSourcesViewComparator extends ...\n        ...\n        private Function\u003cObject, Comparable\u003e column; \n        public DebugSourcesViewComparator(Function\u003cObject, Comparable\u003e column) {\n            this.column \u003d column;\n        }\n        ...\n        public void setColumn(Function\u003cObject, Comparable\u003e column) {\n            this.column \u003d column;\n            direction \u003d DESCENDING;\n        }\n        ...\n        public int compare(Viewer viewer, Object e1, Object e2) {\n            Comparable s1 \u003d column(e1);\n            Comparable s2 \u003d column(e2);\n            int rc \u003d s1.compareTo(s2);\n            ... flip direction and return\n        }\n    }\n\nThis in calling/constructing class:\n\n    comparator.setColumn(e -\u003e  ((IDebugSourceFileInfo)e).getName());\n\nor\n    comparator.setColumn(e -\u003e  ((IDebugSourceFileInfo)e).getPath());\n\nwhat that means is on adding a new column, you just need to update the setColumn.\n\nI haven\u0027t actually tried this in your use case. But it looks like this may work. Have a go and see what you think.",
+      "parentUuid": "17fc365c_e50fba45",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d34c414_b2da978a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
         "patchSetId": 1

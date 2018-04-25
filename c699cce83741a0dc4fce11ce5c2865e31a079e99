@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "fdf6d4a5_225751eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "I added the Function\u003cT, Comparable\u003e in the next patch, and removed the usage of IDebugSourceFileInfo in the comparator.",
+      "parentUuid": "1fd45d11_15a698e7",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d34c414_b2da978a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
         "patchSetId": 1
@@ -119,6 +137,24 @@
       "writtenOn": "2018-04-24T13:00:28Z",
       "side": 1,
       "message": "I would make this a boolean or an enum.",
+      "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4485f061_f6a19366",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "See next patch",
+      "parentUuid": "4d34c414_b2da978a",
       "revId": "c699cce83741a0dc4fce11ce5c2865e31a079e99",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

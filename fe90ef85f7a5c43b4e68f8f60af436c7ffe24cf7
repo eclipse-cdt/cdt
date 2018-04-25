@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e087a13_11c88ad2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "I\u0027m using a TreeViewer in order to use the PatternFilter that manages pattern searches. Also this viewer will be a Tree anyways.",
+      "revId": "fe90ef85f7a5c43b4e68f8f60af436c7ffe24cf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddcde6fb_f083683c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "For now we only use the getElements as the tree is of depth 1.",
+      "revId": "fe90ef85f7a5c43b4e68f8f60af436c7ffe24cf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4058339d_e751808a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "Manage the Label with a String case when the tree is initialised and does not display any data.",
+      "revId": "fe90ef85f7a5c43b4e68f8f60af436c7ffe24cf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00d8e2bf_6359dd23",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-04-25T22:25:21Z",
+      "side": 1,
+      "message": "required so that the viewer is correctly updated with data.",
+      "revId": "fe90ef85f7a5c43b4e68f8f60af436c7ffe24cf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

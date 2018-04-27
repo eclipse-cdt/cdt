@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.VariableTemplateTests;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx17.TemplateAutoTests;
 import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
 
 import junit.framework.Test;
@@ -64,6 +65,8 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(VariableTemplateTests.suite());
 		suite.addTestSuite(ReturnTypeDeductionTests.class);
 		suite.addTestSuite(GenericLambdaTests.class);
+		// C++17 tests
+		suite.addTest(TemplateAutoTests.suite());
 		return suite;
 	}
 }

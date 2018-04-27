@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -57,7 +58,7 @@ public class CPPBuiltinVariable extends CPPVariable {
      * Returns null.
      */
     @Override
-	public IASTNode[] getDeclarations() {
+	public IASTName[] getDeclarations() {
         return null;
     }
 

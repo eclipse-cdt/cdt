@@ -12681,4 +12681,16 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableType("v_b", CPPBasicType.UNSIGNED_LONG_LONG);
 		helper.assertVariableType("v_c", CPPBasicType.LONG_LONG);
 	}
+	
+	//	extern void *List[];
+	//	extern void *List[];
+	//	void *List[] = { 0 };
+	//	unsigned int ListSize = sizeof(List)/sizeof(List[0]);
+	public void testMultipleExternDecls_534098() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable var = helper.assertNonProblem("ListSize");
+		// Trigger initial value computation, test that it
+		// does not throw an exception.
+		var.getInitialValue();
+	}
 }

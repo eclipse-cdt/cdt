@@ -2865,6 +2865,14 @@ public class CPPTemplates {
 			}
 			return null;
 		}
+
+		if (paramType instanceof ProblemType) {
+			// Partial support for C++17 template <auto>
+			if (((ProblemType) paramType).getID() == ProblemType.TYPE_CANNOT_DEDUCE_AUTO_TYPE) {
+				return arg;
+			}
+		}
+
 		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN,
 				Context.ORDINARY);
 		if (cost == null || !cost.converts()) {

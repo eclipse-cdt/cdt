@@ -2865,6 +2865,13 @@ public class CPPTemplates {
 			}
 			return null;
 		}
+
+		if (paramType instanceof ProblemType) {
+			if (((ProblemType) paramType).getID() == ProblemType.TYPE_CANNOT_DEDUCE_AUTO_TYPE) {
+				return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), arg.getTypeOfNonTypeValue());
+			}
+		}
+
 		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN,
 				Context.ORDINARY);
 		if (cost == null || !cost.converts()) {

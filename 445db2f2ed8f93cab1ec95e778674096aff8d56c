@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04fa12ba_54e2cd0a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/TemplateDeductionTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-29T06:44:47Z",
+      "side": 1,
+      "message": "Call this TemplateAutoTests. (C++17 has a different feature called \"class template argument deduction\", and this name might be confused with that.)",
+      "revId": "445db2f2ed8f93cab1ec95e778674096aff8d56c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0dce1fec_41f564da",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2869,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-29T06:44:47Z",
+      "side": 1,
+      "message": "Please add a comment, \"// Partial support for C++17 template \u003cauto\u003e\"",
+      "revId": "445db2f2ed8f93cab1ec95e778674096aff8d56c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54c678d7_f2bdbf17",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2871,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-04-29T06:44:47Z",
+      "side": 1,
+      "message": "Why not just \u0027return arg\u0027?",
+      "revId": "445db2f2ed8f93cab1ec95e778674096aff8d56c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

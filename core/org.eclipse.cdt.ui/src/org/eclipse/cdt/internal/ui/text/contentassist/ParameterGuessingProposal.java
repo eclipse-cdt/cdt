@@ -45,6 +45,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -78,6 +79,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	private char[][] fParametersNames;
 	private IType[] fParametersTypes;
 	private List<IBinding> fAssignableElements;
+	private IASTCompletionNode fCompletionNode;
 
 	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
 			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
@@ -118,7 +120,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
 				replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(),
 				proposal.getRelevance(), context.getViewer(), function, invocationOffset, parseOffset,
-				context.getTranslationUnit(), document);
+				context.getTranslationUnit(), document, context.getCompletionNode());
 		ret.setContextInformation(proposal.getContextInformation());
 		ret.fFullPrefix = fullPrefix;
 		ret.fCEditor = getCEditor(context.getEditor());
@@ -147,9 +149,10 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	public ParameterGuessingProposal(String replacementString, int replacementOffset, int replacementLength,
 			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
 			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu,
-			IDocument document) {
+			IDocument document, IASTCompletionNode completionNode) {
 		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
 				relevance, viewer, function, invocationOffset, parseOffset, tu, document);
+		fCompletionNode = completionNode;
 	}
 
 	/**
@@ -254,14 +257,12 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 	
 	public void generateParameterGuesses() {
-		IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_ACTIVE_ONLY, 
+		IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_NO, 
 				new NullProgressMonitor(), new ASTRunnable() {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-				if (astRoot == null)
-					return Status.CANCEL_STATUS;
 				try {
-					CPPSemantics.pushLookupPoint(astRoot);
+					CPPSemantics.pushLookupPoint(fCompletionNode.getTranslationUnit());
 					guessParameters();
 				} catch (Exception e) {
 					CUIPlugin.log(e);

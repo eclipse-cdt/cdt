@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Kichwa Coders and others.
+ * Copyright (c) 2015, 2018 Kichwa Coders and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -24,13 +28,19 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbSourceLookupDirector;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo.SourceFileInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,15 +50,24 @@ import org.eclipse.core.runtime.Status;
  *
  * @since 5.0
  */
-public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
+public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup, IDebugSourceFiles, ICachingService {
 
-	private ICommandControl fCommand;
+	private static class DebugSourceFilesChangedEvent extends AbstractDMEvent<IDMContext>
+			implements IDebugSourceFilesChangedEvent {
+		public DebugSourceFilesChangedEvent(IDMContext context) {
+			super(context);
+		}
+	}
+
+	private ICommandControlService fCommand;
 	private CommandFactory fCommandFactory;
 	private Map<ISourceLookupDMContext, CSourceLookupDirector> fDirectors = new HashMap<>();
 	/**
 	 * The current set of path substitutions that have been set on GDB.
 	 */
 	private Map<String, String> fCachedEntries = Collections.emptyMap();
+
+	private CommandCache fDebugSourceFilesCache;
 
 	public GDBSourceLookup(DsfSession session) {
 		super(session);
@@ -65,12 +84,14 @@ public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
 	}
 
 	private void doInitialize(RequestMonitor rm) {
-		fCommand = getServicesTracker().getService(ICommandControl.class);
+		fCommand = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
-		register(new String[] { IGDBSourceLookup.class.getName(), GDBSourceLookup.class.getName() },
-				new Hashtable<String, String>());
+		fDebugSourceFilesCache = new CommandCache(getSession(), fCommand);
+		fDebugSourceFilesCache.setContextAvailable(fCommand.getContext(), true);
 
+		register(new String[] { IGDBSourceLookup.class.getName(), GDBSourceLookup.class.getName(),
+				IDebugSourceFiles.class.getName() }, new Hashtable<String, String>());
 		rm.done();
 	}
 
@@ -120,10 +141,9 @@ public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
 			rm.done(false);
 		} else {
 			/*
-			 * Issue the clear and set commands back to back so that the
-			 * executor thread atomically changes the source lookup settings.
-			 * Any commands to GDB issued after this call will get the new
-			 * source substitute settings.
+			 * Issue the clear and set commands back to back so that the executor thread
+			 * atomically changes the source lookup settings. Any commands to GDB issued
+			 * after this call will get the new source substitute settings.
 			 */
 			CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
 				@Override
@@ -143,14 +163,19 @@ public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
 		fCachedEntries = entries;
 		CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
 			@Override
-			protected void handleFailure() {
-				/*
-				 * We failed to apply the changes. Clear the cache as it does
-				 * not represent the state of the backend. However we don't have
-				 * a good recovery here, so on future sourceContainersChanged()
-				 * calls we will simply reissue the substitutions.
-				 */
-				fCachedEntries = null;
+			protected void handleCompleted() {
+				// Reset the list of source files when source path substitutions change
+				fDebugSourceFilesCache.reset();
+				getSession().dispatchEvent(new DebugSourceFilesChangedEvent(sourceLookupCtx), getProperties());
+				if (!isSuccess()) {
+					/*
+					 * We failed to apply the changes. Clear the cache as it does not represent the
+					 * state of the backend. However we don't have a good recovery here, so on
+					 * future sourceContainersChanged() calls we will simply reissue the
+					 * substitutions.
+					 */
+					fCachedEntries = null;
+				}
 				rm.done();
 			}
 		};
@@ -160,6 +185,100 @@ public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {
 					fCommandFactory.createMISetSubstitutePath(sourceLookupCtx, entry.getKey(), entry.getValue()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));
 		}
+
 	}
 
+	private static final class DebugSourceFileInfo implements IDebugSourceFileInfo {
+		private final SourceFileInfo miInfo;
+
+		private DebugSourceFileInfo(SourceFileInfo miInfo) {
+			if (miInfo == null)
+				throw new IllegalArgumentException("The SourceFileInfo provided is null"); //$NON-NLS-1$
+			this.miInfo = miInfo;
+		}
+
+		@Override
+		public String getName() {
+			// we get the file name without the path
+			String name = miInfo != null ? miInfo.getFile() : null;
+			if (name == null)
+				return name;
+			try {
+				Path p = Paths.get(name);
+				name = p.getFileName() != null ? p.getFileName().toString() : ""; //$NON-NLS-1$
+			} catch (InvalidPathException e) {
+				// do nothing
+			}
+			return name;
+		}
+
+		@Override
+		public String getPath() {
+			// we get the file name without the path
+			String path = miInfo != null ? miInfo.getFullName() : null;
+			if (path == null)
+				return path;
+			try {
+				Path p = Paths.get(path);
+				path = p.toString();
+			} catch (InvalidPathException e) {
+				// do nothing
+			}
+			return path;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((miInfo == null) ? 0 : miInfo.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			DebugSourceFileInfo other = (DebugSourceFileInfo) obj;
+			if (miInfo == null) {
+				if (other.miInfo != null)
+					return false;
+			} else if (!miInfo.equals(other.miInfo))
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "DebugSourceFileInfo [miInfo=" + miInfo + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+	}
+
+	@Override
+	public void getSources(final IDMContext dmc, final DataRequestMonitor<IDebugSourceFileInfo[]> rm) {
+		fDebugSourceFilesCache.execute(fCommandFactory.createMiFileListExecSourceFiles(dmc),
+				new DataRequestMonitor<MiSourceFilesInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						IDebugSourceFileInfo[] result = null;
+						MiSourceFilesInfo sourceFiles = getData();
+						SourceFileInfo[] info = sourceFiles.getSourceFiles();
+						result = Arrays.asList(info).stream().map(DebugSourceFileInfo::new)
+								.toArray(IDebugSourceFileInfo[]::new);
+						rm.setData(result);
+						rm.done();
+					}
+				});
+	}
+
+	@Override
+	public void flushCache(IDMContext context) {
+		fDebugSourceFilesCache.reset();
+		getSession().dispatchEvent(new DebugSourceFilesChangedEvent(fCommand.getContext()), getProperties());
+	}
 }

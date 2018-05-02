@@ -296,6 +296,14 @@
             name="%view.osresources.name"
             icon="icons/full/view16/osresources_view.gif">
       </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.DebugSourcesView"
+            icon="icons/full/view16/debugsources_view.gif"
+            id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view"
+            name="%view.debugsources.name"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -325,6 +333,18 @@
          </view>
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
          </viewShortcut>
       </perspectiveExtension>
    </extension>
@@ -630,4 +650,25 @@
             name="GDB Remote Serial">
       </wizard2>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+      <contextViewBinding
+            autoOpen="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            viewId="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+      </contextViewBinding>
+   </extension>
+    <extension point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view.refresh"
+            targetID="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesViewRefresh"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view.refresh"
+               label="%debugSourcesRefresh.name"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+    </extension>
 </plugin>

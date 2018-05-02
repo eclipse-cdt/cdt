@@ -26,6 +26,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -134,6 +136,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
@@ -1606,21 +1609,34 @@ public class CPPTemplates {
 			// to the target type but can SFINAE out during instantiation, so it's not
 			// sufficient to handle it in the ITypeContainer case.
 			if (type instanceof ICPPAliasTemplateInstance) {
+				// Cache instantiations of alias templates. This is necessary because below we can
+				// potentially instantiate types that appear in the arguments of an alias template
+				// instance up to three times (once in instantiateArguments(), once in
+				// instantiateArgumentMap(), and if the argument appears in the aliased type, then
+				// a third time in instantiateType()), leading to exponential runtime in cases of
+				// nested alias template instances (which can be common in metaprogramming code
+				// implemented using alias templates). 
+				IType result = getCachedInstantiation(instantiationRequest);
+				if (result != null) {
+					return result;
+				}
 				ICPPAliasTemplateInstance instance = (ICPPAliasTemplateInstance) type;
 				ICPPAliasTemplate template = instance.getTemplateDefinition();
 				ICPPTemplateArgument[] args = instance.getTemplateArguments();
 				ICPPTemplateArgument[] newArgs = instantiateArguments(args, context, true);
 				if (newArgs == null) {
-					return (IType) createProblem(template, 
+					result = (IType) createProblem(template, 
 							IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
-				}
-				if (args != newArgs) {
+				} else if (args != newArgs) {
 					IType target = instantiateType(instance.getType(), context);
 					CPPTemplateParameterMap map = 
 							instantiateArgumentMap(instance.getTemplateParameterMap(), context);
-					return new CPPAliasTemplateInstance(template, target, instance.getOwner(), map, newArgs);
+					result = new CPPAliasTemplateInstance(template, target, instance.getOwner(), map, newArgs);
+				} else {
+					result = type;
 				}
-				return type;
+				putCachedInstantiation(instantiationRequest, result);
+				return result;
 			}
 
 			if (type instanceof ITypeContainer) {
@@ -3334,5 +3350,28 @@ public class CPPTemplates {
 			}
 		}
 		return true;
+	}
+
+	private static Map<TypeInstantiationRequest, IType> getInstantiationCache() {
+		IASTNode lookupPoint = CPPSemantics.getCurrentLookupPoint();
+		if (lookupPoint != null) {
+			IASTTranslationUnit tu = lookupPoint.getTranslationUnit();
+			if (tu instanceof CPPASTTranslationUnit) {
+				return ((CPPASTTranslationUnit) tu).getInstantiationCache();
+			}
+		}
+		return null;
+	}
+	
+	private static IType getCachedInstantiation(TypeInstantiationRequest instantiationRequest) {
+		Map<TypeInstantiationRequest, IType> cache = getInstantiationCache();
+		return cache != null ? cache.get(instantiationRequest) : null;
+	}
+	
+	private static void putCachedInstantiation(TypeInstantiationRequest instantiationRequest, IType result) {
+		Map<TypeInstantiationRequest, IType> cache = getInstantiationCache();
+		if (cache != null) {
+			cache.put(instantiationRequest, result);
+		}
 	}
 }

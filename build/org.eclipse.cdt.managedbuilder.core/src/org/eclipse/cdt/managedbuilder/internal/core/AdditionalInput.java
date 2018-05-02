@@ -491,9 +491,10 @@ public class AdditionalInput implements IAdditionalInput {
 					return false;
 				if (libSO.length() == name.length())
 					return true; // we don't necessarily have a version extension
-				if (name.charAt(libSO.length()) != '.')
+				if (name.charAt(libSO.length()) != '.'
+								|| name.length() == libSO.length() + 1) 
 					return false;
-				String ext = libName.substring(libSO.length() + 1);
+				String ext = name.substring(libSO.length() + 1);
 				try {
 					Integer.parseInt(ext);
 					return true;

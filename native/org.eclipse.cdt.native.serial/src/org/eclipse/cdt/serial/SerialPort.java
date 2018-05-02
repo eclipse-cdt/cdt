@@ -79,6 +79,8 @@ public class SerialPort {
 								return -1;
 							}
 						} else if (rlen > 0) {
+							// Reset the pointer, as we have new data
+							rpos = 0;
 							break;
 						}
 					}

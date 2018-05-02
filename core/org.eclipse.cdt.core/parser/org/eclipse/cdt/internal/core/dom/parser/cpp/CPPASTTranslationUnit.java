@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPInheritance.FinalOverriderMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeInstantiationRequest;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
@@ -55,6 +56,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	// Caches.
 	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
+	// Cache for type instantiations. This is currently only used for instantiations of
+	// alias template instances, but its use could potentially be expanded to cover other
+	// instantiations. Note that class template instances are already cached by the 
+	// template definition, so we wouldn't want to double-cache those. (But we could e.g. 
+	// cache instantiations of function types if we found it worthwhile.)
+	private final Map<TypeInstantiationRequest, IType> fInstantiationCache = new HashMap<>();
 
 	public CPPASTTranslationUnit() {
 		fScopeMapper= new CPPScopeMapper(this);
@@ -248,6 +255,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
 		return fFinalOverriderMapCache;
+	}
+	
+	public Map<TypeInstantiationRequest, IType> getInstantiationCache() {
+		return fInstantiationCache;
 	}
 
 	public void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,

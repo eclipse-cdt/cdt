@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "603eb813_33726576",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "Can you add this view as a perspective extension (see a few lines below). I want it to appear in the same tab group as the ConsoleView and to automatically open when debugging. It should appear in the first set of views in Window -\u003e Show View (without having to do Other...). It also needs a org.eclipse.debug.ui.contextViewBindings to the org.eclipse.cdt.debug.ui.debugging id (look in debug/org.eclipse.cdt.debug.ui/plugin.xml for an example or two).",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "495cd944_d5860a96",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "i18n this string.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0cbc5322_e56d9a20",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "This instance should be typed, e.g. \u003cIDebugSourceFileInfo\u003e this removes the need for all the typecasts later down.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "485dddbb_3d0d2f4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "This whole block needs a big TODO to use sourcelookup to resolve files. If you have done anything already that is ok, but this is a little tricky and annoying part of API.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7748c474_9caa69cd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "val is never used, simply remove it.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12c1a082_89523156",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "see comment on line 67.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ace366a6_5ac922fb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "please change to direction \u003d direction \u003d\u003d ASCENDING ? DESCENDING : ASCENDING; (or add that functionality into a static in enum Direction). I don\u0027t like that getDirection can return a null, making it non-trivial to read this code to see that in practice it can\u0027t happen.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdfc27dc_88b42c98",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "Possible NPE, miInfo.getFile() is not guaranteed in current implementation to return anything in particular, so may return null or empty string.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a380aa8b_9ad3ee4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBSourceLookup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-02T12:31:57Z",
+      "side": 1,
+      "message": "This method feels like it is reimplementing something too standard.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

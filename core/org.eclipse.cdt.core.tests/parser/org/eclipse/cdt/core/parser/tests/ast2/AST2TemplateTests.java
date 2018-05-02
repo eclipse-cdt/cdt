@@ -10826,4 +10826,112 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testOverloadResolutionWithInitializerList_531322() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	using size_t = decltype(sizeof(int));
+	//
+	//	template <class Fn, class... Ts>
+	//	using MetaApply = typename Fn::template apply<Ts...>;
+	//
+	//	template <class... Ts>
+	//	struct TypeList {
+	//		using type = TypeList;
+	//
+	//		template <class Fn>
+	//		using apply = MetaApply<Fn, Ts...>;
+	//	};
+	//
+	//	struct Empty {};
+	//
+	//	namespace impl {
+	//		template <bool B>
+	//		struct If_ {
+	//			template <class T, class U>
+	//			using apply = T;
+	//		};
+	//		template <>
+	//		struct If_<false> {
+	//			template <class T, class U>
+	//			using apply = U;
+	//		};
+	//	}
+	//
+	//	template <bool If_, class Then, class Else>
+	//	using If = MetaApply<impl::If_<If_>, Then, Else>;
+	//
+	//	template <template <class...> class C, class... Ts>
+	//	class MetaDefer {
+	//		template <template <class...> class D = C, class = D<Ts...>>
+	//		static char(&try_(int))[1];
+	//		static char(&try_(long))[2];
+	//		struct Result {
+	//			using type = C<Ts...>;
+	//		};
+	//
+	//	public:
+	//		template <class... Us>
+	//		using apply = typename If<sizeof(try_(0)) - 1 || sizeof...(Us), Empty, Result>::type;
+	//	};
+	//
+	//	struct MetaIdentity {
+	//		template <class T>
+	//		using apply = T;
+	//	};
+	//
+	//	template <template <class...> class C>
+	//	struct MetaQuote {
+	//		template <class... Ts>
+	//		using apply = MetaApply<MetaDefer<C, Ts...>>;
+	//	};
+	//
+	//	template <>
+	//	struct MetaQuote<TypeList> {
+	//		template <class... Ts>
+	//		using apply = TypeList<Ts...>;
+	//	};
+	//
+	//	template <class Fn>
+	//	struct MetaFlip {
+	//		template <class A, class B>
+	//		using apply = MetaApply<Fn, B, A>;
+	//	};
+	//
+	//	namespace impl {
+	//		template <class Fn>
+	//		struct FoldL_ {
+	//			template <class... Ts>
+	//			struct Lambda : MetaIdentity {};
+	//			template <class A, class... Ts>
+	//			struct Lambda<A, Ts...> {
+	//				template <class State>
+	//				using apply = MetaApply<Lambda<Ts...>, MetaApply<Fn, State, A>>;
+	//			};
+	//			template <class... Ts>
+	//			using apply = Lambda<Ts...>;
+	//		};
+	//	}
+	//
+	//	template <class List, class State, class Fn>
+	//	using TypeReverseFold = MetaApply<MetaApply<List, impl::FoldL_<Fn>>, State>;
+	//
+	//	template <class Car, class Cdr = Empty>
+	//	struct Cons {};
+	//	using Fn = MetaQuote<Cons>;
+	//	using T4 = TypeReverseFold<
+	//      // Make it long enough to be sure that if the runtime is exponential
+	//      // in the length of the list, the test suite times out.
+	//		TypeList<int, short, void, float, double, long, char
+    //               int*, short*, void*, float*, double*, long*, char*>,
+	//		Empty,
+	//		MetaFlip<Fn>>;
+	//
+	//	template <class T>
+	//	struct Dummy {
+	//		static const bool value = true;
+	//	};
+	//	int main() {
+	//		static_assert(Dummy<T4>::value, "");
+	//	}
+	public void testMetaprogrammingWithAliasTemplates_534126() throws Exception {
+		parseAndCheckBindings();
+	}
 }

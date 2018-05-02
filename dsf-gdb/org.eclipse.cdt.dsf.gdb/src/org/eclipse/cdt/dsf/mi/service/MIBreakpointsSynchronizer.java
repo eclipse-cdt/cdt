@@ -759,7 +759,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			if (plBpt.getIgnoreCount() != miBpt.getIgnoreCount()) {
 				plBpt.setIgnoreCount(miBpt.getIgnoreCount());
 			}
-			if (oldData.isPending() != miBpt.isPending()) {
+			if (oldData != null ? oldData.isPending() != miBpt.isPending() : false) {
 				if (miBpt.isPending()) {
 					plBpt.decrementInstallCount();
 				} else {

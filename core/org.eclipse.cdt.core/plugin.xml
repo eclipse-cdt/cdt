@@ -608,6 +608,12 @@
             resolver="org.eclipse.cdt.internal.core.PathEntryVariableResolver"
             description="%cdt_pathentry_var.description">
       </variable>
+      <variable
+            description="%core_build_dir.description"
+            name="active_core_build_dir"
+            resolver="org.eclipse.cdt.internal.core.build.CBuildDirectoryResolver"
+            supportsArgument="true">
+      </variable>
    </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">

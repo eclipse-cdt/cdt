@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.net.URI;
+
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @since 6.5
  */
@@ -19,5 +23,10 @@ public interface ICBuildConfiguration2 {
 	 * Mark the Build Configuration as active
 	 */
 	void setActive();
+
+	/**
+	 * The URI for the directory in which the build is executed.
+	 */
+	URI getBuildDirectoryURI() throws CoreException;
 
 }

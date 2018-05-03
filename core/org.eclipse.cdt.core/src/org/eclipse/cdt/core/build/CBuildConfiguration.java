@@ -236,6 +236,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 		return buildFolder;
 	}
 
+	@Override
 	public URI getBuildDirectoryURI() throws CoreException {
 		return getBuildContainer().getLocationURI();
 	}

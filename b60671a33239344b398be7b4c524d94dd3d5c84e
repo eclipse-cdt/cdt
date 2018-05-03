@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "98ba55db_a9048500",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "I added it in the next patch",
+      "parentUuid": "603eb813_33726576",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "495cd944_d5860a96",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "4a433bb7_f009d5c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "495cd944_d5860a96",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0cbc5322_e56d9a20",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2018-05-02T12:31:57Z",
       "side": 1,
       "message": "This instance should be typed, e.g. \u003cIDebugSourceFileInfo\u003e this removes the need for all the typecasts later down.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a48a749_72f74e1f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0cbc5322_e56d9a20",
       "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "3062672d_26707b0d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7748c474_9caa69cd",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12c1a082_89523156",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
         "patchSetId": 3
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "8f7ce99f_7eb7692d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12c1a082_89523156",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ace366a6_5ac922fb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
         "patchSetId": 3
@@ -115,6 +205,24 @@
       "writtenOn": "2018-05-02T12:31:57Z",
       "side": 1,
       "message": "please change to direction \u003d direction \u003d\u003d ASCENDING ? DESCENDING : ASCENDING; (or add that functionality into a static in enum Direction). I don\u0027t like that getDirection can return a null, making it non-trivial to read this code to see that in practice it can\u0027t happen.",
+      "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7bfa8c3_50f9923a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesViewComparator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-05-03T17:09:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ace366a6_5ac922fb",
       "revId": "b60671a33239344b398be7b4c524d94dd3d5c84e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

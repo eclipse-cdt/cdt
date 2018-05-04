@@ -998,26 +998,14 @@ public class ASTTypeUtil {
 		}
 		if (loc != null) {
 			char[] fname= loc.getFileName().toCharArray();
-			int fnamestart= findFileNameStart(fname);
 			buf.append('{');
-			buf.append(fname, fnamestart, fname.length - fnamestart);
+			buf.append(fname);
 			if (includeOffset) {
 				buf.append(':');
 				buf.append(loc.getNodeOffset());
 			}
 			buf.append('}');
 		}
-	}
-
-	private static int findFileNameStart(char[] fname) {
-		for (int i= fname.length - 2; i >= 0; i--) {
-			switch (fname[i]) {
-			case '/':
-			case '\\':
-				return i+1;
-			}
-		}
-		return 0;
 	}
 
 	/**

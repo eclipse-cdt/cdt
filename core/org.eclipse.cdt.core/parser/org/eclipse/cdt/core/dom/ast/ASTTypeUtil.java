@@ -42,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -60,7 +62,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -997,10 +1001,9 @@ public class ASTTypeUtil {
 			}
 		}
 		if (loc != null) {
-			char[] fname= loc.getFileName().toCharArray();
-			int fnamestart= findFileNameStart(fname);
+			char[] file = getWorkspaceRelativePath(loc.getFileName(), node).toCharArray();
 			buf.append('{');
-			buf.append(fname, fnamestart, fname.length - fnamestart);
+			buf.append(file);
 			if (includeOffset) {
 				buf.append(':');
 				buf.append(loc.getNodeOffset());
@@ -1009,17 +1012,32 @@ public class ASTTypeUtil {
 		}
 	}
 
-	private static int findFileNameStart(char[] fname) {
-		for (int i= fname.length - 2; i >= 0; i--) {
-			switch (fname[i]) {
-			case '/':
-			case '\\':
-				return i+1;
-			}
+	/**
+	 * Try to get a workspace-relative path for a filename.
+	 * If that fails, just return the input path. 
+	 */
+	private static String getWorkspaceRelativePath(String filename, IASTNode context) {
+		if (context == null) {
+			return filename;
 		}
-		return 0;
+		IASTTranslationUnit ast = context.getTranslationUnit();
+		if (ast == null) {
+			return filename;
+		}
+		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+		if (tu == null) {
+			return filename;
+		}
+		ICProject cproject = tu.getCProject();
+		if (cproject == null) {
+			return filename;
+		}
+		IPath path = new Path(filename);
+		IFile file = ResourceLookup.selectFileForLocation(path, cproject.getProject());
+		IPath workspaceRelative = file.getFullPath();
+		return workspaceRelative.toString();
 	}
-
+	
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @deprecated This method is no longer used and is scheduled for removal in 10.0.

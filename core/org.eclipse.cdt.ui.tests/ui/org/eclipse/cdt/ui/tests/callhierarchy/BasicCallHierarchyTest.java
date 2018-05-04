@@ -216,6 +216,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
+		String pathPrefix = "/" + fCProject.getElementName() + "/";
+		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -233,7 +235,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4 : {struct_member.c:129}");
+		checkTreeNode(tree, 0, "s4::mem4 : {" + pathPrefix + "struct_member.c:129}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
@@ -252,7 +254,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4 : {struct_member.c:129}");
+		checkTreeNode(tree, 0, "s4::mem4 : {" + pathPrefix + "struct_member.c:129}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
@@ -261,7 +263,9 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile file= createFile(getProject(), "struct_member.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
-		
+
+		String pathPrefix = "/" + fCProject.getElementName() + "/";
+
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -279,7 +283,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4 : s4::{struct_member.cpp:129}");
+		checkTreeNode(tree, 0, "s4::mem4 : s4::{" + pathPrefix + "struct_member.cpp:129}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
@@ -298,7 +302,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4 : s4::{struct_member.cpp:129}");
+		checkTreeNode(tree, 0, "s4::mem4 : s4::{" + pathPrefix + "struct_member.cpp:129}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
@@ -398,6 +402,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
+		String pathPrefix = "/" + fCProject.getElementName() + "/";
+		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -415,7 +421,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4 : {union_member.c:161}");
+		checkTreeNode(tree, 0, "u4::mem4 : {" + pathPrefix + "union_member.c:161}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
@@ -434,7 +440,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4 : {union_member.c:161}");
+		checkTreeNode(tree, 0, "u4::mem4 : {" + pathPrefix + "union_member.c:161}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
@@ -443,6 +449,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile file= createFile(getProject(), "union_member.cpp", content);
 		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
+		
+		String pathPrefix = "/" + fCProject.getElementName() + "/";
 		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
@@ -461,7 +469,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4 : u4::{union_member.cpp:161}");
+		checkTreeNode(tree, 0, "u4::mem4 : u4::{" + pathPrefix + "union_member.cpp:161}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
@@ -480,7 +488,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4 : u4::{union_member.cpp:161}");
+		checkTreeNode(tree, 0, "u4::mem4 : u4::{" + pathPrefix + "union_member.cpp:161}");
 		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 

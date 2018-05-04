@@ -169,6 +169,8 @@
             name="org.eclipse.ui.trace"/>
         <requirement
             name="tm-feature.feature.group"/>
+        <requirement
+            name="org.eclipse.lsp4e"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
@@ -198,6 +200,8 @@
               url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
           <repository
               url="http://download.eclipse.org/tm4e/snapshots/"/>
+          <repository
+              url="http://download.eclipse.org/lsp4e/snapshots/"/>
         </repositoryList>
       </targlet>
     </setupTask>

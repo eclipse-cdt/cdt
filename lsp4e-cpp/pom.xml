@@ -48,7 +48,6 @@
     <module>org.eclipse.lsp4e.cpp</module>
     <module>org.eclipse.lsp4e.cpp.language</module>
     <module>org.eclipse.lsp4e.cpp.site</module>
-    <module>org.eclipse.lsp4e.cpp.target</module>
   </modules>
 
   <build>

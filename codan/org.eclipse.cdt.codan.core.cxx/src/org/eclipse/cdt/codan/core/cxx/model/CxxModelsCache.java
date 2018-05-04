@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.core.resources.IFile;
@@ -120,8 +118,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {
         Assert.isTrue(!disposed, "CxxASTCache is already disposed."); //$NON-NLS-1$
 		if (this.index == null) {
-			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 			try {
 				index.acquireReadLock();
 			} catch (InterruptedException e) {

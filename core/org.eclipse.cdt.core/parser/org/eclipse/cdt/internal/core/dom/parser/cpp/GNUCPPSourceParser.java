@@ -3065,7 +3065,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			declarator= addInitializer(lie, DeclarationOptions.PARAMETER);
 		}
 		
-		addAttributeSpecifiers(attributes, (ICPPASTDeclSpecifier) declSpec);
+		addAttributeSpecifiers(attributes, declSpec);
 
 		final ICPPASTParameterDeclaration parm = getNodeFactory().newParameterDeclaration(declSpec, declarator);
 		final int endOffset = figureEndOffset(declSpec, declarator);

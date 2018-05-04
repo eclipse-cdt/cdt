@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier, IASTAttributeOwner {
+public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 	// A declaration in C++ can be a friend declaration
 	/**
 	 * Is this a friend declaration?

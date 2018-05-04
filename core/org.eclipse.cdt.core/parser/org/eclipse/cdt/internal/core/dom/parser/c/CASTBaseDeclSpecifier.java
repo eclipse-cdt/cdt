@@ -14,14 +14,14 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 
 /**
  * @author jcamelon
  */
-public abstract class CASTBaseDeclSpecifier extends ASTNode
+public abstract class CASTBaseDeclSpecifier extends ASTAttributeOwner
 		implements ICASTDeclSpecifier, IASTAmbiguityParent {
 
     protected int storageClass;

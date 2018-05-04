@@ -922,6 +922,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     	ICASTDeclSpecifier result= null;
     	ICASTDeclSpecifier altResult= null;
     	IASTAlignmentSpecifier[] alignmentSpecifiers = IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
+    	List<IASTAttributeSpecifier> attributes = null;
     	try {
     		IASTName identifier= null;
     		IASTExpression typeofExpression= null;
@@ -1151,7 +1152,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     			case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
 	    			if (!supportAttributeSpecifiers)
 	    				throwBacktrack(LA(1));
-	    			__attribute_decl_seq(true, false);
+	    			attributes = CollectionUtils.merge(attributes,  __attribute_decl_seq(true, false));
 	    			break;
     			case IGCCToken.t__declspec: // __declspec precedes the identifier
 	    			if (identifier != null || !supportDeclspecSpecifiers)
@@ -1212,6 +1213,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     			result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
     		}
         	result.setAlignmentSpecifiers(ArrayUtil.trim(alignmentSpecifiers));
+        	addAttributeSpecifiers(attributes, result);
         } catch (BacktrackException e) {
         	if (returnToken != null) {
         		backup(returnToken);

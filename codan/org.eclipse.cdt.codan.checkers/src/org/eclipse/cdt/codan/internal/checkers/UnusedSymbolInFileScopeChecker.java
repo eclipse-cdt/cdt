@@ -133,6 +133,10 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						// declarations
 						IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) element;
 
+						IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
+						if (AttributeUtil.hasAttribute(declSpec, ATTRIBUTE_UNUSED)) {
+							return PROCESS_SKIP;
+						}
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						for (IASTDeclarator decl : declarators) {
 							if (AttributeUtil.hasAttribute(decl, ATTRIBUTE_UNUSED))

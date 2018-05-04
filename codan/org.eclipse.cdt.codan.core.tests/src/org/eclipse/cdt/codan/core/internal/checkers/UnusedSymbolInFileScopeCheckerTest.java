@@ -306,6 +306,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	}
 
 	// static int v1 __attribute__((unused));
+	// static int __attribute__((unused)) v2;
 	// int f1() __attribute__((__unused__));
 	// extern int f2() __attribute__((unused));
 	// static void f3() __attribute__((unused));
@@ -313,6 +314,9 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// static void f4() __attribute__((unused)) {}
 	public void testAttributeUnused() throws Exception {
 		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+
+		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 

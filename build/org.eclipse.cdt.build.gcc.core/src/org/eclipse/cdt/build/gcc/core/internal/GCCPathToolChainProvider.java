@@ -72,6 +72,14 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 									case "apple": //$NON-NLS-1$
 										gcc.setProperty(IToolChain.ATTR_OS, Platform.OS_MACOSX);
 										break;
+									default:
+										if ("linux".equals(tuple[2])) {
+											gcc.setProperty(IToolChain.ATTR_OS, Platform.OS_LINUX);
+											System.err.println("Toolchain OS: linux by tuple[2]");
+										} else {
+											gcc.setProperty(IToolChain.ATTR_OS, tuple[1]);
+											System.err.println("Toolchain OS: " + tuple[1]);
+										}
 									}
 									try {
 										if (manager.getToolChain(gcc.getTypeId(), gcc.getId()) == null) {

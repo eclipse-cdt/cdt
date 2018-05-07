@@ -164,6 +164,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
@@ -2866,11 +2867,9 @@ public class CPPTemplates {
 			return null;
 		}
 
-		if (paramType instanceof ProblemType) {
+		if (paramType instanceof CPPPlaceholderType) {
 			// Partial support for C++17 template <auto>
-			if (((ProblemType) paramType).getID() == ProblemType.TYPE_CANNOT_DEDUCE_AUTO_TYPE) {
-				return arg;
-			}
+			return arg;
 		}
 
 		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN,

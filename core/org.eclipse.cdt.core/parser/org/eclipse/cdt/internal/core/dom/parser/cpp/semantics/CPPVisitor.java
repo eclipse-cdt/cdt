@@ -2214,9 +2214,13 @@ public class CPPVisitor extends ASTQueries {
 					return createAutoParameterType(declSpec, declarator, 
 							(ICPPASTParameterDeclaration) declarator.getParent(), placeholderKind);
 				} else {
-					// 'auto' used as the type of a template parameter.
-					// This is a C++17 feature we don't yet support.
-					return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+					if (placeholderKind == PlaceholderKind.Auto) {
+						// 'auto' used as the type of a template parameter.
+						// This is a partially supported C++17 feature.
+						return new CPPPlaceholderType(placeholderKind);
+					} else {
+						return ProblemType.CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE;
+					}
 				}
 			}
 			ICPPASTInitializerClause autoInitClause= null;

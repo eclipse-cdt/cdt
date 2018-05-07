@@ -53,10 +53,13 @@ public class ContainerGCCToolChainProvider
 	}
 
 	@Override
-	public void init(IToolChainManager manager) throws CoreException {
+	public synchronized void init(IToolChainManager manager)
+			throws CoreException {
 		this.toolChainManager = manager;
 		IDockerConnection[] connections = DockerConnectionManager.getInstance()
 				.getConnections();
+		DockerConnectionManager.getInstance()
+				.addConnectionManagerListener(this);
 		Map<String, IDockerConnection> connectionMap = new HashMap<>();
 		for (IDockerConnection connection : connections) {
 			connectionMap.put(connection.getUri(), connection);
@@ -87,12 +90,11 @@ public class ContainerGCCToolChainProvider
 			}
 		}
 
-		DockerConnectionManager.getInstance()
-				.addConnectionManagerListener(this);
 	}
 
 	@Override
-	public void changeEvent(IDockerConnection connection, int type) {
+	public synchronized void changeEvent(IDockerConnection connection,
+			int type) {
 		ICBuildConfigurationManager mgr = CCorePlugin
 				.getService(ICBuildConfigurationManager.class);
 		ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;

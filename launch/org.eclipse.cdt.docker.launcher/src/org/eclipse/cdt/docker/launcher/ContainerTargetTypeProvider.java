@@ -48,7 +48,7 @@ public class ContainerTargetTypeProvider
 	private ILaunchTargetManager targetManager;
 
 	@Override
-	public void init(ILaunchTargetManager targetManager) {
+	public synchronized void init(ILaunchTargetManager targetManager) {
 		this.targetManager = targetManager;
 		ILaunchBarManager launchbarManager = CDebugCorePlugin
 				.getService(ILaunchBarManager.class);
@@ -60,14 +60,17 @@ public class ContainerTargetTypeProvider
 		}
 		IDockerConnection[] connections = DockerConnectionManager.getInstance()
 				.getConnections();
+		DockerConnectionManager.getInstance().addConnectionManagerListener(this);
 		Map<String, IDockerConnection> establishedConnectionMap = new HashMap<>();
 		Set<String> imageNames = new HashSet<>();
 		for (IDockerConnection connection : connections) {
+			// Get Images before checking state as the state may be
+			// unknown until a request is made
+			List<IDockerImage> images = connection.getImages();
 			if (connection
 					.getState() == EnumDockerConnectionState.ESTABLISHED) {
 				establishedConnectionMap.put(connection.getUri(), connection);
 			}
-			List<IDockerImage> images = connection.getImages();
 			for (IDockerImage image : images) {
 				if (!image.isDangling() && !image.isIntermediateImage()) {
 					String imageName = "[" //$NON-NLS-1$
@@ -112,8 +115,6 @@ public class ContainerTargetTypeProvider
 			DockerLaunchUIPlugin.log(e);
 		}
 
-		DockerConnectionManager.getInstance()
-				.addConnectionManagerListener(this);
 	}
 
 	@Override
@@ -123,7 +124,8 @@ public class ContainerTargetTypeProvider
 	}
 
 	@Override
-	public void changeEvent(IDockerConnection connection, int type) {
+	public synchronized void changeEvent(IDockerConnection connection,
+			int type) {
 		ICBuildConfigurationManager mgr = CCorePlugin
 				.getService(ICBuildConfigurationManager.class);
 		ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;

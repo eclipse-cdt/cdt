@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
@@ -188,7 +190,9 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 		if (!CoreModel.getDefault().isNewStyleProject(p)) return null;
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
 		if (prjd == null) return null;
-		return prjd.getConfigurations();
+		ICConfigurationDescription[] cfgs = prjd.getConfigurations();
+		Arrays.sort(cfgs, CDTListComparator.getInstance());
+		return cfgs;
 	}
 
 	private void openDialog() {

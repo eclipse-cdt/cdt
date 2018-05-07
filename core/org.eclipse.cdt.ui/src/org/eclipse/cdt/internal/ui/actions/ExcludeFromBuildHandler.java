@@ -139,6 +139,10 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 						}
 					}
 				}
+				if (cfgNames != null) {
+					// same order as used by the property pages (via CDTListComparator)
+					cfgNames.sort(String.CASE_INSENSITIVE_ORDER);
+				}
 			}
 		}
 		setBaseEnabled(cfgsOK && (objects != null));

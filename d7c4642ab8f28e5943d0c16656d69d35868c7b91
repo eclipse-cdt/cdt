@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "36e63022_10a4fe37",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-05-07T02:31:03Z",
+      "side": 0,
+      "message": "maybe keep this comment?",
+      "revId": "d7c4642ab8f28e5943d0c16656d69d35868c7b91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

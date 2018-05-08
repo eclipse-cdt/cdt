@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd9d9187_d5eb62c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2219,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-08T06:40:23Z",
+      "side": 1,
+      "message": "I believe template\u003cdecltype(auto)\u003e is not valid, so we should check placeholderKind and only create a CPPPlaceholderType if it\u0027s PlaceholderKind.Auto.",
+      "revId": "1234478e8b12cc5195a91feb5f51be24cc996125",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

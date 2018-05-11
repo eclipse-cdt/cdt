@@ -47,4 +47,29 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	public void testTemplateNontypeParameterTypeDeductionParsing_519361_2() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename Type, Type v>
+	//	struct helper {
+	//		static void call() {}
+	//	};
+	//
+	//	template<auto F>
+	//	class call_helper {
+	//		using functor_t = decltype(F);
+	//
+	//	public:
+	//		using type = helper<functor_t, F>;
+	//	};
+	//
+	//	struct Something {
+	//		void foo() {}
+	//	};
+	//
+	//	void test() {
+	//		using A = call_helper<&Something::foo>::type;
+	//		A::call();
+	//	}
+	public void testTemplateNontypeParameterTypeDeductionParsing_519361_3() throws Exception {
+		parseAndCheckBindings();
+	}
 }

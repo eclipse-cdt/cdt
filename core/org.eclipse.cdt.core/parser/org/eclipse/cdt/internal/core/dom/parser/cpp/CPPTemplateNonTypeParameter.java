@@ -28,7 +28,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPDependentEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 
 /**
  * Binding for a non-type template parameter.
@@ -109,6 +112,14 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 					break;
 				}
 				parent= parent.getParent();
+			}
+
+			// C++17 template<auto>
+			if (type instanceof CPPPlaceholderType) {
+				CPPDependentEvaluation eval = new EvalBinding(this, null, getPrimaryDeclaration());
+				TypeOfDependentExpression replacementType = new TypeOfDependentExpression(eval);
+				replacementType.setForTemplateAuto(true);
+				type = replacementType;
 			}
 		}
 		return type;

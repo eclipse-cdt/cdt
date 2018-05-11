@@ -16,6 +16,24 @@
       "revId": "45bbb2bb5b5e4e9c93d4103a9c5e5c24db71d752",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ce4f252_d4d247b1",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/UnusedSymbolInFileScopeCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-05-11T15:02:07Z",
+      "side": 1,
+      "message": "Here are a few more failing cases:\n\n\t// static void f5() __attribute__((unused));\n\t// static void f5() {}\n\t// static void __attribute__((unused)) f6();\n\t// static void f6() {}",
+      "parentUuid": "9b61b1ef_a8b42385",
+      "revId": "45bbb2bb5b5e4e9c93d4103a9c5e5c24db71d752",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

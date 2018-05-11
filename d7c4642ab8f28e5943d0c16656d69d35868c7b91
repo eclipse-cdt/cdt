@@ -34,6 +34,24 @@
       "revId": "d7c4642ab8f28e5943d0c16656d69d35868c7b91",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54e22375_a2354bc1",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-05-11T02:59:54Z",
+      "side": 0,
+      "message": "I recommend using the text editor. The target editor is buggy.",
+      "parentUuid": "3984c9aa_894169fa",
+      "revId": "d7c4642ab8f28e5943d0c16656d69d35868c7b91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -2883,9 +2883,12 @@ public class CPPTemplates {
 			return null;
 		}
 
-		if (paramType instanceof CPPPlaceholderType) {
+		if (paramType instanceof TypeOfDependentExpression) {
 			// Partial support for C++17 template <auto>
-			return arg;
+			TypeOfDependentExpression type = (TypeOfDependentExpression) paramType;
+			if (type.isForTemplateAuto()) {
+				return arg;
+			}
 		}
 
 		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN,

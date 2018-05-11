@@ -16,6 +16,24 @@
       "revId": "d7c4642ab8f28e5943d0c16656d69d35868c7b91",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3984c9aa_894169fa",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-11T02:54:26Z",
+      "side": 0,
+      "message": "Besides adding the new \u003clocation\u003e element, all the other changes to this file (including the removal of this comment) appear to have been made automatically by Eclipse when saving the target file. I can re-add the comment and hope that it doesn\u0027t get removed again...",
+      "parentUuid": "36e63022_10a4fe37",
+      "revId": "d7c4642ab8f28e5943d0c16656d69d35868c7b91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

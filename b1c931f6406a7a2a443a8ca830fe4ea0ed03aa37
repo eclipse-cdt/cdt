@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b437267_987baf5b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateNonTypeParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-13T05:31:06Z",
+      "side": 1,
+      "message": "Move this into the \u0027if\u0027 block above, so that we don\u0027t do this extra check after the initial computation and caching of the type.",
+      "revId": "b1c931f6406a7a2a443a8ca830fe4ea0ed03aa37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "215038f5_98e0a5c2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeOfDependentExpression.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-13T05:31:06Z",
+      "side": 1,
+      "message": "The marshal() and unmarshal() functions in this type need to be updated so that this flag is stored in the index. We can use ITypeMarshalBuffer.FLAG2, similar to how we use FLAG1 for storing fIsForDecltype.\n\nIt would also be nice to have a test that fails without the changes to marshal() and unmarshal(). One way to do that would be to add a new test harness \"TemplateAutoIndexTests\" which contains index versions of the template auto tests. (Compare ReturnTypeDeductionTests and ReturnTypeDeductionIndexTests.)\n\nNote that for index tests, the test case is split into two commented blocks, which represent a header file and a source file. The header file\u0027s contents are stored and read back from the index, so whatever you want to test index storage for (in this case, call_helper::functor_t) should be in the header part. (A good rule of thumb is to place all declarations except the last into the header part when splitting the test case.)\n\n(The C++14 constexpr tests (see AllConstexprEvalTests) do things a bit more smartly and avoid duplicating test cases altogether. You\u0027re welcome to make TemplateAutoTests work that way if you\u0027d like, as an alternative.)",
+      "revId": "b1c931f6406a7a2a443a8ca830fe4ea0ed03aa37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66dabfae_effbd5e3",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/CopyReplaceVisitor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "Could it make sense to decide whether to copy-replace a node with itself based on an arbitrary predicate?",
+      "range": {
+        "startLine": 46,
+        "startChar": 40,
+        "endLine": 46,
+        "endChar": 50
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d014673_e992a23d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/gnu/IGCCASTDeclspecList.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "It\u0027s weird that the IGCCASTDeclspecList represents a Microsoft attribute specifier",
+      "range": {
+        "startLine": 25,
+        "startChar": 17,
+        "endLine": 25,
+        "endChar": 37
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd422ca5_78693ef1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IProblem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "Copy-pasted doc comment",
+      "range": {
+        "startLine": 360,
+        "startChar": 12,
+        "endLine": 360,
+        "endChar": 21
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "966eb541_4e33da2e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2469,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "Please use tabs only in all changed lines.",
+      "range": {
+        "startLine": 2469,
+        "startChar": 15,
+        "endLine": 2469,
+        "endChar": 27
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfe94aca_134b9f53",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTEnumerationSpecifier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "Isn\u0027t this redundant?",
+      "range": {
+        "startLine": 29,
+        "startChar": 17,
+        "endLine": 29,
+        "endChar": 26
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "052a982f_c097faa8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTEnumerationSpecifier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "We should still use the isScoped parameter to behave as before, even when the constructor is deprecated.",
+      "range": {
+        "startLine": 45,
+        "startChar": 43,
+        "endLine": 45,
+        "endChar": 51
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f7f5d23_fdd0c4fb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTEnumerationSpecifier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "This should have an effect on isScoped().",
+      "range": {
+        "startLine": 173,
+        "startChar": 16,
+        "endLine": 173,
+        "endChar": 26
+      },
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf7b72b2_380c70fc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-05-14T11:28:54Z",
+      "side": 1,
+      "message": "An overload newStaticAssertion(IASTExpression) should be added to the node factories.",
+      "revId": "bb08bca4b8bddc3a6e8c742f4ffe6a8a453ef61b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

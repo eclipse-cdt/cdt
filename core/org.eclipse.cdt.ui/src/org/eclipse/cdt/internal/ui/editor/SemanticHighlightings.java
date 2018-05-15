@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -1809,7 +1810,36 @@ public class SemanticHighlightings {
 					|| token.getNode() instanceof ICPPASTClassVirtSpecifier;
 		}
 	}
-	
+
+	/**
+	 * Semantic highlighting for context-sensitive UDL like operator""if(...).
+	 * 
+	 * This does not get its own color and style; rather, it uses
+	 * the color and style of the 'Default' syntactic highlighting.
+	 */
+	private static final class ContextSensitiveUDLHighlighting extends SemanticHighlighting {
+		@Override
+		public String getPreferenceKey() {
+			return ICColorConstants.C_DEFAULT;
+		}
+
+		@Override
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+
+		@Override
+		public boolean requiresImplicitNames() {
+			return true;
+		}
+
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			IASTNode node = token.getNode();
+			return node instanceof IASTImplicitName && node.getParent() instanceof ICPPASTLiteralExpression;
+		}
+	}
+
 	private static boolean heuristicallyResolvesToEnumeration(ICPPUnknownBinding binding) {
 		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding);
 		return resolved.length == 1 && resolved[0] instanceof IEnumeration;
@@ -1981,6 +2011,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
 		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
 		highlightings.put(new Key(250), new VariablePassedByNonconstRefHighlighting());
+		highlightings.put(new Key(260), new ContextSensitiveUDLHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$

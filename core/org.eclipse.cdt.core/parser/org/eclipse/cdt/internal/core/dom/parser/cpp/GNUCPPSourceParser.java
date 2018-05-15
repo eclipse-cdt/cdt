@@ -912,14 +912,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (strOp.getLength() == 2) {
 				endOffset = strOp.getEndOffset();
 
-				IToken ident = consume(IToken.tIDENTIFIER);
+				IToken udlOperator = identifierOrKeyword();
 
 				char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
 				operatorName = CharArrayUtils.concat(operatorName, strOp.getCharImage());
-				operatorName = CharArrayUtils.concat(operatorName, ident.getCharImage());
+				operatorName = CharArrayUtils.concat(operatorName, udlOperator.getCharImage());
 
 				IASTName name = getNodeFactory().newOperatorName(operatorName);
-				setRange(name, firstToken.getOffset(), ident.getEndOffset());
+				setRange(name, firstToken.getOffset(), udlOperator.getEndOffset());
 				return name;
 			}
 			break;
@@ -2020,13 +2020,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			IToken la = LA(1);
 			int offset = ((ASTNode) literalExprWithRange).getOffset();
 			int length = ((ASTNode) literalExprWithRange).getLength();
-			if (la.getType() == IToken.tIDENTIFIER) {
+			if (isIdentifierOrKeyword(la)) {
 				if ((offset + length) != la.getOffset()) {
 					return literalExprWithRange;
 				}
-				IToken opName = consume(IToken.tIDENTIFIER);
-				((CPPASTLiteralExpression) literalExprWithRange).setSuffix(opName.getCharImage());
-				setRange(literalExprWithRange, offset, opName.getEndOffset());
+				consume();
+				((CPPASTLiteralExpression) literalExprWithRange).setSuffix(la.getCharImage());
+				setRange(literalExprWithRange, offset, la.getEndOffset());
 			}
 		}
 

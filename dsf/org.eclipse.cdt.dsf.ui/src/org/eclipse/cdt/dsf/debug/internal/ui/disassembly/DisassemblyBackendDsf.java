@@ -269,7 +269,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			}
 		} else if (dmContext instanceof IExecutionDMContext) {
 			// When switching to and between thread and application nodes.
-			result.sessionId = null;
+			result.sessionId = fDsfSessionId;
 			result.contextChanged = false;
 			fTargetContext = (IExecutionDMContext) dmContext;
 			fTargetFrameContext = null;

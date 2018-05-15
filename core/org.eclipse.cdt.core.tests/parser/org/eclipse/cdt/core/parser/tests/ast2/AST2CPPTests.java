@@ -12067,6 +12067,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		checkUserDefinedLiteralIsType(getAboveComment(), "complex");
 	}
 
+	// struct complex {
+	//   complex(long double real, long double imag);
+	//   complex operator+(long double long);
+	// };
+	// complex operator""if(long double imag) {
+	//   return complex { 0, imag };
+	// }
+	// auto waldo = 1.0if + 1;
+	public void testComplexFloatNumbersOverriddenCompilerSupport() throws Exception {
+		checkUserDefinedLiteralIsType(getAboveComment(), "complex");
+	}
+
 	// // Test name lacking a space
 	// int operator ""X(const char* s) { return 0; }
 	// int operator ""_X(const char* s) { return 0; }

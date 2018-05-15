@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -92,18 +94,25 @@ public class SemanticHighlightingTest extends TestCase {
 		return dest;
 	}
 
-	private void enableHighlightingsAndAssignColors() {
+	private void enableHighlightingsAndAssignColors(Set<String> ignoredHighlightings) {
 		fColorToPreferenceKeyMap = new HashMap<>();
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
 		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
 		int blue = 0;  // for assigning colors to preferences below
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
-			// Enable the highlighting.
 			String enabledPreferenceKey = SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
-			if (!store.getBoolean(enabledPreferenceKey))
+			// Make sure ignored highlightings are disabled.
+			if (ignoredHighlightings.contains(semanticHighlighting.getPreferenceKey())) {
+				store.setValue(enabledPreferenceKey, false);
+				continue;
+			}
+
+			// Enable the highlighting.
+			if (!store.getBoolean(enabledPreferenceKey)) {
 				store.setValue(enabledPreferenceKey, true);
-			
+			}
+
 			// Choose a unique color for the highlighting, and save the mapping
 			// from the color to the highlighting's preference key .
 			String colorPreferenceKey = SemanticHighlightings.getColorPreferenceKey(semanticHighlighting);
@@ -129,8 +138,8 @@ public class SemanticHighlightingTest extends TestCase {
 	
 	// Note: This is not an override of the TestCase.setUp(), but a method called directly
 	// by the tests, so that they can specify a value for 'isCpp' on a per-test basis.
-	private void setup(boolean isCpp) throws Exception {
-		enableHighlightingsAndAssignColors();
+	private void setup(boolean isCpp, Set<String> ignoredHighlightings) throws Exception {
+		enableHighlightingsAndAssignColors(ignoredHighlightings);
 		
 		StringBuilder[] testData = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), 0);
 		
@@ -217,15 +226,23 @@ public class SemanticHighlightingTest extends TestCase {
 		assertEqualMaps(actual, expected);
 	}
 
-	private void makeAssertions(boolean isCpp) throws Exception {
-		setup(isCpp);
+	private void makeAssertions(boolean isCpp, Set<String> ignoredHighlightings) throws Exception {
+		setup(isCpp, ignoredHighlightings);
 		try {
 			doMakeAssertions();
 		} finally {
 			teardown();
 		}
 	}
-	
+
+	private void makeAssertions(Set<String> ignoredHighlightings) throws Exception {
+		makeAssertions(true, ignoredHighlightings);  // default to C++
+	}
+
+	private void makeAssertions(boolean isCpp) throws Exception {
+		makeAssertions(isCpp, new HashSet<String>());
+	}
+
 	private void makeAssertions() throws Exception {
 		makeAssertions(true);  // default to C++
 	}
@@ -679,4 +696,48 @@ public class SemanticHighlightingTest extends TestCase {
     public void testVariablePassedByNonConstRef_529958() throws Exception {
     	makeAssertions();
     }
+    
+    //	float operator""if(long double) {                //$functionDeclaration
+    //		return 1.6f;
+    //	}
+    //	int main() {                                     //$functionDeclaration
+    //		auto k = 1.3if;                              //$localVariableDeclaration,overloadedOperator
+    //	}
+    public void testOverriddenUDLOperatorIfCall_527954() throws Exception {
+    	makeAssertions();
+    }
+
+	//	float operator""if(long double) {                //$functionDeclaration
+	//		return 1.6f;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3if;                              //$localVariableDeclaration,c_default
+	//	}
+	public void testUDLOperatorIfCall_527954() throws Exception {
+		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.OVERLOADED_OPERATOR);
+		makeAssertions(ignoredHighlightings);
+	}
+	
+	//	int operator""int(long double) {                 //$functionDeclaration
+	//		return -1;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3int;                             //$localVariableDeclaration,overloadedOperator
+	//	}
+	public void testOverriddenUDLOperatorIntCall_527954() throws Exception {
+		makeAssertions();
+	}
+
+	//	int operator""int(long double) {                 //$functionDeclaration
+	//		return -1;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3int;                             //$localVariableDeclaration,c_default
+	//	}
+	public void testUDLOperatorIntCall_527954() throws Exception {
+		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.OVERLOADED_OPERATOR);
+		makeAssertions(ignoredHighlightings);
+	}
 }

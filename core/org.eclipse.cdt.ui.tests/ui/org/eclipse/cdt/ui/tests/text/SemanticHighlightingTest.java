@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -92,7 +94,7 @@ public class SemanticHighlightingTest extends TestCase {
 		return dest;
 	}
 
-	private void enableHighlightingsAndAssignColors() {
+	private void enableHighlightingsAndAssignColors(Set<String> ignored) {
 		fColorToPreferenceKeyMap = new HashMap<>();
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
@@ -101,8 +103,9 @@ public class SemanticHighlightingTest extends TestCase {
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
 			// Enable the highlighting.
 			String enabledPreferenceKey = SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
-			if (!store.getBoolean(enabledPreferenceKey))
+			if (!store.getBoolean(enabledPreferenceKey) && !ignored.contains(semanticHighlighting.getPreferenceKey())) {
 				store.setValue(enabledPreferenceKey, true);
+			}
 			
 			// Choose a unique color for the highlighting, and save the mapping
 			// from the color to the highlighting's preference key .
@@ -129,8 +132,8 @@ public class SemanticHighlightingTest extends TestCase {
 	
 	// Note: This is not an override of the TestCase.setUp(), but a method called directly
 	// by the tests, so that they can specify a value for 'isCpp' on a per-test basis.
-	private void setup(boolean isCpp) throws Exception {
-		enableHighlightingsAndAssignColors();
+	private void setup(boolean isCpp, Set<String> ignored) throws Exception {
+		enableHighlightingsAndAssignColors(ignored);
 		
 		StringBuilder[] testData = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), 0);
 		
@@ -217,15 +220,23 @@ public class SemanticHighlightingTest extends TestCase {
 		assertEqualMaps(actual, expected);
 	}
 
-	private void makeAssertions(boolean isCpp) throws Exception {
-		setup(isCpp);
+	private void makeAssertions(boolean isCpp, Set<String> ignored) throws Exception {
+		setup(isCpp, ignored);
 		try {
 			doMakeAssertions();
 		} finally {
 			teardown();
 		}
 	}
-	
+
+	private void makeAssertions(Set<String> ignored) throws Exception {
+		makeAssertions(true, ignored);  // default to C++
+	}
+
+	private void makeAssertions(boolean isCpp) throws Exception {
+		makeAssertions(isCpp, new HashSet<String>());
+	}
+
 	private void makeAssertions() throws Exception {
 		makeAssertions(true);  // default to C++
 	}
@@ -679,4 +690,48 @@ public class SemanticHighlightingTest extends TestCase {
     public void testVariablePassedByNonConstRef_529958() throws Exception {
     	makeAssertions();
     }
+    
+    //	float operator""if(long double) {                //$functionDeclaration
+    //		return 1.6f;
+    //	}
+    //	int main() {                                     //$functionDeclaration
+    //		auto k = 1.3if;                              //$localVariableDeclaration,overloadedOperator
+    //	}
+    public void testOverriddenUDLOperatorIfCall_527954() throws Exception {
+    	makeAssertions();
+    }
+
+	//	float operator""if(long double) {                //$functionDeclaration
+	//		return 1.6f;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3if;                              //$localVariableDeclaration,c_default
+	//	}
+	public void testUDLOperatorIfCall_527954() throws Exception {
+		Set<String> ignored = new HashSet<>();
+		ignored.add(SemanticHighlightings.OVERLOADED_OPERATOR);
+		makeAssertions(ignored);
+	}
+	
+	//	bool operator""bool(long double) {               //$functionDeclaration
+	//		return false;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3bool;                            //$localVariableDeclaration,overloadedOperator
+	//	}
+	public void testOverriddenUDLOperatorBoolCall_527954() throws Exception {
+		makeAssertions();
+	}
+
+	//	int operator""int(long double) {                 //$functionDeclaration
+	//		return -1;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3int;                             //$localVariableDeclaration,c_default
+	//	}
+	public void testUDLOperatorIntCall_527954() throws Exception {
+		Set<String> ignored = new HashSet<>();
+		ignored.add(SemanticHighlightings.OVERLOADED_OPERATOR);
+		makeAssertions(ignored);
+	}
 }

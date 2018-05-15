@@ -2488,16 +2488,22 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
+	protected boolean isIdentifierOrKeyword(IToken token) {
+		char[] image = token.getCharImage();
+		if (image.length == 0) {
+			return false;
+		}
+		char firstChar = image[0];
+		return Character.isLetter(firstChar) || firstChar == '_';
+	}
+
 	protected IToken identifierOrKeyword() throws EndOfFileException, BacktrackException {
-		IToken t = LA(1);
-		char[] image= t.getCharImage();
-		if (image.length == 0)
+		IToken token = LA(1);
+		if (!isIdentifierOrKeyword(token)) {
 			throw backtrack;
-		char firstChar= image[0];
-		if (!Character.isLetter(firstChar) && firstChar != '_')
-			throw backtrack;
+		}
 		consume();
-		return t;
+		return token;
 	}
 
 	/**

@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04e0d15d_5b35af3c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-05-16T10:45:20Z",
+      "side": 1,
+      "message": "Please reformat this to it isn\u0027t all on one very long line.",
+      "revId": "1718fecb6affbb68ff0f0959773e431f3eff8b85",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b7789f8_79b1a5c0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/ExcludeFromBuildHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-05-16T10:45:20Z",
+      "side": 1,
+      "message": "Did you consider sorting the configs using CDTListComparator before the list of names is created?\n\nDoing that would mean it was guarantee to be the same as the property pages even if CDTListComparator were changed in future.",
+      "range": {
+        "startLine": 142,
+        "startChar": 4,
+        "endLine": 145,
+        "endChar": 5
+      },
+      "revId": "1718fecb6affbb68ff0f0959773e431f3eff8b85",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

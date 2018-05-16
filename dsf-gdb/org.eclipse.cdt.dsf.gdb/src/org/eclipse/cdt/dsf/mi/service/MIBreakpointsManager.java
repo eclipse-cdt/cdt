@@ -24,6 +24,7 @@ package org.eclipse.cdt.dsf.mi.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -981,7 +982,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		// in the breakpoint's install count.
         		// Excluding ATTR_DEBUGGER_PATH from the comparison because it has been set just before
         		// "modifyBreakpoint()" was called.
-        		String[] diff = compareAttributes(oldValues.getAttributes(), attributes, new String[] { ATTR_DEBUGGER_PATH });
+        		// (Bugzilla 534309) Guard against NULL oldValues, which is legitimate, in which case use an empty Map.
+        		String[] diff = compareAttributes(oldValues == null ? Collections.emptyMap() : oldValues.getAttributes(),
+        				attributes,new String[] { ATTR_DEBUGGER_PATH });
         		if (diff.length != 1 || !diff[0].equals(ICBreakpoint.INSTALL_COUNT)) {
 	                attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
 	                attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));

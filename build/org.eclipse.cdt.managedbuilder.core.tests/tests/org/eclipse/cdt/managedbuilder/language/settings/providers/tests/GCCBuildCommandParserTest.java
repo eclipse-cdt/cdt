@@ -688,7 +688,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
-		CMacroEntry expected = new CMacroEntry("MACRO0", "", 0);
+		CMacroEntry expected = new CMacroEntry("MACRO0", "1", 0);
 		CMacroEntry entry = (CMacroEntry)entries.get(0);
 		assertEquals(expected.getName(), entry.getName());
 		assertEquals(expected.getValue(), entry.getValue());
@@ -1979,8 +1979,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertFalse(new java.io.File("/Python1025/Include").exists());
 		assertEquals(new CIncludePathEntry("/Python1025/Include", 0), entries.get(1));
 		assertEquals(new CMacroEntry("BOOST_ALL_NO_LIB", "1", 0), entries.get(2));
-		assertEquals(new CMacroEntry("BOOST_PYTHON_SOURCE", "", 0), entries.get(3));
-		assertEquals(new CMacroEntry("BOOST_PYTHON_STATIC_LIB", "", 0), entries.get(4));
+		assertEquals(new CMacroEntry("BOOST_PYTHON_SOURCE", "1", 0), entries.get(3));
+		assertEquals(new CMacroEntry("BOOST_PYTHON_STATIC_LIB", "1", 0), entries.get(4));
 		assertEquals(5, entries.size());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 Wind River and others.
+ * Copyright (c) 2007, 2018 Renesas and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *     Alvaro Sanchez-Leon (Ericsson) - Sometimes breakpoints set and immediately deleted when debugging with GDB (Bug 442394)
  *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
+ *     John Moule (Renesas) - Breakpoint filtering modification causes NPE in mi breakpoint manager (Bug 534309)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -981,7 +982,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		// in the breakpoint's install count.
         		// Excluding ATTR_DEBUGGER_PATH from the comparison because it has been set just before
         		// "modifyBreakpoint()" was called.
-        		String[] diff = compareAttributes(oldValues.getAttributes(), attributes, new String[] { ATTR_DEBUGGER_PATH });
+        		// (Bugzilla 534309) Guard against NULL oldValues, which is legitimate, in which case use an empty Map. 
+        		Map<String, Object> oldValuesAttributes = new HashMap<>();
+        		if(oldValues != null) {
+        			oldValuesAttributes = oldValues.getAttributes();
+        		}
+        		String[] diff = compareAttributes(oldValuesAttributes, attributes, new String[] { ATTR_DEBUGGER_PATH });
         		if (diff.length != 1 || !diff[0].equals(ICBreakpoint.INSTALL_COUNT)) {
 	                attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
 	                attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));

@@ -57,15 +57,29 @@ public class BuildGroup extends CViewActionGroup {
 	 * before build.
 	 */
 	public static class CDTBuildAction extends BuildAction {
-	    public CDTBuildAction(IShellProvider shell, int kind) {
+	    private int kind;
+
+		public CDTBuildAction(IShellProvider shell, int kind) {
 	        super(shell, kind);
+			this.kind = kind;
 	    }
 	    
 	    @Override
 	    protected boolean updateSelection(IStructuredSelection s) {
 	    	// Call the super since it needs to clear out some settings
 	    	super.updateSelection(s);
-	    	// Always build CDT projects
+
+			if (kind == IncrementalProjectBuilder.CLEAN_BUILD) {
+				// Bug 529016: super's update reset the label to "Build Project(s)",
+				// so we need it to be Clean on a clean build.
+				// XXX We can't handle the plurals here without a lot
+				// of copying code. As we are already "illegally" extending
+				// BuildAction, we will leave Clean non-pluralized, as it has
+				// always been.
+				setText(CViewMessages.CleanAction_label);
+			}
+
+			// Always build CDT projects
 	    	return true;
 	    }
 	    
@@ -139,6 +153,14 @@ public class BuildGroup extends CViewActionGroup {
 	    	((IProject) resource).build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 
 	    }
+
+		@Override
+		protected boolean updateSelection(IStructuredSelection s) {
+			boolean r = super.updateSelection(s);
+			// Bug 529016: See comment in super.
+			setText(CViewMessages.RebuildAction_label);
+			return r;
+		}
 	}
 
 	private BuildAction buildAction;

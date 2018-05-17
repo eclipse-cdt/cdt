@@ -34,6 +34,24 @@
       "revId": "71584c0559a6843fc72a2b9d9850fbfa5f8a73dc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5af4b9f_8e2d8e9c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1818,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-17T22:31:20Z",
+      "side": 1,
+      "message": "Fair enough.\n\nPlease still add a testcase to SemanticHighlightingTest to check that the keyword suffix is colored by OverloadedOperatorHighlighting when it\u0027s enabled (all the highlightings are enabled in that test suite).",
+      "parentUuid": "d57aabf2_af310dab",
+      "revId": "71584c0559a6843fc72a2b9d9850fbfa5f8a73dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1089,6 +1089,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	public int visit(ICPPASTNamespaceDefinition node) {
 		if (!enterNode(node)) { return PROCESS_SKIP; }
 		final int line= scribe.line;
+
+		if (node.isInline()) {
+			scribe.printNextToken(Token.t_inline, false);
+			scribe.space();
+		}
+
 		// namespace <name>
 		scribe.printNextToken(Token.t_namespace, false);
 		scribe.space();

@@ -328,6 +328,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
 
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition);
+
 	public ICPPASTSwitchStatement newSwitchStatement();
 
 	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body);

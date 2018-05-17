@@ -23,6 +23,15 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 	private IASTExpression fCondition;
 	private final ICPPASTLiteralExpression fMessage;
 
+	/**
+	 * Constructor for C++17 static_assert with only a condition.
+	 * 
+	 * @param condition The condition of the static assertion
+	 */
+	public CPPASTStaticAssertionDeclaration(IASTExpression condition) {
+		this(condition, null);
+	}
+
 	public CPPASTStaticAssertionDeclaration(IASTExpression condition, ICPPASTLiteralExpression message) {
 		fCondition= condition;
 		fMessage= message;

@@ -735,6 +735,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 			ICPPASTLiteralExpression message) {
 		return new CPPASTStaticAssertionDeclaration(condition, message);
 	}
+	
+	@Override
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition) {
+		return newStaticAssertion(condition, null);
+	}
 
 	@Override
 	public ICPPASTSwitchStatement newSwitchStatement() {

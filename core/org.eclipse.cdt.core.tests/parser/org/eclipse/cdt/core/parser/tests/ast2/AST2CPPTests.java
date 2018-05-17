@@ -12705,4 +12705,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		// does not throw an exception.
 		var.getInitialValue();
 	}
+
+	//static_assert(true);
+	public void testStaticAssertWithoutMessage_534808() throws Exception {
+		parseAndCheckBindings();
+	}
 }

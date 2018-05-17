@@ -34,8 +34,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
@@ -56,10 +58,12 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class DeclarationWriter extends NodeWriter {
-	private static final String ASM_END = ")"; //$NON-NLS-1$
-	private static final String ASM_START = "asm("; //$NON-NLS-1$
+	private static final char OPEN_PAREN = '(';
+	private static final char CLOSE_PAREN = ')';
+	private static final String ASM_START = "asm" + OPEN_PAREN; //$NON-NLS-1$
 	private static final String TEMPLATE_DECLARATION = "template<"; //$NON-NLS-1$
-	private static final String TEMPLATE_SPECIALIZATION = "template <> "; //$NON-NLS-1$
+	private static final String TEMPLATE_SPECIALIZATION = "template<> "; //$NON-NLS-1$
+	private static final char COMMA = ',';
 	private boolean printSemicolon;
 
 	public DeclarationWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
@@ -103,6 +107,8 @@ public class DeclarationWriter extends NodeWriter {
 			writeVisibilityLabel((ICPPASTVisibilityLabel) declaration);
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			writeAliasDeclaration((ICPPASTAliasDeclaration) declaration);
+		} else if (declaration instanceof ICPPASTStaticAssertDeclaration) {
+			writeStaticAssertDeclaration((ICPPASTStaticAssertDeclaration)declaration);
 		}
 
 		writeTrailingComments(declaration, addNewLine);
@@ -272,7 +278,7 @@ public class DeclarationWriter extends NodeWriter {
 	private void writeASMDeclatation(IASTASMDeclaration asmDeclaration) {
 		scribe.print(ASM_START);
 		scribe.print(asmDeclaration.getAssembly());
-		scribe.print(ASM_END);
+		scribe.print(CLOSE_PAREN);
 		printSemicolon();
 	}
 
@@ -377,5 +383,21 @@ public class DeclarationWriter extends NodeWriter {
 		}
 
 		printSemicolon();
+	}
+	
+	private void writeStaticAssertDeclaration(ICPPASTStaticAssertDeclaration staticAssertDeclaration) {
+		scribe.print(Keywords.STATIC_ASSERT);
+		scribe.print(OPEN_PAREN);
+		staticAssertDeclaration.getCondition().accept(visitor);
+	
+		ICPPASTLiteralExpression message = staticAssertDeclaration.getMessage();
+		if (message != null) {
+			scribe.print(COMMA);
+			scribe.printSpace();
+			message.accept(visitor);
+		}
+
+		scribe.print(CLOSE_PAREN);
+		scribe.printSemicolon();
 	}
 }

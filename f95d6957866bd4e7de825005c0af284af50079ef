@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79f4edbf_45f0b18c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-17T21:43:17Z",
+      "side": 1,
+      "message": "You can\u0027t change this :-) The copyright holder is the original author of the file, Renesas is covered in the \"and others.\" line.",
+      "range": {
+        "startLine": 2,
+        "startChar": 28,
+        "endLine": 2,
+        "endChar": 35
+      },
+      "revId": "f95d6957866bd4e7de825005c0af284af50079ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c420c98_732d37c4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-17T21:43:17Z",
+      "side": 1,
+      "message": "Once upon a time including entries in Contributors was necessary. It is now optional as git is used to track all contributors to a file. You can certainly leave this in, but you don\u0027t need to bother if you don\u0027t want.",
+      "revId": "f95d6957866bd4e7de825005c0af284af50079ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41ad054a_35503896",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 986,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-05-17T21:43:17Z",
+      "side": 1,
+      "message": "Collections.emptyMap() please, unless you really need a writable map.\n\nAlternatively, simply skipping the compare if oldValues \u003d\u003d null is ok, and probably preferable. That restores the behaviour that was there before the optimization was added for Bug 506950.",
+      "range": {
+        "startLine": 986,
+        "startChar": 52,
+        "endLine": 986,
+        "endChar": 67
+      },
+      "revId": "f95d6957866bd4e7de825005c0af284af50079ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

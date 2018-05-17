@@ -170,10 +170,6 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);
 		}
-		writeVirtualSpecifiers(funcDec);
-		if (funcDec.isPureVirtual()) {
-			scribe.print(PURE_VIRTUAL);
-		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification(), funcDec.getNoexceptExpression());
 		writeAttributes(funcDec, EnumSet.of(SpaceLocation.BEFORE));
 		if (funcDec.getTrailingReturnType() != null) {
@@ -181,6 +177,10 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(ARROW_OPERATOR);
 			scribe.printSpace();
 			funcDec.getTrailingReturnType().accept(visitor);
+		}
+		writeVirtualSpecifiers(funcDec);
+		if (funcDec.isPureVirtual()) {
+			scribe.print(PURE_VIRTUAL);
 		}
 	}
 

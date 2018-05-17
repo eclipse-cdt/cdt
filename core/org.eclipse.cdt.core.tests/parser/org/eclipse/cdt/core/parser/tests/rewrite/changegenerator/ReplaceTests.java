@@ -1018,4 +1018,31 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			}
 		});
 	}
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int);
+	//};
+
+	//struct FooInterface
+	//{
+	//	virtual void foo() throw (int) = 0;
+	//};
+	public void testPureVirtualFunction() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarators = true;
+			}
+
+			@Override
+			public int visit(IASTDeclarator declarator) {
+				if (declarator instanceof ICPPASTFunctionDeclarator) {
+					ICPPASTFunctionDeclarator newDeclarator = (ICPPASTFunctionDeclarator) declarator.copy(CopyStyle.withLocations);
+					newDeclarator.setPureVirtual(true);
+					addModification(null, ModificationKind.REPLACE, declarator, newDeclarator);
+				}
+				return PROCESS_ABORT;
+			}
+		});
+	}
 }

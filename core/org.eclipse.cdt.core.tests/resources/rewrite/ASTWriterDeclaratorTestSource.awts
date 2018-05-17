@@ -56,6 +56,7 @@ class TestClass
     int alpha;
     TestClass(int a);
     virtual void pure() = 0;
+    virtual void func() noexcept = 0;
 };
 
 TestClass::TestClass(int a)

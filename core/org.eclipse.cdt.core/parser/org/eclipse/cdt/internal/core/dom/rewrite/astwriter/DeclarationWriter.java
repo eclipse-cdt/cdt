@@ -203,6 +203,9 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeNamespaceDefinition(ICPPASTNamespaceDefinition namespaceDefinition) {
+		if (namespaceDefinition.isInline()) {
+			scribe.printStringSpace(Keywords.INLINE);
+		}
 		scribe.printStringSpace(Keywords.NAMESPACE);
 		namespaceDefinition.getName().accept(visitor);
 		writeGCCAttributes(namespaceDefinition, EnumSet.of(SpaceLocation.BEFORE));

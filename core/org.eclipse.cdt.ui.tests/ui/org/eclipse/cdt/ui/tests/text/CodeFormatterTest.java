@@ -3371,4 +3371,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testSwitchInitStatementFormat_4() throws Exception {
 		assertFormatterResult();
 	}
+
+	//namespace na {
+	//inline namespace nb {
+	//}
+	//}
+
+	//namespace na {
+	//inline namespace nb {
+	//}
+	//}
+	public void testInlineNamespace_Bug532849() throws Exception {
+		assertFormatterResult();
+	}
 }

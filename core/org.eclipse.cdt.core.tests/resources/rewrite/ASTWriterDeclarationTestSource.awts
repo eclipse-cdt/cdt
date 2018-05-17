@@ -164,3 +164,11 @@ int main()
 //%CPP
 static_assert(true, "Should always pass");
 static_assert(sizeof (int) == 4);
+
+//!Inline namespace
+//%CPP
+inline namespace InlnNS
+{
+
+
+}

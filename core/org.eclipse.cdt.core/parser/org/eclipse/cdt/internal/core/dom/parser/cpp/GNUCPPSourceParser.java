@@ -2272,21 +2272,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	/**
 	 * static_assert-declaration:
-			   static_assert (constant-expression  ,  string-literal ) ;
+	 *		static_assert (constant-expression);
+	 *			OR
+	 *		static_assert (constant-expression , string-literal);
 	 */
 	private ICPPASTStaticAssertDeclaration staticAssertDeclaration() throws EndOfFileException, BacktrackException {
 		int offset= consume(IToken.t_static_assert).getOffset();
 		consume(IToken.tLPAREN);
 		IASTExpression e= constantExpression();
 		int endOffset= calculateEndOffset(e);
-		ICPPASTLiteralExpression lit= null;
-		if (LT(1) != IToken.tEOC) {
+		ICPPASTLiteralExpression message = null;
+		if (LT(1) == IToken.tCOMMA) {
 			consume(IToken.tCOMMA);
-			lit= stringLiteral();
-			consume(IToken.tRPAREN);
-			endOffset= consume(IToken.tSEMI).getEndOffset();
+			message = stringLiteral();
 		}
-		ICPPASTStaticAssertDeclaration assertion = getNodeFactory().newStaticAssertion(e, lit);
+		ICPPASTStaticAssertDeclaration assertion = getNodeFactory().newStaticAssertion(e, message);
+		if (LT(1) != IToken.tEOC) {
+			consume(IToken.tRPAREN);
+			endOffset = consume(IToken.tSEMI).getEndOffset();
+		}
 		return setRange(assertion, offset, endOffset);
 	}
 

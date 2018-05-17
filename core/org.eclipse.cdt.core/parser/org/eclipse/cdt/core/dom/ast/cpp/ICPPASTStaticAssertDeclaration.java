@@ -33,7 +33,8 @@ public interface ICPPASTStaticAssertDeclaration extends IASTDeclaration {
 	IASTExpression getCondition();
 	
 	/**
-	 * Returns the message of the assertion, or potentially <code>null</code> when using content assist.
+	 * Returns the message of the assertion. Potentially <code>null</code> when message is omitted 
+	 * or using content assist.
 	 */
 	ICPPASTLiteralExpression getMessage();
 }

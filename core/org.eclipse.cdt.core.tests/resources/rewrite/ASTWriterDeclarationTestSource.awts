@@ -159,3 +159,8 @@ int main()
     }
     ;
 }
+
+//!static_asserts with and without message
+//%CPP
+static_assert(true, "Should always pass");
+static_assert(sizeof (int) == 4);

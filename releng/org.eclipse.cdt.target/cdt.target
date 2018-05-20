@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="29">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="30">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -16,7 +16,7 @@
 <unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20180302171354/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20180504181223/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
@@ -26,13 +26,13 @@
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/technology/swtbot/snapshots/"/>
+<repository location="http://download.eclipse.org/technology/swtbot/milestones/photon-m7/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.remote.console.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones"/>
+<repository location="http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- Needed for org.eclipse.emf.edit -->
@@ -60,7 +60,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/I-3.10.0-20180201205936/repository"/>
+<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/S-3.10.0.M7-20180510062228/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

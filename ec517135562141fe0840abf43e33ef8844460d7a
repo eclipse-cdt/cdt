@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aaaeb361_450ac96d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-22T21:18:33Z",
+      "side": 1,
+      "message": "As currently implemented, \"ignored\" will only be respected for highlightings that are not enabled by default.\n\nI\u0027m fine with that, but it\u0027s worth mentioning it in a comment (e.g. above the declaration of makeAssertions()).",
+      "revId": "ec517135562141fe0840abf43e33ef8844460d7a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

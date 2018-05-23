@@ -11,6 +11,7 @@
  *     Bruce Griffith, Sage Electronic Engineering, LLC - bug 305943
  *              - API generalization to become transport-independent (allow
  *                connections via serial ports and pipes).
+ *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -94,4 +95,27 @@ public class GDBJtagDeviceContributionFactory {
 		return (elementValue != null) ? elementValue : defaultValue;
 	}
 
+	/**
+	 * @since 9.2
+	 */
+	public GDBJtagDeviceContribution findByDeviceName(String name) {
+		for (GDBJtagDeviceContribution contribution : getGDBJtagDeviceContribution()) {
+			if (contribution.getDeviceName().equals(name)) {
+				return contribution;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @since 9.2
+	 */
+	public GDBJtagDeviceContribution findByDeviceId(String id) {
+		for (GDBJtagDeviceContribution contribution : getGDBJtagDeviceContribution()) {
+			if (contribution.getDeviceId().equals(id)) {
+				return contribution;
+			}
+		}
+		return null;
+	}
 }

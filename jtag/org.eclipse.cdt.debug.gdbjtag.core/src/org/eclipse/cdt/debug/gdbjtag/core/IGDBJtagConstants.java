@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - Disable reset and halt by default, bug 529171
+ *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -23,7 +24,9 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
+	/** @deprecated Use {@link #ATTR_JTAG_DEVICE ID} instead */
 	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
+	/** @since 9.2 */ public static final String ATTR_JTAG_DEVICE_ID = Activator.PLUGIN_ID + ".jtagDeviceId"; //$NON-NLS-1$
 	
 	public static final boolean DEFAULT_USE_REMOTE_TARGET = true;
 	public static final String DEFAULT_IP_ADDRESS = "unspecified-ip-address"; //$NON-NLS-1$
@@ -73,6 +76,12 @@ public interface IGDBJtagConstants {
 	/** @since 7.0 */ public static final String DEFAULT_SYMBOLS_OFFSET = ""; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String DEFAULT_PC_REGISTER = ""; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String DEFAULT_STOP_AT = ""; //$NON-NLS-1$
-	/** @since 7.0 */ public static final String DEFAULT_JTAG_DEVICE = ""; //$NON-NLS-1$
+	/** @since 9.2 */ public static final String DEFAULT_JTAG_DEVICE_ID = ""; //$NON-NLS-1$
+	/** @since 9.2 */ public static final String DEFAULT_JTAG_DEVICE_NAME = ""; //$NON-NLS-1$
+	/**
+	 * @since 7.0
+	 * @deprecated Use either {@link #DEFAULT_JTAG_DEVICE_ID} or {@link #DEFAULT_JTAG_DEVICE_NAME}
+	 */
+	public static final String DEFAULT_JTAG_DEVICE = ""; //$NON-NLS-1$
 	
 }

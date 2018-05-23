@@ -30,13 +30,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
-import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
@@ -51,75 +44,15 @@ public class SemanticTestBase extends BaseTestCase {
 		super(name);
 	}
 
-	protected static class CommonCTypes {
-		public static IType pointerToVoid = pointerTo(CBasicType.VOID);
-		public static IType pointerToConstVoid = pointerTo(constOf(CBasicType.VOID));
-		public static IType pointerToInt = pointerTo(CBasicType.INT);
-		public static IType pointerToConstInt = pointerTo(constOf(CBasicType.INT));
-		public static IType pointerToVolatileInt = pointerTo(volatileOf(CBasicType.INT));
-		public static IType pointerToConstVolatileInt = pointerTo(constVolatileOf(CBasicType.INT));
-
-		private static IType pointerTo(IType type) {
-			return new CPointerType(type, 0);
-		}
-
-		private static IType constOf(IType type) {
-			return new CQualifierType(type, true, false, false);
-		}
-
-		private static IType volatileOf(IType type) {
-			return new CQualifierType(type, false, true, false);
-		}
-
-		private static IType constVolatileOf(IType type) {
-			return new CQualifierType(type, true, true, false);
-		}
-	}
-
-	protected static class CommonCPPTypes {
-		public static IType char_ = CPPBasicType.CHAR;
-		public static IType int_ = CPPBasicType.INT;
-		public static IType void_ = CPPBasicType.VOID;
-		public static IType constChar = constOf(char_);
-		public static IType constInt = constOf(int_);
-		public static IType pointerToInt = pointerTo(int_);
-		public static IType constPointerToInt = constPointerTo(int_);
-		public static IType pointerToConstChar = pointerTo(constChar);
-		public static IType pointerToConstInt = pointerTo(constInt);
-		public static IType referenceToInt = referenceTo(int_);
-		public static IType referenceToConstInt = referenceTo(constInt);
-		public static IType rvalueReferenceToInt = rvalueReferenceTo(int_);
-		public static IType rvalueReferenceToConstInt = rvalueReferenceTo(constInt);
-
-		// Not quite the same as constOf(pointerTo(type)) because of the
-		// idiosyncratic way we represent cosnt pointers using a flag
-		// on the CPPPointerType rather than using CPPQualifierType.
-		private static IType constPointerTo(IType type) {
-			return new CPPPointerType(type, true, false, false);
-		}
-
-		private static IType pointerTo(IType type) {
-			return new CPPPointerType(type);
-		}
-
-		public static IType constOf(IType type) {
-			return new CPPQualifierType(type, true, false);
-		}
-
-		private static IType referenceTo(IType type) {
-			return new CPPReferenceType(type, false);
-		}
-
-		private static IType rvalueReferenceTo(IType type) {
-			return new CPPReferenceType(type, true);
-		}
-	}
-
 	protected static void assertSameType(IType expected, IType actual) {
 		assertNotNull(expected);
 		assertNotNull(actual);
 		assertTrue("Expected same types, but the types were: '" + ASTTypeUtil.getType(expected, false) + "' and '"
 				+ ASTTypeUtil.getType(actual, false) + "'", expected.isSameType(actual));
+	}
+
+	protected static void assertType(IVariable variable, IType expectedType) {
+		assertSameType(expectedType, variable.getType());
 	}
 
 	protected static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode lookupPoint) {

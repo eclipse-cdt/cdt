@@ -134,6 +134,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -2886,6 +2887,51 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return super.isLegalWithoutDtor(declSpec);
 	}
 
+	private RefQualifier optionalRefQualifier() throws EndOfFileException {
+		int nextToken = LT(1);
+		switch (nextToken) {
+		case IToken.tAMPER:
+			consume();
+			return RefQualifier.LVALUE;
+
+		case IToken.tAND:
+			consume();
+			return RefQualifier.RVALUE;
+
+		default:
+			return null;
+		}
+	}
+
+	private ICPPASTStructuredBindingDeclaration structuredBinding(ICPPASTSimpleDeclSpecifier simpleDeclSpecifier,
+			List<IASTAttributeSpecifier> attributes) throws BacktrackException, EndOfFileException {
+		RefQualifier refQualifier = optionalRefQualifier();
+		consume(IToken.tLBRACKET);
+		IASTName[] identifiers = identifierList();
+		int endOffset = consume(IToken.tRBRACKET).getEndOffset();
+
+		IASTInitializer initializer = null;
+		if (LT(1) != IToken.tCOLON) {
+			switch (LT(1)) {
+			case IToken.tASSIGN:
+				initializer = equalsInitalizerClause(false);
+				break;
+			case IToken.tLBRACE:
+			case IToken.tLPAREN:
+				initializer = bracedOrCtorStyleInitializer();
+				break;
+			}
+
+			endOffset = consume(IToken.tSEMI).getEndOffset();
+		}
+
+		ICPPASTStructuredBindingDeclaration structuredBinding = getNodeFactory()
+				.newStructuredBindingDeclaration(simpleDeclSpecifier, refQualifier, identifiers, initializer);
+		setRange(structuredBinding, simpleDeclSpecifier, endOffset);
+		addAttributeSpecifiers(attributes, structuredBinding);
+		return structuredBinding;
+	}
+
 	/**
 	 * Parses a declaration with the given options.
 	 */
@@ -2903,6 +2949,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IASTDeclSpecifier altDeclSpec = null;
 		IASTDeclarator altDtor = null;
 		IToken markBeforDtor = null;
+		boolean isAtStartOfStructuredBinding = false;
 		try {
 			Decl decl = declSpecifierSequence_initDeclarator(declOption, true);
 			markBeforDtor = decl.fDtorToken1;
@@ -2910,6 +2957,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			dtor = decl.fDtor1;
 			altDeclSpec = decl.fDeclSpec2;
 			altDtor = decl.fDtor2;
+			isAtStartOfStructuredBinding = decl.isAtStartOfStructuredBinding;
 		} catch (FoundAggregateInitializer lie) {
 			declSpec = lie.fDeclSpec;
 			// scalability: don't keep references to tokens, initializer may be large
@@ -2923,6 +2971,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				throwBacktrack(e.getProblem(), d);
 			}
 			throw e;
+		}
+
+		if (isAtStartOfStructuredBinding && declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+			ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpec;
+			return structuredBinding(simpleDeclSpecifier, attributes);
 		}
 
 		IASTDeclarator[] declarators = IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
@@ -4765,17 +4818,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// ref-qualifiers
-		switch (LT(1)) {
-		case IToken.tAMPER:
-			fc.setRefQualifier(RefQualifier.LVALUE);
-			endOffset = consume().getEndOffset();
-			break;
-		case IToken.tAND:
-			fc.setRefQualifier(RefQualifier.RVALUE);
-			endOffset = consume().getEndOffset();
-			break;
-		default:
-			break;
+		RefQualifier refQualifier = optionalRefQualifier();
+		if (refQualifier != null) {
+			fc.setRefQualifier(refQualifier);
+			endOffset = getEndOffset();
 		}
 
 		// throws clause
@@ -5672,5 +5718,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTAlignmentSpecifier createAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression,
 			IASTAlignmentSpecifier typeId) {
 		return new CPPASTAmbiguousAlignmentSpecifier(expression, typeId);
+	}
+
+	protected IASTName[] identifierList() throws EndOfFileException, BacktrackException {
+		List<IASTName> result = new ArrayList<>();
+		result.add(identifier());
+		while (LT(1) == IToken.tCOMMA) {
+			consume();
+			result.add(identifier());
+		}
+		return result.toArray(new IASTName[result.size()]);
 	}
 }

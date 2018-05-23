@@ -1380,4 +1380,38 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 		assertInstance(target, IASTName.class);
 		assertEquals(IASTNameOwner.r_definition, ((IASTName) target).getRoleOfName(false));
 	}
+
+	//	template <typename E>
+	//	struct Node {
+	//		Node * next;
+	//		E value;
+	//	};
+	//	Node<int> head{nullptr, 42};
+	//	auto [h, v] = head;
+
+	//	#include "SBTestHeader.hpp"
+	//	auto myH = h;
+	//	auto myV = v;
+	public void testNavigationToStructuredBinding_522200() throws Exception {
+		StringBuilder[] buffers = getContents(2);
+		String header = buffers[0].toString();
+		IFile headerFile = importFile("SBTestHeader.hpp", header);
+		String source = buffers[1].toString();
+		IFile sourceFile = importFile("SBTestSource.cpp", source);
+		waitUntilFileIsIndexed(index, sourceFile);
+
+		IASTNode targetH = testF3(sourceFile, source.indexOf("myH = h") + 6);
+		assertInstance(targetH, IASTName.class);
+		assertEquals(IASTNameOwner.r_definition, ((IASTName) targetH).getRoleOfName(false));
+		IASTFileLocation locationH = targetH.getFileLocation();
+		int targetHOffset = locationH.getNodeOffset();
+		assertEquals(header.indexOf("auto [h") + 6, targetHOffset);
+
+		IASTNode targetV = testF3(sourceFile, source.indexOf("myV = v") + 6);
+		assertInstance(targetV, IASTName.class);
+		assertEquals(IASTNameOwner.r_definition, ((IASTName) targetV).getRoleOfName(false));
+		IASTFileLocation locationV = targetV.getFileLocation();
+		int targetVOffset = locationV.getNodeOffset();
+		assertEquals(header.indexOf("[h, v") + 4, targetVOffset);
+	}
 }

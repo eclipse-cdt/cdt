@@ -132,6 +132,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		public IASTDeclarator fDtor2;
 		public IToken fDtorToken1;
 
+		public boolean isAtStartOfStructuredBinding = false;
+
 		public Decl set(IASTDeclSpecifier declspec, IASTDeclarator dtor, IToken dtorToken) {
 			fDeclSpec1 = declspec;
 			fDtor1 = dtor;
@@ -1676,6 +1678,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	}
 
 	/**
+	 * Checks whether the type specified by the {@code declSpecifier} is "auto" and
+	 * the subsequent token, when looking beyond potential ref-qualifiers (& and &&),
+	 * will be a single opening bracket ([) followed by an identifier.
+	 */
+	protected boolean isAtStartOfStructuredBinding(IASTDeclSpecifier declSpecifier) {
+		if (!isAutoType(declSpecifier)) {
+			return false;
+		}
+		int expectedBracketOffset = 1;
+		int nextToken = LTcatchEOF(expectedBracketOffset);
+		if (nextToken == IToken.tAMPER || nextToken == IToken.tAND) {
+			expectedBracketOffset++;
+		}
+		return LTcatchEOF(expectedBracketOffset) == IToken.tLBRACKET
+				&& LTcatchEOF(expectedBracketOffset + 1) == IToken.tIDENTIFIER;
+	}
+
+	/**
 	 * Parses for two alternatives of a declspec sequence followed by a initDeclarator.
 	 * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
 	 * longer alternative is selected.
@@ -1688,6 +1708,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		final int lt1 = LTcatchEOF(1);
 		if (lt1 == IToken.tEOC)
 			return result;
+
+		// support for structured bindings
+		if (isAtStartOfStructuredBinding(result.fDeclSpec1)) {
+			result.isAtStartOfStructuredBinding = true;
+			return result;
+		}
 
 		// support simple declarations without declarators
 		final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDtor(result.fDeclSpec1);
@@ -2052,6 +2078,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 					&& ((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	protected static boolean isAutoType(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTSimpleDeclSpecifier) {
+			IASTSimpleDeclSpecifier simpleDeclSpecifier = (IASTSimpleDeclSpecifier) declSpec;
+			return simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_auto;
 		}
 		return false;
 	}

@@ -159,16 +159,7 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(Keywords.VOLATILE);
 		}
 		RefQualifier refQualifier = funcDec.getRefQualifier();
-		if (refQualifier != null) {
-			switch (refQualifier) {
-			case LVALUE:
-				scribe.print(Keywords.cpAMPER);
-				break;
-			case RVALUE:
-				scribe.print(Keywords.cpAND);
-				break;
-			}
-		}
+		writeRefQualifier(refQualifier);
 		if (funcDec.isMutable()) {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);

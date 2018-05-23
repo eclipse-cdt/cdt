@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -108,6 +109,8 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 					return rwAssignmentToType(type, indirection);
 				}
 			}
+		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
+			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
 		return READ | WRITE; // fallback
 	}

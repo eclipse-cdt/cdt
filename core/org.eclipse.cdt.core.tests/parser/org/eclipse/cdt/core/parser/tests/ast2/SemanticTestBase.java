@@ -122,6 +122,10 @@ public class SemanticTestBase extends BaseTestCase {
 				+ ASTTypeUtil.getType(actual, false) + "'", expected.isSameType(actual));
 	}
 
+	protected static void assertType(IVariable variable, IType expectedType) {
+		assertSameType(expectedType, variable.getType());
+	}
+
 	protected static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode lookupPoint) {
 		try {
 			CPPSemantics.pushLookupPoint(lookupPoint);

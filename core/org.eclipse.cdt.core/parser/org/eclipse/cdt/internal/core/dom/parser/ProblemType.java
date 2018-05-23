@@ -27,6 +27,8 @@ public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType AUTO_FOR_VIRTUAL_METHOD = new ProblemType(TYPE_AUTO_FOR_VIRTUAL_METHOD);
 	public static final IType CANNOT_DEDUCE_AUTO_TYPE = new ProblemType(TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 	public static final IType CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE = new ProblemType(TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE);
+	public static final IType CANNOT_DEDUCE_STRUCTURED_BINDING_TYPE = new ProblemType(
+			TYPE_CANNOT_DEDUCE_STRUCTURED_BINDING_TYPE);
 	public static final IType ENUMERATION_EXPECTED = new ProblemType(TYPE_ENUMERATION_EXPECTED);
 	public static final IType NO_NAME = new ProblemType(TYPE_NO_NAME);
 	public static final IType NOT_PERSISTED = new ProblemType(TYPE_NOT_PERSISTED);

@@ -65,6 +65,8 @@ public class AllConstexprEvalTests {
 		suite.addTest(FloatingPointValueTests.SingleProject.suite());
 		suite.addTest(CStringValueTests.NonIndexing.suite());
 		suite.addTest(CStringValueTests.SingleProject.suite());
+		suite.addTest(StructuredBindingTests.NonIndexing.suite());
+		suite.addTest(StructuredBindingTests.SingleProject.suite());
 		return suite;
 	}
 }

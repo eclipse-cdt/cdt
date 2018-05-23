@@ -23,8 +23,10 @@ import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -155,6 +157,19 @@ public class NodeWriter {
 		}
 		if (spaceLocations.contains(SpaceLocation.AFTER)) {
 			scribe.printSpace();
+		}
+	}
+
+	protected void writeRefQualifier(RefQualifier refQualifier) {
+		if (refQualifier != null) {
+			switch (refQualifier) {
+			case LVALUE:
+				scribe.print(Keywords.cpAMPER);
+				break;
+			case RVALUE:
+				scribe.print(Keywords.cpAND);
+				break;
+			}
 		}
 	}
 }

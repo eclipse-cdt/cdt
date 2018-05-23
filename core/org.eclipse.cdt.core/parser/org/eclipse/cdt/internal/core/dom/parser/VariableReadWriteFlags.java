@@ -51,8 +51,10 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -96,6 +98,8 @@ public abstract class VariableReadWriteFlags {
 			if (binding instanceof IVariable) {
 				return rwAssignmentToType(((IVariable) binding).getType(), indirection);
 			}
+		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
+			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
 		return READ | WRITE; // fallback
 	}
@@ -113,8 +117,19 @@ public abstract class VariableReadWriteFlags {
 					}
 				}
 			}
+		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
+			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
 		return READ | WRITE; // fallback
+	}
+
+	protected int rwInStructuredBinding(ICPPASTStructuredBindingDeclaration declaration) {
+		RefQualifier refQualifier = declaration.getRefQualifier();
+		if (refQualifier != null && !declaration.getDeclSpecifier().isConst()) {
+			return READ | WRITE;
+		} else {
+			return READ;
+		}
 	}
 
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {

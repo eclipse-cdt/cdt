@@ -908,11 +908,22 @@ public class SemanticUtil {
 		if (type instanceof ICPPReferenceType) {
 			ICPPReferenceType refType = (ICPPReferenceType) type;
 			return isConst(refType.getType());
-		} else if (type instanceof CPPQualifierType) {
-			CPPQualifierType qualifierType = (CPPQualifierType) type;
-			return qualifierType.isConst();
 		}
-		return false;
+		return ExpressionTypes.isConst(type);
+	}
+
+	/**
+	 * Returns whether a type is volatile or a reference to a volatile type.
+	 *
+	 * @param type the type to be checked
+	 * @return true if the type is volatile, otherwise false
+	 */
+	public static boolean isVolatile(IType type) {
+		if (type instanceof ICPPReferenceType) {
+			ICPPReferenceType refType = (ICPPReferenceType) type;
+			return isVolatile(refType.getType());
+		}
+		return ExpressionTypes.isVolatile(type);
 	}
 
 	static IType[] addImplicitParameterType(IType[] types, ICPPMethod m) {

@@ -2470,6 +2470,84 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.insert_space_between_empty_parens_in_exception_specification"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a space before the opening bracket of the name list in a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_structured_binding_name_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_opening_structured_binding_name_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after the opening bracket of the name list in a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_structured_binding_name_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_opening_structured_binding_name_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before the closing bracket of the name list in a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_structured_binding_name_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_closing_structured_binding_name_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before a comma in the name list of a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_structured_binding_name_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_comma_in_structured_binding_name_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after a comma in the name list of a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_structured_binding_name_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_comma_in_structured_binding_name_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before a reference qualifier in a structured binding declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_ref_qualifier_in_structured_binding"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.9
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_ref_qualifier_in_structured_binding"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to keep else statement on the same line
 	 *     - option id:         "org.eclipse.cdt.core.formatter.keep_else_statement_on_same_line"
 	 *     - possible values:   { TRUE, FALSE }

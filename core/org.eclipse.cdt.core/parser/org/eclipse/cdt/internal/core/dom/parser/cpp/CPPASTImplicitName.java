@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSearch;
 
@@ -34,6 +35,10 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	private boolean alternate;
 	private boolean isOperator;
 	private boolean isDefinition;
+
+	public CPPASTImplicitName(IASTNode parent) {
+		this(CharArrayUtils.EMPTY, parent);
+	}
 
 	public CPPASTImplicitName(char[] name, IASTNode parent) {
 		super(name);

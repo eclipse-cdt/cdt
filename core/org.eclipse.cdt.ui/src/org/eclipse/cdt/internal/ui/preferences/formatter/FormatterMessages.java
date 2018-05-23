@@ -78,6 +78,7 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceTabPage_if;
 	public static String WhiteSpaceTabPage_for;
 	public static String WhiteSpaceTabPage_labels;
+	public static String WhiteSpaceTabPage_structured_bindings;
 	public static String WhiteSpaceTabPage_template_arguments;
 	public static String WhiteSpaceTabPage_template_parameters;
 	public static String WhiteSpaceTabPage_conditionals;
@@ -204,6 +205,13 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_after_semicolon;
 	public static String WhiteSpaceOptions_before_question_mark;
 	public static String WhiteSpaceOptions_after_question_mark;
+	public static String WhiteSpaceOptions_structured_binding_declarations;
+	public static String WhiteSpaceOptions_structured_binding_before_ref_qualifier;
+	public static String WhiteSpaceOptions_structured_binding_before_name_list_opening_bracket;
+	public static String WhiteSpaceOptions_structured_binding_before_first_name_in_list;
+	public static String WhiteSpaceOptions_structured_binding_before_comma_in_name_list;
+	public static String WhiteSpaceOptions_structured_binding_after_comma_in_name_list;
+	public static String WhiteSpaceOptions_structured_binding_before_name_list_closing_bracket;
 	//	public static String WhiteSpaceOptions_before_ellipsis;
 	//	public static String WhiteSpaceOptions_after_ellipsis;
 	//	public static String WhiteSpaceOptions_return_with_parenthesized_expression;

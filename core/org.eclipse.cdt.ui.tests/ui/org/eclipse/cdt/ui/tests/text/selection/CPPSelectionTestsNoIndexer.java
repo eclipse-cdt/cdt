@@ -1418,4 +1418,33 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertInstance(target, IASTName.class);
 		assertEquals(IASTNameOwner.r_definition, ((IASTName) target).getRoleOfName(false));
 	}
+
+	//int arr[2]{1, 2};
+	//auto [e1, e2] = arr;
+	//auto r1 = e1;
+	//auto r2 = e2;
+	public void testOpenDeclarationForStructuredBinding_522200() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testSB_.cpp", code); //$NON-NLS-1$
+
+		int offsetE1Reference = code.indexOf("e1;"); //$NON-NLS-1$
+		IASTNode e1Declaration = testF3(file, offsetE1Reference);
+		assertTrue(e1Declaration instanceof IASTName);
+
+		String expectedE1Name = "e1"; //$NON-NLS-1$
+		assertEquals(expectedE1Name, ((IASTName) e1Declaration).toString());
+		assertEquals(code.indexOf(expectedE1Name), ((ASTNode) e1Declaration).getOffset());
+		assertEquals(expectedE1Name.length(), ((ASTNode) e1Declaration).getLength());
+		assertEquals(IASTNameOwner.r_definition, ((IASTName) e1Declaration).getRoleOfName(false));
+
+		int offsetE2Reference = code.indexOf("e2;"); //$NON-NLS-1$
+		IASTNode e2Declaration = testF3(file, offsetE2Reference);
+		assertTrue(e2Declaration instanceof IASTName);
+
+		String expectedE2Name = "e2"; //$NON-NLS-1$
+		assertEquals(expectedE2Name, ((IASTName) e2Declaration).toString());
+		assertEquals(code.indexOf(expectedE2Name), ((ASTNode) e2Declaration).getOffset());
+		assertEquals(expectedE2Name.length(), ((ASTNode) e2Declaration).getLength());
+		assertEquals(IASTNameOwner.r_definition, ((IASTName) e2Declaration).getRoleOfName(false));
+	}
 }

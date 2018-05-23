@@ -122,7 +122,7 @@ public class ExpressionTypes {
 		return false;
 	}
 
-	private static boolean isVolatile(IType type) {
+	public static boolean isVolatile(IType type) {
 		if (type instanceof IQualifierType) {
 			return ((IQualifierType) type).isVolatile();
 		} else if (type instanceof IPointerType) {

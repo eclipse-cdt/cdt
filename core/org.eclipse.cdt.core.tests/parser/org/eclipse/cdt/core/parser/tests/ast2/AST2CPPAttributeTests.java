@@ -335,6 +335,12 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTSimpleDeclSpecifier.class);
 	}
 
+	//auto [[maybe_unused]] variable;
+	public void testAttributeAutoDeclSpecifer() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTSimpleDeclSpecifier.class);
+	}
+
 	//	const volatile unsigned long int [[attr]] cvuli;
 	public void testAttributedTypeSpecifier() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();

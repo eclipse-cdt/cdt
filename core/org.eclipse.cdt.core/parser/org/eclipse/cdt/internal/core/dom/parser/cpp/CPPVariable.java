@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -52,7 +54,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -258,7 +259,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
 			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition,
-					fDeclarations, getType())) == IntegralValue.UNKNOWN) {
+					fDeclarations, getType())) == IntegralValue.UNKNOWN || getStructuredBindingDeclaration() != null) {
 				ICPPEvaluation initEval = getInitializerEvaluation();
 				if (initEval == null) {
 					return null;
@@ -319,21 +320,48 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 			if (constructor != null) {
 				ICPPEvaluation[] arguments = EvalConstructor.extractArguments(initializer, constructor);
 				return new EvalConstructor(getType(), constructor, arguments, declarator);
-			} else if (initializer instanceof IASTEqualsInitializer) {
-				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-				ICPPASTInitializerClause clause = (ICPPASTInitializerClause) equalsInitializer.getInitializerClause();
-				return clause.getEvaluation();
-			} else if (initializer instanceof ICPPASTInitializerList) {
-				return ((ICPPASTInitializerClause) initializer).getEvaluation();
-			} else if (initializer instanceof ICPPASTConstructorInitializer) {
-				ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
-				ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) ctorInitializer.getArguments()[0];
-				return evalOwner.getEvaluation();
-			} else if (initializer == null) {
-				return null;
+			}
+			return evaluationOfInitializer(initializer);
+		}
+
+		ICPPASTStructuredBindingDeclaration structuredBinding = getStructuredBindingDeclaration();
+		if (structuredBinding != null) {
+			return evaluationOfStructuredBindingInitializer(structuredBinding);
+		}
+		return null;
+	}
+
+	private ICPPEvaluation evaluationOfStructuredBindingInitializer(
+			ICPPASTStructuredBindingDeclaration structuredBinding) {
+		IASTImplicitName implicitName = structuredBinding.getImplicitNames()[0];
+		CPPStructuredBindingComposite variable = (CPPStructuredBindingComposite) implicitName.getBinding();
+		return variable.getEvaluationForName(fDefinition);
+	}
+
+	public static ICPPEvaluation evaluationOfInitializer(IASTInitializer initializer) {
+		if (initializer instanceof IASTEqualsInitializer) {
+			IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+			ICPPASTInitializerClause clause = (ICPPASTInitializerClause) equalsInitializer.getInitializerClause();
+			return clause.getEvaluation();
+		} else if (initializer instanceof ICPPASTInitializerList) {
+			return ((ICPPASTInitializerClause) initializer).getEvaluation();
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
+			ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) ctorInitializer.getArguments()[0];
+			return evalOwner.getEvaluation();
+		}
+		return null;
+	}
+
+	private ICPPASTStructuredBindingDeclaration getStructuredBindingDeclaration() {
+		IASTNode definition = getDefinition();
+		if (definition != null) {
+			IASTNode parent = definition.getParent();
+			if (parent instanceof ICPPASTStructuredBindingDeclaration) {
+				return (ICPPASTStructuredBindingDeclaration) parent;
 			}
 		}
-		return EvalFixed.INCOMPLETE;
+		return null;
 	}
 
 	private static ICPPConstructor getImplicitlyCalledCtor(ICPPASTDeclarator declarator) {
@@ -350,4 +378,5 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 	public void allDeclarationsDefinitionsAdded() {
 		fAllResolved = true;
 	}
+
 }

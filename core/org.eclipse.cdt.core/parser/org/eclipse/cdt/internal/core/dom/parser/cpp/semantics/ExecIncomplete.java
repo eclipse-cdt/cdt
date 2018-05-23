@@ -35,6 +35,10 @@ public class ExecIncomplete implements ICPPExecution {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		throw new UnsupportedOperationException();
+		buffer.putShort(ITypeMarshalBuffer.EXEC_INCOMPLETE);
+	}
+
+	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) {
+		return INSTANCE;
 	}
 }

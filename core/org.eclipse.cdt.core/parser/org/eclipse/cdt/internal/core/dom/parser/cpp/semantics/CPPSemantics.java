@@ -141,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -250,6 +251,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Contex
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMAdaptedASTNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -938,7 +940,7 @@ public class CPPSemantics {
 		}
 	}
 
-	static ICPPScope getLookupScope(IASTName name) throws DOMException {
+	public static ICPPScope getLookupScope(IASTName name) {
 		IASTNode parent = name.getParent();
 		IScope scope = null;
 		if (parent instanceof ICPPASTBaseSpecifier) {
@@ -1102,7 +1104,9 @@ public class CPPSemantics {
 				}
 			}
 			ICPPScope scope = useTemplScope ? nextTmplScope : nextScope;
-			scope = (ICPPScope) SemanticUtil.mapToAST(scope, data.getTranslationUnit());
+			if (!(scope != null && scope.getKind() == EScopeKind.eGlobal && data.isIgnorePointOfDeclaration())) {
+				scope = (ICPPScope) SemanticUtil.mapToAST(scope, data.getTranslationUnit());
+			}
 
 			if (!data.usingDirectivesOnly && !(data.ignoreMembers && scope instanceof ICPPClassScope)) {
 				mergeResults(data, getBindingsFromScope(scope, data), true);
@@ -1387,7 +1391,9 @@ public class CPPSemantics {
 	}
 
 	static IBinding[] getBindingsFromScope(ICPPScope scope, LookupData data) throws DOMException {
-		IBinding[] bindings = scope.getBindings(data);
+		// PDOMGlobalScope does not support getBindings(LookupData)
+		IBinding[] bindings = (scope instanceof PDOMGlobalScope) ? IBinding.EMPTY_BINDING_ARRAY
+				: scope.getBindings(data);
 
 		if (scope instanceof ICPPASTInternalScope && scope instanceof ICPPClassScope) {
 			final IASTName lookupName = data.getLookupName();
@@ -1507,6 +1513,8 @@ public class CPPSemantics {
 		if (parentScope == null && scope instanceof ICPPClassSpecializationScope
 				&& unit instanceof CPPASTTranslationUnit) {
 			parentScope = unit.getScope();
+		} else if (parentScope != null && parentScope.getKind() == EScopeKind.eGlobal) {
+			return (ICPPScope) parentScope;
 		} else {
 			parentScope = SemanticUtil.mapToAST(parentScope, unit);
 		}
@@ -1662,6 +1670,10 @@ public class CPPSemantics {
 		} else if (parent instanceof ICPPASTRangeBasedForStatement) {
 			ICPPASTRangeBasedForStatement forStatement = (ICPPASTRangeBasedForStatement) parent;
 			final IASTDeclaration decl = forStatement.getDeclaration();
+			if (decl instanceof ICPPASTStructuredBindingDeclaration) {
+				handleStructuredBinding((ICPPASTStructuredBindingDeclaration) decl, scope);
+				return;
+			}
 			nodes = new IASTNode[] { decl };
 		} else if (parent instanceof ICPPASTEnumerationSpecifier) {
 			// The enumeration scope contains the enumeration items
@@ -1822,7 +1834,9 @@ public class CPPSemantics {
 			return;
 		}
 
-		if (declaration instanceof IASTSimpleDeclaration) {
+		if (declaration instanceof ICPPASTStructuredBindingDeclaration) {
+			handleStructuredBinding((ICPPASTStructuredBindingDeclaration) declaration, scope);
+		} else if (declaration instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
@@ -1941,6 +1955,12 @@ public class CPPSemantics {
 			default:
 				break;
 			}
+		}
+	}
+
+	private static void handleStructuredBinding(ICPPASTStructuredBindingDeclaration structuredBinding, IScope scope) {
+		for (IASTName name : structuredBinding.getNames()) {
+			ASTInternal.addName(scope, name);
 		}
 	}
 
@@ -4325,7 +4345,13 @@ public class CPPSemantics {
 		// Find all bindings that match the first part of the name.  For each such binding,
 		// lookup the second part of the name.
 		for (IBinding binding : findBindings(scope, part1, false)) {
-			findBindingsForQualifiedName(getLookupScope(binding), part2, bindings);
+			IScope lookupScope;
+			if (binding instanceof IScope) {
+				lookupScope = (IScope) binding;
+			} else {
+				lookupScope = getLookupScope(binding);
+			}
+			findBindingsForQualifiedName(lookupScope, part2, bindings);
 		}
 	}
 

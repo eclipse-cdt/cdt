@@ -50,6 +50,8 @@ public interface ISemanticProblem {
 	int TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE = 10007;
 	/** @since 6.3 */
 	int TYPE_AUTO_FOR_VIRTUAL_METHOD = 10008;
+	/** @since 6.6 */
+	int TYPE_CANNOT_DEDUCE_STRUCTURED_BINDING_TYPE = 10009;
 
 	/**
 	 * Returns the ID of the problem.

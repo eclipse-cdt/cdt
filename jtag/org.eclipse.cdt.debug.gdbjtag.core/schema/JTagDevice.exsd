@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.debug.gdbjtag.core" id="JTagDevice" name="%JTagDevice.name"/>
       </appInfo>
       <documentation>
-         Jtag device extension point
+         JTAG device extension point
       </documentation>
    </annotation>
 
@@ -49,14 +49,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Unique if of the jtag device contribution.
+                  Unique id of the JTAG device contribution.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Name of the JTag device.
+                  Name of the JTAG device.
                </documentation>
             </annotation>
          </attribute>

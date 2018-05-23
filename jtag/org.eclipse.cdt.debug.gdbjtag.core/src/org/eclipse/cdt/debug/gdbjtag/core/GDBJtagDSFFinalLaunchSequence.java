@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 QNX Software Systems and others.
+ * Copyright (c) 2007, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Marc Khouzam (Ericsson) - Cannot disable Delay command (bug 413437)
  *     John Dallaway - Execute run commands before resume (Bug 525692)
  *     John Dallaway - Test for reset/delay/halt command not defined (Bug 361881)
+ *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -238,7 +239,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepRetrieveJTAGDevice(final RequestMonitor rm) {
 		Exception exception = null;
 		try {
-			fGdbJtagDevice = getGDBJtagDevice();
+			fGdbJtagDevice = getGDBJtagDeviceContribution().getDevice();
 		} catch (NullPointerException e) {
 			exception = e;
 		}
@@ -630,20 +631,33 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	}
 
 	private String getGDBJtagDeviceName() {
-		return CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE);
+		GDBJtagDeviceContribution contribution = getGDBJtagDeviceContribution();
+		if (contribution != null) {
+			return contribution.getDeviceName();
+		}
+		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME;
 	}
 
-	private IGDBJtagDevice getGDBJtagDevice () {
-		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = getGDBJtagDeviceName();
-		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
-		for (GDBJtagDeviceContribution availableDevice : availableDevices) {
-			if (jtagDeviceName.equals(availableDevice.getDeviceName())) {
-				gdbJtagDevice = availableDevice.getDevice();
-				break;
+	@SuppressWarnings("deprecation")
+	private GDBJtagDeviceContribution getGDBJtagDeviceContribution() {
+		Map<String, Object> attributes = getAttributes();
+		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID)) {
+			String deviceId = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, "");
+			if (!deviceId.isEmpty()) {
+				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceId(deviceId);
 			}
 		}
-		return gdbJtagDevice;
+
+		// Fall back to old behavior with name only if ID is missing
+		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
+			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+			if (!deviceName.isEmpty()) {
+				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
+			}
+		}
+
+		// No matching device contribution found
+		return null;
 	}
 
 	/**

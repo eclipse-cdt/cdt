@@ -1647,7 +1647,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
     	return declSpecifierSequence_initDeclarator(option, acceptCompoundWithoutDtor, null);
     }
-    
+
+	protected boolean isAtStartOfStructuredBinding() {
+		int nextToken = LTcatchEOF(1);
+		if (nextToken == IToken.tAMPER || nextToken == IToken.tAND) {
+			nextToken = LTcatchEOF(2);
+		}
+		return nextToken == IToken.tLBRACKET; 
+	}
+
     /**
      * Parses for two alternatives of a declspec sequence followed by a initDeclarator.
      * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
@@ -1662,6 +1670,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		if (lt1 == IToken.tEOC)
 			return result;
 
+		// support for structured bindings
+		if (isAutoType(result.fDeclSpec1) && isAtStartOfStructuredBinding()) {
+			return result;
+		}
+	
     	// support simple declarations without declarators
     	final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDtor(result.fDeclSpec1);
 		if (acceptEmpty) {
@@ -1672,11 +1685,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				return result;
 			}
 		}
+		
 
 		final IToken dtorMark1= mark();
 		final IToken dtorMark2= result.fDtorToken1;
 		final IASTDeclSpecifier declspec1= result.fDeclSpec1;
 		final IASTDeclSpecifier declspec2= result.fDeclSpec2;
+
 		IASTDeclarator dtor1, dtor2;
 		try {
 			// declarator for first variant
@@ -2026,6 +2041,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	}
     	return false;
     }
+
+	protected static boolean isAutoType(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTSimpleDeclSpecifier) {
+			IASTSimpleDeclSpecifier simpleDeclSpecifier = (IASTSimpleDeclSpecifier) declSpec;
+			return simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_auto;
+		}
+		return false;
+	}
 
     protected abstract IASTAmbiguousStatement createAmbiguousStatement();
 

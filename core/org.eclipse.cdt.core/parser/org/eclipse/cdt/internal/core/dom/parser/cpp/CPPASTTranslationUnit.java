@@ -222,7 +222,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	 * Stores directives from the index into this scope.
 	 */
 	public void handleAdditionalDirectives(ICPPNamespaceScope scope) {
-		fScopeMapper.handleAdditionalDirectives(scope);
+		// handleAdditionalDirectives(ICPPNamespaceScope) does not accept scopes of type IIndexScope
+		if (!(scope instanceof IIndexScope)) {
+			fScopeMapper.handleAdditionalDirectives(scope);
+		}
 	}
 
 	private class ProblemBindingClearer extends ASTVisitor {

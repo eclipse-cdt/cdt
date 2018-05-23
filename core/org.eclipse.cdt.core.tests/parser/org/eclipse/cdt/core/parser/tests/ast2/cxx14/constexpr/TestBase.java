@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.CStringValue;
 import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -61,6 +62,16 @@ public class TestBase extends IndexBindingResolutionTestBase {
 		map.put("__SIZEOF_LONG__", "8");
 		map.put("__SIZEOF_POINTER__", "8");
 		return map;
+	}
+
+	protected void assertEvaluationIsUnkown() throws Exception {
+		IValue value = getValue();
+		assertEquals(value, IntegralValue.UNKNOWN);
+	}
+
+	protected void assertEvaluationIsError() throws Exception {
+		IValue value = getValue();
+		assertEquals(value, IntegralValue.ERROR);
 	}
 
 	protected void assertEvaluationEquals(boolean expectedValue) throws Exception {

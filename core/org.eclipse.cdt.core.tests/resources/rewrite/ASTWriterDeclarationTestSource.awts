@@ -214,3 +214,17 @@ enum struct [[foo]] X{ };
 //!Attributed scoped enum declaration with keyword class
 //%CPP
 enum class [[foo]] X{ };
+
+//!Structured binding declarations
+//%CPP
+struct S
+{
+    int first, second, third;
+} s{};
+int arr[]{1, 2, 3};
+auto [a, b, c] = arr;
+auto [d, e, f]{s};
+auto [g, h, i](arr);
+auto& [j, k, l] = arr;
+const auto& [m, n, o] = S{};
+auto&& [p, q, r] = S{};

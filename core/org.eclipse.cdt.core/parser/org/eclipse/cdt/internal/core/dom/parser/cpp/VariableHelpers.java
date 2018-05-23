@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -120,6 +121,9 @@ public class VariableHelpers {
 					if (firstCandidate == null) {
 						firstCandidate = (IArrayType) t;
 					}
+				} else if (node instanceof ICPPASTStructuredBindingDeclaration) {
+					ICPPASTStructuredBindingDeclaration parent = (ICPPASTStructuredBindingDeclaration) node;
+					return CPPVisitor.createType(parent, n);
 				}
 			}
 		}

@@ -46,11 +46,15 @@ public class CPPASTSimpleDeclaration extends CPPASTAttributeOwner implements IAS
 	@Override
 	public CPPASTSimpleDeclaration copy(CopyStyle style) {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
+		return copy(copy, style);
+	}
+
+	protected <T extends CPPASTSimpleDeclaration> T copy(T copy, CopyStyle style) {
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
 		for (IASTDeclarator declarator : getDeclarators()) {
 			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
 		}
-		return copy(copy, style);
+		return super.copy(copy, style);
 	}
 
 	@Override

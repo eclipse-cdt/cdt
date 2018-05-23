@@ -16,6 +16,7 @@
  *              - API generalization to become transport-independent (e.g. to
  *                allow connections via serial ports and pipes).
  *     John Dallaway - Ensure correct SessionType enabled, bug 334110
+ *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
 *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -384,7 +385,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		ipAddress.setEnabled(enabled);
 		portNumber.setEnabled(enabled);
 		connection.setEnabled(enabled);
-		GDBJtagDeviceContribution selectedDeviceEntry = findJtagDeviceByName(jtagDevice.getText());
+		GDBJtagDeviceContribution selectedDeviceEntry = GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(jtagDevice.getText());
 		if ((selectedDeviceEntry == null) || (selectedDeviceEntry.getDevice() == null)) {
 			remoteConnectParmsLayout.topControl = null;
 			remoteConnectionParameters.layout();
@@ -400,13 +401,50 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	private GDBJtagDeviceContribution findJtagDeviceByName(String name) {
-		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
-		for (GDBJtagDeviceContribution device : availableDevices) {
-			if (device.getDeviceName().equals(name)) {
-				return device;
-			}
+	/**
+	 * Returns the device name for a given device id or {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME}
+	 *
+	 * @param jtagDeviceId The device id
+	 * @return The device id if found, else {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME}
+	 * @since 8.0
+	 */
+	protected String getDeviceNameForDeviceId(String jtagDeviceId) {
+		GDBJtagDeviceContribution contribution = GDBJtagDeviceContributionFactory.getInstance().findByDeviceId(jtagDeviceId);
+		if (contribution != null) {
+			return contribution.getDeviceName();
 		}
+		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME;
+	}
+
+	/**
+	 * Returns the device id for a given device name or {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID}
+	 *
+	 * @param jtagDeviceName The device name
+	 * @return The device id if found, else {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID}
+	 * @since 8.0
+	 */
+	protected String getDeviceIdForDeviceName(String jtagDeviceName) {
+		GDBJtagDeviceContribution device = GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(jtagDeviceName);
+		if (device != null) {
+			return device.getDeviceId();
+		}
+		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID;
+	}
+
+	private GDBJtagDeviceContribution getDeviceContribution(ILaunchConfiguration configuration) throws CoreException {
+		String deviceId = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, (String)null);
+		if (deviceId != null) {
+			return GDBJtagDeviceContributionFactory.getInstance().findByDeviceId(deviceId);
+		}
+
+		// Fall back to old behavior with name only if ID is missing
+		@SuppressWarnings("deprecation")
+		String deviceName = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, (String)null);
+		if (deviceName != null) {
+			return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
+		}
+
+		// No matching device contribution found
 		return null;
 	}
 
@@ -422,8 +460,14 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			useRemote.setSelection(useRemoteAttr);
 
-			savedJtagDevice = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
-			if (savedJtagDevice.length() == 0) {
+			GDBJtagDeviceContribution savedDeviceContribution = getDeviceContribution(configuration);
+			if (savedDeviceContribution != null) {
+				savedJtagDevice = savedDeviceContribution.getDeviceName();
+			} else {
+				savedJtagDevice = IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME;
+			}
+
+			if (savedJtagDevice.isEmpty()) {
 				jtagDevice.select(0);
 			} else {
 				String storedAddress = ""; //$NON-NLS-1$
@@ -485,7 +529,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim()); // DSF
 		savedJtagDevice = jtagDevice.getText();
-		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, savedJtagDevice);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, getDeviceIdForDeviceName(savedJtagDevice));
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
 		if (useRemote.getSelection()) {
 			// ensure LaunchUtils.getSessionType() returns SessionType.REMOTE (bug 334110)
@@ -495,9 +539,9 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			// ensure LaunchUtils.getSessionType() returns the default session type
 			configuration.removeAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE);
 		}
-		if (savedJtagDevice.length() > 0) {
+		if (!savedJtagDevice.isEmpty()) {
 			try {
-				IGDBJtagDevice device = findJtagDeviceByName(jtagDevice.getText()).getDevice();
+				IGDBJtagDevice device = GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(savedJtagDevice).getDevice();
 				if (device instanceof IGDBJtagConnection) {
 					String conn = connection.getText().trim();
 					URI uri = new URI("gdb", conn, ""); //$NON-NLS-1$ //$NON-NLS-2$

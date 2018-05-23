@@ -17,6 +17,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,11 +26,15 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -38,9 +43,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -48,9 +58,14 @@ import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -60,6 +75,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 	private IType fType;
 	private IValue fInitialValue = IntegralValue.NOT_INITIALIZED;
 	private boolean fAllResolved;
+	private static final char[] GET_NAME = "get".toCharArray();  //$NON-NLS-1$
 
 	/**
 	 * The set of CPPVariable objects for which initial value computation is in progress on each thread.
@@ -255,7 +271,9 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 		try {
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
-			if (nestedType instanceof ICPPClassType || (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN) {
+			if (nestedType instanceof ICPPClassType 
+					|| (initialValue = VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType())) == IntegralValue.UNKNOWN
+					|| getStructuredBindingDeclaration() != null) {
 				ICPPEvaluation initEval = getInitializerEvaluation();
 				if (initEval == null) {
 					return null;
@@ -303,6 +321,20 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 		return getName();
 	}
 
+	private static IBinding resolveGetFunction(ICompositeType classType, IASTNode point, ICPPEvaluation argument, ICPPEvaluation index) {
+		IBinding[] allGetBindings = CPPSemantics.findBindings(classType.getCompositeScope(), GET_NAME, false);
+		ICPPFunction[] functions = Arrays.stream(allGetBindings).filter(IFunction.class::isInstance).map(IFunction.class::cast).toArray(ICPPFunction[]::new);
+		ICPPTemplateArgument[] arguments = new ICPPTemplateArgument[] {new CPPTemplateNonTypeArgument(index)};
+		LookupData lookupGet = new LookupData(GET_NAME, arguments, point);
+		lookupGet.setFunctionArguments(true, argument);
+		try {
+			return CPPSemantics.resolveFunction(lookupGet, functions, true, true);
+		} catch (DOMException e) {
+			return null;
+		}
+	}
+
+
 	/**
 	 * Returns an evaluation representing the variable's initialization.
 	 *
@@ -316,21 +348,77 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 			if (constructor != null) {
 				ICPPEvaluation[] arguments = EvalConstructor.extractArguments(initializer, constructor);
 				return new EvalConstructor(getType(), constructor, arguments, declarator);
-			} else if (initializer instanceof IASTEqualsInitializer) {
-				IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-				ICPPASTInitializerClause clause = (ICPPASTInitializerClause) equalsInitializer.getInitializerClause();
-				return clause.getEvaluation();
-			} else if (initializer instanceof ICPPASTInitializerList) {
-				return ((ICPPASTInitializerClause) initializer).getEvaluation();
-			} else if (initializer instanceof ICPPASTConstructorInitializer) {
-				ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
-				ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) ctorInitializer.getArguments()[0];
-				return evalOwner.getEvaluation();
-			} else if (initializer == null) {
-				return null;
+			}
+			return evaluationOfInitializer(initializer);
+		}
+
+		ICPPASTStructuredBindingDeclaration structuredBinding = getStructuredBindingDeclaration();
+		if (structuredBinding != null) {
+			IASTInitializer init = structuredBinding.getInitializer();
+			if (init != null) {
+				ICPPEvaluation initializerEvaluation = evaluationOfInitializer(init);
+				if (initializerEvaluation != null) {
+					IType type = initializerEvaluation.getType();
+					int index = ArrayUtil.indexOf(structuredBinding.getNames(), fDefinition);
+					EvalFixed indexEvaluation = new EvalFixed(CPPBasicType.UNSIGNED_INT, ValueCategory.PRVALUE, IntegralValue.create(index));
+					if (type instanceof IArrayType) {
+						return new EvalBinary(EvalBinary.op_arrayAccess, initializerEvaluation, indexEvaluation, init);
+					} else if(tupleSizeExists(fDefinition, initializerEvaluation)) {
+						if (type instanceof ICPPClassType) {
+							ICPPClassType classType = (ICPPClassType) type;
+							IBinding resolvedFunction = resolveGetFunction(classType, init, initializerEvaluation, indexEvaluation);
+							if (resolvedFunction instanceof ICPPMethod) {
+								ICPPEvaluation eExpressionEvaluation = new EvalMemberAccess(type, initializerEvaluation.getValueCategory(), resolvedFunction, initializerEvaluation, false, init);
+								return new EvalFunctionCall(new ICPPEvaluation[] {eExpressionEvaluation}, null, init);
+							} else if (resolvedFunction instanceof ICPPFunction) {
+								EvalBinding functionEvaluation = new EvalBinding(resolvedFunction, ((ICPPFunction) resolvedFunction).getType(), init);
+								return new EvalFunctionCall(new ICPPEvaluation[] {functionEvaluation, initializerEvaluation}, null, init);
+							}
+						}
+					} else if (type instanceof ICPPClassType) {
+						ICPPClassType classType = (ICPPClassType) type;
+						IField[] fields = classType.getFields();
+						if (index >= 0 && index < fields.length) {
+							IField boundField = fields[index];
+							return new EvalMemberAccess(classType, initializerEvaluation.getValueCategory(), boundField, initializerEvaluation, false, init);
+						}
+					}
+				}
 			}
 		}
 		return EvalFixed.INCOMPLETE;
+	}
+
+	private boolean tupleSizeExists(IASTName name, ICPPEvaluation evaluation) {
+		IType type = evaluation.getType();
+		ICPPScope scope = CPPSemantics.getLookupScope(name);
+		return CPPVisitor.isTupleSizeAvailable(type, scope);
+	}
+
+	private static ICPPEvaluation evaluationOfInitializer(IASTInitializer initializer) {
+		if (initializer instanceof IASTEqualsInitializer) {
+			IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+			ICPPASTInitializerClause clause = (ICPPASTInitializerClause) equalsInitializer.getInitializerClause();
+			return clause.getEvaluation();
+		} else if (initializer instanceof ICPPASTInitializerList) {
+			return ((ICPPASTInitializerClause) initializer).getEvaluation();
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
+			ICPPASTConstructorInitializer ctorInitializer = (ICPPASTConstructorInitializer) initializer;
+			ICPPASTInitializerClause evalOwner = (ICPPASTInitializerClause) ctorInitializer.getArguments()[0];
+			return evalOwner.getEvaluation();
+		}
+		return null;
+	}
+
+	private ICPPASTStructuredBindingDeclaration getStructuredBindingDeclaration() {
+		IASTNode definition = getDefinition();
+		if (definition != null) {
+			IASTNode parent = definition.getParent();
+			if (parent instanceof ICPPASTStructuredBindingDeclaration) {
+				return (ICPPASTStructuredBindingDeclaration) parent;
+			}
+		}
+		return null;
 	}
 
 	private static ICPPConstructor getImplicitlyCalledCtor(ICPPASTDeclarator declarator) {

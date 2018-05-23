@@ -30,10 +30,6 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignmen
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
@@ -69,38 +65,7 @@ public class SemanticTestBase extends BaseTestCase {
     	}
     }
     
-    protected static class CommonCPPTypes {
-    	public static IType char_ = CPPBasicType.CHAR;
-    	public static IType int_ = CPPBasicType.INT;
-    	public static IType void_ = CPPBasicType.VOID;
-    	public static IType constChar = constOf(char_);
-    	public static IType constInt = constOf(int_);
-    	public static IType pointerToInt = pointerTo(int_);
-    	public static IType pointerToConstChar = pointerTo(constChar);
-    	public static IType pointerToConstInt = pointerTo(constInt);
-    	public static IType referenceToInt = referenceTo(int_);
-    	public static IType referenceToConstInt = referenceTo(constInt);
-    	public static IType rvalueReferenceToInt = rvalueReferenceTo(int_);
-    	public static IType rvalueReferenceToConstInt = rvalueReferenceTo(constInt);
-    	
-    	private static IType pointerTo(IType type) {
-    		return new CPPPointerType(type);
-    	}
-    	
-    	private static IType constOf(IType type) {
-    		return new CPPQualifierType(type, true, false);
-    	}
-    	
-    	private static IType referenceTo(IType type) {
-    		return new CPPReferenceType(type, false);
-    	}
-    	
-    	private static IType rvalueReferenceTo(IType type) {
-    		return new CPPReferenceType(type, true);
-    	}
-    }
-    
-	protected static void assertSameType(IType expected, IType actual) {
+    protected static void assertSameType(IType expected, IType actual) {
 		assertNotNull(expected);
 		assertNotNull(actual);
 		assertTrue("Expected same types, but the types were: '" +
@@ -404,5 +369,9 @@ public class SemanticTestBase extends BaseTestCase {
 
     		return astName.resolveBinding();
     	}
+	}
+
+	protected static void assertType(IVariable variable, IType expectedType) {
+		assertSameType(expectedType, variable.getType());
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 
 /**
  * AST tests for C++14 generic lambdas.

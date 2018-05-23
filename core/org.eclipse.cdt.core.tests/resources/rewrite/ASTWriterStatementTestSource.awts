@@ -422,3 +422,18 @@ void f()
             break;
     }
 }
+
+//!Range-based for with structured binding
+//%CPP
+struct S
+{
+    int i;
+    float f;
+};
+
+void rangedBasedForContext()
+{
+    S esses[] = {S{}, S{}, S{}};
+    for (auto [l, r]: esses){
+    }
+}

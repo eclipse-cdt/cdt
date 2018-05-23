@@ -149,6 +149,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -719,6 +720,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		try {
 			if (node instanceof IASTFunctionDefinition) {
 				return visit((IASTFunctionDefinition) node);
+			} else if (node instanceof ICPPASTStructuredBindingDeclaration) {
+				return visit((ICPPASTStructuredBindingDeclaration) node);
 			} else if (node instanceof IASTSimpleDeclaration) {
 				return visit((IASTSimpleDeclaration) node);
 			} else if (node instanceof IASTASMDeclaration) {
@@ -1939,6 +1942,24 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return PROCESS_SKIP;
 	}
 
+	private int visit(ICPPASTStructuredBindingDeclaration node) {
+		formatLeadingAttributes(node);
+		IASTDeclSpecifier declSpec = node.getDeclSpecifier();
+		declSpec.accept(this);
+		scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_structured_binding_name_list);
+		List<IASTName> names = Arrays.asList(node.getNames());
+		final ListOptions options = new ListOptions(preferences.alignment_for_declarator_list);
+		options.fSpaceAfterSeparator = preferences.insert_space_after_comma_in_structured_binding_name_list;
+		options.fSpaceBeforeSeparator = preferences.insert_space_before_comma_in_structured_binding_name_list;
+		formatList(names, options, false, false, null);
+		scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_before_closing_structured_binding_name_list);
+		node.getInitializer().ifPresent(this::visit);
+		if (fExpectSemicolonAfterDeclaration) {
+			scribe.printNextToken(Token.tSEMI);
+		}
+		return PROCESS_SKIP;
+	}
+
 	private int visit(IASTSimpleDeclaration node) {
 		formatLeadingAttributes(node);
 		IASTDeclSpecifier declSpec = node.getDeclSpecifier();
@@ -2576,11 +2597,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private void formatInlineDeclaration(final IASTDeclaration decl) {
+		boolean previousExpectSemicolonAfterDeclaration = fExpectSemicolonAfterDeclaration;
 		fExpectSemicolonAfterDeclaration = false;
 		try {
 			decl.accept(this);
 		} finally {
-			fExpectSemicolonAfterDeclaration = true;
+			fExpectSemicolonAfterDeclaration = previousExpectSemicolonAfterDeclaration;
 		}
 	}
 
@@ -3651,7 +3673,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 			IASTDeclaration declaration = node.getDeclaration();
-			declaration.accept(this);
+			formatInlineDeclaration(declaration);
 			scribe.printNextToken(Token.tCOLON, true /* preferences.insert_space_before_colon_in_for */);
 			final IASTInitializerClause initializer = node.getInitializerClause();
 			if (true /*preferences.insert_space_after_colon_in_for*/) {

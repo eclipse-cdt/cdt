@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.index.tests;
 
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaIndexTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionIndexTests;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx17.StructuredBindingIndexTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx17.TemplateAutoIndexTests;
 
 import junit.framework.Test;
@@ -48,6 +49,7 @@ public class IndexTests extends TestSuite {
 
 		// C++17 index test suites
 		suite.addTestSuite(TemplateAutoIndexTests.class);
+		suite.addTestSuite(StructuredBindingIndexTests.class);
 
 		IndexCPPBindingResolutionBugs.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);

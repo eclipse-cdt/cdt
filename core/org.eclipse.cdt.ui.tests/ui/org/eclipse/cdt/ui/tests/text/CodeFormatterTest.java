@@ -4396,4 +4396,29 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testConstVolatileMember_Bug548512() throws Exception {
 		assertFormatterResult();
 	}
+
+	//struct S {
+	//	int i;
+	//	float f;
+	//};
+	//void foo() {
+	//	S esses[] { { 1, 1.0f } };
+	//	auto[f,s]=esses[0];
+	//	for (auto l: esses) {
+	//	}
+	//}
+
+	//struct S {
+	//	int i;
+	//	float f;
+	//};
+	//void foo() {
+	//	S esses[] { { 1, 1.0f } };
+	//	auto [f, s] = esses[0];
+	//	for (auto l : esses) {
+	//	}
+	//}
+	public void testStructuredBinding() throws Exception {
+		assertFormatterResult();
+	}
 }

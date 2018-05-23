@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
@@ -63,6 +66,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class DeclarationWriter extends NodeWriter {
 	private static final char OPEN_PAREN = '(';
 	private static final char CLOSE_PAREN = ')';
+	private static final char OPEN_BRACKET = '[';
+	private static final char CLOSE_BRACKET = ']';
 	private static final String ASM_START = "asm" + OPEN_PAREN; //$NON-NLS-1$
 	private static final String TEMPLATE_DECLARATION = "template<"; //$NON-NLS-1$
 	private static final String TEMPLATE_SPECIALIZATION = "template<> "; //$NON-NLS-1$
@@ -87,6 +92,8 @@ public class DeclarationWriter extends NodeWriter {
 			addNewLine = false;
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			throw new ProblemRuntimeException((IASTProblemDeclaration) declaration);
+		} else if (declaration instanceof ICPPASTStructuredBindingDeclaration) {
+			writeStructuredBinding((ICPPASTStructuredBindingDeclaration) declaration, writeSemicolon);
 		} else if (declaration instanceof IASTSimpleDeclaration) {
 			writeSimpleDeclaration((IASTSimpleDeclaration) declaration);
 		} else if (declaration instanceof ICPPASTExplicitTemplateInstantiation) {
@@ -120,6 +127,28 @@ public class DeclarationWriter extends NodeWriter {
 				scribe.newLine();
 			}
 			writeFreestandingComments(declaration);
+		}
+	}
+
+	private void writeStructuredBinding(ICPPASTStructuredBindingDeclaration declaration, boolean writeSemicolon) {
+		writeAttributes(declaration, EnumSet.of(SpaceLocation.AFTER));
+		declaration.getDeclSpecifier().accept(visitor);
+		RefQualifier refQualifier = declaration.getRefQualifier();
+		if (refQualifier != null) {
+			writeRefQualifier(refQualifier);
+		}
+		scribe.printSpace();
+
+		scribe.print(OPEN_BRACKET);
+		writeNodeList(declaration.getNames());
+		scribe.print(CLOSE_BRACKET);
+
+		IASTInitializer initializer = declaration.getInitializer();
+		if (initializer != null) {
+			initializer.accept(visitor);
+		}
+		if (writeSemicolon) {
+			printSemicolon();
 		}
 	}
 

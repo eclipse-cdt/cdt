@@ -301,6 +301,18 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_between_empty_parens_in_method_declaration;
 	public boolean insert_space_between_empty_parens_in_method_invocation;
 	public boolean insert_space_between_empty_parens_in_exception_specification;
+	/** @since 6.9 */
+	public boolean insert_space_before_opening_structured_binding_name_list;
+	/** @since 6.9 */
+	public boolean insert_space_after_opening_structured_binding_name_list;
+	/** @since 6.9 */
+	public boolean insert_space_before_closing_structured_binding_name_list;
+	/** @since 6.9 */
+	public boolean insert_space_before_comma_in_structured_binding_name_list;
+	/** @since 6.9 */
+	public boolean insert_space_after_comma_in_structured_binding_name_list;
+	/** @since 6.9 */
+	public boolean insert_space_before_ref_qualifier_in_structured_binding;
 	public boolean compact_else_if;
 	public boolean keep_guardian_clause_on_one_line;
 	public boolean keep_else_statement_on_same_line;
@@ -787,6 +799,24 @@ public class DefaultCodeFormatterOptions {
 		options.put(
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_EXCEPTION_SPECIFICATION,
 				this.insert_space_between_empty_parens_in_exception_specification ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				this.insert_space_before_opening_structured_binding_name_list ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				this.insert_space_after_opening_structured_binding_name_list ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST,
+				this.insert_space_before_closing_structured_binding_name_list ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				this.insert_space_before_comma_in_structured_binding_name_list ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				this.insert_space_after_comma_in_structured_binding_name_list ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING,
+				this.insert_space_before_ref_qualifier_in_structured_binding ? CCorePlugin.INSERT
 						: CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF,
 				this.compact_else_if ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
@@ -2130,6 +2160,42 @@ public class DefaultCodeFormatterOptions {
 			this.insert_space_between_empty_parens_in_exception_specification = CCorePlugin.INSERT
 					.equals(insertSpaceBetweenEmptyParensInExceptionSpecificationOption);
 		}
+		final Object insertSpaceBeforeOpeningStructuredBindingNameList = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST);
+		if (insertSpaceBeforeOpeningStructuredBindingNameList != null) {
+			this.insert_space_before_opening_structured_binding_name_list = CCorePlugin.INSERT
+					.equals(insertSpaceBeforeOpeningStructuredBindingNameList);
+		}
+		final Object insertSpaceAfterOpeningStructuredBindingNameList = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST);
+		if (insertSpaceAfterOpeningStructuredBindingNameList != null) {
+			this.insert_space_after_opening_structured_binding_name_list = CCorePlugin.INSERT
+					.equals(insertSpaceAfterOpeningStructuredBindingNameList);
+		}
+		final Object insertSpaceBeforeClosingStructuredBindingNameList = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST);
+		if (insertSpaceBeforeClosingStructuredBindingNameList != null) {
+			this.insert_space_before_closing_structured_binding_name_list = CCorePlugin.INSERT
+					.equals(insertSpaceBeforeClosingStructuredBindingNameList);
+		}
+		final Object insertSpaceBeforeCommaInStructuredBindingNameList = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST);
+		if (insertSpaceBeforeCommaInStructuredBindingNameList != null) {
+			this.insert_space_before_comma_in_structured_binding_name_list = CCorePlugin.INSERT
+					.equals(insertSpaceBeforeCommaInStructuredBindingNameList);
+		}
+		final Object insertSpaceAfterCommaInStructuredBindingNameList = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST);
+		if (insertSpaceAfterCommaInStructuredBindingNameList != null) {
+			this.insert_space_after_comma_in_structured_binding_name_list = CCorePlugin.INSERT
+					.equals(insertSpaceAfterCommaInStructuredBindingNameList);
+		}
+		final Object insertSpaceBeforeRefQualifierInStructuredBinding = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING);
+		if (insertSpaceBeforeRefQualifierInStructuredBinding != null) {
+			this.insert_space_before_ref_qualifier_in_structured_binding = CCorePlugin.INSERT
+					.equals(insertSpaceBeforeRefQualifierInStructuredBinding);
+		}
 		final Object compactElseIfOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF);
 		if (compactElseIfOption != null) {
 			this.compact_else_if = DefaultCodeFormatterConstants.TRUE.equals(compactElseIfOption);
@@ -2441,6 +2507,12 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_between_empty_parens_in_method_declaration = false;
 		this.insert_space_between_empty_parens_in_method_invocation = false;
 		this.insert_space_between_empty_parens_in_exception_specification = false;
+		this.insert_space_before_opening_structured_binding_name_list = true;
+		this.insert_space_after_opening_structured_binding_name_list = false;
+		this.insert_space_before_closing_structured_binding_name_list = false;
+		this.insert_space_before_comma_in_structured_binding_name_list = false;
+		this.insert_space_after_comma_in_structured_binding_name_list = true;
+		this.insert_space_before_ref_qualifier_in_structured_binding = false;
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;

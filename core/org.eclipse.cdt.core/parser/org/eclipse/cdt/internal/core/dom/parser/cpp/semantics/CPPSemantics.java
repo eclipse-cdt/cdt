@@ -141,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -938,7 +939,7 @@ public class CPPSemantics {
 		}
 	}
 
-	static ICPPScope getLookupScope(IASTName name) throws DOMException {
+	public static ICPPScope getLookupScope(IASTName name) {
 		IASTNode parent = name.getParent();
 		IScope scope = null;
 		if (parent instanceof ICPPASTBaseSpecifier) {
@@ -1822,7 +1823,9 @@ public class CPPSemantics {
 			return;
 		}
 
-		if (declaration instanceof IASTSimpleDeclaration) {
+		if (declaration instanceof ICPPASTStructuredBindingDeclaration) {
+			handleStructuredBinding((ICPPASTStructuredBindingDeclaration) declaration, scope);
+		} else if (declaration instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
@@ -1941,6 +1944,12 @@ public class CPPSemantics {
 			default:
 				break;
 			}
+		}
+	}
+
+	private static void handleStructuredBinding(ICPPASTStructuredBindingDeclaration structuredBinding, IScope scope) {
+		for (IASTName name : structuredBinding.getNames()) {
+			ASTInternal.addName(scope, name);
 		}
 	}
 
@@ -2647,6 +2656,11 @@ public class CPPSemantics {
 		return result;
 	}
 
+	/**
+	 * Resolves the {@code IBinding} for given {@code LookupData} in the set of function bindings {@code fns}.
+	 * It supports mixed member/non-member lookup. {@code LookupData::argContainsImpliedObject} is ignored for
+	 * non-member lookup.
+	 */
 	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC,
 			boolean resolveTargetedArgumentTypes) throws DOMException {
 		final IASTName lookupName = data.getLookupName();
@@ -4262,6 +4276,14 @@ public class CPPSemantics {
 	 * in the given scope.
 	 */
 	public static IBinding[] findBindingsForQualifiedName(IScope scope, String qualifiedName) {
+		return findBindingsForQualifiedName(scope, qualifiedName, null);
+	}
+
+	/**
+	 * Uses C++ lookup semantics to find the possible bindings for the given qualified name starting
+	 * in the given scope.
+	 */
+	public static IBinding[] findBindingsForQualifiedName(IScope scope, String qualifiedName, IASTNode beforeNode) {
 		// Return immediately if the qualifiedName does not match a known format.
 		Matcher m = QUALNAME_REGEX.matcher(qualifiedName);
 		if (!m.matches())
@@ -4284,7 +4306,7 @@ public class CPPSemantics {
 		Set<IBinding> bindings = new HashSet<>();
 
 		// Look for the name in the given scope.
-		findBindingsForQualifiedName(scope, qualifiedName, bindings);
+		findBindingsForQualifiedName(scope, qualifiedName, bindings, beforeNode);
 
 		// If the qualified name is not rooted in the global namespace (with a leading ::), then
 		// look at all parent scopes.
@@ -4293,7 +4315,7 @@ public class CPPSemantics {
 				while (scope != null) {
 					scope = scope.getParent();
 					if (scope != null)
-						findBindingsForQualifiedName(scope, qualifiedName, bindings);
+						findBindingsForQualifiedName(scope, qualifiedName, bindings, beforeNode);
 				}
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
@@ -4303,8 +4325,8 @@ public class CPPSemantics {
 		return bindings.size() == 0 ? IBinding.EMPTY_BINDING_ARRAY : bindings.toArray(new IBinding[bindings.size()]);
 	}
 
-	private static void findBindingsForQualifiedName(IScope scope, String qualifiedName,
-			Collection<IBinding> bindings) {
+	private static void findBindingsForQualifiedName(IScope scope, String qualifiedName, Collection<IBinding> bindings,
+			IASTNode beforeNode) {
 		// Split the qualified name into the first part (before the first :: qualifier) and the rest. All
 		// bindings for the first part are found and their scope is used to find the rest of the name.  When
 		// the call tree gets to a leaf (non-qualified name) then a simple lookup happens and all matching
@@ -4318,14 +4340,20 @@ public class CPPSemantics {
 
 		// When we're down to a single component name, then use the normal lookup method.
 		if (part2 == null || part2.isEmpty()) {
-			bindings.addAll(Arrays.asList(findBindings(scope, part1, false)));
+			bindings.addAll(Arrays.asList(findBindings(scope, part1.toCharArray(), false, beforeNode)));
 			return;
 		}
 
 		// Find all bindings that match the first part of the name.  For each such binding,
 		// lookup the second part of the name.
-		for (IBinding binding : findBindings(scope, part1, false)) {
-			findBindingsForQualifiedName(getLookupScope(binding), part2, bindings);
+		for (IBinding binding : findBindings(scope, part1.toCharArray(), false, beforeNode)) {
+			IScope lookupScope;
+			if (binding instanceof IScope) {
+				lookupScope = (IScope) binding;
+			} else {
+				lookupScope = getLookupScope(binding);
+			}
+			findBindingsForQualifiedName(lookupScope, part2, bindings, beforeNode);
 		}
 	}
 

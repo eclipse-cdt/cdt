@@ -131,6 +131,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
@@ -149,6 +150,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -1948,7 +1950,48 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return PROCESS_SKIP;
 	}
 
+	private int visit(ICPPASTStructuredBindingDeclaration node) {
+		formatLeadingAttributes(node);
+		IASTDeclSpecifier declSpec = node.getDeclSpecifier();
+		declSpec.accept(this);
+
+		RefQualifier refQualifier = node.getRefQualifier();
+		if (refQualifier != null) {
+			int expectedToken = refQualifier == RefQualifier.LVALUE ? Token.tAMPER : Token.tAND;
+			if (peekNextToken() == expectedToken) {
+				scribe.printNextToken(expectedToken,
+						preferences.insert_space_before_ref_qualifier_in_structured_binding);
+			}
+		}
+
+		IASTInitializer initializer = node.getInitializer();
+		if (peekNextToken() == Token.tLBRACKET) {
+			List<IASTName> names = Arrays.asList(node.getNames());
+			final ListOptions options = new ListOptions(preferences.alignment_for_declarator_list);
+			options.leftToken = Token.tLBRACKET;
+			options.rightToken = Token.tRBRACKET;
+			options.fSpaceBeforeOpeningParen = preferences.insert_space_before_opening_structured_binding_name_list;
+			options.fSpaceAfterOpeningParen = preferences.insert_space_after_opening_structured_binding_name_list;
+			options.fSpaceBeforeClosingParen = preferences.insert_space_before_closing_structured_binding_name_list;
+			options.fSpaceAfterSeparator = preferences.insert_space_after_comma_in_structured_binding_name_list;
+			options.fSpaceBeforeSeparator = preferences.insert_space_before_comma_in_structured_binding_name_list;
+			formatList(names, options, true, false, null);
+		} else if (initializer != null) {
+			skipToNode(initializer);
+		}
+		if (initializer != null) {
+			initializer.accept(this);
+		}
+		if (fExpectSemicolonAfterDeclaration && peekNextToken() == Token.tSEMI) {
+			scribe.printNextToken(Token.tSEMI);
+		}
+		return PROCESS_SKIP;
+	}
+
 	private int visit(IASTSimpleDeclaration node) {
+		if (node instanceof ICPPASTStructuredBindingDeclaration) {
+			return visit((ICPPASTStructuredBindingDeclaration) node);
+		}
 		formatLeadingAttributes(node);
 		IASTDeclSpecifier declSpec = node.getDeclSpecifier();
 		declSpec.accept(this);
@@ -2585,11 +2628,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private void formatInlineDeclaration(final IASTDeclaration decl) {
+		boolean previousExpectSemicolonAfterDeclaration = fExpectSemicolonAfterDeclaration;
 		fExpectSemicolonAfterDeclaration = false;
 		try {
 			decl.accept(this);
 		} finally {
-			fExpectSemicolonAfterDeclaration = true;
+			fExpectSemicolonAfterDeclaration = previousExpectSemicolonAfterDeclaration;
 		}
 	}
 
@@ -3660,7 +3704,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 			IASTDeclaration declaration = node.getDeclaration();
-			declaration.accept(this);
+			formatInlineDeclaration(declaration);
 			scribe.printNextToken(Token.tCOLON, true /* preferences.insert_space_before_colon_in_for */);
 			final IASTInitializerClause initializer = node.getInitializerClause();
 			if (true /*preferences.insert_space_after_colon_in_for*/) {

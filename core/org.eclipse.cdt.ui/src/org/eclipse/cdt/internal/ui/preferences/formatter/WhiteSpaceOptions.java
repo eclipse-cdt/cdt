@@ -236,6 +236,10 @@ public final class WhiteSpaceOptions {
 					"map<int,int> m;" //$NON-NLS-1$
 	);
 
+	private final PreviewSnippet STRUCTURED_BINDING_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
+			"auto & [first, second, third] = init;" //$NON-NLS-1$
+	);
+
 	/**
 	 * Create the tree, in this order: syntax element - position - abstract element
 	 * @param workingValues
@@ -477,6 +481,7 @@ public final class WhiteSpaceOptions {
 		createMethodDeclTree(workingValues, declarations);
 		createExceptionSpecificationTree(workingValues, declarations);
 		createLabelTree(workingValues, declarations);
+		createStructuredBindingTree(workingValues, declarations);
 
 		final InnerNode statements = new InnerNode(null, workingValues, FormatterMessages.WhiteSpaceTabPage_statements);
 		createOption(statements, workingValues, FormatterMessages.WhiteSpaceOptions_before_semicolon,
@@ -582,6 +587,10 @@ public final class WhiteSpaceOptions {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_exception_specification,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS,
 				METHOD_DECL_PREVIEW);
+
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createBeforeOperatorTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -602,6 +611,9 @@ public final class WhiteSpaceOptions {
 	private void createBeforeClosingBracketTree(Map<String, String> workingValues, final InnerNode parent) {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET, ARRAY_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createBeforeClosingAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -616,6 +628,9 @@ public final class WhiteSpaceOptions {
 	private void createBeforeOpenBracketTree(Map<String, String> workingValues, final InnerNode parent) {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET, ARRAY_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createBeforeOpenAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -703,6 +718,9 @@ public final class WhiteSpaceOptions {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_declarator_list,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_DECLARATOR_LIST,
 				DECLARATOR_LIST_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createAfterPointerTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -814,6 +832,10 @@ public final class WhiteSpaceOptions {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_exception_specification,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS,
 				METHOD_DECL_PREVIEW);
+
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createAfterOperatorTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -835,6 +857,9 @@ public final class WhiteSpaceOptions {
 	private void createAfterOpenBracketTree(Map<String, String> workingValues, final InnerNode parent) {
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arrays,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACKET, ARRAY_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_declarations,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private void createAfterOpenAngleBracketTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -1266,6 +1291,33 @@ public final class WhiteSpaceOptions {
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_colon,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_LABELED_STATEMENT, LABEL_PREVIEW);
 		return root;
+	}
+
+	private void createStructuredBindingTree(Map<String, String> workingValues, InnerNode parent) {
+		InnerNode root = new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_structured_bindings);
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceOptions_structured_binding_before_ref_qualifier,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING,
+				STRUCTURED_BINDING_PREVIEW);
+		createOption(root, workingValues,
+				FormatterMessages.WhiteSpaceOptions_structured_binding_before_name_list_opening_bracket,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
+		createOption(root, workingValues,
+				FormatterMessages.WhiteSpaceOptions_structured_binding_before_name_list_closing_bracket,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
+		createOption(root, workingValues,
+				FormatterMessages.WhiteSpaceOptions_structured_binding_before_first_name_in_list,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
+		createOption(root, workingValues,
+				FormatterMessages.WhiteSpaceOptions_structured_binding_before_comma_in_name_list,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
+		createOption(root, workingValues,
+				FormatterMessages.WhiteSpaceOptions_structured_binding_after_comma_in_name_list,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				STRUCTURED_BINDING_PREVIEW);
 	}
 
 	private InnerNode createTemplateArgumentTree(Map<String, String> workingValues, InnerNode parent) {

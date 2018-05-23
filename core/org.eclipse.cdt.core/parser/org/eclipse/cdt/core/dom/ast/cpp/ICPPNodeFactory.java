@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeStyle;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPASTAttributeSpecifier;
@@ -503,4 +504,15 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Deprecated
 	public ICPPASTAttributeSpecifier newAttributeSpecifier();
+
+	/**
+	 * @since 6.8
+	 */
+	public ICPPASTStructuredBindingDeclaration newStructuredBindingDeclaration();
+
+	/**
+	 * @since 6.8
+	 */
+	public ICPPASTStructuredBindingDeclaration newStructuredBindingDeclaration(ICPPASTSimpleDeclSpecifier declSpecifier,
+			RefQualifier refQualifier, IASTName[] names, IASTInitializer initializer);
 }

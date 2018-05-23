@@ -377,3 +377,8 @@ int __declspec(selectany)* pi2 = 0;
 //!MS declspec attribute on simple declaration
 //%CPP GNU
 __declspec(thread) int tls_i = 1;
+
+//!Attributed structured binding declaration
+//%CPP
+int arr[]{1, 2, 3};
+[[nodiscard]] auto [a, b, c] = arr;

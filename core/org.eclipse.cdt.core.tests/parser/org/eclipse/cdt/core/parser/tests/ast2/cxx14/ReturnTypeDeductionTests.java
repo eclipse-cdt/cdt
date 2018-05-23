@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 
 public class ReturnTypeDeductionTests extends AST2CPPTestBase {

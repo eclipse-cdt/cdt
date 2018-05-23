@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
 
 /**

@@ -1675,6 +1675,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return declSpecifierSequence_initDeclarator(option, acceptCompoundWithoutDtor, null);
 	}
 
+	protected boolean isAtStartOfStructuredBinding() {
+		int nextToken = LTcatchEOF(1);
+		if (nextToken == IToken.tAMPER || nextToken == IToken.tAND) {
+			nextToken = LTcatchEOF(2);
+		}
+		return nextToken == IToken.tLBRACKET;
+	}
+
 	/**
 	 * Parses for two alternatives of a declspec sequence followed by a initDeclarator.
 	 * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
@@ -1688,6 +1696,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		final int lt1 = LTcatchEOF(1);
 		if (lt1 == IToken.tEOC)
 			return result;
+
+		// support for structured bindings
+		if (isAutoType(result.fDeclSpec1) && isAtStartOfStructuredBinding()) {
+			return result;
+		}
 
 		// support simple declarations without declarators
 		final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDtor(result.fDeclSpec1);
@@ -2052,6 +2065,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 					&& ((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	protected static boolean isAutoType(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTSimpleDeclSpecifier) {
+			IASTSimpleDeclSpecifier simpleDeclSpecifier = (IASTSimpleDeclSpecifier) declSpec;
+			return simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_auto;
 		}
 		return false;
 	}

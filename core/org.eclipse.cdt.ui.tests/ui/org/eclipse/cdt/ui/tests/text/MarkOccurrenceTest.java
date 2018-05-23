@@ -557,6 +557,32 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	public void testMarkReferencedStructuredBindingDefinition() {
+		try {
+			fMatch = fFindReplaceDocumentAdapter.find(0, "decomposedF", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+
+		assertOccurrences(2, 1);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkReferencedStructuredBindingInitializer() {
+		try {
+			fMatch = fFindReplaceDocumentAdapter.find(0, "decompArr", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+
+		assertOccurrences(6, 2);
+		assertOccurrencesInWidget();
+	}
+
 	private void assertOccurrencesInWidget() {
 		EditorTestHelper.runEventQueue(100);
 

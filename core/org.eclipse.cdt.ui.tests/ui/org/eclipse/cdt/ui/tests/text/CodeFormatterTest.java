@@ -4460,4 +4460,190 @@ public class CodeFormatterTest extends BaseUITestCase {
 				DefaultCodeFormatterConstants.NEXT_LINE);
 		assertFormatterResult();
 	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto[l,r]=s;
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto [l, r] = s;
+	//}
+	public void testStructuredBindingSimpleDeclaration() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto&[l0,r0]=s;
+	//	auto&&[l1,r1]=S{1,1.0};
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto & [l0, r0] = s;
+	//	auto && [l1, r1] = S { 1, 1.0 };
+	//}
+	public void testStructuredBindingWithRefQualifiers() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto[l0,r0]=s;
+	//	auto&[l1,r1]=s;
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	auto[ l0 ,r0 ] = s;
+	//	auto&[ l1 ,r1 ] = s;
+	//}
+	public void testStructuredBindingSimpleDeclarationInvertedFormat() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_REF_QUALIFIER_IN_STRUCTURED_BINDING,
+				CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_STRUCTURED_BINDING_NAME_LIST,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_STRUCTURED_BINDING_NAME_LIST,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_STRUCTURED_BINDING_NAME_LIST,
+				CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//#define SB(F, S, I) auto[F,S] = I
+	//#define LIST(F, S) [F,S]
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	SB(l0,r0,s);
+	//	auto LIST(l1,r1)=s;
+	//}
+
+	//#define SB(F, S, I) auto[F,S] = I
+	//#define LIST(F, S) [F,S]
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	SB(l0, r0, s);
+	//	auto LIST(l1,r1) = s;
+	//}
+	public void testStructuredBindingSimpleDeclarationFromMacro() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} esses[] { { 1, 1.0 } };
+	//void foo() {
+	//	for (auto[l,r]: esses) {
+	//	}
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} esses[] { { 1, 1.0 } };
+	//void foo() {
+	//	for (auto [l, r] : esses) {
+	//	}
+	//}
+	public void testStructuredBindingInRangeBasedForLoop() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	for(auto[l,r]=s;l<10;l++){
+	//	}
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	for (auto [l, r] = s; l < 10; l++) {
+	//	}
+	//}
+	public void testStructuredBindingInForLoop() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	if(auto[l,r]=s;l==1){
+	//	}
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	if (auto [l, r] = s; l == 1) {
+	//	}
+	//}
+	public void testStructuredBindingInIfInitStatement() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	switch(auto[l,r]=s;l){
+	//	}
+	//}
+
+	//struct S {
+	//	int i;
+	//	double d;
+	//} s { 1, 1.0 };
+	//void foo() {
+	//	switch (auto [l, r] = s; l) {
+	//	}
+	//}
+	public void testStructuredBindingInSwitchInitStatement() throws Exception {
+		assertFormatterResult();
+	}
+
+	public void testStructuredBindingDeclarationFromMacro() throws Exception {
+
+	}
 }

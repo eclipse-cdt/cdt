@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
@@ -69,10 +70,12 @@ public class SemanticTestBase extends BaseTestCase {
     	}
     }
     
-    protected static class CommonCPPTypes {
+    public static class CommonCPPTypes {
     	public static IType char_ = CPPBasicType.CHAR;
     	public static IType int_ = CPPBasicType.INT;
     	public static IType void_ = CPPBasicType.VOID;
+    	public static IType double_ = new CPPBasicType(Kind.eDouble, 0);
+    	public static IType float_ = new CPPBasicType(Kind.eFloat, 0);
     	public static IType constChar = constOf(char_);
     	public static IType constInt = constOf(int_);
     	public static IType pointerToInt = pointerTo(int_);
@@ -83,19 +86,27 @@ public class SemanticTestBase extends BaseTestCase {
     	public static IType rvalueReferenceToInt = rvalueReferenceTo(int_);
     	public static IType rvalueReferenceToConstInt = rvalueReferenceTo(constInt);
     	
-    	private static IType pointerTo(IType type) {
+    	public static IType pointerTo(IType type) {
     		return new CPPPointerType(type);
     	}
     	
-    	private static IType constOf(IType type) {
+    	public static IType constOf(IType type) {
     		return new CPPQualifierType(type, true, false);
     	}
+
+    	public static IType volatileOf(IType type) {
+    		return new CPPQualifierType(type, false, true);
+    	}
+
+    	public static IType constVolatileOf(IType type) {
+    		return new CPPQualifierType(type, true, true);
+    	}
     	
-    	private static IType referenceTo(IType type) {
+    	public static IType referenceTo(IType type) {
     		return new CPPReferenceType(type, false);
     	}
     	
-    	private static IType rvalueReferenceTo(IType type) {
+    	public static IType rvalueReferenceTo(IType type) {
     		return new CPPReferenceType(type, true);
     	}
     }
@@ -404,5 +415,9 @@ public class SemanticTestBase extends BaseTestCase {
 
     		return astName.resolveBinding();
     	}
+	}
+
+	protected static void assertType(IVariable variable, IType expectedType) {
+		assertSameType(expectedType, variable.getType());
 	}
 }

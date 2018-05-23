@@ -401,8 +401,8 @@ public class CPPTemplates {
 		return null;
 	}
 
-	private static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template, ICPPTemplateArgument[] arguments,
-			CPPTemplateParameterMap tpMap) throws DOMException {
+	public static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template, ICPPTemplateArgument[] arguments,
+			ICPPTemplateParameterMap tpMap) throws DOMException {
 		ICPPTemplateInstance instance = getInstance(template, arguments, false);
 		if (instance != null) {
 			return instance;
@@ -2321,7 +2321,7 @@ public class CPPTemplates {
 		return result;
 	}
 
-	static ICPPFunction[] instantiateForFunctionCall(ICPPFunction[] fns, ICPPTemplateArgument[] tmplArgs,
+	public static ICPPFunction[] instantiateForFunctionCall(ICPPFunction[] fns, ICPPTemplateArgument[] tmplArgs,
 			List<IType> fnArgs, List<ValueCategory> argCats, boolean withImpliedObjectArg) {
 		// Extract template arguments.
 		boolean requireTemplate = tmplArgs != null;

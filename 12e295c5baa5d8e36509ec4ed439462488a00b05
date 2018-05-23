@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b241ab2_9794de42",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-05-23T21:14:31Z",
+      "side": 1,
+      "message": "Can we not continue to use DEFAULT_JTAG_DEVICE rather than introduce a new String?",
+      "range": {
+        "startLine": 80,
+        "startChar": 46,
+        "endLine": 80,
+        "endChar": 70
+      },
+      "revId": "12e295c5baa5d8e36509ec4ed439462488a00b05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1db0479a_81dac62d",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-05-23T21:14:31Z",
+      "side": 1,
+      "message": "Does this need to be a protected method? The method it replaces was private.",
+      "range": {
+        "startLine": 411,
+        "startChar": 1,
+        "endLine": 411,
+        "endChar": 10
+      },
+      "revId": "12e295c5baa5d8e36509ec4ed439462488a00b05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8cb5ebe1_e671c8b2",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-05-23T21:14:31Z",
+      "side": 1,
+      "message": "Does this need to be a protected method? The method it replaces was private.",
+      "range": {
+        "startLine": 426,
+        "startChar": 1,
+        "endLine": 426,
+        "endChar": 10
+      },
+      "revId": "12e295c5baa5d8e36509ec4ed439462488a00b05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

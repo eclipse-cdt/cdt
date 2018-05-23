@@ -134,3 +134,14 @@ void functionWithLabelReferenceGoto() {
 	referencedLabel:
 	return;
 }
+
+void localOccurrencesInStructuredBinding() {
+	int decompArr[2]{1, 2};
+	auto [decomposedF, decomposedS] = decompArr;
+	decomposedF;
+	decomposedS;
+	auto [decomposedF2, decomposedS2](decompArr);
+	auto [decomposedF3, decomposedS3]{decompArr};
+	auto & [decomposedF4, decomposedS4] = decompArr;
+	auto const & [decomposedF5,decomposedS5] = decompArr;
+}

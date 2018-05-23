@@ -392,21 +392,20 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 					wc.setAttribute(
 							ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 							IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+					Map<String, List<IDockerPortBinding>> hostPorts = new HashMap<>();
 					if (job.getPorts() != null && isLocalConnection) {
-						Map<String, List<IDockerPortBinding>> hostPorts = job
-								.getPorts();
-						List<IDockerPortBinding> bindingList = hostPorts
-								.get(gdbserverPortNumber + "/tcp"); //$NON-NLS-1$
-						if (bindingList != null && !bindingList.isEmpty()) {
-							IDockerPortBinding firstBinding = bindingList
-									.get(0);
-							wc.setAttribute(
-									IGDBLaunchConfigurationConstants.ATTR_HOST,
-									"localhost"); //$NON-NLS-1$
-							wc.setAttribute(
-									IGDBLaunchConfigurationConstants.ATTR_PORT,
-									firstBinding.hostPort());
-						}
+						hostPorts = job.getPorts();
+					}
+					List<IDockerPortBinding> bindingList = hostPorts
+							.get(gdbserverPortNumber + "/tcp"); //$NON-NLS-1$
+					if (bindingList != null && !bindingList.isEmpty()) {
+						IDockerPortBinding firstBinding = bindingList.get(0);
+						wc.setAttribute(
+								IGDBLaunchConfigurationConstants.ATTR_HOST,
+								"localhost"); //$NON-NLS-1$
+						wc.setAttribute(
+								IGDBLaunchConfigurationConstants.ATTR_PORT,
+								firstBinding.hostPort());
 					} else {
 						wc.setAttribute(
 								IGDBLaunchConfigurationConstants.ATTR_HOST,

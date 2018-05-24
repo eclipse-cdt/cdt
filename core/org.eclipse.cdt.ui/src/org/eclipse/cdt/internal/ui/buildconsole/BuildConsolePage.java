@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 QNX Software Systems and others.
+ * Copyright (c) 2002, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -584,6 +584,9 @@ public class BuildConsolePage extends Page
 		if (console == null) return;
 		if (console instanceof BuildConsolePartitioner) {
 			BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+
+			BuildConsolePartition oldPartition = par.fDocumentMarkerManager.getCurrentPartition();
+
 			// Move to specified line in the model (BuildConsolePartitioner)
 			if ( position == POSITION_NEXT ) {
 				par.fDocumentMarkerManager.moveToNextError();
@@ -596,6 +599,9 @@ public class BuildConsolePage extends Page
 					// we haven't moved, because offset points to non-error partition
 					return;
 				}
+			}
+			if (oldPartition != null) {
+				getViewer().deselectPartition(par, oldPartition);
 			}
 			showError(par, position > 0 || fShowErrorAction.isChecked() );
 		}

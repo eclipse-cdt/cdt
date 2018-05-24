@@ -183,6 +183,14 @@ public class BuildConsoleViewer extends TextViewer
 		event.styles = styles;
 	}
 
+	public void deselectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {
+		StyledText st = getTextWidget();
+		if (st != null) {
+			// Deselect line
+			st.redrawRange(p.getOffset(), p.getLength(), false);
+		}
+	}
+
 	public void selectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {
 		StyledText st = getTextWidget();
 		if (st != null) {
@@ -202,7 +210,7 @@ public class BuildConsoleViewer extends TextViewer
 				}
 	
 				// Select line
-				st.redrawRange(0, partitioner.getDocument().getLength(), true);
+				st.redrawRange(p.getOffset(), p.getLength(), false);
 	
 			} catch (BadLocationException e) {
 				CUIPlugin.log(e);

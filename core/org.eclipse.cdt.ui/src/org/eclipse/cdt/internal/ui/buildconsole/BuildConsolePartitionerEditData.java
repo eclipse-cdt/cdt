@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Kichwa Coders and others.
+ * Copyright (c) 2016, 2018 Kichwa Coders and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class BuildConsolePartitionerEditData {
 		/**
 		 * New partitions that match the new contents.
 		 */
-		List<ITypedRegion> getNewPartitions();
+		List<BuildConsolePartition> getNewPartitions();
 
 		/**
 		 * All the streams that have been written to since the last update.
@@ -73,7 +73,7 @@ public class BuildConsolePartitionerEditData {
 	 * Editable partitions, all modifications are made to this copy of the
 	 * partitions, then the UI thread occasionally gets these updates
 	 */
-	private List<BuildConsolePartition> fEditPartitions = new ArrayList<BuildConsolePartition>();
+	private List<BuildConsolePartition> fEditPartitions = new ArrayList<>();
 
 	/**
 	 * Set to true when an edit causes the document marker manager to need to be
@@ -318,7 +318,7 @@ public class BuildConsolePartitionerEditData {
 		boolean problemsAdded;
 		long newOffset;
 		String newConents;
-		List<ITypedRegion> newPartitions;
+		List<BuildConsolePartition> newPartitions;
 		List<IBuildConsoleStreamDecorator> streamsNeedingNotifcation;
 
 		synchronized (this) {
@@ -346,7 +346,7 @@ public class BuildConsolePartitionerEditData {
 			}
 
 			@Override
-			public List<ITypedRegion> getNewPartitions() {
+			public List<BuildConsolePartition> getNewPartitions() {
 				return newPartitions;
 			}
 

@@ -111,7 +111,7 @@ class DocumentMarkerManager {
 	BuildConsolePartition getCurrentPartition() {
 		if ( 0 <= highlightedPartitionIndex && 	
 				highlightedPartitionIndex < fPartitioner.fPartitions.size() ) {
-			BuildConsolePartition p = (BuildConsolePartition)fPartitioner.fPartitions.get(highlightedPartitionIndex);
+			BuildConsolePartition p = fPartitioner.fPartitions.get(highlightedPartitionIndex);
 			return p;
 		}
 		return null;

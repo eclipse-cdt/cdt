@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 QNX Software Systems and others.
+ * Copyright (c) 2002, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -61,9 +62,13 @@ public class BuildConsolePartitioner
 
 	/**
 	 * Active list of partitions, must only be accessed form UI thread which
-	 * provides implicit lock
+	 * provides implicit lock.
+	 * 
+	 * The partitions are required to be sorted, and the partitions must not have
+	 * any gaps. (The Offset + Length of partition N must equals the Offset of
+	 * partition N + 1.)
 	 */
-	List<ITypedRegion> fPartitions = new ArrayList<ITypedRegion>();
+	List<BuildConsolePartition> fPartitions = new ArrayList<>();
 	/**
 	 * Active document, must only be accessed form UI thread which provides
 	 * implicit lock
@@ -365,37 +370,68 @@ public class BuildConsolePartitioner
 	 */
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
-		if (offset == 0 && length == fDocument.getLength()) {
-			return fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
-		}
-		int end = offset + length;
-		List<ITypedRegion> list = new ArrayList<ITypedRegion>();
-		for (int i = 0; i < fPartitions.size(); i++) {
-			ITypedRegion partition = fPartitions.get(i);
-			int partitionStart = partition.getOffset();
-			int partitionEnd = partitionStart + partition.getLength();
-			if ((offset >= partitionStart && offset <= partitionEnd)
-					|| (offset < partitionStart && end >= partitionStart)) {
-				list.add(partition);
-			}
-		}
+		List<BuildConsolePartition> list = computePartitioningAsList(offset, length);
 		return list.toArray(new ITypedRegion[list.size()]);
+	}
+
+	public List<BuildConsolePartition> computePartitioningAsList(int offset, int length) {
+		List<BuildConsolePartition> list;
+		if (offset == 0 && length == fDocument.getLength()) {
+			list = fPartitions;
+		} else {
+			int fromIndex = getPartitionIndex(offset);
+			int toIndex = getPartitionIndex(offset + length - 1);
+			if (fromIndex < 0 && toIndex < 0) {
+				// entire range falls outside, should be unreachable
+				return Collections.emptyList();
+			} else if (fromIndex < 0) {
+				fromIndex = 0;
+			} else if (toIndex < 0) {
+				toIndex = fPartitions.size() - 1;
+			}
+			list = fPartitions.subList(fromIndex, toIndex + 1);
+		}
+		return list;
 	}
 
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getPartition(int)
 	 */
 	@Override
-	public ITypedRegion getPartition(int offset) {
-		for (int i = 0; i < fPartitions.size(); i++) {
-			ITypedRegion partition = fPartitions.get(i);
-			int start = partition.getOffset();
-			int end = start + partition.getLength();
-			if (offset >= start && offset < end) {
-				return partition;
-			}
+	public BuildConsolePartition getPartition(int offset) {
+		int partitionIndex = getPartitionIndex(offset);
+		if (partitionIndex >= 0) {
+			return fPartitions.get(partitionIndex);
 		}
 		return null;
+	}
+
+	private int getPartitionIndex(int offset) {
+		BuildConsolePartition searchTerm = new BuildConsolePartition(null, offset, 0, null, null, 0);
+		int index = Collections.binarySearch(fPartitions, searchTerm,
+				(a, b) -> Integer.compare(a.getOffset(), b.getOffset()));
+		if (index >= 0) {
+			// exact match to beginning of a partition
+			return index;
+		} else if (index == -1) {
+			// before first partition
+			return -1;
+		} else if (index == -(fPartitions.size() + 1)) {
+			// either in or after last partition
+			BuildConsolePartition lastPartition = fPartitions.get(fPartitions.size() - 1);
+			int lastPartitionEnd = lastPartition.getOffset() + lastPartition.getLength();
+			assert offset >= lastPartition.getOffset();
+			if (offset < lastPartitionEnd) {
+				// within last partition
+				return fPartitions.size() - 1;
+			} else {
+				// after last partition
+				return -1;
+			}
+		} else {
+			// within a partition
+			return -(index + 1) - 1;
+		}
 	}
 
 	@Override
@@ -407,20 +443,19 @@ public class BuildConsolePartitioner
 			fEditData.clear();
 			return new Region(0, 0);
 		}
-		ITypedRegion[] affectedRegions = computePartitioning(event.getOffset(), text.length());
-		if (affectedRegions.length == 0) {
+		List<BuildConsolePartition> affectedRegions = computePartitioningAsList(event.getOffset(), text.length());
+		if (affectedRegions.size() == 0) {
 			return null;
 		}
-		if (affectedRegions.length == 1) {
-			return affectedRegions[0];
+		if (affectedRegions.size() == 1) {
+			return affectedRegions.get(0);
 		}
-		int affectedLength = affectedRegions[0].getLength();
-		for (int i = 1; i < affectedRegions.length; i++) {
-			ITypedRegion region = affectedRegions[i];
+		int affectedLength = 0;
+		for (BuildConsolePartition region : affectedRegions) {
 			affectedLength += region.getLength();
 		}
 
-		return new Region(affectedRegions[0].getOffset(), affectedLength);
+		return new Region(affectedRegions.get(0).getOffset(), affectedLength);
 	}
 
 	public IConsole getConsole() {

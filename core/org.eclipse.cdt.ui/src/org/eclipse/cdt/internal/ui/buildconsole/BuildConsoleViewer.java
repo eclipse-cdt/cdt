@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 QNX Software Systems and others.
+ * Copyright (c) 2002, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.util.List;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
@@ -163,10 +164,10 @@ public class BuildConsoleViewer extends TextViewer
 
 		// Note, computePartitioning actually doesn't change anything in partitioning,
 		// but only computes number of affected regions.
-		ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineText.length());
-		StyleRange[] styles = new StyleRange[regions.length];
-		for (int i = 0; i < regions.length; i++) {
-			BuildConsolePartition partition = (BuildConsolePartition) regions[i];
+		List<BuildConsolePartition> regions = partitioner.computePartitioningAsList(event.lineOffset, event.lineText.length());
+		StyleRange[] styles = new StyleRange[regions.size()];
+		for (int i = 0; i < regions.size(); i++) {
+			BuildConsolePartition partition = regions.get(i);
 			if (partition.getStream()== null) return;
 
 			Color colorFG = partition.getStream().getColor();

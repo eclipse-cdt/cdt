@@ -189,19 +189,21 @@ public class ToolChainManager implements IToolChainManager {
 	public Collection<IToolChain> getToolChainsMatching(Map<String, String> properties) {
 		init();
 		List<IToolChain> tcs = new ArrayList<>();
-		for (IToolChain toolChain : orderedToolChains) {
-			boolean matches = true;
-			for (Map.Entry<String, String> property : properties.entrySet()) {
-				String tcProperty = toolChain.getProperty(property.getKey());
-				if (tcProperty != null) {
-					if (!property.getValue().equals(tcProperty)) {
-						matches = false;
-						break;
+		if (orderedToolChains != null) {
+			for (IToolChain toolChain : orderedToolChains) {
+				boolean matches = true;
+				for (Map.Entry<String, String> property : properties.entrySet()) {
+					String tcProperty = toolChain.getProperty(property.getKey());
+					if (tcProperty != null) {
+						if (!property.getValue().equals(tcProperty)) {
+							matches = false;
+							break;
+						}
 					}
 				}
-			}
-			if (matches) {
-				tcs.add(toolChain);
+				if (matches) {
+					tcs.add(toolChain);
+				}
 			}
 		}
 

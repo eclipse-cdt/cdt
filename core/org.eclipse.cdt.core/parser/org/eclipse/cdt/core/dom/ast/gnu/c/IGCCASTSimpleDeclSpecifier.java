@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 /**
  * @deprecated Everything can be expressed as {@link ICASTSimpleDeclSpecifier}.
  * @noreference This interface is not intended to be referenced by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 @Deprecated
 public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {

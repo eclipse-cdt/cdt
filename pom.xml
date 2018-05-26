@@ -318,6 +318,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
 		<module>jtag/org.eclipse.cdt.debug.gdbjtag.core.tests</module>
+		<module>jtag/org.eclipse.cdt.debug.gdbjtag.ui.tests</module>
 		<module>lsp/org.eclipse.cdt.lsp.core.tests</module>
 		<module>lsp/org.eclipse.cdt.lsp.cquery.tests</module>
 		<module>memory/org.eclipse.cdt.debug.core.memory.tests</module>

@@ -404,26 +404,20 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		try {
 			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
+				Boolean extendedRemote = CDebugUtils.getAttribute(getAttributes(),
+						IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET,
+						IGDBJtagConstants.DEFAULT_USE_EXTENDED_REMOTE_TARGET);
 				List<String> commands = new ArrayList<>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
-					String connection = IGDBJtagConstants.DEFAULT_CONNECTION;
-					String connectionUri = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
-							IGDBJtagConstants.DEFAULT_CONNECTION);
-					if (!IGDBJtagConstants.DEFAULT_CONNECTION.equals(connectionUri)) {
-						connection = new URI(connectionUri).getSchemeSpecificPart();
-					} else {
-						// Handle legacy launch configurations
-						String ipAddress = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IP_ADDRESS,
-								IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-						int portNumber = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PORT_NUMBER,
-								IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-						if (!IGDBJtagConstants.DEFAULT_IP_ADDRESS.equals(ipAddress)) {
-							connection = String.format("%s:%d", ipAddress, portNumber); //$NON-NLS-1$
-						}
-					}
+					URI uri = new URI(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
+							IGDBJtagConstants.DEFAULT_CONNECTION));
 					IGDBJtagConnection device = (IGDBJtagConnection) fGdbJtagDevice;
-					device.doRemote(connection, commands);
-					queueCommands(commands, rm);
+					if (extendedRemote && device instanceof IGDBJtagConnection2) {
+						IGDBJtagConnection2 device2 = (IGDBJtagConnection2) fGdbJtagDevice;
+						device2.doExtendedRemote(uri.getSchemeSpecificPart(), commands);
+					} else {
+						device.doRemote(uri.getSchemeSpecificPart(), commands);
+					}
 				} else {
 					rm.done();
 				}

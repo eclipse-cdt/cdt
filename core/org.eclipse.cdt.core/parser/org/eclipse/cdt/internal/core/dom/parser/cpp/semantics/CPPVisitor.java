@@ -118,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
@@ -270,7 +271,7 @@ public class CPPVisitor extends ASTQueries {
 		if (parent instanceof IASTNamedTypeSpecifier ||
 				parent instanceof ICPPASTBaseSpecifier ||
 				parent instanceof ICPPASTConstructorChainInitializer ||
-				parent instanceof ICPPASTCapture ||
+				(parent instanceof ICPPASTCapture && !(parent instanceof ICPPASTInitCapture)) ||
 				name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME) {
 		    if (name.getLookupKey().length == 0)
 		    	return null;
@@ -755,6 +756,11 @@ public class CPPVisitor extends ASTQueries {
 	
 	private static IBinding createBinding(IASTDeclarator declarator) {
 		IASTNode parent = findOutermostDeclarator(declarator).getParent();
+
+		if (parent instanceof ICPPASTInitCapture) {
+			return new CPPVariable(declarator.getName());
+		}
+
 		declarator= findInnermostDeclarator(declarator);
 
 		final IASTDeclarator typeRelevantDtor= findTypeRelevantDeclarator(declarator);
@@ -2094,7 +2100,37 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return null;
 	}
-	
+
+	private static IType initalizerClauseType(IASTInitializerClause initializerClause) {
+		if (initializerClause instanceof IASTExpression) {
+			return ((IASTExpression) initializerClause).getExpressionType();
+		} else if (initializerClause instanceof ICPPASTInitializerList) {
+			return((ICPPASTInitializerList) initializerClause).getEvaluation().getType();
+		}
+		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+	}
+
+	public static IType createType(ICPPASTInitCapture capture) {
+		IASTInitializer initializer = capture.getDeclarator().getInitializer();
+		if (initializer instanceof ICPPASTInitializerList) {
+			IType type = ((ICPPASTInitializerList) initializer).getEvaluation().getType();
+			if (type instanceof InitializerListType) {
+				ICPPEvaluation[] clauses = ((InitializerListType) type).getEvaluation().getClauses();
+				if (clauses.length == 1) {
+					return clauses[0].getType();
+				}
+			}
+		} else if (initializer instanceof ICPPASTConstructorInitializer) {
+			IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
+			if (arguments.length == 1) {
+				return initalizerClauseType(arguments[0]);
+			}
+		} else if (initializer instanceof IASTEqualsInitializer) {
+			return initalizerClauseType(((IASTEqualsInitializer) initializer).getInitializerClause());
+		}
+		return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+	}
+
 	public static IType createType(IASTDeclarator declarator) {
 		// Resolve placeholders by default.
 		return createType(declarator, RESOLVE_PLACEHOLDERS);
@@ -2121,6 +2157,8 @@ public class CPPVisitor extends ASTQueries {
 				final ICPPASTTypeId typeId = (ICPPASTTypeId) parent;
 				declSpec = typeId.getDeclSpecifier();
 				isPackExpansion= typeId.isPackExpansion();
+			} else if (parent instanceof ICPPASTInitCapture) {
+				return createType((ICPPASTInitCapture) parent);
 			} else {
 				throw new IllegalArgumentException();
 			}

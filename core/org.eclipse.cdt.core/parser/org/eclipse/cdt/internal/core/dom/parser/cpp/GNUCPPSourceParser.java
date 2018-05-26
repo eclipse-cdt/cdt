@@ -106,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
@@ -2118,9 +2119,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		final IASTName identifier= identifier();
 		result.setIdentifier(identifier);
 
-		if (LT(1) == IToken.tELLIPSIS) {
+		switch(LT(1)) {
+		case IToken.tELLIPSIS:
 			result.setIsPackExpansion(true);
 			return setRange(result, offset, consume().getEndOffset());
+		case IToken.tASSIGN:
+		{
+			consume();
+			IASTDeclarator declarator = getNodeFactory().newDeclarator(identifier);
+			IASTInitializerClause initClause = initClause(false);
+			declarator.setInitializer(getNodeFactory().newEqualsInitializer(initClause));
+			ICPPASTInitCapture initResult = getNodeFactory().newInitCapture(declarator);
+			return setRange(initResult, offset, calculateEndOffset(initClause));
+		}
+		case IToken.tLBRACE:
+		case IToken.tLPAREN:
+		{
+			IASTDeclarator declarator = getNodeFactory().newDeclarator(identifier);
+			IASTInitializer initializer = bracedOrCtorStyleInitializer();
+			declarator.setInitializer(initializer);
+			ICPPASTInitCapture initResult = getNodeFactory().newInitCapture(declarator);
+			return setRange(initResult, offset, calculateEndOffset(initializer));
+		}
 		}
 
 		return setRange(result, offset, calculateEndOffset(identifier));

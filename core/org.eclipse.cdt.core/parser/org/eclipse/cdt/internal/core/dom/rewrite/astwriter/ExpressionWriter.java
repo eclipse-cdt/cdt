@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
@@ -574,7 +575,11 @@ public class ExpressionWriter extends NodeWriter{
 			if (capture.isByReference()) {
 				scribe.print(AMPERSAND_OP);
 			}
-			capture.getIdentifier().accept(visitor);
+			if (capture instanceof ICPPASTInitCapture) {
+				((ICPPASTInitCapture) capture).getDeclarator().accept(visitor);
+			} else {
+				capture.getIdentifier().accept(visitor);
+			}
 		}
 	}
 

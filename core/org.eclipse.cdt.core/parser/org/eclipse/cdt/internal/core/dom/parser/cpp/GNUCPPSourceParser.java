@@ -106,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
@@ -2102,28 +2103,56 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return setRange(lambdaExpr, offset, calculateEndOffset(body));
 	}
 
+	private ICPPASTInitCapture createInitCapture(IASTName identifier, IASTInitializer initializer, boolean isReference, int offset)
+			throws EndOfFileException, BacktrackException {
+		IASTDeclarator declarator = getNodeFactory().newDeclarator(identifier);
+		declarator.setInitializer(initializer);
+		if (isReference) {
+			declarator.addPointerOperator(getNodeFactory().newReferenceOperator(false));
+		}
+		setRange(declarator, offset, calculateEndOffset(initializer));
+		ICPPASTInitCapture initCapture = getNodeFactory().newInitCapture(declarator);
+		return setRange(initCapture, offset, calculateEndOffset(initializer));
+	}
+
 	private ICPPASTCapture capture() throws EndOfFileException, BacktrackException {
-		final int offset= LA().getOffset();
-		final ICPPASTCapture result = getNodeFactory().newCapture();
+		final int offset = LA().getOffset();
+		ICPPASTCapture result = getNodeFactory().newCapture();
+		boolean referenceCapture = false;
 
 		switch (LT(1)) {
 		case IToken.t_this:
 			return setRange(result, offset, consume().getEndOffset());
 		case IToken.tAMPER:
 			consume();
-			result.setIsByReference(true);
+			referenceCapture = true;
 			break;
 		}
 
-		final IASTName identifier= identifier();
+		final IASTName identifier = identifier();
 		result.setIdentifier(identifier);
+		result.setIsByReference(referenceCapture);
+		setRange(result, offset, calculateEndOffset(identifier));
+
+		switch(LT(1)) {
+		case IToken.tASSIGN:
+			result = createInitCapture(identifier, equalsInitalizerClause(false), referenceCapture, offset);
+			break;
+		case IToken.tLBRACE:
+		case IToken.tLPAREN:
+			result = createInitCapture(identifier, bracedOrCtorStyleInitializer(), referenceCapture, offset);
+			break;
+		}
 
 		if (LT(1) == IToken.tELLIPSIS) {
+			// Note this will probably change with C++20 such that the 
+			// pack expansion of a CPPASTInitCapture will be part of the IASTDeclarator
+			// and not the capture. [See: P0780R2]
 			result.setIsPackExpansion(true);
 			return setRange(result, offset, consume().getEndOffset());
 		}
 
-		return setRange(result, offset, calculateEndOffset(identifier));
+		return result;
 	}
 
 	protected IASTExpression specialCastExpression(int kind) throws EndOfFileException, BacktrackException {
@@ -3947,6 +3976,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
+	private IASTEqualsInitializer equalsInitalizerClause(boolean allowSkipping)
+			throws EndOfFileException, BacktrackException {
+		// Check for deleted or defaulted function syntax.
+		final int lt2 = LTcatchEOF(2);
+		if (lt2 == IToken.t_delete || lt2 == IToken.t_default) {
+			return null;
+		}
+
+		int offset = consume(IToken.tASSIGN).getOffset();
+		IASTInitializerClause initClause = initClause(allowSkipping);
+		IASTEqualsInitializer initExpr = getNodeFactory().newEqualsInitializer(initClause);
+		return setRange(initExpr, offset, calculateEndOffset(initClause));
+	}
+
 	/**
 	 * initializer:
 	 *	brace-or-equal-initializer
@@ -3963,16 +4006,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// = initializer-clause
 		if (lt1 == IToken.tASSIGN) {
-			// Check for deleted or defaulted function syntax.
-			final int lt2= LTcatchEOF(2);
-			if (lt2 == IToken.t_delete || lt2 == IToken.t_default)
-				return null;
-
-			int offset= consume().getOffset();
-			final boolean allowSkipping = LT(1) == IToken.tLBRACE && specifiesArray(dtor);
-			IASTInitializerClause initClause = initClause(allowSkipping);
-			IASTEqualsInitializer initExpr= getNodeFactory().newEqualsInitializer(initClause);
-			return setRange(initExpr, offset, calculateEndOffset(initClause));
+			return equalsInitalizerClause(LTcatchEOF(2) == IToken.tLBRACE && specifiesArray(dtor));
 		}
 
 		// braced-init-list

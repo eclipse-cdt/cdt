@@ -123,3 +123,39 @@ template<typename... T>
 void foo(Tpl<T...>)
 {
 }
+
+//!Lambda init capture equals
+//%CPP
+int main()
+{
+    [c = {3, 3}] {
+    }
+    ;
+}
+
+//!Lambda init capture braces
+//%CPP
+int main()
+{
+    [c{3, 3}] {
+    }
+    ;
+}
+
+//!Lambda init capture parenthesis
+//%CPP
+int main()
+{
+    [c({3, 3})] {
+    }
+    ;
+}
+
+//!Lambda init equals by ref
+//%CPP
+int main()
+{
+    [&c = {3, 3}] {
+    }
+    ;
+}

@@ -12,15 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * Implementation for captures.
  */
-public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
-	private boolean fByReference;
-	private boolean fPackExpansion;
+public class CPPASTCapture extends CPPASTCaptureBase {
 	private IASTName fIdentifier;
 
 	public CPPASTCapture() {
@@ -34,10 +30,7 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	@Override
 	public CPPASTCapture copy(CopyStyle style) {
 		final CPPASTCapture copy = new CPPASTCapture();
-		if (fIdentifier != null)
-			copy.setIdentifier(fIdentifier.copy(style));
-		copy.fByReference = fByReference;
-		copy.fPackExpansion = fPackExpansion;
+		copy.setIdentifier(fIdentifier == null ? null : fIdentifier.copy(style));
 		return copy(copy, style);
 	}
 
@@ -47,28 +40,21 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	}
 
 	@Override
-	public boolean isByReference() {
-		return fByReference;
-	}
-
-	@Override
-	public boolean isPackExpansion() {
-		return fPackExpansion;
-	}
-
-	@Override
 	public IASTName getIdentifier() {
 		return fIdentifier;
 	}
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-        if (visitor.shouldVisitCaptures) {
-		    switch (visitor.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (visitor.shouldVisitCaptures) {
+			switch (visitor.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
 		if (fIdentifier != null && !fIdentifier.accept(visitor))
@@ -77,8 +63,8 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 		if (visitor.shouldVisitCaptures && visitor.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public void setIdentifier(IASTName identifier) {
@@ -91,22 +77,8 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	}
 
 	@Override
-	public void setIsByReference(boolean value) {
-		assertNotFrozen();
-		fByReference= value;
-	}
-
-	@Override
-	public void setIsPackExpansion(boolean val) {
-		assertNotFrozen();
-		fPackExpansion= val;
-	}
-
-	@Override
 	public int getRoleForName(IASTName name) {
 		if (name == fIdentifier) {
-			// Treat the capture as a reference to the captured variable.
-			// This choice may be revisited when C++14 init-captures are implemented.
 			return r_reference;
 		}
 		return r_unclear;

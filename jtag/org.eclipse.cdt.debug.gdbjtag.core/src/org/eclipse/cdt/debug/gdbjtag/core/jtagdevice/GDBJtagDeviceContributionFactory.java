@@ -96,7 +96,7 @@ public class GDBJtagDeviceContributionFactory {
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 9.3
 	 */
 	public GDBJtagDeviceContribution findByDeviceName(String name) {
 		for (GDBJtagDeviceContribution contribution : getGDBJtagDeviceContribution()) {
@@ -108,7 +108,7 @@ public class GDBJtagDeviceContributionFactory {
 	}
 
 	/**
-	 * @since 10.0
+	 * @since 9.3
 	 */
 	public GDBJtagDeviceContribution findByDeviceId(String id) {
 		for (GDBJtagDeviceContribution contribution : getGDBJtagDeviceContribution()) {

@@ -105,6 +105,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTCapture newCapture();
 
+	/**
+	 * @since 6.5
+	 */
+	public ICPPASTInitCapture newInitCapture(ICPPASTDeclarator declarator);
+
 	@Override
 	public ICPPASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand);
 

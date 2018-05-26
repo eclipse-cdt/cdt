@@ -313,16 +313,26 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepConnectToTarget(final RequestMonitor rm) {
 		try {
 			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
+				Boolean extendedRemote = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_EXTENDED_REMOTE_TARGET);
 				List<String> commands = new ArrayList<String>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
 					URI	uri = new URI(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
 					IGDBJtagConnection device = (IGDBJtagConnection)fGdbJtagDevice;
-					device.doRemote(uri.getSchemeSpecificPart(), commands);
+					if (extendedRemote && device instanceof IGDBJtagConnection2) {
+						IGDBJtagConnection2 device2 = (IGDBJtagConnection2) fGdbJtagDevice;
+						device2.doExtendedRemote(uri.getSchemeSpecificPart(), commands);
+					} else {
+						device.doRemote(uri.getSchemeSpecificPart(), commands);
+					}
 				} else {
 					// Handle legacy network device contributions that don't understand URIs
 					String ipAddress = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 					int portNumber = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-					fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+					if (extendedRemote) {
+						fGdbJtagDevice.doExtendedRemote(ipAddress, portNumber, commands);
+					} else {
+						fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+					}
 				}
 				queueCommands(commands, rm);
 			} else {

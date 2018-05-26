@@ -66,6 +66,12 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 		addCmd(commands, cmd);
 	}
 
+	@Override
+	public void doExtendedRemote(String ip, int port, Collection<String> commands) {
+		String cmd = "-target-select extended-remote " + ip + ":" + String.valueOf(port); //$NON-NLS-1$ //$NON-NLS-2$
+		addCmd(commands, cmd);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doHalt(java.util.Collection)
 	 */

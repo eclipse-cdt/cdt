@@ -23,6 +23,7 @@ public interface IGDBJtagConstants {
 	
 	// Debugger
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
+	/** @since 9.2 */ public static final String ATTR_USE_EXTENDED_REMOTE_TARGET = Activator.PLUGIN_ID + ".useExtendedRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
 	/** @deprecated Use {@link #ATTR_JTAG_DEVICE ID} instead */
@@ -30,6 +31,7 @@ public interface IGDBJtagConstants {
 	/** @since 9.2 */ public static final String ATTR_JTAG_DEVICE_ID = Activator.PLUGIN_ID + ".jtagDeviceId"; //$NON-NLS-1$
 	
 	public static final boolean DEFAULT_USE_REMOTE_TARGET = true;
+	/** @since 9.2 */ public static final boolean DEFAULT_USE_EXTENDED_REMOTE_TARGET = false;
 	public static final String DEFAULT_IP_ADDRESS = "unspecified-ip-address"; //$NON-NLS-1$
 	public static final int DEFAULT_PORT_NUMBER = 0;
 	public static final String ATTR_INIT_COMMANDS = Activator.PLUGIN_ID + ".initCommands"; //$NON-NLS-1$

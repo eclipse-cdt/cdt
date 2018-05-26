@@ -16,4 +16,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/debug/gdbjtag/core/jtagdevice/IGDBJtagDevice.java" type="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice">
+        <filter comment="As per CDT policy, new default methods are allowed in interfaces." id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice"/>
+                <message_argument value="doExtendedRemote(String, int, Collection&lt;String&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

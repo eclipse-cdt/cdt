@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.Activator;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
+import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection2;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContribution;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContributionFactory;
@@ -75,6 +76,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	private Text gdbCommand;
 	private Button useRemote;
+	private Button useExtendedRemote;
 	private Combo jtagDevice;
 	private Composite remoteConnectionParameters;
 	private StackLayout remoteConnectParmsLayout;
@@ -87,6 +89,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	protected Button fUpdateThreadlistOnSuspend;
 	private Button remoteTimeoutEnabled;
 	private Text remoteTimeoutValue;
+	private Group remoteGroup;
 
 	@Override
 	public String getName() {
@@ -201,15 +204,15 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	}
 
 	private void createRemoteControl(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
+		remoteGroup = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		group.setLayout(layout);
+		remoteGroup.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		group.setLayoutData(gd);
-		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
+		remoteGroup.setLayoutData(gd);
+		remoteGroup.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
 
-		useRemote = new Button(group, SWT.CHECK);
+		useRemote = new Button(remoteGroup, SWT.CHECK);
 		useRemote.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text"));
 		useRemote.addSelectionListener(new SelectionAdapter() {
@@ -219,9 +222,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
-		
-		remoteTimeoutEnabled = new Button(group, SWT.CHECK);
+
+		remoteTimeoutEnabled = new Button(remoteGroup, SWT.CHECK);
 		remoteTimeoutEnabled.setText(Messages.getString("GDBJtagDebuggerTab.remoteTimeout"));
 		remoteTimeoutEnabled.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
 		remoteTimeoutEnabled.addSelectionListener(new SelectionAdapter() {
@@ -231,13 +233,13 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		remoteTimeoutValue = new Text(group, SWT.BORDER);
+		remoteTimeoutValue = new Text(remoteGroup, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 125;
 		remoteTimeoutValue.setLayoutData(gd);
 		remoteTimeoutValue.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
 
-		Composite comp = new Composite(group, SWT.NONE);
+		Composite comp = new Composite(remoteGroup, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
@@ -262,7 +264,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		remoteConnectionParameters = new Composite(group, SWT.NO_TRIM | SWT.NO_FOCUS);
+		remoteConnectionParameters = new Composite(remoteGroup, SWT.NO_TRIM | SWT.NO_FOCUS);
 		remoteConnectParmsLayout = new StackLayout();
 		remoteConnectionParameters.setLayout(remoteConnectParmsLayout);
 		remoteConnectionParameters.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
@@ -341,6 +343,11 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});	
+
+
+		useExtendedRemote = new Button(remoteGroup, SWT.CHECK);
+		useExtendedRemote.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+		useExtendedRemote.setText(Messages.getString("GDBJtagDebuggerTab.useExtendedRemote_Text"));
 	}
 
 	/**
@@ -379,6 +386,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	
 	private void useRemoteChanged() {
 		boolean enabled = useRemote.getSelection();
+		useExtendedRemote.setEnabled(enabled);
 		remoteTimeoutEnabled.setEnabled(enabled);
 		remoteTimeoutValue.setEnabled(remoteTimeoutEnabled.getSelection());
 		jtagDevice.setEnabled(enabled);
@@ -387,14 +395,28 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		connection.setEnabled(enabled);
 		GDBJtagDeviceContribution selectedDeviceEntry = GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(jtagDevice.getText());
 		if ((selectedDeviceEntry == null) || (selectedDeviceEntry.getDevice() == null)) {
+			useExtendedRemote.setVisible(false);
 			remoteConnectParmsLayout.topControl = null;
 			remoteConnectionParameters.layout();
 		} else {
 			IGDBJtagDevice device = selectedDeviceEntry.getDevice();
 			if (device instanceof IGDBJtagConnection) {
+				if (device instanceof IGDBJtagConnection2) {
+					IGDBJtagConnection2 device2 = (IGDBJtagConnection2) device;
+					boolean extendedRemoteEnabled = device2.getSupportsExtendedRemote();
+					boolean onlyExtendedRemote = device2.getSupportsOnlyExtendedRemote();
+					boolean displayExtendedRemote = extendedRemoteEnabled && !onlyExtendedRemote;
+					useExtendedRemote.setVisible(displayExtendedRemote);
+					useExtendedRemote.setToolTipText(Messages.getString("GDBJtagDebuggerTab.extendedRemoteTooltip_device_supports_extended_remote")); //$NON-NLS-1$
+				} else {
+					useExtendedRemote.setVisible(true);
+					useExtendedRemote.setToolTipText(Messages.getString("GDBJtagDebuggerTab.extendedRemoteTooltip_device_extended_remote_state_not_known")); //$NON-NLS-1$
+				}
 				remoteConnectParmsLayout.topControl = remoteConnectionBox;
 				remoteConnectionBox.getParent().layout();
 			} else {
+				useExtendedRemote.setVisible(true);
+				useExtendedRemote.setToolTipText(Messages.getString("GDBJtagDebuggerTab.extendedRemoteTooltip_device_supports_extended_remote")); //$NON-NLS-1$
 				remoteConnectParmsLayout.topControl = remoteTcpipBox;
 				remoteTcpipBox.getParent().layout();
 			}
@@ -459,6 +481,9 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			boolean useRemoteAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			useRemote.setSelection(useRemoteAttr);
+			useExtendedRemote.setSelection(
+					configuration.getAttribute(IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET,
+							IGDBJtagConstants.DEFAULT_USE_EXTENDED_REMOTE_TARGET));
 
 			GDBJtagDeviceContribution savedDeviceContribution = getDeviceContribution(configuration);
 			if (savedDeviceContribution != null) {
@@ -539,6 +564,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			// ensure LaunchUtils.getSessionType() returns the default session type
 			configuration.removeAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE);
 		}
+		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET, useExtendedRemote.getSelection());
 		if (!savedJtagDevice.isEmpty()) {
 			try {
 				IGDBJtagDevice device = GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(savedJtagDevice).getDevice();
@@ -574,6 +600,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET,
+				IGDBJtagConstants.DEFAULT_USE_EXTENDED_REMOTE_TARGET);
 		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,

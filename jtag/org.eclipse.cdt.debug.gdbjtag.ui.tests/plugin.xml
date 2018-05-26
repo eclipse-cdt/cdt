@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialNoExtendeRemote"
+            id="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialNoExtendeRemote"
+            name="Test Device - Generic Serial disallowing extended-remote">
+      </device>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialOnlyExtendeRemote"
+            id="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialOnlyExtendeRemote"
+            name="Test Device - Generic Serial only allowing extended-remote">
+      </device>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialNoExtendedRemoteInfo"
+            id="org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GenericSerialNoExtendedRemoteInfo"
+            name="Test Device - Generic Serial with no extended-remote infor">
+      </device>
+   </extension>
+</plugin>

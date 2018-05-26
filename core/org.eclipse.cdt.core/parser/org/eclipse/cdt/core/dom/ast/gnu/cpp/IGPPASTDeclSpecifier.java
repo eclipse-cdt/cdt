@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 /**
  * @deprecated Replaced by {@link IASTDeclSpecifier}.
  * @noreference This interface is not intended to be referenced by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 @Deprecated
 public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {

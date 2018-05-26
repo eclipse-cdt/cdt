@@ -16,7 +16,7 @@ import java.util.Collection;
 
 
 /**
- * @since 9.2
+ * @since 9.3
  */
 public class OpenOCDSocket extends DefaultGDBJtagDeviceImpl {
 

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse GDB Hardware Debug UI Plug-in Tests
+Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.ui.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Eclipse CDT
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.cdt.debug.gdbjtag.core

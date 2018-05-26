@@ -15,12 +15,12 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
+import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection2;
 
 /**
  * @since 7.0
  */
-public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl implements IGDBJtagConnection {
+public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl implements IGDBJtagConnection2 {
 
 	protected String connection = null;
 
@@ -46,6 +46,13 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 			// Bug 348043
 			cmd = "-target-select remote " + connection; //$NON-NLS-1$
 			addCmd(commands, cmd);
+		}
+	}
+
+	@Override
+	public void doExtendedRemote(String connection, Collection<String> commands) {
+		if (connection != null) {
+			addCmd(commands, "-target-select extended-remote " + connection); //$NON-NLS-1$
 		}
 	}
 

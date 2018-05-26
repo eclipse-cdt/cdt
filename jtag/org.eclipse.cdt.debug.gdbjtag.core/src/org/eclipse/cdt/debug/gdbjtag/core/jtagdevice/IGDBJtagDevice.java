@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,28 @@ public interface IGDBJtagDevice {
 	 */
 	@Deprecated
 	public void doRemote(String ip, int port, Collection<String> commands);
+
+	/**
+	 * Commands to connect to extended-remote JTAG device
+	 * 
+	 * @param ip
+	 *            host name of IP address of JTAG device
+	 * @param port
+	 *            TCP socket port number of JTAG device
+	 * @param commands
+	 *            implementation should populate the collection with the gdb
+	 *            commands that will connect to the device, or leave the
+	 *            collection as-is if that operation is either unsupported or
+	 *            not applicable
+	 * @deprecated an implementor should adapt to IGDBJtagConnection2 instead of
+	 *             implementing this method (implementation should throw
+	 *             UnsupportedOperationException)
+	 * @since 9.2
+	 */
+	@Deprecated
+	default public void doExtendedRemote(String ip, int port, Collection<String> commands) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Commands to download the executable binary to target

@@ -136,6 +136,15 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
     	}
     }
 
+	/**
+	 * Remove a pointer operator from the pointer operators
+	 * @param operator Pointer operator to be removed
+	 */
+	public void removePointerOperator(IASTPointerOperator operator) {
+		assertNotFrozen();
+		ArrayUtil.remove(pointerOps, operator);
+	}
+
     @Override
 	public void setNestedDeclarator(IASTDeclarator nested) {
         assertNotFrozen();

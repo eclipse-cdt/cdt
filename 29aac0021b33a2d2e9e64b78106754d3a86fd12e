@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73603c53_765c84a9",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-05-26T15:52:07Z",
+      "side": 1,
+      "message": "There has been no release since the version was previously incremented to 9.2.0 so I think it can stay at 9.2.0. Do you concur?",
+      "range": {
+        "startLine": 5,
+        "startChar": 18,
+        "endLine": 5,
+        "endChar": 19
+      },
+      "revId": "29aac0021b33a2d2e9e64b78106754d3a86fd12e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

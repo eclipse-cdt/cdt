@@ -63,7 +63,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class that implements IGDBJtagDevice and provides default commands used by debbuger for various set-up tasks. It is recommended tp extend DefaultGDBJtagConnectionImpl class.
+                  Class that implements IGDBJtagDevice and optionally IGDBJtagConnection or IGDBJtagConnection2 and provides default commands used by debbuger for various set-up tasks. It is recommended to extend DefaultGDBJtagConnectionImpl class.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice"/>

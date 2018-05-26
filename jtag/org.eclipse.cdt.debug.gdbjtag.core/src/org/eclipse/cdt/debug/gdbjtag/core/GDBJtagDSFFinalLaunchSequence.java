@@ -406,6 +406,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
 				List<String> commands = new ArrayList<>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
+					IGDBJtagConnection device = (IGDBJtagConnection) fGdbJtagDevice;
 					String connection = IGDBJtagConstants.DEFAULT_CONNECTION;
 					String connectionUri = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
 							IGDBJtagConstants.DEFAULT_CONNECTION);
@@ -421,9 +422,17 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 							connection = String.format("%s:%d", ipAddress, portNumber); //$NON-NLS-1$
 						}
 					}
-					IGDBJtagConnection device = (IGDBJtagConnection) fGdbJtagDevice;
-					device.doRemote(connection, commands);
+					Boolean extendedRemote = CDebugUtils.getAttribute(getAttributes(),
+							IGDBJtagConstants.ATTR_USE_EXTENDED_REMOTE_TARGET,
+							IGDBJtagConstants.DEFAULT_USE_EXTENDED_REMOTE_TARGET);
+					if (extendedRemote && device instanceof IGDBJtagConnection2) {
+						IGDBJtagConnection2 device2 = (IGDBJtagConnection2) device;
+						device2.doExtendedRemote(connection, commands);
+					} else {
+						device.doRemote(connection, commands);
+					}
 					queueCommands(commands, rm);
+
 				} else {
 					rm.done();
 				}

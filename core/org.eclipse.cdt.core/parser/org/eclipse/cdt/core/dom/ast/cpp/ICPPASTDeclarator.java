@@ -20,6 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
  * @since 5.2
  */
 public interface ICPPASTDeclarator extends IASTDeclarator {
+
+	@Override
+	public ICPPASTDeclarator copy();
+
+	@Override
+	public ICPPASTDeclarator copy(CopyStyle style);
+
 	/**
 	 * Returns whether the declarator contains an ellipsis, in which case it declares
 	 * a parameter pack.

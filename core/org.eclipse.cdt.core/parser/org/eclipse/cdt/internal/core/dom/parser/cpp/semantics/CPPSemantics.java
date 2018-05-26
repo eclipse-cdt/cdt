@@ -104,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -1582,9 +1583,16 @@ public class CPPSemantics {
 				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition) p).getDeclarator();
 				nodes = dtor.getParameters();
 			} else if (p instanceof ICPPASTLambdaExpression) {
-				ICPPASTFunctionDeclarator dtor = ((ICPPASTLambdaExpression) p).getDeclarator();
-				if (dtor != null) {
-					nodes = dtor.getParameters();
+				ICPPASTLambdaExpression lambdaExpression = (ICPPASTLambdaExpression) p;
+				for (ICPPASTCapture capture : lambdaExpression.getCaptures()) {
+					IASTName name = capture.getIdentifier();
+					if (name != null) {
+						ASTInternal.addName(scope, name);
+					}
+				}
+				ICPPASTFunctionDeclarator lambdaDeclarator = lambdaExpression.getDeclarator();
+				if (lambdaDeclarator != null) {
+					nodes = lambdaDeclarator.getParameters();
 				}
 			}
 			if (p instanceof ICPPASTCatchHandler) {

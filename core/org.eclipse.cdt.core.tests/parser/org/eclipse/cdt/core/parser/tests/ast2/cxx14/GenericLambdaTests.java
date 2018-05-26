@@ -100,4 +100,99 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	public void testNestedGenericLambdas() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	// int main() {
+	// 	[c { 3 }] { }();
+	// }
+	public void testLambdaInitCaptures_413527_1a()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b {};
+	// 	[c { 3 }, b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_1b()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b {};
+	// 	[c { 3 }, b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_1c()  throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("b", CommonCPPTypes.int_);
+		helper.assertVariableType("c", CommonCPPTypes.int_);
+	}
+
+	// int main() {
+	// 	[c(3)] { }();
+	// }
+	public void testLambdaInitCaptures_413527_2a()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c(3), b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_2b()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c(3), b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_2c()  throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("b", CommonCPPTypes.int_);
+		helper.assertVariableType("c", CommonCPPTypes.int_);
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c( { 3 } ), b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_2d()  throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("b", CommonCPPTypes.int_);
+		helper.assertInitializerType("c", CommonCPPTypes.int_, 1);
+	}
+
+	// int main() {
+	// 	[c = 3] { }();
+	// }
+	public void testLambdaInitCaptures_413527_3a()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c = 3, b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_3b()  throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c = 3, b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_3c()  throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("b", CommonCPPTypes.int_);
+		helper.assertVariableType("c", CommonCPPTypes.int_);
+	}
+
+	// int main() {
+	// 	int b { };
+	// 	[c = { 3, 4 }, b] { }();
+	// }
+	public void testLambdaInitCaptures_413527_3d()  throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("b", CommonCPPTypes.int_);
+		helper.assertInitializerType("c", CommonCPPTypes.int_, 2);
+	}
 }

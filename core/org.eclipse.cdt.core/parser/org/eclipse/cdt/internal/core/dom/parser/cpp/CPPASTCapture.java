@@ -34,10 +34,9 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	@Override
 	public CPPASTCapture copy(CopyStyle style) {
 		final CPPASTCapture copy = new CPPASTCapture();
-		if (fIdentifier != null)
-			copy.setIdentifier(fIdentifier.copy(style));
 		copy.fByReference = fByReference;
 		copy.fPackExpansion = fPackExpansion;
+		copy.setIdentifier(fIdentifier == null ? null : fIdentifier.copy(style));
 		return copy(copy, style);
 	}
 
@@ -105,8 +104,6 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	@Override
 	public int getRoleForName(IASTName name) {
 		if (name == fIdentifier) {
-			// Treat the capture as a reference to the captured variable.
-			// This choice may be revisited when C++14 init-captures are implemented.
 			return r_reference;
 		}
 		return r_unclear;

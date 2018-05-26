@@ -34,7 +34,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.InitializerListType;
 
 /**
  * Common base class for AST2 and index tests.
@@ -364,7 +366,18 @@ public class SemanticTestBase extends BaseTestCase {
     		IVariable var = assertNonProblem(variableName);
     		assertSameType(expectedType, var.getType());
     	}
-    	
+
+		public void assertInitializerType(String variableName, IType clauseType, int numberOfClauses) {
+			IVariable var = assertNonProblem(variableName);
+			IType type = var.getType();
+			assertTrue(variableName + " must be of type InitalizerList", var.getType() instanceof InitializerListType);
+			ICPPEvaluation[] clauses = ((InitializerListType) type).getEvaluation().getClauses();
+			assertTrue(variableName + " must contain " + numberOfClauses + " clauses", clauses.length == numberOfClauses);
+			for (ICPPEvaluation clause : clauses) {
+				assertSameType(clauseType, clause.getType());
+			}
+		}
+
     	public void assertVariableTypeProblem(String variableName) {
     		IVariable var = assertNonProblem(variableName);
     		assertInstance(var.getType(), IProblemType.class);

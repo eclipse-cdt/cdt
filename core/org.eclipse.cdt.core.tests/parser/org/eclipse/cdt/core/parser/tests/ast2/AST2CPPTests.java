@@ -12705,4 +12705,12 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		// does not throw an exception.
 		var.getInitialValue();
 	}
+
+	// int foo() {
+	//    int x;
+	//    auto lambda = [x = x] {};
+	// }
+	public void testLambdaInitCaptureSyntaxOnly_413527() throws Exception {
+		parse(getAboveComment(), CPP);
+	}
 }

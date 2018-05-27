@@ -4,14 +4,11 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage;
 
-//import pluginClass;
-
 /**
  * Class used to initialize default preference values.
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	// CPPLanguageServerPreferencePage page = new CPPLanguageServerPreferencePage();
 	/*
 	 * (non-Javadoc)
 	 *

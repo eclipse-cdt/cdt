@@ -1,7 +1,5 @@
 package org.eclipse.lsp4e.cpp.language;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 /**
  * Constant definitions for plug-in preferences
  */

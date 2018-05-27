@@ -93,4 +93,19 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            id="org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage"
+            name="C++ Language Server">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.lsp4e.cpp.language.PreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>

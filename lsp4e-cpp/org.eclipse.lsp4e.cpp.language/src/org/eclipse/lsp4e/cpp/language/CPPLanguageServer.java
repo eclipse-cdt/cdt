@@ -22,23 +22,32 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
 public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
 	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
 
-	private static final String CLANG_LANGUAGE_SERVER = "clangd"; //$NON-NLS-1$
-
 	private IResourceChangeListener fResourceListener;
+
+	private static final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 	public CPPLanguageServer() {
 		List<String> commands = new ArrayList<>();
-		File clangServerLocation = getClangServerLocation();
+		File defaultLSLocation = getDefaultLSLocation(store.getString(PreferenceConstants.P_SERVER_CHOICE));
+		if(defaultLSLocation != null) {
+			store.setDefault(PreferenceConstants.P_SERVER_PATH, defaultLSLocation.getAbsolutePath());
+		}
+		File languageServerLocation = getLanguageServerLocation();
 		String parent = ""; //$NON-NLS-1$
-		if (clangServerLocation != null) {
-			commands.add(clangServerLocation.getAbsolutePath());
-			parent = clangServerLocation.getParent();
+		String flags = store.getString(PreferenceConstants.P_SERVER_OPTIONS);
+		if (languageServerLocation != null) {
+			commands.add(languageServerLocation.getAbsolutePath());
+			if (!flags.isEmpty()) {
+				commands.add(flags);
+			}
+			parent = languageServerLocation.getParent();
 		}
 		setWorkingDirectory(parent);
 		setCommands(commands);
@@ -86,11 +95,25 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 		return "C/C++ Language Server: " + super.toString(); //$NON-NLS-1$
 	}
 
-	private static File getClangServerLocation() {
+	private static File getLanguageServerLocation() {
+		String path = store.getString(PreferenceConstants.P_SERVER_PATH);
+
+		if (path.isEmpty()) {
+			return null;
+		}
+		File f = new File(path);
+		if (f.canExecute()) {
+			return f;
+		}
+
+		return null;
+	}
+
+	private static File getDefaultLSLocation(String selectedLanguageServer) {
 		String res = null;
-		String[] command = new String[] {"/bin/bash", "-c", "which " + CLANG_LANGUAGE_SERVER}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] command = new String[] {"/bin/bash", "-c", "which " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] {"cmd", "/c", "where " + CLANG_LANGUAGE_SERVER}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			command = new String[] {"cmd", "/c", "where " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		BufferedReader reader = null;
 		try {
@@ -115,3 +138,4 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 		return null;
 	}
 }
+

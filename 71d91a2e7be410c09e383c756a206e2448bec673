@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24d50bbf_314c7f88",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/GenericLambdaTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "These tests are not testing generic lambdas (which are another C++14 feature). Please move them into their own file, cxx14/InitCaptureTests.java.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3232c995_86295659",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "C++0x -\u003e C++14",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a179c306_643101ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "No one is using this; it can be removed.\n\nHowever, we probably want a DECLARATOR property for the declarator.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73581dfa_b5f45115",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "Since the entire interface is marked \u0027@since 6.5\u0027, you don\u0027t need this annotation on individual methods.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4cd8abf2_054061d9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7f67708_871f5ca8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "I find the implementation choice of extending CPPASTCapture a bit awkward: we still have the field CPPASTCapture.fIdentifier, but we are not using it, as the identifier is now stored by fDeclarator.\n\nPossible options here are:\n\n  - Do not extend CPPASTCapture, and instead duplicate\n    fByReference and fPackExpansion and the related logic.\n\n  - Factor out an abstract CPPASTCaptureBase class to\n    store fByReference and fPackExpansion.\n\n  - Leave it as is, but add a comment to clarify that\n    CPPASTInitCapture ignores CPPASTCapture.fIdentifier.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfea2395_4f246404",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "Some visitors may be confused by seeing the same node first as a capture, and then as a declaration, but it might be OK.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d07d2a61_663fb032",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "leave() calls should be in the reverse order of visit() calls, so if we visit() the node as a capture first and then as a declaration, we should leave() it as a declaration first and then as a capture.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "488ce658_ac7c1470",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "After adding the ICPPASTInitCapture.DECLARATOR property that I suggested, this should do fDeclarator.setPropertyInParent(DECLARATOR).",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c22d8cc8_a2a3da73",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "Add comment: \"Callers should use setDeclarator() instead\".",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3afefee2_10286496",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2133,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "The declarator and the equals-initializer need setRange() called on them too.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27e5bc8d_041328f7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2142,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "The declarator needs setRange() called on it too.",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a2b16028_b270fd25",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2113,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-27T02:25:28Z",
+      "side": 1,
+      "message": "The logic in this function isn\u0027t entirely correct. The standard specifies the type of the init-capture in terms of the \u0027auto\u0027 type deduction rules, so let\u0027s reuse the \u0027auto\u0027 type deduction logic.\n\nIf we factor out the logic in this \u0027else\u0027 branch [1] into a helper function getAutoInitClauseForDeclarator() that takes a declarator and returns an ICPPASTInitializerClause, we can compute the type as follows:\n\n  IASTDeclarator declarator \u003d capture.getDeclarator();\n  ICPPASTInitializerClause initClause \u003d \n      getAutoInitClauseForDeclarator(declarator);\n  if (initClause \u003d\u003d null) {\n    return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;\n  }\n  return createAutoType(initClause.getEvaluation(), null,\n      declarator);\n\n[1] http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java?id\u003d35b4bf02de354d0ec7d4ae3f96cc3951218a5ffb#n2273",
+      "revId": "71d91a2e7be410c09e383c756a206e2448bec673",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

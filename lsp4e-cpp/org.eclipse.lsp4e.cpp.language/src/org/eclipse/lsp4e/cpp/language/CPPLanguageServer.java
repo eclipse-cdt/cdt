@@ -8,7 +8,7 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,22 +22,30 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
 public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
 	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
 
-	private static final String CLANG_LANGUAGE_SERVER = "clangd"; //$NON-NLS-1$
+	// private static final String CLANG_LANGUAGE_SERVER = "clangd"; //$NON-NLS-1$
 
 	private IResourceChangeListener fResourceListener;
 
+	private static final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+
 	public CPPLanguageServer() {
 		List<String> commands = new ArrayList<>();
-		File clangServerLocation = getClangServerLocation();
+		// File clangServerLocation = getClangServerLocation();
+		File clangServerLocation = getLanguageServerLocation();
 		String parent = ""; //$NON-NLS-1$
+		String flags = store.getString(PreferenceConstants.P_FLAGS);
 		if (clangServerLocation != null) {
 			commands.add(clangServerLocation.getAbsolutePath());
+			if (flags.length() > 0) {
+				commands.add(flags);
+			}
 			parent = clangServerLocation.getParent();
 		}
 		setWorkingDirectory(parent);
@@ -86,32 +94,48 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 		return "C/C++ Language Server: " + super.toString(); //$NON-NLS-1$
 	}
 
-	private static File getClangServerLocation() {
-		String res = null;
-		String[] command = new String[] {"/bin/bash", "-c", "which " + CLANG_LANGUAGE_SERVER}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] {"cmd", "/c", "where " + CLANG_LANGUAGE_SERVER}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		BufferedReader reader = null;
-		try {
-			Process p = Runtime.getRuntime().exec(command);
-			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			res = reader.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(reader);
-		}
+	private static File getLanguageServerLocation() {
+		String path = store.getString(PreferenceConstants.P_PATH);
 
-		if (res == null) {
+		if (path.equals("")) {
 			return null;
 		}
-
-		File f = new File(res);
+		File f = new File(path);
 		if (f.canExecute()) {
 			return f;
 		}
 
 		return null;
 	}
+
+	// private static File getClangServerLocation() {
+	// String res = null;
+	// String[] command = new String[] {"/bin/bash", "-c", "which " +
+	// CLANG_LANGUAGE_SERVER}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	// command = new String[] {"cmd", "/c", "where " + CLANG_LANGUAGE_SERVER};
+	// //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// }
+	// BufferedReader reader = null;
+	// try {
+	// Process p = Runtime.getRuntime().exec(command);
+	// reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	// res = reader.readLine();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// } finally {
+	// IOUtils.closeQuietly(reader);
+	// }
+	//
+	// if (res == null) {
+	// return null;
+	// }
+	//
+	// File f = new File(res);
+	// if (f.canExecute()) {
+	// return f;
+	// }
+	//
+	// return null;
+	// }
 }

@@ -98,7 +98,7 @@
       <page
             class="org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage"
             id="org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage"
-            name="C++ Language Server Preferences">
+            name="C++ Language Server">
       </page>
    </extension>
    <extension

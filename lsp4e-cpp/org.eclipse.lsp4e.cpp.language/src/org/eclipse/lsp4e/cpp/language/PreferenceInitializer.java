@@ -11,18 +11,19 @@ import org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-//	CPPLanguageServerPreferencePage page = new CPPLanguageServerPreferencePage();
+	// CPPLanguageServerPreferencePage page = new CPPLanguageServerPreferencePage();
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
+	 * initializeDefaultPreferences()
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_BOOLEAN, false);
-		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
-		store.setDefault(PreferenceConstants.P_STRING, "Hello");
+		store.setDefault(PreferenceConstants.P_PATH, "");
+		store.setDefault(PreferenceConstants.P_CHOICE, "clangd");
+		store.setDefault(PreferenceConstants.P_FLAGS, "");
 	}
 
 }

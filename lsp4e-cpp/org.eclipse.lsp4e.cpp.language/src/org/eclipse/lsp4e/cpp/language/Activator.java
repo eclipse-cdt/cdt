@@ -1,6 +1,5 @@
 package org.eclipse.lsp4e.cpp.language;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -16,7 +15,7 @@ public class Activator extends AbstractUIPlugin {
 
 	private static Activator plugin;
 
-	private Bundle bundle = null;
+//	private Bundle bundle = null;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -24,7 +23,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 
 		//Instantiate Bundle
-		bundle = context.getBundle();
+//		bundle = context.getBundle();
 	}
 
 	@Override
@@ -33,11 +32,10 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	@Override
-	public IPreferenceStore getPreferenceStore() {
-		return super.getPreferenceStore();
-
-	}
+//	@Override
+//	public IPreferenceStore getPreferenceStore() {
+//		return super.getPreferenceStore();
+//	}
 
 	public static Activator getDefault() {
 		return plugin;

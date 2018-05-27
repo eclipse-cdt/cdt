@@ -19,3 +19,5 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.core.resources
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.lsp4e.cpp.language
+Bundle-Activator: org.eclipse.lsp4e.cpp.language.Activator
+Bundle-ActivationPolicy: lazy

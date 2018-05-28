@@ -189,7 +189,7 @@
           <repository
               url="http://download.eclipse.org/eclipse/updates/4.8milestones/"/>
           <repository
-              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+              url="http://download.eclipse.org/tools/cdt/launchbar/photon/m7/"/>
           <repository
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
@@ -197,7 +197,7 @@
           <repository
               url="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
           <repository
-              url="https://hudson.eclipse.org/cdt/job/tools-templates-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+              url="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.0-photon-rc2/"/>
           <repository
               url="http://download.eclipse.org/tm4e/snapshots/"/>
           <repository

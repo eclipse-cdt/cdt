@@ -83,9 +83,20 @@ public class ExpressionWriterTest extends TestCase {
     @Test
     public void testWriteLambdaExpressionThisCaptureNoDeclarator() {
         ICPPASTLambdaExpression lambda = getEmptyLambdaExpression();
-        lambda.addCapture(new CPPASTCapture());
+        CPPASTCapture thisCapture = new CPPASTCapture();
+        thisCapture.setIsByReference(true);
+        lambda.addCapture(thisCapture);
         lambda.accept(visitor);
         String expected = "[this] {" + BR + "    return 7;" + BR + "}" + BR;
+        Assert.assertEquals(expected, visitor.toString());
+    }
+
+    @Test
+    public void testWriteLambdaExpressionStarThisCaptureNoDeclarator() {
+        ICPPASTLambdaExpression lambda = getEmptyLambdaExpression();
+        lambda.addCapture(new CPPASTCapture());
+        lambda.accept(visitor);
+        String expected = "[*this] {" + BR + "    return 7;" + BR + "}" + BR;
         Assert.assertEquals(expected, visitor.toString());
     }
 
@@ -93,7 +104,9 @@ public class ExpressionWriterTest extends TestCase {
     public void testWriteLambdaExpressionMixedCaptureNoDeclarator() {
         ICPPASTLambdaExpression lambda = getEmptyLambdaExpression();
         lambda.setCaptureDefault(ICPPASTLambdaExpression.CaptureDefault.BY_COPY);
-        lambda.addCapture(new CPPASTCapture());
+        CPPASTCapture thisCapture = new CPPASTCapture();
+        thisCapture.setIsByReference(true);
+        lambda.addCapture(thisCapture);
         ICPPASTCapture x = new CPPASTCapture(), y = new CPPASTCapture();
         x.setIdentifier(new CPPASTName(new char[] { 'x' }));
         x.setIsByReference(true);
@@ -158,7 +171,9 @@ public class ExpressionWriterTest extends TestCase {
         y.setIsByReference(true);
         lambda.addCapture(x);
         lambda.addCapture(y);
-        lambda.addCapture(new CPPASTCapture());
+        CPPASTCapture thisCapture = new CPPASTCapture();
+        thisCapture.setIsByReference(true);
+        lambda.addCapture(thisCapture);
         f.setMutable(true);
         f.setTrailingReturnType(new CPPASTTypeId(INT, new CPPASTDeclarator(NO_NAME)));
         f.addExceptionSpecificationTypeId(new CPPASTTypeId(INT, new CPPASTDeclarator(NO_NAME)));

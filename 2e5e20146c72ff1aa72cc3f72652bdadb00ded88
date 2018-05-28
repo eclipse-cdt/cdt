@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e6060e4_3ee41af8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitCapture.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-28T17:06:46Z",
+      "side": 1,
+      "message": "Nope, init-captures are new in C++14",
+      "revId": "2e5e20146c72ff1aa72cc3f72652bdadb00ded88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "940955e9_65ab08d9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTCaptureBase.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-28T17:06:46Z",
+      "side": 1,
+      "message": "Should this be marked @Override?",
+      "revId": "2e5e20146c72ff1aa72cc3f72652bdadb00ded88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3236c021_fc29f472",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTInitCapture.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-28T17:06:46Z",
+      "side": 1,
+      "message": "Should this condition be \u0027value \u0026\u0026 !isByReference()\u0027, so we don\u0027t keep adding pointer operators with repeated calls to setIsByReference(true)?",
+      "revId": "2e5e20146c72ff1aa72cc3f72652bdadb00ded88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cdc927bf_88de6847",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1590,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-28T17:06:46Z",
+      "side": 1,
+      "message": "Do we want to do this for captures which are not init-captures?",
+      "revId": "2e5e20146c72ff1aa72cc3f72652bdadb00ded88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

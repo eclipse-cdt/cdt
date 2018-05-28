@@ -217,3 +217,27 @@ int main()
 {
     double x = 90.0_deg;
 }
+
+//!Star this lambda capture
+//%CPP
+struct S
+{
+    void foo()
+    {
+        [*this] {
+        }
+        ;
+    }
+};
+
+//!This lambda capture
+//%CPP
+struct S
+{
+    void foo()
+    {
+        [this] {
+        }
+        ;
+    }
+};

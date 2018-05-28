@@ -570,6 +570,9 @@ public class ExpressionWriter extends NodeWriter{
 
 	private void writeCapture(ICPPASTCapture capture) {
 		if (capture.capturesThisPointer()) {
+			if (!capture.isByReference()) {
+				scribe.print(STAR_OP);
+			}
 			scribe.print(THIS);
 		} else {
 			if (capture instanceof ICPPASTInitCapture) {

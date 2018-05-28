@@ -10,7 +10,7 @@
 
 	<groupId>org.eclipse.tools.templates</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -33,13 +33,8 @@
 
 	<repositories>
 		<repository>
-			<id>eclipse</id>
-			<url>http://download.eclipse.org/releases/oxygen/</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.8milestones/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,12 +44,7 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>orbit-recipes</id>
-			<url>https://hudson.eclipse.org/orbit/job/orbit-recipes/lastSuccessfulBuild/artifact/releng/repository/target/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/S20180504181223/repository/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

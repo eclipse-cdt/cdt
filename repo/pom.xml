@@ -5,10 +5,14 @@
 	<parent>
 		<groupId>org.eclipse.tools.templates</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>repo</artifactId>
 	<packaging>eclipse-repository</packaging>
+	
+	<build>
+		<finalName>org.eclipse.tools.templates.repo</finalName>
+	</build>
 </project>

@@ -2122,10 +2122,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		switch (LT(1)) {
 		case IToken.t_this:
+			result.setIsByReference(true);
 			return setRange(result, offset, consume().getEndOffset());
 		case IToken.tAMPER:
 			consume();
 			referenceCapture = true;
+			break;
+		case IToken.tSTAR:
+			if (LT(2) == IToken.t_this) {
+				consume();
+				return setRange(result, offset, consume().getEndOffset());
+			}
 			break;
 		}
 

@@ -1572,11 +1572,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         			final IASTName etorName= identifier();
         			final IASTEnumerator enumerator= nodeFactory.newEnumerator(etorName, null);
-        			endOffset= calculateEndOffset(etorName);
 
 					List<IASTAttributeSpecifier> attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 					addAttributeSpecifiers(attributes, enumerator);
-					endOffset = attributesEndOffset(endOffset, attributes);
+					endOffset = attributesEndOffset(calculateEndOffset(etorName), attributes);
 					setRange(enumerator, problemOffset, endOffset);
 
         			result.addEnumerator(enumerator);
@@ -2419,7 +2418,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		}
         		result.add(__attribute__());
         	} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
-        		__declspec();
+        		if (result == null) {
+        			result = new ArrayList<IASTAttributeSpecifier>();
+        		}
+        		result.add(__declspec());
         	} else {
         		break;
         	}
@@ -2445,21 +2447,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		consume();
     		consume(IToken.tLPAREN);
 
-    		for (;;) {
-    			final int lt1= LT(1);
-    			if (lt1 == IToken.tRPAREN || lt1 == IToken.tEOC)
-    				break;
-
-    			// Allow empty attribute
-    			if (lt1 != IToken.tCOMMA) {
-    				result.addAttribute(singleAttribute());
-    			}
-
-				// Require comma
-    			if (LT(1) != IToken.tCOMMA)
-    				break;
-    			consume();
-    		}
+    		addAttributesOrDeclspecs(result);
 
     		consumeOrEOC(IToken.tRPAREN);
     		endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
@@ -2582,15 +2570,40 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return token;
 	}
 
-	protected void __declspec() throws BacktrackException, EndOfFileException {
-    	IToken token = LA(1);
-    	if (token.getType() == IGCCToken.t__declspec) {
-    		consume();
-    		if (LT(1) == IToken.tLPAREN) {
-    	    	skipBrackets(IToken.tLPAREN, IToken.tRPAREN, 0);
-    		}
-    	}
-    }
+	protected void addAttributesOrDeclspecs(IASTAttributeList result) throws EndOfFileException, BacktrackException {
+		int lt1 = LT(1);
+		do {
+			// Allow empty attribute
+			if (lt1 != IToken.tCOMMA) {
+				result.addAttribute(singleAttribute());
+			}
+
+			// Continue on comma
+			if (LT(1) != IToken.tCOMMA) {
+				return;
+			}
+			consume();
+			lt1 = LT(1);
+		} while(lt1 != IToken.tRPAREN && lt1 != IToken.tEOC);
+	}
+
+	/**
+	 * Parses an __declspec clause.
+	 * @return the list of __declspec attributes
+	 * @throws BacktrackException
+	 * @throws EndOfFileException
+	 */
+	protected IASTAttributeList __declspec() throws BacktrackException, EndOfFileException {
+		IASTAttributeList result = nodeFactory.newMSDeclspecList();
+		final int startOffset = consume(IGCCToken.t__declspec).getOffset();
+		if (LT(1) == IToken.tLPAREN) {
+			consume();
+			addAttributesOrDeclspecs(result);
+			final int endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
+			setRange(result, startOffset, endOffset);
+		}
+		return result;
+	}
 
     /**
 	 * Hook method to support (skip) additional declspec modifiers.

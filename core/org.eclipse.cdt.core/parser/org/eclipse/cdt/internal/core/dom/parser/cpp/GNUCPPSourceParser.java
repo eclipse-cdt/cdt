@@ -2593,6 +2593,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	@Override
 	protected IASTDeclaration declaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
 		List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
+		attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
+
 		switch (LT(1)) {
 		case IToken.t_asm:
 			return asmDeclaration();
@@ -3465,7 +3467,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				case IGCCToken.t__declspec: // __declspec precedes the identifier
 					if (identifier != null || !supportDeclspecSpecifiers)
 						throwBacktrack(LA(1));
-					__attribute_decl_seq(false, true);
+					attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(false, true));
 					break;
 
 				case IGCCToken.t_typeof:

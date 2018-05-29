@@ -1166,4 +1166,57 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTSwitchStatement.class::isInstance));
 	}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]][[bar]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttributeOnSwitchStatement_Bug535263_1() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					addAttributeListModification(statement, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]][[foobar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttributeOnSwitchCompoundStatement_Bug535263_2() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					IASTSwitchStatement switchStatement = (IASTSwitchStatement) statement;
+					addAttributeListModification(switchStatement.getBody(), "foobar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
 }

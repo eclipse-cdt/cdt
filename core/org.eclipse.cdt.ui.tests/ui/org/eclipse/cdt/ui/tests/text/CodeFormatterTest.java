@@ -3420,4 +3420,30 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testIndendtionSizeofParampack_535331() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void f() {
+	//	[[foo]]switch (true) {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+	public void testAttributedSwitchStatement_Bug535263_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+	public void testAttributedSwitchCompoundStatement_Bug535263_2() throws Exception {
+		assertFormatterResult();		
+	}
 }

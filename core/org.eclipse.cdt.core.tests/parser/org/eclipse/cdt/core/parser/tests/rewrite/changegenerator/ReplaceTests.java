@@ -22,10 +22,12 @@ import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -1165,5 +1167,25 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTSwitchStatement.class::isInstance));
+	}
+
+	//void f() {
+	//	switch (1) {
+	//	[[foo]] case 1:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535266_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, IASTCaseStatement.class::isInstance));
+	}
+
+	//void f() {
+	//	switch (1) {
+	//	[[foo]] default:
+	//		break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535266_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, IASTDefaultStatement.class::isInstance));
 	}
 }

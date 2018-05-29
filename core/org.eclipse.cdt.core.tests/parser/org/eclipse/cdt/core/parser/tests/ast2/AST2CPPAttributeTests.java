@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
@@ -26,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
@@ -54,6 +53,8 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
+
+import junit.framework.TestSuite;
 
 public class AST2CPPAttributeTests extends AST2TestBase {
 
@@ -518,5 +519,14 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	public void testGCCAttributeAfterOverride_bug413615() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
+	}
+
+
+	//	enum E {
+	//		value1 [[attr1]], value2 [[attr2]] = 1
+	//	};
+	public void testAttributedEnumerator_Bug535269() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), IASTEnumerator.class, IASTEnumerator.class);
 	}
 }

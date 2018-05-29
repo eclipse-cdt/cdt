@@ -2753,6 +2753,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return null;
 	}
 
+	@Override
+	protected List<IASTAttributeSpecifier> anyAttributes(boolean allowAttrib, boolean allowDeclspec)
+			throws BacktrackException, EndOfFileException {
+		List<IASTAttributeSpecifier> attributes = super.anyAttributes(allowAttrib, allowDeclspec);
+		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		return attributes;
+	}
+
 	protected List<IASTAttributeSpecifier> attributeSpecifierSeq() throws EndOfFileException,
 			BacktrackException {
 		List<IASTAttributeSpecifier> specifiers = null;
@@ -3630,8 +3638,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				consume();
 			}
 			// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-			attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
-			attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+			attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
 			if (isScoped || LT(1) == IToken.tIDENTIFIER) {
 				// A qualified-name can appear here if an enumeration declared at class scope is
@@ -3709,8 +3716,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		final int offset= consume().getOffset();
 
 		// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
-		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		List<IASTAttributeSpecifier> attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
 		IASTName name = qualifiedName();
 		ICPPASTElaboratedTypeSpecifier elaboratedTypeSpecifier = getNodeFactory().newElaboratedTypeSpecifier(eck, name);
@@ -4838,8 +4844,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
-		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		List<IASTAttributeSpecifier> attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
 		// class name
 		IASTName name = null;

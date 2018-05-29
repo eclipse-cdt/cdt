@@ -1574,11 +1574,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         			final IASTEnumerator enumerator= nodeFactory.newEnumerator(etorName, null);
         			endOffset= calculateEndOffset(etorName);
 
-					List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+					List<IASTAttributeSpecifier> attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 					addAttributeSpecifiers(attributes, enumerator);
 					endOffset = attributesEndOffset(endOffset, attributes);
 					setRange(enumerator, problemOffset, endOffset);
-        			
+
         			result.addEnumerator(enumerator);
         			if (LTcatchEOF(1) == IToken.tASSIGN) {
         				problemOffset= consume().getOffset();
@@ -2394,6 +2394,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	throw e;
         }
     }
+
+	protected List<IASTAttributeSpecifier> anyAttributes(boolean allowAttrib, boolean allowDeclspec) throws BacktrackException, EndOfFileException {
+		return __attribute_decl_seq(allowAttrib, allowDeclspec);
+	}
 
     /**
      * Accepts a sequence of __attribute__ or __declspec.

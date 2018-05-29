@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.EnumSet;
 
-import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -171,9 +170,7 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeElaboratedTypeSec(IASTElaboratedTypeSpecifier elabType) {
 		scribe.printStringSpace(getElabTypeString(elabType.getKind()));
-		if (elabType instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) elabType, EnumSet.of(SpaceLocation.AFTER));
-		}
+		writeAttributes(elabType, EnumSet.of(SpaceLocation.AFTER));
 		elabType.getName().accept(visitor);
 	}
 
@@ -228,9 +225,7 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumSpec(IASTEnumerationSpecifier enumSpec) {
 		scribe.printStringSpace(Keywords.ENUM);
-		if (enumSpec instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) enumSpec, EnumSet.of(SpaceLocation.AFTER));
-		}
+		writeAttributes(enumSpec, EnumSet.of(SpaceLocation.AFTER));
 		enumSpec.getName().accept(visitor);
 		scribe.print('{');
 		scribe.printSpace();
@@ -246,20 +241,18 @@ public class DeclSpecWriter extends NodeWriter {
 
 	private void writeEnumerator(IASTEnumerator enumerator) {
 		enumerator.getName().accept(visitor);
-		
+		writeAttributes(enumerator, EnumSet.of(SpaceLocation.BEFORE));
 		IASTExpression value = enumerator.getValue();
 		if (value != null) {
 			scribe.print(EQUALS);
 			value.accept(visitor);
-		}		
+		}
 	}
 
 	private void writeCompositeTypeSpecifier(IASTCompositeTypeSpecifier compDeclSpec) {
 		boolean hasTrailingComments = hasTrailingComments(compDeclSpec.getName());
 		scribe.printStringSpace(getCPPCompositeTypeString(compDeclSpec.getKey()));
-		if (compDeclSpec instanceof IASTAttributeOwner) {
-			writeAttributes((IASTAttributeOwner) compDeclSpec, EnumSet.of(SpaceLocation.AFTER));
-		}
+		writeAttributes(compDeclSpec, EnumSet.of(SpaceLocation.AFTER));
 		compDeclSpec.getName().accept(visitor);
 		if (compDeclSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cppComp = (ICPPASTCompositeTypeSpecifier) compDeclSpec;

@@ -89,6 +89,7 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 	        }
 		}
         if (name != null && !name.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action)) return false;
         if (value != null && !value.accept(action)) return false;
         if (action.shouldVisitEnumerators) {
 		    switch (action.leave(this)) {

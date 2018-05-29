@@ -359,3 +359,7 @@ char*__attribute__((aligned(8)))* f;
 //%CPP GNU
 void __attribute__((noreturn)) foo();
 void (__attribute__((__stdcall__))*foo1)(int);
+
+//!Attributed Enumerator
+//%CPP
+enum E{ value1 [[attr1]], value2 [[attr2]] = 1};

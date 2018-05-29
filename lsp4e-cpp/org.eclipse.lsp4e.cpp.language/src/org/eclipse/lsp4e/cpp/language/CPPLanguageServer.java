@@ -8,15 +8,20 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
@@ -28,17 +33,21 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
 	private static final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
+	private static final String selectedLanguageServer = store.getString(PreferenceConstants.P_CHOICE);
+
 	public CPPLanguageServer() {
 		List<String> commands = new ArrayList<>();
-		File clangServerLocation = getLanguageServerLocation();
+		File defaultLSLocation = getDefaultLSLocation();
+		store.setDefault(PreferenceConstants.P_PATH, defaultLSLocation.getAbsolutePath());
+		File languageServerLocation = getLanguageServerLocation();
 		String parent = ""; //$NON-NLS-1$
 		String flags = store.getString(PreferenceConstants.P_FLAGS);
-		if (clangServerLocation != null) {
-			commands.add(clangServerLocation.getAbsolutePath());
+		if (languageServerLocation != null) {
+			commands.add(languageServerLocation.getAbsolutePath());
 			if (!flags.isEmpty()) {
 				commands.add(flags);
 			}
-			parent = clangServerLocation.getParent();
+			parent = languageServerLocation.getParent();
 		}
 		setWorkingDirectory(parent);
 		setCommands(commands);
@@ -99,4 +108,34 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
 		return null;
 	}
+
+	private static File getDefaultLSLocation() {
+		String res = null;
+		String[] command = new String[] {"/bin/bash", "-c", "which " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			command = new String[] {"cmd", "/c", "where " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		BufferedReader reader = null;
+		try {
+			Process p = Runtime.getRuntime().exec(command);
+			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			res = reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(reader);
+		}
+
+		if (res == null) {
+			return null;
+		}
+
+		File f = new File(res);
+		if (f.canExecute()) {
+			return f;
+		}
+
+		return null;
+	}
 }
+

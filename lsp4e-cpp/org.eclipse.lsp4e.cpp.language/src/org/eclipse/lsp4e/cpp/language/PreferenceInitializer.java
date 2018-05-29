@@ -18,7 +18,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_PATH, "");
 		store.setDefault(PreferenceConstants.P_CHOICE, "clangd");
 		store.setDefault(PreferenceConstants.P_FLAGS, "");
 	}

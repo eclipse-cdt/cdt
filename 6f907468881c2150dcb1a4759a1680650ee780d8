@@ -33,6 +33,24 @@
       "revId": "6f907468881c2150dcb1a4759a1680650ee780d8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e9e3e27_4d2134bd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2136,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-05-29T06:18:33Z",
+      "side": 1,
+      "message": "Sorry, please ignore this comment. We will not accept a star followed by an identifier because we are not consume()ing the star in this case.",
+      "parentUuid": "b8fbc105_7b517ec1",
+      "revId": "6f907468881c2150dcb1a4759a1680650ee780d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

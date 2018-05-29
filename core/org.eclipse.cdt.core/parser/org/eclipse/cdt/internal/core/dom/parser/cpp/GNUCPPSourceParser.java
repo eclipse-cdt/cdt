@@ -3111,12 +3111,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			declSpec= lie.fDeclSpec;
 			declarator= addInitializer(lie, DeclarationOptions.PARAMETER);
 		}
-		
-		addAttributeSpecifiers(attributes, declSpec);
 
 		final ICPPASTParameterDeclaration parm = getNodeFactory().newParameterDeclaration(declSpec, declarator);
 		final int endOffset = figureEndOffset(declSpec, declarator);
 		setRange(parm, startOffset, endOffset);
+		addAttributeSpecifiers(attributes, parm);
 		return parm;
 	}
 

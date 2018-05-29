@@ -172,3 +172,9 @@ inline namespace InlnNS
 
 
 }
+
+//!Function definition with attributed parameters
+//%CPP
+void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3)
+{
+}

@@ -1219,4 +1219,10 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			}
 		});
 	}
+
+	//void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3) {
+	//}
+	public void testCopyReplaceAttribute_Bug535275() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTFunctionDeclarator.class::isInstance));
+	}
 }

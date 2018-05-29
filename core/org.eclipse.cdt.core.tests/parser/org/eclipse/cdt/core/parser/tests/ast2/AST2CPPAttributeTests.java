@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
@@ -528,5 +529,12 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	public void testAttributedEnumerator_Bug535269() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTEnumerator.class, IASTEnumerator.class);
+	}
+
+	//void f([[attr1]] int [[attr2]] p) {
+	//}
+	public void testAttributedFunctionParameter_Bug535275() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class, ICPPASTSimpleDeclSpecifier.class);
 	}
 }

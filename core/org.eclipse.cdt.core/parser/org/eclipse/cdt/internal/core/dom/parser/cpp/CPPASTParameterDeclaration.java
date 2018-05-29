@@ -18,14 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Function parameter or non-type template parameter declaration.
  */
-public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParameterDeclaration, IASTAmbiguityParent {
+public class CPPASTParameterDeclaration extends CPPASTAttributeOwner implements ICPPASTParameterDeclaration {
     private IASTDeclSpecifier fDeclSpec;
     private ICPPASTDeclarator fDeclarator;
 
@@ -97,6 +95,8 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 	        }
 		}
 
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
 		if (fDeclSpec != null && !fDeclSpec.accept(action))
 			return false;
 		if (fDeclarator != null && !fDeclarator.accept(action))

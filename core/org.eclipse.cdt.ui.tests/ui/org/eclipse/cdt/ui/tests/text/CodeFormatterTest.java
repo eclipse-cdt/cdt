@@ -3384,4 +3384,25 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testInlineNamespace_Bug532849() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void f() {
+	//	switch (1) {
+	//	[[foo]] case 1:
+	//		break;
+	//	[[foo]] default:
+	//		break;
+	//	}
+	//}
+
+	//void f() {
+	//	switch (1) {
+	//	[[foo]] case 1:
+	//		break;
+	//	[[foo]] default:
+	//		break;
+	//	}
+	//}
+	public void testFormatAttributedLabelStatements_Bug535266() throws Exception {
+		assertFormatterResult();
+	}
 }

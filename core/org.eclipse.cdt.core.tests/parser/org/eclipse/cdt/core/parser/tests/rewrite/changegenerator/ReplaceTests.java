@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -1127,5 +1128,23 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f([[foo]] int i) {
+	//}
+	public void testCopyReplaceAttribute_Bug535275_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTFunctionDefinition));
+	}
+
+	//void f([[foo]] int [[bar]] i) {
+	//}
+	public void testCopyReplaceAttribute_Bug535275_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTFunctionDefinition));
+	}
+
+	//void f([[foo]] int i, int [[asdf]] j, [[foobar]] int k) {
+	//}
+	public void testCopyReplaceAttribute_Bug535275_3() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTFunctionDefinition));
 	}
 }

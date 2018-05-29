@@ -449,8 +449,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Files.createDirectories(buildDirectory);
 
 		// Startup the command
-		ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile())
-				.redirectErrorStream(true);
+		ProcessBuilder processBuilder = new ProcessBuilder(commandLine).directory(buildDirectory.toFile());
 		CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(),
 				buildConfig, true);
 		Process process = processBuilder.start();
@@ -459,30 +458,50 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Map<String, String> symbols = new HashMap<>();
 		List<String> includePath = new ArrayList<>();
 		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				if (line.startsWith("#define ")) { //$NON-NLS-1$
-					Matcher matcher = definePattern.matcher(line);
-					if (matcher.matches()) {
-						symbols.put(matcher.group(1), matcher.group(2));
-					}
-				} else {
-					String dir = line.trim();
-					if (dir.equals(".")) { //$NON-NLS-1$
-						includePath.add(buildDirectory.toString());
-					} else {
-						try {
-							Path dirPath = Paths.get(dir);
-							if (Files.isDirectory(dirPath)) {
-								includePath.add(dirPath.toString());
+		
+		// First the include path off the error stream
+		new Thread("Include Path Reader") {
+			@Override
+			public void run() {
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+						String dir = line.trim();
+						if (dir.equals(".")) { //$NON-NLS-1$
+							includePath.add(buildDirectory.toString());
+						} else {
+							try {
+								Path dirPath = Paths.get(dir);
+								if (Files.isDirectory(dirPath)) {
+									includePath.add(dirPath.toString());
+								}
+							} catch (InvalidPathException e) {
+								// nothing
 							}
-						} catch (InvalidPathException e) {
-							// nothing
 						}
 					}
+				} catch (IOException e) {
+					CCorePlugin.log(e);
 				}
 			}
-		}
+		}.start();
+		
+		new Thread("Macro reader") {
+			public void run() {
+				// Now the defines off the output stream
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+						if (line.startsWith("#define ")) { //$NON-NLS-1$
+							Matcher matcher = definePattern.matcher(line);
+							if (matcher.matches()) {
+								symbols.put(matcher.group(1), matcher.group(2));
+							}
+						}
+					}
+				} catch (IOException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}.start();
 
 		try {
 			process.waitFor();

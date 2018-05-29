@@ -111,11 +111,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
@@ -2028,8 +2030,23 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			name.accept(this);
 		}
 
+		ICPPASTEnumerationSpecifier cppNode = null;
+		if (node instanceof ICPPASTEnumerationSpecifier) {
+			cppNode = (ICPPASTEnumerationSpecifier) node;
+			formatLeadingAttributes(cppNode);
+			ICPPASTDeclSpecifier baseType = cppNode.getBaseType();
+			if (baseType != null) {
+				scribe.space();
+				scribe.printNextToken(Token.tCOLON);
+				scribe.space();
+				baseType.accept(this);
+			}
+		}
+
+		formatAttributes(cppNode, preferences.insert_space_before_opening_brace_in_type_declaration, false);
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
 		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+
 		final int braceIndent= scribe.numberOfIndentations;
 
 		scribe.startNewLine();

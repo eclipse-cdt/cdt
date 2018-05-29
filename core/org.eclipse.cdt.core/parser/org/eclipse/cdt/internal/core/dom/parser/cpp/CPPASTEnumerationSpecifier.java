@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		implements IASTInternalEnumerationSpecifier, ICPPASTEnumerationSpecifier {
-	private boolean fIsScoped;
+	private ScopeStyle fScopeStyle;
 	private boolean fIsOpaque;
 	private IASTName fName;
 	private ICPPASTDeclSpecifier fBaseType;
@@ -40,11 +40,17 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTEnumerationSpecifier() {
 	}
 
+	@Deprecated
 	public CPPASTEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType) {
-		fIsScoped= isScoped;
+		this(isScoped ? ScopeStyle.CLASS : ScopeStyle.NONE, name, baseType);
+	}
+
+	public CPPASTEnumerationSpecifier(ScopeStyle scopeStyle, IASTName name, ICPPASTDeclSpecifier baseType) {
+		setScopeStyle(scopeStyle);
 		setName(name);
 		setBaseType(baseType);
 	}
+
 
 	@Override
 	public CPPASTEnumerationSpecifier copy() {
@@ -53,7 +59,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
-		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped,
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fScopeStyle,
 				fName == null ? null : fName.copy(style),
 				fBaseType == null ? null : fBaseType.copy(style));
 		copy.fIsOpaque = fIsOpaque;
@@ -154,14 +160,25 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	@Override
+	@Deprecated
 	public void setIsScoped(boolean isScoped) {
+		setScopeStyle(isScoped ? ScopeStyle.CLASS : ScopeStyle.NONE);
+	}
+
+	@Override
+	public void setScopeStyle(ScopeStyle scopeStyle) {
 		assertNotFrozen();
-		fIsScoped= isScoped;
+		fScopeStyle = scopeStyle;
+	}
+
+	@Override
+	public ScopeStyle getScopeStyle() {
+		return fScopeStyle;
 	}
 
 	@Override
 	public boolean isScoped() {
-		return fIsScoped;
+		return fScopeStyle != ScopeStyle.NONE;
 	}
 
 	@Override

@@ -95,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeStyle;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
@@ -2573,6 +2574,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return parameterDeclaration();
 	}
 
+	protected List<IASTAttributeSpecifier> anyAttributes() throws EndOfFileException, BacktrackException {
+		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		return attributes;
+	}
+
 	/**
 	 * The most abstract construct within a translationUnit : a declaration.
 	 * declaration : {"asm"} asmDefinition | {"namespace"} namespaceDefinition |
@@ -3614,6 +3621,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		final int offset= consume(IToken.t_enum).getOffset();
 		int endOffset= 0;
 		boolean isScoped= false;
+		ScopeStyle scopeStyle = ScopeStyle.NONE;
 		IASTName name= null;
 		ICPPASTDeclSpecifier baseType= null;
 		List<IASTAttributeSpecifier> attributes = null;
@@ -3621,12 +3629,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		try {
 			int lt1= LT(1);
 			if (lt1 == IToken.t_class || lt1 == IToken.t_struct) {
-				isScoped= true;
+				scopeStyle = (lt1 == IToken.t_class) ? ScopeStyle.CLASS : ScopeStyle.STRUCT;
+				isScoped = true;
 				consume();
 			}
 			// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-			attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
-			attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+			attributes = anyAttributes();
 
 			if (isScoped || LT(1) == IToken.tIDENTIFIER) {
 				// A qualified-name can appear here if an enumeration declared at class scope is
@@ -3663,14 +3671,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			name= getNodeFactory().newName();
 		}
 
-		final ICPPASTEnumerationSpecifier result= getNodeFactory().newEnumerationSpecifier(isScoped, name, baseType);
+		final ICPPASTEnumerationSpecifier result= getNodeFactory().newEnumerationSpecifier(scopeStyle, name, baseType);
 		result.setIsOpaque(isOpaque);
 		if (lt1 == IToken.tLBRACE) {
 			endOffset= enumBody(result);
 		}
 		assert endOffset != 0;
+		setRange(result, offset, endOffset);
 		addAttributeSpecifiers(attributes, result);
-		return setRange(result, offset, endOffset);
+		return result;
 	}
 
 	/**

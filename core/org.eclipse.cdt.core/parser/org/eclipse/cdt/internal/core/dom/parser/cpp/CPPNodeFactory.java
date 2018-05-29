@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeStyle;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
@@ -381,14 +382,21 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
+	@Deprecated
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name,
 			ICPPASTDeclSpecifier baseType) {
 		return new CPPASTEnumerationSpecifier(isScoped, name, baseType);
 	}
 
 	@Override
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeStyle scopeStyle, IASTName name,
+			ICPPASTDeclSpecifier baseType) {
+		return new CPPASTEnumerationSpecifier(scopeStyle, name, baseType);
+	}
+
+	@Override
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
-		return new CPPASTEnumerationSpecifier(false, name, null);
+		return new CPPASTEnumerationSpecifier(ScopeStyle.NONE, name, null);
 	}
 
 	@Override

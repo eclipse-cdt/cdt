@@ -1128,4 +1128,19 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
 	}
+
+	//enum X {
+	//	TEST [[bar]]
+	//};
+	public void testCopyReplaceAttribute_Bug535269_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum X {
+	//	TEST [[bar]], ASDF [[foobar]]
+	//};
+	public void testCopyReplaceAttribute_Bug535269_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
 }

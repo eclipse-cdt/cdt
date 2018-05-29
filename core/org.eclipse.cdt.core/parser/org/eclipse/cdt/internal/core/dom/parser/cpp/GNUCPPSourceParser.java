@@ -2750,6 +2750,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return null;
 	}
 
+	@Override
+	protected List<IASTAttributeSpecifier> anyAttributes(boolean allowAttrib, boolean allowDeclspec)
+			throws BacktrackException, EndOfFileException {
+		List<IASTAttributeSpecifier> attributes = super.anyAttributes(allowAttrib, allowDeclspec);
+		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		return attributes;
+	}
+
 	protected List<IASTAttributeSpecifier> attributeSpecifierSeq() throws EndOfFileException,
 			BacktrackException {
 		List<IASTAttributeSpecifier> specifiers = null;

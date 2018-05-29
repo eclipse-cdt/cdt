@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -1127,5 +1128,26 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//namespace [[foo]] {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug535274_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//namespace [[foo]] FOO {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug535274_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
+	}
+
+	//namespace [[foo]] FOO __attribute__((__visibility__("default"))) {
+	//
+	//}
+	public void testCopyReplaceAttribute_Bug535274_3() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTNamespaceDefinition));
 	}
 }

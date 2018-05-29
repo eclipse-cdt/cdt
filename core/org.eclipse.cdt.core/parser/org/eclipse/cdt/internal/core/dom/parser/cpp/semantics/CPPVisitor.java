@@ -3088,4 +3088,15 @@ public class CPPVisitor extends ASTQueries {
 		ArrayUtil.reverse(operands);
 		return operands;
 	}
+
+	/**
+	 * Determines whether the given {@code namespace} definition denotes
+	 * an anonymous namespace.
+	 * @param namespace
+	 * @return {@code true} if the {@code namespace} is anonymous, false otherwise
+	 */
+	public static boolean isAnonymousNamespace(ICPPASTNamespaceDefinition namespace) {
+		IASTName name = namespace.getName();
+		return name == null || name.toString().isEmpty();
+	}
 }

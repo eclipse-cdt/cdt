@@ -178,3 +178,19 @@ inline namespace InlnNS
 void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3)
 {
 }
+
+//!Attributed anonymous namespace
+//%CPP
+namespace [[foo]] 
+{
+
+
+}
+
+//!Mixed CPP and GNU attributes on named namespace
+//%CPP GNU
+namespace [[foo]] FOO __attribute__((__visibility__("default")))
+{
+
+
+}

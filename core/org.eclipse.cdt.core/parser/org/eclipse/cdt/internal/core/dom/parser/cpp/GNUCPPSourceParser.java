@@ -2676,6 +2676,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		consume(IToken.t_namespace);
 
+		List<IASTAttributeSpecifier> attributeSpecifiers = attributeSpecifierSeq();
+
 		// optional name
 		ICPPASTName name = null;
 		if (LT(1) == IToken.tIDENTIFIER) {
@@ -2686,7 +2688,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// bug 195701, gcc 4.2 allows visibility attribute for namespaces.
-		List<IASTAttributeSpecifier> attributeSpecifiers = __attribute_decl_seq(true, false);
+		attributeSpecifiers = CollectionUtils.merge(attributeSpecifiers, __attribute_decl_seq(true, false));
 
 		if (LT(1) == IToken.tLBRACE) {
 			ICPPASTNamespaceDefinition outer = null;

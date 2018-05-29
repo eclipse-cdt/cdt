@@ -15,8 +15,6 @@ package org.eclipse.cdt.ui.tests.text;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
+
+import junit.framework.TestSuite;
 
 /**
  * Tests for the CodeFormatter.
@@ -3523,6 +3523,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	[[bar]] label: ;
 	//}
 	public void testAttributedGotoLabel_Bug535278_5() throws Exception {
+		assertFormatterResult();
+	}
+
+	//namespace[[foo]]{
+	//}
+	//namespace[[foo]]NS  __attribute__((__visibility__("default"))){
+	//}
+
+	//namespace [[foo]] {
+	//}
+	//namespace [[foo]] NS __attribute__((__visibility__("default"))) {
+	//}
+	public void testAttributedNamesapces_Bug535274() throws Exception {
 		assertFormatterResult();
 	}
 }

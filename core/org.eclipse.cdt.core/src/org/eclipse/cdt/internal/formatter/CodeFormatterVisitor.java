@@ -2235,6 +2235,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTBreakStatement node) {
+		formatLeadingAttributes(node);
 		scribe.printNextToken(Token.t_break);
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
@@ -3133,6 +3134,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTContinueStatement node) {
+		formatLeadingAttributes(node);
 		scribe.printNextToken(Token.t_continue);
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
@@ -3579,6 +3581,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTReturnStatement node) {
+		formatLeadingAttributes(node);
 		scribe.printNextToken(Token.t_return);
 		final IASTExpression expression = node.getReturnValue();
 		if (expression != null) {
@@ -3598,6 +3601,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTLabelStatement node) {
 		// TLETODO [formatter] label indentation
+		formatLeadingAttributes(node);
 		node.getName().accept(this);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_labeled_statement);
 		if (preferences.insert_space_after_colon_in_labeled_statement) {

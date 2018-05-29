@@ -22,7 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -30,10 +32,12 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -42,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -1127,5 +1132,52 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] continue;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535278_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTContinueStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] break;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535278_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTBreakStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] return;
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535278_3() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTReturnStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] goto asdf;
+	//	}
+	//	asdf: ;
+	//}
+	public void testCopyReplaceAttribute_Bug535278_4() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTGotoStatement));
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] goto asdf;
+	//	}
+	//	[[bar]] asdf: ;
+	//}
+	public void testCopyReplaceAttribute_Bug535278_5() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTLabelStatement));
 	}
 }

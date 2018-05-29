@@ -3446,4 +3446,83 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAttributedSwitchCompoundStatement_Bug535263_2() throws Exception {
 		assertFormatterResult();		
 	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]]continue;
+	//	}
+	//}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] continue;
+	//	}
+	//}
+	public void testAttributedContinueStatement_Bug535278_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]]break;
+	//	}
+	//}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] break;
+	//	}
+	//}
+	public void testAttributedBreakStatement_Bug535278_2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]]return;
+	//	}
+	//}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] return;
+	//	}
+	//}
+	public void testAttributedReturnStatement_Bug535278_3() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]]goto label;
+	//	}
+	//	label: ;
+	//}
+
+	//void f() {
+	//	for (;;) {
+	//		[[foo]] goto label;
+	//	}
+	//	label: ;
+	//}
+	public void testAttributedGotoStatement_Bug535278_4() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	for (;;) {
+	//		goto label;
+	//	}
+	//	[[bar]]label: ;
+	//}
+
+	//void f() {
+	//	for (;;) {
+	//		goto label;
+	//	}
+	//	[[bar]] label: ;
+	//}
+	public void testAttributedGotoLabel_Bug535278_5() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -194,3 +194,23 @@ namespace [[foo]] FOO __attribute__((__visibility__("default")))
 
 
 }
+
+//!Attributed anonymous enum declaration
+//%CPP
+enum [[foo]] { };
+
+//!Attributed named enum declaration
+//%CPP
+enum [[foo]] X{ };
+
+//!Attributed anonymous enum with attributed base specifier
+//%CPP
+enum [[foo]]  : int [[bar]] { };
+
+//!Attributed opaque enum declaration with keyword struct
+//%CPP
+enum struct [[foo]] X{ };
+
+//!Attributed opaque enum declaration with keyword class
+//%CPP
+enum class [[foo]] X{ };

@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -1224,5 +1225,53 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535275() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTFunctionDeclarator.class::isInstance));
+	}
+
+	//enum [[foo]] {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//enum [[foo]] : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_3() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof ICPPASTEnumerationSpecifier));
+	}
+
+	//enum [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_4() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum struct [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_5() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum class [[foo]] X {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_6() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_7() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//};
+	public void testCopyReplaceAttribute_Bug535256_8() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
 	}
 }

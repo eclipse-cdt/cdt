@@ -3538,4 +3538,36 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAttributedNamesapces_Bug535274() throws Exception {
 		assertFormatterResult();
 	}
+
+	//enum[[foo]]{};
+
+	//enum [[foo]] {
+	//};
+	public void testAttributedAnonymousEnumDeclaration_Bug535256_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//enum[[foo]] X{};
+
+	//enum [[foo]] X {
+	//};
+	public void testAttributedNamedEnumDeclaration_Bug535256_2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//enum[[foo]]:int [[bar]]{};
+
+	//enum [[foo]] : int [[bar]] {
+	//};
+	public void testAttributedNamedEnumDeclarationWithAttributedBaseSpecifier_Bug535256_3() throws Exception {
+		assertFormatterResult();
+	}
+
+	//enum struct [[foo]] X{};
+
+	//enum struct [[foo]] X {
+	//};
+	public void testAttributedNamedOpaqueEnumDeclaration_Bug535256_4() throws Exception {
+		assertFormatterResult();
+	}
 }

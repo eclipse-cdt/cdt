@@ -2414,7 +2414,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		}
         		result.add(__attribute__());
         	} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
-        		__declspec();
+        		if (result == null) {
+        			result = new ArrayList<IASTAttributeSpecifier>();
+        		}
+        		result.add(__declspec());
         	} else {
         		break;
         	}
@@ -2422,44 +2425,64 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    /**
-     * Parses an __attribute__ clause.
-     * @return the list of attributes, or {@code null} if the __attribute__ clause contained
-     *     no attributes
-     * @throws BacktrackException
-     * @throws EndOfFileException
-     */
-    protected IASTAttributeList __attribute__() throws BacktrackException, EndOfFileException {
-    	if (LT(1) != IGCCToken.t__attribute__)
-    		return null;
+	/**
+	 * Parses an __attribute__ clause.
+	 * @return the list of __attribute__ attributes
+	 * @throws BacktrackException
+	 * @throws EndOfFileException
+	 */
+	protected IASTAttributeList __attribute__() throws BacktrackException, EndOfFileException {
+		IASTAttributeList result = nodeFactory.newGCCAttributeList();
+		final int startOffset = consume(IGCCToken.t__attribute__).getOffset();
 
-    	IASTAttributeList result = nodeFactory.newGCCAttributeList();
-    	consume();
-    	if (LT(1) == IToken.tLPAREN) {
-    		consume();
-    		consume(IToken.tLPAREN);
+		if (LT(1) == IToken.tLPAREN) {
+			consume();
+			consume(IToken.tLPAREN);
+			addAttributesOrDeclspecs(result);
+			consumeOrEOC(IToken.tRPAREN);
+			final int endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
+			setRange(result, startOffset, endOffset);
+		}
+		return result;
+	}
 
-    		for (;;) {
-    			final int lt1= LT(1);
-    			if (lt1 == IToken.tRPAREN || lt1 == IToken.tEOC)
-    				break;
+	/**
+	 * Parses an __declspec clause.
+	 * @return the list of __declspec attributes
+	 * @throws BacktrackException
+	 * @throws EndOfFileException
+	 */
+	protected IASTAttributeList __declspec() throws BacktrackException, EndOfFileException {
+		IASTAttributeList result = nodeFactory.newMSDeclspecList();
+		final int startOffset = consume(IGCCToken.t__declspec).getOffset();
+		if (LT(1) == IToken.tLPAREN) {
+			consume();
+			addAttributesOrDeclspecs(result);
+			final int endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
+			setRange(result, startOffset, endOffset);
+		}
+		return result;
+	}
 
-    			// Allow empty attribute
-    			if (lt1 != IToken.tCOMMA) {
-    				result.addAttribute(singleAttribute());
-    			}
+	protected void addAttributesOrDeclspecs(IASTAttributeList result) throws EndOfFileException, BacktrackException {
+		for (;;) {
+			final int lt1= LT(1);
+			if (lt1 == IToken.tRPAREN || lt1 == IToken.tEOC) {
+				break;
+			}
 
-				// Require comma
-    			if (LT(1) != IToken.tCOMMA)
-    				break;
-    			consume();
-    		}
+			// Allow empty attribute
+			if (lt1 != IToken.tCOMMA) {
+				result.addAttribute(singleAttribute());
+			}
 
-    		consumeOrEOC(IToken.tRPAREN);
-    		consumeOrEOC(IToken.tRPAREN);
-    	}
-    	return result;
-    }
+			// Require comma
+			if (LT(1) != IToken.tCOMMA) {
+				break;
+			}
+			consume();
+		}
+	}
 
 	protected IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {
 		// Get an identifier including keywords
@@ -2566,16 +2589,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		setRange(token, t.getOffset(), t.getEndOffset());
 		return token;
 	}
-
-	protected void __declspec() throws BacktrackException, EndOfFileException {
-    	IToken token = LA(1);
-    	if (token.getType() == IGCCToken.t__declspec) {
-    		consume();
-    		if (LT(1) == IToken.tLPAREN) {
-    	    	skipBrackets(IToken.tLPAREN, IToken.tRPAREN, 0);
-    		}
-    	}
-    }
 
     /**
 	 * Hook method to support (skip) additional declspec modifiers.

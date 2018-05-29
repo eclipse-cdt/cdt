@@ -1128,4 +1128,20 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
 	}
+
+	//__declspec(dllimport) class X {
+	//} varX;
+	public void testCopyReplaceAttribute_Bug535257_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//int __declspec(selectany)* pi2 = 0;
+	public void testCopyReplaceAttribute_Bug535257_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//__declspec(thread) int tls_i = 1;
+	public void testCopyReplaceAttribute_Bug535257_3() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
 }

@@ -363,3 +363,17 @@ void (__attribute__((__stdcall__))*foo1)(int);
 //!Attributed Enumerator
 //%CPP
 enum E{ value1 [[attr1]], value2 [[attr2]] = 1};
+
+//!MS declspec attribute on class
+//%CPP GNU
+__declspec(dllimport) class X
+{
+} varX;
+
+//!MS declspec attribute on declarator
+//%CPP GNU
+int __declspec(selectany)* pi2 = 0;
+
+//!MS declspec attribute on simple declaration
+//%CPP GNU
+__declspec(thread) int tls_i = 1;

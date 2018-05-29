@@ -3609,6 +3609,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTCaseStatement node) {
 		IASTExpression constant = node.getExpression();
+		formatLeadingAttributes(node);
 		if (constant == null) {
 			scribe.printNextToken(Token.t_default);
 			scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_default);
@@ -3622,6 +3623,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTDefaultStatement node) {
+		formatLeadingAttributes(node);
 		scribe.printNextToken(Token.t_default);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_default);
 		return PROCESS_SKIP;

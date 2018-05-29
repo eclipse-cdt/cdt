@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -1524,6 +1526,31 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * Formats the attributes of a given attribute owner.
+	 *
+	 * @param owner Node containing attributes
+	 * @param printLeadingSpace Print a space before the first attribute
+	 * @param printTrailingSpace Print a space after the last attribute
+	 */
+	private void formatAttributes(IASTAttributeOwner owner, boolean printLeadingSpace, boolean printTrailingSpace) {
+		if (owner == null) {
+			return;
+		}
+		IASTAttributeSpecifier[] attributeSpecifiers = owner.getAttributeSpecifiers();
+		if (attributeSpecifiers.length > 0) {
+			if (printLeadingSpace) {
+				scribe.space();
+			}
+			for (IASTAttributeSpecifier attributeSpecifier : attributeSpecifiers) {
+				formatRaw(attributeSpecifier);
+			}
+			if (printTrailingSpace) {
+				scribe.space();
+			}
+		}
 	}
 
 	private void formatPointers(IASTPointerOperator[] pointers) {
@@ -3598,6 +3625,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTSwitchStatement node) {
 		final int headerIndent= scribe.numberOfIndentations;
+		formatAttributes(node, false, true);
 		// 'switch' keyword
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_switch);
@@ -3632,7 +3660,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		int braceIndent = -1;
 		IASTStatement bodyStmt= node.getBody();
 		if (!startsWithMacroExpansion(bodyStmt)) {
-			formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_switch);
+			boolean insertSpaceBeforeOpeningBrace = preferences.insert_space_before_opening_brace_in_switch;
+			formatAttributes(bodyStmt, insertSpaceBeforeOpeningBrace, insertSpaceBeforeOpeningBrace);
+			formatOpeningBrace(brace_position, insertSpaceBeforeOpeningBrace);
 			scribe.startNewLine();
 			braceIndent= scribe.numberOfIndentations;
 			if (braceIndent > headerIndent) {

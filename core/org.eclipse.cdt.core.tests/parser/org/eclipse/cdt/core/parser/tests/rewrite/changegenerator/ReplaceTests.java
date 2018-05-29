@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
@@ -1024,6 +1026,42 @@ public class ReplaceTests extends ChangeGeneratorTest {
 		});
 	}
 
+	private IASTAttribute createAttribute(String name) {
+		return factory.newAttribute(name.toCharArray(), null);
+	}
+
+	private IASTAttributeOwner copy(IASTAttributeOwner owner) {
+		return (IASTAttributeOwner) owner.copy(CopyStyle.withLocations);
+	}
+
+	/**
+	 * Adds an Attribute to an existing IASTAttributeList
+	 * 
+	 * @param owner IASTAttributeOwner
+	 * @param attributeName Name of the new Attribute
+	 * @param index Index of existing IASTAttributeList
+	 */
+	private void addAttributeToListModification(IASTAttributeOwner owner, String attributeName, int index) {
+		IASTAttributeOwner copy = copy(owner);
+		IASTAttributeList attributeList = (IASTAttributeList) copy.getAttributeSpecifiers()[index];
+		attributeList.addAttribute(createAttribute(attributeName));
+		addModification(null, ModificationKind.REPLACE, owner, copy);
+	}
+
+	/**
+	 * Addds a new AttributeList to a IASTAttributeOwner
+	 * 
+	 * @param owner IASTAttributeOwner
+	 * @param attributeName Name of the new Attribute
+	 */
+	private void addAttributeListModification(IASTAttributeOwner owner, String attributeName) {
+		IASTAttributeOwner copy = copy(owner);
+		ICPPASTAttributeList attributeList = factory.newAttributeList();
+		attributeList.addAttribute(createAttribute(attributeName));
+		copy.addAttributeSpecifier(attributeList);
+		addModification(null, ModificationKind.REPLACE, owner, copy);
+	}
+
 	//[[foo]] int hs = 5;
 	public void testCopyReplaceAttribute_Bug533552_1a() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
@@ -1050,13 +1088,11 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
-				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
-				IASTAttributeList attributeSpecifierList = (IASTAttributeList) newDeclaration.getAttributeSpecifiers()[0];
-				attributeSpecifierList.addAttribute(newAttribute);
-
-				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
-				return PROCESS_ABORT;
+				if (declaration instanceof IASTSimpleDeclaration) {
+					addAttributeToListModification((IASTSimpleDeclaration) declaration, "bar", 0);
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
 			}
 		});
 	}
@@ -1072,14 +1108,80 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
-				ICPPASTAttributeList newAttributeList = factory.newAttributeList();
-				newAttributeList.addAttribute(newAttribute);
-				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
-				newDeclaration.addAttributeSpecifier(newAttributeList);
+				if (declaration instanceof IASTSimpleDeclaration) {
+					addAttributeListModification((IASTSimpleDeclaration) declaration, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
 
-				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
-				return PROCESS_ABORT;
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]][[bar]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_1b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					addAttributeListModification(statement, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]][[foobar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_2b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					IASTSwitchStatement switchStatement = (IASTSwitchStatement) statement;
+					addAttributeListModification(switchStatement.getBody(), "foobar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
 			}
 		});
 	}

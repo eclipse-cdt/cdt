@@ -3636,6 +3636,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTSwitchStatement node) {
 		final int headerIndent= scribe.numberOfIndentations;
+		formatLeadingAttributes(node);
 		// 'switch' keyword
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_switch);
@@ -3670,7 +3671,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		int braceIndent = -1;
 		IASTStatement bodyStmt= node.getBody();
 		if (!startsWithMacroExpansion(bodyStmt)) {
-			formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_switch);
+			boolean insertSpaceBeforeOpeningBrace = preferences.insert_space_before_opening_brace_in_switch;
+			formatAttributes(bodyStmt, insertSpaceBeforeOpeningBrace, false);
+			formatOpeningBrace(brace_position, insertSpaceBeforeOpeningBrace);
 			scribe.startNewLine();
 			braceIndent= scribe.numberOfIndentations;
 			if (braceIndent > headerIndent) {

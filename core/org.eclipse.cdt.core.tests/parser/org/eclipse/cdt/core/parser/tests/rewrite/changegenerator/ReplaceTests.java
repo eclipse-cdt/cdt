@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
@@ -1109,6 +1110,75 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclaration declaration) {
 				if (declaration instanceof IASTSimpleDeclaration) {
 					addAttributeListModification((IASTSimpleDeclaration) declaration, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]][[bar]] switch (true) {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_1b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					addAttributeListModification(statement, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTSwitchStatement));
+	}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]] {
+	//	}
+	//}
+
+	//void f() {
+	//	[[foo]] switch (true) [[bar]][[foobar]] {
+	//	}
+	//}
+	public void testCopyReplaceAttribute_Bug535263_2b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement) {
+					IASTSwitchStatement switchStatement = (IASTSwitchStatement) statement;
+					addAttributeListModification(switchStatement.getBody(), "foobar");
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;

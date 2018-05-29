@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -1224,5 +1225,19 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//}
 	public void testCopyReplaceAttribute_Bug535275() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTFunctionDeclarator.class::isInstance));
+	}
+
+	//enum [[foo]] X : int [[bar]] {
+	//};
+	public void testEnumReplacementRetainsAttributes_Bug535256_1() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTEnumerationSpecifier.class::isInstance));
+	}
+
+	//enum class EC {
+	//};
+	//enum struct ES {
+	//};
+	public void testScopedEnumReplacementRetains_Bug535256_2() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTEnumerationSpecifier.class::isInstance));
 	}
 }

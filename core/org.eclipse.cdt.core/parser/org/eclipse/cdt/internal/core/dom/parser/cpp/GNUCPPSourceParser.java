@@ -95,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier.ScopeStyle;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
@@ -3561,7 +3562,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
 			}
 			addAttributeSpecifiers(attributes, result);
-			attributesEndOffset(endOffset, attributes);
+			endOffset = attributesEndOffset(endOffset, attributes);
 			setRange(result, offset, endOffset);
 		} catch (BacktrackException e) {
 			if (returnToken != null) {
@@ -3628,6 +3629,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		final int offset= consume(IToken.t_enum).getOffset();
 		int endOffset= 0;
 		boolean isScoped= false;
+		ScopeStyle scopeStyle = ScopeStyle.NONE;
 		IASTName name= null;
 		ICPPASTDeclSpecifier baseType= null;
 		List<IASTAttributeSpecifier> attributes = null;
@@ -3635,7 +3637,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		try {
 			int lt1= LT(1);
 			if (lt1 == IToken.t_class || lt1 == IToken.t_struct) {
-				isScoped= true;
+				scopeStyle = (lt1 == IToken.t_class) ? ScopeStyle.CLASS : ScopeStyle.STRUCT;
+				isScoped = true;
 				consume();
 			}
 			// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
@@ -3676,7 +3679,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			name= getNodeFactory().newName();
 		}
 
-		final ICPPASTEnumerationSpecifier result= getNodeFactory().newEnumerationSpecifier(isScoped, name, baseType);
+		final ICPPASTEnumerationSpecifier result= getNodeFactory().newEnumerationSpecifier(scopeStyle, name, baseType);
 		result.setIsOpaque(isOpaque);
 		if (lt1 == IToken.tLBRACE) {
 			endOffset= enumBody(result);

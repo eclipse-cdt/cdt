@@ -207,6 +207,7 @@ public class DeclarationWriter extends NodeWriter {
 			scribe.printStringSpace(Keywords.INLINE);
 		}
 		scribe.printStringSpace(Keywords.NAMESPACE);
+		writeCPPAttributes(namespaceDefinition, EnumSet.of(SpaceLocation.AFTER));
 		namespaceDefinition.getName().accept(visitor);
 		writeGCCAttributes(namespaceDefinition, EnumSet.of(SpaceLocation.BEFORE));
 		if (!hasTrailingComments(namespaceDefinition.getName())) {

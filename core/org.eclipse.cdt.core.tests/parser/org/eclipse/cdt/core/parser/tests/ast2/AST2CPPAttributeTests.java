@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -536,5 +537,23 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	public void testAttributedFunctionParameter_Bug535275() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class, ICPPASTSimpleDeclSpecifier.class);
+	}
+
+	//namespace [[attr]] NS {}
+	public void testAttributedNamedNamespace_Bug535274() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
+	}
+
+	//namespace [[attr]] {}
+	public void testAttributedUnnamedNamespace_Bug535274() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
+	}
+
+	//namespace NS __attribute__((__visibility__("default"))) {}
+	public void testGnuAndCppMixedAttributedNamedNamespace_Bug535274() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 }

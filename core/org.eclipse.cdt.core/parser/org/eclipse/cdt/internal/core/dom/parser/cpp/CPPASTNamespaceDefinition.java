@@ -125,6 +125,9 @@ public class CPPASTNamespaceDefinition extends CPPASTAttributeOwner implements I
 	        }
 		}
 
+		if (!acceptByCPPAttributeSpecifiers(action))
+			return false;
+
 		if (fName != null && !fName.accept(action))
 			return false;
 

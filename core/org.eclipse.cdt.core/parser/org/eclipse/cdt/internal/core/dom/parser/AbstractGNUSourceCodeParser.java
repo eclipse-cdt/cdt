@@ -2439,8 +2439,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		return null;
 
     	IASTAttributeList result = nodeFactory.newGCCAttributeList();
-		final int startOffset = consume().getOffset();
-    	int endOffset = startOffset;
+		final int startOffset = LA().getOffset();
+    	int endOffset = consume().getEndOffset();
     	if (LT(1) == IToken.tLPAREN) {
     		consume();
     		consume(IToken.tLPAREN);
@@ -2464,8 +2464,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		consumeOrEOC(IToken.tRPAREN);
     		endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
     	}
-    	setRange(result, startOffset, endOffset);
-    	return result;
+    	return setRange(result, startOffset, endOffset);
     }
 
 	protected IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {

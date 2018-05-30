@@ -3371,4 +3371,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testSwitchInitStatementFormat_4() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void f(int ... a) {
+	//	if (sizeof...(a)) {
+	//	}
+	//}
+
+	//void f(int ... a) {
+	//	if (sizeof...(a)) {
+	//	}
+	//}
+	public void testIndendtionSizeofParampack_535331() throws Exception {
+		assertFormatterResult();
+	}
 }

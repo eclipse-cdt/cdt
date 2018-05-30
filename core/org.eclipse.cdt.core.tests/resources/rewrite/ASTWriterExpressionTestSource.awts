@@ -241,3 +241,11 @@ struct S
         ;
     }
 };
+
+//!Operator sizeofParameterPack
+//%CPP
+void f(int... a)
+{
+    if (sizeof...(a)){
+    }
+}

@@ -651,6 +651,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * to reside in the given project.
 	 */
 	private static IResource findFileForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
+		if (!uri.isAbsolute()) {
+			// IWorkspaceRoot.findFilesForLocationURI(URI) below requires an absolute URI
+			// therefore we haven't/aren't going to find the file based on this URI.
+			return null;
+		}
 		IResource sourceFile = null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource[] resources = root.findFilesForLocationURI(uri);

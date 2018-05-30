@@ -71,7 +71,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String TYPEID_OP = "typeid ("; //$NON-NLS-1$
 	private static final String OPEN_BRACKET_OP = "("; //$NON-NLS-1$
 	private static final String SIZEOF_OP = "sizeof "; //$NON-NLS-1$
-	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof..."; //$NON-NLS-1$
+	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof...("; //$NON-NLS-1$
 	private static final String NOEXCEPT_OP = "noexcept ("; //$NON-NLS-1$
 	private static final String NOT_OP = "!"; //$NON-NLS-1$
 	private static final String TILDE_OP = "~"; //$NON-NLS-1$
@@ -274,6 +274,7 @@ public class ExpressionWriter extends NodeWriter{
 		case ICPPASTUnaryExpression.op_typeid:
 		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_sizeofParameterPack:
 			return true;
 
 		default:
@@ -333,6 +334,7 @@ public class ExpressionWriter extends NodeWriter{
 		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_sizeofParameterPack:
 			return CLOSING_BRACKET_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
@@ -519,7 +521,7 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTTypeIdExpression.op_typeof:
 			return TYPEOF_OP;
 		case IASTTypeIdExpression.op_sizeofParameterPack:
-			return SIZEOF_PARAMETER_PACK_OP + "("; //$NON-NLS-1$
+			return SIZEOF_PARAMETER_PACK_OP;
 		}
 		throw new IllegalArgumentException("Unknown TypeId Type"); //$NON-NLS-1$
 	}

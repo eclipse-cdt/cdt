@@ -241,3 +241,12 @@ struct S
         ;
     }
 };
+
+//!Operator sizeofParameterPack
+//%CPP
+template<typename... T> 
+void f(T... a)
+{
+    if (sizeof...(a)){
+    }
+}

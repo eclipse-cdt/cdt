@@ -3405,4 +3405,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormatAttributedLabelStatements_Bug535266() throws Exception {
 		assertFormatterResult();
 	}
+
+	//template<typename ... T>
+	//void f(T ... a) {
+	//	if (sizeof...(a)) {
+	//	}
+	//}
+
+	//template<typename ... T>
+	//void f(T ... a) {
+	//	if (sizeof...(a)) {
+	//	}
+	//}
+	public void testIndendtionSizeofParampack_535331() throws Exception {
+		assertFormatterResult();
+	}
 }

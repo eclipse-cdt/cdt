@@ -2669,9 +2669,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		case IASTUnaryExpression.op_sizeofParameterPack:
 			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
 			scribe.printNextToken(Token.tELIPSE, scribe.printComment());
-			if (peekNextToken() != Token.tLPAREN) {
-				scribe.space();
-			}
+			scribe.printNextToken(Token.tLPAREN);
 			operand.accept(this);
 			break;
 		case IASTUnaryExpression.op_throw:

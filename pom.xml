@@ -16,8 +16,8 @@
 
 	<properties>
 		<required-maven-version>3.3.1</required-maven-version>
-		<tycho-version>1.1.0</tycho-version>
-		<tycho-extras-version>1.1.0</tycho-extras-version>
+		<tycho-version>1.2.0</tycho-version>
+		<tycho-extras-version>1.2.0</tycho-extras-version>
 		<cbi-plugins.version>1.1.5</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://hudson.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>

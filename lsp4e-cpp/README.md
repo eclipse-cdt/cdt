@@ -1,3 +1,4 @@
+Fake edit to test gerrit triggers
 # LSP4E-CPP: C/C++ Language Server Support in Eclipse IDE
 
 Support for C/C++ edition in Eclipse IDE using the Language Server Protocol. Relies on Clangd and the Language Server Protocol.

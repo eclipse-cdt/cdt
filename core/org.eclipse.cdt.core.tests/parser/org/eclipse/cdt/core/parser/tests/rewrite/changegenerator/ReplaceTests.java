@@ -14,11 +14,13 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import static org.eclipse.cdt.core.dom.ast.IASTLiteralExpression.lk_integer_constant;
 import static org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind.REPLACE;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -41,9 +43,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -64,6 +68,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+
+import junit.framework.TestSuite;
 
 public class ReplaceTests extends ChangeGeneratorTest {
 
@@ -1015,6 +1021,97 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclarator declarator) {
 				addModification(null, ModificationKind.REPLACE, declarator, declarator.copy());
 				return PROCESS_SKIP;
+			}
+		});
+	}
+
+	private IASTAttribute createAttribute(String name) {
+		return factory.newAttribute(name.toCharArray(), null);
+	}
+
+	private IASTAttributeOwner copy(IASTAttributeOwner owner) {
+		return (IASTAttributeOwner) owner.copy(CopyStyle.withLocations);
+	}
+
+	/**
+	 * Adds an Attribute to an existing IASTAttributeList
+	 * 
+	 * @param owner IASTAttributeOwner
+	 * @param attributeName Name of the new Attribute
+	 * @param index Index of existing IASTAttributeList
+	 */
+	private void addAttributeToListModification(IASTAttributeOwner owner, String attributeName, int index) {
+		IASTAttributeOwner copy = copy(owner);
+		IASTAttributeList attributeList = (IASTAttributeList) copy.getAttributeSpecifiers()[index];
+		attributeList.addAttribute(createAttribute(attributeName));
+		addModification(null, ModificationKind.REPLACE, owner, copy);
+	}
+
+	/**
+	 * Addds a new AttributeList to a IASTAttributeOwner
+	 * 
+	 * @param owner IASTAttributeOwner
+	 * @param attributeName Name of the new Attribute
+	 */
+	private void addAttributeListModification(IASTAttributeOwner owner, String attributeName) {
+		IASTAttributeOwner copy = copy(owner);
+		ICPPASTAttributeList attributeList = factory.newAttributeList();
+		attributeList.addAttribute(createAttribute(attributeName));
+		copy.addAttributeSpecifier(attributeList);
+		addModification(null, ModificationKind.REPLACE, owner, copy);
+	}
+
+	//[[foo]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int [[asdf]] hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo, bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_2a() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				if (declaration instanceof IASTSimpleDeclaration) {
+					addAttributeToListModification((IASTSimpleDeclaration) declaration, "bar", 0);
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo]][[bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_2b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				if (declaration instanceof IASTSimpleDeclaration) {
+					addAttributeListModification((IASTSimpleDeclaration) declaration, "bar");
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
 			}
 		});
 	}

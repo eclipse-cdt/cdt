@@ -2482,6 +2482,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected void addAttributeSpecifiers(List<IASTAttributeSpecifier> specifiers, IASTAttributeOwner owner) {
 		if (specifiers != null && owner != null) {
+			if (!specifiers.isEmpty()) {
+				ASTNode ownerNode = (ASTNode) owner;
+				ASTNode firstSpecifier = (ASTNode) specifiers.get(0);
+				ASTNode lastSpecifier = (ASTNode) specifiers.get(specifiers.size() - 1);
+				final int startOffset = Math.min(ownerNode.getOffset(), firstSpecifier.getOffset());
+				final int endOffset = Math.max(calculateEndOffset(ownerNode), calculateEndOffset(lastSpecifier));
+				ownerNode.setOffsetAndLength(startOffset, endOffset - startOffset);
+			}
 			for (IASTAttributeSpecifier specifier : specifiers) {
 				owner.addAttributeSpecifier(specifier);
 			}

@@ -40,8 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <tycho-version>1.0.0</tycho-version>
-    <target-platform>lsp4e.cpp-staging</target-platform>
+    <tycho-version>1.2.0</tycho-version>
   </properties>
 
   <modules>
@@ -80,49 +79,6 @@
 
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <configuration>
-          <includePackedArtifacts>true</includePackedArtifacts>
-          <environments>
-            <environment>
-                <os>win32</os>
-                <ws>win32</ws>
-                <arch>x86</arch>
-            </environment>
-            <environment>
-                <os>win32</os>
-                <ws>win32</ws>
-                <arch>x86_64</arch>
-            </environment>
-            <environment>
-                <os>macosx</os>
-                <ws>cocoa</ws>
-                <arch>x86_64</arch>
-            </environment>
-            <environment>
-                <os>linux</os>
-                <ws>gtk</ws>
-                <arch>x86</arch>
-            </environment>
-            <environment>
-                <os>linux</os>
-                <ws>gtk</ws>
-                <arch>x86_64</arch>
-            </environment>
-          </environments>
-          <target>
-            <artifact>
-              <groupId>org.eclipse.lsp4e.cpp.group</groupId>
-              <artifactId>org.eclipse.lsp4e.cpp.target</artifactId>
-              <classifier>${target-platform}</classifier>
-              <version>1.0.0-SNAPSHOT</version>
-            </artifact>
-          </target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
         <version>${tycho-version}</version>
         <extensions>true</extensions>
@@ -154,12 +110,6 @@
             <target>1.8</target>
             <encoding>UTF-8</encoding>
           </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.eclipse.tycho</groupId>
-          <artifactId>target-platform-configuration</artifactId>
-          <version>${tycho-version}</version>
         </plugin>
 
         <plugin>

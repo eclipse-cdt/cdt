@@ -2,6 +2,7 @@
 <site>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
+   <!-- this file is where to add lsp4e-cpp to when it is ready to be in the main CDT p2 repo, once it does not conflict with anything -->
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0">
       <category name="main"/>
    </feature>

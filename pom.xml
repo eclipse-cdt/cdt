@@ -244,6 +244,10 @@
 		<module>releng/org.eclipse.cdt.testing-feature</module>
 		<module>releng/org.eclipse.cdt.testing.repo</module>
 
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp</module>
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp.language</module>
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp.site</module>
+
 		<!-- TODO:  Investigate/Fix hanging before re-enable re-enabling
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
 		-->

@@ -160,6 +160,10 @@
 		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
 		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
 
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp</module>
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp.language</module>
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp.site</module>
+
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.search</module>
@@ -236,6 +240,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
+        <module>lsp4e-cpp/org.eclipse.lsp4e.cpp.language.tests</module>
 		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
 		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
@@ -375,6 +380,7 @@
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -382,6 +388,7 @@
 			<properties>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -389,6 +396,15 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
+			</properties>
+		</profile>
+		<profile>
+			<id>skip-tests-except-lsp4e-cpp</id>
+			<properties>
+				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
+				<cdt-other.skip.tests>true</cdt-other.skip.tests>
+				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -396,6 +412,7 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
+				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
 			</properties>
 		</profile>
 		<profile>

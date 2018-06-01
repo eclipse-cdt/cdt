@@ -177,7 +177,7 @@
         <repositoryList
             name="Photon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/S20180504181223/repository"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180531190352/repository"/>
           <repository
               url="http://download.eclipse.org/technology/swtbot/milestones/photon-m7/"/>
           <repository

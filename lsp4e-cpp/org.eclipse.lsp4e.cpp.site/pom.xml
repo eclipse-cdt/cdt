@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (C) 2016, 2017 Ericsson
+   Copyright (C) 2016, 2018 Ericsson and others.
 
    All rights reserved. This program and the accompanying materials
    are made available under the terms of the Eclipse Public License v1.0
@@ -14,12 +14,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.eclipse.lsp4e.cpp.group</groupId>
-    <artifactId>org.eclipse.lsp4e.cpp.parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <groupId>org.eclipse.cdt</groupId>
+    <artifactId>org.eclipse.lsp4e.cpp-parent</artifactId>
+    <version>9.6.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>org.eclipse.lsp4e.cpp.site</artifactId>
   <packaging>eclipse-repository</packaging>
 
+  <build>
+    <finalName>org.eclipse.lsp4e.cpp.repo</finalName>
+  </build>
 </project>

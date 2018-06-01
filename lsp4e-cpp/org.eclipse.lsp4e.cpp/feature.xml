@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.lsp4e.cpp"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="9.6.0.qualifier"
       provider-name="%featureProvider"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

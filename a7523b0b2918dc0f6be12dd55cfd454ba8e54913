@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7c5d027b_f1609948",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T04:25:23Z",
+      "side": 1,
+      "message": "Correction: I see there is a file OSGI-INF/l10n/bundle.properties. I believe we can use that, instead of creating a plugin.properties file.",
+      "parentUuid": "40ceaede_2914ead9",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1ae312ee_02ef9972",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
         "patchSetId": 2

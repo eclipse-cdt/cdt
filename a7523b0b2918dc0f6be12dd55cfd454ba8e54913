@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "40ceaede_2914ead9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "The name needs to be externalized too (see my explanation of externalizing strings in later comments).\n\nFor strings in plugin.xml, the procedure is slightly different. You choose a variable name like \"PreferencePageTitle\", and reference it from the plugin.xml by prefixing it with a %, as in:\n\n    name\u003d\"%PreferencePageTitle\"\n\nYou then define it in the plugin.properties file (which doesn\u0027t exist yet and needs to be created), like so:\n\n    PreferencePageTitle\u003dC++ Language Server",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ae312ee_02ef9972",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "Please add a copyright header at the top of all new files. It should look something like this:\n\n/*******************************************************************************\n * Copyright (c) 2018 Manish Khurana and others.\n * All rights reserved. This program and the accompanying materials\n * are made available under the terms of the Eclipse Public License v1.0\n * which accompanies this distribution, and is available at\n * http://www.eclipse.org/legal/epl-v10.html\n *******************************************************************************/",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aff4d7f_0a013f4d",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "Please add a comment of the following form at the end of this line:\n\n  //$NON-NLS-1$\n\nThis is needed to suppress a warning about a string not being externalized (which means made available for translators to translate it to other languages).\n\nStrings that are not user-facing, like this one, do not need to be externalized, but we do need this comment to suppress the warning.\n\nNote, Eclipse should offer to insert this comment as a quick-fix for the warning (click on the warning icon in the ruler on the left side of the editor).",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9bc4a320_7a24e3d8",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "I\u0027m not sure what the life cycle of the CPPLanguageServer object is, but it\u0027s possible that an instance of it can be created later than program startup. This means the user may have a chance to change the preference before the creation of a CPPLanguageServer.\n\nTherefore, I think it\u0027s better to read this preference in the constructor, and pass it in as an argument to getDefaultLSLocation().",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ef63cf56_8d1f5f43",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "Add copyright header.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89e3d042_77b4f10e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "Please give the fields more descriptive names, e.g.\n  file -\u003e serverPath\n  radio -\u003e serverChoice\n  options -\u003e serverOptions",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9bcdf21f_1ab269d0",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "In this case, we have a user-facing string, which needs to be externalized.\n\nAdding externalization support to a plugin involves adding two files, typically named Messages.java and Messages.properties (as an example, see the ones in this directory [1]).\n\nMessages.java defines variables for the strings, and Messages.properties maps the variables to the corresponding English string. (Translators will then go through these files and translate the strings to other languages.)\n\nFinally, here at the use site you refer to the variable, e.g. Messages.PreferencePageDescription.\n\nThis applies to all of the user-facing strings in this file (with the exception of \"ClangD\" and \"CQuery\" which are proper names and their translations wouldn\u0027t be any different).\n\n[1] https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95254520_f4cac2c6",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "Add copyright header.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0558aa23_883114af",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "As the plugin grows, we may have multiple paths chosen in the preferences, so it\u0027s better to give these variables more specific names. I would suggest P_SERVER_PATH, P_SERVER_CHOICE, P_SERVER_OPTIONS.\n\nAlso, these strings need //$NON-NLS-1$ annotations.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7ad09f1_8e7cdf4f",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "This import is unused.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e8ae929_afe90979",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-01T00:48:18Z",
+      "side": 1,
+      "message": "These strings need //$NON-NLS-1$ annotations.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

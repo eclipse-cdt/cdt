@@ -6,5 +6,8 @@
    <feature url="features/org.eclipse.lsp4e.cpp_0.0.0.qualifier.jar" id="org.eclipse.lsp4e.cpp" version="0.0.0">
       <category name="LSP4E C/C++ Support"/>
    </feature>
+   <feature url="features/org.eclipse.lsp4e.cpp.source_0.0.0.qualifier.jar" id="org.eclipse.lsp4e.cpp.source" version="0.0.0">
+      <category name="LSP4E C/C++ Support"/>
+   </feature>
    <category-def name="LSP4E C/C++ Support" label="LSP4E C/C++ Support Main Features"/>
 </site>

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41037ede_245d6451",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/AttributeWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 155422
+      },
+      "writtenOn": "2018-06-01T08:15:24Z",
+      "side": 1,
+      "message": "Couldn\u0027t we just use just call `writeAttribute((IASTAttribute) attribute);` here instead of duplicating the code?\n\nOr we could move the instanceof check into `writeAttribute(IASTAttribute)` and then if we have a `ICPPASTAttribute` for we first call `writeAttributeScope` and `writeAttributeVarArgs` after writing the attribute like in this patch: https://git.eclipse.org/r/#/c/121282/6/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/AttributeWriter.java",
+      "revId": "9797444fc2cbf13c8cc3508875d80d39e7067ece",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

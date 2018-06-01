@@ -14,11 +14,12 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import static org.eclipse.cdt.core.dom.ast.IASTLiteralExpression.lk_integer_constant;
 import static org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind.REPLACE;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -41,9 +42,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -64,6 +67,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+
+import junit.framework.TestSuite;
 
 public class ReplaceTests extends ChangeGeneratorTest {
 
@@ -1015,6 +1020,66 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclarator declarator) {
 				addModification(null, ModificationKind.REPLACE, declarator, declarator.copy());
 				return PROCESS_SKIP;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1a() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1b() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo, bar]][[foobar]] int [[asdf]] hs = 5;
+	public void testCopyReplaceAttribute_Bug533552_1c() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this, node -> node instanceof IASTDeclaration));
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo, bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_2a() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
+				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
+				IASTAttributeList attributeSpecifierList = (IASTAttributeList) newDeclaration.getAttributeSpecifiers()[0];
+				attributeSpecifierList.addAttribute(newAttribute);
+
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
+			}
+		});
+	}
+
+	//[[foo]] int hs = 5;
+
+	//[[foo]][[bar]] int hs = 5;
+	public void testAddAttribute_Bug533552_2b() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				IASTAttribute newAttribute = factory.newAttribute("bar".toCharArray(), null);
+				ICPPASTAttributeList newAttributeList = factory.newAttributeList();
+				newAttributeList.addAttribute(newAttribute);
+				IASTSimpleDeclaration newDeclaration = (IASTSimpleDeclaration) declaration.copy(CopyStyle.withLocations);
+				newDeclaration.addAttributeSpecifier(newAttributeList);
+
+				addModification(null, ModificationKind.REPLACE, declaration, newDeclaration);
+				return PROCESS_ABORT;
 			}
 		});
 	}

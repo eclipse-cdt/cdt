@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -71,9 +74,24 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	protected void compareResult(ASTVisitor visitor) throws Exception {
+		compareResult(visitor, false);
+	}
+
+	protected void compareResult(ASTVisitor visitor, boolean shouldValidateAST) throws Exception {
 		final StringBuilder[] testSources = getTestSource(2);
-		final String source = testSources[0].toString();
-		final String expected = testSources[1].toString();
+		compareResult(visitor, testSources[0].toString(), testSources[1].toString(), shouldValidateAST);
+	}
+
+	protected void compareCopyResult(ASTVisitor visitor) throws Exception {
+		compareCopyResult(visitor, true);
+	}
+
+	protected void compareCopyResult(ASTVisitor visitor, boolean shouldValidateAST) throws Exception {
+		final StringBuilder[] testSources = getTestSource(1);
+		compareResult(visitor, testSources[0].toString(), testSources[0].toString(), shouldValidateAST);
+	}
+
+	private void compareResult(ASTVisitor visitor, String source, String expected, boolean shouldValidateAST) throws Exception {
 		final IFile testFile = importFile("source.h", source); //$NON-NLS-1$
 
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -83,13 +101,22 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		waitForIndexer(cproject);
 
 		final IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
+
+		if (shouldValidateAST) {
+			ProblemNodeChecker validator = new ProblemNodeChecker();
+			unit.accept(validator);
+			assertFalse("Problem nodes found, AST is invalid.", validator.problemsFound());
+		}
+
 		final ChangeGenerator changeGenerator =
 				new ChangeGenerator(modStore, ASTCommenter.getCommentedNodeMap(unit));
 		unit.accept(visitor);
 
 		changeGenerator.generateChange(unit);
 		final Document doc = new Document(source);
-		for (Change change : ((CompositeChange) changeGenerator.getChange()).getChildren()) {
+		Change[] changes = ((CompositeChange) changeGenerator.getChange()).getChildren();
+		assertThat("No changes found",changes.length, is(greaterThan(0)));
+		for (Change change : changes) {
 			if (change instanceof TextFileChange) {
 				TextFileChange textChange = (TextFileChange) change;
 				textChange.getEdit().apply(doc);

@@ -1213,7 +1213,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     			result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
     		}
         	result.setAlignmentSpecifiers(ArrayUtil.trim(alignmentSpecifiers));
-        	addAttributeSpecifiers(attributes, result);
+			addAttributeSpecifiers(attributes, result);
+			endOffset = attributesEndOffset(endOffset, attributes);
+			setRange(result, offset, endOffset);
         } catch (BacktrackException e) {
         	if (returnToken != null) {
         		backup(returnToken);

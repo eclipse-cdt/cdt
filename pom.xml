@@ -160,6 +160,8 @@
 		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
 		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
 
+<!-- add lsp4e-cpp plugins/features here (alphabetical order) -->
+
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.search</module>
@@ -236,6 +238,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
+<!-- add lsp4e-cpp tests here (alphabetical order) -->
 		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
 		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>

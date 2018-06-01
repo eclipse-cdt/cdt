@@ -2241,8 +2241,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			addAttributeSpecifiers(attributes, astUD);
 
-			((ASTNode) astUD).setOffsetAndLength(offset, endOffset - offset);
-			return astUD;
+			return setRange(astUD, offset, endOffset);
 		}
 
 		if (LT(1) == IToken.tIDENTIFIER
@@ -2278,8 +2277,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		ICPPASTAliasDeclaration aliasDeclaration = getNodeFactory().newAliasDeclaration(aliasName, aliasedType);
 		addAttributeSpecifiers(attributes, aliasDeclaration);
-		setRange(aliasDeclaration, offset, endOffset);
-		return aliasDeclaration;
+
+		return setRange(aliasDeclaration, offset, endOffset);
 	}
 
 	private ICPPASTUsingDeclaration usingDeclaration(final int offset) throws EndOfFileException, BacktrackException {
@@ -2840,7 +2839,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (LT(1) == IToken.tLBRACE)
 			throwBacktrack(LA(1));
 
-		final int firstOffset= LA(1).getOffset();
+		final int firstOffset= attributesStartOffset(LA(1).getOffset(), attributes);
 		int endOffset= firstOffset;
 		boolean insertSemi= false;
 
@@ -3553,6 +3552,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
 			}
 			addAttributeSpecifiers(attributes, result);
+			attributesEndOffset(endOffset, attributes);
+			setRange(result, offset, endOffset);
 		} catch (BacktrackException e) {
 			if (returnToken != null) {
 				backup(returnToken);
@@ -4510,13 +4511,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			pointer.setConst(isConst);
 			pointer.setVolatile(isVolatile);
 			pointer.setRestrict(isRestrict);
-			setRange(pointer, startOffset, endOffset);
 			if (result == null) {
 				result= new ArrayList<>(4);
 			}
 
 			attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
 			addAttributeSpecifiers(attributes, pointer);
+			endOffset = attributesEndOffset(endOffset, attributes);
+			setRange(pointer, startOffset, endOffset);
 
 			result.add(pointer);
 		}
@@ -4595,8 +4597,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		addAttributeSpecifiers(attributes, result);
+		endOffset = attributesEndOffset(endOffset, attributes);
+		setRange(result, startingOffset, endOffset);
 
-		((ASTNode) result).setOffsetAndLength(startingOffset, endOffset - startingOffset);
 		return result;
 	}
 
@@ -4757,9 +4760,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
 		addAttributeSpecifiers(attributes, fc);
-		if (attributes != null && !attributes.isEmpty()) {
-			endOffset = getEndOffset();
-		}
+		endOffset = attributesEndOffset(endOffset, attributes);
 
 		if (LT(1) == IToken.tARROW) {
 			consume();
@@ -5097,27 +5098,29 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			throws EndOfFileException, BacktrackException {
 		boolean allowExpression= option == DeclarationOptions.TYPEID_NEW;
 		while (LT(1) == IToken.tLBRACKET) {
-			int o = consume().getOffset(); // eat the '['
+			int startOffset = consume().getOffset(); // eat the '['
 
 			IASTExpression exp = null;
 			if (LT(1) != IToken.tRBRACKET && LT(1) != IToken.tEOC) {
 				exp = allowExpression ? expression() : constantExpression();
 				allowExpression= false;
 			}
-			int l;
+			int endOffset;
 			switch (LT(1)) {
 			case IToken.tRBRACKET:
 			case IToken.tEOC:
-				l = consume().getEndOffset();
+				endOffset = consume().getEndOffset();
 				break;
 			default:
 				throw backtrack;
 			}
 			IASTArrayModifier arrayMod = getNodeFactory().newArrayModifier(exp);
-			((ASTNode) arrayMod).setOffsetAndLength(o, l - o);
 
 			List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
 			addAttributeSpecifiers(attributes, arrayMod);
+			endOffset = attributesEndOffset(endOffset, attributes);
+
+			setRange(arrayMod, startOffset, endOffset);
 
 			collection.add(arrayMod);
 		}
@@ -5131,6 +5134,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	@Override
 	protected IASTStatement statement() throws EndOfFileException, BacktrackException {
+		int startOffset = LA(1).getOffset();
 		List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
 
 		IASTStatement statement = null;
@@ -5193,7 +5197,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return parseDeclarationOrExpressionStatement(attributes);
 		}
 		addAttributeSpecifiers(attributes, statement);
-		return statement;
+
+		int endOffset = calculateEndOffset(statement);
+		return setRange(statement, startOffset, endOffset);
 	}
 
 	protected IASTStatement parseTryStatement() throws EndOfFileException, BacktrackException {

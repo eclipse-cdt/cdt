@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -1532,6 +1534,40 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return -1;
 	}
 
+	/**
+	 * Formats the attributes leading a node.
+	 * Same as {@code formatAttributes(owner, false, true);}
+	 * @param owner Node containing attributes
+	 */
+	private void formatLeadingAttributes(IASTAttributeOwner owner) {
+		formatAttributes(owner, false, true);
+	}
+
+	/**
+	 * Formats the attributes of a given attribute owner.
+	 *
+	 * @param owner Node containing attributes
+	 * @param printLeadingSpace Print a space before the first attribute
+	 * @param printTrailingSpace Print a space after the last attribute
+	 */
+	private void formatAttributes(IASTAttributeOwner owner, boolean printLeadingSpace, boolean printTrailingSpace) {
+		if (owner == null) {
+			return;
+		}
+		IASTAttributeSpecifier[] attributeSpecifiers = owner.getAttributeSpecifiers();
+		if (attributeSpecifiers.length > 0) {
+			if (printLeadingSpace) {
+				scribe.space();
+			}
+			for (IASTAttributeSpecifier attributeSpecifier : attributeSpecifiers) {
+				formatRaw(attributeSpecifier);
+			}
+			if (printTrailingSpace) {
+				scribe.space();
+			}
+		}
+	}
+
 	private void formatPointers(IASTPointerOperator[] pointers) {
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
@@ -1634,6 +1670,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTSimpleDeclaration node) {
+		formatLeadingAttributes(node);
 		IASTDeclSpecifier declSpec= node.getDeclSpecifier();
 		declSpec.accept(this);
 		final List<IASTDeclarator> declarators= Arrays.asList(node.getDeclarators());
@@ -3142,6 +3179,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTNullStatement node) {
 		if (!fHasClauseInitStatement && nodeOffset(node) == getCurrentPosition()) {
+			formatAttributes(node, false, false);
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 			scribe.printTrailingComment();
 		}

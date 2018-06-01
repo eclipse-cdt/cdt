@@ -1573,10 +1573,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         			final IASTName etorName= identifier();
         			final IASTEnumerator enumerator= nodeFactory.newEnumerator(etorName, null);
         			endOffset= calculateEndOffset(etorName);
-        			setRange(enumerator, problemOffset, endOffset);
-        			
-        	        List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
-        	        addAttributeSpecifiers(attributes, enumerator);
+
+					List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+					addAttributeSpecifiers(attributes, enumerator);
+					endOffset = attributesEndOffset(endOffset, attributes);
+					setRange(enumerator, problemOffset, endOffset);
         			
         			result.addEnumerator(enumerator);
         			if (LTcatchEOF(1) == IToken.tASSIGN) {
@@ -2434,7 +2435,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		return null;
 
     	IASTAttributeList result = nodeFactory.newGCCAttributeList();
-    	consume();
+		final int startOffset = consume().getOffset();
+    	int endOffset = startOffset;
     	if (LT(1) == IToken.tLPAREN) {
     		consume();
     		consume(IToken.tLPAREN);
@@ -2456,8 +2458,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		}
 
     		consumeOrEOC(IToken.tRPAREN);
-    		consumeOrEOC(IToken.tRPAREN);
+    		endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();
     	}
+    	setRange(result, startOffset, endOffset);
     	return result;
     }
 
@@ -2480,8 +2483,25 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return result;
 	}
 
-	protected void addAttributeSpecifiers(List<IASTAttributeSpecifier> specifiers, IASTAttributeOwner owner) {
-		if (specifiers != null && owner != null) {
+	protected final int attributesStartOffset(int startOffset, List<IASTAttributeSpecifier> specifiers) {
+		if (specifiers == null || specifiers.isEmpty()) {
+			return startOffset;
+		}
+		ASTNode firstSpecifier = (ASTNode) specifiers.get(0);
+		return Math.min(startOffset, firstSpecifier.getOffset());
+	}
+
+	protected final int attributesEndOffset(int endOffset, List<IASTAttributeSpecifier> specifiers) {
+		if (specifiers == null || specifiers.isEmpty()) {
+			return endOffset;
+		}
+		ASTNode lastSpecifier = (ASTNode) specifiers.get(specifiers.size() - 1);
+		return Math.max(endOffset, calculateEndOffset(lastSpecifier));
+	}
+
+	protected final void addAttributeSpecifiers(List<IASTAttributeSpecifier> specifiers, IASTAttributeOwner owner) {
+		assert owner != null;
+		if (specifiers != null) {
 			for (IASTAttributeSpecifier specifier : specifiers) {
 				owner.addAttributeSpecifier(specifier);
 			}

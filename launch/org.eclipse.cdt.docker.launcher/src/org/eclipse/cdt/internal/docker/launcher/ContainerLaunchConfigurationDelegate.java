@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.docker.launcher.ContainerTargetTypeProvider;
@@ -604,6 +605,62 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 		}
 
 		return super.buildForLaunch(configuration, mode, monitor);
+	}
+
+	@Override
+	public boolean finalLaunchCheck(ILaunchConfiguration configuration,
+			String mode, IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject(configuration);
+		ILaunchTargetManager targetManager = CCorePlugin
+				.getService(ILaunchTargetManager.class);
+		ILaunchTarget target = null;
+		ILaunchTarget[] targets = targetManager
+				.getLaunchTargetsOfType(ContainerTargetTypeProvider.TYPE_ID);
+		String image = configuration.getAttribute(
+				IContainerLaunchTarget.ATTR_IMAGE_ID, (String) null);
+		String connection = configuration.getAttribute(
+				IContainerLaunchTarget.ATTR_CONNECTION_URI, (String) null);
+		for (ILaunchTarget t : targets) {
+			if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "")
+					.equals(image)) {
+				target = t;
+				break;
+			}
+		}
+		String program = configuration.getAttribute(
+				ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				(String) null);
+		if (program == null) {
+			ICBuildConfiguration cconfig = getBuildConfiguration(configuration,
+					mode, target, monitor);
+			if (cconfig != null) {
+				IBinary[] binaries = cconfig.getBuildOutput();
+				for (IBinary b : binaries) {
+					if (b.isExecutable()
+							&& b.getElementName().contains(project.getName())) {
+						ILaunchConfigurationWorkingCopy wc = configuration
+								.getWorkingCopy();
+						wc.setAttribute(
+								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+								b.getResource().getProjectRelativePath()
+										.toString());
+						wc.setMappedResources(new IResource[] { b.getResource(),
+								b.getResource().getProject() });
+						wc.setAttribute(
+								ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+								(String) null); // default is the project
+												// directory
+						wc.setAttribute(ILaunchConstants.ATTR_CONNECTION_URI,
+								connection);
+						wc.setAttribute(ILaunchConstants.ATTR_IMAGE, image);
+
+						wc.doSave();
+						break;
+					}
+				}
+			}
+		}
+		return super.finalLaunchCheck(configuration, mode, monitor);
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.docker.launcher.ContainerTargetTypeProvider;
 import org.eclipse.cdt.docker.launcher.IContainerLaunchTarget;
@@ -79,11 +80,17 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 
 	private String getImageName(ILaunchConfiguration config)
 			throws CoreException {
-		String connection = config
-				.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
-		String image = config.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID,
-				""); //$NON-NLS-1$
-		String imageName = connection + "-" + image; //$NON-NLS-1$
+		IProject project = config.getMappedResources()[0].getProject();
+		ICBuildConfiguration cconfig = project.getActiveBuildConfig()
+				.getAdapter(ICBuildConfiguration.class);
+		String image = cconfig.getToolChain()
+				.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+		String connection = cconfig.getToolChain()
+				.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI); // $NON-NLS-1$
+		String imageName = "unknown"; //$NON-NLS-1$
+		if (connection != null && image != null) {
+			imageName = connection + "-" + image; //$NON-NLS-1$
+		}
 
 		return imageName;
 	}

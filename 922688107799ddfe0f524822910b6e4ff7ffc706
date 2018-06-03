@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27b30913_47ba7179",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-03T13:17:00Z",
+      "side": 1,
+      "message": "C/C++ Language Server",
+      "revId": "922688107799ddfe0f524822910b6e4ff7ffc706",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44506826_c7993480",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-03T13:17:00Z",
+      "side": 1,
+      "message": "C/C++ Language Server",
+      "revId": "922688107799ddfe0f524822910b6e4ff7ffc706",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c48aa10e_d7bfb3f9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-03T13:17:00Z",
+      "side": 1,
+      "message": "C/C++ Language Server",
+      "revId": "922688107799ddfe0f524822910b6e4ff7ffc706",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0983cf6a_4631abb3",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-03T13:17:00Z",
+      "side": 1,
+      "message": "\"C++ Preference Page\" -\u003e \"C/C++ Language Server preference page\"",
+      "revId": "922688107799ddfe0f524822910b6e4ff7ffc706",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

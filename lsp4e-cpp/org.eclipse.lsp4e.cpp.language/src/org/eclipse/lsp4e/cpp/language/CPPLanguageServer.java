@@ -21,9 +21,13 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
+
+import com.google.gson.JsonObject;
 
 public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
@@ -63,7 +67,11 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 	@Override
 	public Object getInitializationOptions(URI rootPath) {
 		installResourceChangeListener(rootPath);
-		return super.getInitializationOptions(rootPath);
+		IPath cacheDirectory = Path.fromOSString(rootPath.getPath()).append(".cquery/cquery_index");  //$NON-NLS-1$
+		Object superResult = super.getInitializationOptions(rootPath);
+		JsonObject result = (superResult instanceof JsonObject) ? (JsonObject)superResult : new JsonObject();
+		result.addProperty("cacheDirectory", cacheDirectory.toString());  //$NON-NLS-1$
+		return result;
 	}
 
 	private void installResourceChangeListener(URI rootPath) {

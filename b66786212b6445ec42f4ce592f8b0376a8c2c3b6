@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8450e449_9df34b70",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-05T22:42:19Z",
+      "side": 1,
+      "message": "Another issue I noticed while trying this out: getDefaultLSLocation() can return null (e.g. if the chosen language server is not found in your PATH), in which case the next line will throw a NullPointerException. So we need to add a check here.",
+      "revId": "b66786212b6445ec42f4ce592f8b0376a8c2c3b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

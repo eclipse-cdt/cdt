@@ -37,6 +37,42 @@
     },
     {
       "key": {
+        "uuid": "ecbd8855_84ae2723",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "40ceaede_2914ead9",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0743163_f7847a30",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c5d027b_f1609948",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1ae312ee_02ef9972",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
         "patchSetId": 2
@@ -48,6 +84,24 @@
       "writtenOn": "2018-06-01T00:48:18Z",
       "side": 1,
       "message": "Please add a copyright header at the top of all new files. It should look something like this:\n\n/*******************************************************************************\n * Copyright (c) 2018 Manish Khurana and others.\n * All rights reserved. This program and the accompanying materials\n * are made available under the terms of the Eclipse Public License v1.0\n * which accompanies this distribution, and is available at\n * http://www.eclipse.org/legal/epl-v10.html\n *******************************************************************************/",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d110627_d683b180",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ae312ee_02ef9972",
       "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -71,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "c06fa45c_905749e3",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9aff4d7f_0a013f4d",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9bc4a320_7a24e3d8",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServer.java",
         "patchSetId": 2
@@ -82,6 +154,24 @@
       "writtenOn": "2018-06-01T00:48:18Z",
       "side": 1,
       "message": "I\u0027m not sure what the life cycle of the CPPLanguageServer object is, but it\u0027s possible that an instance of it can be created later than program startup. This means the user may have a chance to change the preference before the creation of a CPPLanguageServer.\n\nTherefore, I think it\u0027s better to read this preference in the constructor, and pass it in as an argument to getDefaultLSLocation().",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b79066c_6b6fe3f5",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bc4a320_7a24e3d8",
       "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -105,6 +195,24 @@
     },
     {
       "key": {
+        "uuid": "610d6ed8_324b9eeb",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef63cf56_8d1f5f43",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89e3d042_77b4f10e",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
         "patchSetId": 2
@@ -116,6 +224,24 @@
       "writtenOn": "2018-06-01T00:48:18Z",
       "side": 1,
       "message": "Please give the fields more descriptive names, e.g.\n  file -\u003e serverPath\n  radio -\u003e serverChoice\n  options -\u003e serverOptions",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c908a93_863d3947",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89e3d042_77b4f10e",
       "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -139,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "9ceded5c_44beb0f2",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bcdf21f_1ab269d0",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95254520_f4cac2c6",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceConstants.java",
         "patchSetId": 2
@@ -150,6 +294,24 @@
       "writtenOn": "2018-06-01T00:48:18Z",
       "side": 1,
       "message": "Add copyright header.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2d073b0_3ecaccfc",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95254520_f4cac2c6",
       "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -173,6 +335,24 @@
     },
     {
       "key": {
+        "uuid": "089b78b4_311a2f83",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0558aa23_883114af",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7ad09f1_8e7cdf4f",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
         "patchSetId": 2
@@ -190,6 +370,24 @@
     },
     {
       "key": {
+        "uuid": "68d42951_af6a06d8",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7ad09f1_8e7cdf4f",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6e8ae929_afe90979",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
         "patchSetId": 2
@@ -201,6 +399,24 @@
       "writtenOn": "2018-06-01T00:48:18Z",
       "side": 1,
       "message": "These strings need //$NON-NLS-1$ annotations.",
+      "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6716bc5b_22a6c8f9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 185837
+      },
+      "writtenOn": "2018-06-06T13:17:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e8ae929_afe90979",
       "revId": "a7523b0b2918dc0f6be12dd55cfd454ba8e54913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

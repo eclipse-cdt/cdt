@@ -291,7 +291,9 @@ public class SizeofCalculator {
 		int maxAlignment = 1;
 		IField[] fields;
 		if (type instanceof ICPPClassType) {
-			CPPSemantics.pushLookupPoint(ast);
+			if (ast != null) {
+				CPPSemantics.pushLookupPoint(ast);
+			}
 			try {
 				ICPPClassType classType = (ICPPClassType) type;
 				for (ICPPBase base : classType.getBases()) {
@@ -315,7 +317,9 @@ public class SizeofCalculator {
 				}
 				fields = classType.getDeclaredFields();
 			} finally {
-				CPPSemantics.popLookupPoint();
+				if (ast != null) {
+					CPPSemantics.popLookupPoint();
+				}
 			}
 		} else {
 			fields = type.getFields();

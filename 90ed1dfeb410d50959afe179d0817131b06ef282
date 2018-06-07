@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cca9b29f_a556cc29",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-07T09:53:53Z",
+      "side": 1,
+      "message": "As we continue to work on CQuery support, there are going to be other cases where we want to make something dependent on which language server we are using. Instead of repeating this string check in multiple places, I think it would be appropriate to factor it out.\n\nThe usual convention for handling situations like this is to introduce an interface that abstracts away the behaviour that can vary between different implementations.\n\nSo in this case, we could:\n\n* Create an interface ICPPLanguageServer, with two implementations CqueryLanguageServer and ClangdLanguageServer\n* As part of the above change, we should rename CPPLanguageServer, which is unrelated to the ICPPLanguageServer hierarchy being introduced, to avoid confusion. I recommend \"CPPStreamConnectionProvider\", since it is an implementation of StreamConnectionProvider \n* Add a field to CPPLanguageServer (now called CPPStreamConnectionProvider) of type ICPPLanguageServer, initialized in the constructor based on P_SERVER_CHOICE\n* Give ICPPLanguageServer a method that returns language-server specific initialization options, and call it in CPPStreamConnectionProvider.getInitializationOptions()\n* The CqueryLanguageServer implementation of this method would return initialization options that include \"cacheDirectory\".\n* The ClangdLanguageServer implementation of this method would return empty initialization options (for now).\n\nDoes that seem reasonable?",
+      "revId": "90ed1dfeb410d50959afe179d0817131b06ef282",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

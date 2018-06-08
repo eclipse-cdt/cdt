@@ -42,7 +42,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		LanguageServerDefinition definition = LanguageServersRegistry.getInstance().getDefinition(CPPLanguageServer.ID);
+		LanguageServerDefinition definition = LanguageServersRegistry.getInstance().getDefinition(CPPStreamConnectionProvider.ID);
 		ProjectSpecificLanguageServerWrapper wrapper = getLanguageSeverWrapper(definition);
 		if (event.getType() != IResourceChangeEvent.POST_CHANGE || !isRelevantDelta(event.getDelta())
 				|| wrapper == null) {

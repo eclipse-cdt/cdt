@@ -25,7 +25,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
-public class CPPLanguageServer extends ProcessStreamConnectionProvider {
+
+public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider {
 
 	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
 
@@ -33,8 +34,16 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 
 	private static final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-	public CPPLanguageServer() {
+	private ICPPLanguageServer languageServer;
+
+	public CPPStreamConnectionProvider() {
 		List<String> commands = new ArrayList<>();
+		if(store.getString(PreferenceConstants.P_SERVER_CHOICE).equals("cquery")) {	//$NON-NLS-1$
+			languageServer = new CqueryLanguageServer();
+		}
+		else if(store.getString(PreferenceConstants.P_SERVER_CHOICE).equals("clangd")) {	//$NON-NLS-1$
+			languageServer = new ClangdLanguageServer();
+		}
 		File defaultLSLocation = getDefaultLSLocation(store.getString(PreferenceConstants.P_SERVER_CHOICE));
 		if(defaultLSLocation != null) {
 			store.setDefault(PreferenceConstants.P_SERVER_PATH, defaultLSLocation.getAbsolutePath());
@@ -65,7 +74,8 @@ public class CPPLanguageServer extends ProcessStreamConnectionProvider {
 	@Override
 	public Object getInitializationOptions(URI rootPath) {
 		installResourceChangeListener(rootPath);
-		return super.getInitializationOptions(rootPath);
+		Object superResult = super.getInitializationOptions(rootPath);
+		return languageServer.getLSSpecificInitializationOptions(superResult, rootPath);
 	}
 
 	private void installResourceChangeListener(URI rootPath) {

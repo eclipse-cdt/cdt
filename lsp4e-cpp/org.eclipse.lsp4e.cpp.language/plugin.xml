@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.lsp4e.languageServer">
       <server
-            class="org.eclipse.lsp4e.cpp.language.CPPLanguageServer"
+            class="org.eclipse.lsp4e.cpp.language.CPPStreamConnectionProvider"
             id="org.eclipse.lsp4e.languages.cpp"
             label="%server.label">
       </server>

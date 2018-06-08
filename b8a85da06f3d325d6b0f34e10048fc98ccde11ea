@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62dbf8f6_cfcdc422",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPStreamConnectionProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "If, for whatever reason, the choice is neither \"cquery\" nor \"clangd\", then, rather than allowing the CPPStreamConnectionProvider to be constructed with languageServer being null (thus setting us up for an NPE later), let\u0027s just fail early, by throwing something like UnsupportedOperationException(\"Unsupported language server\").",
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9bb2fa50_ca61713f",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/ClangdLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "add a space after this comma",
+      "range": {
+        "startLine": 16,
+        "startChar": 75,
+        "endLine": 16,
+        "endChar": 76
+      },
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f586b6bd_232f4317",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "space after comma",
+      "range": {
+        "startLine": 19,
+        "startChar": 75,
+        "endLine": 19,
+        "endChar": 76
+      },
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e929a1e0_de88dcd3",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "Please add a comment: \"TODO: Allow user to specify cache directory path\".",
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c6fc022_86b6f94f",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "There is probably a better way to do this (i.e. a way to use whatever JSON-like object type the base class used, even if it\u0027s different from JsonObject), but I don\u0027t know what that way is, and the current base implementation of StreamConnectionProvider.getInitializationOptions() just returns null, so this is fine for now.",
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca547f02_7e03cb4e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/ICPPLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T18:39:55Z",
+      "side": 1,
+      "message": "Please add a comment: \"Encapsulates functionality specific to a particular C++ language server (e.g., clangd)\".",
+      "revId": "b8a85da06f3d325d6b0f34e10048fc98ccde11ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "247b3302_c5db1a6e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPStreamConnectionProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-08T22:47:24Z",
+      "side": 1,
+      "message": "One other thing I thought of: we should factor these strings out into variables like CQUERY_ID and CLANGD_ID, and reuse them in CPPLanguageServerPreferencePage",
+      "revId": "1bf689e31876afeb8d4e29b88b523fd5ce0a63ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

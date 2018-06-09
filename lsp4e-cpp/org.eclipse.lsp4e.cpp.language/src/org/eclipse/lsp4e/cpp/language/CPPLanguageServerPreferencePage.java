@@ -31,9 +31,10 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 	@Override
 	public void createFieldEditors() {
 
-		serverChoice = new RadioGroupFieldEditor(PreferenceConstants.P_SERVER_CHOICE,
-				Messages.ServerChoiceLabel, 1,
-				new String[][] { { "ClangD", "clangd" }, { "CQuery", "cquery" } }, getFieldEditorParent()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		serverChoice = new RadioGroupFieldEditor(PreferenceConstants.P_SERVER_CHOICE, Messages.ServerChoiceLabel, 1,
+				new String[][] { { "ClangD", CPPStreamConnectionProvider.CLANGD_ID }, //$NON-NLS-1$
+						{ "CQuery", CPPStreamConnectionProvider.CQUERY_ID } }, //$NON-NLS-1$
+				getFieldEditorParent());
 		addField(serverChoice);
 
 		serverPath = new FileFieldEditor(PreferenceConstants.P_SERVER_PATH, Messages.ServerPathLabel,

@@ -65,9 +65,9 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<IMemoryDMContext, Integer>();
 	
 	/**
-	 * We assume the endianness is the same for all processes because GDB supports only one target.
+	 * Cache of the endianness for each memory context. 
 	 */
-	private Boolean fIsBigEndian;
+	private Map<IMemoryDMContext, Boolean> fIsBigEndian = new HashMap<>();
 
 	public GDBMemory(DsfSession session) {
 		super(session);
@@ -272,7 +272,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 					
 				}
 
-				if (fIsBigEndian == null) {
+				if (fIsBigEndian.get(memContext) == null) {
 					stepsList.add(
 						new Step() {
 							// read endianness
@@ -284,7 +284,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 											@Override
 											protected void handleCompleted() {
 												if (isSuccess()) {
-													fIsBigEndian = getData();
+													fIsBigEndian.put(memContext, getData());
 												}
 												// Accept failure
 												requestMonitor.done();
@@ -336,12 +336,13 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 
 	@Override
 	public boolean isBigEndian(IMemoryDMContext context) {
-		assert fIsBigEndian != null;
-		if (fIsBigEndian == null) {
-    		GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Endianness was never initialized!")); //$NON-NLS-1$
+		Boolean isBigEndian = fIsBigEndian.get(context);
+		assert isBigEndian != null;
+		if (isBigEndian == null) {
+    		GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Endianness was never initialized for " + context)); //$NON-NLS-1$
 			return false;
 		}
-		return fIsBigEndian;
+		return isBigEndian.booleanValue();
 	}
 
 	/**

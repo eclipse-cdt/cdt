@@ -15,14 +15,14 @@
 		<tycho-version>1.1.0</tycho-version>
 		<tycho-extras-version>1.1.0</tycho-extras-version>
 		<maven-resources-version>2.6</maven-resources-version>
-		<!-- TODO: use 4.8milestones? or switch to 4.8 after June 27, 2018 -->
-		<sdk-version>4.8-I-builds</sdk-version>
+		<!-- TODO: switch to 4.9-I-builds after June 27, 2018 -->
+		<sdk-version>4.8milestones</sdk-version>
 
 		<!-- Set up the default target platform to build against -->
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</orbit-site>
-		<cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository</orbit-site>
+		<cdt-site>http://download.eclipse.org/tools/cdt/releases/8.8.1</cdt-site>
 		<terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
 	</properties>
 

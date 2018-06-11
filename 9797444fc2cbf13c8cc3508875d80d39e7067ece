@@ -16,6 +16,24 @@
       "revId": "9797444fc2cbf13c8cc3508875d80d39e7067ece",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4eeccb4e_23807688",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/AttributeWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2018-06-11T11:33:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "41037ede_245d6451",
+      "revId": "9797444fc2cbf13c8cc3508875d80d39e7067ece",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

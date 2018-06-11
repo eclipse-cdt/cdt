@@ -252,11 +252,14 @@
 			<properties>
 				<terminal-stream>photon</terminal-stream>
 				<sdk-version>4.8</sdk-version>
-				<platform-site>http://download.eclipse.org/eclipse/updates/4.8milestones</platform-site>
-				<platform-release-site>http://download.eclipse.org/releases/photon</platform-release-site>
-				<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20180119201206/repository</orbit-site>
-				<tm-site>http://download.eclipse.org/tm/updates/4.3milestones</tm-site>
-				<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones</remote-site>
+				<platform-site>http://download.eclipse.org/eclipse/updates/4.8milestones/</platform-site>
+				<platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site>
+				<!-- <platform-release-site>http://download.eclipse.org/releases/photon/</platform-release-site> -->
+				<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/</orbit-site>
+				<tm-site>http://download.eclipse.org/tm/updates/3.7.100-SNAPSHOT/repository/</tm-site>
+				<!-- <tm-site>http://download.eclipse.org/tm/updates/3.7.100/repository/</tm-site> -->
+				<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
+				<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
 				<cdt-site>http://download.eclipse.org/tools/cdt/builds/9.4</cdt-site>
 				<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
 			</properties>

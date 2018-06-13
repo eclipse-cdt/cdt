@@ -253,6 +253,11 @@ public class DataPane extends AbstractPane
         }
 
         int addressSpan = address.subtract(baseAddress).intValue();
+		if (fRendering.isTargetLittleEndian()) {
+			addressSpan = fRendering.getBytesPerColumn() - addressSpan - 1;
+			assert addressSpan >= 0;
+		}
+
         // Resolve the horizontal distance from base address to given address in octets
         int charsWidth = fRendering.getRadixCharacterCount(fRendering.getRadix(), addressSpan) * getCellCharacterWidth();
 
@@ -561,6 +566,11 @@ public class DataPane extends AbstractPane
                 if (rangeColor != null) {
                     gc.setForeground(rangeColor);
                 }
+
+				// Max rectangle size of one for LE if rectangle may be discontiguous
+				if (fRendering.isTargetLittleEndian() && fRendering.getBytesPerColumn() > 1) {
+					addressUnits = BigInteger.ONE;
+				}
 
                 // The start and end address are part of the length so we need to decrement / adjust by one
                 BigInteger endAddress = startAddress.add(addressUnits.subtract(BigInteger.ONE));

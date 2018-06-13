@@ -2359,7 +2359,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	
     	// Cross Reference information can not be properly highlighted for a Little Endian display
     	// see Bug 509577 - [Traditional Rendering] Local variable enclosing markings may be wrong in Little Endian presentation
-    	return (!isDisplayLittleEndian() && prefShowInfo);
+		// return (!isDisplayLittleEndian() && prefShowInfo);
+		return prefShowInfo;
     }
 
     /**

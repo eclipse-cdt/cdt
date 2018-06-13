@@ -227,6 +227,12 @@ public class DataPane extends AbstractPane
         int addressableOffset = offset / getAddressableWidth();
         assert addressableOffset <= getAddressableOctetsPerColumn();
 
+		if (fRendering.isTargetLittleEndian()) {
+			addressableOffset = getAddressableOctetsPerColumn() - addressableOffset - 1;
+			if (addressableOffset < 0)
+				addressableOffset = 0;
+		}
+
         return cellBaseAddress.add(BigInteger.valueOf(addressableOffset));
     }
 

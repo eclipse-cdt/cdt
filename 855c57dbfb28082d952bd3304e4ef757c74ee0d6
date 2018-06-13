@@ -16,6 +16,24 @@
       "revId": "855c57dbfb28082d952bd3304e4ef757c74ee0d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "740bc1fe_a93c7cb3",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-13T21:49:10Z",
+      "side": 1,
+      "message": "I did a bit of digging and I can see that these can\u0027t really return null.",
+      "parentUuid": "670503e2_bfb36a03",
+      "revId": "855c57dbfb28082d952bd3304e4ef757c74ee0d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

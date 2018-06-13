@@ -1,0 +1,14 @@
+These serial tests require setting up paired serial ports, that are connected
+via null-modem cable. These could also be virtual serial ports performing the
+same function.
+
+Most tests start a simulator to generate data on one port before the test
+begins, and then the automated tests listen on the paired port to verify data
+received.
+
+To create the paired virtual ports for initial implementation and testing,
+following utilities were used:
+ - Windows
+  - https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/powersdr-iq/setup_com0com_W7_x64_signed.exe
+ - Linux
+  - socat -d -d pty,raw,echo=0,crnl pty,raw,echo=0,crnl 

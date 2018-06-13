@@ -105,7 +105,7 @@ public class SerialPort {
 				} else {
 					while (isOpen()) {
 						n = read1(handle, b, off, len);
-						if (n <= 0 ) {
+						if (n <= 0) {
 							if (isPaused) {
 								synchronized (pauseMutex) {
 									while (isPaused) {
@@ -116,12 +116,10 @@ public class SerialPort {
 										}
 									}
 								}
-							}
-							else if (n < 0) {
+							} else if (n < 0) {
 								// End of stream, connection closed?
 								return n;
-							}
-							else {
+							} else {
 								// Nothing available yet, keep blocking
 								try {
 									Thread.sleep(500);
@@ -133,7 +131,7 @@ public class SerialPort {
 							return n;
 						}
 					}
-					
+
 					return -1;
 				}
 			} else {
@@ -281,8 +279,9 @@ public class SerialPort {
 	}
 
 	/**
-	 * Return an the SerialPort with the given name or null if it hasn't been allocated yet. This
-	 * would be used by components that need to pause and resume a serial port.
+	 * Return an the SerialPort with the given name or null if it hasn't been
+	 * allocated yet. This would be used by components that need to pause and resume
+	 * a serial port.
 	 * 
 	 * @param portName
 	 * @return
@@ -365,7 +364,7 @@ public class SerialPort {
 				// Sleep for a second since some serial ports take a while to actually close
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// nothing to do 
+				// nothing to do
 			}
 		}
 	}
@@ -373,7 +372,7 @@ public class SerialPort {
 	public boolean isOpen() {
 		return isOpen;
 	}
-	
+
 	public void pause() throws IOException {
 		if (!isOpen) {
 			return;

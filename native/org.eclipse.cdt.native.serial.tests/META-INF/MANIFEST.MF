@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Serial Port Tests
+Bundle-SymbolicName: org.eclipse.cdt.native.serial.tests
+Automatic-Module-Name: org.eclipse.cdt.native.serial.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.cdt.native.serial;bundle-version="1.1.0",
+ org.eclipse.ecf.provider.filetransfer;bundle-version="3.2.0",
+ org.junit,
+ org.junit.jupiter.api,
+ org.junit.jupiter.engine,
+ org.junit.jupiter.migrationsupport,
+ org.junit.jupiter.params,
+ org.junit.platform.commons,
+ org.junit.platform.engine,
+ org.junit.platform.launcher,
+ org.junit.platform.runner,
+ org.junit.platform.suite.api,
+ org.junit.vintage.engine,
+ org.hamcrest.core,
+ org.opentest4j,
+ org.apiguardian
+Export-Package: org.eclipse.cdt.serial.tests,
+ org.eclipse.cdt.serial.tests.utils

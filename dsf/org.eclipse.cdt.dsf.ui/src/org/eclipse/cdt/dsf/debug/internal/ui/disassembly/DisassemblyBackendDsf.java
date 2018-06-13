@@ -1327,4 +1327,9 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	protected IExecutionDMContext getExecutionDMContext() {
 		return fTargetContext;
 	}
+
+	@Override
+	protected void handleError(IStatus status) {
+		DsfUIPlugin.log(status);
+	}
 }

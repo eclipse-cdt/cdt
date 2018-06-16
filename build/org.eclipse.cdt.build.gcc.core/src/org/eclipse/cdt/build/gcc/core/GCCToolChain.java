@@ -471,6 +471,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 						} else {
 							try {
 								Path dirPath = Paths.get(dir);
+								if (!dirPath.isAbsolute()) {
+									dirPath = buildDirectory.resolve(dirPath);
+								}
 								if (Files.isDirectory(dirPath)) {
 									includePath.add(dirPath.toString());
 								}

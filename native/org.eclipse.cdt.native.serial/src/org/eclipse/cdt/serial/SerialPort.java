@@ -103,38 +103,21 @@ public class SerialPort {
 					rpos += n;
 					return n;
 				} else {
-					while (isOpen()) {
-						n = read1(handle, b, off, len);
-						if (n <= 0 ) {
-							if (isPaused) {
-								synchronized (pauseMutex) {
-									while (isPaused) {
-										try {
-											pauseMutex.wait();
-										} catch (InterruptedException e) {
-											return -1;
-										}
-									}
-								}
-							}
-							else if (n < 0) {
-								// End of stream, connection closed?
-								return n;
-							}
-							else {
-								// Nothing available yet, keep blocking
+					n = read1(handle, b, off, len);
+					if (n <= 0 && isPaused) {
+						synchronized (pauseMutex) {
+							while (isPaused) {
 								try {
-									Thread.sleep(500);
+									pauseMutex.wait();
 								} catch (InterruptedException e) {
-									// ignore
+									return -1;
 								}
 							}
-						} else {
-							return n;
 						}
+						return read1(handle, b, off, len);
+					} else {
+						return n;
 					}
-					
-					return -1;
 				}
 			} else {
 				return -1;

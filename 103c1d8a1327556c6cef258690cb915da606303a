@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1455748a_66095095",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/CqueryInactiveRegion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "The general convention in the Eclipse codebase is to use lowercase names for packages.\n\nIn this case, I would suggest using \u0027cquery\u0027 as the package name for cquery-specific types.",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5fe2e85_dbaff6ac",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/CqueryInactiveRegion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "CqueryInactiveRegion -\u003e CqueryInactiveRegions (since it stores multiple regions)",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70ac9837_f2c96ea0",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/CqueryInactiveRegion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "Let\u0027s add getters, to avoid \"The value of the field ... is not used\" warnings.",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8710bfd1_b5ae3f1a",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/CquerySemanticHighlights.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "Add getters to avoid unused field warnings.",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e505fa33_569dc358",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/CquerySymbolKind.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "//$NON-NLS-1$",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a2426a79_4e529152",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/StorageType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "cquery calls this StorageClass, let\u0027s call it that too",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e8385d0_9eabd189",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/StorageType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "Add getter to avoid warning",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bba7412_cbf5287c",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LSExtendedResponses/StorageType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "//$NON-NLS-1$",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d08d3983_34b70084",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-16T17:12:59Z",
+      "side": 1,
+      "message": "Please add a \"// TODO: Implement\" comment in each method body, and file a bug for implementing each request.",
+      "revId": "103c1d8a1327556c6cef258690cb915da606303a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

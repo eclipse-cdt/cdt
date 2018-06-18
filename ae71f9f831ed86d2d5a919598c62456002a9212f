@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57136dcd_d58a50b7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2018-06-18T15:41:49Z",
+      "side": 1,
+      "message": "Should we put the check here too?",
+      "range": {
+        "startLine": 339,
+        "startChar": 16,
+        "endLine": 339,
+        "endChar": 31
+      },
+      "revId": "ae71f9f831ed86d2d5a919598c62456002a9212f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0637c8ea_04121988",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2018-06-18T15:41:49Z",
+      "side": 1,
+      "message": "Here too?",
+      "range": {
+        "startLine": 358,
+        "startChar": 11,
+        "endLine": 358,
+        "endChar": 15
+      },
+      "revId": "ae71f9f831ed86d2d5a919598c62456002a9212f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "413df7b9_7cb5d74d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2018-06-18T15:41:49Z",
+      "side": 1,
+      "message": "Here too?",
+      "range": {
+        "startLine": 373,
+        "startChar": 18,
+        "endLine": 373,
+        "endChar": 41
+      },
+      "revId": "ae71f9f831ed86d2d5a919598c62456002a9212f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c587f52_30113419",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2018-06-18T15:41:49Z",
+      "side": 1,
+      "message": "Here too?",
+      "range": {
+        "startLine": 639,
+        "startChar": 2,
+        "endLine": 639,
+        "endChar": 7
+      },
+      "revId": "ae71f9f831ed86d2d5a919598c62456002a9212f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -302,6 +302,10 @@ public class Elf {
 		public final static int SHF_WRITE = 1;
 		public final static int SHF_ALLOC = 2;
 		public final static int SHF_EXECINTR = 4;
+		/**
+		 * @since 6.6
+		 */
+		public final static int SHF_COMPRESSED = 2048;
 
 		/* note_types */
 		/**
@@ -324,6 +328,10 @@ public class Elf {
 		 * @since 5.1
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
+			if ((sh_flags & SHF_COMPRESSED) != 0) {
+				// No point in continuing, the map() will be wrong.
+				throw new IOException("Compressed sections are unsupported (SHF_COMPRESSED): " + toString()); //$NON-NLS-1$
+			}
 			sections_mapped = true;
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}

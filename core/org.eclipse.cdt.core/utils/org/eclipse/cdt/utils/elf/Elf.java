@@ -302,6 +302,10 @@ public class Elf {
 		public final static int SHF_WRITE = 1;
 		public final static int SHF_ALLOC = 2;
 		public final static int SHF_EXECINTR = 4;
+		/**
+		 * @since 6.6
+		 */
+		public final static int SHF_COMPRESSED = 2048;
 
 		/* note_types */
 		/**
@@ -324,15 +328,24 @@ public class Elf {
 		 * @since 5.1
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
+			makeSureNotCompressed();
 			sections_mapped = true;
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}
 
 		public byte[] loadSectionData() throws IOException {
+			makeSureNotCompressed();
 			byte[] data = new byte[(int)sh_size];
 			efile.seek(sh_offset);
 			efile.read(data);
 			return data;
+		}
+
+		private void makeSureNotCompressed() throws IOException {
+			if ((sh_flags & SHF_COMPRESSED) != 0) {
+				// No point in continuing, any seek() or map() will be wrong.
+				throw new IOException("Compressed sections are unsupported (SHF_COMPRESSED): " + toString()); //$NON-NLS-1$
+			}
 		}
 
 		@Override
@@ -342,6 +355,7 @@ public class Elf {
 					final int shstrndx= ehdr.e_shstrndx & 0xffff; // unsigned short
 					if (shstrndx > sections.length || shstrndx < 0)
 						return EMPTY_STRING;
+					sections[shstrndx].makeSureNotCompressed();
 					int size = (int)sections[shstrndx].sh_size;
 					if (size <= 0 || size > efile.length())
 						return EMPTY_STRING;
@@ -367,10 +381,10 @@ public class Elf {
 			return EMPTY_STRING;
 		}
 
+		section.makeSureNotCompressed();
 		StringBuilder str = new StringBuilder();
 		//Most string symbols will be less than 50 bytes in size
 		byte [] tmp = new byte[50];
-
 		efile.seek(section.sh_offset + index);
 		while(true) {
 			int len = efile.read(tmp);
@@ -627,6 +641,7 @@ public class Elf {
 		if (section.sh_type != Section.SHT_DYNAMIC) {
 			return new Dynamic[0];
 		}
+		section.makeSureNotCompressed();
 		ArrayList<Dynamic> dynList = new ArrayList<Dynamic>();
 		efile.seek(section.sh_offset);
 		int off = 0;
@@ -1066,6 +1081,7 @@ public class Elf {
 		if (section.sh_entsize != 0) {
 			numSyms = (int)section.sh_size / (int)section.sh_entsize;
 		}
+		section.makeSureNotCompressed();
 		ArrayList<Symbol> symList = new ArrayList<Symbol>(numSyms);
 		long offset = section.sh_offset;
 		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {

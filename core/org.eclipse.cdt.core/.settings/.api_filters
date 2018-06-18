@@ -68,4 +68,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="utils/org/eclipse/cdt/utils/elf/Elf.java" type="org.eclipse.cdt.utils.elf.Elf$Section">
+        <filter comment="Unlikely API incompatibility" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.elf.Elf.Section"/>
+                <message_argument value="SHF_COMPRESSED"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

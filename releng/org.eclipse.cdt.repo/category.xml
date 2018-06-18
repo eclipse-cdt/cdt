@@ -165,6 +165,9 @@
    <iu id="org.eclipse.cdt.util.source" version="0.0.0"/>
    <iu id="org.eclipse.cdt.remote.core" version="0.0.0"/>
    <iu id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
+   <iu id="javax.xml" version="0.0.0"/>
+   <iu id="javax.xml.bind" version="0.0.0"/>
+   <iu id="javax.xml.stream" version="0.0.0"/>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>
    <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>

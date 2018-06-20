@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
-import java.util.function.Predicate;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -158,6 +157,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.util.IUnaryPredicate;
+import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
@@ -1108,13 +1109,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// namespace <name>
 		scribe.printNextToken(Token.t_namespace, false);
 		scribe.space();
-		formatLeadingAttributes(node, ICPPASTAttributeList.class::isInstance);
+		formatLeadingAttributes(node, ICPPASTAttributeList.TYPE_FILTER);
 		boolean isNamedNamespace = !CPPVisitor.isAnonymousNamespace(node);
 		if (isNamedNamespace) {
 			IASTName name = node.getName();
 			name.accept(this);
 		}
-		formatAttributes(node, isNamedNamespace, false, IGCCASTAttributeList.class::isInstance);
+		formatAttributes(node, isNamedNamespace, false, IGCCASTAttributeList.TYPE_FILTER);
 
 		// member declarations
 		IASTDeclaration[] memberDecls= node.getDeclarations();
@@ -1558,7 +1559,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param owner Node containing attributes
 	 * @param filter Filter predicate for specifying which attributes to print
 	 */
-	private void formatLeadingAttributes(IASTAttributeOwner owner, Predicate<IASTAttributeSpecifier> predicate) {
+	private void formatLeadingAttributes(IASTAttributeOwner owner, InstanceOfPredicate<IASTAttributeSpecifier> predicate) {
 		formatAttributes(owner, false, true, predicate);
 	}
 
@@ -1575,7 +1576,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param filter Filter predicate for specifying which attributes to print
 	 */
 	private void formatAttributes(IASTAttributeOwner owner, boolean printLeadingSpace,
-			boolean printTrailingSpace, Predicate<IASTAttributeSpecifier> filter) {
+			boolean printTrailingSpace, IUnaryPredicate<IASTAttributeSpecifier> filter) {
 		if (owner == null) {
 			return;
 		}
@@ -1585,7 +1586,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 			for (IASTAttributeSpecifier attributeSpecifier : attributeSpecifiers) {
-				if (filter.test(attributeSpecifier)) {
+				if (filter.apply(attributeSpecifier)) {
 					formatRaw(attributeSpecifier);
 				}
 			}

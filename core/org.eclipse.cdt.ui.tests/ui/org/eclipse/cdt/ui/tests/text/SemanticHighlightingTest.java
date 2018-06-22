@@ -268,6 +268,9 @@ public class SemanticHighlightingTest extends TestCase {
 	//enum Enumeration {                                 //$enum
 	//    enumerator                                     //$enumerator
 	//};
+	//enum class EnumerationClass {                      //$enumClass
+	//    enumerator                                     //$enumerator
+	//};
 	//
 	//const int globalConstant = 0;                      //$globalVariable
 	//int globalVariable = 0;                            //$globalVariable
@@ -299,6 +302,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//    int pubMethod();                               //$methodDeclaration
 	//
 	//    enum pubEnumeration {pubEnumerator};           //$enum,enumerator
+	//    enum class pubEnumerationClass {pubEnum};      //$enumClass,enumerator
 	//    class pubClass{};                              //$class
 	//    class pubStruct{};                             //$class
 	//    class pubUnion{};                              //$class
@@ -314,6 +318,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//    int protMethod();                              //$methodDeclaration
 	//
 	//    enum protEnumeration {protEnumerator};         //$enum,enumerator
+    //    enum class protEnumerationClass {protEnum};   //$enumClass,enumerator
 	//    class protClass{};                             //$class
 	//    class protStruct{};                            //$class
 	//    class protUnion{};                             //$class
@@ -329,6 +334,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//    int privMethod();                              //$methodDeclaration
 	//
 	//    enum privEnumeration {privEnumerator};         //$enum,enumerator
+    //    enum class privEnumerationClass {privEnum};    //$enumClass,enumerator
 	//    class privClass{};                             //$class
 	//    class privStruct{};                            //$class
 	//    class privUnion{};                             //$class
@@ -488,12 +494,17 @@ public class SemanticHighlightingTest extends TestCase {
     //	namespace N {                                    //$namespace
     //		class C {                                    //$class
     //			enum E1 {};                              //$enum
+    //			enum class EC1 {};                       //$enumClass
     //		};
     //		C::E1 e1;                                    //$class,enum,globalVariable
+    //		C::EC1 ec1;                                  //$class,enumClass,globalVariable
     //		enum E2 {};                                  //$enum
+    //		enum class EC2 {};                           //$enumClass
     //	}
     //	N::C::E1 e1;                                     //$namespace,class,enum,globalVariable
+    //	N::C::EC1 ec1;                                   //$namespace,class,enumClass,globalVariable
     //	N::E2 e2;                                        //$namespace,enum,globalVariable
+    //	N::EC2 ec2;                                      //$namespace,enumClass,globalVariable
     public void testQualifiedEnum_485709() throws Exception {
     	makeAssertions();
     }
@@ -517,14 +528,14 @@ public class SemanticHighlightingTest extends TestCase {
     //	template <typename T>                            //$templateParameter
     //	struct Base {                                    //$class
     //		enum E { A };                                //$enum,enumerator
-    //		enum class F { B };                          //$enum,enumerator
+    //		enum class F { B };                          //$enumClass,enumerator
     //	};
     //	template <typename T>                            //$templateParameter
     //	struct Derived : Base<T> {                       //$class,class,templateParameter
     //		static typename Base<T>::E x                 //$class,templateParameter,enum,staticField
     //          = Base<T>::A;                            //$class,templateParameter,enumerator
-    //		static typename Base<T>::F y                 //$class,templateParameter,enum,staticField
-    //          = Base<T>::F::B;                         //$class,templateParameter,enum,enumerator
+    //		static typename Base<T>::F y                 //$class,templateParameter,enumClass,staticField
+    //          = Base<T>::F::B;                         //$class,templateParameter,enumClass,enumerator
     //	};
     public void testDependentEnum_486688() throws Exception {
     	makeAssertions();

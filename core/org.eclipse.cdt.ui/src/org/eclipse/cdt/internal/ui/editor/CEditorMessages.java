@@ -94,6 +94,7 @@ public final class CEditorMessages extends NLS {
 	public static String SemanticHighlighting_method;
 	public static String SemanticHighlighting_classes;
 	public static String SemanticHighlighting_enums;
+	public static String SemanticHighlighting_enumClasses;
 	public static String SemanticHighlighting_enumerator;
 	public static String SemanticHighlighting_templateArguments;
 	public static String SemanticHighlighting_templateParameter;

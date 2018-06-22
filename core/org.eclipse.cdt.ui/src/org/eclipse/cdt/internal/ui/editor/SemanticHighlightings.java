@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
@@ -175,6 +176,11 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of enums.
 	 */
 	public static final String ENUM= "enum"; //$NON-NLS-1$
+
+	/**
+	 * A named preference part that controls the highlighting of enum classes.
+	 */
+	public static final String ENUM_CLASS= "enumClass"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of macro references.
@@ -343,7 +349,7 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof IField) {
 					if (binding instanceof ICPPUnknownBinding) {
-						if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding)) {
+						if (heuristicallyResolve((ICPPUnknownBinding) binding) instanceof IEnumerator) {
 							return false;
 						}
 					}
@@ -1065,7 +1071,7 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof ICompositeType && !(binding instanceof ICPPTemplateParameter)) {
 					if (binding instanceof ICPPUnknownBinding) {
-						if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding)) {
+						if (heuristicallyResolve((ICPPUnknownBinding) binding) instanceof IEnumeration) {
 							return false;
 						}
 					}
@@ -1118,13 +1124,67 @@ public class SemanticHighlightings {
 					return false;
 				}
 				IBinding binding= token.getBinding();
+				if (binding instanceof ICPPUnknownBinding) {
+					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+				}
 				if (binding instanceof IEnumeration) {
+					if (binding instanceof ICPPEnumeration) {
+						return !((ICPPEnumeration) binding).isScoped();
+					}
 					return true;
 				}
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Semantic highlighting for enum classes.
+	 */
+	private static final class EnumClassHighlighting extends SemanticHighlightingWithOwnPreference {
+		@Override
+		public String getPreferenceKey() {
+			return ENUM_CLASS;
+		}
+
+		@Override
+		public RGB getDefaultDefaultTextColor() {
+			return new RGB(0, 80, 50);
+		}
+
+		@Override
+		public boolean isBoldByDefault() {
+			return false;
+		}
+
+		@Override
+		public boolean isItalicByDefault() {
+			return false;
+		}
+
+		@Override
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return CEditorMessages.SemanticHighlighting_enumClasses;
+		}
+
+		@Override
+		public boolean consumes(ISemanticToken token) {
+			IASTNode node= token.getNode();
+			if (node instanceof IASTName) {
+				if (node instanceof ICPPASTQualifiedName) {
+					return false;
+				}
+				IBinding binding= token.getBinding();
 				if (binding instanceof ICPPUnknownBinding) {
-					if (heuristicallyResolvesToEnumeration((ICPPUnknownBinding) binding)) {
-						return true;
-					}
+					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+				}
+				if (binding instanceof ICPPEnumeration) {
+					return ((ICPPEnumeration) binding).isScoped();
 				}
 			}
 			return false;
@@ -1419,13 +1479,11 @@ public class SemanticHighlightings {
 					return false;
 				}
 				IBinding binding= token.getBinding();
+				if (binding instanceof ICPPUnknownBinding) {
+					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+				}
 				if (binding instanceof IEnumerator) {
 					return true;
-				}
-				if (binding instanceof ICPPUnknownBinding) {
-					if (heuristicallyResolvesToEnumerator((ICPPUnknownBinding) binding)) {
-						return true;
-					}
 				}
 			}
 			return false;
@@ -1852,14 +1910,12 @@ public class SemanticHighlightings {
 		}
 	}
 
-	private static boolean heuristicallyResolvesToEnumeration(ICPPUnknownBinding binding) {
+	private static IBinding heuristicallyResolve(ICPPUnknownBinding binding) {
 		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding);
-		return resolved.length == 1 && resolved[0] instanceof IEnumeration;
-	}
-	
-	private static boolean heuristicallyResolvesToEnumerator(ICPPUnknownBinding binding) {
-		IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(binding);
-		return resolved.length == 1 && resolved[0] instanceof IEnumerator;
+		if (resolved.length == 1) {
+			return resolved[0];
+		}
+		return binding;
 	}
 	
 	// Note on the get___PreferenceKey() functions below:
@@ -2024,6 +2080,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
 		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
 		highlightings.put(new Key(250), new VariablePassedByNonconstRefHighlighting());
+		highlightings.put(new Key(260), new EnumClassHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$

@@ -954,7 +954,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
-		return cand == null;
+		// Toplevel anonymous namespaces are not part of the qualified name either.
+		return cand == null || (cand instanceof ICPPNamespace && cand.getNameCharArray().length == 0);
 	}
 
 	private long getFirstLinkageRecord() throws CoreException {

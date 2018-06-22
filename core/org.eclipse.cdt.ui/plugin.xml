@@ -835,6 +835,12 @@
             value="100, 70, 50">
       </colorDefinition>
       <colorDefinition
+            id="org.eclipse.cdt.ui.enumClassHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 80, 50">
+      </colorDefinition>
+      <colorDefinition
             id="org.eclipse.cdt.ui.macroSubstitutionHighlighting"
             isEditable="false"
             label="%Dummy.label"

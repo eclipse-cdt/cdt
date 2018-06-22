@@ -81,7 +81,7 @@ public class SemanticHighlightingTest extends TestCase {
 	private IASTTranslationUnit fAST;
 	
 	// The highlighted positions stored in the document don't store any information
-	// that directly identifies which highligting they are for. To recover this
+	// that directly identifies which highlighting they are for. To recover this
 	// information, we assign a different color to each highlighting, and then
 	// look up the highlighting's preference key based on the color.
 	private Map<RGB, String> fColorToPreferenceKeyMap;
@@ -260,7 +260,7 @@ public class SemanticHighlightingTest extends TestCase {
 
 	//  void SDKFunction();
 	//	class SDKClass { public: void SDKMethod(); };\n\n";
-	
+
 	//#define INT      int                               //$macroDefinition
 	//#define FUNCTION_MACRO(arg) globalFunc(arg)        //$macroDefinition
 	//#define EMPTY_MACRO(arg)                           //$macroDefinition
@@ -430,6 +430,30 @@ public class SemanticHighlightingTest extends TestCase {
 	public void testVariousHighlightings() throws Exception {
 		makeAssertions();
 	}
+
+	//enum class EnumerationClass {                      //$enumClass
+	//    enumerator                                     //$enumerator
+	//};
+	//
+	//class Base1 {};                                    //$class
+	//class Base2 {};                                    //$class
+	//
+	//class ClassContainer : Base1, Base2 {              //$class,class,class
+	//    
+	//public:
+	//    enum class pubEnumerationClass {pubEnum};      //$enumClass,enumerator
+	//    
+	//protected:
+	//    enum class protEnumerationClass {protEnum};    //$enumClass,enumerator
+	//    
+	//private:
+	//    enum class privEnumerationClass {privEnum};    //$enumClass,enumerator
+	//
+	//};
+	//
+	public void testEnumClassHighlightings() throws Exception {
+		makeAssertions();
+	}
 	
     //  class C {                                        //$class
     //    template <typename T> void bar(T);             //$templateParameter,methodDeclaration,templateParameter
@@ -488,12 +512,17 @@ public class SemanticHighlightingTest extends TestCase {
     //	namespace N {                                    //$namespace
     //		class C {                                    //$class
     //			enum E1 {};                              //$enum
+    //			enum class EC1 {};                       //$enumClass
     //		};
     //		C::E1 e1;                                    //$class,enum,globalVariable
+    //		C::EC1 ec1;                                  //$class,enumClass,globalVariable
     //		enum E2 {};                                  //$enum
+    //		enum class EC2 {};                           //$enumClass
     //	}
     //	N::C::E1 e1;                                     //$namespace,class,enum,globalVariable
+    //	N::C::EC1 ec1;                                   //$namespace,class,enumClass,globalVariable
     //	N::E2 e2;                                        //$namespace,enum,globalVariable
+    //	N::EC2 ec2;                                      //$namespace,enumClass,globalVariable
     public void testQualifiedEnum_485709() throws Exception {
     	makeAssertions();
     }
@@ -517,14 +546,14 @@ public class SemanticHighlightingTest extends TestCase {
     //	template <typename T>                            //$templateParameter
     //	struct Base {                                    //$class
     //		enum E { A };                                //$enum,enumerator
-    //		enum class F { B };                          //$enum,enumerator
+    //		enum class F { B };                          //$enumClass,enumerator
     //	};
     //	template <typename T>                            //$templateParameter
     //	struct Derived : Base<T> {                       //$class,class,templateParameter
     //		static typename Base<T>::E x                 //$class,templateParameter,enum,staticField
     //          = Base<T>::A;                            //$class,templateParameter,enumerator
-    //		static typename Base<T>::F y                 //$class,templateParameter,enum,staticField
-    //          = Base<T>::F::B;                         //$class,templateParameter,enum,enumerator
+    //		static typename Base<T>::F y                 //$class,templateParameter,enumClass,staticField
+    //          = Base<T>::F::B;                         //$class,templateParameter,enumClass,enumerator
     //	};
     public void testDependentEnum_486688() throws Exception {
     	makeAssertions();

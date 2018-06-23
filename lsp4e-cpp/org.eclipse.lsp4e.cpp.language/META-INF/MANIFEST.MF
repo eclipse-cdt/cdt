@@ -17,7 +17,9 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.core.commands,
  org.eclipse.core.expressions,
  org.eclipse.core.resources,
- com.google.gson;bundle-version="2.8.2"
+ com.google.gson;bundle-version="2.8.2",
+ org.eclipse.lsp4j.jsonrpc,
+ org.junit
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.lsp4e.cpp.language
 Bundle-Activator: org.eclipse.lsp4e.cpp.language.Activator

@@ -16,7 +16,8 @@
       <server
             class="org.eclipse.lsp4e.cpp.language.CPPStreamConnectionProvider"
             id="org.eclipse.lsp4e.languages.cpp"
-            label="%server.label">
+            label="%server.label"
+            clientImpl="org.eclipse.lsp4e.cpp.language.Server2ClientProtocolExtension" >
       </server>
       <contentTypeMapping
             contentType="org.eclipse.lsp4e.languages.cpp"

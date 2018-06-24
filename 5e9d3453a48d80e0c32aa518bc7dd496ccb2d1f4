@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b0bccfe_20cbc00d",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/cquery/ExtendedSymbolKindType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "The variable \u0027s\u0027 is not used. If you\u0027re doing this for the bounds check, you can just do \u0027SymbolKind.forValue(_v)\u0027 and discard the return value.\n\n(Does your IDE show a warning for the unused variable? If not, you may want to turn that on. In general, please try to avoid introducing new warnings if they can be avoided. (Sometimes, it cannot be avoided; for example, Server2ClientProtocolExtension derives from LanguageClientImpl which is technically not public API, and the API tooling gives me a warning about that, but there\u0027s nothing we can do about it except suppress it.))",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9123193_9afe002e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/cquery/ExtendedSymbolKindType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "Likewise for \u0027c\u0027 here.",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cfe60142_5eb17d32",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/cquery/ExtendedSymbolKindType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "//$NON-NLS-1$",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d7c9ee2_1d64c4be",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/cquery/IndexingProgressStats.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "Please add getters to avoid \u0027unused field\u0027 warnings.",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23580bfd_bba40d6c",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/test/CqueryJsonParseTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "* In the rest of the Eclipse CDT codebase, we have a convention of putting tests into separate plugins. I would suggest doing that as well, calling the plugin \"org.eclipse.lsp4e.cpp.language.tests\". (Note: plugins correspond to projects in your Eclipse workspace.)\n\n* The package name typically starts with the plugin name. Subpackages in a test plugin will often be named for the corresponding subpackage in the regular plugin whose functionality they are testing. So, this test would go into the package \"org.eclipse.lsp4e.cpp.language.tests.cquery\".\n\n* The test file needs a copyright header too.",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4abb0752_8c2da029",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/test/CqueryJsonParseTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-24T00:12:09Z",
+      "side": 1,
+      "message": "Please make the array non-empty so we actually exercise serialization of the element type.",
+      "revId": "5e9d3453a48d80e0c32aa518bc7dd496ccb2d1f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

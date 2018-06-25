@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ca2a180_d3db0b89",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Binary.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-25T08:46:36Z",
+      "side": 1,
+      "message": "This needs cleaning up before submission.",
+      "revId": "75d9bfc1cd06412861d20eb8976d4c46880b069a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

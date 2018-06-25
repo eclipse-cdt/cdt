@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07e97f10_799e00b1",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-25T04:15:30Z",
+      "side": 1,
+      "message": "Please make it something like \"Tests for LSP4E C/C++ Support\".\n\n(I see our existing test plugins are inconsistent as to whether they externalize the bundle name. Feel free not to do that.)",
+      "revId": "e27f60164ec5631edbc5b0027721b2afb36886a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5fd93ba_f8ba53f9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-06-25T04:15:30Z",
+      "side": 1,
+      "message": "Now that the tests are in their own plugin, this plugin shouldn\u0027t need to depend on org.junit.",
+      "revId": "e27f60164ec5631edbc5b0027721b2afb36886a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

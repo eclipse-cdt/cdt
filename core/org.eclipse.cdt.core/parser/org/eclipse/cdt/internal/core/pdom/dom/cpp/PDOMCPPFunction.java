@@ -333,10 +333,17 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	public final ICPPFunctionType getType() {
 		if (fType == null) {
 			try {
-				fType = (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
+				IType type = getLinkage().loadType(record + FUNCTION_TYPE);
+				if (type instanceof ICPPFunctionType) {
+					fType = (ICPPFunctionType) type;
+				} else {
+					// Something went wrong while loading the type and we didn't
+					// get a function type. Treat it similar to an exception.
+					fType = ProblemFunctionType.NOT_PERSISTED;
+				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fType = new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
+				fType = ProblemFunctionType.NOT_PERSISTED;
 			}
 		}
 		return fType;

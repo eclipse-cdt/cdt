@@ -230,7 +230,7 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 	}
 
 	public static ICPPDeferredClassInstance unmarshal(IIndexFragment fragment, short firstBytes,
-			ITypeMarshalBuffer buffer) throws CoreException {
+		ITypeMarshalBuffer buffer) throws CoreException {
 		IBinding template= buffer.unmarshalBinding();
 		int argcount= buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];

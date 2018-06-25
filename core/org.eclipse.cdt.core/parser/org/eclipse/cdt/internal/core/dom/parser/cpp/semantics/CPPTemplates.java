@@ -167,7 +167,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;

@@ -17,6 +17,8 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -77,6 +80,17 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private final PDOM fPDOM;
 	private final Database fDatabase;
 
+	/**
+	 * The set of types currently being loaded from the index on each thread, represented as record numbers.
+	 * This is used to guard against infinite recursion while loading types.
+	 */
+	private static final ThreadLocal<Set<Long>> fLoadTypeInProgress = new ThreadLocal<Set<Long>>() {
+		@Override
+		protected Set<Long> initialValue() {
+			return new HashSet<>();
+		}
+	};
+	
 	public PDOMLinkage(PDOM pdom, long record) {
 		super(null, record);
 		fPDOM= pdom;
@@ -550,23 +564,31 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public IType loadType(long offset) throws CoreException {
-		final Database db= getDB();
-		final byte firstByte= db.getByte(offset);
-		byte[] data= null;
-		switch (firstByte) {
-		case TypeMarshalBuffer.INDIRECT_TYPE:
-			data = loadLinkedSerializedData(db, offset + 1);
-			break;
-		case TypeMarshalBuffer.UNSTORABLE_TYPE:
-			return TypeMarshalBuffer.UNSTORABLE_TYPE_PROBLEM;
-		case TypeMarshalBuffer.NULL_TYPE:
-			return null;
-		default:
-			data= new byte[Database.TYPE_SIZE];
-			db.getBytes(offset, data);
-			break;
+		Set<Long> recursionProtectionSet = fLoadTypeInProgress.get();
+		if (!recursionProtectionSet.add(offset)) {
+			return ProblemType.NOT_PERSISTED;
 		}
-		return new TypeMarshalBuffer(this, data).unmarshalType();
+		try {
+			final Database db= getDB();
+			final byte firstByte= db.getByte(offset);
+			byte[] data= null;
+			switch (firstByte) {
+			case TypeMarshalBuffer.INDIRECT_TYPE:
+				data = loadLinkedSerializedData(db, offset + 1);
+				break;
+			case TypeMarshalBuffer.UNSTORABLE_TYPE:
+				return TypeMarshalBuffer.UNSTORABLE_TYPE_PROBLEM;
+			case TypeMarshalBuffer.NULL_TYPE:
+				return null;
+			default:
+				data= new byte[Database.TYPE_SIZE];
+				db.getBytes(offset, data);
+				break;
+			}
+			return new TypeMarshalBuffer(this, data).unmarshalType();
+		} finally {
+			recursionProtectionSet.remove(offset);
+		}
 	}
 
 	public void storeBinding(long offset, IBinding binding) throws CoreException {

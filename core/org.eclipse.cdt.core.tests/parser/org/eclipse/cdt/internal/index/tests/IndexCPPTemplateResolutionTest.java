@@ -3219,4 +3219,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testClassCastException_533216() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <int N>
+	//	struct array {};
+	//
+	//	template <class... Ts>
+	//	auto make_array(Ts... ts) -> array<sizeof...(ts)>;
+
+	//	auto x = make_array(2);
+	public void testRecursion_535548() throws Exception {
+		checkBindings();
+	}
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8f5147a_47f32ddb",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Binary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-25T08:46:36Z",
+      "side": 1,
+      "message": "This catch block needs resolving before this can be submitted.",
+      "revId": "89363979f12c4e9daf5e12df58f935a8d73c2d4e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

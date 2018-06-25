@@ -22,7 +22,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ProblemFunctionType extends ProblemType implements ICPPFunctionType {
 	@SuppressWarnings("hiding")
-	public static final IType RECURSION_IN_LOOKUP = new ProblemFunctionType(BINDING_RECURSION_IN_LOOKUP);
+	public static final ICPPFunctionType RECURSION_IN_LOOKUP = new ProblemFunctionType(BINDING_RECURSION_IN_LOOKUP);
+	public static final ICPPFunctionType NOT_PERSISTED = new ProblemFunctionType(TYPE_NOT_PERSISTED);
 
 	public ProblemFunctionType(int id) {
 		super(id);

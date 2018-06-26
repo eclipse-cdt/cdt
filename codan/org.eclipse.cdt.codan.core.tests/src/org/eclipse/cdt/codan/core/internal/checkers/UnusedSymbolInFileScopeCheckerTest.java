@@ -346,4 +346,16 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	class S {};
+	//	S operator+(S, S);
+	//
+	//	int main() {
+	//		S a, b;
+	//		a + b;
+	//	}
+	public void testOverloadedOperator_536268() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

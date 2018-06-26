@@ -233,6 +233,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 			ast.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
+					shouldVisitImplicitNames = true;
 					shouldVisitDeclarations = true;
 				}
 

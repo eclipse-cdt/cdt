@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e0d823fa_46dfd37e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1123,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-06-27T15:35:36Z",
+      "side": 1,
+      "message": "Please look at the recent patch",
+      "parentUuid": "2058d398_f66c9f00",
+      "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3e08d8b_c39f95b0",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2018-06-24T02:37:59Z",
       "side": 1,
       "message": "We\u0027ll want the new highlighting to apply to dependent enum classes as well. To do that, we\u0027ll want to refactor heuristicallyResolvesToEnumeration() to return the enumeration, and  reorganize the logic a bit in this function to be something like this:\n\nIBinding binding \u003d token.getBinding();\nif (binding instanceof ICPPUnknownBinding) {\n    binding \u003d heuristicallyResolve(binding);\n}\nif (binding instanceof ICPPEnumeration) {\n  // return true if not an enum class\n}\nif (binding instanceof IEnumeration) { \n  // return true\n}",
+      "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7c789bb_f1edd12e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-06-27T15:35:36Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c3e08d8b_c39f95b0",
       "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

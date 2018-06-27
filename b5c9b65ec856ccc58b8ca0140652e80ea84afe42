@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "1ccb2057_c398ab3e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1123,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-06-27T15:36:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0d823fa_46dfd37e",
+      "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3e08d8b_c39f95b0",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
         "patchSetId": 3
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "f3f090af_c0e14cd4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-06-27T15:36:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7c789bb_f1edd12e",
+      "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5313f6a_793433fd",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
         "patchSetId": 3
@@ -83,6 +119,24 @@
       "writtenOn": "2018-06-24T02:37:59Z",
       "side": 1,
       "message": "Likewise, we want to use isScoped() here, and try to heuristically resolve a dependent enumeration before checking if it\u0027s an enum class.",
+      "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d3eb220_03696c4a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1182,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-06-27T15:36:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5313f6a_793433fd",
       "revId": "b5c9b65ec856ccc58b8ca0140652e80ea84afe42",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

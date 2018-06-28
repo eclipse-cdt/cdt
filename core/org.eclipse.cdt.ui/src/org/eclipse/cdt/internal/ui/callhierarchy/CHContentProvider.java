@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Lidia Popescu (Wind River) [536255] Extension point for open call hierarchy view
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -33,6 +34,8 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHEContentProvider;
+import org.eclipse.cdt.ui.ICHENode;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
@@ -91,6 +94,19 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	@Override
 	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 		try {
+			ICHEContentProvider[] providers = fView.getContentProviders();
+			if (providers != null) {
+				for (ICHEContentProvider provider : providers) {
+					Object[] object = provider.asyncComputeExtendedRoot(parentElement);
+					if (object != null) {
+						return object;
+					}
+				}
+			}
+			if (parentElement instanceof ICHENode) {
+				return asyncComputeRoot(((ICHENode)parentElement).getRepresentedDeclaration());
+			}
+
 			if (parentElement instanceof ICElement) {
 				return asyncComputeRoot((ICElement) parentElement);
 			}

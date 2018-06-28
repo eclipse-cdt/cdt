@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *     Lidia Popescu (Wind River) [536255] Extension point for open call hierarchy view
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -72,6 +74,7 @@ import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHEContentProvider;
 import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
@@ -102,7 +105,7 @@ public class CHViewPart extends ViewPart {
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_VARIABLES = "variableFilter"; //$NON-NLS-1$
     private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
-    
+
     private IMemento fMemento;
     private boolean fShowsMessage;
     private CHNode fNavigationNode;
@@ -149,6 +152,8 @@ public class CHViewPart extends ViewPart {
 
 	private IBindingService bindingService;
 	private IBindingManagerListener bindingManagerListener;
+	private ICHEContentProvider[] fProviders;
+	private IStyledLabelProvider[] fLabelProviders;
 
     @Override
 	public void setFocus() {
@@ -162,7 +167,7 @@ public class CHViewPart extends ViewPart {
         updateDescription();
         updateActionEnablement();
     }
-    
+
     public void setInput(ICElement input) {
     	if (input == null) {
             setMessage(CHMessages.CHViewPart_emptyPageMessage);
@@ -203,7 +208,7 @@ public class CHViewPart extends ViewPart {
 		if (element instanceof IFunction || element instanceof IMethod) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -212,7 +217,7 @@ public class CHViewPart extends ViewPart {
         fPagebook = new PageBook(parent, SWT.NULL);
         createInfoPage();
         createViewerPage();
-                
+
         getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, fTreeViewer));
 
         initDragAndDrop();
@@ -236,9 +241,9 @@ public class CHViewPart extends ViewPart {
 		}
 
         setMessage(CHMessages.CHViewPart_emptyPageMessage);
-        
+
         initializeActionStates();
-        
+
     	IContextService ctxService = getSite().getService(IContextService.class);
     	if (ctxService != null) {
     		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
@@ -247,7 +252,7 @@ public class CHViewPart extends ViewPart {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPagebook, ICHelpContextIds.CALL_HIERARCHY_VIEW);
 		addPartListener();
 	}
-	
+
 	private void addPartListener() {
 		fPartListener= new IPartListener2() {
 			@Override
@@ -316,7 +321,7 @@ public class CHViewPart extends ViewPart {
 		}
 		super.dispose();
 	}
-	
+
     private void initializeActionStates() {
         boolean referencedBy= true;
         boolean filterVariables= false;
@@ -391,22 +396,30 @@ public class CHViewPart extends ViewPart {
         fViewerPage.setSize(100, 100);
         fViewerPage.setLayout(new FillLayout());
 
-        fContentProvider= new CHContentProvider(this, display); 
-        fLabelProvider= new CHLabelProvider(display, fContentProvider);
+        fProviders = getContentProviders();
+        fLabelProviders = getLabelProviders();
+
+        fContentProvider= new CHContentProvider(this, display);
+        fLabelProvider = new CHLabelProvider(this, display, fContentProvider);
         fTreeViewer= new ExtendedTreeViewer(fViewerPage);
         fTreeViewer.setContentProvider(fContentProvider);
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fLabelProvider));
-        fTreeViewer.setAutoExpandLevel(2);     
+        fTreeViewer.setAutoExpandLevel(2);
         fTreeViewer.addOpenListener(new IOpenListener() {
 			@Override
 			public void open(OpenEvent event) {
             	onShowSelectedReference(event.getSelection());
             }
         });
+        if (fProviders !=null) {
+			for (ICHEContentProvider provider : fProviders) {
+				fTreeViewer.addOpenListener(provider.getCCallHierarchyOpenListener());
+			}
+        }
     }
-    
-    private void createInfoPage() {
-    	fInfoText = new Label(fPagebook, SWT.TOP | SWT.LEFT | SWT.WRAP);
+
+	private void createInfoPage() {
+		fInfoText = new Label(fPagebook, SWT.TOP | SWT.LEFT | SWT.WRAP);
     }
 
     private void initDragAndDrop() {
@@ -427,7 +440,7 @@ public class CHViewPart extends ViewPart {
     	fOpenViewActionGroup.setEnableIncludeBrowser(true);
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
-    	
+
     	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
             @Override
 			protected void onWorkingSetChange() {
@@ -439,8 +452,8 @@ public class CHViewPart extends ViewPart {
             }
         };
 
-        fReferencedByAction= 
-            new Action(CHMessages.CHViewPart_ShowCallers_label, IAction.AS_RADIO_BUTTON) { 
+        fReferencedByAction=
+            new Action(CHMessages.CHViewPart_ShowCallers_label, IAction.AS_RADIO_BUTTON) {
                 @Override
 				public void run() {
                     if (isChecked()) {
@@ -449,10 +462,10 @@ public class CHViewPart extends ViewPart {
                 }
         };
         fReferencedByAction.setToolTipText(CHMessages.CHViewPart_ShowCallers_tooltip);
-        CPluginImages.setImageDescriptors(fReferencedByAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_REF_BY);       
+        CPluginImages.setImageDescriptors(fReferencedByAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_REF_BY);
 
         fMakesReferenceToAction= 
-            new Action(CHMessages.CHViewPart_ShowCallees_label, IAction.AS_RADIO_BUTTON) { 
+            new Action(CHMessages.CHViewPart_ShowCallees_label, IAction.AS_RADIO_BUTTON) {
                 @Override
 				public void run() {
                     if (isChecked()) {
@@ -461,7 +474,7 @@ public class CHViewPart extends ViewPart {
                 }
         };
         fMakesReferenceToAction.setToolTipText(CHMessages.CHViewPart_ShowCallees_tooltip);
-        CPluginImages.setImageDescriptors(fMakesReferenceToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);       
+        CPluginImages.setImageDescriptors(fMakesReferenceToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);
 
         fVariableFilter= new ViewerFilter() {
             @Override
@@ -484,7 +497,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fFilterVariablesAction.setToolTipText(CHMessages.CHViewPart_FilterVariables_tooltip);
-        CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
+        CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);
         
         fSorterAlphaNumeric= new ViewerComparator();
         fSorterReferencePosition= new ViewerComparator() {
@@ -544,8 +557,8 @@ public class CHViewPart extends ViewPart {
                 onNextOrPrevious(true);
             }
         };
-        fNextAction.setToolTipText(CHMessages.CHViewPart_NextReference_tooltip); 
-        CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
+        fNextAction.setToolTipText(CHMessages.CHViewPart_NextReference_tooltip);
+        CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);
 
         fPreviousAction = new Action(CHMessages.CHViewPart_PreviousReference_label) {
             @Override
@@ -554,7 +567,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fPreviousAction.setToolTipText(CHMessages.CHViewPart_PreviousReference_tooltip); 
-        CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
+        CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);
 
         fRefreshAction = new Action(CHMessages.CHViewPart_Refresh_label) {
             @Override
@@ -563,7 +576,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fRefreshAction.setToolTipText(CHMessages.CHViewPart_Refresh_tooltip); 
-        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
+        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);
 
         fHistoryAction = new CHHistoryDropDownAction(this);
 
@@ -611,7 +624,7 @@ public class CHViewPart extends ViewPart {
         mm.add(new Separator());
         mm.add(fFilterVariablesAction);
     }
-    
+
     private void setNextNode(boolean forward) {
     	TreeNavigator navigator= new TreeNavigator(fTreeViewer.getTree(), CHNode.class);
     	TreeItem selectedItem= navigator.getSelectedItemOrFirstOnLevel(1, forward);
@@ -643,7 +656,7 @@ public class CHViewPart extends ViewPart {
 			fNavigationDetail= 0;
 		}
 	}
-        
+
 	protected void onShowSelectedReference(ISelection selection) {
 		CHNode node= selectionToNode(selection);
 		if (node != null && node == fNavigationNode && node.getReferenceCount() > 0) {
@@ -699,7 +712,7 @@ public class CHViewPart extends ViewPart {
             fTreeViewer.setComparator(fSorterReferencePosition);
         }
     }
-    
+
     private void updateDescription() {
         String message= ""; //$NON-NLS-1$
         if (!fShowsMessage) {
@@ -738,7 +751,7 @@ public class CHViewPart extends ViewPart {
         
         setContentDescription(message);
     }
-    
+
 	private void updateActionEnablement() {
 		fHistoryAction.setEnabled(CallHierarchyUI.getHistoryEntries().length > 0);
 		fNextAction.setEnabled(!fShowsMessage);
@@ -749,7 +762,7 @@ public class CHViewPart extends ViewPart {
     private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
     	fContentProvider.setWorkingSetFilter(filterUI);
     }
-    
+
     public void onSetShowReferencedBy(boolean showReferencedBy) {
         if (showReferencedBy != fContentProvider.getComputeReferencedBy()) {
             Object input= fTreeViewer.getInput();
@@ -832,7 +845,7 @@ public class CHViewPart extends ViewPart {
         	}
         }
     }
-    
+
 	private int getReferenceCount(CHNode node) {
 		if (node != null) {
 			CHNode parent = node.getParent();
@@ -895,5 +908,25 @@ public class CHViewPart extends ViewPart {
 	 */
 	boolean isPinned() {
 		return fIsPinned;
+	}
+
+	/**
+	 * Returns an array list of content providers for Extended Call Hierarchy
+	 * */
+	public ICHEContentProvider[] getContentProviders() {
+		if (fProviders == null) {
+			 fProviders = CHEProviderSettings.getCCallHierarchyContentProviders();
+		}
+		return fProviders;
+	}
+
+	/**
+	 * Returns an array list of label providers for Extended Call Hierarchy
+	 * */
+	public IStyledLabelProvider[] getLabelProviders() {
+		if (fLabelProviders == null) {
+			fLabelProviders = CHEProviderSettings.getCCallHierarchyLabelProviders();
+		}
+		return fLabelProviders;
 	}
 }

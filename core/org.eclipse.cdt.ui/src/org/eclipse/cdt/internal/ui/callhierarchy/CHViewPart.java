@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Lidia Popescu (Wind River) [536255] Extension point for open call hierarchy view
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -72,6 +73,7 @@ import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHEProvider;
 import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
@@ -149,6 +151,7 @@ public class CHViewPart extends ViewPart {
 
 	private IBindingService bindingService;
 	private IBindingManagerListener bindingManagerListener;
+	private ICHEProvider[] fProviders;
 
     @Override
 	public void setFocus() {
@@ -392,7 +395,7 @@ public class CHViewPart extends ViewPart {
         fViewerPage.setLayout(new FillLayout());
 
         fContentProvider= new CHContentProvider(this, display); 
-        fLabelProvider= new CHLabelProvider(display, fContentProvider);
+        fLabelProvider= new CHLabelProvider(fProviders, display, fContentProvider);
         fTreeViewer= new ExtendedTreeViewer(fViewerPage);
         fTreeViewer.setContentProvider(fContentProvider);
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fLabelProvider));
@@ -403,6 +406,10 @@ public class CHViewPart extends ViewPart {
             	onShowSelectedReference(event.getSelection());
             }
         });
+        
+        for (ICHEProvider provider : fProviders) {
+        	fTreeViewer.addOpenListener(provider.getCCallHierarchyOpenListener());
+        }
     }
     
     private void createInfoPage() {
@@ -461,7 +468,7 @@ public class CHViewPart extends ViewPart {
                 }
         };
         fMakesReferenceToAction.setToolTipText(CHMessages.CHViewPart_ShowCallees_tooltip);
-        CPluginImages.setImageDescriptors(fMakesReferenceToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);       
+        CPluginImages.setImageDescriptors(fMakesReferenceToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);
 
         fVariableFilter= new ViewerFilter() {
             @Override
@@ -484,7 +491,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fFilterVariablesAction.setToolTipText(CHMessages.CHViewPart_FilterVariables_tooltip);
-        CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
+        CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);
         
         fSorterAlphaNumeric= new ViewerComparator();
         fSorterReferencePosition= new ViewerComparator() {
@@ -545,7 +552,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fNextAction.setToolTipText(CHMessages.CHViewPart_NextReference_tooltip); 
-        CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
+        CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);
 
         fPreviousAction = new Action(CHMessages.CHViewPart_PreviousReference_label) {
             @Override
@@ -554,7 +561,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fPreviousAction.setToolTipText(CHMessages.CHViewPart_PreviousReference_tooltip); 
-        CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
+        CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);
 
         fRefreshAction = new Action(CHMessages.CHViewPart_Refresh_label) {
             @Override
@@ -563,7 +570,7 @@ public class CHViewPart extends ViewPart {
             }
         };
         fRefreshAction.setToolTipText(CHMessages.CHViewPart_Refresh_tooltip); 
-        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
+        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);
 
         fHistoryAction = new CHHistoryDropDownAction(this);
 
@@ -895,5 +902,12 @@ public class CHViewPart extends ViewPart {
 	 */
 	boolean isPinned() {
 		return fIsPinned;
+	}
+
+	public ICHEProvider[] getProviders() {
+		if (fProviders == null) {
+			 fProviders = CHEProviderSettings.getCCallHierarchyProviders();
+		}
+		return fProviders;
 	}
 }

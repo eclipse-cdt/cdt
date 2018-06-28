@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae0af3ec_5a13b4b7",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language.tests/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T13:03:02Z",
+      "side": 1,
+      "message": "At the moment there are no UI tests, but as this setting is for the whole project, I went with UI to start with. There may be another way to get this to work if no defaults need changing by including an empty file called \"ui-test-plugin.properties\", see root\u0027s pom.xml. I simply didn\u0027t get this way to work for this project.",
+      "revId": "9eb262a1922ecb631e8f67f328b814bdde275ac3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "204d6db7_6b976321",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.site/category.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T13:03:02Z",
+      "side": 1,
+      "message": "With this bit of magic the source bundles/features get built.",
+      "revId": "9eb262a1922ecb631e8f67f328b814bdde275ac3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b574276f_c633c764",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp/feature.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T13:03:02Z",
+      "side": 1,
+      "message": "I set this so that all the features in the CDT repo are the same version, even for new stuff. The plug-in version should follow the semantic/API rules as normal.",
+      "revId": "9eb262a1922ecb631e8f67f328b814bdde275ac3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a2910366_598d2370",
+        "filename": "lsp4e-cpp/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T13:03:02Z",
+      "side": 1,
+      "message": "For this file I all but removed it and instead refer to this module\u0027s parent. All the settings on the left aren\u0027t needed AFAICT or exist in the cdt root pom.\n\nNote this file is needed so that pomless builds work. You may note that some of the subdirs have no pom.xmls, this one is the magic one that gets automatically set as the parent for those children",
+      "revId": "9eb262a1922ecb631e8f67f328b814bdde275ac3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05302f06_9f4ab9be",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T13:03:02Z",
+      "side": 1,
+      "message": "This is the profile that the lsp4e-cpp gerrit job uses so that only lsp4e tests are run. Note that everything still gets build.",
+      "revId": "9eb262a1922ecb631e8f67f328b814bdde275ac3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

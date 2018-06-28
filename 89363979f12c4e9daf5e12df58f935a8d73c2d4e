@@ -16,6 +16,24 @@
       "revId": "89363979f12c4e9daf5e12df58f935a8d73c2d4e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cc2f338_6e36ad0c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Binary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2018-06-28T19:40:28Z",
+      "side": 1,
+      "message": "agreed",
+      "parentUuid": "a8f5147a_47f32ddb",
+      "revId": "89363979f12c4e9daf5e12df58f935a8d73c2d4e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

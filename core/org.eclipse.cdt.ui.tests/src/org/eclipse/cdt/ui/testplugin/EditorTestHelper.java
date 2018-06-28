@@ -113,7 +113,7 @@ public class EditorTestHelper {
 	private static final long MAX_WAIT_TIME = 60000; // don't wait longer than 60 seconds
 	
 	public static IEditorPart openInEditor(IFile file, boolean runEventLoop) throws PartInitException {
-		IEditorPart part= IDE.openEditor(getActivePage(), file);
+		IEditorPart part= IDE.openEditor(getActivePage(), file, C_EDITOR_ID);
 		if (runEventLoop)
 			runEventQueue(part);
 		return part;

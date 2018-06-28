@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer  [bug 325799]
+ *     Lidia Popescu (Wind River) [536255] Extension point for open call hierarchy view
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.NLS;
@@ -42,14 +44,27 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
     private CHContentProvider fContentProvider;
     private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
 	private Color fColorInactive;
-    
-    public CHLabelProvider(Display display, CHContentProvider cp) {
+	private IStyledLabelProvider[] fProviders;
+	private CHViewPart fView;
+
+    public CHLabelProvider(CHViewPart view, Display display, CHContentProvider cp) {
         fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
         fContentProvider= cp;
+        fView = view;
     }
     
     @Override
 	public Image getImage(Object element) {
+		if (fProviders == null ) {
+			fProviders = fView.getLabelProviders();
+		}
+		if ( fProviders != null ) {
+			for (IStyledLabelProvider provider : fProviders) {
+				Image img = provider.getImage(element);
+				if (img != null)
+					return img;
+			}
+		}
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             Image image= null;
@@ -99,6 +114,16 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
     
     @Override
 	public StyledString getStyledText(Object element) {
+        if (fProviders == null ) {
+            fProviders = fView.getLabelProviders();
+        }
+        if (fProviders != null) {
+            for (IStyledLabelProvider provider : fProviders) {
+            	StyledString styledString = provider.getStyledText(element);
+            	if (styledString != null)
+                	return styledString;
+            }
+        }
     	if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             ICElement decl= node.getOneRepresentedDeclaration();

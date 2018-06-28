@@ -283,4 +283,15 @@
       </menuContribution>
    </extension>
 
+   <extension
+         point="org.eclipse.cdt.ui.CCallHierarchy">
+      <CallHierarchyLabelProvider
+            class="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHLabelProvider"
+            id="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHLabelProvider">
+      </CallHierarchyLabelProvider>
+      <CallHierarchyContentProvider
+            class="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHContentProvider"
+            id="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHContentProvider">
+      </CallHierarchyContentProvider>
+   </extension>
 </plugin>

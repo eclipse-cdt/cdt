@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer  [bug 325799]
+ *     Lidia Popescu (Wind River) [536255] Extension point for open call hierarchy view
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.NLS;
@@ -37,19 +39,32 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
 	private final static long LABEL_OPTIONS_SIMPLE = CElementLabels.ALL_FULLY_QUALIFIED
 			| CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.TEMPLATE_ARGUMENTS;
 	private final static long LABEL_OPTIONS_SHOW_FILES= LABEL_OPTIONS_SIMPLE | CElementLabels.MF_POST_FILE_QUALIFIED;
-	
+
     private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, CElementImageProvider.OVERLAY_ICONS);
     private CHContentProvider fContentProvider;
     private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
 	private Color fColorInactive;
-    
-    public CHLabelProvider(Display display, CHContentProvider cp) {
+	private IStyledLabelProvider[] fProviders;
+	private CHViewPart fView;
+
+    public CHLabelProvider(CHViewPart view, Display display, CHContentProvider cp) {
         fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
         fContentProvider= cp;
+        fView = view;
     }
-    
+
     @Override
 	public Image getImage(Object element) {
+		if (fProviders == null ) {
+			fProviders = fView.getLabelProviders();
+		}
+		if ( fProviders != null ) {
+			for (IStyledLabelProvider provider : fProviders) {
+				Image img = provider.getImage(element);
+				if (img != null)
+					return img;
+			}
+		}
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             Image image= null;
@@ -96,9 +111,19 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
         }
         return super.getText(element);
     }
-    
+
     @Override
 	public StyledString getStyledText(Object element) {
+        if (fProviders == null ) {
+            fProviders = fView.getLabelProviders();
+        }
+        if (fProviders != null) {
+            for (IStyledLabelProvider provider : fProviders) {
+            	StyledString styledString = provider.getStyledText(element);
+            	if (styledString != null)
+                	return styledString;
+            }
+        }
     	if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             ICElement decl= node.getOneRepresentedDeclaration();
@@ -120,7 +145,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
             		final int offset= label.length();
             		label.append(NLS.bind(" ({0} {1})", Integer.valueOf(refCount), CHMessages.CHLabelProvider_matches));  //$NON-NLS-1$
                 	label.setStyle(offset, label.length() - offset, StyledString.COUNTER_STYLER);
-    				
+                	
             	}
             	String decorated= decorateText(label.getString(), element);
         		if (decorated != null) {
@@ -131,7 +156,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
         }
         return fCLabelProvider.getStyledText(element);
 	}
-    
+
     private String addInitializerDecoration(String label) {
     	int i= 0;
     	char[] content= label.toCharArray();
@@ -169,7 +194,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
     	label2.setStyle(0, i, null);
     	return label2;
 	}
-    
+
 	@Override
 	public void dispose() {
         fCLabelProvider.dispose();
@@ -181,7 +206,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
     }
 
     private Image decorateImage(Image image, CHNode node) {
-        int flags= 0;        
+        int flags= 0;
         if (node.isRecursive()) {
             flags |= CElementImageDescriptor.RECURSIVE_RELATION;
         } else if (fContentProvider.hasChildren(node)) {

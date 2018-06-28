@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae8d5ee2_6f3f1dde",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": ":-) for remembering to bump the version on new API",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "33269667_1a26ec36",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHLabelProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": "Why doesn\u0027t this delegate to providers?",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "511871c2_62aac8e4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHLabelProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": "Do providers understand any kind of element, or just ICHENodes? If the latter should there be an instanceof check first?",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2571389_8f31ea0c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/ICHENode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": "Is this code wind river? Your email address is @yahoo so I couldn\u0027t tell.",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "605d9333_d788a340",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/ICHEProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": "This looks a lot like a label provider. Can the label provider and content provider interfaces be split and if possible use the label provider interface from platform, such as org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider?",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd6762ff_031b6866",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/ICHEProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-06-28T19:10:13Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

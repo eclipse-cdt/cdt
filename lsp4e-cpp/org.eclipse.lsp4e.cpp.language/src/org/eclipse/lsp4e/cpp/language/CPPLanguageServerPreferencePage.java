@@ -48,5 +48,6 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 
 	@Override
 	public void init(IWorkbench workbench) {
+		Activator.getDefault().getPreferenceStore().addPropertyChangeListener(new ServerChoiceListener());
 	}
 }

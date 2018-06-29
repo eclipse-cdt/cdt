@@ -1034,6 +1034,9 @@ public class ASTTypeUtil {
 		}
 		IPath path = new Path(filename);
 		IFile file = ResourceLookup.selectFileForLocation(path, cproject.getProject());
+		if (file == null) {
+			return filename;
+		}
 		IPath workspaceRelative = file.getFullPath();
 		return workspaceRelative.toString();
 	}

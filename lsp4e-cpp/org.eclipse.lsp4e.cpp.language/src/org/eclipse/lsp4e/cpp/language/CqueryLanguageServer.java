@@ -18,7 +18,7 @@ public class CqueryLanguageServer implements ICPPLanguageServer {
 	@Override
 	public Object getLSSpecificInitializationOptions(Object defaultInitOptions, URI rootPath) {
 //		TODO: Allow user to specify cache directory path
-		IPath cacheDirectory = Path.fromOSString(rootPath.getPath()).append(".cquery/cquery_index"); //$NON-NLS-1$
+		IPath cacheDirectory = Path.fromOSString(rootPath.getPath()).append(".lsp4e-cpp/cquery_index"); //$NON-NLS-1$
 		JsonObject result = (defaultInitOptions instanceof JsonObject) ? (JsonObject) defaultInitOptions : new JsonObject();
 		result.addProperty("cacheDirectory", cacheDirectory.toString()); //$NON-NLS-1$
 		return result;

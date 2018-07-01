@@ -30,6 +30,7 @@ public class DeclarationOptions {
 	final public static int ALLOW_OPAQUE_ENUM=				0x2000;
 	final public static int SINGLE_DTOR=					0x4000;
 	final public static int ALLOW_FUNCTION_DEFINITION=		0x8000;
+	final public static int NO_COMPOSITE_SPECIFIER=         0x10000;
 
     public static final DeclarationOptions
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM | ALLOW_FUNCTION_DEFINITION),
@@ -39,7 +40,7 @@ public class DeclarationOptions {
     	LOCAL=	    new DeclarationOptions(ALLOW_OPAQUE_ENUM),
     	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS | REQUIRE_SIMPLE_NAME | NO_BRACED_INITIALIZER | NO_CTOR_STYLE_INITIALIZER),
     	TYPEID=     new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER),
-    	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE | ALLOW_FUNCTION_DEFINITION),
+    	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE | ALLOW_FUNCTION_DEFINITION | NO_COMPOSITE_SPECIFIER),
     	TYPEID_NEW= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED | ALLOW_FOLLOWED_BY_BRACE),
     	TYPEID_CONVERSION= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
         EXCEPTION= new DeclarationOptions(ALLOW_ABSTRACT | NO_INITIALIZER),
@@ -62,6 +63,7 @@ public class DeclarationOptions {
 	final public boolean fAllowOpaqueEnum;
 	final public boolean fSingleDtor;
 	final public boolean fAllowFunctionDefinition;
+	final public boolean fAllowCompositeSpecifier;
 
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -79,5 +81,6 @@ public class DeclarationOptions {
 		fAllowOpaqueEnum= (options & ALLOW_OPAQUE_ENUM) != 0;
 		fSingleDtor= (options & SINGLE_DTOR) != 0;
 		fAllowFunctionDefinition= (options & ALLOW_FUNCTION_DEFINITION) != 0;
+		fAllowCompositeSpecifier= (options & NO_COMPOSITE_SPECIFIER) == 0;
 	}
 }

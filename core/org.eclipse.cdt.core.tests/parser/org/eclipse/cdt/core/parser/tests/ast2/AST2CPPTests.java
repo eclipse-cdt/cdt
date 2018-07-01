@@ -12710,4 +12710,15 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testStaticAssertWithoutMessage_534808() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct MyStruct {
+	//	    unsigned i;
+	//	};
+	//	
+	//	auto myFunA() -> struct MyStruct {
+	//	    return {5};
+	//	};
+	public void testElabSpecInTrailingReturn_535777() throws Exception {
+		parseAndCheckBindings();
+	}
 }

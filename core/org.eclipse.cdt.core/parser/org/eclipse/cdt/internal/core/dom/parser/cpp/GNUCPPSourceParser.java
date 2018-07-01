@@ -3434,10 +3434,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				case IToken.t_union:
 					if (encounteredTypename || encounteredRawType)
 						break declSpecifiers;
-					try {
-						result= classSpecifier();
-					} catch (BacktrackException bt) {
-						result= elaboratedTypeSpecifier();
+					if (option != null && option.fAllowCompositeSpecifier) {
+						try {
+							result= classSpecifier();
+						} catch (BacktrackException bt) {
+							result= elaboratedTypeSpecifier();
+						}
+					} else {
+						result = elaboratedTypeSpecifier();
 					}
 					endOffset= calculateEndOffset(result);
 					encounteredTypename= true;

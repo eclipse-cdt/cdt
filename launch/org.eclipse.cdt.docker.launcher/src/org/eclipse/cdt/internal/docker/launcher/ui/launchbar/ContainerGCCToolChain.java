@@ -186,7 +186,14 @@ public class ContainerGCCToolChain extends PlatformObject
 		try {
 			Path buildDirectory = Paths.get(buildDirectoryURI);
 
-			Path command = Paths.get(commandStrings.get(0));
+			int offset = 0;
+			Path command = Paths.get(commandStrings.get(offset));
+
+			// look for ccache being used
+			if (command.toString().contains("ccache")) { //$NON-NLS-1$
+				command = Paths.get(commandStrings.get(++offset));
+			}
+
 			List<String> commandLine = new ArrayList<>();
 			if (command.isAbsolute()) {
 				commandLine.add(command.toString());
@@ -213,7 +220,8 @@ public class ContainerGCCToolChain extends PlatformObject
 			}
 
 			addDiscoveryOptions(commandLine);
-			commandLine.addAll(commandStrings.subList(1, commandStrings.size()));
+			commandLine.addAll(
+					commandStrings.subList(offset + 1, commandStrings.size()));
 
 			// Strip surrounding quotes from the args on Windows
 			if (Platform.OS_WIN32.equals(Platform.getOS())) {

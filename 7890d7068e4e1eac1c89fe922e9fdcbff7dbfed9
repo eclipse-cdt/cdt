@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "453720b2_15bfd869",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-04T15:05:35Z",
+      "side": 1,
+      "message": "This null check is too late: if getDefaultLSLocation() returns null, the call to getAbsolutePath() on the previous line will already throw a NullPointerException.",
+      "revId": "7890d7068e4e1eac1c89fe922e9fdcbff7dbfed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

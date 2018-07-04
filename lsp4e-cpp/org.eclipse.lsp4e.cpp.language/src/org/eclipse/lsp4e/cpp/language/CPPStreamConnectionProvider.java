@@ -124,7 +124,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		return null;
 	}
 
-	private static File getDefaultLSLocation(String selectedLanguageServer) {
+	static File getDefaultLSLocation(String selectedLanguageServer) {
 		String res = null;
 		String[] command = new String[] {"/bin/bash", "-c", "which " + selectedLanguageServer}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {

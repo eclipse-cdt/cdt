@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "afc5670e_f090f44a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-04T10:02:35Z",
+      "side": 1,
+      "message": "(minor) Your name changed here a little and doesn\u0027t match the author name.",
+      "range": {
+        "startLine": 4,
+        "startChar": 17,
+        "endLine": 4,
+        "endChar": 21
+      },
+      "revId": "7041931e9466bb6c23643e643e4d75bc09c4bfb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "052217ec_9af7c06a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-04T10:02:35Z",
+      "side": 1,
+      "message": "as suggested offline, remove all the extra commit message.",
+      "revId": "7041931e9466bb6c23643e643e4d75bc09c4bfb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77e56f36_d192c7f5",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-04T04:46:07Z",
+      "side": 1,
+      "message": "VALUE is a static field of FieldEditor, so accessing it via an object instance (serverChoice is this case) is misleading. It\u0027s better to access it as FieldEditor.VALUE.",
+      "revId": "9b1dda4df655745b30f05f5c8cf2f612b48fb51f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce5c943b_7926bde4",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-04T04:46:07Z",
+      "side": 1,
+      "message": "getDefaultLSLocation() can return null if the server executable is not in the PATH, so we need a null check.",
+      "revId": "9b1dda4df655745b30f05f5c8cf2f612b48fb51f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08977bc2_5f44cbb5",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-04T04:46:07Z",
+      "side": 1,
+      "message": "What FieldEditor.load() does is check the current value of the preference in the IPreferenceStore, and update the UI of the field editor widget to reflect that value.\n\nSo, if you\u0027re setting the value via IPreferenceStore, as the previous version of this patch did, then you need to call FieldEditor.load() to get the new value to be reflected in the UI.\n\nIf, however, you\u0027re setting the displayed value of the field editor directly, as this version of the patch is doing, there is no need to call FieldEditor.load() (and in fact FieldEditor.load() will just overwrite the value you just set with the old value still stored in the IPreferenceStore).",
+      "revId": "9b1dda4df655745b30f05f5c8cf2f612b48fb51f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

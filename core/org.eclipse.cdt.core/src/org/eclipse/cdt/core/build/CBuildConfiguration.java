@@ -788,8 +788,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 							getBaseScannerInfo(resource), tu.getLanguage(), getBuildDirectoryURI());
 					synchronized (scannerInfoLock) {
 						scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
+						saveScannerInfoCache();
 					}
-					saveScannerInfoCache();
 				} catch (CoreException e) {
 					CCorePlugin.log(e.getStatus());
 				}

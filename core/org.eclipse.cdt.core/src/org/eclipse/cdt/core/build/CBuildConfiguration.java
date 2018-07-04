@@ -701,7 +701,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 								new IExtendedScannerInfoCreator());
 						Gson gson = gsonBuilder.create();
 						scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
-					} catch (IOException e) {
+					} catch (IOException | JsonParseException e) {
 						CCorePlugin.log(e);
 						scannerInfoCache = new ScannerInfoCache();
 					}

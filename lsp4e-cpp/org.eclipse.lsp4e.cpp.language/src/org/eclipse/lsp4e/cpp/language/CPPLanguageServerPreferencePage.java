@@ -9,6 +9,7 @@
 package org.eclipse.lsp4e.cpp.language;
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
 
@@ -44,6 +45,16 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 		serverOptions = new StringFieldEditor(PreferenceConstants.P_SERVER_OPTIONS, Messages.ServerOptionsLabel,
 				getFieldEditorParent());
 		addField(serverOptions);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if(event.getSource() == serverChoice && event.getProperty() == FieldEditor.VALUE) {
+			String changedLSLocation = CPPStreamConnectionProvider.getDefaultLSLocation((String) event.getNewValue()).getAbsolutePath();
+			if(changedLSLocation != null) {
+				serverPath.setStringValue(changedLSLocation);
+			}
+		}
 	}
 
 	@Override

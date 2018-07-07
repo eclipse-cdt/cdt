@@ -15,25 +15,31 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A basic tree
+ * A basic tree used to display source files in the debug view
  *
  * @param <T>
  */
 public class DebugTree<T extends Comparable<?>> {
+
+	public enum FileExist {
+		YES,
+		NO,
+		UNKNOWN;
+	}
 
 	// preserve insertion order with LinkedHashSet
 	private final Set<DebugTree<T>> children = new LinkedHashSet<DebugTree<T>>();
 	private final T data;
 	private T leafData;
 	private DebugTree<T> parent;
-	private boolean exists;
+	private FileExist exists;
 
 	/**
 	 * 
 	 * @param data
 	 * @param exists
 	 */
-	public DebugTree(T data, boolean exists) {
+	public DebugTree(T data, FileExist exists) {
 		this.data = data;
 		this.exists = exists;
 	}
@@ -44,10 +50,10 @@ public class DebugTree<T extends Comparable<?>> {
 	 * @param data
 	 * @param leafData
 	 */
-	private DebugTree(T data, T leafData, boolean exists) {
+	private DebugTree(T data, T leafData, FileExist exist) {
 		this.data = data;
 		this.leafData = leafData;
-		this.exists = exists;
+		this.exists = exist;
 	}
 
 	/**
@@ -56,11 +62,11 @@ public class DebugTree<T extends Comparable<?>> {
 	 * @param exists 
 	 * @return a new node if not already existing, existing node otherwise
 	 */
-	public DebugTree<T> addNode(T data, boolean exists) {
+	public DebugTree<T> addNode(T data, FileExist exists) {
 		for (DebugTree<T> child : children) {
 			if (child.data.equals(data)) {
-				if (exists) {
-					child.exists = true;
+				if (exists == FileExist.YES) {
+					child.exists = FileExist.YES;
 				}
 				return child;
 			}
@@ -74,7 +80,7 @@ public class DebugTree<T extends Comparable<?>> {
 	 * @param leafData of leaf
 	 * @return a new leaf if not already existing, existing leaf otherwise
 	 */
-	public DebugTree<T> addLeaf(T data, T leafData, boolean exists) {
+	public DebugTree<T> addLeaf(T data, T leafData, FileExist exists) {
 		for (DebugTree<T> child : children) {
 			if (child.data.equals(data)) {
 				return child;
@@ -128,7 +134,15 @@ public class DebugTree<T extends Comparable<?>> {
 	 * This can be used to display differently.
 	 */
 	public boolean getExists() {
-		return exists;
+		switch (exists) {
+		case YES:
+			return true;
+		case NO:
+			return false;
+		case UNKNOWN:
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -148,6 +162,11 @@ public class DebugTree<T extends Comparable<?>> {
 		this.parent = parent;
 	}
 
+
+	public void setExist(boolean exist) {
+		exists = exist? FileExist.YES : FileExist.NO;
+	}
+
 	@Override
 	public String toString() {
 		return Objects.toString(getData());
@@ -157,8 +176,9 @@ public class DebugTree<T extends Comparable<?>> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((children == null) ? 0 : children.hashCode());
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		result = prime * result + (exists ? 1231 : 1237);
+		result = prime * result + ((exists == null) ? 0 : exists.hashCode());
 		result = prime * result + ((leafData == null) ? 0 : leafData.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		return result;
@@ -172,7 +192,12 @@ public class DebugTree<T extends Comparable<?>> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DebugTree other = (DebugTree) obj;
+		DebugTree<?> other = (DebugTree<?>) obj;
+		if (children == null) {
+			if (other.children != null)
+				return false;
+		} else if (!children.equals(other.children))
+			return false;
 		if (data == null) {
 			if (other.data != null)
 				return false;
@@ -192,4 +217,5 @@ public class DebugTree<T extends Comparable<?>> {
 			return false;
 		return true;
 	}
+
 }

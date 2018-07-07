@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23a2c51e_972726c8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-07T22:12:09Z",
+      "side": 1,
+      "message": "I\u0027m using the CompletableFuture in java 8 to check for file existence asynchronously",
+      "revId": "16e4ed45701b75e907d064736aebe821700e519d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7c4c22f_57be5083",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-07T22:12:09Z",
+      "side": 1,
+      "message": "this method is just used in this class",
+      "revId": "16e4ed45701b75e907d064736aebe821700e519d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2fe6faa4_e32f8ea9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-07T22:12:09Z",
+      "side": 1,
+      "message": "There is maybe a better way to write this snippet of code (some code replication here)",
+      "revId": "16e4ed45701b75e907d064736aebe821700e519d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -43,9 +43,6 @@ public class DebugSourcesTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof String) {
-			return new String[] { (String) inputElement };
-		}
 		if (inputElement instanceof DebugTree) {
 			@SuppressWarnings("unchecked")
 			DebugTree<Comparable<?>> tree = (DebugTree<Comparable<?>>) inputElement;
@@ -60,9 +57,6 @@ public class DebugSourcesTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof String) {
-			return new String[] { (String) parentElement };
-		}
 		if (parentElement instanceof DebugTree) {
 			@SuppressWarnings("unchecked")
 			DebugTree<Comparable<?>> tree = (DebugTree<Comparable<?>>) parentElement;
@@ -87,9 +81,6 @@ public class DebugSourcesTreeContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
 		if (element == null)
 			return null;
-		if (element instanceof String) {
-			return null;
-		}
 		if (element instanceof DebugTree) {
 			@SuppressWarnings("unchecked")
 			DebugTree<Comparable<?>> node = (DebugTree<Comparable<?>>) element;
@@ -111,9 +102,6 @@ public class DebugSourcesTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof String) {
-			return false;
-		}
 		if (element instanceof DebugTree) {
 			return getChildren(element).length > 0;
 		}

@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A basic tree
+ * A basic tree used to display source files in the debug view
  *
  * @param <T>
  */
@@ -172,7 +172,7 @@ public class DebugTree<T extends Comparable<?>> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DebugTree other = (DebugTree) obj;
+		DebugTree<?> other = (DebugTree<?>) obj;
 		if (data == null) {
 			if (other.data != null)
 				return false;

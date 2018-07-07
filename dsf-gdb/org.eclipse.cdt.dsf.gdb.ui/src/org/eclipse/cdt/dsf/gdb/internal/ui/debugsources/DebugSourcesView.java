@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.debugsources;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesColl
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesExpandAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesFlattendedTree;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesNormalTree;
+import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesShowExistingFilesOnly;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.tree.DebugTree;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
@@ -45,6 +47,12 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -119,17 +127,11 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 				Object selectedNode = thisSelection.getFirstElement();
-				if (selectedNode instanceof IDebugSourceFileInfo) {
-					IDebugSourceFileInfo newName = (IDebugSourceFileInfo) selectedNode;
-					openSourceFile(newName.getPath());
-				}
 				if (selectedNode instanceof DebugTree) {
 					DebugTree<?> node = (DebugTree<?>) selectedNode;
 					// only leafs can be opened!
 					if (!node.hasChildren()) {
-						if (node.getExists()) {
-							openSourceFile((String) node.getLeafData());
-						}
+						openSourceFile((String) node.getLeafData(), node.getExists());
 					}
 				}
 			}
@@ -203,8 +205,7 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 		toolBar.add(new DebugSourcesCollapseAction(viewer));
 		toolBar.add(new DebugSourcesFlattendedTree(viewer, viewerColumns));
 		toolBar.add(new DebugSourcesNormalTree(viewer, viewerColumns));
-// TODO: we aren't testing for file existence at the moment.
-//		toolBar.add(new DebugSourcesShowExistingFilesOnly(viewer));
+		toolBar.add(new DebugSourcesShowExistingFilesOnly(viewer));
 	}
 
 	private DsfSession getSession() {
@@ -363,19 +364,26 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 								IDebugSourceFileInfo[] srcFileInfo = getData();
 								// We have a frame context. It is just a 'pointer' though.
 								// We need to get the data associated with it.
-								DebugTree<?> populateTree = populateTree(srcFileInfo);
-								Display.getDefault().asyncExec(new Runnable() {
+								PopulateTreeJob populateTreeJob = new PopulateTreeJob(srcFileInfo);
+								populateTreeJob.addJobChangeListener(new JobChangeAdapter() {
 									@Override
-									public void run() {
-										if (!viewer.getControl().isDisposed()) {
-											populateTree.toString();
-											viewer.setInput(populateTree);
-											// TODO: Expanding all when there are 15k files
-											// is noticeably slow.
-											// viewer.expandAll();
-										}
+									public void done(IJobChangeEvent event) {
+										DebugTree<?> populateTree = populateTreeJob.getTree();
+										Display.getDefault().asyncExec(new Runnable() {
+											@Override
+											public void run() {
+												if (!viewer.getControl().isDisposed()) {
+													populateTree.toString();
+													viewer.setInput(populateTree);
+													// TODO: Expanding all when there are 15k files
+													// is noticeably slow.
+													// viewer.expandAll();
+												}
+											}
+										});
 									}
 								});
+								populateTreeJob.schedule();
 							}
 
 							@Override
@@ -386,50 +394,6 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 						});
 			}
 		});
-	}
-
-	private DebugTree<?> populateTree(IDebugSourceFileInfo[] srcFileInfo) {
-		DebugTree<String> debugTree = new DebugTree<String>("", false); //$NON-NLS-1$
-		DebugTree<String> current = debugTree;
-		for (int i = 0; i < srcFileInfo.length; i++) {
-			DebugTree<String> root = current;
-			DebugTree<String> parent = root;
-			String path = srcFileInfo[i].getPath();
-			// Use Path API to clean the path
-			try {
-				Path p = Paths.get(path);
-				boolean exists = true; // Files.exists(p); TODO We need to do this asynchronously, if/when we do we can
-										// reenable the button to show/hide files
-				Path filename = p.getFileName();
-				// add root
-				Path pRoot = p.getRoot();
-				if (pRoot == null || !p.isAbsolute()) {
-					current = current.addLeaf(DebugSourcesMessages.DebugSourcesView_unrooted, p.toString(), exists);
-				} else if (pRoot.equals(filename)) {
-					current = current.addLeaf(srcFileInfo[i].getName(), p.toString(), exists);
-				} else {
-					current = current.addNode(pRoot.toString(), exists);
-				}
-				parent = current;
-				// Add each sub-path
-				Path normalizedPath = p.normalize();
-				for (Path subpath : normalizedPath) {
-					if (subpath.equals(filename)) { // this is a leaf
-						current = current.addLeaf(srcFileInfo[i].getName(), p.toString(), exists);
-					} else {
-						current = current.addNode(subpath.toString(), exists);
-					}
-					current.setParent(parent);
-					parent = current;
-				}
-				current = root;
-				parent = root;
-			} catch (InvalidPathException e) {
-				// do nothing
-				System.out.println(e.getMessage());
-			}
-		}
-		return current;
 	}
 
 	// This method must be public for the DSF callback to be found
@@ -478,25 +442,29 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 		}
 	}
 
-	public void openSourceFile(String fullPath) {
+	private void openSourceFile(String fullPath, boolean exist) {
 		if (fullPath == null) {
 			return;
 		}
 		Path path = Paths.get(fullPath);
 		IEditorInput editorInput = null;
 		String editorId = null;
-		try {
-			URI uriLocation = path.toUri();
-			IFileStore fileStore = EFS.getStore(uriLocation);
-			editorInput = new FileStoreEditorInput(fileStore);
-			editorId = CDebugUIUtils.getEditorId(fileStore, false);
-		} catch (CoreException e1) {
+		if (exist) {
+			try {
+				URI uriLocation = path.toUri();
+				IFileStore fileStore = EFS.getStore(uriLocation);
+				editorInput = new FileStoreEditorInput(fileStore);
+				editorId = CDebugUIUtils.getEditorId(fileStore, false);
+			} catch (CoreException e1) {
+				CSourceNotFoundElement element = new CSourceNotFoundElement(new TempElement(), null, fullPath);
+				editorInput = new CSourceNotFoundEditorInput(element);
+				editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
+			}
+		} else {
 			CSourceNotFoundElement element = new CSourceNotFoundElement(new TempElement(), null, fullPath);
-
 			editorInput = new CSourceNotFoundEditorInput(element);
 			editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
 		}
-
 		IWorkbenchPage page = CUIPlugin.getActivePage();
 		try {
 			page.openEditor(editorInput, editorId);
@@ -532,6 +500,74 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 			String name = (String) ((DebugTree<?>) element).getData();
 			String path = (String) ((DebugTree<?>) element).getLeafData();
 			return wordMatches(path) || wordMatches(name);
+		}
+	}
+
+	class PopulateTreeJob extends Job {
+
+		private IDebugSourceFileInfo[] srcFileInfo;
+		private DebugTree<?> populateTree;
+
+		public PopulateTreeJob(IDebugSourceFileInfo[] srcFileInfo) {
+			super("Populate Tree Job"); //$NON-NLS-1$
+			this.srcFileInfo = srcFileInfo;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			populateTree = populateTree(srcFileInfo, monitor);
+			return Status.OK_STATUS;
+		}
+
+		public DebugTree<?> getTree() {
+			return populateTree;
+		}
+
+		private DebugTree<?> populateTree(IDebugSourceFileInfo[] srcFileInfo, IProgressMonitor monitor) {
+			DebugTree<String> debugTree = new DebugTree<String>("", false); //$NON-NLS-1$
+			DebugTree<String> current = debugTree;
+			for (int i = 0; i < srcFileInfo.length; i++) {
+				DebugTree<String> root = current;
+				DebugTree<String> parent = root;
+				String path = srcFileInfo[i].getPath();
+				// Use Path API to clean the path
+				try {
+					Path p = Paths.get(path);
+					boolean exists = Files.exists(p);
+
+					Path filename = p.getFileName();
+					// add root
+					Path pRoot = p.getRoot();
+					if (pRoot == null || !p.isAbsolute()) {
+						current = current.addLeaf(DebugSourcesMessages.DebugSourcesView_unrooted, p.toString(), exists);
+					} else if (pRoot.equals(filename)) {
+						current = current.addLeaf(srcFileInfo[i].getName(), p.toString(), exists);
+					} else {
+						current = current.addNode(pRoot.toString(), exists);
+					}
+					parent = current;
+					// Add each sub-path
+					Path normalizedPath = p.normalize();
+					for (Path subpath : normalizedPath) {
+						if (subpath.equals(filename)) { // this is a leaf
+							current = current.addLeaf(srcFileInfo[i].getName(), p.toString(), exists);
+						} else {
+							current = current.addNode(subpath.toString(), exists);
+						}
+						current.setParent(parent);
+						parent = current;
+					}
+					current = root;
+					parent = root;
+				} catch (InvalidPathException e) {
+					// do nothing
+					System.out.println(e.getMessage());
+				}
+				if (monitor != null && monitor.isCanceled()) {
+					return current;
+				}
+			}
+			return current;
 		}
 	}
 

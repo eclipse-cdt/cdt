@@ -112,7 +112,7 @@ public class MiSourceFilesInfo extends MIInfo {
 				if (!(miVal instanceof MIConst)) {
 					continue;
 				}
-				String value = ((MIConst) miVal).getString();
+				String value = ((MIConst) miVal).getCString();
 				switch (variable) {
 				case "file": //$NON-NLS-1$
 					file = value;

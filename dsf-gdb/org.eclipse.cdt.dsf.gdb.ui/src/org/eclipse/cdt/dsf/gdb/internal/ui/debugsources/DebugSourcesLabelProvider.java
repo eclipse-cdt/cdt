@@ -45,9 +45,6 @@ public class DebugSourcesLabelProvider extends ColumnLabelProvider {
 
 	private String getLabel(Object element, int columnIdx) {
 		String emptyString = ""; //$NON-NLS-1$
-		if (element instanceof String) {
-			return (String) element;
-		}
 		if (element instanceof DebugTree) {
 			@SuppressWarnings("unchecked")
 			DebugTree<Comparable<?>> node = (DebugTree<Comparable<?>>) element;

@@ -11,10 +11,14 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.debugsources;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.ICSourceNotFoundDescription;
@@ -33,6 +37,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesColl
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesExpandAction;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesFlattendedTree;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesNormalTree;
+import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesShowExistingFilesOnly;
 import org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.tree.DebugTree;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
@@ -119,17 +124,11 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 				Object selectedNode = thisSelection.getFirstElement();
-				if (selectedNode instanceof IDebugSourceFileInfo) {
-					IDebugSourceFileInfo newName = (IDebugSourceFileInfo) selectedNode;
-					openSourceFile(newName.getPath());
-				}
 				if (selectedNode instanceof DebugTree) {
 					DebugTree<?> node = (DebugTree<?>) selectedNode;
 					// only leafs can be opened!
 					if (!node.hasChildren()) {
-						if (node.getExists()) {
-							openSourceFile((String) node.getLeafData());
-						}
+						openSourceFile((String) node.getLeafData(), node.getExists());
 					}
 				}
 			}
@@ -203,8 +202,7 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 		toolBar.add(new DebugSourcesCollapseAction(viewer));
 		toolBar.add(new DebugSourcesFlattendedTree(viewer, viewerColumns));
 		toolBar.add(new DebugSourcesNormalTree(viewer, viewerColumns));
-// TODO: we aren't testing for file existence at the moment.
-//		toolBar.add(new DebugSourcesShowExistingFilesOnly(viewer));
+		toolBar.add(new DebugSourcesShowExistingFilesOnly(viewer));
 	}
 
 	private DsfSession getSession() {
@@ -398,8 +396,24 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 			// Use Path API to clean the path
 			try {
 				Path p = Paths.get(path);
-				boolean exists = true; // Files.exists(p); TODO We need to do this asynchronously, if/when we do we can
-										// reenable the button to show/hide files
+				// Run a task of checking if file exists specified by a Supplier object asynchronously
+				CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(new Supplier<Boolean>() {
+					@Override
+					public Boolean get() {
+						boolean exists = true;
+						exists = Files.exists(p);
+						return exists;
+					}
+				});
+
+				// Block and get the result of the Future
+				boolean exists = true;
+				try {
+					exists = future.get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				
 				Path filename = p.getFileName();
 				// add root
 				Path pRoot = p.getRoot();
@@ -478,25 +492,29 @@ public class DebugSourcesView extends ViewPart implements IDebugContextListener 
 		}
 	}
 
-	public void openSourceFile(String fullPath) {
+	private void openSourceFile(String fullPath, boolean exist) {
 		if (fullPath == null) {
 			return;
 		}
 		Path path = Paths.get(fullPath);
 		IEditorInput editorInput = null;
 		String editorId = null;
-		try {
-			URI uriLocation = path.toUri();
-			IFileStore fileStore = EFS.getStore(uriLocation);
-			editorInput = new FileStoreEditorInput(fileStore);
-			editorId = CDebugUIUtils.getEditorId(fileStore, false);
-		} catch (CoreException e1) {
+		if (exist) {
+			try {
+				URI uriLocation = path.toUri();
+				IFileStore fileStore = EFS.getStore(uriLocation);
+				editorInput = new FileStoreEditorInput(fileStore);
+				editorId = CDebugUIUtils.getEditorId(fileStore, false);
+			} catch (CoreException e1) {
+				CSourceNotFoundElement element = new CSourceNotFoundElement(new TempElement(), null, fullPath);
+				editorInput = new CSourceNotFoundEditorInput(element);
+				editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
+			}
+		} else {
 			CSourceNotFoundElement element = new CSourceNotFoundElement(new TempElement(), null, fullPath);
-
 			editorInput = new CSourceNotFoundEditorInput(element);
 			editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
 		}
-
 		IWorkbenchPage page = CUIPlugin.getActivePage();
 		try {
 			page.openEditor(editorInput, editorId);

@@ -69,6 +69,7 @@ public class DebugSourcesViewComparator<T> extends ViewerComparator {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		Comparable s1 = func.apply((T) e1);

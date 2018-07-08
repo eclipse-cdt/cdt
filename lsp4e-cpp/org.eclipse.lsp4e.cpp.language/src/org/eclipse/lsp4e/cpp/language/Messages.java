@@ -15,6 +15,8 @@ public class Messages extends NLS {
 	public static String ServerChoiceLabel;
 	public static String ServerPathLabel;
 	public static String ServerOptionsLabel;
+	public static String CqueryStateIdle;
+	public static String CqueryStateBusy;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

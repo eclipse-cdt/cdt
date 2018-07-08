@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56f3bece_df1b4d7d",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T20:31:30Z",
+      "side": 1,
+      "message": "Please move the variable inside the for loop",
+      "revId": "67b3f534a727e6e61401753bf5f0f0bf2b637cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54562349_72c567b2",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T20:31:30Z",
+      "side": 1,
+      "message": "We can avoid calling find() twice:\n\n  StatusLineContributionItem cqueryStatusField \u003d statusLine.find(cqueryStatusFieldId);\n  if (cqueryStatusField \u003d\u003d null) {\n      cqueryStatusField \u003d new StatusLineContributionItem(...);\n      statusLine.add(cqueryStatusField);\n  }\n  // update cqueryStatusField",
+      "revId": "67b3f534a727e6e61401753bf5f0f0bf2b637cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

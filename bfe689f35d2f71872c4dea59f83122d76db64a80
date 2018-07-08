@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a0ba47b_c387b9cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T03:15:08Z",
+      "side": 1,
+      "message": "Please file a bug for this and mention the bug number in the commit message.",
+      "revId": "bfe689f35d2f71872c4dea59f83122d76db64a80",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5464ef09_21074bde",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T03:15:08Z",
+      "side": 1,
+      "message": "It\u0027s not sufficient to display the status in the active window.\n\nWith this patch, if I open a second window via Window -\u003e New Window, whichever window is currently active (focused) will have its status line updated, but the other one will be stuck with a stale message from the last time it was focused.\n\nInstead, we should use IWorkbench.getWorkbenchWindows() and show the status in all windows.",
+      "revId": "bfe689f35d2f71872c4dea59f83122d76db64a80",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d384a82_2b2dfa88",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T03:15:08Z",
+      "side": 1,
+      "message": "Since these strings are displayed to the user, they need to be externalized.\n\nNote that Eclipse supports externalized strings with placeholders in them (for e.g. a number to insert into the message). As an example, see e.g. CEditorMessages.AddInclude_ast_not_available, and see also how the message is formatted (to provide a value for the placeholder) at its point of use.",
+      "revId": "bfe689f35d2f71872c4dea59f83122d76db64a80",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

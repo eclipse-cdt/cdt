@@ -172,6 +172,10 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 */
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
 			boolean allowContextualConversion) {
+		if (targetType == null) {
+			return argument;
+		}
+		
 		IType type = argument.getType();
 		
 		// Types match - don't bother to check for conversions.

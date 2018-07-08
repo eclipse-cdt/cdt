@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9806b64_6faee921",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-08T18:08:56Z",
+      "side": 1,
+      "message": "I don\u0027t think this does what you are expecting. You are issuing this async, but by immediately \"getting\" the result you are synchronising immediately.\n\nSo the async needs to update the data structure in some way asynchronously.\n\nIdeally I would put this into an Eclipse job, and have the job synchronously iterate the data structure updating file \"existence\".",
+      "revId": "c1831c42dedd9f9886e45827f5fa78eed482499d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

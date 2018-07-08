@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f14581fd_f26d35ab",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T19:49:17Z",
+      "side": 1,
+      "message": "naming: \"workbenchWindows\"",
+      "revId": "e020b8e1a82aafce8fba0acdd4394dfff829ebf6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f81eb5d_a2f1e4ce",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-08T19:49:17Z",
+      "side": 1,
+      "message": "Why are we re-creating the status field on each message, rather than re-using it between messages?",
+      "revId": "e020b8e1a82aafce8fba0acdd4394dfff829ebf6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

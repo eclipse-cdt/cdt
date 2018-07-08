@@ -26,6 +26,11 @@ public class IndexingProgressStats {
 		this.activeThreads = activeThreads;
 	}
 
+	public int getTotalJobs() {
+        int sum = indexRequestCount + doIdMapCount + loadPreviousIndexCount + onIdMappedCount + onIndexedCount;
+        return sum;
+    }
+
 	public int getIndexRequestCount() {
 		return indexRequestCount;
 	}

@@ -8,24 +8,50 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import org.eclipse.jface.action.StatusLineContributionItem;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4e.cpp.language.cquery.CqueryInactiveRegions;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
 import org.eclipse.lsp4e.cpp.language.cquery.IndexingProgressStats;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
+@SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	@JsonNotification("$cquery/progress")
 	public final void indexingProgress(IndexingProgressStats stats) {
-		// TODO: Implement
+
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				final String cqueryStatusFieldId = "org.eclipse.lsp4e.cpp.status"; //$NON-NLS-1$
+				final int width = 28;
+				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (IWorkbenchWindow window : workbenchWindows) {
+					StatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
+					StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine.find(cqueryStatusFieldId);
+					if (cqueryStatusField == null) {
+						cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
+						statusLine.add(cqueryStatusField);
+					}
+					String msg = stats.getTotalJobs() > 0 ? NLS.bind(Messages.CqueryStateBusy, stats.getTotalJobs())
+														  : Messages.CqueryStateIdle;
+					cqueryStatusField.setText(msg);
+				}
+			}
+		});
 	}
 
 	@JsonNotification("$cquery/setInactiveRegions")
 	public final void setInactiveRegions(CqueryInactiveRegions regions) {
 		// TODO: Implement
 	}
-
 
 	@JsonNotification("$cquery/publishSemanticHighlighting")
 	public final void semanticHighlights(CquerySemanticHighlights highlights) {

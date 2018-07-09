@@ -16,6 +16,24 @@
       "revId": "c1831c42dedd9f9886e45827f5fa78eed482499d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86a5b234_0a78dedc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-09T10:37:44Z",
+      "side": 1,
+      "message": "So in my last patch I just populate the tree in a job. \n\nOr another option, should I just use instead CompletableFuture instead like that:\n\nCompletableFuture\u003cDebugTree\u003c?\u003e futureTree \u003d CompletableFuture.supplyAsynx(new Supplier\u003cDebugTree\u003c?\u003e() {\n    @Override\n    public DebugTree\u003c?\u003e get() {\n       return populateTree(srcFileInfo);\n    }\n});\n//then I can get the full tree structure\nDebugTree\u003cString\u003e current \u003d futureTree.get();",
+      "parentUuid": "d9806b64_6faee921",
+      "revId": "c1831c42dedd9f9886e45827f5fa78eed482499d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

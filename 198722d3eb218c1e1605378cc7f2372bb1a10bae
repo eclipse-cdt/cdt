@@ -16,6 +16,24 @@
       "revId": "198722d3eb218c1e1605378cc7f2372bb1a10bae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcc961c0_bb92eff0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-09T10:51:43Z",
+      "side": 1,
+      "message": "this comment can be discarded",
+      "parentUuid": "8bffe568_ce827766",
+      "revId": "198722d3eb218c1e1605378cc7f2372bb1a10bae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

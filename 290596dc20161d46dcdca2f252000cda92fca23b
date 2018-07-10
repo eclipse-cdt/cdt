@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a0dabd2_de0d9439",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-10T08:26:53Z",
+      "side": 1,
+      "message": ":-(",
+      "revId": "290596dc20161d46dcdca2f252000cda92fca23b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b2e6748_55c98d8b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-10T08:26:53Z",
+      "side": 1,
+      "message": "Is this running in UI thread?",
+      "range": {
+        "startLine": 424,
+        "startChar": 6,
+        "endLine": 424,
+        "endChar": 41
+      },
+      "revId": "290596dc20161d46dcdca2f252000cda92fca23b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e601287b_b6f203ac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-10T08:26:53Z",
+      "side": 1,
+      "message": "This may be ok as every node in the tree has changed anyway. Best see if this refresh preserves selection.\n\nOriginally I was thinking that you would do the updates as you went through each node, but that would be too slow.",
+      "revId": "290596dc20161d46dcdca2f252000cda92fca23b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

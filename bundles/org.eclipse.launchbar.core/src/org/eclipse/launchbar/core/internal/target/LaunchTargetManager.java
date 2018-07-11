@@ -40,6 +40,8 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 
 	private static final String DELIMETER1 = ","; //$NON-NLS-1$
 	private static final String DELIMETER2 = ":"; //$NON-NLS-1$
+	private static final String SLASH = "/";  //$NON-NLS-1$
+	private static final String SLASH_REPLACER = ";"; //$NON-NLS-1$
 
 	private Preferences getTargetsPref() {
 		return InstanceScope.INSTANCE.getNode(Activator.getDefault().getBundle().getSymbolicName())
@@ -70,7 +72,9 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 					String[] segments = childName.split(DELIMETER1);
 					if (segments.length == 2) {
 						String typeId = segments[0];
-						String name = segments[1];
+						// Bug 536889 - we need to restore any slashes we changed when creating
+						// the target node so the name will appear correct to the end-user
+						String name = segments[1].replaceAll(SLASH_REPLACER, SLASH);
 
 						Map<String, ILaunchTarget> type = targets.get(typeId);
 						if (type == null) {
@@ -194,7 +198,9 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 
 		try {
 			Preferences prefs = getTargetsPref();
-			String childName = typeId + DELIMETER1 + id;
+			// Bug 536889 - replace any slashes in the id with a replacement character
+			// for the child node name but still leave the id intact for the launch target
+			String childName = typeId + DELIMETER1 + id.replaceAll(SLASH, SLASH_REPLACER);
 			Preferences child;
 			if (prefs.nodeExists(childName)) {
 				child = prefs.node(childName);
@@ -233,7 +239,8 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 
 			// Remove the attribute node
 			try {
-				getTargetsPref().node(typeId + DELIMETER1 + target.getId()).removeNode();
+				// Bug 536889 - calculate the node name to remove, replacing slashes with a replacement character
+				getTargetsPref().node(typeId + DELIMETER1 + target.getId().replaceAll(SLASH, SLASH_REPLACER)).removeNode();
 			} catch (BackingStoreException e) {
 				Activator.log(e);
 			}

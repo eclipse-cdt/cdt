@@ -28,10 +28,13 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.docker.launcher.Messages;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -43,20 +46,38 @@ public class ContainerCommandLauncherFactory
 
 	private IProject project;
 
+	@SuppressWarnings("restriction")
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {
 		this.project = project;
 		// check if container build enablement has been checked
 		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(project)
+				.getProjectDescription(project, false)
 					.getActiveConfiguration();
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
-		// TODO: figure out why this occurs
+
+		IConfiguration cfg = null;
+
+		try {
+			if (cfgd instanceof CConfigurationDescriptionCache) {
+				CConfigurationData data = ((CConfigurationDescriptionCache) cfgd)
+						.getConfigurationData();
+				if (data instanceof BuildConfigurationData) {
+					cfg = ((BuildConfigurationData) data).getConfiguration();
+				}
+			}
+
+			if (cfg == null) {
+				cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+
 		if (cfg == null) {
 			return null;
 		}
 		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+
 		if (props != null) {
 			String enablementProperty = props.getProperty(
 					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
@@ -253,8 +274,8 @@ public class ContainerCommandLauncherFactory
 						Messages.ContainerCommandLauncher_invalid_values);
 				return includePaths;
 			}
-			ContainerLauncher launcher = new ContainerLauncher();
 			if (includePaths.size() > 0) {
+				ContainerLauncher launcher = new ContainerLauncher();
 				// Create a directory to put the header files for
 				// the image. Use the connection name to form
 				// the directory name as the connection may be
@@ -327,6 +348,16 @@ public class ContainerCommandLauncherFactory
 					return newEntries;
 				}
 
+			} else {
+				// TODO: fix this logic in future so it can be done using a call
+				// rather than using a property of the toolchain
+				IPath pluginPath = Platform
+						.getStateLocation(Platform
+								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+						.append("HEADERS").append(getCleanName(connectionName)) //$NON-NLS-1$
+						.append(getCleanName(imageName));
+				toolchain.setProperty("cdt.needScannerRefresh", //$NON-NLS-1$
+						pluginPath.toFile().exists() ? "false" : "true"); //$NON-NLS-2$
 			}
 		}
 		return includePaths;

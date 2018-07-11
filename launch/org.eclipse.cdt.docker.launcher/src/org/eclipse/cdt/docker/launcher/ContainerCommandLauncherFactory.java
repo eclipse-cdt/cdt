@@ -16,7 +16,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncherFactory;
@@ -43,20 +45,35 @@ public class ContainerCommandLauncherFactory
 
 	private IProject project;
 
+	private Map<ICConfigurationDescription, IOptionalBuildProperties> cachedOpts = new WeakHashMap<>();
+
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {
 		this.project = project;
 		// check if container build enablement has been checked
 		ICConfigurationDescription cfgd = CoreModel.getDefault()
-				.getProjectDescription(project)
+				.getProjectDescription(project, false)
 					.getActiveConfiguration();
-		IConfiguration cfg = ManagedBuildManager
-				.getConfigurationForDescription(cfgd);
-		// TODO: figure out why this occurs
-		if (cfg == null) {
-			return null;
+
+		IOptionalBuildProperties props = null;
+
+		synchronized (cachedOpts) {
+			props = cachedOpts.get(cfgd);
 		}
-		IOptionalBuildProperties props = cfg.getOptionalBuildProperties();
+
+		if (props == null) {
+			IConfiguration cfg = ManagedBuildManager
+					.getConfigurationForDescription(cfgd);
+			// TODO: figure out why this occurs
+			if (cfg == null) {
+				return null;
+			}
+			props = cfg.getOptionalBuildProperties();
+			synchronized (cachedOpts) {
+				cachedOpts.put(cfgd, props);
+			}
+		}
+
 		if (props != null) {
 			String enablementProperty = props.getProperty(
 					ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
@@ -253,8 +270,8 @@ public class ContainerCommandLauncherFactory
 						Messages.ContainerCommandLauncher_invalid_values);
 				return includePaths;
 			}
-			ContainerLauncher launcher = new ContainerLauncher();
 			if (includePaths.size() > 0) {
+				ContainerLauncher launcher = new ContainerLauncher();
 				// Create a directory to put the header files for
 				// the image. Use the connection name to form
 				// the directory name as the connection may be
@@ -327,6 +344,16 @@ public class ContainerCommandLauncherFactory
 					return newEntries;
 				}
 
+			} else {
+				// TODO: fix this logic in future so it can be done using a call
+				// rather than using a property of the toolchain
+				IPath pluginPath = Platform
+						.getStateLocation(Platform
+								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))
+						.append("HEADERS").append(getCleanName(connectionName)) //$NON-NLS-1$
+						.append(getCleanName(imageName));
+				toolchain.setProperty("cdt.needScannerRefresh", //$NON-NLS-1$
+						pluginPath.toFile().exists() ? "false" : "true"); //$NON-NLS-2$
 			}
 		}
 		return includePaths;

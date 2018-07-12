@@ -20,6 +20,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -640,6 +641,14 @@ public class ContainerGCCToolChain extends PlatformObject
 
 		ICommandLauncher launcher = CommandLauncherManager.getInstance()
 				.getCommandLauncher(config);
+
+		// Bug 536884 - following is a kludge to allow us to check if the
+		// Container headers have been deleted by the user in which case
+		// we need to re-perform scanner info collection and copy headers
+		// to the host.
+		// TODO: make this cleaner
+		CommandLauncherManager.getInstance().processIncludePaths(config,
+				Collections.emptyList());
 
 		launcher.setProject(config.getBuildConfiguration().getProject());
 		if (launcher instanceof ICBuildCommandLauncher) {

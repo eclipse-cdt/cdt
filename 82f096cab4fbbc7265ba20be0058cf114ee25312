@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca2377e2_effa1d2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "this is needed so that the parent nodes of an existing leaf have their \"exist\" set to YES instead of the default UNKNOWN and can therefore be displayed when the option to display only existing nodes is set.",
+      "revId": "82f096cab4fbbc7265ba20be0058cf114ee25312",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

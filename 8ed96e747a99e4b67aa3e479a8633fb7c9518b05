@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27703632_2c5a58ab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/tree/DebugTree.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T12:52:12Z",
+      "side": 1,
+      "message": "Hmm. I think I purposely left children out, I should have commented that. Reason being that if you do this, the whole tree needs to called to be calculated. However, hash/equals is sufficient to have path to this point, i.e. go to all parents, but not all children.\n\nI originally added hashcode/equals in \"Don\u0027t expand all as it can be too slow\" because I wanted to make sure that the selection was preserved across refresh.",
+      "revId": "8ed96e747a99e4b67aa3e479a8633fb7c9518b05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fbc7be6a_2d0d4972",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/tree/DebugTree.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T12:52:12Z",
+      "side": 1,
+      "message": "ditto.",
+      "revId": "8ed96e747a99e4b67aa3e479a8633fb7c9518b05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

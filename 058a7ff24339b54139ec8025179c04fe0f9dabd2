@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b30042b_d16e2efb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesLabelProvider.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "remove unnecessary loc",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "20068537_f9502066",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesTreeContentProvider.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "remove unnecessary loc",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe937fc7_9f7653be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesTreeContentProvider.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "remove unnecessary loc",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae5113bf_afc7f11a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesTreeContentProvider.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "remove unnecessary loc",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57c8ef87_678e33d2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesTreeContentProvider.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "remove unnecessary loc",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a976416_c1599d83",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "cause can be null. replace by e",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "09048d61_26e92b76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T15:11:59Z",
+      "side": 1,
+      "message": "cause can be null. replace by e",
+      "revId": "058a7ff24339b54139ec8025179c04fe0f9dabd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

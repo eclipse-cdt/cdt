@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e369e1bb_6c01d8d2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T00:16:04Z",
+      "side": 1,
+      "message": "I\u0027m creating the job objects just once.",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "080e2dca_90488436",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T00:16:04Z",
+      "side": 1,
+      "message": "checking that the job is not already running, if it does while there is a call to this method (displaySourceFiles) then the running job is canceled before the next scheduling.",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "139ed7bc_b7f1a70a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T00:16:04Z",
+      "side": 1,
+      "message": "I put the file checking existence in another job run at the end of the populateTreeJob.",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

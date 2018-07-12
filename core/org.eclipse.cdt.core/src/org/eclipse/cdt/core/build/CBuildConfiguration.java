@@ -106,6 +106,8 @@ public abstract class CBuildConfiguration extends PlatformObject
 		IConsoleParser2, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
+	
+	private static final String NEED_REFRESH = "cdt.needScannerRefresh"; //$NON-NLS-1$
 
 	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
 
@@ -470,7 +472,14 @@ public abstract class CBuildConfiguration extends PlatformObject
 					}
 				}
 			}
+			IToolChain tc = getToolChain();
+			if (tc instanceof IToolChain2) {
+				// we may have a Container build...default to Path based on command
+				return Paths.get(command);
+			}
 		} catch (InvalidPathException e) {
+			// ignore
+		} catch (CoreException e) {
 			// ignore
 		}
 		return null;
@@ -937,6 +946,15 @@ public abstract class CBuildConfiguration extends PlatformObject
 			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null && resources.length > 0) {
 				List<String> commandStrings = toolChain.stripCommand(command, resources);
+				
+				boolean needScannerRefresh = false;
+				
+				if (toolChain instanceof IToolChain2) {
+					String needRefresh = toolChain.getProperty(NEED_REFRESH);
+					if ("true".equals(needRefresh)) { //$NON-NLS-1$
+						needScannerRefresh = true;
+					}
+				}
 
 				for (IResource resource : resources) {
 					loadScannerInfoCache();
@@ -951,7 +969,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 							hasCommand = false;
 						}
 					}
-					if (!hasCommand) {
+					if (!hasCommand || needScannerRefresh) {
 						Path commandPath = findCommand(command.get(0));
 						if (commandPath != null) {
 							command.set(0, commandPath.toString());
@@ -1058,6 +1076,15 @@ public abstract class CBuildConfiguration extends PlatformObject
 			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null && resources.length > 0) {
 				List<String> commandStrings = toolChain.stripCommand(command, resources);
+				
+				boolean needScannerRefresh = false;
+				
+				if (toolChain instanceof IToolChain2) {
+					String needRefresh = toolChain.getProperty(NEED_REFRESH);
+					if ("true".equals(needRefresh)) { //$NON-NLS-1$
+						needScannerRefresh = true;
+					}
+				}
 
 				for (IResource resource : resources) {
 					loadScannerInfoCache();
@@ -1072,7 +1099,7 @@ public abstract class CBuildConfiguration extends PlatformObject
 							hasCommand = false;
 						}
 					}
-					if (!hasCommand) {
+					if (!hasCommand || needScannerRefresh) {
 						Path commandPath = findCommand(command.get(0));
 						if (commandPath != null) {
 							command.set(0, commandPath.toString());
@@ -1117,6 +1144,9 @@ public abstract class CBuildConfiguration extends PlatformObject
 	@Override
 	public void shutdown() {
 		// TODO persist changes
+		
+		// Bug 536884 - Turn off any manual future scanner refresh
+		toolChain.setProperty(NEED_REFRESH,	"false"); //$NON-NLS-1$
 
 		// Trigger a reindex if anything changed
 		// TODO be more surgical

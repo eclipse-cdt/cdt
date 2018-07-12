@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 
+@SuppressWarnings("restriction")
 public class ContainerCommandLauncherFactory
 		implements ICommandLauncherFactory, ICommandLauncherFactory2 {
 
@@ -349,8 +350,12 @@ public class ContainerCommandLauncherFactory
 				}
 
 			} else {
-				// TODO: fix this logic in future so it can be done using a call
-				// rather than using a property of the toolchain
+				// Bug 536884 - if no include entries, check if the copied
+				// header files have been erased by the end-user in which
+				// case mark that scanner info needs refreshing (only way
+				// the headers will be recopied)
+				// TODO: fix this in a minor release to be an additional method
+				// that can be registered by the removal of the header files
 				IPath pluginPath = Platform
 						.getStateLocation(Platform
 								.getBundle(DockerLaunchUIPlugin.PLUGIN_ID))

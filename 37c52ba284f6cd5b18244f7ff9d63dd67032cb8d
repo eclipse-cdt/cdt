@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f4627386_7d814b76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T12:47:35Z",
+      "side": 1,
+      "message": "good to check, but its not the correct job you are checking. As this job was just created it can\u0027t be running.",
+      "range": {
+        "startLine": 411,
+        "startChar": 12,
+        "endLine": 411,
+        "endChar": 33
+      },
+      "revId": "37c52ba284f6cd5b18244f7ff9d63dd67032cb8d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb4f18a6_cfb5d18a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T12:47:35Z",
+      "side": 1,
+      "message": "cleanup (log or something, no going to system out/err)",
+      "revId": "37c52ba284f6cd5b18244f7ff9d63dd67032cb8d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c953371e_df3f8415",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T12:47:35Z",
+      "side": 1,
+      "message": "cleanup (log or something, no going to system out/err)",
+      "revId": "37c52ba284f6cd5b18244f7ff9d63dd67032cb8d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

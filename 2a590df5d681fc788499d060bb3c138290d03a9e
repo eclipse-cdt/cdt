@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "97610b71_8b559c9a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T10:27:11Z",
+      "side": 1,
+      "message": "This can cause all sorts of bizarre errors. You are changing the internal state of populateTreeJob while it is running.\n\nI would make fields in populateTreeJob final and then create new jobs all the time, ensuring I cancelled running jobs before losing the handle to them. Creating populateTreeJob instances is very cheap.",
+      "range": {
+        "startLine": 398,
+        "startChar": 0,
+        "endLine": 398,
+        "endChar": 52
+      },
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "080e2dca_90488436",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
         "patchSetId": 6
@@ -36,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "8fd0779b_396574cb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T10:27:11Z",
+      "side": 1,
+      "message": "The checkFileExistenceJob should be cancelled too.",
+      "parentUuid": "080e2dca_90488436",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "139ed7bc_b7f1a70a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
         "patchSetId": 6
@@ -47,6 +88,46 @@
       "writtenOn": "2018-07-12T00:16:04Z",
       "side": 1,
       "message": "I put the file checking existence in another job run at the end of the populateTreeJob.",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f50b370_b485ad52",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 633,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T10:27:11Z",
+      "side": 1,
+      "message": "As a style thing, I don\u0027t know why you have the CheckFileExistenceJob directly do the refresh, but the other job does it in a JobChangeAdapter?",
+      "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5ab956b_c89e2687",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/tree/DebugTree.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-12T10:27:11Z",
+      "side": 1,
+      "message": "Now that exists is not primitive, this should probably be:\n\n    ((exists \u003d\u003d null) ? 0 : exists.hashCode())",
+      "range": {
+        "startLine": 180,
+        "startChar": 28,
+        "endLine": 180,
+        "endChar": 67
+      },
       "revId": "2a590df5d681fc788499d060bb3c138290d03a9e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

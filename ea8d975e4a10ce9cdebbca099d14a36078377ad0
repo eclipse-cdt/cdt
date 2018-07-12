@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f2d56518_96e8b05b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-12T14:26:09Z",
+      "side": 1,
+      "message": "Moving that method to the checkFileExistenceJob as it is only used there.",
+      "revId": "ea8d975e4a10ce9cdebbca099d14a36078377ad0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a07eb9df_93896c27",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
         "patchSetId": 9

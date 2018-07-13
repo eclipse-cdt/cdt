@@ -260,6 +260,49 @@ public final class ASTRewrite {
 	}
 
 	/**
+	 * Removes the given <code>comment</code> from the <code>node</code>. If the
+	 * <code>comment</code> is not attached to the node nothing happens.
+	 *
+	 * @param node the node.
+	 * @param comment the comment to be removed from the node.
+	 * @since 6.5
+	 */
+	public void removeComment(IASTNode node, IASTComment comment) {
+		fCommentMap.removeCommentFromNode(node, comment);
+	}
+
+	/**
+	 * Removes all comments of a node at a given position.
+	 *
+	 * @param node the node.
+	 * @param pos the position of the comments to be removed from the node.
+	 * @since 6.5
+	 */
+	public void removeComments(IASTNode node, CommentPosition pos) {
+		switch (pos) {
+		case leading:
+			fCommentMap.removeLeadingCommentsFromNode(node);
+			break;
+		case trailing:
+			fCommentMap.removeTrailingCommentsFromNode(node);
+			break;
+		case freestanding:
+			fCommentMap.removeFreestandingCommentsFromNode(node);
+			break;
+		}
+	}
+
+	/**
+	 * Removes all comments of a node.
+	 * 
+	 * @param node the node.
+	 * @since 6.5
+	 */
+	public void removeAllComments(IASTNode node) {
+		fCommentMap.removeAllComments(node);
+	}
+
+	/**
 	 * Returns comments for the given node.
 	 *
 	 * @param node the node

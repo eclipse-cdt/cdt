@@ -1240,4 +1240,11 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	public void testScopedEnumReplacementRetains_Bug535256_2() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTEnumerationSpecifier.class::isInstance));
 	}
+
+	////comment before
+	//void function() {
+	//}
+	public void testCopyFunctionDefinitionWithComment_Bug537013() throws Exception {
+		compareCopyResult(new CopyReplaceVisitor(this,  ICPPASTFunctionDefinition.class::isInstance));
+	}
 }

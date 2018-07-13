@@ -385,12 +385,11 @@ public class ChangeGenerator extends ASTVisitor {
 		List<ASTModification> modifications = getModifications(node, ModificationKind.REPLACE);
 		String source = node.getTranslationUnit().getRawSignature();
 		ChangeGeneratorWriterVisitor writer = createChangeWriterForNode(node);
-		IASTFileLocation fileLocation = node.getFileLocation();
 		addToRootEdit(node);
+		int offset = commentMap.getOffsetIncludingComments(node);
+		int endOffset = commentMap.getEndOffsetIncludingComments(node);
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
 			// There is no replacement. We are deleting a piece of existing code.
-			int offset = commentMap.getOffsetIncludingComments(node);
-			int endOffset = commentMap.getEndOffsetIncludingComments(node);
 			offset = Math.max(skipPrecedingBlankLines(source, offset), processedOffset);
 			endOffset = skipTrailingBlankLines(source, endOffset);
 			IASTNode[] siblingsList = getContainingNodeList(node);
@@ -422,8 +421,6 @@ public class ChangeGenerator extends ASTVisitor {
 		} else {
 			node.accept(writer);
 			String code = writer.toString();
-			int offset = fileLocation.getNodeOffset();
-			int endOffset = offset + fileLocation.getNodeLength();
 			String lineSeparator = writer.getScribe().getLineSeparator();
 			if (code.endsWith(lineSeparator)) {
 				code = code.substring(0, code.length() - lineSeparator.length());

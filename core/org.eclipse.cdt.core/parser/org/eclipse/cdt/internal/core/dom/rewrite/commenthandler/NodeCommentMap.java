@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,5 +205,61 @@ public class NodeCommentMap {
 	 */
 	public boolean isASTCovered(IASTTranslationUnit ast) {
 		return coveredUnits.contains(ast);
+	}
+
+	/**
+	 * Removes a given <code>comment</code> from a node, regardless of its position.
+	 *
+	 * @param node The key to remove the <code>comment</code> from.
+	 * @param comment The comment is the value to be removed.
+	 */
+	public void removeCommentFromNode(IASTNode node, IASTComment comment) {
+		List<IASTComment> leadingComments = getLeadingCommentsForNode(node);
+		leadingComments.removeAll(Collections.singleton(comment));
+		List<IASTComment> trailingComments = getTrailingCommentsForNode(node);
+		trailingComments.removeAll(Collections.singleton(comment));
+		List<IASTComment> freestandingComments = getFreestandingCommentsForNode(node);
+		freestandingComments.removeAll(Collections.singleton(comment));
+	}
+
+	/**
+	 * Removes all leading comments from a node.
+	 *
+	 * @param node The key to remove the leading comments from.
+	 */
+	public void removeLeadingCommentsFromNode(IASTNode node) {
+		List<IASTComment> leadingComments = getLeadingCommentsForNode(node);
+		leadingComments.clear();
+	}
+
+	/**
+	 * Removes all trailing comments from a node.
+	 *
+	 * @param node The key to remove the trailing comments from.
+	 */
+	public void removeTrailingCommentsFromNode(IASTNode node) {
+		List<IASTComment> trailingComments = getTrailingCommentsForNode(node);
+		trailingComments.clear();
+	}
+
+	/**
+	 * Removes all freestanding comments from a node.
+	 *
+	 * @param node The key to remove the freestanding comments from.
+	 */
+	public void removeFreestandingCommentsFromNode(IASTNode node) {
+		List<IASTComment> freestandingComments = getFreestandingCommentsForNode(node);
+		freestandingComments.clear();
+	}
+
+	/**
+	 * Removes all comments from a node.
+	 *
+	 * @param node The key to remove all comments from.
+	 */
+	public void removeAllComments(IASTNode node) {
+		removeLeadingCommentsFromNode(node);
+		removeTrailingCommentsFromNode(node);
+		removeFreestandingCommentsFromNode(node);
 	}
 }

@@ -15,6 +15,10 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -38,9 +42,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.lsp4e.LSPEclipseUtils;
+import org.eclipse.swt.custom.StyledText;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -54,6 +62,9 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private SingleTokenCScanner fStringScanner;
 	private AbstractCScanner fCodeScanner;
 	private boolean fSettingPartitioner = false;
+	private CqueryLineBackgroundPainter fLineBackgroundListener = new CqueryLineBackgroundPainter();
+	private ITextViewer textViewer;
+
 	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
 			@Override
@@ -203,6 +214,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	}
 
 	protected AbstractCScanner fPreprocessorScanner;
+	public static Map<URI, CqueryLineBackgroundPainter> fileLineBackgroundPainterMap = new HashMap<>();
 	protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
@@ -218,5 +230,46 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
+	}
+
+	class TextInputListenerCPP implements ITextInputListener {
+
+		@Override
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			PresentationReconcilerCPP.this.setupDocument(newInput);
+		}
+
+		@Override
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+		}
+	}
+
+	public void setupDocument(IDocument newDocument) {
+		if (newDocument != null) {
+			StyledText textWidget = textViewer.getTextWidget();
+			URI fileUri = LSPEclipseUtils.toUri(LSPEclipseUtils.getFile(newDocument));
+			if (fileLineBackgroundPainterMap.containsKey(fileUri)) {
+				fLineBackgroundListener = fileLineBackgroundPainterMap.get(fileUri);
+			} else {
+				fLineBackgroundListener.setTextViewer(textViewer);
+				fileLineBackgroundPainterMap.put(fileUri, fLineBackgroundListener);
+			}
+			textWidget.addLineBackgroundListener(fLineBackgroundListener);
+		}
+	}
+
+	@Override
+	public void install(ITextViewer viewer) {
+		super.install(viewer);
+		this.textViewer = viewer;
+		TextInputListenerCPP textInputListener = new TextInputListenerCPP();
+		viewer.addTextInputListener(textInputListener);
+	}
+
+	@Override
+	public void uninstall() {
+		super.uninstall();
+		fileLineBackgroundPainterMap.remove(LSPEclipseUtils.toUri(LSPEclipseUtils.getFile(textViewer.getDocument())));
+		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
 	}
 }

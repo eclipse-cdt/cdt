@@ -13,6 +13,7 @@ import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssist
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
@@ -68,6 +69,15 @@ public class CompletionTestBase extends AbstractContentAssistTest {
 
 	protected void assertParameterHint(String[] expected) throws Exception {
 		assertContentAssistResults(fCursorOffset, expected, AbstractContentAssistTest.DEFAULT_FLAGS, CONTEXT);
+	}
+	
+	protected void assertCursorPositionsAfterReplacement(int[] expected) throws Exception {
+		Object[] results = invokeContentAssist(fCursorOffset, 0, true, false, true).results;
+		assertEquals(expected.length, results.length);
+		for (int i = 0; i < results.length; ++i) {
+			assertInstance(results[i], ICompletionProposal.class);
+			assertEquals(expected[i], ((ICompletionProposal) results[i]).getSelection(getDocument()).x);
+		}
 	}
 	
 	protected void assertDotReplacedWithArrow() throws Exception {

@@ -2040,4 +2040,15 @@ public class CompletionTests extends CompletionTestBase {
 	public void testNonTypeTemplateParameterCompletion_522010() throws Exception {
 		assertCompletionResults(new String[] { "TestParam" });		
 	}
+	
+	//	void find();
+	//	void waldo() {
+	//		fin/*cursor*/
+	//	}
+	public void testCursorPositionForZeroArgFunction_537031() throws Exception {
+		// Test that the cursor ends up after the closing parenthesis.
+		// The 6 below is 4 for "find" + 2 for opening AND closing parentheses.
+		int expectedPos = getDocument().get().lastIndexOf("fin") + 6;
+		assertCursorPositionsAfterReplacement(new int[] { expectedPos });
+	}
 }

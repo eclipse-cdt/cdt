@@ -38,9 +38,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.swt.custom.StyledText;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -54,6 +56,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private SingleTokenCScanner fStringScanner;
 	private AbstractCScanner fCodeScanner;
 	private boolean fSettingPartitioner = false;
+	private CqueryLineBackgroundPainter fLineBackgroundListener = new CqueryLineBackgroundPainter();
+
 	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
 			@Override
@@ -218,5 +222,13 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
+	}
+
+	@Override
+	public void install(ITextViewer viewer) {
+		super.install(viewer);
+        StyledText textWidget = viewer.getTextWidget();
+        textWidget.addLineBackgroundListener(fLineBackgroundListener);
+        fLineBackgroundListener.setTextViewer(viewer);
 	}
 }

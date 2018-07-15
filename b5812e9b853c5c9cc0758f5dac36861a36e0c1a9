@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f67fe56b_79990ffc",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundPainter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-15T07:06:32Z",
+      "side": 1,
+      "message": "The C++ editor\u0027s line background listener is called LineBackgroundPainter because it also implements IPainter.\n\nIn our case, there is no painting involved, and so I would prefer to call it CqueryLineBackgroundListener.",
+      "revId": "b5812e9b853c5c9cc0758f5dac36861a36e0c1a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a209ac3_f446dd44",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundPainter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-15T07:06:32Z",
+      "side": 1,
+      "message": "If we\u0027ve found a matching inactive region, we can break from the loop.",
+      "revId": "b5812e9b853c5c9cc0758f5dac36861a36e0c1a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51eb3b11_7b16aa4e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundPainter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-15T07:06:32Z",
+      "side": 1,
+      "message": "It\u0027s better to log errors to the workspace log file.\n\nWe generally do this by having a static log(Throwable) method in the plugin class. For example, see CUIPlugin.log(Throwable). Feel free to copy that method, and any helpers it uses, from CUIPlugin into our Activator class, and then in this catch block we can do:\n\n  Activator.log(e);",
+      "revId": "b5812e9b853c5c9cc0758f5dac36861a36e0c1a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47cf9052_0b2af460",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-15T07:06:32Z",
+      "side": 1,
+      "message": "On the one hand, I agree that it is wasteful to do processing like installing text input listeners if the language server is clangd and we don\u0027t need them.\n\nOn the other hand, if our goal is to get to a state where the user can change the choice of language server and have that take effect right away (bug 536820), then this impedes that goal (if the user switches from clangd to cquery, inactive code highlighting won\u0027t work in existing editors, only newly opened editors).\n\nWe could handle this by adding additional complexity, such as listening for the preference change and calling a method on every open editor\u0027s presentation reconciler to set up the necessary listeners.\n\nHowever, I think it\u0027s better to keep things simple, and just install the listeners unconditionally. I expect that in time clangd will also get things like inactive code highlighting, and then the client-side processing we do will no longer be wasteful.",
+      "revId": "b5812e9b853c5c9cc0758f5dac36861a36e0c1a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

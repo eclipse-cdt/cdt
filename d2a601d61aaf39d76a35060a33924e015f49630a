@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7d80832_7d284b62",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Activator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "Please mark these methods as @noreference like the CUIPlugin methods.\n\n(This triggers a compiler warning if code in another plugin calls these functions. Other plugins should use their own logging functions.)",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0f783f6_635c563b",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "Lookups in this map will be performed from the UI thread (which queries and paints the line backgrounds), while adding entries to the map will happen from another thread which listens for and processes LSP messages from the server.\n\nTo make this concurrent access safe, we should use a ConcurrentHashMap instead of a plain HashMap.\n\nSince there will only be one thread making changes to the map (the UI thread only does lookups), we should use the third constructor parameter of ConcurrentHashMap [1] to specify a concurrencyLevel of 1. (We can pass the default values for the first two parameters, which are documented here [2].)\n\n[1] https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ConcurrentHashMap.html#ConcurrentHashMap(int,%20float,%20int)\n[2] https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ConcurrentHashMap.html#ConcurrentHashMap()",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd9238ec_a6a952d9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "Let\u0027s use the same color that the C++ editor uses. This way, the user can change the color.\n\nWe can get this color using:\n\n  PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), CEditor.INACTIVE_CODE_COLOR)",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9dedb7dc_036ada69",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "currentDocument might be null if this gets called before it is set, and LSPEclipseUtils.getFile() requires that its argument is not null, so we need a null check.\n\nLikewise, LSPEclipseUtils.getFile() might return null and toUri() requires a non-null argument, so we need a null check there too.",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ef90440_868121c4",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "This check can be moved outside the try block.",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ddd4571_76b241a7",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "It is sufficient to write:\n\n  setupDocument(newInput);",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ebdbcebc_6c912d9b",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "PresentationReconciler.install() does this:\n\n  IDocument document\u003d viewer.getDocument();\n  if (document !\u003d null)\n    fInternalListener.inputDocumentChanged(null, document);\n\nsince, if there is already a document, we won\u0027t get a \"document changed\" message for the existing document.\n\nWe should probably do the same thing with our textInputListener.",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59d4fbc9_2ef44ca4",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T06:49:01Z",
+      "side": 1,
+      "message": "We should remove the textInputListener as well (which means we\u0027ll need to store it as a field).",
+      "revId": "d2a601d61aaf39d76a35060a33924e015f49630a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

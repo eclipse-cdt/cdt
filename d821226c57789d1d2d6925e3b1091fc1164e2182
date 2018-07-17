@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64abda14_5782afd3",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLineBackgroundListener.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-17T23:42:57Z",
+      "side": 1,
+      "message": "The null check for the return value of LSPEclipseUtils.getFile() is still missing.\n\nTo clarify, we need something like:\n\n  IFile file \u003d LSPEclipseUtils.getFile(currentDocument);\n  if (file \u003d\u003d null) {\n    return;\n  }\n  currentDocumentUri \u003d LSPEclipseUtils.toUri(file);",
+      "revId": "d821226c57789d1d2d6925e3b1091fc1164e2182",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

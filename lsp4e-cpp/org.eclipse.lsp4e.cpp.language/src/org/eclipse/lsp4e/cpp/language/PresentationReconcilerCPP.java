@@ -11,6 +11,8 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson) - Mostly copied from CSourceViewerConfiguration
+ *     Nathan Ridge
+ *     Manish Khurana
  *******************************************************************************/
 
 package org.eclipse.lsp4e.cpp.language;
@@ -38,9 +40,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.swt.custom.StyledText;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -54,6 +59,9 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private SingleTokenCScanner fStringScanner;
 	private AbstractCScanner fCodeScanner;
 	private boolean fSettingPartitioner = false;
+	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
+	private ITextViewer textViewer;
+	private TextInputListenerCPP textInputListener;
 	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
 			@Override
@@ -203,6 +211,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	}
 
 	protected AbstractCScanner fPreprocessorScanner;
+
 	protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
@@ -218,5 +227,44 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
+	}
+
+	class TextInputListenerCPP implements ITextInputListener {
+
+		@Override
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			setupDocument(newInput);
+		}
+
+		@Override
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+		}
+	}
+
+	public void setupDocument(IDocument newDocument) {
+		if (newDocument != null) {
+			fLineBackgroundListener.setCurrentDocument(newDocument);
+		}
+	}
+
+	@Override
+	public void install(ITextViewer viewer) {
+		super.install(viewer);
+		this.textViewer = viewer;
+		textInputListener = new TextInputListenerCPP();
+		viewer.addTextInputListener(textInputListener);
+		IDocument document= viewer.getDocument();
+		if (document != null) {
+		    textInputListener.inputDocumentChanged(null, document);
+		}
+		StyledText textWidget = textViewer.getTextWidget();
+		textWidget.addLineBackgroundListener(fLineBackgroundListener);
+	}
+
+	@Override
+	public void uninstall() {
+		super.uninstall();
+		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
+		textViewer.removeTextInputListener(textInputListener);
 	}
 }

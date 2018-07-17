@@ -467,7 +467,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
 		
 		// First the include path off the error stream
-		new Thread("Include Path Reader") {
+		Thread includePathReaderThread = new Thread("Include Path Reader") {
 			@Override
 			public void run() {
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -493,9 +493,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 					CCorePlugin.log(e);
 				}
 			}
-		}.start();
+		};
+		includePathReaderThread.start();
 		
-		new Thread("Macro reader") {
+		Thread macroReaderThread = new Thread("Macro reader") {
 			public void run() {
 				// Now the defines off the output stream
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -511,9 +512,12 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 					CCorePlugin.log(e);
 				}
 			}
-		}.start();
+		};
+		macroReaderThread.start();
 
 		try {
+			includePathReaderThread.join();
+			macroReaderThread.join();
 			process.waitFor();
 		} catch (InterruptedException e) {
 			Activator.log(e);

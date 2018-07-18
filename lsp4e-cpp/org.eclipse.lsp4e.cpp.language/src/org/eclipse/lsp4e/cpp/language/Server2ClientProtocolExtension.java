@@ -8,18 +8,23 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.net.URI;
+import java.util.List;
+
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4e.cpp.language.cquery.CqueryInactiveRegions;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
 import org.eclipse.lsp4e.cpp.language.cquery.IndexingProgressStats;
+import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
+
 
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
@@ -50,7 +55,9 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	@JsonNotification("$cquery/setInactiveRegions")
 	public final void setInactiveRegions(CqueryInactiveRegions regions) {
-		// TODO: Implement
+		URI uri = regions.getUri();
+		List<Range> inactiveRegions = regions.getInactiveRegions();
+		CqueryLineBackgroundListener.fileInactiveRegionsMap.put(uri, inactiveRegions);
 	}
 
 	@JsonNotification("$cquery/publishSemanticHighlighting")

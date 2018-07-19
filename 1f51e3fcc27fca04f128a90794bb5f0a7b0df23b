@@ -22,6 +22,30 @@
       "revId": "1f51e3fcc27fca04f128a90794bb5f0a7b0df23b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b3b9f20_647e980b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-07-19T23:30:15Z",
+      "side": 1,
+      "message": "i\u0027m using a jobmanager to retrieve the previous jobs running and cancelling them if they are of type populateTreeJob or fileCheckJob.",
+      "parentUuid": "dbba8c9b_a9eccb0c",
+      "range": {
+        "startLine": 410,
+        "startChar": 12,
+        "endLine": 410,
+        "endChar": 27
+      },
+      "revId": "1f51e3fcc27fca04f128a90794bb5f0a7b0df23b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

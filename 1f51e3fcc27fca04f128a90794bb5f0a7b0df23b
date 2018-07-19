@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dbba8c9b_a9eccb0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/debugsources/DebugSourcesView.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-19T09:50:40Z",
+      "side": 1,
+      "message": "this can\u0027t be running here. What you should be checking is the previously scheduled jobs if they are running and cancel them, for both populateTreeJob and checkFileExistenceJob",
+      "range": {
+        "startLine": 410,
+        "startChar": 12,
+        "endLine": 410,
+        "endChar": 27
+      },
+      "revId": "1f51e3fcc27fca04f128a90794bb5f0a7b0df23b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

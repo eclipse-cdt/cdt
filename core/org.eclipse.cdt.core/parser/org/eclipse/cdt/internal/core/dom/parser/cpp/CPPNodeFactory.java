@@ -775,6 +775,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(int type, IASTName name, IASTExpression defaultValue) {
+		return new CPPASTTemplatedTypeTemplateParameter(type, name, defaultValue);
+	}
+
+	@Override
 	public ICPPASTTemplateId newTemplateId(IASTName templateName) {
 		return new CPPASTTemplateId(templateName);
 	}

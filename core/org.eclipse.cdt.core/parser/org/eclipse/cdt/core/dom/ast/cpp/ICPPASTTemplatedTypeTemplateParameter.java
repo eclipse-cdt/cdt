@@ -44,9 +44,27 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 			"ICPPASTTemplateTypeTemplateParameter.DEFAULT_VALUE [IASTExpression]"); //$NON-NLS-1$
 
 	/**
+	 * <code>st_class</code> represents a class.
+	 * @since 6.6
+	 */
+	public static final int tt_class = 1;
+
+	/**
+	 * <code>st_typename</code> represents a typename.
+	 * @since 6.6
+	 */
+	public static final int tt_typename = 2;
+
+	/**
 	 * Get the nested template parameters.
 	 */
 	public ICPPASTTemplateParameter[] getTemplateParameters();
+
+	/**
+	 * Get the parameter type
+	 * @since 6.6
+	 */
+	public int getParameterType();
 
 	/**
 	 * Get the (optional) name of this template template parameter. In case there is no name an
@@ -84,6 +102,13 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 	 */
 	public void setIsParameterPack(boolean val);
 
+	/**
+	 * Set the parameter type
+	 * @param type
+	 * @since 6.6
+	 */
+	public void setParameterType(int type);
+	
 	/**
 	 * Set the name of this template template parameter.
 	 */

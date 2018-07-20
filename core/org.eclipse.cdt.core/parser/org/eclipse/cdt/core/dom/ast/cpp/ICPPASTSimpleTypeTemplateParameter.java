@@ -47,7 +47,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 
 
 	/**
-	 * Get the parameter type.
+	 * Get the type of the type parameter (either {@link #st_class} or {@link #st_typename}).
 	 */
 	public int getParameterType();
 	
@@ -62,7 +62,9 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 	public IASTTypeId getDefaultType();
 
 	/**
-	 * Set the parameter type.
+	 * Set the type of the type parameter.
+	 * 
+	 * @param value The type of the type parameter (either {@link #st_class} or {@link #st_typename})
 	 */
 	public void setParameterType(int value);
 

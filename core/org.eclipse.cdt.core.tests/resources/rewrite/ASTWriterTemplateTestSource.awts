@@ -65,3 +65,59 @@ int f()
 {
     return S<int>::template c<100>;
 }
+
+//!Type Template Parameter with class
+//%CPP
+template<class > 
+void f()
+{
+}
+
+//!Type Template Parameter with typename
+//%CPP
+template<typename > 
+void f()
+{
+}
+
+//!Variadic Type Template Parameter with class
+//%CPP
+template<class... > 
+void f()
+{
+}
+
+//!Variadic Type Template Parameter with typename
+//%CPP
+template<typename... > 
+void f()
+{
+}
+
+//!Template-template Template Parameter with class
+//%CPP
+template<template <typename > class > 
+void f()
+{
+}
+
+//!Template-template Template Parameter with typename
+//%CPP
+template<template <typename > typename > 
+void f()
+{
+}
+
+//!Variadic Template-template Template Parameter with class
+//%CPP
+template<template <typename > class... > 
+void f()
+{
+}
+
+//!Variadic Template-template Template Parameter with typename
+//%CPP
+template<template <typename > typename... > 
+void f()
+{
+}

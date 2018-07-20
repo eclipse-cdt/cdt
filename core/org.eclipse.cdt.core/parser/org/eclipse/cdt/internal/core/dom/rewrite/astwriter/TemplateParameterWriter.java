@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
@@ -28,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class TemplateParameterWriter extends NodeWriter {
-	private static final String GREATER_THAN_CLASS = "> class"; //$NON-NLS-1$
+	private static final String GREATER_THAN = ">"; //$NON-NLS-1$
 	private static final String TEMPLATE_LESS_THAN = "template <"; //$NON-NLS-1$
 
 	/**
@@ -43,7 +45,9 @@ public class TemplateParameterWriter extends NodeWriter {
 		if (parameter instanceof ICPPASTParameterDeclaration) {
 			((IASTParameterDeclaration)((ICPPASTParameterDeclaration) parameter)).accept(visitor);
 		} else if (parameter instanceof ICPPASTSimpleTypeTemplateParameter) {
-			writeSimpleTypeTemplateParameter((ICPPASTSimpleTypeTemplateParameter) parameter);
+			ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) parameter;
+			writeTemplateParameter(simple.getParameterType() == ICPPASTSimpleTypeTemplateParameter.st_class,
+			simple.isParameterPack(), simple.getName(), simple.getDefaultType());
 		} else if (parameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
 			writeTemplatedTypeTemplateParameter((ICPPASTTemplatedTypeTemplateParameter) parameter);
 		}
@@ -53,38 +57,25 @@ public class TemplateParameterWriter extends NodeWriter {
 		scribe.print(TEMPLATE_LESS_THAN);
 		ICPPASTTemplateParameter[] params = templated.getTemplateParameters();
 		writeNodeList(params);
-		
-		scribe.print(GREATER_THAN_CLASS);
-		
-		if (templated.getName()!=null){
-			scribe.printSpace();
-			templated.getName().accept(visitor);
-		}
-		
-		if (templated.getDefaultValue() != null){
-			scribe.print(EQUALS);
-			templated.getDefaultValue().accept(visitor);
-		}
+		scribe.print(GREATER_THAN);
+		scribe.printSpace();
+
+		writeTemplateParameter(templated.getParameterType() == ICPPASTTemplatedTypeTemplateParameter.tt_class,
+				templated.isParameterPack(), templated.getName(), templated.getDefaultValue());
 	}
 
-	private void writeSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter simple) {
-		switch (simple.getParameterType()) {
-		case ICPPASTSimpleTypeTemplateParameter.st_class:
-			scribe.print(Keywords.CLASS);
-			break;
-		case ICPPASTSimpleTypeTemplateParameter.st_typename:
-			scribe.print(Keywords.TYPENAME);
-			break;
-		}
-		if (simple.isParameterPack()) {
+	private void writeTemplateParameter(boolean usesClass, boolean isVariadic, IASTName name, IASTNode defaultArgument) {
+		scribe.print(usesClass ? Keywords.CLASS : Keywords.TYPENAME);
+		if (isVariadic) {
 			scribe.print(VAR_ARGS);
 		}
 		scribe.printSpace();
-		visitNodeIfNotNull(simple.getName());
-		
-		if (simple.getDefaultType() != null){
+		visitNodeIfNotNull(name);
+
+		if (defaultArgument != null){
 			scribe.print(EQUALS);
-			simple.getDefaultType().accept(visitor);
+			defaultArgument.accept(visitor);
 		}
 	}
+
 }

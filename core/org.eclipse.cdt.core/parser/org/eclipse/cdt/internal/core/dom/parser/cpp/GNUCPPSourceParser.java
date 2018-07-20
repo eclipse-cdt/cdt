@@ -2540,7 +2540,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			consume(IToken.tLT);
 			List<ICPPASTTemplateParameter> tparList = templateParameterList(new ArrayList<>());
 			consume(IToken.tGT, IToken.tGT_in_SHIFTR);
-			int endOffset = consume(IToken.t_class).getEndOffset();
+
+			int kind = LT(1);
+			if(kind != IToken.t_class && kind != IToken.t_typename) {
+				throw backtrack;
+			}
+
+			int endOffset = consume(kind).getEndOffset();
 
 			if (LT(1) == IToken.tELLIPSIS) {
 				parameterPack= true;
@@ -2564,6 +2570,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			ICPPASTTemplatedTypeTemplateParameter tpar = getNodeFactory().newTemplatedTypeTemplateParameter(identifierName, defaultValue);
 			tpar.setIsParameterPack(parameterPack);
+			tpar.setParameterType(kind == IToken.t_class ? ICPPASTTemplatedTypeTemplateParameter.tt_class : ICPPASTTemplatedTypeTemplateParameter.tt_typename);
 			setRange(tpar, start.getOffset(), endOffset);
 
 			for (int i = 0; i < tparList.size(); ++i) {

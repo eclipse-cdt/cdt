@@ -30,6 +30,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 
     private ICPPASTTemplateParameter [] fNestedParameters = null;
     private boolean fIsParameterPack;
+    private boolean fUsesKeywordClass;
     private IASTName fName;
     private IASTExpression fDefaultValue;
 	private CPPTemplateTemplateParameterScope fScope;
@@ -38,6 +39,11 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 	}
 
 	public CPPASTTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
+		this(tt_class, name, defaultValue);
+	}
+
+	public CPPASTTemplatedTypeTemplateParameter(int type, IASTName name, IASTExpression defaultValue) {
+		fUsesKeywordClass = type == tt_class;
 		setName(name);
 		setDefaultValue(defaultValue);
 	}
@@ -52,6 +58,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		CPPASTTemplatedTypeTemplateParameter copy = new CPPASTTemplatedTypeTemplateParameter();
 		copy.setName(fName == null ? null : fName.copy(style));
 		copy.setDefaultValue(fDefaultValue == null ? null : fDefaultValue.copy(style));
+		copy.fUsesKeywordClass = fUsesKeywordClass;
 		copy.fIsParameterPack = fIsParameterPack;
 		for (ICPPASTTemplateParameter param : getTemplateParameters())
 			copy.addTemplateParameter(param == null ? null : param.copy(style));
@@ -93,6 +100,17 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 	@Override
 	public boolean isParameterPack() {
 		return fIsParameterPack;
+	}
+
+	@Override
+	public int getParameterType() {
+		return fUsesKeywordClass ? tt_class : tt_typename;
+	}
+
+	@Override
+	public void setParameterType(int type) {
+		assertNotFrozen();
+		fUsesKeywordClass = type == tt_class;
 	}
 
 	@Override

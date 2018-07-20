@@ -209,6 +209,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		 * @param rc - resource to check markers.
 		 */
 		public void deleteMarkers(IResource rc) {
+			if (!rc.isAccessible()) {
+				return; // resource might be read-only or project might be closed
+			}
 			String providerId = getId();
 			try {
 				IMarker[] markers = rc.findMarkers(SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);

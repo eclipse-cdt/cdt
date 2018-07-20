@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "775d309e_5539c8e7",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-07-20T17:18:55Z",
+      "side": 1,
+      "message": "You mean the whole Enum classes tests or just the lines under the comment?",
+      "parentUuid": "e8c6e1fe_9a9d3db1",
+      "revId": "317a7cadb5097969457f6504d4ff365e7cdc8c1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dec61dfe_3857e52c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
         "patchSetId": 6
@@ -47,6 +65,24 @@
       "writtenOn": "2018-06-28T06:44:17Z",
       "side": 1,
       "message": "We can simplify this a bit further: if we remove the \"instanceof IEnumeration\" condition from here, we can just call this function heuristicallyResolve().\n\nThe call sites in EnumHighlighting and EnumClassHighlighting already check for IEnumeration, so they are fine as is.\n\nFor the call site in ClassHighlighting, we\u0027ll want to keep the original structure, and replace the original heuristicallyResolvesToEnumeration() call with \"heuristicallyResolves() instanceof IEnumeration\". (The reason is that a type can still be dependent after heuristic resolution. In such cases, Class is the fallback highlighting.)\n\nWe can also get rid of heuristicallyResolvesToEnumerator(), and replace its call sites with \"heuristicallyResolve() instanceof IEnumerator\".",
+      "revId": "317a7cadb5097969457f6504d4ff365e7cdc8c1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9ecf829_114fa2fe",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1901,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-07-20T17:18:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dec61dfe_3857e52c",
       "revId": "317a7cadb5097969457f6504d4ff365e7cdc8c1e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5e075c1d_361f50d8",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-23T00:14:47Z",
+      "side": 1,
+      "message": "Just the newly added lines please.",
+      "parentUuid": "775d309e_5539c8e7",
+      "revId": "317a7cadb5097969457f6504d4ff365e7cdc8c1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dec61dfe_3857e52c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightings.java",
         "patchSetId": 6

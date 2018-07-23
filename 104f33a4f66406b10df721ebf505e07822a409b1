@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5be509e_dd8018c0",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/TemplateTemplateTypenameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-23T01:20:19Z",
+      "side": 1,
+      "message": "Are you Vlad Ivanov? :)",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9544129_a66a103f",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/ASTWriterTemplateTestSource.awts",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-23T01:20:19Z",
+      "side": 1,
+      "message": "Do these tests pass if there is no space after the \u0027class\u0027 or \u0027typename\u0027?",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab51efee_37a7942a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplatedTypeTemplateParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-23T01:20:19Z",
+      "side": 1,
+      "message": "I prefer using an enum over integer constants in new code, but in this case I understand the desire for consistency with ICPPASTSimpleTypeTemplateParameter.",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e391294_f93d0889",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplatedTypeTemplateParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-23T01:20:19Z",
+      "side": 1,
+      "message": "Perhaps we can clarify that this is one of \u0027tt_class\u0027 or \u0027tt_typename\u0027? \"Parameter type\" sounds fairly generic, especially with the result being of type int.\n\n(Feel free to make a similar addition to the comment in ICPPASTSimpleTypeTemplateParameter.)",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

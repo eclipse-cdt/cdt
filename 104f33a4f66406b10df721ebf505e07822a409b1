@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "22b7852b_b1c51c49",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/TemplateTemplateTypenameTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2018-07-23T05:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5be509e_dd8018c0",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9544129_a66a103f",
         "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/ASTWriterTemplateTestSource.awts",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-07-23T01:20:19Z",
       "side": 1,
       "message": "Do these tests pass if there is no space after the \u0027class\u0027 or \u0027typename\u0027?",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a2a89_a07c45e5",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/ASTWriterTemplateTestSource.awts",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2018-07-23T05:41:15Z",
+      "side": 1,
+      "message": "No, because this is how the ASTWriter writes them. We could either change the way the ASTWriter writes the nodes, or maybe pass the output through the formatter. Alternatively, we could \u0027normalize\u0027 the whitespace in the test class, but I am unsure of whether there are tests that rely on whitespace for a reason. The worst thing is that we even \u0027need\u0027 the whitespace after the closing angle bracket, because the writer is built to write it that way.",
+      "parentUuid": "d9544129_a66a103f",
       "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "348a8fdb_6d014c19",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplatedTypeTemplateParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2018-07-23T05:41:15Z",
+      "side": 1,
+      "message": "I would have also preferred that, but chose to do it that way for exactly the consistency you mentioned. I even thought about how we could reuse the existing defintions (e.g. by extracting them) but that would probably break API. What I am unsure about is if my interpretation of the st_* prefix, in the ICPPASTSimpleTypeTemplateParameter, as meaning \"simple type\" was correct.",
+      "parentUuid": "ab51efee_37a7942a",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e391294_f93d0889",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplatedTypeTemplateParameter.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2018-07-23T01:20:19Z",
       "side": 1,
       "message": "Perhaps we can clarify that this is one of \u0027tt_class\u0027 or \u0027tt_typename\u0027? \"Parameter type\" sounds fairly generic, especially with the result being of type int.\n\n(Feel free to make a similar addition to the comment in ICPPASTSimpleTypeTemplateParameter.)",
+      "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6f14f45_21054e43",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplatedTypeTemplateParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2018-07-23T05:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e391294_f93d0889",
       "revId": "104f33a4f66406b10df721ebf505e07822a409b1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

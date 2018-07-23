@@ -14,12 +14,12 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.1.0</tycho-version>
-		<tycho-extras-version>1.1.0</tycho-extras-version>
+		<tycho-version>1.2.0</tycho-version>
+		<tycho-extras-version>1.2.0</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.8</help-docs-eclipserun-repo>
 	</properties>
 
 	<licenses>
@@ -39,7 +39,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.8/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,12 +49,12 @@
 		</repository>
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.4/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.5/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>remote</id>
-			<url>http://download.eclipse.org/tools/ptp/builds/remote/oxygen/milestones/</url>
+			<url>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

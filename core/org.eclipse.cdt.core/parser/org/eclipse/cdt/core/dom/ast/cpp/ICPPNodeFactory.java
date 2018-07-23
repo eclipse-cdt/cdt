@@ -166,7 +166,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
 
 	/**
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(ScopeStyle scopeStyle, IASTName name, ICPPASTDeclSpecifier baseType);
 

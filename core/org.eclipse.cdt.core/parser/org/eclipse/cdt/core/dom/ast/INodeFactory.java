@@ -123,7 +123,7 @@ public interface INodeFactory {
 	public IGCCASTAttributeList newGCCAttributeList();
 
 	/**
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public IMSASTDeclspecList newMSDeclspecList();
 

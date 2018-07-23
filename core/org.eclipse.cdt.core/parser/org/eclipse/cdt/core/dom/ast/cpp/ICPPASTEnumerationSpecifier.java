@@ -25,7 +25,7 @@ public interface ICPPASTEnumerationSpecifier extends IASTEnumerationSpecifier, I
 			"ICPPASTEnumerationSpecifier.BASE_TYPE [ICPPASTDeclSpecifier]"); //$NON-NLS-1$
 
 	/**
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public enum ScopeStyle {
 		CLASS,
@@ -52,12 +52,12 @@ public interface ICPPASTEnumerationSpecifier extends IASTEnumerationSpecifier, I
 
 	/**
 	 * Not allowed on frozen AST.
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public void setScopeStyle(ScopeStyle scopeStyle);
 
 	/**
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public ScopeStyle getScopeStyle();
 

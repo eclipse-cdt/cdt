@@ -265,7 +265,7 @@ public final class ASTRewrite {
 	 *
 	 * @param node the node.
 	 * @param comment the comment to be removed from the node.
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public void removeComment(IASTNode node, IASTComment comment) {
 		fCommentMap.removeCommentFromNode(node, comment);
@@ -276,7 +276,7 @@ public final class ASTRewrite {
 	 *
 	 * @param node the node.
 	 * @param pos the position of the comments to be removed from the node.
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public void removeComments(IASTNode node, CommentPosition pos) {
 		switch (pos) {
@@ -296,7 +296,7 @@ public final class ASTRewrite {
 	 * Removes all comments of a node.
 	 * 
 	 * @param node the node.
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	public void removeAllComments(IASTNode node) {
 		fCommentMap.removeAllComments(node);

@@ -39,62 +39,6 @@
       </presentationReconciler>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            id="org.eclipse.lsp4e.cpp.language.commands.reindex"
-            name="%reindex.command.name">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eclipse.lsp4e.cpp.language.ReindexHandler"
-            commandId="org.eclipse.lsp4e.cpp.language.commands.reindex">
-         <activeWhen>
-               <with
-                     variable="selection">
-                           <count
-                                 value="1">
-                           </count>
-                           <iterate
-                                 ifEmpty="false"
-                                 operator="and">
-                              <test
-                                    forcePluginActivation="true"
-                                    property="org.eclipse.lsp4e.cpp.language.hasServer"
-                                    value="org.eclipse.lsp4e.languages.cpp">
-                              </test>
-                           </iterate>
-               </with>
-         </activeWhen>
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="org.eclipse.lsp4e.cpp.language.commands.reindex"
-               label="%reindex.command.label"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.lsp4e.cpp.language.LanguageServerPropertyTester"
-            id="org.eclipse.lsp4e.cpp.language.propertyTester"
-            namespace="org.eclipse.lsp4e.cpp.language"
-            properties="hasServer"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.eclipse.lsp4e.cpp.language.CPPLanguageServerPreferencePage"

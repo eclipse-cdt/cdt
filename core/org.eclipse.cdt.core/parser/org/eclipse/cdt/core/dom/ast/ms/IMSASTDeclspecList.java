@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
 /**
  * Represents a Microsoft attribute specifier, introduced by __declspec.
  *
- * @since 6.5
+ * @since 6.6
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -11,4 +11,8 @@
 
 	<artifactId>repo</artifactId>
 	<packaging>eclipse-repository</packaging>
+
+	<build>
+		<finalName>org.eclipse.launchbar.repo</finalName>
+	</build>
 </project>

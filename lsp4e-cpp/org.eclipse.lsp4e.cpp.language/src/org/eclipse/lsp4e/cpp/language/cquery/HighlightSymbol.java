@@ -8,17 +8,36 @@
 
 package org.eclipse.lsp4e.cpp.language.cquery;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.SymbolKind;
 
+@SuppressWarnings("restriction")
 public class HighlightSymbol {
 	private int stableId;
 	private ExtendedSymbolKindType parentKind;
 	private ExtendedSymbolKindType kind;
 	private StorageClass storage;
 	private List<Range> ranges;
-
+	public static Map<Integer, String> semanticHighlightSymbolsMap = new HashMap<Integer, String>() {{
+		put(SymbolKind.Namespace.getValue(), SemanticHighlightings.NAMESPACE);
+		put(SymbolKind.Class.getValue(), SemanticHighlightings.CLASS);
+		put(SymbolKind.Method.getValue(), SemanticHighlightings.METHOD);
+		put(SymbolKind.Constructor.getValue(), SemanticHighlightings.METHOD);
+		put(SymbolKind.Enum.getValue(), SemanticHighlightings.ENUM);
+		put(SymbolKind.Function.getValue(), SemanticHighlightings.FUNCTION);
+		put(SymbolKind.Struct.getValue(), SemanticHighlightings.CLASS);
+		put(SymbolKind.TypeParameter.getValue(), SemanticHighlightings.TEMPLATE_PARAMETER);
+		put(CquerySymbolKind.TypeAlias.getValue(), SemanticHighlightings.TYPEDEF);
+		put(CquerySymbolKind.Parameter.getValue(), SemanticHighlightings.PARAMETER_VARIABLE);
+		put(CquerySymbolKind.StaticMethod.getValue(), SemanticHighlightings.STATIC_METHOD_INVOCATION);
+		put(CquerySymbolKind.Macro.getValue(), SemanticHighlightings.MACRO_DEFINITION);
+	}
+	};
 	public HighlightSymbol(int stableId, ExtendedSymbolKindType parentKind, ExtendedSymbolKindType kind,
 			StorageClass storage, List<Range> ranges) {
 		this.stableId = stableId;

@@ -17,6 +17,10 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -30,14 +34,18 @@ import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
@@ -45,7 +53,14 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.lsp4e.LSPEclipseUtils;
+import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
+import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
+import org.eclipse.lsp4j.Range;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -166,6 +181,44 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			fSettingPartitioner = false;
 		}
 		TextPresentation createPresentation = super.createPresentation(damage, document);
+
+		IDocument doc = textViewer.getDocument();
+		File file = (File) LSPEclipseUtils.getFile(doc);
+		if (file != null) {
+			URI uri = LSPEclipseUtils.toUri(file);
+			if (uri != null) {
+				List<StyleRange> styleRanges = new ArrayList<>();
+				List<HighlightSymbol> symbols = CquerySemanticHighlights.semanticHighlightingsMap.get(uri);
+				StyleRange[] styleRangesArray;
+				if (symbols != null) {
+					for (HighlightSymbol symbol : symbols) {
+						String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ HighlightSymbol.semanticHighlightSymbolsMap.get(symbol.getKind().getValue())
+								+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+						List<Range> ranges = symbol.getRanges();
+						Color color = new Color(Display.getCurrent(),
+								PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
+						for (Range range : ranges) {
+							int offset = 0, length = 0;
+							try {
+								offset = doc.getLineOffset(range.getStart().getLine())
+										+ range.getStart().getCharacter();
+								length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter()
+										- offset;
+							} catch (BadLocationException e) {
+								Activator.log(e);
+							}
+							StyleRange styleRange = new StyleRange(offset, length, color, null);
+							styleRanges.add(styleRange);
+						}
+					}
+					//			styleRanges.sort((a, b) -> { return a.start - b.start; });
+					styleRangesArray = new StyleRange[styleRanges.size()];
+					styleRangesArray = styleRanges.toArray(styleRangesArray);
+					createPresentation.mergeStyleRanges(styleRangesArray);
+				}
+			}
+		}
 		return createPresentation;
 	}
 
@@ -229,7 +282,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		return fPreprocessorScanner;
 	}
 
-	class TextInputListenerCPP implements ITextInputListener {
+	public class TextInputListenerCPP implements ITextInputListener {
 
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
@@ -267,4 +320,5 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
 		textViewer.removeTextInputListener(textInputListener);
 	}
+
 }

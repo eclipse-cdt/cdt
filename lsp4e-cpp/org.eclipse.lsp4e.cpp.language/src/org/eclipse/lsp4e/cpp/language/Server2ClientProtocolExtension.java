@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
-
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
@@ -63,5 +62,6 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 	@JsonNotification("$cquery/publishSemanticHighlighting")
 	public final void semanticHighlights(CquerySemanticHighlights highlights) {
 		// TODO: Implement
+		CquerySemanticHighlights.semanticHighlightingsMap.put(highlights.getUri(), highlights.getSymbols());
 	}
 }

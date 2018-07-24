@@ -82,5 +82,9 @@
        <universalResolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixSuppressProblem">
        </universalResolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateLocalVariable"
+             messagePattern="%GCCNotDeclaredInThisScope.errormsg">
+       </resolution>
     </extension>
 </plugin>

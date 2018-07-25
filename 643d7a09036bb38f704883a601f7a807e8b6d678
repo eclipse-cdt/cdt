@@ -1,0 +1,186 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f4d1b9cb_3b377590",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/callhierarchy/extension/CHExtensionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "I can\u0027t see what having the java file in here is doing. It does not appear to be referenced?",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cad1e5e7_ecdb85aa",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/callhierarchy/extension/CHLabelProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "remove TODO blocks",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "029b295d_05667feb",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/callhierarchy/extension/CHOpenListener.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "Redundant null check. if selection is null, then selection is not an instanceof anything.",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f0e3c12_26ad2df0",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/callhierarchy/extension/CHOpenListener.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "Redundant null check.",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bccc3871_9c4057d0",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/callhierarchy/extension/CHOpenListener.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "?\n\nThis is just in the tests, so I assume that is why it is empty.",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ebbc01c_b16628f2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHEProviderSettings.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "I don\u0027t really like or understand the purpose of this. Is this to avoid use of synchronizing the get* methods?",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c7f1969_7df51227",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "fProviders is assigned within getContentProviders and here too.",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf44a08c_3cd50b36",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 914,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "not a list :-)",
+      "range": {
+        "startLine": 914,
+        "startChar": 21,
+        "endLine": 914,
+        "endChar": 25
+      },
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b4bc9d6_642e6d8f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 924,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "not a list :-)",
+      "range": {
+        "startLine": 924,
+        "startChar": 21,
+        "endLine": 924,
+        "endChar": 25
+      },
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23f76a8f_bc9f1cb0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 927,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-07-25T14:24:53Z",
+      "side": 1,
+      "message": "either make this a get method that returns the result, or have it be a \"load\" method. Having it do both is unexpected (same for above method)",
+      "revId": "643d7a09036bb38f704883a601f7a807e8b6d678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -58,7 +58,6 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private CCommentScanner fMultilineCommentScanner;
 	private SingleTokenCScanner fStringScanner;
 	private AbstractCScanner fCodeScanner;
-	private boolean fSettingPartitioner = false;
 	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
 	private ITextViewer textViewer;
 	private TextInputListenerCPP textInputListener;
@@ -155,16 +154,6 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 
 	@Override
 	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
-		if (fSettingPartitioner) {
-			return null;
-		}
-		//FIXME: Need a better place to set the partitioner
-		if (!(document.getDocumentPartitioner() instanceof FastCPartitioner)) {
-			// Prevent infinite recursion
-			fSettingPartitioner = true;
-			CUIPlugin.getDefault().getTextTools().setupCDocument(document);
-			fSettingPartitioner = false;
-		}
 		TextPresentation createPresentation = super.createPresentation(damage, document);
 		return createPresentation;
 	}

@@ -25,6 +25,15 @@
       </contentTypeMapping>
    </extension>
    <extension
+         id="org.eclipse.lsp4e.cpp.language.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.lsp4e.languages.cpp">
+      </participant>
+   </extension>
+   <extension
          point="org.eclipse.ui.editors">
       <editorContentTypeBinding
             contentTypeId="org.eclipse.lsp4e.languages.cpp"

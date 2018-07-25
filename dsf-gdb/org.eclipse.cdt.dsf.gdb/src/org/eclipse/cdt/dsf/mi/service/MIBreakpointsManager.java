@@ -1366,7 +1366,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                     			// from the MIBreakpointsSynchronizer (through the gdb console).  In that case the
                                     			// platform bp gets created, and the targetFilter gets set by MIBreakpointsSynchronizer
                                     			// before the call to breakpointAdded() is made and we get to here.
-                                    			// Bug 433339
+                                    			// Bug 433329
                                     			filterExtension.setTargetFilter(containerDmc);
                                     		}
 										}
@@ -1678,7 +1678,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     			// erase the content of that previous entry.
     			// This could theoretically happen if the targetFilter is set by
     			// someone else, before this method is called.
-    			// Bug 433339
+    			// Bug 433329
     			filterExt.setTargetFilter(containerDmc);
     		}
 

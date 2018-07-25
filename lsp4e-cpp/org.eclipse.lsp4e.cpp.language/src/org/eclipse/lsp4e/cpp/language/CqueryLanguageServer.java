@@ -9,8 +9,12 @@
 package org.eclipse.lsp4e.cpp.language;
 
 import java.net.URI;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
 import com.google.gson.JsonObject;
 
 public class CqueryLanguageServer implements ICPPLanguageServer {
@@ -21,6 +25,10 @@ public class CqueryLanguageServer implements ICPPLanguageServer {
 		IPath cacheDirectory = Path.fromOSString(rootPath.getPath()).append(".lsp4e-cpp/cquery_index"); //$NON-NLS-1$
 		JsonObject result = (defaultInitOptions instanceof JsonObject) ? (JsonObject) defaultInitOptions : new JsonObject();
 		result.addProperty("cacheDirectory", cacheDirectory.toString()); //$NON-NLS-1$
+		result.addProperty("emitInactiveRegions", CUIPlugin.getDefault().getPreferenceStore().getBoolean(CEditor.INACTIVE_CODE_ENABLE)); //$NON-NLS-1$
+		JsonObject semanticHighlights = new JsonObject();
+		semanticHighlights.addProperty("enabled", CUIPlugin.getDefault().getPreferenceStore().getBoolean(org.eclipse.cdt.ui.PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)); //$NON-NLS-1$
+		result.add("highlight", semanticHighlights); //$NON-NLS-1$
 		return result;
 	}
 

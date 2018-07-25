@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a06cfada_c7530d4c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-25T15:22:46Z",
+      "side": 1,
+      "message": "Not specific to this bug, but see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d511229#c3 for a question about putting these strings into bundle.properties.",
+      "revId": "a848a422ca57f3a33b583cf19b2b9c2576f62963",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "397bd326_285ed69b",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-26T03:19:41Z",
+      "side": 1,
+      "message": "We should use the other style properties (bold, italic, strikethrough, underline) as well, not just color.",
+      "revId": "a61b611c04633b2d1dacbbb8b8bde41d3d48a7df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

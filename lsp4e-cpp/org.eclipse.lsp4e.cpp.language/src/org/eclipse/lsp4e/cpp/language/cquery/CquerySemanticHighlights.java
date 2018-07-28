@@ -10,10 +10,13 @@ package org.eclipse.lsp4e.cpp.language.cquery;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CquerySemanticHighlights {
 	private URI uri;
 	private List<HighlightSymbol> symbols;
+	public static ConcurrentMap<URI,List<HighlightSymbol>> semanticHighlightingsMap = new ConcurrentHashMap<>(16, 0.75f, 1);
 
 	public URI getUri() {
 		return uri;

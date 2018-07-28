@@ -10,9 +10,15 @@ package org.eclipse.lsp4e.cpp.language;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4e.cpp.language.cquery.CqueryInactiveRegions;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
@@ -25,9 +31,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
-
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
+
+	public static ConcurrentMap<URI, PresentationReconcilerCPP> uriToPresentationReconcilerMapping = new ConcurrentHashMap<>(16, 0.75f, 2);
 
 	@JsonNotification("$cquery/progress")
 	public final void indexingProgress(IndexingProgressStats stats) {
@@ -62,6 +69,32 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	@JsonNotification("$cquery/publishSemanticHighlighting")
 	public final void semanticHighlights(CquerySemanticHighlights highlights) {
-		// TODO: Implement
+		URI uriReceived = highlights.getUri();
+		CquerySemanticHighlights.semanticHighlightingsMap.put(uriReceived, highlights.getSymbols());
+		ConcurrentMap<URI, PresentationReconcilerCPP> uriToRecMapping = Server2ClientProtocolExtension.uriToPresentationReconcilerMapping;
+
+		if (uriToRecMapping.get(uriReceived) != null) {
+
+			// Get presentation reconciler for the received uri
+			PresentationReconcilerCPP p = uriToRecMapping.get(uriReceived);
+
+			IDocument document = p.getTextViewer().getDocument();
+			URI uriCurrentlyAttachedToPresentationReconciler = LSPEclipseUtils.toUri(LSPEclipseUtils.getFile(document));
+
+			if (!uriReceived.equals(uriCurrentlyAttachedToPresentationReconciler)) {
+				uriToRecMapping.remove(highlights.getUri());
+				return;
+			}
+
+			// Call createPresentation for that presentation reconciler
+			// with damage as whole document region
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					TextPresentation textPresentation = p.createPresentation(new Region(0, document.getLength()), document);
+					p.getTextViewer().changeTextPresentation(textPresentation, false);
+				}
+			});
+		}
 	}
 }

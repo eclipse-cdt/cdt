@@ -17,9 +17,14 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.text.CCodeScanner;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
@@ -30,14 +35,19 @@ import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
@@ -45,7 +55,17 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.lsp4e.LSPEclipseUtils;
+import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
+import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
+import org.eclipse.lsp4e.cpp.language.cquery.StorageClass;
+import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.SymbolKind;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -166,6 +186,94 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			fSettingPartitioner = false;
 		}
 		TextPresentation createPresentation = super.createPresentation(damage, document);
+
+		IDocument doc = textViewer.getDocument();
+		File file = (File) LSPEclipseUtils.getFile(doc);
+
+		if (file != null) {
+			URI uri = LSPEclipseUtils.toUri(file);
+
+			if (uri != null) {
+				Server2ClientProtocolExtension.uriToPresentationReconcilerMapping.put(uri, this);
+				StyleRange[] styleRangesArray;
+
+				IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+
+				List<StyleRange> styleRanges = new ArrayList<>();
+				List<HighlightSymbol> symbols = CquerySemanticHighlights.semanticHighlightingsMap.get(uri);
+
+				if (symbols != null) {
+
+					for (HighlightSymbol symbol : symbols) {
+						String symbolName = HighlightSymbol.semanticHighlightSymbolsMap.get(symbol.getKind().getValue());
+						if (symbolName == null) {
+							if (symbol.getKind().getValue() == SymbolKind.Variable.getValue()) {
+								if (symbol.getParentKind().getValue() == SymbolKind.Function.getValue()
+										|| symbol.getParentKind().getValue() == SymbolKind.Method.getValue()
+										|| symbol.getParentKind().getValue() == SymbolKind.Constructor.getValue()) {
+
+									symbolName = SemanticHighlightings.LOCAL_VARIABLE;
+								} else {
+									symbolName = SemanticHighlightings.GLOBAL_VARIABLE;
+							}
+							} else if (symbol.getKind().getValue() == SymbolKind.Field.getValue()) {
+								if (symbol.getStorage() == StorageClass.Static) {
+									symbolName = SemanticHighlightings.STATIC_FIELD;
+								} else {
+								symbolName = SemanticHighlightings.FIELD;
+								}
+							}
+						}
+
+						String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + symbolName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+
+						boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + symbolName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
+						boolean isItalic = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + symbolName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
+						boolean isUnderline = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + symbolName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
+						boolean isStrikethrough = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + symbolName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
+
+						Color color = new Color(Display.getCurrent(), PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
+
+						int damageStartOffset = damage.getOffset();
+						int damageEndOffset = damageStartOffset + damage.getLength();
+
+						List<Range> ranges = symbol.getRanges();
+						for (Range range : ranges) {
+							int offset = 0, length = 0;
+							try {
+								offset = doc.getLineOffset(range.getStart().getLine()) + range.getStart().getCharacter();
+								length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter() - offset;
+							} catch (BadLocationException e) {
+								Activator.log(e);
+							}
+							if ((offset + length) >= damageStartOffset && offset < damageEndOffset) {
+
+								StyleRange styleRange = new StyleRange(offset, length, color, null);
+
+								if(isBold) {
+									styleRange.fontStyle = SWT.BOLD;
+								}
+								if(isItalic) {
+									styleRange.fontStyle = SWT.ITALIC;
+								}
+								if(isUnderline) {
+									styleRange.underline = true;
+								}
+								if(isStrikethrough) {
+									styleRange.strikeout = true;
+								}
+
+								styleRanges.add(styleRange);
+							}
+						}
+					}
+
+					styleRangesArray = new StyleRange[styleRanges.size()];
+					styleRangesArray = styleRanges.toArray(styleRangesArray);
+					createPresentation.mergeStyleRanges(styleRangesArray);
+				}
+			}
+		}
 		return createPresentation;
 	}
 
@@ -229,7 +337,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		return fPreprocessorScanner;
 	}
 
-	class TextInputListenerCPP implements ITextInputListener {
+	public class TextInputListenerCPP implements ITextInputListener {
 
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
@@ -261,10 +369,16 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
 	}
 
+	public ITextViewer getTextViewer() {
+		return textViewer;
+	}
+
 	@Override
 	public void uninstall() {
 		super.uninstall();
 		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
 		textViewer.removeTextInputListener(textInputListener);
+		Server2ClientProtocolExtension.uriToPresentationReconcilerMapping.remove(LSPEclipseUtils.toUri(LSPEclipseUtils.getFile(textViewer.getDocument())));
 	}
+
 }

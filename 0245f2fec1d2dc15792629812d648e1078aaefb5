@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7776f03b_88f9563e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-29T06:38:31Z",
+      "side": 1,
+      "message": "This should be:\n\n  styleRange.fontStyle |\u003d SWT.ITALIC;\n\nsince the user can choose both bold and italic at the same time.",
+      "revId": "0245f2fec1d2dc15792629812d648e1078aaefb5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5391a7ed_03ce7886",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-29T06:38:31Z",
+      "side": 1,
+      "message": "As I mentioned during chat, maintaining a map like this is tricky.\n\nI can think of two issues with the approach in this patch:\n\n  - Since the same document can be open in multiple editors,\n    and we make a call to put() the mapping in every call to\n    createPresentation(), the two presentation reconcilers\n    can \"fight\" over which one gets the mapping for the\n    document\u0027s URI, and keep replacing each other\u0027s mappings.\n\n  - If the document open in a particular editor changes to\n    a different document, but the editor remains open (so\n    we don\u0027t remove the mapping in uninstall()) and we \n    don\u0027t get any further highlighting messages for the old\n    document (so we don\u0027t remove the mapping in the message\n    handler either), we can leak a mapping.\n\nMy suggestion would be to just keep a list (not map) of active presentation reconcilers, and iterate through the list to find the right one(s) when the message arrives. I realize this means performing an operation that\u0027s linear time in the number of open editors, but since the number of open editors is usually \u003c 100, that doesn\u0027t seem so bad. Note that multiple reconcilers in the list may match the URI (if the document is open in multiple editors), and in that case we want to update the presentation of each one. (Visually, you can think of having two Eclipse windows open with the same file in each one. When the server sends the highlighting ranges, we want the colors to update in both windows.)",
+      "revId": "0245f2fec1d2dc15792629812d648e1078aaefb5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

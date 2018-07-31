@@ -92,7 +92,7 @@ public class CMakePropertyPage extends PropertyPage {
 				((ICBuildCommandLauncher)launcher).setBuildConfiguration(cconfig);
 			}
 			IPath buildPath = project.getLocation().append("build").append(((CBuildConfiguration)cconfig).getName());
-			Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", "cmake -LAH ."}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Process p = launcher.execute(new Path("sh"), new String[] { "-c", "cmake -LAH ."}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					new String[0], buildPath, new NullProgressMonitor());
 			if (p != null) {
 				ByteArrayOutputStream stdout = new ByteArrayOutputStream();
@@ -170,7 +170,7 @@ public class CMakePropertyPage extends PropertyPage {
 				b.append(" "); //$NON-NLS-1$
 			}
 			b.append(".");
-			Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", b.toString() }, new String[0], buildDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
+			Process p = launcher.execute(new Path("sh"), new String[] { "-c", b.toString() }, new String[0], buildDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
 			int rc = -1;
 			IConsole console = CCorePlugin.getDefault().getConsole();
 			console.start(project);

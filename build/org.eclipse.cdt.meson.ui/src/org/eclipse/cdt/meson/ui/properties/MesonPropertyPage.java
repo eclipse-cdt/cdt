@@ -90,7 +90,7 @@ public class MesonPropertyPage extends PropertyPage {
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
 				}
-				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", "meson configure " + buildDir}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Process p = launcher.execute(new Path("sh"), new String[] { "-c", "meson configure " + buildDir}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						new String[0], sourceDir, new NullProgressMonitor());
 				if (p != null) {
 					ByteArrayOutputStream stdout = new ByteArrayOutputStream();
@@ -114,7 +114,7 @@ public class MesonPropertyPage extends PropertyPage {
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
 				}
-				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", "meson -h"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Process p = launcher.execute(new Path("sh"), new String[] { "-c", "meson -h"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						new String[0], sourceDir, new NullProgressMonitor());
 				if (p == null) {
 					return null;
@@ -265,7 +265,7 @@ public class MesonPropertyPage extends PropertyPage {
 					b.append(" "); //$NON-NLS-1$
 				}
 				b.append(buildDir);
-				Process p = launcher.execute(new Path("/bin/sh"), new String[] { "-c", b.toString() }, new String[0], sourceDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
+				Process p = launcher.execute(new Path("sh"), new String[] { "-c", b.toString() }, new String[0], sourceDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
 				int rc = -1;
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(project);

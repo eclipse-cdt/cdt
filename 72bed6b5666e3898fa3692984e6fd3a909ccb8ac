@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d59366b8_27353641",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "This variable can be of type IFile (and then the cast is unnecessary).",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b8bb1e3_83f830d6",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "I find it more readable to use early returns instead of having several levels of nesting for null / error conditions.\n\n(With many levels of indentation, the screen has a lot of blank space and you have to scroll to the right to see the code.)\n\nWe can move this code (for adding semantic highlighting ranges to a TextPresentation) into its own function, to make it easier to use early returns.",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7bd2c9fe_9b4be45e",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "Please declare this inside the (outer) loop, on the same line where it\u0027s initialized.",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eeb52ef4_ab35ccbe",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "Thinking about this some more, now that we are looping over all presentation reconcilers when a message arrives, we can get rid of CquerySemanticHighlights.semanticHighlightingsMap.\n\nInstead, we can:\n\n- Have PresentationReconcilerCPP store a field of type List\u003cHighlightSymbol\u003e, say it\u0027s called \"semanticHighlights\"\n- The loop over matchingReconcilers can call setSemanticHighlights() on each matching reconciler to update this field\n- createPresentation() can just use the current value of semanticHighlights",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "209abf40_c9f724c6",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "Please factor this logic out into a function like:\n\n  String getSymbolName(\n    ExtendedSymbolKindType kind,\n    ExtendedSymbolKindType parentKind,\n    StorageClass storage)\n\n(Maybe also call it \"highlighting name\" instead of \"symbol name\")",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e16580f7_7a6ebc19",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "We need null checks for this chain of function calls here, just like we do in PresentationReconcilerCPP.\n\nFeel free to create a helper function that calls toUri(getFile()) to make things easier.",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f52bfba_bc040f1a",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/cquery/HighlightSymbol.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-07-31T06:55:27Z",
+      "side": 1,
+      "message": "I think we are missing EnumMember -\u003e ENUMERATOR.\n\nPerhaps order them by numeric value of the key?",
+      "revId": "72bed6b5666e3898fa3692984e6fd3a909ccb8ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a86c8497_6d4566c5",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-01T06:40:41Z",
+      "side": 1,
+      "message": "I think it makes sense to have this function, and the map it uses, in the same file. That way, all the logic for mapping a server symbol kind to an Eclipse highlighting is in one place.",
+      "revId": "f59a9bf52774fc3ea3360886c5cc40c25c68bed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdff3736_702b0b03",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-01T06:40:41Z",
+      "side": 1,
+      "message": "Let\u0027s call this variable just \"presentation\". (createPresentation sounds like a function name).",
+      "revId": "f59a9bf52774fc3ea3360886c5cc40c25c68bed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ade10520_513420a9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-01T06:40:41Z",
+      "side": 1,
+      "message": "Might as well use our getUri() function.",
+      "revId": "f59a9bf52774fc3ea3360886c5cc40c25c68bed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92057a52_85cff93f",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-01T06:40:41Z",
+      "side": 1,
+      "message": "I notice you changed \"merge\" to \"replace\". I agree that this is better! (We would only need \"merge\" if we needed a semantic coloring and a lexical coloring to apply to the same token, and I don\u0027t believe that can happen.)",
+      "revId": "f59a9bf52774fc3ea3360886c5cc40c25c68bed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

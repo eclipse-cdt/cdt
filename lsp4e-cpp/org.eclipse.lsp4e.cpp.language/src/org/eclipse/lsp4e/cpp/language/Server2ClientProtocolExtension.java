@@ -9,10 +9,16 @@
 package org.eclipse.lsp4e.cpp.language;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4e.cpp.language.cquery.CqueryInactiveRegions;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
@@ -24,7 +30,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
-
 
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
@@ -60,8 +65,46 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		CqueryLineBackgroundListener.fileInactiveRegionsMap.put(uri, inactiveRegions);
 	}
 
+	public static URI getUri(IDocument document) {
+		URI uri = null;
+		IFile file = LSPEclipseUtils.getFile(document);
+		if (file != null) {
+			uri = LSPEclipseUtils.toUri(file);
+		}
+		return uri;
+	}
+
 	@JsonNotification("$cquery/publishSemanticHighlighting")
 	public final void semanticHighlights(CquerySemanticHighlights highlights) {
-		// TODO: Implement
+		URI uriReceived = highlights.getUri();
+		CquerySemanticHighlights.uriToSemanticHighlightsMapping.put(uriReceived, highlights.getSymbols());
+		List<PresentationReconcilerCPP> matchingReconcilers = new ArrayList<>();
+
+		for (PresentationReconcilerCPP eachReconciler: PresentationReconcilerCPP.presentationReconcilers) {
+			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
+			URI currentReconcilerUri = getUri(currentReconcilerDoc);
+
+			if(currentReconcilerUri == null) {
+				continue;
+			}
+
+			if (uriReceived.equals(currentReconcilerUri)) {
+				matchingReconcilers.add(eachReconciler);
+			}
+		}
+
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (PresentationReconcilerCPP p: matchingReconcilers) {
+					IDocument currentReconcilerDoc = p.getTextViewer().getDocument();
+					if (currentReconcilerDoc == null) {
+						continue;
+					}
+					TextPresentation textPresentation = p.createPresentation(new Region(0, currentReconcilerDoc.getLength()), currentReconcilerDoc);
+					p.getTextViewer().changeTextPresentation(textPresentation, false);
+				}
+			}
+		});
 	}
 }

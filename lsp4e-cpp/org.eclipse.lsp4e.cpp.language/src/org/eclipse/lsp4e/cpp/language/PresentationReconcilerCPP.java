@@ -17,6 +17,12 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -30,6 +36,7 @@ import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -38,6 +45,9 @@ import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
@@ -45,7 +55,13 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
+import org.eclipse.lsp4j.Range;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -62,6 +78,10 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
 	private ITextViewer textViewer;
 	private TextInputListenerCPP textInputListener;
+	private List<HighlightSymbol> semanticHighlights;
+
+	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();
+
 	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
 			@Override
@@ -165,8 +185,75 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			CUIPlugin.getDefault().getTextTools().setupCDocument(document);
 			fSettingPartitioner = false;
 		}
-		TextPresentation createPresentation = super.createPresentation(damage, document);
-		return createPresentation;
+		TextPresentation presentation = super.createPresentation(damage, document);
+
+		IDocument doc = textViewer.getDocument();
+		URI uri = Server2ClientProtocolExtension.getUri(doc);
+
+		if (uri == null || semanticHighlights == null) {
+			return presentation;
+		}
+
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		List<StyleRange> styleRanges = new ArrayList<>();
+
+		for (HighlightSymbol highlight : semanticHighlights) {
+
+			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(), highlight.getParentKind(), highlight.getStorage());
+			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+
+			boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
+			boolean isItalic = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
+			boolean isUnderline = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
+			boolean isStrikethrough = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
+
+			Color color = new Color(Display.getCurrent(),
+									PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
+
+			int damageStartOffset = damage.getOffset();
+			int damageEndOffset = damageStartOffset + damage.getLength();
+
+			List<Range> ranges = highlight.getRanges();
+			for (Range range : ranges) {
+
+				int offset = 0, length = 0;
+				try {
+					offset = doc.getLineOffset(range.getStart().getLine()) + range.getStart().getCharacter();
+					length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter() - offset;
+				} catch (BadLocationException e) {
+					Activator.log(e);
+				}
+				if ((offset + length) >= damageStartOffset && offset < damageEndOffset) {
+
+					StyleRange styleRange = new StyleRange(offset, length, color, null);
+
+					if (isBold) {
+						styleRange.fontStyle = SWT.BOLD;
+					}
+					if (isItalic) {
+						styleRange.fontStyle |= SWT.ITALIC;
+					}
+					if (isUnderline) {
+						styleRange.underline = true;
+					}
+					if (isStrikethrough) {
+						styleRange.strikeout = true;
+					}
+
+					styleRanges.add(styleRange);
+				}
+			}
+		}
+
+		StyleRange[] styleRangesArray = new StyleRange[styleRanges.size()];
+		styleRangesArray = styleRanges.toArray(styleRangesArray);
+		presentation.replaceStyleRanges(styleRangesArray);
+		return presentation;
 	}
 
 	/**
@@ -229,7 +316,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		return fPreprocessorScanner;
 	}
 
-	class TextInputListenerCPP implements ITextInputListener {
+	public class TextInputListenerCPP implements ITextInputListener {
 
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
@@ -247,6 +334,14 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 	}
 
+	public void setSemanticHighlights(List<HighlightSymbol> highlights) {
+		semanticHighlights = highlights;
+	}
+
+	public ITextViewer getTextViewer() {
+		return textViewer;
+	}
+
 	@Override
 	public void install(ITextViewer viewer) {
 		super.install(viewer);
@@ -259,6 +354,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 		StyledText textWidget = textViewer.getTextWidget();
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
+		presentationReconcilers.add(this);
 	}
 
 	@Override
@@ -266,5 +362,6 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		super.uninstall();
 		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
 		textViewer.removeTextInputListener(textInputListener);
+		presentationReconcilers.remove(this);
 	}
 }

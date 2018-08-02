@@ -391,8 +391,8 @@ public class MesonPropertyPage extends PropertyPage {
 			ParseState state = ParseState.INIT;
 			Pattern optionPattern = Pattern.compile(Messages.MesonPropertyPage_option_pattern);
 			Pattern optionWithValuesPattern = Pattern.compile(Messages.MesonPropertyPage_option_with_values_pattern);
-			Pattern optionLine = Pattern.compile("(\\w+)\\s+(\\w+)\\s+(.*)$"); //$NON-NLS-1$
-			Pattern optionWithValuesLine = Pattern.compile("(\\w+)\\s+(\\w+)\\s+\\[(\\w+)((,\\s+\\w+)*)\\]\\s+(.*)$");
+			Pattern optionLine = Pattern.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+(.*)$"); //$NON-NLS-1$
+			Pattern optionWithValuesLine = Pattern.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+\\[([\\w,\\-,/]+)((,\\s+[\\w,\\-]+)*)\\]\\s+(.*)$");
 			Pattern compilerOrLinkerArgs = Pattern.compile(Messages.MesonPropertyPage_compiler_or_link_args);
 			Pattern argLine = Pattern.compile("(\\w+)\\s+\\[([^\\]]*)\\]"); //$NON-NLS-1$
 			Pattern groupPattern = Pattern.compile("(([^:]*)):"); //$NON-NLS-1$
@@ -400,120 +400,152 @@ public class MesonPropertyPage extends PropertyPage {
 			Composite parent = composite;
 			for (String line : lines) {
 				line = line.trim();
-				switch (state) {
-				case INIT:
-					Matcher argMatcher = compilerOrLinkerArgs.matcher(line);
-					if (argMatcher.matches()) {
-						state = ParseState.ARGS;
-						Group group = new Group(composite, SWT.BORDER);
-						group.setLayout(new GridLayout(2, true));
-						group.setLayoutData(new GridData(GridData.FILL_BOTH));
-						group.setText(argMatcher.group(1));
-						parent = group;
-					} else {
-						Matcher groupMatcher = groupPattern.matcher(line);
-						if (groupMatcher.matches()) {
-							groupName = groupMatcher.group(1);
-							state = ParseState.GROUP;
+				boolean unprocessed = true;
+				while (unprocessed) {
+					unprocessed = false;
+					switch (state) {
+					case INIT:
+						Matcher argMatcher = compilerOrLinkerArgs.matcher(line);
+						if (argMatcher.matches()) {
+							state = ParseState.ARGS;
+							Group group = new Group(composite, SWT.BORDER);
+							group.setLayout(new GridLayout(2, true));
+							group.setLayoutData(new GridData(GridData.FILL_BOTH));
+							group.setText(argMatcher.group(1));
+							parent = group;
+						} else {
+							Matcher groupMatcher = groupPattern.matcher(line);
+							if (groupMatcher.matches()) {
+								groupName = groupMatcher.group(1);
+								state = ParseState.GROUP;
+							}
+							parent = composite;
 						}
-						parent = composite;
-					}
-					break;
-				case GROUP:
-					Matcher m = optionPattern.matcher(line);
-					if (m.matches()) {
-						state = ParseState.OPTION;
-						Group group = new Group(composite, SWT.BORDER);
-						group.setLayout(new GridLayout(2, true));
-						group.setLayoutData(new GridData(GridData.FILL_BOTH));
-						group.setText(groupName);
-						parent = group;
 						break;
-					}
-					m = optionWithValuesPattern.matcher(line);
-					if (m.matches()) {
-						state = ParseState.OPTION_WITH_VALUES;
-						Group group = new Group(composite, SWT.BORDER);
-						group.setLayout(new GridLayout(2, true));
-						group.setLayoutData(new GridData(GridData.FILL_BOTH));
-						group.setText(groupName);
-						parent = group;
-					}
-				
-					break;
-				case ARGS:
-					Matcher m2 = argLine.matcher(line);
-					if (m2.matches()) {
-						String argName = m2.group(1);
-						String argValue = m2.group(2);
-						argValue = argValue.replaceAll("',", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						argValue = argValue.replaceAll("'", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						String argDescription = Messages.MesonPropertyPage_arg_description;
-						IMesonPropertyPageControl argControl = new MesonPropertyText(parent, argName, argValue, argDescription);
-						controls.add(argControl);
-					}
-					state = ParseState.INIT;
-					parent = composite;
-					break;
-				case OPTION:
-					Matcher m3 = optionLine.matcher(line);
-					if (line.startsWith("----")) { //$NON-NLS-1$
+					case GROUP:
+						Matcher m = optionPattern.matcher(line);
+						if (m.matches()) {
+							state = ParseState.OPTION;
+							if (parent == composite) {
+								Group group = new Group(composite, SWT.BORDER);
+								group.setLayout(new GridLayout(2, true));
+								group.setLayoutData(new GridData(GridData.FILL_BOTH));
+								group.setText(groupName);
+								parent = group;
+							}
+							break;
+						}
+						m = optionWithValuesPattern.matcher(line);
+						if (m.matches()) {
+							state = ParseState.OPTION_WITH_VALUES;
+							if (parent == composite) {
+								Group group = new Group(composite, SWT.BORDER);
+								group.setLayout(new GridLayout(2, true));
+								group.setLayoutData(new GridData(GridData.FILL_BOTH));
+								group.setText(groupName);
+								parent = group;
+							}
+							break;
+						}
+
+						if (line.contains(":")) { //$NON-NLS-1$
+							state = ParseState.INIT;
+							unprocessed = true;
+							parent = composite;
+						}
 						break;
-					}
-					if (line.isEmpty()) {
+					case ARGS:
+						Matcher m2 = argLine.matcher(line);
+						if (m2.matches()) {
+							String argName = m2.group(1);
+							String argValue = m2.group(2);
+							argValue = argValue.replaceAll("',", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							argValue = argValue.replaceAll("'", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							String argDescription = Messages.MesonPropertyPage_arg_description;
+							IMesonPropertyPageControl argControl = new MesonPropertyText(parent, argName, argValue, argDescription);
+							controls.add(argControl);
+						}
 						state = ParseState.INIT;
 						parent = composite;
 						break;
-					}
-					if (m3.matches()) {
-						String name = m3.group(1);
-						String value = m3.group(2);
-						String description = m3.group(3);
-						boolean isInteger = false;
-						try {
-							Integer.parseInt(value);
-							isInteger = true;
-						} catch (NumberFormatException e) {
-							// do nothing
+					case OPTION:
+						Matcher m3 = optionLine.matcher(line);
+						if (line.startsWith("----")) { //$NON-NLS-1$
+							break;
 						}
-						if (isInteger) {
-							IMesonPropertyPageControl control = new MesonPropertyInteger(parent, this, name, value, description);
-							controls.add(control);
-						} else if (Messages.MesonPropertyPage_true.equals(value) ||
-								Messages.MesonPropertyPage_false.equals(value)) {
-							IMesonPropertyPageControl control = new MesonPropertyCheckbox(parent, name, Boolean.getBoolean(value), description);
+						if (line.isEmpty()) {
+							state = ParseState.INIT;
+							parent = composite;
+							break;
+						}
+						if (m3.matches()) {
+							String name = m3.group(1);
+							String value = m3.group(2);
+							String description = m3.group(3);
+							boolean isInteger = false;
+							try {
+								Integer.parseInt(value);
+								isInteger = true;
+							} catch (NumberFormatException e) {
+								// do nothing
+							}
+							if (isInteger) {
+								IMesonPropertyPageControl control = new MesonPropertyInteger(parent, this, name, value, description);
+								controls.add(control);
+							} else if (Messages.MesonPropertyPage_true.equals(value) ||
+									Messages.MesonPropertyPage_false.equals(value)) {
+								IMesonPropertyPageControl control = new MesonPropertyCheckbox(parent, name, Boolean.getBoolean(value), description);
+								controls.add(control);
+							} else {
+								IMesonPropertyPageControl control = new MesonPropertyText(parent, name, value, description);
+								controls.add(control);
+							}
+						} else {
+							if (line.contains(":")) { //$NON-NLS-1$
+								state = ParseState.INIT;
+								parent = composite;
+								unprocessed = true;
+							} else {
+								state = ParseState.GROUP;
+								unprocessed = true;
+							}
+						}
+						break;
+					case OPTION_WITH_VALUES:
+						Matcher m4 = optionWithValuesLine.matcher(line);
+						if (line.startsWith("----")) { //$NON-NLS-1$
+							break;
+						}
+						if (line.isEmpty()) {
+							state = ParseState.INIT;
+							parent = composite;
+							break;
+						}
+						if (m4.matches()) {
+							String name = m4.group(1);
+							String value = m4.group(2);
+							String possibleValue = m4.group(3);
+							String extraValues = m4.group(4);
+							String description = m4.group(6);
+							String[] values = new String[] {possibleValue};
+							if (!extraValues.isEmpty()) {
+								values = extraValues.split(",\\s+");
+								values[0] = possibleValue;
+							}
+							IMesonPropertyPageControl control = new MesonPropertyCombo(parent, name, values, value, description);
 							controls.add(control);
 						} else {
-							IMesonPropertyPageControl control = new MesonPropertyText(parent, name, value, description);
-							controls.add(control);
+							if (line.contains(":")) { //$NON-NLS-1$
+								state = ParseState.INIT;
+								parent = composite;
+								unprocessed = true;
+							} else {
+								state = ParseState.GROUP;
+								unprocessed = true;
+							}
 						}
-					}
-					break;
-				case OPTION_WITH_VALUES:
-					Matcher m4 = optionWithValuesLine.matcher(line);
-					if (line.startsWith("----")) { //$NON-NLS-1$
 						break;
 					}
-					if (line.isEmpty()) {
-						state = ParseState.INIT;
-						parent = composite;
-						break;
-					}
-					if (m4.matches()) {
-						String name = m4.group(1);
-						String value = m4.group(2);
-						String possibleValue = m4.group(3);
-						String extraValues = m4.group(4);
-						String description = m4.group(6);
-						String[] values = new String[] {possibleValue};
-						if (!extraValues.isEmpty()) {
-							values = extraValues.split(",\\s+");
-							values[0] = possibleValue;
-						}
-						IMesonPropertyPageControl control = new MesonPropertyCombo(parent, name, values, value, description);
-						controls.add(control);
-					}
-					break;
 				}
 			}
 		} catch (UnsupportedEncodingException e) {

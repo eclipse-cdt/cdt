@@ -227,7 +227,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 				}
 				stack.fState= 2;
 
-				IASTExpression op2 = expr.getOperand2();
+				IASTInitializerClause op2 = expr.getInitOperand2();
 				if (op2 instanceof IASTBinaryExpression) {
 					N n= new N((IASTBinaryExpression) op2);
 					n.fNext= stack;

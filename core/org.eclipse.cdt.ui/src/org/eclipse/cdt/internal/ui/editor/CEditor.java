@@ -496,7 +496,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				// When entering an anonymous class between the parenthesis', we don't want
 				// to jump after the closing parenthesis when return is pressed.
 				if (event.character == SWT.CR && offset > 0) {
-					IDocument document = getSourceViewer().getDocument();
+					IDocument document;
+					if (isGenericEditor) {
+						document = sourceViewer.getDocument();
+					} else {
+						document = getSourceViewer().getDocument();
+					}
 					try {
 						if (document.getChar(offset - 1) == '{')
 							return new ExitFlags(ILinkedModeListener.EXIT_ALL, true);
@@ -508,7 +513,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		private boolean isMasked(int offset) {
-			IDocument document = getSourceViewer().getDocument();
+			IDocument document;
+			if (isGenericEditor) {
+				document = sourceViewer.getDocument();
+			} else {
+				document = getSourceViewer().getDocument();
+			}
 			try {
 				return fEscapeCharacter == document.getChar(offset - 1);
 			} catch (BadLocationException e) {
@@ -603,7 +613,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 //		}
 	}
 
-	private class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
+	public class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
 		private boolean fCloseBrackets = true;
 		private boolean fCloseStrings = true;
 		private boolean fCloseAngularBrackets = true;
@@ -652,7 +662,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return;
 			}
 
-			final ISourceViewer sourceViewer = getSourceViewer();
+			if(!isGenericEditor) {
+				sourceViewer = getSourceViewer();
+			}
+
 			IDocument document = sourceViewer.getDocument();
 
 			final Point selection = sourceViewer.getSelectedRange();
@@ -730,7 +743,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						return;
 				}
 
-				if (!validateEditorInputState())
+				if (!isGenericEditor && !validateEditorInputState())
 					return;
 
 				final char character = event.character;
@@ -821,7 +834,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				return;
 
 			// remove brackets
-			final ISourceViewer sourceViewer = getSourceViewer();
+			if (!isGenericEditor) {
+				sourceViewer = getSourceViewer();
+			}
 			final IDocument document = sourceViewer.getDocument();
 			if (document instanceof IDocumentExtension) {
 				IDocumentExtension extension = (IDocumentExtension) document;
@@ -1355,6 +1370,10 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	private final ListenerList<IPostSaveListener> fPostSaveListeners;
 
+	private boolean isGenericEditor = false;
+
+	private ISourceViewer sourceViewer;
+
 	private static final Set<String> angularIntroducers = new HashSet<>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -1391,6 +1410,15 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
 		fPostSaveListeners = new ListenerList<IPostSaveListener>();
+	}
+
+	public CEditor(boolean isGenericEditor) {
+		this();
+		this.isGenericEditor = isGenericEditor;
+	}
+
+	public void setSourceViewer(ISourceViewer sViewer) {
+		sourceViewer = sViewer;
 	}
 
 	@Override

@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditor.BracketInserter;
 import org.eclipse.cdt.internal.ui.text.CCodeScanner;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
@@ -52,8 +54,10 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
 import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
 import org.eclipse.lsp4j.Range;
@@ -77,6 +81,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
 	private ITextViewer textViewer;
 	private TextInputListenerCPP textInputListener;
+	private CEditor cEditor = new CEditor(true);
+	private final BracketInserter fBracketInserter = cEditor.new BracketInserter();
 
 	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();
 
@@ -345,6 +351,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		StyledText textWidget = textViewer.getTextWidget();
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
 		presentationReconcilers.add(this);
+		cEditor.setSourceViewer((SourceViewer) textViewer);
+		((TextViewer) textViewer).prependVerifyKeyListener(fBracketInserter);
 	}
 
 	@Override

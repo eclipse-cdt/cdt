@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "811fff26_c2768eac",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-07T19:55:20Z",
+      "side": 1,
+      "message": "We should not instantiate a CEditor object just to be able to use the BracketInserter. (It\u0027s a very heavy-weight object - it would be like creating two editors every time the user opens one editor.)\n\nInstead, we should make BracketInserter a static class (so a BracketInserter object can be created without a CEditor object). If BracketInserter uses some non-static fields of CEditor, we should refactor it so those are passed in through the BracketInserter constructor instead.",
+      "revId": "9c9dfd9e77282040dee63b840b170a51195b89b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

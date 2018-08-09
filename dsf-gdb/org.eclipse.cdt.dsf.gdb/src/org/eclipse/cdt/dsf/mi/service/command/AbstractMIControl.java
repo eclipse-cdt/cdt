@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - New method to properly created ErrorThread (Bug 350837)
  *     Jason Litton (Sage Electronic Engineering, LLC) - Use Dynamic Tracing option (Bug 379169)
  *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
+ *     Jonah Graham / Baha El kassaby - Bug 530443 - discard events
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -45,6 +47,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -53,6 +56,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIList;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
@@ -62,10 +66,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
+import org.eclipse.cdt.dsf.mi.service.events.MpdDiscardingStateChangeEvent;
+import org.eclipse.cdt.dsf.mi.service.events.MpdRefreshAllEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -137,7 +147,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
     private OutputStream fTracingStream = null;
 
     private CommandFactory fCommandFactory;
-    
+    private boolean fDiscardingEvents = false;
+
     public AbstractMIControl(DsfSession session) {
     	this(session, false, false, new CommandFactory());
     }
@@ -363,6 +374,26 @@ public abstract class AbstractMIControl extends AbstractDsfService
         
         return handle;
     }
+
+	/**
+	 * @since 5.5
+	 */
+	protected String getTargetThreadId(MICommand<MIInfo> command) {
+		IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(command.getContext(), IMIExecutionDMContext.class);
+		if(execCtx != null)
+			return execCtx.getThreadId();
+		return null;
+	}
+
+	/**
+	 * @since 5.5
+	 */
+	protected boolean isSuspended(IDMContext targetContext) {
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(targetContext, IMIExecutionDMContext.class);
+		boolean isSuspended = runControl != null && execDmc != null && runControl.isSuspended(execDmc);
+		return isSuspended;
+	}
 
     private void processNextQueuedCommand() {
 		if (!fCommandQueue.isEmpty()) {
@@ -725,6 +756,28 @@ public abstract class AbstractMIControl extends AbstractDsfService
 		 */
         private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<MIStreamRecord>();
 
+        private class RxDiscardEventMonitoringJob extends Job {
+
+			public RxDiscardEventMonitoringJob() {
+				super("RxDiscardEventMonitoringJob");
+				setSystem(true);
+			}
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				stopDiscardingEvents();
+				return Status.OK_STATUS;
+			}
+        	
+        }
+
+        private static final int MAXIMUM_OUTSTANDING = 10;
+        private static final int STOP_DISCARDING_IDLE_TIMEOUT_MS = 1000;
+		private AtomicInteger fOutstandingCount = new AtomicInteger(0);
+		private MIOutput fLastDiscaredRunControlEvent = null;
+		private boolean fStartDiscardingOnNextEvent = false;
+		private RxDiscardEventMonitoringJob fRxDiscardEventMonitoringJob = new RxDiscardEventMonitoringJob();
+
         public RxThread(InputStream inputStream) {
             super("MI RX Thread"); //$NON-NLS-1$
             fInputStream = inputStream;
@@ -732,59 +785,80 @@ public abstract class AbstractMIControl extends AbstractDsfService
 
         @Override
         public void run() {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fInputStream));
-            try {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.length() != 0) {
-                    	// Write Gdb response to sysout or file
-                    	if(GdbDebugOptions.DEBUG) {
-                    		if (line.length() < DEVELOPMENT_TRACE_LIMIT_CHARS) {
-                    			GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, line)); //$NON-NLS-1$
-                    		} else {
-                    			// "-list-thread-groups --available" give a very large output that is not very useful but that makes
-                    			// looking at the traces much more difficult.  Don't show the full output in the traces.
-                    			// If we really need to see that output, it will still be in the 'gdb traces'.
-                    			GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER,  //$NON-NLS-1$
-                    					line.substring(0, DEVELOPMENT_TRACE_LIMIT_CHARS) + 
-                    					" [remaining output truncated. Refer to 'gdb traces' if full output needed.]")); //$NON-NLS-1$
-                    		}
-                    	}
-                        
-                        final String finalLine = line;
-                        if (getMITracingStream() != null) {
-                        	try {
-                        		String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-                        		while (message.length() > 100) {
-                        			String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
-                        			message = message.substring(100);
-                        			getMITracingStream().write(partial.getBytes());
-                        		}
-                        		getMITracingStream().write(message.getBytes());
-                        	} catch (IOException e) {
-                        		// The tracing stream could be closed at any time
-                        		// since the user can set a preference to turn off
-                        		// this tracing.
-                        		setMITracingStream(null);
-                        	}
-                        }
-                        
-                    	processMIOutput(line);
-                    }
-                }
-            } catch (IOException e) {
-                // Socket is shut down.
-            } catch (RejectedExecutionException e) {
-                // Dispatch thread is down.
-            }
-            // Must close the stream here to avoid leaking and
-            // to give enough time to read all the data
-            // Bug 345164 and Bug 339379
-            try {
-				fInputStream.close();
-			} catch (IOException e) {
-			}
+        	BufferedReader reader = new BufferedReader(new InputStreamReader(fInputStream));
+        	try {
+        		String line;
+        		while ((line = reader.readLine()) != null) {
+        			if (line.length() != 0) {
+        				traceLine(line);
+        				synchronized (RxThread.this) {
+        					if (fDiscardingEvents) {
+        						// more output received from MPD, so don't stop discarding yet
+        						fRxDiscardEventMonitoringJob.cancel();
+        						fRxDiscardEventMonitoringJob.schedule(STOP_DISCARDING_IDLE_TIMEOUT_MS);
+        					}
+        					processMIOutput(line);
+        				}
+        			}
+        		}
+        	} catch (IOException e) {
+        	        // Socket is shut down.
+        	} catch (RejectedExecutionException e) {
+        		// Dispatch thread is down.
+        	}
+        	// Must close the stream here to avoid leaking and
+        	// to give enough time to read all the data
+        	// Bug 345164 and Bug 339379
+        	try {
+        		fInputStream.close();
+        	} catch (IOException e) {
         }
+    }
+
+	private void traceLine(String line) {
+		// Write Gdb response to sysout or file
+		if(GdbDebugOptions.DEBUG) {
+			if (line.length() < DEVELOPMENT_TRACE_LIMIT_CHARS) {
+				GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, line)); //$NON-NLS-1$
+			} else {
+				// "-list-thread-groups --available" give a very large output that is not very useful but that makes
+				// looking at the traces much more difficult.  Don't show the full output in the traces.
+				// If we really need to see that output, it will still be in the 'gdb traces'.
+				GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER,  //$NON-NLS-1$
+						line.substring(0, DEVELOPMENT_TRACE_LIMIT_CHARS) + 
+						" [remaining output truncated. Refer to 'gdb traces' if full output needed.]")); //$NON-NLS-1$
+			}
+		}
+	
+		final String finalLine = line;
+		if (getMITracingStream() != null) {
+			try {
+				String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+				int initialMaxLines = 10;
+				try {
+					IEclipsePreferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
+					initialMaxLines = node.getInt(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES, 500000);
+				} catch (NumberFormatException e) {
+				}
+				int linecounter = initialMaxLines;
+				while (message.length() > 100 && linecounter-- > 0) {
+					String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
+					message = message.substring(100);
+					getMITracingStream().write(partial.getBytes());
+				}
+				if (linecounter <= 0) {
+					getMITracingStream().write(("[output truncated to "+ initialMaxLines +" lines. For more lines set PREF_MAX_GDB_TRACES.]\n").getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					getMITracingStream().write(message.getBytes());
+				}
+			} catch (IOException e) {
+				// The tracing stream could be closed at any time
+				// since the user can set a preference to turn off
+				// this tracing.
+				setMITracingStream(null);
+			}
+		}
+	}
         
         private MIResult findResultRecord(MIResult[] results, String variable) {
             for (int i = 0; i < results.length; i++) {
@@ -917,7 +991,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 final CommandHandle commandHandle = fRxCommands.remove(id);
 
                 if (commandHandle != null) {
-                    final MIOutput response = new MIOutput(
+                	stopDiscardingEvents();
+
+                	final MIOutput response = new MIOutput(
                         rr, fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
                     fAccumulatedOOBRecords.clear();
                     fAccumulatedStreamRecords.clear();
@@ -995,28 +1071,21 @@ public abstract class AbstractMIControl extends AbstractDsfService
                      *  MIOutput object.  
                      */
                     final MIOutput response = new MIOutput(rr, new MIOOBRecord[0]);
-
-                    getExecutor().execute(new DsfRunnable() {
-                    	@Override
-                        public void run() {
-                            processEvent(response);
-                        }
-                        @Override
-                        public String toString() {
-                            return "MI asynchronous output received: " + response; //$NON-NLS-1$
-                        }
-                    });
+                    processOrDiscardEvent(response);
                 }
+        	} else if ("(mpd)".equals(line.trim())) { //$NON-NLS-1$
+        		// skip the prompt line
         	} else if (recordType == MIParser.RecordType.OOBRecord) {
 				// Process OOBs
-        		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
+				final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
 
-        		fAccumulatedOOBRecords.add(oob);
-        		// limit growth, but only if these are not responses to CLI commands
-        		// Bug 302927 & 330608
-        		if (fRxCommands.isEmpty() && fAccumulatedOOBRecords.size() > 20) {
-        			fAccumulatedOOBRecords.remove(0);
-        		}
+				fAccumulatedOOBRecords.add(oob);
+				// limit growth, but only if these are not responses to CLI commands
+				// Bug 302927 & 330608
+				// MPD Bug 170 -- MPD never produces output that needs more than 20 OOBs
+				if (fAccumulatedOOBRecords.size() > 20) {
+					fAccumulatedOOBRecords.remove(0);
+				}
 
 				// The handling of this OOB record may need the stream records
 				// that preceded it. One such case is a stopped event caused by a
@@ -1039,16 +1108,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             	 *   OOBS are events. So we pass them to any event listeners who want to see them. Again this must
             	 *   be done on the DSF thread for integrity.
             	 */
-                getExecutor().execute(new DsfRunnable() {
-                	@Override
-                    public void run() {
-                        processEvent(response);
-                    }
-                    @Override
-                    public String toString() {
-                        return "MI asynchronous output received: " + response; //$NON-NLS-1$
-                    }
-                });
+                processOrDiscardEvent(response);
             }
             
             getExecutor().execute(new DsfRunnable() {
@@ -1058,7 +1118,125 @@ public abstract class AbstractMIControl extends AbstractDsfService
             	}
             });
         }
-    }
+
+        /**
+         * Call this method when a state change happens that means events should be processed again.
+         */
+		private synchronized void stopDiscardingEvents() {
+			if (fDiscardingEvents) {
+				if(GdbDebugOptions.DEBUG) {
+					GdbDebugOptions.trace(String.format( "%s %s  stopping discards\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER)); //$NON-NLS-1$
+				}
+
+				// We have a response from MPD, that means we can proceed with processing events again.
+				// but first we need to restore running state.
+				MIOutput event = fLastDiscaredRunControlEvent;
+				fLastDiscaredRunControlEvent = null;
+				fDiscardingEvents = false;
+				MpdDiscardingStateChangeEvent discardingStoppedEvent = new MpdDiscardingStateChangeEvent(getContext(), false);
+				getSession().dispatchEvent(discardingStoppedEvent, getProperties());
+				if (event != null) {
+					processOrDiscardEvent(event);
+				}
+				
+				// Now that we have started processing again, refresh all the views
+				MpdRefreshAllEvent refresh = new MpdRefreshAllEvent(getContext());
+				getSession().dispatchEvent(refresh, getProperties());
+			}
+		}
+
+        private boolean isRunningEvent(final MIOutput response) {
+        	for (MIOOBRecord oobr : response.getMIOOBRecords()) {
+				if (oobr instanceof MIExecAsyncOutput) {
+					MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
+					// Change of state.
+					String state = exec.getAsyncClass();
+					if ("running".equals(state)) { //$NON-NLS-1$
+						return true;
+					}
+				}
+			}
+        	return false;
+        }
+        
+		private void collapseExecAsyncOutput(final MIOutput response) {
+			for (MIOOBRecord oobr : response.getMIOOBRecords()) {
+				if (oobr instanceof MIExecAsyncOutput) {
+					MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
+					// Change of state.
+					String state = exec.getAsyncClass();
+					if ("stopped".equals(state) || "running".equals(state)) { //$NON-NLS-1$ //$NON-NLS-2$
+						fLastDiscaredRunControlEvent = response;
+					}
+				}
+			}
+		}
+		
+		private void processOrDiscardEvent(final MIOutput event) {
+			if (fDiscardingEvents || fOutstandingCount.get() > MAXIMUM_OUTSTANDING * 2
+					|| (fStartDiscardingOnNextEvent && fOutstandingCount.get() > MAXIMUM_OUTSTANDING)) {
+				if (GdbDebugOptions.DEBUG) {
+					GdbDebugOptions.trace(String.format("%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, //$NON-NLS-1$
+							"Event discarded\n")); //$NON-NLS-1$
+				}
+				if (!fDiscardingEvents) {
+					fDiscardingEvents = true;
+					fRxDiscardEventMonitoringJob.schedule(STOP_DISCARDING_IDLE_TIMEOUT_MS);
+					fLastDiscaredRunControlEvent = null;
+
+					MpdDiscardingStateChangeEvent discardingEvent = new MpdDiscardingStateChangeEvent(getContext(),
+							true);
+					getSession().dispatchEvent(discardingEvent, getProperties());
+					// We need to request something from MPD to know when MPD is responding to us again
+					getExecutor().execute(() -> {
+						queueCommand(getCommandFactory().createMIInterpreterExecConsole(getContext(),
+								""), null); //$NON-NLS-1$
+					});
+				}
+				collapseExecAsyncOutput(event);
+
+				return;
+			} else {
+				fStartDiscardingOnNextEvent = false;
+			}
+
+			if (fOutstandingCount.get() > MAXIMUM_OUTSTANDING && isRunningEvent(event)) {
+				// Ideally we want to start discarding when we get a running event as the UI
+				// synchronizes best that way by shutting down UI's belief it can communicate
+				// with MPD
+				if (GdbDebugOptions.DEBUG) {
+					GdbDebugOptions.trace(String.format("%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, //$NON-NLS-1$
+							"Event discarded, sending fake \"*running\" event\n")); //$NON-NLS-1$
+				}
+				fStartDiscardingOnNextEvent = true;
+			}
+			
+
+			DsfRunnable command = new DsfRunnable() {
+				@Override
+				public void run() {
+					processEvent(event);
+					int size = fOutstandingCount.decrementAndGet();
+					if (GdbDebugOptions.DEBUG) {
+						GdbDebugOptions.trace(String.format("%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, //$NON-NLS-1$
+								"Event processed, length of queue after remove: " + size + "\n")); //$NON-NLS-1$
+					}
+				}
+
+				@Override
+				public String toString() {
+					return "MI asynchronous output received: " + event; //$NON-NLS-1$
+				}
+			};
+			int size = fOutstandingCount.incrementAndGet();
+			if (GdbDebugOptions.DEBUG) {
+				GdbDebugOptions.trace(String.format("%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, //$NON-NLS-1$
+						"Event queued, length of queue after add: " + size + "\n")); //$NON-NLS-1$
+			}
+			getExecutor().execute(command);
+		}
+
+	}
 
     /**
      * A thread that will read GDB's stderr stream.
@@ -1122,7 +1300,19 @@ public abstract class AbstractMIControl extends AbstractDsfService
     public void resetCurrentThreadLevel(){
     	fCurrentThreadId = null; 
     }
-    
+
+	/**
+	 * Set the current thread to the specified thread, optionally
+	 * <code>null</code> to clear the selected thread.
+	 *
+	 * @param currentThreadId
+	 *            new current thread ID that is selected on the backend.
+	 * @since 5.5
+	 */
+	public void setCurrentThreadLevel(String currentThreadId) {
+		fCurrentThreadId = currentThreadId;
+	}
+
     public void resetCurrentStackLevel(){
     	fCurrentStackLevel = -1; 
     }
@@ -1169,4 +1359,11 @@ public abstract class AbstractMIControl extends AbstractDsfService
             processCommandDone(commandHandle, info);
 		}
     }
+
+    /**
+	 * @since 5.5
+	 */
+    protected boolean isDiscardingEvents() {
+    	return fDiscardingEvents;
+	}
 }

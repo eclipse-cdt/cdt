@@ -32,6 +32,8 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE, false);
 		node.putInt(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES, 500000);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES_ENABLE, true);
+		node.putInt(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES, 10);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING, true);

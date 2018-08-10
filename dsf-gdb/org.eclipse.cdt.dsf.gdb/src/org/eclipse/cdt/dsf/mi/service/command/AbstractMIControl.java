@@ -45,6 +45,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -66,6 +67,8 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -676,12 +679,25 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         if (getMITracingStream() != null) {
                         	try {
                         		String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
-                        		while (message.length() > 100) {
+                        		int initialMaxLines = 10;
+                        		try {
+                        			IEclipsePreferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
+									initialMaxLines = node.getInt(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES,
+											IGdbDebugPreferenceConstants.MAX_MI_OUTPUT_LINES_DEFAULT);
+                        		} catch (NumberFormatException e) {
+                        		}
+                        		int linecounter = initialMaxLines;
+
+                        		while (message.length() > 100 && linecounter-- > 0) {
                         			String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
                         			message = message.substring(100);
                         			getMITracingStream().write(partial.getBytes());
                         		}
-                        		getMITracingStream().write(message.getBytes());
+                        		if (linecounter <= 0) {
+                        			getMITracingStream().write(("[output truncated to " + initialMaxLines + " lines. More lines can be set in the 'Preference->Debug->GDB' eclipse preference page.]\n").getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
+                        		} else {
+                        			getMITracingStream().write(message.getBytes());
+                        		}
                         	} catch (IOException e) {
                         		// The tracing stream could be closed at any time
                         		// since the user can set a preference to turn off
@@ -755,12 +771,26 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         if (getMITracingStream() != null) {
                         	try {
                         		String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-                        		while (message.length() > 100) {
+                        		int initialMaxLines = 10;
+                        		try {
+                        			IEclipsePreferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
+									initialMaxLines = node.getInt(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES,
+											IGdbDebugPreferenceConstants.MAX_MI_OUTPUT_LINES_DEFAULT);
+                        		} catch (NumberFormatException e) {
+                        		}
+                        		int linecounter = initialMaxLines;
+
+                        		while (message.length() > 100 && linecounter-- > 0) {
                         			String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
                         			message = message.substring(100);
                         			getMITracingStream().write(partial.getBytes());
                         		}
-                        		getMITracingStream().write(message.getBytes());
+                        		if (linecounter <= 0) {
+                        			getMITracingStream().write(("[output truncated to " + initialMaxLines + " lines. More lines can be set in the 'Preference->Debug->GDB' eclipse preference page.]\n").getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
+                        		} else {
+                        			getMITracingStream().write(message.getBytes());
+                        		}
+                        		
                         	} catch (IOException e) {
                         		// The tracing stream could be closed at any time
                         		// since the user can set a preference to turn off

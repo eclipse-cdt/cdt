@@ -31,6 +31,7 @@ class MessagesForPreferences extends NLS {
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_general_behavior_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
+	public static String GdbDebugPreferencePage_enableMaxMessageLines_label;
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
 	public static String GdbDebugPreferencePage_Browse_button;
 	public static String GdbDebugPreferencePage_Command_column_name;

@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a2faed3a_11636c02",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-10T08:39:00Z",
+      "side": 1,
+      "message": "[1] here too.",
+      "range": {
+        "startLine": 49,
+        "startChar": 68,
+        "endLine": 49,
+        "endChar": 70
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f75abfcd_00db51d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-10T08:39:00Z",
+      "side": 1,
+      "message": "avoid unrelated whitespace change please.",
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a3eac16_c7b80f95",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-10T08:39:00Z",
+      "side": 1,
+      "message": "This number should ideally be a constant itself and used here [1]",
+      "range": {
+        "startLine": 36,
+        "startChar": 69,
+        "endLine": 36,
+        "endChar": 71
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41c0752f_bdd1fbbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-10T08:39:00Z",
+      "side": 1,
+      "message": "[1] here is the place the constant should be used.",
+      "range": {
+        "startLine": 685,
+        "startChar": 106,
+        "endLine": 685,
+        "endChar": 111
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0101d497_24faa465",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-10T08:39:00Z",
+      "side": 1,
+      "message": "This is displayed to users (sort of). Please make it say \"Limit the maximum number of lines a message can be\" instead (adjusting so wording makes sense as necessary)",
+      "range": {
+        "startLine": 696,
+        "startChar": 129,
+        "endLine": 696,
+        "endChar": 153
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

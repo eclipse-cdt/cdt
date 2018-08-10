@@ -690,6 +690,24 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 
+		boolField = new BooleanFieldEditor(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES_ENABLE,
+				MessagesForPreferences.GdbDebugPreferencePage_enableMaxMessageLines_label, group2);
+
+		boolField.fillIntoGrid(group2, 1);
+		addField(boolField);
+		group2.setLayout(groupLayout);
+
+		// The field below sets the number of lines a message can be.
+		final IntegerFieldEditor gdbMaxLines = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES, "", // Empty title as we reuse the string of the previous field //$NON-NLS-1$
+				group2);
+
+		gdbMaxLines.setValidRange(1, 1000);
+		gdbMaxLines.fillIntoGrid(group2, 2);
+		addField(gdbMaxLines);
+		// Need to set layout again.
+		group2.setLayout(groupLayout);
+
 		boolField = new BooleanFieldEditor(IGdbDebugPreferenceConstants.PREF_USE_RTTI,
 				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + " \n" //$NON-NLS-1$
 						+ MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label2,

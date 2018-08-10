@@ -43,6 +43,31 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREF_MAX_GDB_TRACES = "maxGdbTraces"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference whether to enable the max number of lines for messages.
+	 * Default is {@value #MAX_MI_OUTPUT_LINES_ENABLE_DEFAULT}.
+	 * @since 5.6
+	 */
+	public static final String PREF_MAX_MI_OUTPUT_LINES_ENABLE = "maxMiOutputLinesEnable"; //$NON-NLS-1$
+
+	/**
+	 * The default for whether {@link #PREF_MAX_MI_OUTPUT_LINES} is enabled.
+	 * @since 5.6
+	 */
+	public static final boolean MAX_MI_OUTPUT_LINES_ENABLE_DEFAULT = true;
+
+	/**
+	 * The maximum number of lines a single message can be. Default is {@value #MAX_MI_OUTPUT_LINES_DEFAULT}.
+	 * @since 5.6
+	 */
+	public static final String PREF_MAX_MI_OUTPUT_LINES = "maxMiOutputLines"; //$NON-NLS-1$
+
+	/**
+	 * The default maximum number of lines a single message can be.
+	 * @since 5.6
+	 */
+	public static final int MAX_MI_OUTPUT_LINES_DEFAULT = 5;
+
+	/**
 	 * Boolean preference whether to automatically terminate GDB when the inferior exists. Default is <code>true</code>.
 	 */
 	public static final String PREF_AUTO_TERMINATE_GDB = "autoTerminateGdb"; //$NON-NLS-1$

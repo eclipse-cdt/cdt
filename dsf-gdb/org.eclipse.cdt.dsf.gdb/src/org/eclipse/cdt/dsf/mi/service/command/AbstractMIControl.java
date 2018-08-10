@@ -49,6 +49,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -70,6 +71,9 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.util.NLS;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -567,6 +571,50 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		return count;
 	}
 
+	/**
+	 * Write the str containing an MI message to the tracing stream.
+	 * The str will generally have a newline already if toGdb is true,
+	 * and will need a newline if toGdb is false.
+	 * @param toGdb true if MI is to GDB, false if from GDB
+	 * @param str string containing MI message
+	 * @since 5.6
+	 */
+	protected void writeToTracingStream(boolean toGdb, final String str) {
+		if (getMITracingStream() != null) {
+			try {
+				String message = GdbPlugin.getDebugTime() + " " + str + (toGdb ? "" : "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				IEclipsePreferences node = InstanceScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
+				boolean limitEnabled = node.getBoolean(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES_ENABLE,
+						IGdbDebugPreferenceConstants.MAX_MI_OUTPUT_LINES_ENABLE_DEFAULT);
+				int initialMaxLines = IGdbDebugPreferenceConstants.MAX_MI_OUTPUT_LINES_DEFAULT;
+				try {
+					initialMaxLines = node.getInt(IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES,
+							IGdbDebugPreferenceConstants.MAX_MI_OUTPUT_LINES_DEFAULT);
+				} catch (NumberFormatException e) {
+				}
+				int linecounter = initialMaxLines;
+
+				while (message.length() > 100 && (!limitEnabled || linecounter-- > 0)) {
+					String partial = message.substring(0, 100);
+					message = message.substring(100);
+					getMITracingStream().write(partial.getBytes());
+					getMITracingStream().write("\\\n".getBytes()); //$NON-NLS-1$
+				}
+				if (linecounter <= 0) {
+					String messageTruncatedInfo = NLS.bind(Messages.AbstractMIControl_message_truncated,
+							initialMaxLines);
+					getMITracingStream().write(messageTruncatedInfo.getBytes());
+				} else {
+					getMITracingStream().write(message.getBytes());
+				}
+			} catch (IOException e) {
+				// The tracing stream could be closed at any time
+				// since the user can set a preference to turn off
+				// this tracing.
+				setMITracingStream(null);
+			}
+		}
+	}
 	/*
 	 *  Support class which creates a convenient wrapper for holding all information about an
 	 *  individual request.
@@ -705,22 +753,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 							GdbDebugOptions.trace(
 									String.format("%s %s  %s", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, str)); //$NON-NLS-1$
 						}
-						if (getMITracingStream() != null) {
-							try {
-								String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
-								while (message.length() > 100) {
-									String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
-									message = message.substring(100);
-									getMITracingStream().write(partial.getBytes());
-								}
-								getMITracingStream().write(message.getBytes());
-							} catch (IOException e) {
-								// The tracing stream could be closed at any time
-								// since the user can set a preference to turn off
-								// this tracing.
-								setMITracingStream(null);
-							}
-						}
+						writeToTracingStream(true, str);
 
 						fOutputStream.write(str.getBytes());
 						fOutputStream.flush();
@@ -738,6 +771,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 			} catch (IOException e) {
 			}
 		}
+
 	}
 
 	private class RxThread extends Thread {
@@ -785,24 +819,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 							}
 						}
 
-						final String finalLine = line;
-						if (getMITracingStream() != null) {
-							try {
-								String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-								while (message.length() > 100) {
-									String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
-									message = message.substring(100);
-									getMITracingStream().write(partial.getBytes());
-								}
-								getMITracingStream().write(message.getBytes());
-							} catch (IOException e) {
-								// The tracing stream could be closed at any time
-								// since the user can set a preference to turn off
-								// this tracing.
-								setMITracingStream(null);
-							}
-						}
-
+						writeToTracingStream(false, line);
 						processMIOutput(line);
 					}
 				}

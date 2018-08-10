@@ -679,7 +679,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// shown, we want the user to be able to set the limit on those consoles,
 		// even if they are not currently shown.
 		final IntegerFieldEditor gdbTracesLimit = new IntegerFieldEditor(
-				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES, "", // Empty title as we reuse the string of the previous field //$NON-NLS-1$
+				// Empty title as we reuse the string of the previous field
+				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES, "", //$NON-NLS-1$
 				group2);
 
 		// Instead of using Integer.MAX_VALUE which is some obscure number,
@@ -687,6 +688,16 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		gdbTracesLimit.setValidRange(10000, 2000000000);
 		gdbTracesLimit.fillIntoGrid(group2, 2);
 		addField(gdbTracesLimit);
+		// Need to set layout again.
+		group2.setLayout(groupLayout);
+
+		// The field below sets the number of lines a message can be.
+		final StringWithBooleanFieldEditor gdbMaxLines = new StringWithBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES_ENABLE,
+				IGdbDebugPreferenceConstants.PREF_MAX_MI_OUTPUT_LINES,
+				MessagesForPreferences.GdbDebugPreferencePage_enableMaxMessageLines_label, group2);
+		gdbMaxLines.fillIntoGrid(group2, 3);
+		addField(gdbMaxLines);
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 

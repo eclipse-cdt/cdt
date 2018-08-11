@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "475f89a6_b2df09ce",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-11T15:04:55Z",
+      "side": 1,
+      "message": "Why do we need to condition this on !isGenericEditor?",
+      "revId": "39c7cb5a6e3d656337e66e8630b48da119dd83b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39494dcc_d8db5977",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/CAutoIndentStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-11T15:04:55Z",
+      "side": 1,
+      "message": "Please call the parameter \"alwaysUseSmartMode\". (You can use \"this.alwaysUseSmartMode\" in the function body to disambiguate.)",
+      "revId": "39c7cb5a6e3d656337e66e8630b48da119dd83b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e40b3a7_7c01c9fb",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/AutoIndentStrategyCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-11T15:04:55Z",
+      "side": 1,
+      "message": "Please add a comment here:\n\n  // TODO Pass in the project so the auto edit strategy\n  // respects the project\u0027s preferences.\n\nIt\u0027s not immediately clear to me how to look up the project from this location, but it\u0027s something we\u0027ll want to do everntually.",
+      "revId": "39c7cb5a6e3d656337e66e8630b48da119dd83b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4253eda_2685227d",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-11T15:04:55Z",
+      "side": 1,
+      "message": "Please add a comment explaining that the reason to use asyncExec() is to ensure the editor is active by the time the Runnable runs.\n\n(The usual reason to use asyncExec() is that you are on a thread other than the UI thread, and you need to perform an operation that is only allowed to run on the UI thread. Since here we are using it for a different reason, it\u0027s good to document it.)",
+      "revId": "39c7cb5a6e3d656337e66e8630b48da119dd83b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

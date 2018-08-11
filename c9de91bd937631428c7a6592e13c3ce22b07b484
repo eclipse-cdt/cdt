@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf9dfbb5_e0258461",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-11T20:14:14Z",
+      "side": 1,
+      "message": "Forgot one thing: please add a comment explaining that we need to check isGenericEditor because the generic editor\u0027s insert mode is never SMART_INSERT.\n\n(If you\u0027re wondering why I\u0027m asking for so many comments to be added, it\u0027s because the next time someone will look at this code can be a year or more later, and comments can help them understand the motivation for something.)",
+      "revId": "c9de91bd937631428c7a6592e13c3ce22b07b484",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

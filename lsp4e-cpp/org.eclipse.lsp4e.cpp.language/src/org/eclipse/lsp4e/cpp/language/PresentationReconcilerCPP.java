@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.ui.editor.CEditor.BracketInserter;
 import org.eclipse.cdt.internal.ui.text.CCodeScanner;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
@@ -52,8 +53,10 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
 import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
 import org.eclipse.lsp4j.Range;
@@ -62,6 +65,8 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
@@ -77,6 +82,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
 	private ITextViewer textViewer;
 	private TextInputListenerCPP textInputListener;
+	private BracketInserter fBracketInserter;
 
 	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();
 
@@ -345,6 +351,19 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		StyledText textWidget = textViewer.getTextWidget();
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
 		presentationReconcilers.add(this);
+
+//		Using asyncExec() to make sure that by the time Runnable runs,
+//		the Editor is active and we don't get a NPE.
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+//				To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP
+
+				TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				fBracketInserter = new BracketInserter(editor, true);
+				fBracketInserter.setSourceViewer((SourceViewer) textViewer);
+				((TextViewer) textViewer).prependVerifyKeyListener(fBracketInserter);
+			}});
 	}
 
 	@Override
@@ -352,6 +371,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		super.uninstall();
 		textViewer.getTextWidget().removeLineBackgroundListener(fLineBackgroundListener);
 		textViewer.removeTextInputListener(textInputListener);
+		((TextViewer) textViewer).removeVerifyKeyListener(fBracketInserter);
 		presentationReconcilers.remove(this);
 	}
 }

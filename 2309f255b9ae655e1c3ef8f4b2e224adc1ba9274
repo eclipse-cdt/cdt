@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ce7040eb_c3c54fbe",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-08-11T22:28:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2faed3a_11636c02",
+      "range": {
+        "startLine": 49,
+        "startChar": 68,
+        "endLine": 49,
+        "endChar": 70
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f75abfcd_00db51d3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2018-08-10T08:39:00Z",
       "side": 1,
       "message": "avoid unrelated whitespace change please.",
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "320ea681_a60b94bc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-08-11T22:28:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f75abfcd_00db51d3",
       "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "4608b0f4_4310eaaa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPreferenceInitializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-08-11T22:28:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a3eac16_c7b80f95",
+      "range": {
+        "startLine": 36,
+        "startChar": 69,
+        "endLine": 36,
+        "endChar": 71
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41c0752f_bdd1fbbd",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 2
@@ -76,6 +142,30 @@
       "writtenOn": "2018-08-10T08:39:00Z",
       "side": 1,
       "message": "[1] here is the place the constant should be used.",
+      "range": {
+        "startLine": 685,
+        "startChar": 106,
+        "endLine": 685,
+        "endChar": 111
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d85eec30_75b4e988",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-08-11T22:28:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "41c0752f_bdd1fbbd",
       "range": {
         "startLine": 685,
         "startChar": 106,

@@ -62,4 +62,11 @@
             class="org.eclipse.lsp4e.cpp.language.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.autoEditStrategies">
+      <autoEditStrategy
+            class="org.eclipse.lsp4e.cpp.language.AutoIndentStrategyCPP"
+            contentType="org.eclipse.lsp4e.languages.cpp">
+      </autoEditStrategy>
+   </extension>
 </plugin>

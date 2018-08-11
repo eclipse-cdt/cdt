@@ -66,6 +66,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	private String fPartitioning;
 	private final ICProject fProject;
+	private boolean alwaysUseSmartMode = false;
 
 	/**
 	 * Creates a new C auto indent strategy for the given document partitioning.
@@ -77,6 +78,11 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		fPartitioning = partitioning;
 		fProject = project;
  	}
+
+	public CAutoIndentStrategy(String partitioning, ICProject project, boolean smartMode) {
+		this(partitioning, project);
+		alwaysUseSmartMode = smartMode;
+	}
 
 	private int getBracketCount(IDocument d, int start, int end, boolean ignoreCloseBrackets) throws BadLocationException {
 		int bracketcount = 0;
@@ -1151,6 +1157,9 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	private boolean computeSmartMode() {
 		IWorkbenchPage page = CUIPlugin.getActivePage();
 		if (page != null)  {
+			if (alwaysUseSmartMode) {
+				return true;
+			}
 			IEditorPart part = page.getActiveEditor();
 			if (part instanceof MultiPageEditorPart) {
 				part= (IEditorPart)part.getAdapter(ITextEditorExtension3.class);

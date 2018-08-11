@@ -24,4 +24,5 @@ Export-Package: org.eclipse.lsp4e.cpp.language,
  org.eclipse.lsp4e.cpp.language.cquery
 Bundle-Activator: org.eclipse.lsp4e.cpp.language.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.ui.texteditor
+Import-Package: org.eclipse.ui.editors.text,
+ org.eclipse.ui.texteditor

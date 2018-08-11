@@ -469,17 +469,19 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	private class ExitPolicy implements IExitPolicy {
+	private static class ExitPolicy implements IExitPolicy {
 		final char fExitCharacter;
 		final char fEscapeCharacter;
 		final Deque<BracketLevel> fStack;
 		final int fSize;
+		ISourceViewer sourceViewer;
 
-		public ExitPolicy(char exitCharacter, char escapeCharacter, Deque<BracketLevel> stack) {
+		public ExitPolicy(char exitCharacter, char escapeCharacter, Deque<BracketLevel> stack, ISourceViewer sViewer) {
 			fExitCharacter = exitCharacter;
 			fEscapeCharacter = escapeCharacter;
 			fStack = stack;
 			fSize = fStack.size();
+			sourceViewer = sViewer;
 		}
 
 		@Override
@@ -496,7 +498,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				// When entering an anonymous class between the parenthesis', we don't want
 				// to jump after the closing parenthesis when return is pressed.
 				if (event.character == SWT.CR && offset > 0) {
-					IDocument document = getSourceViewer().getDocument();
+					IDocument document = sourceViewer.getDocument();
 					try {
 						if (document.getChar(offset - 1) == '{')
 							return new ExitFlags(ILinkedModeListener.EXIT_ALL, true);
@@ -508,7 +510,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		private boolean isMasked(int offset) {
-			IDocument document = getSourceViewer().getDocument();
+			IDocument document = sourceViewer.getDocument();
 			try {
 				return fEscapeCharacter == document.getChar(offset - 1);
 			} catch (BadLocationException e) {
@@ -603,7 +605,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 //		}
 	}
 
-	private class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
+	public static class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
 		private boolean fCloseBrackets = true;
 		private boolean fCloseStrings = true;
 		private boolean fCloseAngularBrackets = true;
@@ -611,6 +613,18 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		private final String CATEGORY = toString();
 		private final IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
 		private final Deque<BracketLevel> fBracketLevelStack = new ArrayDeque<>();
+		private ISourceViewer sourceViewer;
+		private boolean isGenericEditor;
+		private TextEditor fEditor;
+
+		public BracketInserter(TextEditor editor, boolean isGenericEditor) {
+			fEditor = editor;
+			this.isGenericEditor = isGenericEditor;
+		}
+
+		public void setSourceViewer(ISourceViewer sViewer) {
+			sourceViewer = sViewer;
+		}
 
 		public void setCloseBracketsEnabled(boolean enabled) {
 			fCloseBrackets = enabled;
@@ -638,8 +652,14 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		@Override
 		public void verifyKey(VerifyEvent event) {
 			// Early pruning to minimize overhead for normal typing.
-			if (!event.doit || getInsertMode() != SMART_INSERT)
+			if (!event.doit)
 				return;
+
+//			Need to check that it is Generic Editor or CEditor before checking "Smart Insert" mode
+//			because Generic Editor doesn't have a "Smart Insert" mode.
+			if(!isGenericEditor)
+				if (fEditor.getInsertMode() != SMART_INSERT)
+						return;
 			switch (event.character) {
 				case '(':
 				case '<':
@@ -652,7 +672,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return;
 			}
 
-			final ISourceViewer sourceViewer = getSourceViewer();
 			IDocument document = sourceViewer.getDocument();
 
 			final Point selection = sourceViewer.getSelectedRange();
@@ -661,7 +680,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			try {
 				IRegion startLine = document.getLineInformationOfOffset(offset);
 				IRegion endLine = document.getLineInformationOfOffset(offset + length);
-				if (startLine != endLine && isBlockSelectionModeEnabled()) {
+				if (startLine != endLine && fEditor.isBlockSelectionModeEnabled()) {
 					return;
 				}
 
@@ -730,7 +749,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						return;
 				}
 
-				if (!validateEditorInputState())
+				if (!fEditor.validateEditorInputState())
 					return;
 
 				final char character = event.character;
@@ -764,7 +783,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 				level.fUI = new EditorLinkedModeUI(model, sourceViewer);
 				level.fUI.setSimpleMode(true);
-				level.fUI.setExitPolicy(new ExitPolicy(closingCharacter, getEscapeCharacter(closingCharacter), fBracketLevelStack));
+				level.fUI.setExitPolicy(new ExitPolicy(closingCharacter, getEscapeCharacter(closingCharacter), fBracketLevelStack, sourceViewer));
 				level.fUI.setExitPosition(sourceViewer, offset + 2, 0, Integer.MAX_VALUE);
 				level.fUI.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
 				level.fUI.enter();
@@ -821,7 +840,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				return;
 
 			// remove brackets
-			final ISourceViewer sourceViewer = getSourceViewer();
 			final IDocument document = sourceViewer.getDocument();
 			if (document instanceof IDocumentExtension) {
 				IDocumentExtension extension = (IDocumentExtension) document;
@@ -1284,7 +1302,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
     protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
 
 	/** The bracket inserter. */
-	private final BracketInserter fBracketInserter = new BracketInserter();
+	private final BracketInserter fBracketInserter = new BracketInserter(this, false);
 
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
@@ -2535,12 +2553,14 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		fBracketInserter.setCloseStringsEnabled(closeStrings);
 
 		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer instanceof ITextViewerExtension)
+		if (sourceViewer instanceof ITextViewerExtension) {
+			fBracketInserter.setSourceViewer(sourceViewer);
 			((ITextViewerExtension) sourceViewer).prependVerifyKeyListener(fBracketInserter);
+		}
 
 		if (isMarkingOccurrences())
 			installOccurrencesFinder(false);
-		
+
 		if(isShowingOverrideIndicators())
 			installOverrideIndicator(false);
 	}

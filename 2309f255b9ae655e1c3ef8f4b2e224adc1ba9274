@@ -108,6 +108,30 @@
       "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "965f4e61_37be41e3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-11T18:02:57Z",
+      "side": 1,
+      "message": "Note the above comment was only applied to \"PREF_MAX_MI_OUTPUT_LINES\" (see highlighting in change, it doesn\u0027t appear in emails). The text I recommended instead was what the display text was in the preferences page.",
+      "parentUuid": "0101d497_24faa465",
+      "range": {
+        "startLine": 696,
+        "startChar": 129,
+        "endLine": 696,
+        "endChar": 153
+      },
+      "revId": "2309f255b9ae655e1c3ef8f4b2e224adc1ba9274",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

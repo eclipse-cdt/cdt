@@ -12,20 +12,33 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4e.cpp.language.cquery.CqueryInactiveRegions;
 import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
+import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
 import org.eclipse.lsp4e.cpp.language.cquery.IndexingProgressStats;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -60,24 +73,48 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	@JsonNotification("$cquery/setInactiveRegions")
 	public final void setInactiveRegions(CqueryInactiveRegions regions) {
-		URI uri = regions.getUri();
+		URI uriReceived = regions.getUri();
 		List<Range> inactiveRegions = regions.getInactiveRegions();
-		CqueryLineBackgroundListener.fileInactiveRegionsMap.put(uri, inactiveRegions);
-	}
+		IDocument doc = null;
 
-	public static URI getUri(IDocument document) {
-		URI uri = null;
-		IFile file = LSPEclipseUtils.getFile(document);
-		if (file != null) {
-			uri = LSPEclipseUtils.toUri(file);
+//		To get the document for the received URI.
+		for (PresentationReconcilerCPP eachReconciler: PresentationReconcilerCPP.presentationReconcilers) {
+			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
+			URI currentReconcilerUri = getUri(currentReconcilerDoc);
+
+			if(currentReconcilerUri == null) {
+				continue;
+			}
+
+			if (uriReceived.equals(currentReconcilerUri)) {
+				doc = currentReconcilerDoc;
+				break;
+			}
 		}
-		return uri;
+
+		for (Range region : inactiveRegions) {
+			int offset = 0, length = 0;
+			try {
+				offset = doc.getLineOffset(region.getStart().getLine());
+				length = doc.getLineOffset(region.getEnd().getLine()) - offset;
+			} catch (BadLocationException e) {
+				Activator.log(e);
+			}
+
+			Position inactivePosition = new Position(offset, length);
+			try {
+				doc.addPosition(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY, inactivePosition);
+			} catch (BadLocationException | BadPositionCategoryException e) {
+				Activator.log(e);
+			}
+		}
 	}
 
 	@JsonNotification("$cquery/publishSemanticHighlighting")
 	public final void semanticHighlights(CquerySemanticHighlights highlights) {
 		URI uriReceived = highlights.getUri();
-		CquerySemanticHighlights.uriToSemanticHighlightsMapping.put(uriReceived, highlights.getSymbols());
+
+//		List of PresentationReconcilerCPP objects attached with same C++ source file.
 		List<PresentationReconcilerCPP> matchingReconcilers = new ArrayList<>();
 
 		for (PresentationReconcilerCPP eachReconciler: PresentationReconcilerCPP.presentationReconcilers) {
@@ -93,18 +130,86 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 			}
 		}
 
+//		Using only first object of matchingReconcilers because all reconciler objects share same document object.
+		IDocument doc = matchingReconcilers.get(0).getTextViewer().getDocument();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+
+		for (HighlightSymbol highlight : highlights.getSymbols()) {
+
+			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(), highlight.getParentKind(), highlight.getStorage());
+			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+
+			boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
+			boolean isItalic = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
+			boolean isUnderline = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
+			boolean isStrikethrough = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
+								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
+
+			Color color = new Color(Display.getCurrent(),
+									PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
+
+			List<Range> ranges = highlight.getRanges();
+			for (Range range : ranges) {
+
+				int offset = 0, length = 0;
+				try {
+					offset = doc.getLineOffset(range.getStart().getLine()) + range.getStart().getCharacter();
+					length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter() - offset;
+				} catch (BadLocationException e) {
+					Activator.log(e);
+				}
+
+				int textStyle = 0; 		// SWT.NORMAL = 0
+				if(isBold) {
+					textStyle = SWT.BOLD;
+				}
+				if(isItalic) {
+					textStyle |= SWT.ITALIC;
+				}
+				if(isUnderline) {
+					textStyle |= TextAttribute.UNDERLINE;
+				}
+				if(isStrikethrough) {
+					textStyle |= TextAttribute.STRIKETHROUGH;
+				}
+
+				Object lock = new Object();
+				TextAttribute textAttribute = new TextAttribute(color, null, textStyle);
+				HighlightingStyle highlightingStyle = new HighlightingStyle(textAttribute, true);
+				HighlightedPosition highlightedPosition = new HighlightedPosition(offset, length, highlightingStyle, lock);
+				try {
+					doc.addPosition(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY, highlightedPosition);
+				} catch (BadLocationException | BadPositionCategoryException e) {
+					Activator.log(e);
+				}
+			}
+		}
+
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (PresentationReconcilerCPP p: matchingReconcilers) {
-					IDocument currentReconcilerDoc = p.getTextViewer().getDocument();
-					if (currentReconcilerDoc == null) {
-						continue;
-					}
-					TextPresentation textPresentation = p.createPresentation(new Region(0, currentReconcilerDoc.getLength()), currentReconcilerDoc);
-					p.getTextViewer().changeTextPresentation(textPresentation, false);
+				for(PresentationReconcilerCPP eachReconciler : matchingReconcilers) {
+					TextPresentation presentation = eachReconciler.createPresentation(new Region(0, doc.getLength()), doc);
+					eachReconciler.getTextViewer().changeTextPresentation(presentation, false);
 				}
 			}
 		});
+	}
+
+	/*
+	 * Returns the URI of the Document provided.
+	 * Can return null value.
+	 */
+	public static URI getUri(IDocument document) {
+		URI uri = null;
+		IFile file = LSPEclipseUtils.getFile(document);
+		if (file != null) {
+			uri = LSPEclipseUtils.toUri(file);
+		}
+		return uri;
 	}
 }

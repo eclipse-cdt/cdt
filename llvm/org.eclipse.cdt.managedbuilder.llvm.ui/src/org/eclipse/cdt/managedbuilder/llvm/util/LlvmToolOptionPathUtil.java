@@ -320,7 +320,7 @@ public class LlvmToolOptionPathUtil {
 			return configurations;
 		}
 		//info can be null for projects without build info. For example, when creating a project
-		//from Import >�C/C++ Executable
+		//from Import > C/C++ Executable
 		if(info == null) {
 			return configurations;
 		}

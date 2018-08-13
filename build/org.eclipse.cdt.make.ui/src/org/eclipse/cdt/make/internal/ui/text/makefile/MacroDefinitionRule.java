@@ -160,7 +160,7 @@ class MacroDefinitionRule implements IPredicateRule {
 
 	protected boolean isValidCharacter(int c) {
 		// From GNUMakefile manual:
-		// A variable name may be any sequence of characters not containing ‘:’, ‘#’, ‘=’, or leading or trailing whitespace.
+		// A variable name may be any sequence of characters not containing ':', '#', '=', or leading or trailing whitespace.
 		// However, variable names containing characters other than letters, numbers, and underscores should be avoided,
 		// as they may be given special meanings in the future, and with some shells they cannot be passed through the environment to a sub-make
 		return !Character.isWhitespace(c) && c != ':' && c != '#' && c != '=';

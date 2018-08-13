@@ -268,6 +268,16 @@
 		</pluginRepository>
   	</pluginRepositories>
 	<profiles>
+		<!-- TODO: Remove this profile after getting rid of all the doclint warnings -->
+		<profile>
+			<id>disable-java8-doclint</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<doclint>none</doclint>
+			</properties>
+		</profile>
 		<profile>
 			<id>cdtRepo</id>
 			<repositories>

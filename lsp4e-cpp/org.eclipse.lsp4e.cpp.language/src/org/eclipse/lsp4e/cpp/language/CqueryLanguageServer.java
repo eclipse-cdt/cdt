@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Path;
 
 import com.google.gson.JsonObject;
 
+@SuppressWarnings("restriction")
 public class CqueryLanguageServer implements ICPPLanguageServer {
 
 	@Override

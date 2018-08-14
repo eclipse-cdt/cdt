@@ -13,9 +13,12 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -31,6 +34,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
@@ -40,6 +45,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	private static final IParserLogService NULL_LOG = new NullLogService();
 	protected CPreprocessor fScanner;
 	protected ILocationResolver fLocationResolver;
+	protected String fCode;
 
 	public PreprocessorTestsBase(String name) {
 		super(name);
@@ -66,6 +72,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	private FileContent getContent(String input) {
+		fCode = input;
 		return FileContent.create("<test-code>", input.toCharArray());
 	}
 
@@ -91,6 +98,18 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 
 	protected void initializeScanner() throws Exception {
 		initializeScanner(getAboveComment());
+	}
+
+	protected IASTTranslationUnit parse() {
+		return parse(ParserLanguage.CPP);
+	}
+
+	protected IASTTranslationUnit parse(ParserLanguage lang) {
+		assertNotNull("The scanner needs to be initialized before parsing the code.", fScanner);
+		if (lang == ParserLanguage.C) {	
+			return new GNUCSourceParser(fScanner,  ParserMode.COMPLETE_PARSE, NULL_LOG, GCCParserExtensionConfiguration.getInstance()).parse();
+		}
+		return new GNUCPPSourceParser(fScanner, ParserMode.COMPLETE_PARSE, NULL_LOG, GPPParserExtensionConfiguration.getInstance()).parse();
 	}
 
 	protected StringBuilder[] getTestContent(int sections) throws IOException {
@@ -198,7 +217,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void validateAsUndefined(String name) {
-		assertNull(fScanner.getMacroDefinitions().get(name.toCharArray()));
+		assertNull(fScanner.getMacroDefinitions().get(name));
 	}
 
 	protected void validateProblemCount(int count) throws Exception {

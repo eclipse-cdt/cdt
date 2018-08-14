@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullLogService;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+
+import junit.framework.TestSuite;
 
 
 /**
@@ -275,4 +282,15 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	//	#undef __INCLUDE_C_STD_LIB
+	//	#ifdef __INCLUDE_C_STD_LIB
+	//	#include <cstdint>
+	//	#endif
+	public void testInactiveInclude_FOO() throws Exception {
+		super.initializeScanner();
+		ISourceCodeParser parser = new GNUCPPSourceParser(fScanner, ParserMode.COMPLETE_PARSE, new NullLogService(), new GPPParserExtensionConfiguration());
+		parser.parse();
+		IASTPreprocessorStatement preprocessorStatement = fScanner.getLocationMap().getAllPreprocessorStatements()[2];
+		assertEquals(57, ((ASTNode) preprocessorStatement).getOffset());
+	}
 }

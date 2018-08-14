@@ -1998,7 +1998,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			case IPreprocessorDirective.ppImport:
 			case IPreprocessorDirective.ppInclude:
 			case IPreprocessorDirective.ppInclude_next:
-				executeInclude(lexer, ident.getOffset(), type, false, withinExpansion);
+				executeInclude(lexer, pound.getOffset(), type, false, withinExpansion);
 				break;
 			case IPreprocessorDirective.ppIfdef:
 				return executeIfdef(lexer, pound.getOffset(), false, withinExpansion);

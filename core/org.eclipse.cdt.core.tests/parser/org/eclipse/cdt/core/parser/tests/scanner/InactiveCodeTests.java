@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+
+import junit.framework.TestSuite;
 
 
 /**
@@ -275,4 +276,13 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	//	#undef __INCLUDE_C_STD_LIB
+	//	#ifdef __INCLUDE_C_STD_LIB
+	//	#include <cstdint>
+	//	#endif
+	public void testInactiveInclude_537942() throws Exception {
+		super.initializeScanner();
+		ASTNode include = (ASTNode) parse().getAllPreprocessorStatements()[2];
+		assertEquals(fCode.indexOf("#include <cstdint>"), include.getOffset());
+	}
 }

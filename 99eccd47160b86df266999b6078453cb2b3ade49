@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93479108_e00b1903",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/errorparsers/tests/GCCErrorParserTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-14T09:49:29Z",
+      "side": 1,
+      "message": "Does the test still pass with this change? Have you update the encoding of the file to achieve it?",
+      "revId": "99eccd47160b86df266999b6078453cb2b3ade49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

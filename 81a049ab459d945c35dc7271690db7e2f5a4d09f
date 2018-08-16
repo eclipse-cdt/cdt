@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "b2ef1639_b8746433",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHLabelProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2018-08-16T09:15:50Z",
+      "side": 1,
+      "message": "In my sample this method never have been used when I first time extended the Call Hierarchy tree. I have splitted providers in content and label providers and the label provider should implement IStyledLabelProvider as you suggested, but it does not have the getText() method that could be used for this method.",
+      "parentUuid": "33269667_1a26ec36",
+      "revId": "81a049ab459d945c35dc7271690db7e2f5a4d09f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "511871c2_62aac8e4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHLabelProvider.java",
         "patchSetId": 1

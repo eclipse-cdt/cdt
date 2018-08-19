@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 Wind River Systems, Inc.
+ * Copyright (c) 2004, 2018 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -97,6 +97,10 @@ class RenameMessages extends NLS {
 	public static String CRenameTopProcessor_virtualMethod;
 	public static String CRenameTopProcessor_wizard_backup_title;
 	public static String CRenameTopProcessor_wizard_title;
+	public static String CResourceRenameRefactoringInputPage_new_name;
+	public static String CResourceRenameRefactoringInputPage_open_preferences;
+	public static String CResourceRenameRefactoringInputPage_open_preferences_tooltip;
+	public static String CResourceRenameRefactoringInputPage_update_references;
 	public static String HeaderFileMoveParticipant_name;
 	public static String HeaderFileRenameParticipant_name;
 	public static String HeaderReferenceAdjuster_update_include_guards;
@@ -121,6 +125,7 @@ class RenameMessages extends NLS {
 	public static String RenameLinkedMode_error_saving_editor;
 	public static String RenameSupport_not_available;
 	public static String RenameSupport_dialog_title;
+	public static String RenameSupport_rename_resource;
 	public static String TextSearch_monitor_categorizeMatches;
 
 	static {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -93,6 +93,19 @@ public class CRefactory {
         final CRenameProcessor processor = new CRenameProcessor(this, iarg);
 		CRenameRefactoring refactoring= new CRenameRefactoring(processor);
         RenameSupport.openDialog(shell, refactoring);
+	}
+
+	/**
+	 * Rename a resource selected in the navigator
+	 * 
+	 * @param shell
+	 * @param selected
+	 */
+	public void renameResource(Shell shell, IResource selected) {
+		if (!IDE.saveAllEditors(new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, false)) {
+			return;
+		}
+		RenameSupport.openRenameResourceDialog(shell, selected);
 	}
 
     public TextSearchWrapper getTextSearch() {

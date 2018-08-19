@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringExecutionHelper;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
 
 /**
@@ -214,6 +216,49 @@ public class RenameSupport {
         	CUIPlugin.log(e);
 		}
         return DialogResult.CANCELED;
+	}
+
+	/**
+	 * Opens the refactoring dialog for a resource rename refactoring.
+	 *
+	 * <p>
+	 * This method has to be called from within the UI thread.
+	 * </p>
+	 *
+	 * @param shell a shell used as a parent for the refactoring dialog.
+	 * @param resource selected resource to rename
+	 *
+	 * @see #openRenameResourceDialog(Shell, DialogMode, IResource)
+	 */
+	public static void openRenameResourceDialog(Shell shell, IResource resource) {
+		openRenameResourceDialog(shell, DialogMode.ALL_PAGES, resource);
+	}
+
+	/**
+	 * Opens the resource renaming refactoring dialog.
+	 *
+	 * <p>
+	 * This method has to be called from within the UI thread.
+	 * </p>
+	 *
+	 * @param shell A shell used as a parent for the refactoring, preview, or error dialog
+	 * @param mode One of DialogMode values. ALL_PAGES opens wizard with all pages shown;
+	 *     PREVIEW_ONLY opens the preview page only; CONDITIONAL_PREVIEW opens the wizard with
+	 *     preview page only and only if a warning was generated during the final conditions check.
+	 * @param resource selected resource to rename
+	 * @return One of DialogResult values. OK is returned if the dialog was shown and
+	 *     the refactoring change was applied; CANCELED is returned if the refactoring was
+	 *     cancelled. SKIPPED is returned if the dialog was skipped in CONDITIONAL_PREVIEW mode and
+	 *     the refactoring change has not been applied yet.
+	 */
+	static DialogResult openRenameResourceDialog(Shell shell, final DialogMode mode, IResource resource) {
+		CResourceRenameRefactoringWizard wizard = new CResourceRenameRefactoringWizard(resource);
+		RefactoringStarter starter = new RefactoringStarter();
+		if (starter.activate(wizard, shell, RenameMessages.RenameSupport_rename_resource, RefactoringSaveHelper.SAVE_ALL)) {
+			return DialogResult.OK;
+		}
+
+		return DialogResult.CANCELED;
 	}
 
 	/**

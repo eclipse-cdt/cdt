@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3767763a_0f95b67f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "As a committer it is implicitly signed off by me. I only need your confirmation for signed off.",
+      "parentUuid": "d7004267_7dd8eb76",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3dcc3a4e_0d4c3c95",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRefactory.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-08-21T12:52:33Z",
       "side": 1,
       "message": "Add your name as a contributor?",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b30a840a_633c8194",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CRefactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "The updating of Contributors is now optional, in the new license header (when we update to EPL 2.0) it does not exist at all. The git log is not considered the \"master\" for contributors on a file.",
+      "parentUuid": "3dcc3a4e_0d4c3c95",
       "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "716f3c03_29c48797",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CResourceRenameRefactoringInputPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fad31c80_e0f2119a",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "53172fad_f31bac3a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CResourceRenameRefactoringInputPage.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2018-08-21T12:52:33Z",
       "side": 1,
       "message": "this replaces the previous \"isValidIdentifier()\" method, right?",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a850e73f_8687c607",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/CResourceRenameRefactoringInputPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "Yes. The RenameResourceProcessor has the logic in it already, so the wizard page only needs to delegate to it.",
+      "parentUuid": "53172fad_f31bac3a",
       "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "348835c8_ca2a16fe",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameMessages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "ditto.",
+      "parentUuid": "e2b915b8_2272a101",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f023566e_5c9a018c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameMessages.properties",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2018-08-21T12:52:33Z",
       "side": 1,
       "message": "name as a contributor",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85ff83da_7998a71b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "ditto",
+      "parentUuid": "f023566e_5c9a018c",
       "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "28264b1b_aa5f092e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameSupport.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "ditto",
+      "parentUuid": "279c56bc_b3cdb9db",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67d288bf_a10c90bf",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameSupport.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2018-08-21T12:52:33Z",
       "side": 1,
       "message": "add missing javadoc for IResource parameter",
+      "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fde3dfdc_5ed56529",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameSupport.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-08-21T13:04:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67d288bf_a10c90bf",
       "revId": "d51b0979b512aca8f4982d59159b0ef631c80084",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

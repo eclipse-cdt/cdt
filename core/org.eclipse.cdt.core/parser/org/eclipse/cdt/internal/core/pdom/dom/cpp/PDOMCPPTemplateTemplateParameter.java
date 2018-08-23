@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage.ConfigureTemplateParameters;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -76,6 +77,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		db.putInt(record + PARAMETERID, id);
 		final ICPPTemplateParameter[] origParams= param.getTemplateParameters();
 		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
+		((PDOMCPPLinkage)linkage).new ConfigureTemplateParameters(origParams, params);
 		long rec= PDOMTemplateParameterArray.putArray(db, params);
 		getDB().putRecPtr(record + PARAMETERS, rec);
 	}
@@ -220,6 +222,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 			try {
 				params= PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this, ttp.getTemplateParameters());
+				((PDOMCPPLinkage)linkage).new ConfigureTemplateParameters(ttp.getTemplateParameters(), params);
 				long newRec= PDOMTemplateParameterArray.putArray(db, params);
 				db.putRecPtr(record + PARAMETERS, newRec);
 				if (oldRec != 0)

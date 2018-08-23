@@ -2223,6 +2223,18 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		checkBindings();
 	}
 
+	//	template <template <int... T1> class TT>
+	//	struct my_template {
+	//	};
+
+	//	template<int...>
+	//	struct my_type{};
+	//
+	//	using foo = my_template<my_type>;
+	public void testTemplateTemplateNonTypeParameterPack_bug538069() throws Exception {
+		checkBindings();
+	}
+
 	// template<typename T>
 	// struct S {
 	//     T t;

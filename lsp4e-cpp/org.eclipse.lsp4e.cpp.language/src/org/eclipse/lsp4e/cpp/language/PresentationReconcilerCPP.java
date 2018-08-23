@@ -72,7 +72,6 @@ import org.eclipse.ui.editors.text.TextEditor;
  * Hack-ish reconciler to get some colors in the generic editor using the C/C++
  * Server.
  */
-@SuppressWarnings("restriction")
 public class PresentationReconcilerCPP extends CPresentationReconciler {
 
 	private CCommentScanner fSinglelineCommentScanner;

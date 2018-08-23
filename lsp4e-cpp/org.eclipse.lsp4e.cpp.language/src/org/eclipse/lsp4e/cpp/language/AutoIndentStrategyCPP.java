@@ -15,7 +15,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * 	Class to re-use existing auto-indentation support of CEditor in Generic Editor of LSP4E-CPP.
  */
 
-@SuppressWarnings("restriction")
 public class AutoIndentStrategyCPP extends CAutoIndentStrategy {
 
 	public AutoIndentStrategyCPP() {

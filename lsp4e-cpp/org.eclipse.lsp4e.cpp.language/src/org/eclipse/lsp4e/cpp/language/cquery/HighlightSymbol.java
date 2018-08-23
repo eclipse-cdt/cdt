@@ -16,7 +16,6 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.SymbolKind;
 
-@SuppressWarnings("restriction")
 public class HighlightSymbol {
 	private int stableId;
 	private ExtendedSymbolKindType parentKind;

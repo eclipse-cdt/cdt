@@ -98,8 +98,10 @@ public class CqueryJsonParseTest {
 		ExtendedSymbolKindType kind2 = new ExtendedSymbolKindType(253);
 		StorageClass storage1 = StorageClass.Static;
 		StorageClass storage2 = StorageClass.Auto;
-		HighlightSymbol symbol1 = new HighlightSymbol(21, parentKind1, kind1, storage1, ranges1);
-		HighlightSymbol symbol2 = new HighlightSymbol(19, parentKind2, kind2, storage2, ranges2);
+		int role1 = SymbolRole.Declaration;
+		int role2 = SymbolRole.Reference;
+		HighlightSymbol symbol1 = new HighlightSymbol(21, parentKind1, kind1, storage1, role1, ranges1);
+		HighlightSymbol symbol2 = new HighlightSymbol(19, parentKind2, kind2, storage2, role2, ranges2);
 		List<HighlightSymbol> symbols = new ArrayList<>();
 		symbols.add(symbol1);
 		symbols.add(symbol2);

@@ -51,12 +51,13 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if(event.getSource() == serverChoice && event.getProperty() == FieldEditor.VALUE) {
+		if (event.getSource() == serverChoice && event.getProperty() == FieldEditor.VALUE) {
 			File changedLSLocation = CPPStreamConnectionProvider.getDefaultLSLocation((String) event.getNewValue());
 			if(changedLSLocation != null) {
 				serverPath.setStringValue(changedLSLocation.getAbsolutePath());
 			}
 		}
+		super.propertyChange(event);
 	}
 
 	@Override

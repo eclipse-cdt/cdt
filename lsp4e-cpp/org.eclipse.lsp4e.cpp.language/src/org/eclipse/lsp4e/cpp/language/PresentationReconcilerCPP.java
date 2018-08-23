@@ -199,7 +199,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 
 		for (HighlightSymbol highlight : semanticHighlights) {
 
-			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(), highlight.getParentKind(), highlight.getStorage());
+			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(),
+					highlight.getParentKind(), highlight.getStorage(), highlight.getRole());
 			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
 								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
 

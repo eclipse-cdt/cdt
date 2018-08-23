@@ -76,9 +76,9 @@ public class CqueryJsonParseTest {
 	public void testPublishSemanticHighlighting() {
 		String json = "{\"jsonrpc\": \"2.0\",\"method\": \"$cquery/publishSemanticHighlighting\"," //$NON-NLS-1$
 				+ "\"params\": {\"uri\": \"file:///home/foobar.cpp\",\"symbols\": [{\"stableId\": 21," //$NON-NLS-1$
-				+ "\"parentKind\": 8,\"kind\": 0,\"storage\": 3,\"ranges\": [{\"start\": {\"line\": 41,"  //$NON-NLS-1$
+				+ "\"parentKind\": 8,\"kind\": 0,\"storage\": 3,\"role\": 1,\"ranges\": [{\"start\": {\"line\": 41,"  //$NON-NLS-1$
 				+ "\"character\": 1},\"end\": {\"line\": 41,\"character\": 5}}]},{\"stableId\": 19,"  //$NON-NLS-1$
-				+ "\"parentKind\": 12,\"kind\": 253,\"storage\": 5,\"ranges\": [{\"start\": {\"line\": 39,"  //$NON-NLS-1$
+				+ "\"parentKind\": 12,\"kind\": 253,\"storage\": 5,\"role\": 4,\"ranges\": [{\"start\": {\"line\": 39,"  //$NON-NLS-1$
 				+ "\"character\": 9},\"end\": {\"line\": 39,\"character\": 10}}]}]}}"; //$NON-NLS-1$
 
 		URI uri = URI.create("file:///home/foobar.cpp"); //$NON-NLS-1$
@@ -98,8 +98,10 @@ public class CqueryJsonParseTest {
 		ExtendedSymbolKindType kind2 = new ExtendedSymbolKindType(253);
 		StorageClass storage1 = StorageClass.Static;
 		StorageClass storage2 = StorageClass.Auto;
-		HighlightSymbol symbol1 = new HighlightSymbol(21, parentKind1, kind1, storage1, ranges1);
-		HighlightSymbol symbol2 = new HighlightSymbol(19, parentKind2, kind2, storage2, ranges2);
+		int role1 = SymbolRole.Declaration;
+		int role2 = SymbolRole.Reference;
+		HighlightSymbol symbol1 = new HighlightSymbol(21, parentKind1, kind1, storage1, role1, ranges1);
+		HighlightSymbol symbol2 = new HighlightSymbol(19, parentKind2, kind2, storage2, role2, ranges2);
 		List<HighlightSymbol> symbols = new ArrayList<>();
 		symbols.add(symbol1);
 		symbols.add(symbol2);

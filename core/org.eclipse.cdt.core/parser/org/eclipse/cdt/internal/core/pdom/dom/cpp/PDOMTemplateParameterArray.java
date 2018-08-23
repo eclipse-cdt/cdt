@@ -74,6 +74,7 @@ public class PDOMTemplateParameterArray {
 		for (int i = 0; i < origParams.length; i++) {
 			params[i]= createPDOMTemplateParameter(linkage, parent, origParams[i]);
 		}
+		((PDOMCPPLinkage)linkage).new ConfigureTemplateParameters(origParams, params);
 		return params;
 	}
 

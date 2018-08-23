@@ -168,7 +168,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		for (HighlightSymbol highlight : highlights.getSymbols()) {
 
 			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(),
-					highlight.getParentKind(), highlight.getStorage());
+					highlight.getParentKind(), highlight.getStorage(), highlight.getRole());
 			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + highlightingName
 					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
 

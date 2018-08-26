@@ -11,8 +11,8 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>2.3.0-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.tests.dsf.gdb</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>org.eclipse.cdt.debug.gdbjtag.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 
 	<properties>
@@ -33,7 +33,7 @@
 						<phase>clean</phase>
 						<configuration>
 							<tasks>
-								<ant antfile="TestAppBuilder.xml" target="clean"/>
+								<ant antfile="../../dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/TestAppBuilder.xml" target="clean"/>
 							</tasks>
 						</configuration>
 						<goals>
@@ -45,7 +45,7 @@
 						<phase>pre-integration-test</phase>
 						<configuration>
 							<tasks>
-								<ant antfile="TestAppBuilder.xml" target="makeTestApps"/>
+								<ant antfile="../../dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/TestAppBuilder.xml" target="makeTestApps"/>
 							</tasks>
 						</configuration>
 						<goals>

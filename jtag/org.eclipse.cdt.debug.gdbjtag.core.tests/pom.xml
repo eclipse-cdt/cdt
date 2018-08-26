@@ -11,8 +11,8 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>2.3.0-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.tests.dsf.gdb</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>org.eclipse.cdt.debug.gdbjtag.core.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 
 	<properties>
@@ -33,7 +33,7 @@
 						<phase>clean</phase>
 						<configuration>
 							<tasks>
-								<ant antfile="TestAppBuilder.xml" target="clean"/>
+								<ant antfile="../../dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/TestAppBuilder.xml" target="clean"/>
 							</tasks>
 						</configuration>
 						<goals>
@@ -45,7 +45,7 @@
 						<phase>pre-integration-test</phase>
 						<configuration>
 							<tasks>
-								<ant antfile="TestAppBuilder.xml" target="makeTestApps"/>
+								<ant antfile="../../dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/TestAppBuilder.xml" target="makeTestApps"/>
 							</tasks>
 						</configuration>
 						<goals>
@@ -61,7 +61,7 @@
 				<configuration>
 					<useUIHarness>false</useUIHarness>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M -Dcdt.tests.dsf.gdb.path=${dsf.gdb.tests.gdbPath} -Ddsf.gdb.tests.timeout.multiplier=${dsf.gdb.tests.timeout.multiplier} -Dcdt.tests.dsf.gdb.versions=${cdt.tests.dsf.gdb.versions}</argLine>
-                    <appArgLine>-debug ./dsf.debug.options</appArgLine>
+					<appArgLine>-debug ./dsf.debug.options</appArgLine>
 					<includes>
 						<include>**/${dsf.gdb.tests.gdbTestSuite}</include>
 					</includes>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Ericsson and others.
+ * Copyright (c) 2007, 2018 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
+ *     John Dallaway - Generalize for launch config type (bug 538282)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -106,6 +107,7 @@ public class BaseTestCase {
 
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_EXEC_NAME = "GDBMIGenericTestApp.exe";
+	private static final String LAUNCH_CONFIGURATION_TYPE_ID = "org.eclipse.cdt.tests.dsf.gdb.TestLaunch";
 
     private static GdbLaunch fLaunch;
 
@@ -480,7 +482,8 @@ public class BaseTestCase {
 		launchGdbServer();
 
  		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
- 		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType("org.eclipse.cdt.tests.dsf.gdb.TestLaunch");
+ 		String lcTypeId = getLaunchConfigurationTypeId();
+ 		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType(lcTypeId);
  		assert lcType != null;
 
  		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(
@@ -730,6 +733,10 @@ public class BaseTestCase {
 			gdbCache.put(gdb, GDB_NOT_FOUND);
 			return GDB_NOT_FOUND;
 		}
+	}
+
+	protected String getLaunchConfigurationTypeId() {
+		return LAUNCH_CONFIGURATION_TYPE_ID;
 	}
 
 	protected static String doReadGdbVersion(String gdb) throws IOException {

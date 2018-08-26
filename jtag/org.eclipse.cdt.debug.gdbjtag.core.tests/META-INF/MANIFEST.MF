@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GDB Hardware Debugging Tests
+Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.core.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.core.tests.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.cdt.tests.dsf.gdb;bundle-version="2.3.0",
+ org.junit,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.dsf.gdb,
+ org.eclipse.cdt.debug.gdbjtag.core;bundle-version="9.2.0",
+ org.eclipse.cdt.dsf,
+ org.eclipse.cdt.launch,
+ org.eclipse.debug.core
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Eclipse CDT
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

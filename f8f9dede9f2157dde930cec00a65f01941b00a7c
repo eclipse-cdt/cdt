@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8095c92e_35d3e241",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/InactiveCodeTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-08-26T03:35:31Z",
+      "side": 1,
+      "message": "If we modify PreprocessorTestsBase.initializeScanner() to save the result of getAboveComment() in a field of PreprocessorTestBase (say it\u0027s called \"code\"), we can use \n\n  code.indexOf(\"#include\")\n\ninstead of hardcoding the number 57.",
+      "revId": "f8f9dede9f2157dde930cec00a65f01941b00a7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

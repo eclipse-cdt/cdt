@@ -54,10 +54,7 @@
 		<module>features/org.eclipse.tm.terminal.feature</module>
 		<module>features/org.eclipse.tm.terminal.sdk.feature</module>
 
-		<!-- TM Terminal Repository -->
-		<!-- Can only be built with cdtserial since it references cdtserial! -->
-		<!-- This is OK since older profiles are only for validation anyways. -->
-		<!-- <module>repos/org.eclipse.tm.terminal.repo</module> -->
+		<module>plugins/org.eclipse.tm.terminal.test</module>
 	</modules>
 
 	<profiles>
@@ -78,7 +75,6 @@
 				<module>plugins/org.eclipse.tm.terminal.connector.cdtserial</module>
 				<module>features/org.eclipse.tm.terminal.connector.cdtserial.feature</module>
 				<module>features/org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
-				<module>repos/org.eclipse.tm.terminal.repo</module>
 			</modules>
 		</profile>
 		<profile>
@@ -94,13 +90,6 @@
 				<module>plugins/org.eclipse.tm.terminal.connector.serial</module>
 				<module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
 				<module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
-			</modules>
-		</profile>
-		<profile>
-			<!-- The tests are only built with the tests profile. -->
-			<id>tests</id>
-			<modules>
-				<module>plugins/org.eclipse.tm.terminal.test</module>
 			</modules>
 		</profile>
 	</profiles>

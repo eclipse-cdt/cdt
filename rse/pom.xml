@@ -31,6 +31,5 @@
      <module>features</module>
      <module>plugins</module>
      <module>tests</module>
-     <module>site</module>
     </modules>
 </project>

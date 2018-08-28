@@ -51,73 +51,8 @@
 		<terminal-stream>development</terminal-stream>
 		<terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
 		<terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
-
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>license-feature</id>
-			<url>${license-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>platform</id>
-			<url>${platform-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>platform-release</id>
-			<url>${platform-release-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>orbit</id>
-			<url>${orbit-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>cdt</id>
-			<url>${cdt-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>tm</id>
-			<url>${tm-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>swtbot</id>
-			<url>${swtbot-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>remote</id>
-			<url>${remote-site}</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype</id>
-			<url>https://oss.sonatype.org/content/repositories/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-		<pluginRepository>
-			<id>cbi</id>
-			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>cbi-snapshots</id>
-			<url>https://repo.eclipse.org/content/repositories/cbi-snapshots/</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<profiles>
 		<profile>

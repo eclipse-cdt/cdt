@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature id="org.eclipse.rse"><category name="rse_main"/></feature>
+   <feature id="org.eclipse.rse.sdk"><category name="rse_main"/></feature>
+   <feature id="org.eclipse.rse.terminals"><category name="rse_main"/></feature>
+   <feature id="org.eclipse.rse.useractions"><category name="rse_main"/></feature>
+
+   <feature id="org.eclipse.rse.examples"><category name="rse_optional"/></feature>
+   <feature id="org.eclipse.rse.scp"><category name="rse_optional"/></feature>
+
    <!-- Terminal Control Features -->
    <feature id="org.eclipse.tm.terminal.control.feature"><category name="terminal_main"/></feature>
    <feature id="org.eclipse.tm.terminal.control.sdk.feature"><category name="terminal_main"/></feature>
@@ -27,10 +35,28 @@
    <!-- TM Terminal "all-in-one" features -->
    <feature id="org.eclipse.tm.terminal.feature"><category name="terminal_main"/></feature>
    <feature id="org.eclipse.tm.terminal.sdk.feature"><category name="terminal_main"/></feature>
-   
-   <category-def name="terminal_main" label="TM Terminal Features">
+
+   <bundle id="org.eclipse.tm.terminal.test"><category name="terminal_optional"/></bundle>
+
+   <category-def name="terminal_main" label="Terminal Features">
       <description>
          TM Terminal Features
+      </description>
+   </category-def>
+   <category-def name="terminal_optional" label="Terminal Optional Add-Ons">
+      <description>
+         TM Terminal Examples, Tests, etc.
+      </description>
+   </category-def>
+
+   <category-def name="rse_main" label="RSE Features">
+      <description>
+         RSE Features
+      </description>
+   </category-def>
+   <category-def name="rse_optional" label="RSE Optional Add-Ons">
+      <description>
+         RSE Examples, Tests and Incubation Plug-ins.
       </description>
    </category-def>
 </site>

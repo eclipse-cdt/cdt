@@ -34,10 +34,6 @@
 		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
 		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
 
-		<!-- TODO remove dep on terminal and tm since in the same reactor now -->
-		<terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
-		<tm-site>http://download.eclipse.org/tm/updates/3.7.100/repository/</tm-site>
-
 		<!-- TODO: remove dep on simrel site -->
 		<!-- <platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site> -->
 		<platform-release-site>http://download.eclipse.org/staging/2018-09/</platform-release-site>
@@ -53,10 +49,15 @@
 			<id>license-feature</id>
 			<url>${license-site}</url>
 			<layout>p2</layout>
-		</repository>	
+		</repository>
 		<repository>
 			<id>platform</id>
 			<url>${platform-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>platform-release</id>
+			<url>${platform-release-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -70,8 +71,13 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
-			<id>terminal</id>
-			<url>${terminal-site}</url>
+			<id>swtbot</id>
+			<url>${swtbot-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>remote</id>
+			<url>${remote-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -92,9 +98,9 @@
 				<enabled>true</enabled>
 			</releases>
 		</pluginRepository>
-		<pluginRepository>																						 
-			<id>cbi</id>																						 
-			<url>http://repo.eclipse.org/content/repositories/cbi-releases/</url>											 
+		<pluginRepository>
+			<id>cbi</id>
+			<url>http://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>cbi-snapshots</id>
@@ -343,11 +349,12 @@
 
 
 	<modules>
-    <!-- Terminal features and plug-ins -->
-    <module>terminal</module>
+		<!-- Terminal features and plug-ins -->
+		<module>terminal</module>
 		<!-- RSE features and plug-ins -->
 		<module>rse</module>
 		<!-- Windows CE subsystem and support for RSE -->
 		<module>wince</module>
+		<module>site</module>
 	</modules>
 </project>

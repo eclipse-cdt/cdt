@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Administration (TM Terminal)</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>CONTRIBUTING</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/CONTRIBUTING</locationURI>
+		</link>
+		<link>
+			<name>pom.xml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/pom.xml</locationURI>
+		</link>
+		<link>
+			<name>readme.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>
+		</link>
+		<link>
+			<name>terminals.psf</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/terminals.psf</locationURI>
+		</link>
+		<link>
+			<name>toplevel.gitignore</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.gitignore</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

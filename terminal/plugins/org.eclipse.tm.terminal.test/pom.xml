@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.tm.terminal</groupId>
+    <artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
+    <version>4.4.0-SNAPSHOT</version>
+    <relativePath>../../admin/pom-build.xml</relativePath>
+  </parent>
+
+  <version>4.3.0-SNAPSHOT</version>
+  <artifactId>org.eclipse.tm.terminal.test</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+
+	<properties>
+		<jacoco.append>true</jacoco.append>
+		<ui.test.vmargs>-ea -Xmx512m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</ui.test.vmargs>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>tests</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<useUIHarness>true</useUIHarness>
+							<useUIThread>false</useUIThread>
+							<product>org.eclipse.platform.ide</product>
+							<!-- tycho.testArgLine is filled by Jacoco prepare-agent -->
+							<!-- see http://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
+							<argLine>${tycho.testArgLine} ${ui.test.vmargs}</argLine>
+							<application>org.eclipse.ui.ide.workbench</application>
+							<testFailureIgnore>true</testFailureIgnore>
+							<showEclipseLog>true</showEclipseLog>
+							<testRuntime>p2Installed</testRuntime>
+							<!--
+							<debugPort>8003</debugPort>
+							-->
+							<systemProperties>
+								<osgi.debug>${basedir}/tracing/.options</osgi.debug>
+							</systemProperties>
+
+							<!--
+							<testSuite>org.eclipse.tm.terminal.test</testSuite>
+							<testClass>org.eclipse.tm.terminal.test.AutomatedPluginTests</testClass>
+							-->
+							<includes>
+								<include>**/AutomatedPluginTests.*</include>
+								<include>**/AutomatedTests.*</include>
+							</includes>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.gmaven</groupId>
+						<artifactId>gmaven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<source>
+									project.properties['qualified.bundle.version'] = project.properties['unqualifiedVersion'].replace('qualifier', project.properties['buildQualifier'])
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>generate-report</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<typedef resource="org/jacoco/ant/antlib.xml"/>
+										<echo message="Coverage report"/>
+										<report>
+											<executiondata>
+												<fileset dir="${project.build.directory}" includes="jacoco.exec"/>
+											</executiondata>
+											<structure name="Code Coverage - TM Terminal">
+												<group name="org.eclipse.tm.terminal.control">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.control/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.control/src"/>
+													</sourcefiles>
+												</group>
+
+												<group name="org.eclipse.tm.terminal.view.ui">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.view.ui/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.view.ui/src"/>
+													</sourcefiles>
+												</group>
+
+												<group name="org.eclipse.tm.terminal.view.core">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.view.core/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.view.core/src"/>
+													</sourcefiles>
+												</group>
+										
+												<group name="org.eclipse.tm.terminal.connector.process">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.process/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.process/src"/>
+													</sourcefiles>
+												</group>
+										
+												<group name="org.eclipse.tm.terminal.connector.local">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.local/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.local/src"/>
+													</sourcefiles>
+												</group>
+
+												<group name="org.eclipse.tm.terminal.connector.ssh">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.ssh/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.connector.ssh/src"/>
+													</sourcefiles>
+												</group>
+
+												<group name="org.eclipse.tm.terminal.test">
+													<classfiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.test/target/classes"/>
+													</classfiles>
+													<sourcefiles>
+														<fileset dir="${basedir}/../org.eclipse.tm.terminal.test/src"/>
+													</sourcefiles>
+												</group>
+											</structure>
+
+											<html destdir="${project.build.directory}/coverage"
+										  		  footer="Code Coverage Report for TM Terminal ${qualified.bundle.version}"
+										  		  locale="de"/>
+											<csv destfile="${project.build.directory}/coverage/coverage.csv"/>
+											<xml destfile="${project.build.directory}/coverage/coverage.xml"/>
+										</report>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.jacoco</groupId>
+								<artifactId>org.jacoco.ant</artifactId>
+								<version>${jacoco-version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

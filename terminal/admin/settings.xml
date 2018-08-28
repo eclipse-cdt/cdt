@@ -1,0 +1,10 @@
+<settings>
+  <mirrors>
+    <mirror>
+      <id>eclipse-maven-central</id>
+      <name>Eclipse Maven Central</name>
+      <url>https://repo.eclipse.org/content/repositories/maven_central/</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>

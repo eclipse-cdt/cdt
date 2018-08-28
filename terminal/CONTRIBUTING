@@ -1,0 +1,50 @@
+Contributing to Target Management Terminal
+==========================================
+
+Thanks for your interest in this project.
+
+Project description:
+--------------------
+
+The Target Management Terminal is a lightweight VT100 terminal implementation. The project provides a re-usable terminal widget,
+a set of predefined terminal connectors (i.e. SSH and local shell) and a view managing the terminal sessions.
+
+Developer resources:
+--------------------
+
+Source Repositories:
+
+You can use the code from these repositories to experiment, test, build, create patches, issue pull requests, etc. This project uses Gerrit Code Review; please see contributing via Gerrit (https://wiki.eclipse.org/Gerrit).
+
+tm/org.eclipse.tm.terminal - Target Management Terminal
+    Clone: https://git.eclipse.org/r/tm/org.eclipse.tm.terminal
+    Browse Repository: http://git.eclipse.org/c/tm/org.eclipse.tm.terminal.git
+    Review with Gerrit: https://git.eclipse.org/r/p/tm/org.eclipse.tm.terminal
+
+Contributor License Agreement:
+------------------------------
+
+Before your contribution can be accepted by the project, you need to create and electronically sign the Eclipse Foundation Contributor License Agreement (CLA).
+
+- http://www.eclipse.org/legal/CLA.php
+
+Contact:
+--------
+
+Contact the project developers via the project's "dev" list.
+
+- https://dev.eclipse.org/mailman/listinfo/tm-dev
+
+Search for bugs:
+----------------
+
+This project uses Bugzilla to track ongoing development and issues.
+
+- https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&classification=Tools&component=Terminal&list_id=11564722&product=Target%20Management&query_format=advanced
+
+Create a new bug:
+-----------------
+
+Be sure to search for existing bugs before you create another one. Remember that contributions are always welcome!
+
+- https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Target%20Management&component=Terminal

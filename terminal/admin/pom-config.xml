@@ -252,7 +252,7 @@
 			<properties>
 				<terminal-stream>photon</terminal-stream>
 				<sdk-version>4.8</sdk-version>
-				<platform-site>http://download.eclipse.org/eclipse/updates/4.8milestones/</platform-site>
+				<platform-site>http://download.eclipse.org/eclipse/updates/4.8/</platform-site>
 				<platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site>
 				<!-- <platform-release-site>http://download.eclipse.org/releases/photon/</platform-release-site> -->
 				<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/</orbit-site>

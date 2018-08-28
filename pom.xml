@@ -316,6 +316,8 @@
 
 
 	<modules>
+    <!-- Terminal features and plug-ins -->
+    <module>terminal</module>
 		<!-- RSE features and plug-ins -->
 		<module>rse</module>
 		<!-- Windows CE subsystem and support for RSE -->

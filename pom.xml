@@ -14,16 +14,38 @@
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
 		<tycho-version>1.2.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
-		<maven-resources-version>2.7</maven-resources-version>
-		<!-- TODO: switch to 4.9-I-builds after June 27, 2018 -->
-		<sdk-version>4.8</sdk-version>
 
+		<maven-resources-version>2.7</maven-resources-version>
+		<maven-antrun-version>1.8</maven-antrun-version>
+		<gmaven-version>1.5</gmaven-version>
+		<findbugs-version>3.0.4</findbugs-version>
+		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
+		<jacoco-version>0.7.9</jacoco-version>
+		<eclipse-jarsigner-version>1.1.4</eclipse-jarsigner-version>
+
+		<sdk-version>4.9-I-builds</sdk-version>
 		<!-- Set up the default target platform to build against -->
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository</orbit-site>
-		<cdt-site>http://download.eclipse.org/tools/cdt/releases/8.8.1</cdt-site>
+		<cdt-site>http://download.eclipse.org/tools/cdt/builds/9.4</cdt-site>
+		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
+		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
+		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
+
+		<!-- TODO remove dep on terminal and tm since in the same reactor now -->
 		<terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
+		<tm-site>http://download.eclipse.org/tm/updates/3.7.100/repository/</tm-site>
+
+		<!-- TODO: remove dep on simrel site -->
+		<!-- <platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site> -->
+		<platform-release-site>http://download.eclipse.org/staging/2018-09/</platform-release-site>
+		<!-- TODO: remove this? TCF needs gson-2.2.4 which was added to Orbit in Luna SR2 -->
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
+
+		<!-- provides gnu.io for the update site -->
+		<rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
 	</properties>
 
 	<repositories>
@@ -50,6 +72,11 @@
 		<repository>
 			<id>terminal</id>
 			<url>${terminal-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>rxtx</id>
+			<url>${rxtx-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

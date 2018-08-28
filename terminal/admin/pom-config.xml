@@ -4,9 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+  <parent>
+    <groupId>org.eclipse.tm</groupId>
+    <artifactId>tm-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <relativePath>../../</relativePath>
+  </parent>
 
 	<groupId>org.eclipse.tm.terminal</groupId>
 	<artifactId>org.eclipse.tm.terminal.maven-config</artifactId>
@@ -36,24 +39,6 @@
 	</organization>
 
 	<properties>
-		<!-- Define version id's to be used in the plugins section -->
-		<!-- We use tycho-0.23 for https://bugs.eclipse.org/bugs/show_bug.cgi?id=459873 -->
-		<!-- We cannot use tycho-0.25 or later since it doesn't support Java 7 
-			for building -->
-		<!-- Using Java 8 for Tycho with a Java 7 target should be possible but 
-			takes some config -->
-		<!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=518104 for reference -->
-		<tycho-version>1.2.0</tycho-version>
-		<tycho-extras-version>${tycho-version}</tycho-extras-version>
-		<maven-resources-version>2.7</maven-resources-version>
-		<maven-antrun-version>1.8</maven-antrun-version>
-		<gmaven-version>1.5</gmaven-version>
-		<findbugs-version>3.0.4</findbugs-version>
-		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
-		<jacoco-version>0.7.9</jacoco-version>
-		<!-- Note: jarsigner-1.1.4 fails with Java 7 so stick to 1.1.2 -->
-		<eclipse-jarsigner-version>1.1.2</eclipse-jarsigner-version>
-
 		<!-- Common global properties -->
 		<adminDir>${env.WORKSPACE}/admin</adminDir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -68,27 +53,6 @@
 		<terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
 
-		<sdk-version>4.7</sdk-version>
-
-		<!-- Set up Mars as the default target platform to build against, -->
-		<!-- Because it supports Java 7, but also already has the cdt.native.serial 
-			plugin. -->
-		<!-- Also, PTP o.e.remote-2.0 from Mars is the oldest remote version that 
-			we can support. -->
-		<platform-site>http://download.eclipse.org/eclipse/updates/4.5</platform-site>
-		<platform-release-site>http://download.eclipse.org/releases/mars</platform-release-site>
-		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-		<cdt-site>http://download.eclipse.org/tools/cdt/releases/8.8.1</cdt-site>
-		<tm-site>http://download.eclipse.org/tm/updates/4.0</tm-site>
-		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
-		<rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
-		<!-- TCF needs gson-2.2.4 which was added to Orbit in Luna SR2 -->
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
-		<!-- SWTBot-2.4 and later require an e4-based Eclipse eg Juno or later: -->
-		<!-- See http://wiki.eclipse.org/SWTBot/Releases -->
-		<!-- Also, newer SWTBot needs JUnit 4.12 which is only in Orbit Mars and 
-			newer -->
-		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/2.2.1/</swtbot-site>
 	</properties>
 
 	<repositories>
@@ -130,11 +94,6 @@
 		<repository>
 			<id>remote</id>
 			<url>${remote-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>rxtx</id>
-			<url>${rxtx-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -256,7 +215,7 @@
 				<platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site>
 				<!-- <platform-release-site>http://download.eclipse.org/releases/photon/</platform-release-site> -->
 				<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/</orbit-site>
-				<tm-site>http://download.eclipse.org/tm/updates/3.7.100-SNAPSHOT/repository/</tm-site>
+				<tm-site>http://download.eclipse.org/tm/updates/3.7.100/repository/</tm-site>
 				<!-- <tm-site>http://download.eclipse.org/tm/updates/3.7.100/repository/</tm-site> -->
 				<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
 				<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->

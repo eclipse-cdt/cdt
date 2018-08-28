@@ -12,9 +12,9 @@
 
 	<properties>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
-		<tycho-version>1.1.0</tycho-version>
-		<tycho-extras-version>1.1.0</tycho-extras-version>
-		<maven-resources-version>2.6</maven-resources-version>
+		<tycho-version>1.2.0</tycho-version>
+		<tycho-extras-version>${tycho-version}</tycho-extras-version>
+		<maven-resources-version>2.7</maven-resources-version>
 		<!-- TODO: switch to 4.9-I-builds after June 27, 2018 -->
 		<sdk-version>4.8milestones</sdk-version>
 

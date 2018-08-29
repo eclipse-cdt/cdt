@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.useractions"
       label="%featureName"
-      version="3.7.100.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.useractions"
       image="eclipse_update_120.jpg"
@@ -31,11 +31,6 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -44,18 +39,18 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.shells.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.shells.ui"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
    </requires>
 
    <plugin
          id="org.eclipse.rse.useractions"
-         download-size="105"
-         install-size="339"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.examples"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.examples.tutorial"
       image="eclipse_update_120.jpg"
@@ -31,35 +31,30 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.files.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.shells.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.rse.files.ui"/>
+      <import plugin="org.eclipse.rse.shells.ui"/>
    </requires>
 
    <plugin
          id="org.eclipse.rse.examples.daytime"
-         download-size="9"
-         install-size="25"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.examples.tutorial"
-         download-size="12"
-         install-size="33"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
  <!--

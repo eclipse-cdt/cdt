@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.ftp"
       label="%featureName"
-      version="3.7.1.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.files.ftp"
       license-feature="org.eclipse.license"
@@ -30,40 +30,35 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.apache.commons.net" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
    </requires>
 
    <plugin
          id="org.apache.commons.net"
-         download-size="82"
-         install-size="288"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.files.ftp"
-         download-size="11"
-         install-size="18"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.ftp"
-         download-size="5"
-         install-size="13"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

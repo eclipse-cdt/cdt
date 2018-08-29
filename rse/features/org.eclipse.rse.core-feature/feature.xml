@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.core"
       label="%featureName"
-      version="3.7.3.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.core"
       license-feature="org.eclipse.license"
@@ -29,11 +29,6 @@
    <license url="%licenseURL">
       %license
    </license>
-
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
 
    <requires>
       <import plugin="org.eclipse.compare"/>
@@ -55,99 +50,99 @@
 
    <plugin
          id="org.eclipse.rse.core"
-         download-size="41"
-         install-size="133"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.doc.user"
-         download-size="159"
-         install-size="193"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.efs"
-         download-size="7"
-         install-size="14"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.efs.ui"
-         download-size="7"
-         install-size="14"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.importexport"
-         download-size="51"
-         install-size="147"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.files.ui"
-         download-size="111"
-         install-size="407"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.processes.ui"
-         download-size="22"
-         install-size="61"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services"
-         download-size="57"
-         install-size="183"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.shells.ui"
-         download-size="40"
-         install-size="135"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.core"
-         download-size="32"
-         install-size="98"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.core"
-         download-size="7"
-         install-size="21"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.shell.linux"
-         download-size="8"
-         install-size="22"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.core"
-         download-size="16"
-         install-size="56"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.ui"
-         download-size="548"
-         install-size="1677"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

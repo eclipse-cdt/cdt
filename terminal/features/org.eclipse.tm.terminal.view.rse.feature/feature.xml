@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.view.rse.feature"
       label="%featureName"
-      version="4.3.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.view.core"
       license-feature="org.eclipse.license"
@@ -20,21 +20,17 @@
       %license
    </license>
 
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.3"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.rse.core" version="3.3.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.3.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.rse.ui" version="3.3.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.tm.terminal.view.core"/>
+      <import plugin="org.eclipse.tm.terminal.control"/>
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.view.feature" version="4.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.view.feature"/>
+      <import plugin="org.eclipse.tm.terminal.view.ui"/>
    </requires>
 
    <plugin

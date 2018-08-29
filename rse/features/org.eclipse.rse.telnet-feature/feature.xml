@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.telnet"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.telnet"
       license-feature="org.eclipse.license"
@@ -30,47 +30,42 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services" version="3.1.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.shells.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.shells.ui"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
    </requires>
 
    <plugin
          id="org.apache.commons.net"
-         download-size="82"
-         install-size="228"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.telnet"
-         download-size="10"
-         install-size="21"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.telnet"
-         download-size="14"
-         install-size="23"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.telnet"
-         download-size="7"
-         install-size="14"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

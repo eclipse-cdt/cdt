@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal.connector.cdtserial.feature"
       label="%featureName"
-      version="4.3.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -29,10 +29,6 @@
    <license url="%licenseURL">
       %license
    </license>
-
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.3"/>
-   </url>
 
    <plugin
          id="org.eclipse.tm.terminal.connector.cdtserial"

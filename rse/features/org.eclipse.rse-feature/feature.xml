@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse"
       label="%featureName"
-      version="3.7.100.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse"
       image="eclipse_update_120.jpg"
@@ -30,11 +30,6 @@
    <license url="%licenseURL">
       %license
    </license>
-
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
 
    <includes
          id="org.eclipse.rse.core"
@@ -68,8 +63,8 @@
 
    <plugin
          id="org.eclipse.rse"
-         download-size="7"
-         install-size="8"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

@@ -31,32 +31,27 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.files.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.files.ui"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
    </requires>
 
    <plugin
          id="org.eclipse.rse.subsystems.wince"
-         download-size="20"
-         install-size="40"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.rapi"
-         download-size="14"
-         install-size="26"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
  <!--

@@ -14,7 +14,7 @@
 <feature
       id="org.eclipse.tm.terminal.control.feature"
       label="%featureName"
-      version="4.4.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.control"
       license-feature="org.eclipse.license"
@@ -31,10 +31,6 @@
    <license url="%licenseURL">
       %license
    </license>
-
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.4"/>
-   </url>
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>

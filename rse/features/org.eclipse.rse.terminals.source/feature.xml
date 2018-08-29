@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.terminals.source"
       label="%featureName"
-      version="3.8.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
@@ -19,10 +19,6 @@
    <license url="%licenseURL">
       %license
    </license>
-
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-   </url>
 
    <plugin
          id="org.eclipse.rse.subsystems.terminals.core.source"

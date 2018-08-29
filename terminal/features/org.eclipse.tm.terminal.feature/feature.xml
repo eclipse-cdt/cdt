@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.feature"
       label="%featureName"
-      version="4.4.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.view.core"
       license-feature="org.eclipse.license"
@@ -20,16 +20,12 @@
       %license
    </license>
 
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.4"/>
-   </url>
-
    <requires>
-      <import feature="org.eclipse.tm.terminal.connector.local.feature" version="4.3.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.connector.ssh.feature" version="4.3.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.connector.telnet.feature" version="4.3.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.control.feature" version="4.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.view.feature" version="4.3.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.connector.local.feature"/>
+      <import feature="org.eclipse.tm.terminal.connector.ssh.feature"/>
+      <import feature="org.eclipse.tm.terminal.connector.telnet.feature"/>
+      <import feature="org.eclipse.tm.terminal.control.feature"/>
+      <import feature="org.eclipse.tm.terminal.view.feature"/>
    </requires>
 
 </feature>

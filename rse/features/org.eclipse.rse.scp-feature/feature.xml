@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.rse.scp"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.subsystems.files.scp"
       image="eclipse_update_120.jpg"
@@ -32,20 +32,15 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services.ssh" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.connectorservice.ssh" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.services.ssh"/>
+      <import plugin="org.eclipse.rse.connectorservice.ssh"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
       <import plugin="com.jcraft.jsch" version="0.1.31" match="compatible"/>
    </requires>
 

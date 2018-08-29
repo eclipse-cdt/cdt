@@ -31,41 +31,37 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.rse.services" version="3.1.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services.ssh" version="3.1.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.1.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.connectorservice.ssh" version="2.1.0" match="compatible"/>
-      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.services.ssh"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.rse.connectorservice.ssh"/>
+      <import feature="org.eclipse.tm.terminal.control.feature"/>
    </requires>
 
    <plugin
          id="org.eclipse.rse.subsystems.terminals.core"
-         download-size="7"
-         install-size="15"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.terminals.ssh"
-         download-size="7"
-         install-size="11"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.terminals.ui"
-         download-size="24"
-         install-size="51"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

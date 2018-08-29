@@ -19,7 +19,7 @@
 <feature
       id="org.eclipse.rse.dstore"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.dstore"
       license-feature="org.eclipse.license"
@@ -37,77 +37,72 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.processes.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.core"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.subsystems.processes.core"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
    </requires>
 
    <plugin
          id="org.eclipse.dstore.core"
-         download-size="52"
-         install-size="154"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.dstore.extra"
-         download-size="4"
-         install-size="13"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.dstore"
-         download-size="16"
-         install-size="40"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.dstore"
-         download-size="59"
-         install-size="156"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.dstore"
-         download-size="14"
-         install-size="42"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.dstore"
-         download-size="5"
-         install-size="10"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.dstore"
-         download-size="5"
-         install-size="10"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.dstore.security"
-         download-size="20"
-         install-size="56"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

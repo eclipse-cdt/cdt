@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.local"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.5.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.local"
       license-feature="org.eclipse.license"
@@ -30,53 +30,48 @@
       %license
    </license>
 
-   <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.processes.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      <import plugin="org.eclipse.rse.subsystems.processes.core"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core"/>
    </requires>
 
    <plugin
          id="org.eclipse.rse.services.local"
-         download-size="21"
-         install-size="45"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.local"
-         download-size="7"
-         install-size="17"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.local"
-         download-size="5"
-         install-size="10"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.local"
-         download-size="5"
-         install-size="10"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.local"
-         download-size="3"
-         install-size="8"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

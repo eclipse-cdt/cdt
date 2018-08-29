@@ -15,30 +15,27 @@
 		<tycho-version>1.2.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 
+		<cbi-plugins.version>1.1.4</cbi-plugins.version>
+
 		<maven-resources-version>2.7</maven-resources-version>
 		<maven-antrun-version>1.8</maven-antrun-version>
 		<gmaven-version>1.5</gmaven-version>
 		<findbugs-version>3.0.4</findbugs-version>
 		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
 		<jacoco-version>0.7.9</jacoco-version>
-		<eclipse-jarsigner-version>1.1.4</eclipse-jarsigner-version>
 
 		<sdk-version>4.9-I-builds</sdk-version>
-		<!-- Set up the default target platform to build against -->
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
 
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository</orbit-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/I-builds/I20180829144012/repository/</orbit-site>
 		<cdt-site>http://download.eclipse.org/tools/cdt/builds/9.4</cdt-site>
 		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
 		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
 		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
 
 		<!-- TODO: remove dep on simrel site -->
-		<!-- <platform-release-site>http://download.eclipse.org/staging/photon/</platform-release-site> -->
 		<platform-release-site>http://download.eclipse.org/staging/2018-09/</platform-release-site>
-		<!-- TODO: remove this? TCF needs gson-2.2.4 which was added to Orbit in Luna SR2 -->
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
 
 		<!-- provides gnu.io for the update site -->
 		<rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
@@ -109,21 +106,15 @@
 	</pluginRepositories>
 	<build>
 		<plugins>
-		<plugin>
-			<groupId>org.eclipse.tycho</groupId>
-			<artifactId>tycho-maven-plugin</artifactId>
-			<version>${tycho-version}</version>
-			<extensions>true</extensions>
-		</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-maven-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<extensions>true</extensions>
-				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>target-platform-configuration</artifactId>
@@ -173,6 +164,9 @@
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho-version}</version>
 					<configuration>
+                  				<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
+                  				<!-- ignore project settings which appear in Eclipse but are ignored by Tycho <= 0.26, like API access restrictions -->
+                  				<!-- <useProjectSettings>false</useProjectSettings> -->
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
@@ -200,7 +194,7 @@
 						<dependency>
 							<groupId>org.eclipse.tycho.extras</groupId>
 							<artifactId>tycho-buildtimestamp-jgit</artifactId>
-							<version>${tycho-version}</version>
+							<version>${tycho-extras-version}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.eclipse.tycho.extras</groupId>
@@ -269,84 +263,92 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>${jacoco-version}</version>
 				</plugin>
-				
-				<!-- Pack200 and Signing -->
-				<plugin>
-					<groupId>org.eclipse.tycho.extras</groupId>
-					<artifactId>tycho-pack200a-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>pack200-normalize</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>normalize</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.cbi.maven.plugins</groupId>
-					<artifactId>eclipse-jarsigner-plugin</artifactId>
-					<version>${eclipse-jarsigner-version}</version>
-					<executions>
-						<execution>
-							<id>sign</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho.extras</groupId>
-					<artifactId>tycho-pack200b-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>pack200-pack</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>pack</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- Keep the tycho-p2-plugin after the tycho-pack200b-plugin -->
-				<!-- Tycho p2 metadata generation shall happen _after_ the JAR has been packed. -->
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<!-- Signing appears to mess with the baseline repository logic.
-						 Disable the baseline repository until we've figured out what is going on. -->
-					<!--					
-					<configuration>
-						<baselineRepositories>
-							<repository>
-								<url>http://download.eclipse.org/tools/tm/builds/${tm-stream}/nightly</url>
-							</repository>
-						</baselineRepositories>
-					</configuration>
-					-->
-					<executions>
-						<execution>
-							<id>p2-metadata</id>
-							<phase>package</phase>
-							<goals>
-								<goal>p2-metadata</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<defaultP2Metadata>false</defaultP2Metadata>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>eclipse-sign</id>
+			<build>
+			<plugins>
+				<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<includePackedArtifacts>true</includePackedArtifacts>
+				</configuration>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200a-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
+				<executions>
+					<execution>
+					<id>pack200-normalize</id>
+					<goals>
+						<goal>normalize</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.cbi.maven.plugins</groupId>
+				<artifactId>eclipse-jarsigner-plugin</artifactId>
+				<version>${cbi-plugins.version}</version>
+				<executions>
+					<execution>
+					<id>sign</id>
+					<goals>
+						<goal>sign</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200b-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
+				<executions>
+					<execution>
+					<id>pack200-pack</id>
+					<goals>
+						<goal>pack</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+					<id>p2-metadata</id>
+					<goals>
+						<goal>p2-metadata</goal>
+					</goals>
+					<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<defaultP2Metadata>false</defaultP2Metadata>
+				</configuration>
+				</plugin>
+			</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<modules>
 		<!-- Terminal features and plug-ins -->

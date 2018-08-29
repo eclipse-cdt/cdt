@@ -10,42 +10,49 @@
 
    <!-- Terminal Control Features -->
    <feature id="org.eclipse.tm.terminal.control.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.control.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.control.sdk.feature"><category name="terminal_sdk"/></feature>
    
    <!-- Terminal Connector Features -->
    <feature id="org.eclipse.tm.terminal.connector.local.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.local.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.local.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.cdtserial.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.cdtserial.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.cdtserial.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.serial.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.serial.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.serial.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.ssh.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.ssh.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.ssh.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.telnet.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.telnet.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.telnet.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.remote.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.remote.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.connector.remote.sdk.feature"><category name="terminal_sdk"/></feature>
 
    <!-- Terminal View Features -->
    <feature id="org.eclipse.tm.terminal.view.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.view.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.view.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.view.rse.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.view.rse.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.view.rse.sdk.feature"><category name="terminal_sdk"/></feature>
 
    <!-- TM Terminal "all-in-one" features -->
    <feature id="org.eclipse.tm.terminal.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.sdk.feature"><category name="terminal_main"/></feature>
+   <feature id="org.eclipse.tm.terminal.sdk.feature"><category name="terminal_sdk"/></feature>
 
    <bundle id="org.eclipse.tm.terminal.test"><category name="terminal_optional"/></bundle>
+   <bundle id="org.apache.commons.net"><category name="deps"/></bundle>
+   <bundle id="gnu.io.rxtx"><category name="deps"/></bundle>
 
    <category-def name="terminal_main" label="Terminal Features">
       <description>
          TM Terminal Features
       </description>
    </category-def>
+   <category-def name="terminal_sdk" label="Terminal SDK Features">
+      <description>
+         TM Terminal SDK Features
+      </description>
+   </category-def>
    <category-def name="terminal_optional" label="Terminal Optional Add-Ons">
       <description>
-         TM Terminal Examples, Tests, etc.
+         TM Terminal Examples, Tests
       </description>
    </category-def>
 
@@ -54,9 +61,20 @@
          RSE Features
       </description>
    </category-def>
+   <category-def name="rse_sdk" label="RSE SDK Features">
+      <description>
+         RSE SDK Features
+      </description>
+   </category-def>
    <category-def name="rse_optional" label="RSE Optional Add-Ons">
       <description>
-         RSE Examples, Tests and Incubation Plug-ins.
+         RSE Examples, Tests and Incubation Plug-ins
+      </description>
+   </category-def>
+
+   <category-def name="deps" label="Dependencies">
+      <description>
+         Dependencies
       </description>
    </category-def>
 </site>

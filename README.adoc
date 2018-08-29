@@ -6,31 +6,31 @@ Or, enable jar signing with `-P eclipse-sign`.
 
 There is only one test plugin, and it currently has one failing test. So you will likely want to add the `-DskipTests` flag to avoid that.
 
-An update site and zip will be produced in the `site/target/` folder, which contains features and plugins from both RSE and Terminal.
+An update site and zip will be produced in the `site/target/` folder, which contains features and plugins from both Remote System Explorer (RSE) and Terminal.
 
 == Circular Dependencies
 
-In theory, the Remote System Explorer (RSE) and Terminal are independent projects.
+In theory, the RSE and Terminal are independent projects.
 
 In practice, they each depend on each other, which is why we've now merged the RSE (org.eclipse.tm) and Terminal (org.eclipse.tm.terminal) repos into a single gerrit repo to resolve this cycle and make building easier.
 
 === In RSE
 
 * rse/plugins/org.eclipse.rse.terminals.ui/META-INF/MANIFEST.MF
-depends on
- *org.eclipse.tm.terminal.control*
+_depends on_
+** *org.eclipse.tm.terminal.control*
 
 * rse/features/org.eclipse.rse.terminals-feature/feature.xml
-depends on
- *org.eclipse.tm.terminal.control.feature*
+_depends on_
+** *org.eclipse.tm.terminal.control.feature*
 
-=== In TM.terminal:
+=== In Terminal:
 
 * plugins/org.eclipse.tm.terminal.view.ui.rse/META-INF/MANIFEST.MF
-depends on
- *org.eclipse.rse.core, org.eclipse.rse.subsystems.files.core, org.eclipse.rse.ui*
+_depends on_
+** *org.eclipse.rse.core, org.eclipse.rse.subsystems.files.core, org.eclipse.rse.ui*
 
 * features/org.eclipse.tm.terminal.view.rse.feature/feature.xml
-depends on
- *org.eclipse.rse.core, org.eclipse.rse.subsystems.files.core, org.eclipse.rse.ui*
+_depends on_
+** *org.eclipse.rse.core, org.eclipse.rse.subsystems.files.core, org.eclipse.rse.ui*
 

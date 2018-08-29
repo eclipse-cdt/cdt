@@ -17,12 +17,10 @@
   <parent>
     <groupId>org.eclipse.tm.rse</groupId>
     <artifactId>org.eclipse.tm.rse</artifactId>
-    <version>3.8.0-SNAPSHOT</version>
-  </parent>
+    </parent>
 
   <groupId>org.eclipse.tm.rse</groupId>
   <artifactId>org.eclipse.tm.rse.tools</artifactId>
-  <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

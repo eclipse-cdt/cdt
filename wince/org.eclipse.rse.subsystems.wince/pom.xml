@@ -5,11 +5,10 @@
   <parent>
     <artifactId>org.eclipse.tm.wince</artifactId>
     <groupId>org.eclipse.tm.wince</groupId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.5.0-SNAPSHOT</version>
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.rse.subsystems.wince</artifactId>
-  <version>0.1.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
           <plugins>

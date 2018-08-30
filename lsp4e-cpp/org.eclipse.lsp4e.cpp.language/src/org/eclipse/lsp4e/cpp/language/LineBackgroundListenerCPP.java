@@ -8,33 +8,22 @@
 
 package org.eclipse.lsp4e.cpp.language;
 
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.lsp4e.LSPEclipseUtils;
+import org.eclipse.jface.text.Position;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.lsp4j.Range;
 
 @SuppressWarnings("restriction")
-public class CqueryLineBackgroundListener implements LineBackgroundListener {
-	private List<Range> inactiveRegions;
+public class LineBackgroundListenerCPP implements LineBackgroundListener {
 	private IDocument currentDocument;
-	private URI currentDocumentUri;
 	private Color lineBackgroundColor;
-
-	// TODO: Remove mappings if not required
-	public static ConcurrentMap<URI, List<Range>> fileInactiveRegionsMap = new ConcurrentHashMap<>(16, 0.75f, 1);
 
 	public void setCurrentDocument(IDocument currentDocument) {
 		this.currentDocument = currentDocument;
@@ -47,25 +36,25 @@ public class CqueryLineBackgroundListener implements LineBackgroundListener {
 			return;
 		}
 
-		IFile file = LSPEclipseUtils.getFile(currentDocument);
-		if (file == null) {
-			return;
+		Position[] inactivePositions = null;
+		try {
+			inactivePositions = currentDocument.getPositions(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
+		} catch (BadPositionCategoryException e) {
+			Activator.log(e);
 		}
-		currentDocumentUri = LSPEclipseUtils.toUri(file);
-		inactiveRegions = fileInactiveRegionsMap.get(currentDocumentUri);
 
-		if (this.inactiveRegions == null) {
+		if(inactivePositions == null) {
 			return;
 		}
 
 		try {
-			for (Range eachInactiveRange : this.inactiveRegions) {
-				int regionStartLine = eachInactiveRange.getStart().getLine();
-				int regionEndLine = eachInactiveRange.getEnd().getLine();
+			for (Position eachInactivePosition : inactivePositions) {
+				int regionStartLine = currentDocument.getLineOfOffset(eachInactivePosition.getOffset());
+				int regionEndLine = currentDocument.getLineOfOffset(eachInactivePosition.getOffset() + eachInactivePosition.getLength());
 				if (event.lineOffset >= currentDocument.getLineOffset(regionStartLine)
-						&& event.lineOffset <= currentDocument.getLineOffset(regionEndLine)) {
-					event.lineBackground = lineBackgroundColor;
-					break;
+					&& event.lineOffset <= currentDocument.getLineOffset(regionEndLine)) {
+						event.lineBackground = lineBackgroundColor;
+						break;
 				}
 			}
 		} catch (BadLocationException e) {

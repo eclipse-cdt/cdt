@@ -58,18 +58,23 @@
 			</modules>
 		</profile>
 		<profile>
+			<!-- Bug 536800 depends on gnu.io.rxtx which is a workswith dep we are not allowed to redistribute --> 
 			<!-- The rxtxserial connector doesn't build on MacOSX. -->
 			<id>rxtxserial</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>!norxtx</name>
-				</property>
+				<activeByDefault>false</activeByDefault>
 			</activation>
-			<modules>
+			<!-- Bug 536800 remove from reactor <modules>
 				<module>org.eclipse.tm.terminal.connector.serial.feature</module>
 				<module>org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
-			</modules>
+			</modules> -->
+			<repositories>
+				<repository>
+					<id>rxtx</id>
+					<url>http://archive.eclipse.org/tm/updates/rxtx</url>
+					<layout>p2</layout>
+				</repository>
+			</repositories>
 		</profile>
 	</profiles>
 </project>

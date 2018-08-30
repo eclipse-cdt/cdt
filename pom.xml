@@ -37,8 +37,6 @@
 		<!-- TODO: remove dep on simrel site -->
 		<platform-release-site>http://download.eclipse.org/staging/2018-09/</platform-release-site>
 
-		<!-- provides gnu.io for the update site -->
-		<rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
 	</properties>
 
 	<repositories>
@@ -75,11 +73,6 @@
 		<repository>
 			<id>remote</id>
 			<url>${remote-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>rxtx</id>
-			<url>${rxtx-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

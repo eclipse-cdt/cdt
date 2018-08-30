@@ -39,6 +39,7 @@
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
    </requires>
 
+   <!-- Bug 536800 depends on gnu.io.rxtx which is a workswith dep we are not allowed to redistribute --> 
    <plugin
          id="org.eclipse.tm.terminal.connector.serial"
          download-size="0"

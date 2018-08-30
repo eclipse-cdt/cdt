@@ -17,8 +17,8 @@
    <feature id="org.eclipse.tm.terminal.connector.local.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.cdtserial.feature"><category name="terminal_main"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.cdtserial.sdk.feature"><category name="terminal_sdk"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.serial.feature"><category name="terminal_main"/></feature>
-   <feature id="org.eclipse.tm.terminal.connector.serial.sdk.feature"><category name="terminal_sdk"/></feature>
+   <!-- Bug 536800 remove <feature id="org.eclipse.tm.terminal.connector.serial.feature"><category name="terminal_main"/></feature> -->
+   <!-- Bug 536800 remove <feature id="org.eclipse.tm.terminal.connector.serial.sdk.feature"><category name="terminal_sdk"/></feature> -->
    <feature id="org.eclipse.tm.terminal.connector.ssh.feature"><category name="terminal_main"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.ssh.sdk.feature"><category name="terminal_sdk"/></feature>
    <feature id="org.eclipse.tm.terminal.connector.telnet.feature"><category name="terminal_main"/></feature>
@@ -38,7 +38,8 @@
 
    <bundle id="org.eclipse.tm.terminal.test"><category name="terminal_optional"/></bundle>
    <bundle id="org.apache.commons.net"><category name="deps"/></bundle>
-   <bundle id="gnu.io.rxtx"><category name="deps"/></bundle>
+   <!-- Bug 536800 gnu.io.rxtx is a workswith dep we are not allowed to redistribute --> 
+   <!-- <bundle id="gnu.io.rxtx"><category name="deps"/></bundle> -->
 
    <category-def name="terminal_main" label="Terminal Features">
       <description>

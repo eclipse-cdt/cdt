@@ -11,6 +11,7 @@
     <relativePath>../../admin/pom-build.xml</relativePath>
   </parent>
 
+  <!-- Bug 536800 depends on gnu.io.rxtx which is a workswith dep we are not allowed to redistribute --> 
   <artifactId>org.eclipse.tm.terminal.connector.serial</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>

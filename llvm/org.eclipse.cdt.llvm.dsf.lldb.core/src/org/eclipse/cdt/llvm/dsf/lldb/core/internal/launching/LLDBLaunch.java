@@ -220,6 +220,8 @@ public class LLDBLaunch extends GdbLaunch {
 			// 360.1.70 => Xcode 8.2.1, 8.2.0
 			// 370.0.37 => Xcode 8.3.0
 			// 370.0.40 => Xcode 8.3.1
+			// 902.0.79.7 => Xcode 9.4.1
+			// 1000.11.37.1 => Xcode 10.0
 			//
 			// Note that a LLDB built from source on macOS can report the same
 			// Apple-style version even for different LLDB/Clang-style version

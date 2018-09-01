@@ -103,32 +103,39 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
-		if (dmc instanceof IMIProcessDMContext) {
-			String pidStr = ((IMIProcessDMContext) dmc).getProcId();
-			int pid = -1;
-			try {
-				pid = Integer.parseInt(pidStr);
-			} catch (NumberFormatException e) {
-			}
-
-			// It's possible that we get here without getRunningProcesses called
-			// yet so the process names map will be empty. This can happen when
-			// doing local debugging but not attach mode.
-			if (fProcessNames.isEmpty()) {
-				// FIXME: This triggers a double done()!! (Bug 510833)
-				getRunningProcesses(dmc, new DataRequestMonitor<>(getExecutor(), rm));
-			}
-
-			String name = fProcessNames.get(pid);
-			if (name == null) {
-				name = Messages.LLDBProcesses_unknown_process_name;
-			}
-
-			rm.setData(new LLDBMIThreadDMData(name, pidStr));
-			rm.done();
-		} else {
+		if (!(dmc instanceof IMIProcessDMContext)) {
 			super.getExecutionData(dmc, rm);
+			return;
 		}
+
+		String pidStr = ((IMIProcessDMContext) dmc).getProcId();
+		int pid = -1;
+		try {
+			pid = Integer.parseInt(pidStr);
+		} catch (NumberFormatException e) {
+		}
+		int pid2 = pid;
+
+		// It's possible that we get here without getRunningProcesses called
+		// yet so the process names map will be empty. This can happen when
+		// doing local debugging but not attach mode.
+		if (fProcessNames.isEmpty()) {
+			getRunningProcesses(dmc, new DataRequestMonitor<IProcessDMContext[]>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					rm.setData(new LLDBMIThreadDMData(getProcessName(pid2), pidStr));
+					super.handleSuccess();
+				}
+			});
+		} else {
+			rm.setData(new LLDBMIThreadDMData(getProcessName(pid2), pidStr));
+			rm.done();
+		}
+	}
+
+	private String getProcessName(int pid) {
+		String name = fProcessNames.get(pid);
+		return name != null ? name : Messages.LLDBProcesses_unknown_process_name;
 	}
 
 	private static class LLDBMIThreadDMData implements IThreadDMData {

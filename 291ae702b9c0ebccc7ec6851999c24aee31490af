@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "68a8854a_8b144ab6",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LineBackgroundListenerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T23:21:30Z",
+      "side": 1,
+      "message": "Please disregard this comment. I wrote it before I saw that the caller (PresentationReconcilerCPP.setupDocument()) installs the position category if necessary.",
+      "parentUuid": "71f94386_a11c61f0",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0517501_11b04ae7",
         "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LineBackgroundListenerCPP.java",
         "patchSetId": 3

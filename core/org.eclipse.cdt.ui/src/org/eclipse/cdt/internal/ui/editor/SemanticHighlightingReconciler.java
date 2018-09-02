@@ -445,7 +445,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param visitor the AST visitor
 	 */
 	private void reconcilePositions(IASTTranslationUnit ast, PositionCollector visitor) {
-		ast.accept(visitor);
+		try {
+			CPPSemantics.pushLookupPoint(ast);
+			ast.accept(visitor);
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
 		List<HighlightedPosition> oldPositions= fRemovedPositions;
 		List<HighlightedPosition> newPositions= new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
 		for (int i= 0, n= oldPositions.size(); i < n; i ++) {

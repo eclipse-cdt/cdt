@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ade6174_57a147eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMTemplateParameterArray.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T04:14:33Z",
+      "side": 1,
+      "message": "Most callers of createPDOMTemplateParameters() already handle creating a ConfigureTemplateParameters object (or another ConfigureXXX object that handles configuring the template parameters, such as ConfigureFunctionTemplate).\n\nIt\u0027s only one call site, the PDOMCPPTemplateTemplateParameter constructor, that\u0027s missing it. Therefore, it would be more appropriate to create the ConfigureTemplateParameters object there. (Otherwise, for the other call sites we\u0027ll end up configuring the template parameters twice. Which is probably harmless, but it\u0027s needless work.)",
+      "revId": "8d9764b046c0eadf9b20821fd05b3791c75c44ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

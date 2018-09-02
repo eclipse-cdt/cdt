@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5a69fd0_6268a936",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/CqueryLanguageServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "I just posted a patch to give lsp4e-cpp access to some CDT internals (https://git.eclipse.org/r/#/c/128503/). With that patch, we no longer get warnings in this file and so the @SuppressWarnings is unnecessary.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29e08ef4_b912d409",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LineBackgroundListenerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "For future reference: it is better to put the rename of a class, and changes to the class, into separate commits. If they are mixed into the same commit, it\u0027s hard to see in the diff what the changes were.\n\n(There is no need to split this patch now. This is just a note for the future.)",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "71f94386_a11c61f0",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LineBackgroundListenerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "It probably makes sense to install the position category on the document when setting the document.\n\nThis should avoid the BadPositionCategoryException that you mentioned we still get once per file.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0517501_11b04ae7",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/LineBackgroundListenerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "space before \u0027(\u0027",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "545290c9_4b0831fa",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "The formatting convention for comments in this codebase is to place the \u0027//\u0027 after the indent.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "324fcf8a_c5ac6ab7",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "Is that because one call to presentationReconciler() happens before setupDocument()?\n\nIf that\u0027s the case, it would be better to add the position category here, too, so we don\u0027t get an exception in the log for a scenario that is normal / not problematic.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08bf467d_c2fb2579",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "space before \u0027(\u0027\n\nApplies in a few other places in this file too.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95c6932f_c156f61d",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "I don\u0027t think this check (and the static map it uses) adds much value, as the document already does an internal check to avoid duplicate position categories.\n\nWe can use containsPositionCategory() to avoid creating duplicate position updater objects:\n\n  if (!newDocument.containsPositionCateogry(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY) {\n      // Add the category and the updater\n  }\n\n  // Similarly for the other category",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dffb5757_422ebaf9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "The PresentationReconcilerCPP prefix is not necessary.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "60049f75_943814b5",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b72f195_e4865a13",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "space before \u0027(\u0027, here and elsewhere in this file",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "58f4df8f_bc285a75",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "This is something I didn\u0027t notice before, but the existing semantic highlighting code uses an IColorManager to cache Color objects (which are expensive) so only one object is created per color.\n\nWe don\u0027t have to fix this now, but please add a TODO comment so it\u0027s not forgotten.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9804a67e_572b6ae3",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "The existing user of HighlightedPosition uses the position updater as the lock object. We should probably do the same.",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "834a60c3_1d719748",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-02T06:39:49Z",
+      "side": 1,
+      "message": "Something else I didn\u0027t notice before: highlightings also have an \"enabled\" preference (meaning, is the highlighting enabled at all), accessed via EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX.\n\nThe existing semantic highlighting code passes the value of this preference as the second argument to the HighlightingStyle constructor. (Internally, that sets a field HighlightingStyle.fIsEnabled, and if that\u0027s false, HighlightedPosition.createStyleRange() returns an empty style range.)",
+      "revId": "291ae702b9c0ebccc7ec6851999c24aee31490af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

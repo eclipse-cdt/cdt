@@ -20,6 +20,7 @@ import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.wizards.NewClassCreationWizard;
@@ -67,7 +68,8 @@ public class QuickFixCreateNewClass extends AbstractCodanCMarkerResolution imple
 	public boolean isApplicable(IMarker marker) {
 		return getTranslationUnitViaEditorOrWorkspace(marker).map(tu -> {
 			try {
-				return tu.getLanguage().getLinkageID() != ILinkage.C_LINKAGE_ID;
+				ILanguage language = tu.getLanguage(); 
+				return language != null && language.getLinkageID() != ILinkage.C_LINKAGE_ID;
 			} catch (CoreException e) {
 				return true;
 			}

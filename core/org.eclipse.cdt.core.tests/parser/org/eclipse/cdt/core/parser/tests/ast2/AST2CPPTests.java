@@ -10191,6 +10191,23 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testAutoTypeInRangeBasedFor_359653() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct Iter {
+	//	    Iter& operator++();
+	//	    int& operator*();
+	//	    friend bool operator!=(Iter, Iter);
+	//	};
+	//
+	//	class C {};
+	//	Iter begin(C&);
+	//	Iter end(C&);
+	//
+	//	int main() {
+	//	    for (auto x : C());  // ERROR: Symbol 'begin' could not be resolved
+	//	}
+	public void testRangedBasedFor_538517() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 
 	//	typedef int T;
 	//	struct B {

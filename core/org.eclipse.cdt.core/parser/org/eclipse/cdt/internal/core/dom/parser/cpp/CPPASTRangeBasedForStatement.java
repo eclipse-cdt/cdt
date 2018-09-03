@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -49,6 +50,8 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
     private IASTStatement fBody;
     private IASTImplicitName[] fImplicitNames;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
+	
+	private static final char[] RANGE_EXPR = "__range".toCharArray();  //$NON-NLS-1$
 
     public CPPASTRangeBasedForStatement() {
 	}
@@ -159,11 +162,33 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner implement
 				}
 			}
 			if (fImplicitNames == null) {
+				// Synthesize a notional '__range' variable to refer to the range expression.
+				// We can't use the range expression itself as the argument to begin() and
+				// end() because the range expression's value category might be a prvalue or
+				// xvalue, but the value category of the '__range' variable appearing in the
+				// notional rewrite specified in the standard is an lvalue.
+				CPPASTName rangeVarDeclName = new CPPASTName(RANGE_EXPR);
+				CPPVariable rangeVar = new CPPVariable(rangeVarDeclName);
+				CPPASTSimpleDeclSpecifier rangeVarDeclSpec = new CPPASTSimpleDeclSpecifier();
+				rangeVarDeclSpec.setType(ICPPASTSimpleDeclSpecifier.t_auto);
+				CPPASTSimpleDeclaration rangeVarDecl = new CPPASTSimpleDeclaration();
+				rangeVarDecl.setDeclSpecifier(rangeVarDeclSpec);
+				// Make the notional declaration of '__range_ a child of the range-for
+				// statement's body, so that name resolution in its initializer has 
+				// a scope to work with.
+				rangeVarDecl.setParent(fBody);
+				CPPASTDeclarator rangeVarDeclarator = new CPPASTDeclarator(rangeVarDeclName);
+				rangeVarDeclarator.setInitializer(new CPPASTEqualsInitializer(forInit.copy()));
+				rangeVarDecl.addDeclarator(rangeVarDeclarator);
+				CPPASTName rangeVarRefName = new CPPASTName(RANGE_EXPR);
+				rangeVarRefName.setBinding(rangeVar);
+				CPPASTIdExpression rangeExpr = new CPPASTIdExpression(rangeVarRefName);
+				
 				CPPASTName name = new CPPASTName(CPPVisitor.BEGIN);
 				name.setOffset(position.getOffset());
 				CPPASTIdExpression fname = new CPPASTIdExpression(name);
 				IASTExpression expr= new CPPASTFunctionCallExpression(fname,
-						new IASTInitializerClause[] { forInit.copy() });
+						new IASTInitializerClause[] { rangeExpr });
 				expr.setParent(this);
 				expr.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
 

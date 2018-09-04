@@ -391,20 +391,6 @@ public class LLDBLaunch extends GdbLaunch {
 		return null;
 	}
 
-	@Override
-	public String getProgramPath() throws CoreException {
-		IPath path = new Path(super.getProgramPath());
-
-		// FIXME: LLDB-MI only accepts absolute paths for the program. But this
-		// seems to work with the latest version in SVN trunk (Mac) so we will
-		// need to find out in which version this was or will be fixed and stop
-		// doing this work-around if possible.
-		if (!path.isAbsolute()) {
-			path = getGDBWorkingDirectory().append(path);
-		}
-		return path.toOSString();
-	}
-
 	/**
 	 * Returns whether or not the LLDB use by this launch has the given trait.
 	 *

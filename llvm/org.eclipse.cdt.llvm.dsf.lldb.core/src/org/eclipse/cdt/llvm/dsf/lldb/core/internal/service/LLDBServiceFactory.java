@@ -13,8 +13,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
-import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.llvm.dsf.lldb.core.internal.service.commands.LLDBCommandFactory;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -36,7 +36,7 @@ public class LLDBServiceFactory extends GdbDebugServicesFactory {
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
-		return new LLDBControl(session, config, new CommandFactory());
+		return new LLDBControl(session, config, new LLDBCommandFactory());
 	}
 
 	@Override

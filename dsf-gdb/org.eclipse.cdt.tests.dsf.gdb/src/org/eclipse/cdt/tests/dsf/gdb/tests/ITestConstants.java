@@ -32,9 +32,11 @@ public class ITestConstants {
 	public static final String SUFFIX_GDB_7_12 = "7.12";
 	public static final String SUFFIX_GDB_8_0 = "8.0";
 	public static final String SUFFIX_GDB_8_1 = "8.1";
+	public static final String SUFFIX_GDB_8_2 = "8.2";
 
 	public static String[] ALL_SUPPORTED_VERSIONS = new String[] {
 			// add new versions here
+			ITestConstants.SUFFIX_GDB_8_2,
 			ITestConstants.SUFFIX_GDB_8_1,
 			ITestConstants.SUFFIX_GDB_8_0,
 			ITestConstants.SUFFIX_GDB_7_12,

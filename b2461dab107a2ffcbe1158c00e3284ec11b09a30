@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e994ff9_d0776235",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-09-07T20:53:35Z",
+      "side": 1,
+      "message": "It seems to me that the bottom pane should show the description too? In the past the bottom pane has been useful to differentiate between identical top pane process names.",
+      "revId": "b2461dab107a2ffcbe1158c00e3284ec11b09a30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

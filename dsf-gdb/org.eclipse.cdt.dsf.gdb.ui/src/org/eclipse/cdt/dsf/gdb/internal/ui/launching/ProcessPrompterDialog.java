@@ -13,9 +13,11 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -35,6 +37,8 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * pane).
  */
 public class ProcessPrompterDialog extends TwoPaneElementSelector {
+
+	private static final String DIALOG_SETTINGS_SECTION_ID = "processPrompterDialog"; //$NON-NLS-1$
 
 	public ProcessPrompterDialog(Shell parent, ILabelProvider elementRenderer,
 			ILabelProvider qualifierRenderer) {
@@ -117,5 +121,15 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 		}
 
 		return super.validateCurrentSelection();
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings settings = GdbUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION_ID);
+		if (section == null) {
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION_ID);
+		} 
+		return section;
 	}
 }

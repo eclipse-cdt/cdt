@@ -19,6 +19,7 @@ public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo
 	private final String name;
 	private final String[] cores;
 	private final String ownerId;
+	private final String description;
 	
 	public ProcessInfo(int pid, String name) {
 		this(pid, name, null, null);
@@ -26,11 +27,20 @@ public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo
 	
 	/** @since 2.2 */
 	public ProcessInfo(int pid, String name, String[] cores, String owner) {
+		this(pid, name, cores, owner, null);
+	}
+
+	/**
+	 * @since 2.6
+	 */
+	public ProcessInfo(int pid, String name, String[] cores, String owner, String description) {
 		this.pid = pid;
 		this.name = name;
 		this.cores = cores;
 		this.ownerId = owner;
+		this.description = description;
 	}
+
 	
     @Override
 	public String getName() {
@@ -51,7 +61,12 @@ public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo
 	public String getOwner() {
 		return ownerId;
 	}
-	
+
+    @Override
+    public String getDescription() {
+    	return description;
+    }
+
 	/**
 	 * Sort by name, then by pid.
 	 * No need to sort any further since pids are unique.

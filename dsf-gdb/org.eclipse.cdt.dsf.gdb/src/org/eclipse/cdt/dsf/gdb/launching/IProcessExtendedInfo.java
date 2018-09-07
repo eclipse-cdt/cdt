@@ -44,4 +44,11 @@ public interface IProcessExtendedInfo {
 	 * information is not available.
 	 */
 	public String getOwner();
+
+	/**
+	 * @return The description of this process, i.e. the program and
+	 *         its arguments, or null if not available.
+	 * @since 5.6
+	 */
+	public String getDescription();
 }

@@ -27,7 +27,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
@@ -41,12 +43,57 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 
 	private static final String DIALOG_SETTINGS_SECTION_ID = "processPrompterDialog"; //$NON-NLS-1$
 
+	private static final String DIALOG_SETTINGS_FILTER_KEY = "filter"; //$NON-NLS-1$
+
+	private final ILabelProvider elementRenderer;
+
 	public ProcessPrompterDialog(Shell parent, ILabelProvider elementRenderer,
 			ILabelProvider qualifierRenderer) {
 		super(parent, elementRenderer, qualifierRenderer);
+		this.elementRenderer = elementRenderer;
 		setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
+		setFilter(getFilterFromDialogSetting());
 	}
 	
+	@Override
+	protected FilteredList createFilteredList(Composite parent) {
+		FilteredList list = super.createFilteredList(parent);
+
+		list.setFilterMatcher(new FilteredList.FilterMatcher() {
+			private SearchPattern matcher;
+
+			@Override
+			public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
+
+				if (pattern == null) {
+					pattern = ""; //$NON-NLS-1$
+				}
+
+				if (! pattern.startsWith("*")) { //$NON-NLS-1$
+					pattern = "*" + pattern; //$NON-NLS-1$
+				}
+
+				int rules = SearchPattern.RULE_BLANK_MATCH | SearchPattern.RULE_PREFIX_MATCH;
+				if (! ignoreCase) {
+					rules |= SearchPattern.RULE_CASE_SENSITIVE;
+				}
+
+				if (! ignoreWildCards) {
+					rules |= SearchPattern.RULE_PATTERN_MATCH;
+				}
+				matcher = new SearchPattern(rules);
+				matcher.setPattern(pattern);
+			}
+
+			@Override
+			public boolean match(Object element) {
+				return matcher.matches(elementRenderer.getText(element));
+			}
+		});
+
+		return list;
+	}
+
 	/*
 	 * The result should be every selected element.
 	 */
@@ -127,11 +174,30 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
+		return getDialogSettings();
+	}
+
+	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = GdbUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION_ID);
 		if (section == null) {
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION_ID);
 		}
 		return section;
+	}
+
+	private String getFilterFromDialogSetting() {
+		String filter = getDialogSettings().get(DIALOG_SETTINGS_FILTER_KEY);
+		return filter == null ? "" : filter; //$NON-NLS-1$
+	}
+
+	private void storeDialogSetting() {
+		getDialogSettings().put(DIALOG_SETTINGS_FILTER_KEY, getFilter());
+	}
+
+	@Override
+	public boolean close() {
+		storeDialogSetting();
+		return super.close();
 	}
 }

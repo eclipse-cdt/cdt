@@ -17,6 +17,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
+import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.junit.Test;
@@ -32,6 +34,7 @@ public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 	private static final String TEST_JTAG_DEVICE_ID =
 			"org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
 	private static final String TEST_PROGRAM_NAME = EXEC_PATH + "Minimal.exe"; //$NON-NLS-1$
+	private static final String X86_64_INIT = SOURCE_PATH + "x86_64.init"; //$NON-NLS-1$
 
 	@Test
 	public void testGdbJtagLaunch() {
@@ -56,6 +59,11 @@ public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(IGDBJtagConstants.ATTR_SET_RESUME, remote);
 		if (remote) {
 			setLaunchAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, true);
+			if (0 > LaunchUtils.compareVersions(getGdbVersion(), GdbDebugServicesFactory.GDB_7_10_VERSION)) {
+				// Use a GDB initialization file to set x86_64 architecture for remote sessions with older GDB.
+				// This much precede connection to the gdbserver so we cannot use IGDBJtagConstants.ATTR_INIT_COMMANDS.
+				setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, X86_64_INIT);
+			}
 		} else {
 			setLaunchAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "file " + TEST_PROGRAM_NAME); //$NON-NLS-1$
 			setLaunchAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, "run"); //$NON-NLS-1$

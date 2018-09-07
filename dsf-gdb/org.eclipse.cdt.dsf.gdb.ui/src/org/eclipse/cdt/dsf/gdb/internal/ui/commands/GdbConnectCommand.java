@@ -52,6 +52,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData2;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -447,7 +448,11 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 												cores = ((IGdbThreadDMData)processData).getCores();
 												owner = ((IGdbThreadDMData)processData).getOwner();
 											}
-											procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner));
+											String description = null;
+											if (processData instanceof IGdbThreadDMData2) {
+												description = ((IGdbThreadDMData2)processData).getDescription();
+											}
+											procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner, description));
 										}
 
 										// Re-use the counting monitor and trigger it right away.
@@ -484,7 +489,11 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     																cores = ((IGdbThreadDMData)processData).getCores();
     																owner = ((IGdbThreadDMData)processData).getOwner();
     															}
-    															procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner));
+    															String description = null;
+    															if (processData instanceof IGdbThreadDMData2) {
+    																description = ((IGdbThreadDMData2)processData).getDescription();
+    															}
+    															procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner, description));
     															countingRm.done();
     														}
     													});

@@ -133,6 +133,11 @@ public class ProcessPrompter implements IStatusHandler {
 						text.replace(text.length()-2, text.length(), "]"); //$NON-NLS-1$
 					}
 					
+					String description =  info.getDescription();
+					if (description != null) {
+						text.append(" : " + description); //$NON-NLS-1$
+					}
+
 					return text.toString();
 				}
 
@@ -145,6 +150,10 @@ public class ProcessPrompter implements IStatusHandler {
 				@Override
 				public String getText(Object element) {
 					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
+					String description =  info.getDescription();
+					if (description != null) {
+						return description;
+					}
 					return info.getName();
 				}
 

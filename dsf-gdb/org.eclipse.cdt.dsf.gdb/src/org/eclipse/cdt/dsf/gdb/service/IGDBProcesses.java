@@ -54,7 +54,22 @@ public interface IGDBProcesses extends IMIProcesses {
          */
         String getOwner();
     }
-    
+
+    /**
+     * This interface extends the {@link IGdbThreadDMData} to provide a description
+     * for a process or thread.
+     *
+	 * @since 5.6
+	 */
+    public interface IGdbThreadDMData2 extends IGdbThreadDMData {
+
+    	/**
+    	 * @return The description for this process or thread. Usually
+    	 *         the program and its arguments.
+    	 */
+    	String getDescription();
+    }
+
     /**
      * This interface describes an exited thread/process.
      * 

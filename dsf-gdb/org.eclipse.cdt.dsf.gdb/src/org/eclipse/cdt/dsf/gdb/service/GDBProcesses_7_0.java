@@ -477,18 +477,28 @@ public class GDBProcesses_7_0 extends AbstractDsfService
      * @since 4.0
      */
     @Immutable
-    protected static class MIProcessDMCAndData extends MIProcessDMC implements IGdbThreadDMData {
+    protected static class MIProcessDMCAndData extends MIProcessDMC implements IGdbThreadDMData2 {
     	final String fName;
     	// Note that cores are only available from GDB 7.1.
     	final String[] fCores;
     	final String fOwner;
+    	final String fDescription;
 
     	public MIProcessDMCAndData(String sessionId, ICommandControlDMContext controlDmc, 
     			                   String id, String name, String[] cores, String owner) {
+    		this(sessionId, controlDmc, id, name, cores, owner, null);
+    	}
+
+    	/**
+		 * @since 5.6
+		 */
+    	public MIProcessDMCAndData(String sessionId, ICommandControlDMContext controlDmc, 
+    			String id, String name, String[] cores, String owner, String description) {
     		super(sessionId, controlDmc, id);
     		fName = name;
     		fCores = cores;
     		fOwner = owner;
+    		fDescription = description;
     	}
 
     	@Override
@@ -497,6 +507,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	@Override
     	public String getName() { return fName; }
 		
+    	/**
+		 * @since 5.2
+		 */
+    	@Override
+    	public String getDescription() { return fDescription; }
+
     	@Override
     	public boolean isDebuggerAttached() {
 			return true;
@@ -1587,7 +1603,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 					                                process.getGroupId(),
 					                                process.getName(),
 					                                process.getCores(),
-					                                process.getUser());
+					                                process.getUser(),
+					                                process.getDesciption());
 		}
 		return procDmcs;
 	}

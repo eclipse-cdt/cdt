@@ -28,7 +28,7 @@
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
 
-		<orbit-site>http://download.eclipse.org/tools/orbit/I-builds/I20180829144012/repository/</orbit-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</orbit-site>
 		<cdt-site>http://download.eclipse.org/tools/cdt/builds/9.4</cdt-site>
 		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
 		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->

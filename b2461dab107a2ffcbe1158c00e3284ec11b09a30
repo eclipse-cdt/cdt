@@ -16,6 +16,24 @@
       "revId": "b2461dab107a2ffcbe1158c00e3284ec11b09a30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f01da225_dc481259",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/ProcessPrompter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2018-09-10T07:08:16Z",
+      "side": 1,
+      "message": "Agreed, makes sense. Simeon, can you add this?",
+      "parentUuid": "5e994ff9_d0776235",
+      "revId": "b2461dab107a2ffcbe1158c00e3284ec11b09a30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

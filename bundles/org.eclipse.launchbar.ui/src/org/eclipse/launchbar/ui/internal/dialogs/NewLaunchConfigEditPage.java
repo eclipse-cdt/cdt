@@ -83,7 +83,9 @@ public class NewLaunchConfigEditPage extends WizardPage implements IPageChanging
 
 	@Override
 	public void handlePageChanging(PageChangingEvent event) {
-		if (launchConfigType == null) {
+		if (launchConfigType == null || event.getTargetPage() != this) {
+			if (tabViewer != null)
+				tabViewer.setInput(null);
 			return;
 		}
 		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
@@ -185,6 +187,11 @@ public class NewLaunchConfigEditPage extends WizardPage implements IPageChanging
 		@Override
 		public void setTabViewer(LaunchConfigurationTabGroupViewer viewer) {
 			super.setTabViewer(viewer);
+		}
+
+		@Override
+		public boolean isTreeSelectionEmpty() {
+			return false;
 		}
 	}
 

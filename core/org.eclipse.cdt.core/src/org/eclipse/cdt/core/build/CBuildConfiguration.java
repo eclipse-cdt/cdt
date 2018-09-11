@@ -1145,9 +1145,6 @@ public abstract class CBuildConfiguration extends PlatformObject
 	public void shutdown() {
 		// TODO persist changes
 		
-		// Bug 536884 - Turn off any manual future scanner refresh
-		toolChain.setProperty(NEED_REFRESH,	"false"); //$NON-NLS-1$
-
 		// Trigger a reindex if anything changed
 		// TODO be more surgical
 		if (infoChanged) {

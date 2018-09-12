@@ -182,7 +182,8 @@ public class ContainerGCCToolChain extends PlatformObject
 	}
 
 	@Override
-	public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig, List<String> commandStrings,
+	synchronized public IExtendedScannerInfo getScannerInfo(
+			IBuildConfiguration buildConfig, List<String> commandStrings,
 			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
 		try {
 			Path buildDirectory = Paths.get(buildDirectoryURI);
@@ -301,7 +302,8 @@ public class ContainerGCCToolChain extends PlatformObject
 	}
 
 	@Override
-	public IExtendedScannerInfo getDefaultScannerInfo(IBuildConfiguration buildConfig,
+	synchronized public IExtendedScannerInfo getDefaultScannerInfo(
+			IBuildConfiguration buildConfig,
 			IExtendedScannerInfo baseScannerInfo, ILanguage language, URI buildDirectoryURI) {
 		try {
 			String[] commands = getCompileCommands(language);

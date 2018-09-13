@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6972ee42_86230af9",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/PresentationReconcilerCPP.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-13T05:30:37Z",
+      "side": 1,
+      "message": "As mentioned, we should use containsPositionCategory() to avoid creating a position updater when the document already has one:\n\n  if (!newDocument.containsPositionCateogry(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY) {\n      // Add the category and the updater\n  }\n\n  // Similarly for the other category",
+      "revId": "b27d148987a3d5dc2c66ab9180103e6bc5058c2c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89ad8b85_38bf09c4",
+        "filename": "lsp4e-cpp/org.eclipse.lsp4e.cpp.language/src/org/eclipse/lsp4e/cpp/language/Server2ClientProtocolExtension.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-13T05:30:37Z",
+      "side": 1,
+      "message": "We should query the isEnabled value from the preference store outside the loop, rather than on every iteration.",
+      "revId": "b27d148987a3d5dc2c66ab9180103e6bc5058c2c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

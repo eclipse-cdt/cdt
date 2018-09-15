@@ -58,4 +58,6 @@ public interface IGCCToken extends IToken {
 	/** @since 6.0 */ int tTT_is_trivially_copyable=	FIRST_RESERVED_IGCCToken + 32;
 	/** @since 6.0 */ int tTT_is_trivially_constructible=	FIRST_RESERVED_IGCCToken + 33;
 	/** @since 6.0 */ int tTT_is_trivially_assignable=	FIRST_RESERVED_IGCCToken + 34;
+	
+	/** @since 6.5 */ int tTT_is_constructible=         FIRST_RESERVED_IGCCToken + 35;
 }

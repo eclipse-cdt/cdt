@@ -566,11 +566,14 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns true if 'typeToConstruct' is trivially constructible from arguments
+	 * Returns true if 'typeToConstruct' is constructible from arguments
 	 * of type 'argumentTypes', as defined in [meta.unary.prop].
+	 * 
+	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
+	 * is trivially constructible from said argument types.
 	 */
-	public static boolean isTriviallyConstructible(IType typeToConstruct, IType[] argumentTypes,
-			IBinding pointOfDefinition) {
+	public static boolean isConstructible(IType typeToConstruct, IType[] argumentTypes,
+			IBinding pointOfDefinition, boolean checkTrivial) {
 		IType type = SemanticUtil.getSimplifiedType(typeToConstruct);
 		if (!(type instanceof ICPPClassType)) {
 			return true;
@@ -586,7 +589,13 @@ public class TypeTraits {
 		}
 		EvalTypeId eval = new EvalTypeId(type, pointOfDefinition, false, false, arguments);
 		ICPPFunction constructor = eval.getConstructor();
+		if (!(constructor instanceof ICPPMethod)) {
+			return false;
+		}
 		// TODO check that conversions are trivial as well
-		return constructor instanceof ICPPMethod && ((ICPPMethod) constructor).isImplicit();
+		if (checkTrivial && !((ICPPMethod) constructor).isImplicit()) {
+			return false;
+		}
+		return true;
 	}
 }

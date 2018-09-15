@@ -108,4 +108,8 @@ public class GCCKeywords {
 		cp__is_trivially_copyable=		"__is_trivially_copyable".toCharArray(),
 		cp__is_trivially_constructible=	"__is_trivially_constructible".toCharArray(),
 		cp__is_trivially_assignable=	"__is_trivially_assignable".toCharArray();
+	
+	/** @since 6.6 */
+	public static final char[]
+		cp__is_constructible=           "__is_constructible".toCharArray();
 }

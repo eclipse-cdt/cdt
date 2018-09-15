@@ -1543,6 +1543,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.tTT_is_trivially_copyable:
 		case IGCCToken.tTT_is_trivially_constructible:
 		case IGCCToken.tTT_is_trivially_assignable:
+		case IGCCToken.tTT_is_constructible:
 			return parseTypeTrait();
 
 		default:
@@ -1602,6 +1603,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private boolean isNaryTrait(IToken operatorToken) {
 		switch (operatorToken.getType()) {
 		case IGCCToken.tTT_is_trivially_constructible:
+		case IGCCToken.tTT_is_constructible:
 			return true;
 		}
 		return false;
@@ -1623,6 +1625,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		switch (operatorToken.getType()) {
 		case IGCCToken.tTT_is_trivially_constructible:
 			return ICPPASTNaryTypeIdExpression.Operator.__is_trivially_constructible;
+		case IGCCToken.tTT_is_constructible:
+			return ICPPASTNaryTypeIdExpression.Operator.__is_constructible;
 		}
 
 		assert false;

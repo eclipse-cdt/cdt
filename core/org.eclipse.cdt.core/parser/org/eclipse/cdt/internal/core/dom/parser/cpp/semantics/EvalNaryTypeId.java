@@ -88,6 +88,7 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 	public IType getType() {
 		switch (fOperator) {
 		case __is_trivially_constructible:
+		case __is_constructible:
 			return CPPBasicType.BOOLEAN;
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;

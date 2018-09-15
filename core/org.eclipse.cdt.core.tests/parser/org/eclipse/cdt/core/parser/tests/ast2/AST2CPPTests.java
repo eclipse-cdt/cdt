@@ -12660,6 +12660,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo5", 0);
 	}
 	
+	//	template <typename T, typename U>
+	//	struct pair {
+	//	    pair();
+	//	    pair(T, U);
+	//	};
+	//
+	//	constexpr bool waldo = __is_constructible(pair<const int>, pair<int, int>&&);
+	public void testIsConstructible_539052() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 1);
+	}
+	
 	//  namespace x {
 	//  	void foo();
 	//	}

@@ -611,14 +611,16 @@ public class ValueFactory {
 	private static IValue applyNaryTypeIdOperator(ICPPASTNaryTypeIdExpression.Operator operator, 
 			IType[] operands, IBinding pointOfDefinition) {
 		switch (operator) {
+		case __is_constructible:
 		case __is_trivially_constructible:
 			if (operands.length == 0) {
 				return IntegralValue.UNKNOWN;
 			}
+			boolean checkTrivial = (operator == Operator.__is_trivially_constructible);
 			IType typeToConstruct = operands[0];
 			IType[] argumentTypes = Arrays.copyOfRange(operands, 1, operands.length);
-			return IntegralValue.create(TypeTraits.isTriviallyConstructible(typeToConstruct, argumentTypes, 
-					pointOfDefinition) ? 1 : 0);
+			return IntegralValue.create(TypeTraits.isConstructible(typeToConstruct, argumentTypes, 
+					pointOfDefinition, checkTrivial) ? 1 : 0);
 		}
 		return IntegralValue.UNKNOWN;
 	}

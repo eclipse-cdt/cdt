@@ -24,7 +24,8 @@ public interface ICPPASTNaryTypeIdExpression extends ICPPASTExpression {
 	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTNaryTypeIdExpression.OPERAND [IASTTypeId]"); //$NON-NLS-1$
 
 	public static enum Operator {
-		__is_trivially_constructible
+		__is_trivially_constructible,
+		/** @since 6.5 */ __is_constructible
 	}
 
 	/**

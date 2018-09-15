@@ -2206,7 +2206,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			addTypeTraitPrimitive("is_abstract", GCCKeywords.cp__is_abstract);
 			addTypeTraitPrimitive("is_base_of", GCCKeywords.cp__is_base_of);
 			addTypeTraitPrimitive("is_class", GCCKeywords.cp__is_class);
-			// missing: is_constructible
+			addTypeTraitPrimitive("is_constructible", GCCKeywords.cp__is_constructible);
 			// missing: is_convertible_to
 			// missing: is_destructible
 			addTypeTraitPrimitive("is_empty", GCCKeywords.cp__is_empty);

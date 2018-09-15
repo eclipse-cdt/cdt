@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.core" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="To allow bug 539052 to be backported to the 9.5 branch" id="924844039">
+            <message_arguments>
+                <message_argument value="6.5.0"/>
+                <message_argument value="6.5.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/core/build/ICBuildConfiguration.java" type="org.eclipse.cdt.core.build.ICBuildConfiguration">
         <filter id="403767336">
             <message_arguments>

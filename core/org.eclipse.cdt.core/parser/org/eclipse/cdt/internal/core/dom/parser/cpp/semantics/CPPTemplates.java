@@ -3113,9 +3113,15 @@ public class CPPTemplates {
 
 		boolean changed= arguments != newArgs;
 		IType classTemplateSpecialization= instantiateType(classTemplate, context);
-		if (classTemplateSpecialization != classTemplate && classTemplateSpecialization instanceof ICPPClassTemplate) {
-			classTemplate= (ICPPClassTemplate) classTemplateSpecialization;
-			changed= true;
+		if (classTemplateSpecialization != classTemplate) {
+			if (classTemplateSpecialization instanceof ICPPClassTemplate) {
+				classTemplate= (ICPPClassTemplate) classTemplateSpecialization;
+				changed= true;
+			} else if (classTemplateSpecialization instanceof ICPPAliasTemplate) {
+				IBinding inst = instantiateAliasTemplate((ICPPAliasTemplate) classTemplateSpecialization, newArgs);
+				if (inst != null)
+					return inst;
+			}
 		}
 
 		if (changed) {

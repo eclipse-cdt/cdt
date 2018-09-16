@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a5de7297_f8fdd945",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-16T23:05:54Z",
+      "side": 1,
+      "message": "I see the problem too. This is strange. I\u0027ll try to report the issue to PDE with a smaller example. So this patch is the best that can be done for now I think.",
+      "parentUuid": "f510eb84_2f34345d",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "470c5be5_a7bf60ca",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
         "patchSetId": 1

@@ -10934,4 +10934,24 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testMetaprogrammingWithAliasTemplates_534126() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class>
+	//	struct hhh {
+	//	    using type = int;
+	//	};
+	//
+	//	template <template <class> class TT>
+	//	struct iii {
+	//	    using type = typename TT<int>::type;
+	//	};
+	//
+	//	template <class A>
+	//	using hhh_d = hhh<A>;
+	//
+	//	using waldo = typename iii<hhh_d>::type;
+	public void testAliasTemplateAsTemplateTemplateArg_539076() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IType waldo = helper.assertNonProblem("waldo");
+		assertSameType(SemanticUtil.getSimplifiedType(waldo), CommonCPPTypes.int_);
+	}
 }

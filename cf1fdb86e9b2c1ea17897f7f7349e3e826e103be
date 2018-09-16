@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f510eb84_2f34345d",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-09-16T08:37:30Z",
+      "side": 1,
+      "message": "\u003e unless I change the @since tags to 6.6 - should I do that?\n\nNo, definitely not :-)\n\nI tried to play with this in Eclipse and AFAICT the API errors are acting a bit rubbish here, but I don\u0027t know why. M-A is right, it should be on the new API in the Java, but that is not working for me either.\n\nThe problem with adding this filter is that no one else (on the 9.5 branch) will ever be warned again about adding new API to that plug-in.\n\nFor now I don\u0027t think that is much of a worry though, so my vote is to go ahead as you have it.",
+      "parentUuid": "e634da8f_50f67804",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "470c5be5_a7bf60ca",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
         "patchSetId": 1

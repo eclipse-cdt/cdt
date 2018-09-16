@@ -87,6 +87,24 @@
       "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eca65bed_6170dd64",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-16T22:46:58Z",
+      "side": 1,
+      "message": "This is probably part of the reason:\nhttps://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d230277",
+      "parentUuid": "26675c62_c2fe226f",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

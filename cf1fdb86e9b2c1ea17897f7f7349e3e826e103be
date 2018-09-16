@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da58f1a5_e16589de",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-16T00:53:50Z",
+      "side": 1,
+      "message": "If we go with the api filter route, normally it would go on individual java files where the API error is instead of the MANIFEST.MF, that way other new API would not be silenced by mistake.",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "470c5be5_a7bf60ca",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-16T00:53:50Z",
+      "side": 1,
+      "message": "Can you try the @noreference instead of using an API filter? It is a bit better I think because clients will get a warning or error if they try to reference this in the 9.5 branch, and I don\u0027t think they should until 9.6 is released and we\u0027re sure of the API.",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

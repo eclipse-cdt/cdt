@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e634da8f_50f67804",
+        "filename": "core/org.eclipse.cdt.core/.settings/.api_filters",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-16T03:22:13Z",
+      "side": 1,
+      "message": "The MANIFEST.MF file is the only file where I get an API error, unless I change the @since tags to 6.6 - should I do that?",
+      "parentUuid": "da58f1a5_e16589de",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "470c5be5_a7bf60ca",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-09-16T00:53:50Z",
       "side": 1,
       "message": "Can you try the @noreference instead of using an API filter? It is a bit better I think because clients will get a warning or error if they try to reference this in the 9.5 branch, and I don\u0027t think they should until 9.6 is released and we\u0027re sure of the API.",
+      "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "26675c62_c2fe226f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IGCCToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-09-16T03:22:13Z",
+      "side": 1,
+      "message": "I tried using @noreference but it doesn\u0027t work on enumerators like the new ICPPASTNaryTypeIdExpression.Operator.__is_constructible.",
+      "parentUuid": "470c5be5_a7bf60ca",
       "revId": "cf1fdb86e9b2c1ea17897f7f7349e3e826e103be",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

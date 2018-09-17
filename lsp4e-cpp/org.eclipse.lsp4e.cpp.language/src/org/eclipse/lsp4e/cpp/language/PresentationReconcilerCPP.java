@@ -19,6 +19,7 @@ package org.eclipse.lsp4e.cpp.language;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.ui.editor.CEditor.BracketInserter;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.text.CCodeScanner;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
@@ -36,7 +38,6 @@ import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -45,25 +46,20 @@ import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.lsp4e.cpp.language.cquery.CquerySemanticHighlights;
-import org.eclipse.lsp4e.cpp.language.cquery.HighlightSymbol;
-import org.eclipse.lsp4j.Range;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -78,11 +74,16 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private CCommentScanner fMultilineCommentScanner;
 	private SingleTokenCScanner fStringScanner;
 	private AbstractCScanner fCodeScanner;
-	private CqueryLineBackgroundListener fLineBackgroundListener = new CqueryLineBackgroundListener();
+	private LineBackgroundListenerCPP fLineBackgroundListener = new LineBackgroundListenerCPP();
 	private ITextViewer textViewer;
 	private TextInputListenerCPP textInputListener;
 	private BracketInserter fBracketInserter;
+	private DefaultPositionUpdater semanticHighlightingPositionUpdater;
 
+	public static final String SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.lsp4e.cpp.semanticHighlight"; //$NON-NLS-1$
+	public static final String INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.lsp4e.cpp.inactiveCodeHighlight"; //$NON-NLS-1$
+
+	// A set containing all active objects of PresentationReconcilerCPP.
 	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();
 
 	protected ITokenStoreFactory getTokenStoreFactory() {
@@ -187,65 +188,37 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			return presentation;
 		}
 
-		List<HighlightSymbol> semanticHighlights = CquerySemanticHighlights.uriToSemanticHighlightsMapping.get(uri);
+		Position[] returnedPositions = null;
+		List<StyleRange> styleRanges = new ArrayList<>();
+		HighlightedPosition[] highlightedPositions;
 
-		if(semanticHighlights == null) {
+		/*
+		 * Adding Semantic Highlighting Position Category to so that we don't get a
+		 * BadPositionCategoryException if this method is called before setupDocument()
+		 * could the add new position category.
+		 */
+		addSemanticHighlightPositionCategory(doc);
+
+		try {
+			returnedPositions = doc.getPositions(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
+		} catch (BadPositionCategoryException e) {
+			Activator.log(e);
+		}
+
+		if (returnedPositions == null) {
 			return presentation;
 		}
 
-		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		List<StyleRange> styleRanges = new ArrayList<>();
+		highlightedPositions  = Arrays.copyOf(returnedPositions, returnedPositions.length, HighlightedPosition[].class);
+		int damageStartOffset = damage.getOffset();
+		int damageEndOffset = damageStartOffset + damage.getLength();
 
-		for (HighlightSymbol highlight : semanticHighlights) {
-
-			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(), highlight.getParentKind(), highlight.getStorage());
-			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
-
-			boolean isBold = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX);
-			boolean isItalic = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX);
-			boolean isUnderline = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX);
-			boolean isStrikethrough = store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX
-								+ highlightingName + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX);
-
-			Color color = new Color(Display.getCurrent(),
-									PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), colorKey));
-
-			int damageStartOffset = damage.getOffset();
-			int damageEndOffset = damageStartOffset + damage.getLength();
-
-			List<Range> ranges = highlight.getRanges();
-			for (Range range : ranges) {
-
-				int offset = 0, length = 0;
-				try {
-					offset = doc.getLineOffset(range.getStart().getLine()) + range.getStart().getCharacter();
-					length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter() - offset;
-				} catch (BadLocationException e) {
-					Activator.log(e);
-				}
-				if ((offset + length) >= damageStartOffset && offset < damageEndOffset) {
-
-					StyleRange styleRange = new StyleRange(offset, length, color, null);
-
-					if (isBold) {
-						styleRange.fontStyle = SWT.BOLD;
-					}
-					if (isItalic) {
-						styleRange.fontStyle |= SWT.ITALIC;
-					}
-					if (isUnderline) {
-						styleRange.underline = true;
-					}
-					if (isStrikethrough) {
-						styleRange.strikeout = true;
-					}
-
-					styleRanges.add(styleRange);
-				}
+		for (HighlightedPosition eachPosition : highlightedPositions) {
+			// Find each position that resides in or overlaps the damage region and create StyleRange for it.
+			if ((eachPosition.getOffset() + eachPosition.getLength()) >= damageStartOffset
+				&& eachPosition.getOffset() < damageEndOffset) {
+					StyleRange range = eachPosition.createStyleRange();
+					styleRanges.add(range);
 			}
 		}
 
@@ -265,8 +238,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			if (resource == null) {
 				resource= ResourcesPlugin.getWorkspace().getRoot();
 			}
-//			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getMultilineConfiguration();
-//			fMultilineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+			// IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getMultilineConfiguration();
+			// fMultilineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
 			if (fMultilineDocCommentScanner == null) {
 				// fallback: normal comment highlighting
 				fMultilineDocCommentScanner= fMultilineCommentScanner;
@@ -286,8 +259,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 			if (resource == null) {
 				resource= ResourcesPlugin.getWorkspace().getRoot();
 			}
-//			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();
-//			fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+			// IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();
+			// fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
 			if (fSinglelineDocCommentScanner == null) {
 				// fallback: normal comment highlighting
 				fSinglelineDocCommentScanner= fSinglelineCommentScanner;
@@ -327,14 +300,40 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		}
 	}
 
+	private void addSemanticHighlightPositionCategory(IDocument document) {
+		if (!document.containsPositionCategory(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY)) {
+			document.addPositionCategory(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
+			semanticHighlightingPositionUpdater = new DefaultPositionUpdater(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
+			document.addPositionUpdater(semanticHighlightingPositionUpdater);
+		}
+	}
+
+	private void addInactiveCodeHighlightingCategory(IDocument document) {
+		if (!document.containsPositionCategory(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY)) {
+			document.addPositionCategory(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
+			DefaultPositionUpdater inactiveCodeHighlightingPositionUpdater = new DefaultPositionUpdater(INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
+			document.addPositionUpdater(inactiveCodeHighlightingPositionUpdater);
+		}
+	}
+
 	public void setupDocument(IDocument newDocument) {
 		if (newDocument != null) {
 			fLineBackgroundListener.setCurrentDocument(newDocument);
+
+			// Adding Semantic Highlighting Position Category and a DefaultPositionUpdater to the document.
+			addSemanticHighlightPositionCategory(newDocument);
+
+			// Adding Inactive Code Highlighting Position Category and a DefaultPositionUpdater to the document.
+			addInactiveCodeHighlightingCategory(newDocument);
 		}
 	}
 
 	public ITextViewer getTextViewer() {
 		return textViewer;
+	}
+
+	public DefaultPositionUpdater getSemanticHighlightingPositionUpdater() {
+		return semanticHighlightingPositionUpdater;
 	}
 
 	@Override
@@ -351,13 +350,12 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		textWidget.addLineBackgroundListener(fLineBackgroundListener);
 		presentationReconcilers.add(this);
 
-//		Using asyncExec() to make sure that by the time Runnable runs,
-//		the Editor is active and we don't get a NPE.
+		// Using asyncExec() to make sure that by the time Runnable runs,
+		// the Editor is active and we don't get a NPE.
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-//				To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP
-
+				// To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP.
 				TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 				fBracketInserter = new BracketInserter(editor, true);
 				fBracketInserter.setSourceViewer((SourceViewer) textViewer);

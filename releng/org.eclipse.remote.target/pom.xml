@@ -30,9 +30,9 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>oxygen.target</file>
+									<file>photon.target</file>
 									<type>target</type>
-									<classifier>remote-oxygen</classifier>
+									<classifier>remote-photon</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>

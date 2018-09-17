@@ -2604,7 +2604,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 */
 	@Override
 	protected IASTDeclaration declaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
-		List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
+		// Allow GNU-style attributes both before standard attribute / alignment specifiers, and after.
+		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
 		attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
 		switch (LT(1)) {

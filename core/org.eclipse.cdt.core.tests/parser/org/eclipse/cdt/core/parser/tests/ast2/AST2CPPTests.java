@@ -11666,6 +11666,11 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
+	//	__attribute__((section(".example"))) alignas(4) static int waldo;
+	public void testAlignasAfterAttribute_538615() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+	}
+	
 	// int operator "" _A(unsigned long long i) { return 1; }
 	// int operator "" _B(long double d) { return 1; }
 	// int operator "" _C(const char* s, unsigned int sz) { return sz; }

@@ -74,6 +74,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public static final boolean DEFAULT_IS_PASSWORD = false;
 	public static final boolean DEFAULT_USE_LOGIN_SHELL = true;
 	public static final String DEFAULT_LOGIN_SHELL_COMMAND = "/bin/bash -l -c '{0}'"; //$NON-NLS-1$
+	public static final String DEFAULT_ENCODING = "UTF-8"; //$NON-NLS-1$
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String fWorkingDir;
@@ -693,14 +694,18 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		String osVersion;
 		String osArch;
-		String encoding;
+		String encoding = DEFAULT_ENCODING;
 
 		String osName = executeCommand("uname", subMon.newChild(10)); //$NON-NLS-1$
 		switch (osName.toLowerCase()) {
 		case "linux": //$NON-NLS-1$
 			osArch = executeCommand("uname -m", subMon.newChild(10)); //$NON-NLS-1$
 			osVersion = executeCommand("uname -r", subMon.newChild(10)); //$NON-NLS-1$
-			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			try {
+				encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			} catch (RemoteConnectionException e) {
+				// Use default
+			}
 			break;
 
 		case "darwin": //$NON-NLS-1$
@@ -713,7 +718,11 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					osArch = "x86_64"; //$NON-NLS-1$
 				}
 			}
-			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			try {
+				encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			} catch (RemoteConnectionException e) {
+				// Use default
+			}
 			break;
 
 		case "aix": //$NON-NLS-1$
@@ -728,13 +737,16 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					osArch += "64"; //$NON-NLS-1$
 				}
 			}
-			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			try {
+				encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			} catch (RemoteConnectionException e) {
+				// Use default
+			}
 			break;
 
 		case "qnx": //$NON-NLS-1$
 			osArch = executeCommand("uname -p", subMon.newChild(10)); //$NON-NLS-1$
 			osVersion = executeCommand("uname -r", subMon.newChild(10)); //$NON-NLS-1$
-			encoding = "UTF-8"; //$NON-NLS-1$
 			break;
 
 		default:

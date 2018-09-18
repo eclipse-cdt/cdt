@@ -47,7 +47,7 @@ exit_missing_arg='
   echo $0": error: option [$1] requires an argument"; exit 1'
 
 # Parse command line.
-options=
+i=0
 while test $# -gt 0 ; do
   case $1 in
     --help | -h )
@@ -56,20 +56,27 @@ while test $# -gt 0 ; do
        echo $0": error: -vmargs option is prohibited"; exit 1;;
     -e )
        test $# = 1 && eval "$exit_missing_arg"
-       options="$options $1 $2"
+       options[i]="$1"
+       let "i+=1"
+       options[i]="$2"
+       let "i+=1"
        shift; shift;
        # Get all options after -e and protect them from being
        # processed by Eclipse as Eclipse options
        while test $# -gt 0; do
-          options="$options \"$1\""
+          options[i]=$1
+          let "i+=1"
           shift;
        done ;;
     -c | -r )
        test $# = 1 && eval "$exit_missing_arg"
-       options="$options $1 $2"
+       options[i]="$1"
+       let "i+=1"
+       options[i]="$2"
+       let "i+=1"
        shift; shift ;;
     * )
-       options="$options $1"; shift ;;
+       options[i]="$1"; let "i+=1"; shift ;;
   esac
 done
 
@@ -93,6 +100,6 @@ OSGI_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.osgi_*.jar' -not -na
 # Run eclipse with the Stand-alone Debugger product specified
 "$ECLIPSE_EXEC" -clean -product org.eclipse.cdt.debug.application.product \
                         -data "$HOME/workspace-cdtdebug" -configuration file\:"$HOME/cdtdebugger" \
-                        -dev file\:"$HOME/cdtdebugger/dev.properties" $options \
+                        -dev file\:"$HOME/cdtdebugger/dev.properties" "$options[@]" \
                         -vmargs -Dosgi.jar=$OSGI_JAR -Declipse.home="$ECLIPSE_HOME"
 

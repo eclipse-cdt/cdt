@@ -669,7 +669,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	OutputDebugStringW(buffer);
 #endif
 	
-	hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pCurProcInfo -> pid);
+	hProc = OpenProcess(SYNCHRONIZE, 0, pCurProcInfo -> pid);
 
 	if(NULL == hProc)
 		return -1;
@@ -748,7 +748,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
 	if(NULL == pCurProcInfo)
 		return -1;
 	
-    hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pCurProcInfo -> pid);
+    hProc = OpenProcess(SYNCHRONIZE, 0, pCurProcInfo -> pid);
 	
 	if(NULL == hProc)
 		return -1;

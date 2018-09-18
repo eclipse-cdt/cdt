@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "995171ca_4f534cb3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2018-09-18T15:12:59Z",
+      "side": 1,
+      "message": "BTW, can you remove this line. Pushing someone else\u0027s patch causes you to violate the CLA. I think this patch is small enough that it\u0027s not an issue. But to avoid problems in the future, we should remove this reference. Thanks!",
+      "revId": "6b90c3971af45e26dcaac8344b767608f7afb375",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

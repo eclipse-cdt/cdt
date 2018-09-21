@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.cdt.codan.core,
  org.eclipse.ui.console,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
- org.eclipse.ui.workbench.texteditor
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.cdt.ui.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.codan.ui.cxx",
@@ -27,4 +28,3 @@ Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.co
  org.eclipse.cdt.codan.internal.ui.widgets;x-internal:=true,
  org.eclipse.cdt.codan.ui,
  org.eclipse.cdt.codan.ui.handlers
-

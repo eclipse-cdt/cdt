@@ -11,7 +11,7 @@
 package org.eclipse.cdt.codan.ui;
 
 import java.io.File;
-
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -87,8 +86,7 @@ public class CodanEditorUtility {
 			efile = (IFile) markerResource;
 		if (efile != null) {
 			IWorkbenchPage page = getActivePage();
-			IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file);
-			IEditorPart part = page.openEditor(new FileEditorInput(efile), desc.getId());
+			IEditorPart part = page.openEditor(new FileEditorInput(efile), EditorTestHelper.C_EDITOR_ID);
 			return part;
 		}
 		File fileToOpen = new File(file);

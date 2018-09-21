@@ -27,4 +27,4 @@ Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.co
  org.eclipse.cdt.codan.internal.ui.widgets;x-internal:=true,
  org.eclipse.cdt.codan.ui,
  org.eclipse.cdt.codan.ui.handlers
-
+ 

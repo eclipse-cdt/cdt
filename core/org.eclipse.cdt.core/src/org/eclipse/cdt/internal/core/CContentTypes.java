@@ -34,6 +34,8 @@ public class CContentTypes {
 	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
 	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
+	
+	private static final String LSP4E_CPP_CONTENT_TYPE_ID = "org.eclipse.lsp4e.languages.cpp";  //$NON-NLS-1$
 
 	/**
 	 * Implementation for {@link CCorePlugin#getContentType(IProject, String)}.
@@ -77,6 +79,11 @@ public class CContentTypes {
 		
 		for (int i = 0; i < cts.length; i++) {
 			IContentType candidate= cts[i];
+			// LSP4E_CPP_CONTENT_TYPE_ID is a duplicate content type that lsp4e-cpp
+			// registers for C/C++ files. Ignore it for the purposes of the C editor.
+			if (candidate.getId().equals(LSP4E_CPP_CONTENT_TYPE_ID)) {
+				continue;
+			}
 			int priority= 0;
 			try {
 				if (scopeCtx != null) {

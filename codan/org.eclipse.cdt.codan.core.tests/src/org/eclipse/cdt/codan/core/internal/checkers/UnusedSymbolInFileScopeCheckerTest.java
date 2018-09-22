@@ -310,10 +310,29 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// int f1() __attribute__((__unused__));
 	// extern int f2() __attribute__((unused));
 	// static void f3() __attribute__((unused));
+	// void f3() {}
 	// static void f4() __attribute__((unused));
 	// static void f4() __attribute__((unused)) {}
 	// static void __attribute__((unused)) f5();
+	// static void f6() __attribute__((unused));
+	// static void f6() {}
+	// static void __attribute__((unused)) f7();
+	// void f7() {}
+	// static void __attribute__((unused)) f8();
+	// static void f8() {}
 	public void testAttributeUnused() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static void __attribute__((constructor)) Ctor() {}
+	// static void __attribute__((destructor)) Dtor();
+	// static void Dtor2() __attribute__((destructor));
+	// static void Dtor3() __attribute__((destructor));
+	// static void Dtor() {}
+	// static void Dtor2() {}
+	// void Dtor3() {}
+	public void testAttributeConstructorDestructor_bug389577() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 

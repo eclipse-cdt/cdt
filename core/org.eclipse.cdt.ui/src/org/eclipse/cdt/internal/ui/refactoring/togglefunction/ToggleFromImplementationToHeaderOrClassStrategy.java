@@ -146,6 +146,10 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 	}
 	
 	private void copyAllCommentsToNewLocation(IASTNode node, final ASTRewrite oldRw, final ASTRewrite newRw) {
+		//Bug 486036: In case oldRw == newRw (same file), there's no need to copy anything, the comments will follow along.
+		if (oldRw == newRw) {
+			return;
+		}
 		node.accept(new CPPASTAllVisitor() {
 			@Override
 			public int visitAll(IASTNode node){

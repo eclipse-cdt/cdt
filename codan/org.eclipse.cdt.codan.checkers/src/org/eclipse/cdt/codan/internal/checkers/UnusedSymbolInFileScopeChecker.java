@@ -26,6 +26,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * Checker looking for unused function or variable declarations.
@@ -62,7 +64,12 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public static final String ER_UNUSED_STATIC_FUNCTION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedStaticFunctionProblem"; //$NON-NLS-1$
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
+	/*
+	 * Various attributes that when present for a symbol should make it considered as used.
+	 */
 	private static final String[] ATTRIBUTE_UNUSED = new String[] { "__unused__", "unused" };  //$NON-NLS-1$//$NON-NLS-2$
+	private static final String[] ATTRIBUTE_CONSTRUCTOR = new String[] { "constructor" };  //$NON-NLS-1$
+	private static final String[] ATTRIBUTE_DESTRUCTOR = new String[] { "destructor" };  //$NON-NLS-1$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
@@ -139,7 +146,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						}
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						for (IASTDeclarator decl : declarators) {
-							if (AttributeUtil.hasAttribute(decl, ATTRIBUTE_UNUSED))
+							if (hasUsageAttribute(decl))
 								continue;
 							IASTName astName = decl.getName();
 							if (astName != null) {
@@ -209,7 +216,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 
 							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static &&
 									!(astName instanceof ICPPASTQualifiedName) &&
-									!AttributeUtil.hasAttribute(declarator, ATTRIBUTE_UNUSED)) {
+									!hasUsageAttribute(definition)) {
 								staticFunctionDefinitions.put(binding, declarator);
 							}
 
@@ -222,6 +229,45 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 					return PROCESS_SKIP;
 				}
 
+				private boolean hasUsageAttribute(IASTFunctionDefinition definition) {
+					// Definitions can only have attributes on the decl specifier.
+					IASTDeclSpecifier declSpecifier = definition.getDeclSpecifier();
+					if (declSpecifier instanceof IASTAttributeOwner && hasUsageAttribute((IASTAttributeOwner) declSpecifier)) {
+						return true;
+					}
+
+					// Also make sure none of the previous declarations explicitly have a usage attribute.
+					// The attribute could be either on the declarator or on the decl specifier.
+					IBinding binding = definition.getDeclarator().getName().getBinding();
+					IASTName[] declarationsInAST = ast.getDeclarationsInAST(binding);
+					for (IASTName declName : declarationsInAST) {
+						if (declName.getPropertyInParent() != IASTDeclarator.DECLARATOR_NAME) {
+							continue;
+						}
+
+						IASTDeclarator declDeclarator = ASTQueries.findAncestorWithType(declName, IASTDeclarator.class);
+						if (hasUsageAttribute(declDeclarator)) {
+							return true;
+						}
+						if (declDeclarator.getPropertyInParent() != IASTSimpleDeclaration.DECLARATOR) {
+							continue;
+						}
+						IASTSimpleDeclaration declaration = ASTQueries.findAncestorWithType(declDeclarator, IASTSimpleDeclaration.class);
+						if (declaration != null) {
+							IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
+							if (declSpec instanceof IASTAttributeOwner && hasUsageAttribute(((IASTAttributeOwner) declSpec))) {
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+
+				private boolean hasUsageAttribute(IASTAttributeOwner attributeOwner) {
+					return AttributeUtil.hasAttribute(attributeOwner, ATTRIBUTE_CONSTRUCTOR) ||
+					AttributeUtil.hasAttribute(attributeOwner, ATTRIBUTE_DESTRUCTOR) ||
+					AttributeUtil.hasAttribute(attributeOwner, ATTRIBUTE_UNUSED);
+				}
 			});
 		} catch (Exception e) {
 			CodanCheckersActivator.log(e);

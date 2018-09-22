@@ -362,12 +362,26 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier) {
-        assertNotFrozen();
-    	if (virtSpecifier != null) {
-    		assert virtSpecifiers != null;
-    		virtSpecifiers = ArrayUtil.append(virtSpecifiers, virtSpecifier);
-    		virtSpecifier.setParent(this);
-			virtSpecifier.setPropertyInParent(EXCEPTION_TYPEID);
-    	}
+		assertNotFrozen();
+		if (virtSpecifier != null) {
+			assert virtSpecifiers != null;
+			virtSpecifiers = ArrayUtil.append(virtSpecifiers, virtSpecifier);
+			virtSpecifier.setParent(this);
+			virtSpecifier.setPropertyInParent(VIRT_SPECIFIER);
+		}
+	}
+
+	@Override
+	public void setVirtSpecifiers(ICPPASTVirtSpecifier[] newVirtSpecifiers) {
+		assertNotFrozen();
+		if (newVirtSpecifiers == null) {
+			virtSpecifiers = NO_VIRT_SPECIFIERS;
+		} else {
+			virtSpecifiers = newVirtSpecifiers;
+			for (ICPPASTVirtSpecifier virtSpecifier : newVirtSpecifiers) {
+				virtSpecifier.setParent(this);
+				virtSpecifier.setPropertyInParent(VIRT_SPECIFIER);
+			}
+		}
 	}
 }

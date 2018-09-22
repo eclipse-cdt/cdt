@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
@@ -144,6 +145,11 @@ public class ToggleNodeHelper extends NodeHelper {
 
 		ICPPASTFunctionDefinition newFunction = 
 				createFunctionSignatureWithEmptyBody(newDeclSpecifier, newDeclarator, oldDefinition);
+		// Virt-specifiers are only valid in the class declaration.
+		if (newFunction.getDeclarator() instanceof ICPPASTFunctionDeclarator) {
+			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) newFunction.getDeclarator();
+			functionDeclarator.setVirtSpecifiers(null);
+		}
 
 		return newFunction;
 	}

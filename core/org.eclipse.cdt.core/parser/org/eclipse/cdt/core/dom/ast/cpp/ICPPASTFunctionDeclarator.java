@@ -213,6 +213,12 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier);
 
 	/**
+	 * Set virt-specifiers of this function.
+	 * @since 6.6
+	 */
+	public void setVirtSpecifiers(ICPPASTVirtSpecifier[] newVirtSpecifiers);
+
+	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */

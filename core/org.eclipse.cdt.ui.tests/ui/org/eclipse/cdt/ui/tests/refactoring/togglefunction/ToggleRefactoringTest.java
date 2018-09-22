@@ -3568,4 +3568,63 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testFreeFunctionFromHeaderToImplInC_531701() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//Test.h
+	//class Base {
+	//	virtual void foo() {
+	//	}
+	//};
+	//
+	//class Foo : public Base {
+	//	void /*$*/foo/*$$*/() override final
+	//	{
+	//	}
+	//};
+	//====================
+	//class Base {
+	//	virtual void foo() {
+	//	}
+	//};
+	//
+	//class Foo : public Base {
+	//	void foo() override final;
+	//};
+	//
+	//inline void Foo::foo() {
+	//}
+	public void testToggleWithVirtSpecifiers_518273() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//Test.h
+	//class Base {
+	//	virtual void foo() {
+	//	}
+	//};
+	//
+	//class Foo : public Base {
+	//	void foo() override final;
+	//};
+	//====================
+	//class Base {
+	//	virtual void foo() {
+	//	}
+	//};
+	//
+	//class Foo : public Base {
+	//	void foo() override final
+	//	{
+	//	}
+	//};
+
+	//Test.cpp
+	//#include "Test.h"
+	//
+	//void Foo::/*$*/foo/*$$*/() {
+	//}
+	//====================
+	//#include "Test.h"
+	public void testToggleWithVirtSpecifiersImplementationToClass_518273() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

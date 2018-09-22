@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -362,12 +363,26 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
 	@Override
 	public void addVirtSpecifier(ICPPASTVirtSpecifier virtSpecifier) {
-        assertNotFrozen();
-    	if (virtSpecifier != null) {
-    		assert virtSpecifiers != null;
-    		virtSpecifiers = ArrayUtil.append(virtSpecifiers, virtSpecifier);
-    		virtSpecifier.setParent(this);
+		assertNotFrozen();
+		if (virtSpecifier != null) {
+			assert virtSpecifiers != null;
+			virtSpecifiers = ArrayUtil.append(virtSpecifiers, virtSpecifier);
+			virtSpecifier.setParent(this);
 			virtSpecifier.setPropertyInParent(EXCEPTION_TYPEID);
-    	}
+		}
+	}
+
+	@Override
+	public void setVirtSpecifiers(ICPPASTVirtSpecifier[] newVirtSpecifiers) {
+		assertNotFrozen();
+		if (newVirtSpecifiers == null) {
+			virtSpecifiers = NO_VIRT_SPECIFIERS;
+		} else {
+			virtSpecifiers = newVirtSpecifiers;
+			for (ICPPASTVirtSpecifier virtSpecifier : newVirtSpecifiers) {
+				virtSpecifier.setParent(this);
+				virtSpecifier.setPropertyInParent(EXCEPTION_TYPEID);
+			}
+		}
 	}
 }

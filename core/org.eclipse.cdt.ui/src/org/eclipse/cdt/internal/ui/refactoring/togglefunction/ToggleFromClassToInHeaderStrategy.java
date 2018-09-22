@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -61,8 +62,15 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	private IASTNode getNewDefinition(IASTNode parentNamespace) {
 		IASTNode newDefinition = ToggleNodeHelper.getQualifiedNameDefinition(
 				context.getDefinition(), context.getDefinitionAST(), parentNamespace);
-		((IASTFunctionDefinition) newDefinition).setBody(
-				context.getDefinition().getBody().copy(CopyStyle.withLocations));
+		IASTFunctionDefinition functionDefinition = (IASTFunctionDefinition) newDefinition;
+		functionDefinition.setBody(context.getDefinition().getBody().copy(CopyStyle.withLocations));
+
+		// Virt-specifiers are only valid in the class declaration.
+		if (functionDefinition.getDeclarator() instanceof ICPPASTFunctionDeclarator) {
+			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) functionDefinition.getDeclarator();
+			functionDeclarator.setVirtSpecifiers(null);
+		}
+
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryFun = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryFun = (ICPPASTFunctionWithTryBlock) context.getDefinition();

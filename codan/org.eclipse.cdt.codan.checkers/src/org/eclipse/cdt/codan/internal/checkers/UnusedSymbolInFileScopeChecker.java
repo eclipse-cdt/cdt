@@ -13,10 +13,12 @@ package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
@@ -26,6 +28,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -62,13 +65,17 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public static final String ER_UNUSED_STATIC_FUNCTION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedStaticFunctionProblem"; //$NON-NLS-1$
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
-	private static final String[] ATTRIBUTE_UNUSED = new String[] { "__unused__", "unused" };  //$NON-NLS-1$//$NON-NLS-2$
+	/*
+	 * Various attributes that when present for a symbol should make it considered as used.
+	 */
+	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", "destructor" };  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDefinitions = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> externVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
+	private Set<IBinding> declarationsWithUsageAttributes = new HashSet<>();
 	private IProblemWorkingCopy unusedVariableProblem = null;
 
 	@Override
@@ -118,6 +125,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 			filterOutUsedElements(ast);
 			reportProblems();
 		}
+		declarationsWithUsageAttributes.clear();
 	}
 
 	private void collectCandidates(IASTTranslationUnit ast) {
@@ -134,16 +142,15 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) element;
 
 						IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
-						if (AttributeUtil.hasAttribute(declSpec, ATTRIBUTE_UNUSED)) {
-							return PROCESS_SKIP;
-						}
+						boolean hasUsageAttrib = hasUsageAttribute(declSpec);
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						for (IASTDeclarator decl : declarators) {
-							if (AttributeUtil.hasAttribute(decl, ATTRIBUTE_UNUSED))
-								continue;
 							IASTName astName = decl.getName();
 							if (astName != null) {
 								IBinding binding = astName.resolveBinding();
+								if (hasUsageAttrib || hasUsageAttribute(decl)) {
+									declarationsWithUsageAttributes.add(binding);
+								}
 								int storageClass = simpleDeclaration.getDeclSpecifier().getStorageClass();
 
 								if (binding instanceof IFunction) {
@@ -206,10 +213,12 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						IASTName astName = declarator.getName();
 						if (astName != null) {
 							IBinding binding = astName.resolveBinding();
+							if (hasUsageAttribute(definition.getDeclSpecifier())) {
+								declarationsWithUsageAttributes.add(binding);
+							}
 
 							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static &&
-									!(astName instanceof ICPPASTQualifiedName) &&
-									!AttributeUtil.hasAttribute(declarator, ATTRIBUTE_UNUSED)) {
+									!(astName instanceof ICPPASTQualifiedName)) {
 								staticFunctionDefinitions.put(binding, declarator);
 							}
 
@@ -222,6 +231,9 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 					return PROCESS_SKIP;
 				}
 
+				private boolean hasUsageAttribute(IASTAttributeOwner attributeOwner) {
+					return AttributeUtil.hasAttribute(attributeOwner, USAGE_ATTRIBUTES);
+				}
 			});
 		} catch (Exception e) {
 			CodanCheckersActivator.log(e);
@@ -279,6 +291,14 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 							externVariableDeclarations.remove(binding);
 						}
 					} else {
+						externVariableDeclarations.remove(binding);
+						staticVariableDeclarations.remove(binding);
+					}
+
+					if (declarationsWithUsageAttributes.contains(binding)) {
+						staticFunctionDeclarations.remove(binding);
+						externFunctionDeclarations.remove(binding);
+						staticFunctionDefinitions.remove(binding);
 						externVariableDeclarations.remove(binding);
 						staticVariableDeclarations.remove(binding);
 					}

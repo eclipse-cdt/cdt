@@ -3648,4 +3648,22 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testToggleWithLambdaExpression_518271() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//Test.cpp
+	//class MyClass {
+	//	void MyMethod();
+	//};
+	//
+	//void MyClass::/*$*/MyMethod/*$$*/() {
+	//// A comment
+	//}
+	//====================
+	//class MyClass {
+	//	void MyMethod() {
+	//		// A comment
+	//	}
+	//};
+	public void testToggleWithCommentsInSameFile_486036() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

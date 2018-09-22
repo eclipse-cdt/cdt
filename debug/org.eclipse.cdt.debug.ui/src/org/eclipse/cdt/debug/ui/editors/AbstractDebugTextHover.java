@@ -249,6 +249,9 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 				IASTName name= ast.getNodeSelector(null).findEnclosingName(offset, length);
 				if (name != null) {
 				    IASTImageLocation imageLoc = name.getImageLocation();
+				    if (imageLoc == null) {
+				        return Status.CANCEL_STATUS;
+				    }
 				    int kind = imageLoc.getLocationKind();
 				    switch (kind) {
                     case IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION:

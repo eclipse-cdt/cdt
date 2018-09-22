@@ -48,6 +48,10 @@ public class InsertionPointFinder {
 		if (allafterdeclarations == null || alldefinitionsoutside == null)
 			return;
 		for(ICPPASTFunctionDeclarator decl: allafterdeclarations) {
+			if (decl.getName() == null) {
+				// Could be a lambda expression
+				continue;
+			}
 			String decl_name = decl.getName().toString();
 			for(ICPPASTFunctionDefinition def: alldefinitionsoutside) {
 				String def_name = null;

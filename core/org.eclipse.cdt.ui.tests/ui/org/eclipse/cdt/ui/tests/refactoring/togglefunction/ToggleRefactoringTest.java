@@ -3568,4 +3568,25 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testFreeFunctionFromHeaderToImplInC_531701() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//Test.h
+	//class Foo {
+	//	void /*$*/foo/*$$*/() {
+	//		[]() {
+	//
+	//		};
+	//	}
+	//};
+	//====================
+	//class Foo {
+	//	void foo();
+	//};
+	//
+	//inline void Foo::foo() {
+	//	[]() {
+	//	};
+	//}
+	public void testToggleWithLambdaExpression_518271() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

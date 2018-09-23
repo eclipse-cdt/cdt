@@ -27,8 +27,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.ltk.core.refactoring.Change;
 
 abstract public class AbstractCaseBreakQuickFix extends AbstractAstRewriteQuickFix {
@@ -57,20 +55,18 @@ abstract public class AbstractCaseBreakQuickFix extends AbstractAstRewriteQuickF
 	}
 
 	protected IASTStatement getStmtBeforeCaseEnd(IMarker marker, IASTTranslationUnit ast) throws BadLocationException {
-		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
-		if (line < 0)
+		int offset = marker.getAttribute(IMarker.CHAR_START, 0);
+		int endOffset = marker.getAttribute(IMarker.CHAR_END, 0);
+		if (offset < 0 || endOffset < offset)
 			return null;
-		IDocument doc = getDocument();
-		if (doc == null)
-			doc = openDocument(marker);
-		IRegion lineInformation = doc.getLineInformation(line);
+		int length = endOffset - offset;
 		IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-		IASTNode containedNode = nodeSelector.findFirstContainedNode(lineInformation.getOffset(), lineInformation.getLength());
+		IASTNode containedNode = nodeSelector.findFirstContainedNode(offset, length);
 		IASTNode beforeCaseEndNode = null;
 		if (containedNode != null) {
 			beforeCaseEndNode = CxxAstUtils.getEnclosingStatement(containedNode);
 		} else {
-			beforeCaseEndNode = nodeSelector.findEnclosingNode(lineInformation.getOffset(), lineInformation.getLength());
+			beforeCaseEndNode = nodeSelector.findEnclosingNode(offset, length);
 		}
 		if (beforeCaseEndNode instanceof IASTCompoundStatement) {
 			while (beforeCaseEndNode != null) {

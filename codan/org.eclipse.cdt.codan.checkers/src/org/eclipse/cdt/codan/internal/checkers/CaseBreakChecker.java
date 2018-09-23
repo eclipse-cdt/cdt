@@ -219,7 +219,9 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		int line = astLocation.getEndingLineNumber();
 		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
-		return locFactory.createProblemLocation(getFile(), -1, -1, line);
+		int offset = astLocation.getNodeOffset();
+		return locFactory.createProblemLocation(getFile(), offset, 
+				offset + astLocation.getNodeLength(), line);
 	}
 
 	/**

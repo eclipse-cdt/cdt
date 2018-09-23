@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d495f645_ef29b06a",
+        "filename": "codan/org.eclipse.cdt.codan.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-23T05:59:19Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem like the way to go. Now org.eclipse.cdt.ui.tests is needed at run-time and would also need to be included in non-test features. Perhaps the helper could be moved to cdt.ui instead.",
+      "revId": "94ca685a466dcfae18ea36988ef13cfcda702af0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

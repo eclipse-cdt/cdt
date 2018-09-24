@@ -24,7 +24,7 @@
 		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
 		<jacoco-version>0.7.9</jacoco-version>
 
-		<sdk-version>4.9-I-builds</sdk-version>
+		<sdk-version>4.10-I-builds</sdk-version>
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
 

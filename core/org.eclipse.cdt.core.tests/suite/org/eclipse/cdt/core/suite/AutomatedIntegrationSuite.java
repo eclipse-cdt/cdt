@@ -38,6 +38,7 @@ import org.eclipse.cdt.utils.FindProgramLocationTest;
 import org.eclipse.cdt.utils.StorableCdtVariablesTest;
 import org.eclipse.cdt.utils.UNCPathConverterTest;
 import org.eclipse.cdt.utils.WeakHashSetTest;
+import org.eclipse.cdt.utils.elf.ElfParserTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -92,6 +93,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(ByteUtilsTest.suite());
 		suite.addTest(UNCPathConverterTest.suite());
 		suite.addTest(TestScopeOfBuildConfigResourceChangesPreference.suite());
+		suite.addTest(ElfParserTest.suite());
 
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

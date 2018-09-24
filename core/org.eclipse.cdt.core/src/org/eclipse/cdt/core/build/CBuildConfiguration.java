@@ -23,6 +23,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IConsoleParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -62,9 +62,6 @@ import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ParserSettings2;
-import org.eclipse.cdt.utils.elf.Elf;
-import org.eclipse.cdt.utils.elf.Elf.PHdr;
-import org.eclipse.cdt.utils.elf.parser.ElfBinaryShared;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
@@ -260,46 +257,22 @@ public abstract class CBuildConfiguration extends PlatformObject
 		ICProject cproject = CoreModel.getDefault().create(config.getProject());
 		IBinaryContainer binaries = cproject.getBinaryContainer();
 		IPath outputPath = getBuildContainer().getFullPath();
-		List<IBinary> outputs = new ArrayList<>();
-		for (IBinary binary : binaries.getBinaries()) {
-			if (outputPath.isPrefixOf(binary.getPath())) {
-				if (binary.isExecutable()) {
-					outputs.add(binary);
-				} else if (binary.isSharedLib()) {
-					// Special case of PIE executable that looks like shared
-					// library
-					IBinaryParser.IBinaryObject bin = binary.getAdapter(IBinaryParser.IBinaryObject.class);
-					if (bin instanceof ElfBinaryShared) {
-						try {
-							Elf elf = new Elf(bin.getPath().toOSString());
-							for (PHdr phdr : elf.getPHdrs()) {
-								if (phdr.p_type == PHdr.PT_INTERP) {
-									outputs.add(binary);
-									break;
-								}
-							}
-						} catch (IOException e) {
-							CCorePlugin.log(e);
-						}
-					}
-				}
-			}
+		final IBinary[] outputs = getBuildOutput(binaries, outputPath);
+		if (outputs.length > 0) {
+			return outputs;
 		}
 
-		if (outputs.isEmpty()) {
-			// Give the binary runner a kick and try again.
-			BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(cproject);
-			runner.start();
-			runner.waitIfRunning();
-			
-			for (IBinary binary : binaries.getBinaries()) {
-				if (binary.isExecutable() && outputPath.isPrefixOf(binary.getPath())) {
-					outputs.add(binary);
-				}
-			}
-		}
+		// Give the binary runner a kick and try again.
+		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(cproject);
+		runner.start();
+		runner.waitIfRunning();
+		return getBuildOutput(binaries, outputPath);
+	}
 
-		return outputs.toArray(new IBinary[outputs.size()]);
+	private IBinary[] getBuildOutput(final IBinaryContainer binaries, final IPath outputPath) throws CoreException {
+		return Arrays.stream(binaries.getBinaries())
+				.filter(b -> b.isExecutable() && outputPath.isPrefixOf(b.getPath()))
+				.toArray(IBinary[]::new);
 	}
 
 	public void setActive(IProgressMonitor monitor) throws CoreException {

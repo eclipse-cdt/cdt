@@ -8,11 +8,15 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Hansruedi Patzen (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
 
+import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
+
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -20,6 +24,8 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
+import org.eclipse.cdt.utils.elf.Elf.ELFhdr;
+import org.eclipse.cdt.utils.elf.Elf.PHdr;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -46,19 +52,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 			binary = createBinaryArchive(path);
 		} else {
 			try {
-				Elf.Attribute attribute = null;
-				if (hints != null && Elf.isElfHeader(hints)) {
-					try {
-						attribute = Elf.getAttributes(hints);
-					} catch (EOFException eof) {
-						// continue, the array was to small.
-					}
-				}
-
-				//Take a second run at it if the data array failed.
-	 			if(attribute == null) {
-					attribute = Elf.getAttributes(path.toOSString());
-	 			}
+				Attribute attribute = getAttribute(hints, path);
 
 				if (attribute != null) {
 					switch (attribute.getType()) {
@@ -67,7 +61,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 							break;
 
 						case Attribute.ELF_TYPE_SHLIB :
-							binary = createBinaryShared(path);
+							binary = hasInterpProgramHeader(hints, path) ? createBinaryExecutable(path) : createBinaryShared(path);
 							break;
 
 						case Attribute.ELF_TYPE_OBJ :
@@ -138,5 +132,63 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
 		return new ElfBinaryObject(this, path, IBinaryFile.CORE);
+	}
+
+	private static Elf.Attribute getAttribute(byte[] hints, IPath path) throws IOException {
+		if (Elf.isElfHeader(hints)) {
+			try {
+				return Elf.getAttributes(hints);
+			} catch (EOFException eof) {
+				// continue, the array was to small.
+			}
+		}
+		return Elf.getAttributes(path.toOSString());
+	}
+
+	private static boolean hasInterpProgramHeader(byte[] hints, IPath path) throws IOException {
+		if (Elf.isElfHeader(hints)) {
+			int e_phentsizeOffset = 0;
+			int e_phnumOffset = 0;
+			int elfHeaderByteSize = 0;
+			switch (hints[ELFhdr.EI_CLASS]) {
+			case ELFhdr.ELFCLASS32:
+				e_phentsizeOffset = 0x2A;
+				e_phnumOffset = 0x2C;
+				elfHeaderByteSize = 52;
+				break;
+			case ELFhdr.ELFCLASS64:
+				e_phentsizeOffset = 0x36;
+				e_phnumOffset = 0x38;
+				elfHeaderByteSize = 64;
+				break;
+			}
+			boolean isle = (hints[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB);
+			short e_phentsize = makeShort(hints, e_phentsizeOffset, isle);
+			short e_phnum = makeShort(hints, e_phnumOffset, isle);
+			if (hasInterpProgramHeader(hints, elfHeaderByteSize, e_phentsize)) {
+				return true;
+			}
+			/* See if we checked every program header type */
+			if (elfHeaderByteSize + (e_phnum - 1) * e_phentsize <= hints.length) {
+				return false;
+			}
+		}
+
+		try {
+			/* No PHdr.PT_INTERP found in the hints meaning we need to read the file itself */
+			return Arrays.stream(new Elf(path.toOSString()).getPHdrs()).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP); 
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+		}
+		return false;
+	}
+
+	private static boolean hasInterpProgramHeader(byte[] hints, int offset, short e_phentsize) throws IOException {
+		for (int i = offset; i < hints.length; i += e_phentsize) {
+			if (hints[i] == PHdr.PT_INTERP) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

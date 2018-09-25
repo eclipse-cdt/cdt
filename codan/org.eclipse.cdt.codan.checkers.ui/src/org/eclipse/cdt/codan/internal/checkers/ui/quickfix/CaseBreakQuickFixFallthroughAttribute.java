@@ -61,6 +61,8 @@ public class CaseBreakQuickFixFallthroughAttribute extends AbstractCaseBreakQuic
 		try {
 			IASTTranslationUnit ast = CModelUtil.toWorkingCopy(tu).getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTStatement beforeCaseEnd = getStmtBeforeCaseEnd(marker, ast);
+			if (beforeCaseEnd == null)
+				return false;
 			if (getNextStatement(beforeCaseEnd) == null)
 				return false;
 		} catch (CoreException | BadLocationException e) {

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -34,6 +33,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Utility tools to open editor and highlight the line
  */
 public class CodanEditorUtility {
+	
+	private static final String C_EDITOR_ID= "org.eclipse.cdt.ui.editor.CEditor";  //$NON-NLS-1$
+	
 	/**
 	 * @param fileUrl - file "url", like file:/tmp/a.c#22
 	 * @throws PartInitException
@@ -87,8 +89,7 @@ public class CodanEditorUtility {
 			efile = (IFile) markerResource;
 		if (efile != null) {
 			IWorkbenchPage page = getActivePage();
-			IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file);
-			IEditorPart part = page.openEditor(new FileEditorInput(efile), desc.getId());
+			IEditorPart part = page.openEditor(new FileEditorInput(efile), C_EDITOR_ID);
 			return part;
 		}
 		File fileToOpen = new File(file);

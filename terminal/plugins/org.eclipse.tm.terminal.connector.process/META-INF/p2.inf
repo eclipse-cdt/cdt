@@ -46,10 +46,10 @@ requires.4.name = org.eclipse.cdt.core.linux.ppc64
 #requires.4.range = [5.1, 6.0)
 requires.4.filter = (&(osgi.os=linux)(osgi.arch=ppc64))
 
-requires.5.namespace = org.eclipse.equinox.p2.iu
-requires.5.name = org.eclipse.cdt.core.linux.x86
+#requires.5.namespace = org.eclipse.equinox.p2.iu
+#requires.5.name = org.eclipse.cdt.core.linux.x86
 #requires.5.range = [5.2, 6.0)
-requires.5.filter = (&(osgi.os=linux)(osgi.arch=x86))
+#requires.5.filter = (&(osgi.os=linux)(osgi.arch=x86))
 
 requires.6.namespace = org.eclipse.equinox.p2.iu
 requires.6.name = org.eclipse.cdt.core.linux.x86_64
@@ -71,10 +71,10 @@ requires.9.name = org.eclipse.cdt.core.win32
 #requires.9.range = [5.3, 6.0)
 requires.9.filter = (osgi.os=win32)
 
-requires.10.namespace = org.eclipse.equinox.p2.iu
-requires.10.name = org.eclipse.cdt.core.win32.x86
+#requires.10.namespace = org.eclipse.equinox.p2.iu
+#requires.10.name = org.eclipse.cdt.core.win32.x86
 #requires.10.range = [5.2, 6.0)
-requires.10.filter = (&(osgi.os=win32)(osgi.arch=x86))
+#requires.10.filter = (&(osgi.os=win32)(osgi.arch=x86))
 
 requires.11.namespace = org.eclipse.equinox.p2.iu
 requires.11.name = org.eclipse.cdt.core.win32.x86_64

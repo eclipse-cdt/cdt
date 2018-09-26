@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f5768e0d_8a0e810f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFunctionDeclarator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-26T04:22:58Z",
+      "side": 1,
+      "message": "good catch!",
+      "parentUuid": "2be038d9_5ae07af4",
+      "revId": "ca46d17d1a9180772092422a3ebeab1e0072c2c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "34e8e6c4_292ff90c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromClassToInHeaderStrategy.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-09-25T04:54:01Z",
       "side": 1,
       "message": "It might be slightly cleaner to move this into getQualifiedNameDefinition().",
+      "revId": "ca46d17d1a9180772092422a3ebeab1e0072c2c7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8934a276_a9914c84",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromClassToInHeaderStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-09-26T04:22:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34e8e6c4_292ff90c",
       "revId": "ca46d17d1a9180772092422a3ebeab1e0072c2c7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

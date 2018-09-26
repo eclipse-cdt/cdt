@@ -251,6 +251,26 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>${jacoco-version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<!-- <useUIHarness>true</useUIHarness>  -->
+						<!-- <useUIThread>true</useUIThread> -->
+						<failIfNoTests>false</failIfNoTests>
+						<!-- <dependencies>
+							<dependency>
+								<type>p2-installable-unit</type>
+								<artifactId>org.eclipse.platform.feature.group</artifactId>
+								<version>${sdk-version}</version>
+							</dependency>
+						</dependencies> -->
+						<product>org.eclipse.platform.ide</product>
+						<!-- <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</argLine> -->
+						<argLine> -ea </argLine>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -343,8 +363,8 @@
 		<module>terminal</module>
 		<!-- RSE features and plug-ins -->
 		<module>rse</module>
-		<!-- Windows CE subsystem and support for RSE -->
-		<module>wince</module>
+		<!-- Windows CE subsystem and support for RSE - requires 32-bit Eclipse so not supported in Eclipse 4.10+ -->
+		<!-- <module>wince</module> -->
 		<module>site</module>
 	</modules>
 </project>

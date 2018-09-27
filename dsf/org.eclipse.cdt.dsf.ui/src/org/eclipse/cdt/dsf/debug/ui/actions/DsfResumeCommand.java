@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Added support for multi-selection (Bug 330974)
+ *     John Dallaway - Report command execution error (Bug 539455)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.actions;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -108,7 +109,13 @@ public class DsfResumeCommand implements IResumeHandler {
     				return;
     			}
 
-    			multiRun.resume(getContexts(), new ImmediateRequestMonitor());
+    			multiRun.resume(getContexts(), new ImmediateRequestMonitor() {
+                    @Override
+                    protected void handleError() {
+                        super.handleError();
+                        CDebugUtils.error(getStatus(), DsfResumeCommand.this);
+                    }
+                });
     		}
     	});
     	return false;
@@ -117,7 +124,13 @@ public class DsfResumeCommand implements IResumeHandler {
 	private void executeSingle(IDebugCommandRequest request) {
     	fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                getRunControl().resume(getContext(), new RequestMonitor(fExecutor, null));
+                getRunControl().resume(getContext(), new ImmediateRequestMonitor() {
+                    @Override
+                    protected void handleError() {
+                        super.handleError();
+                        CDebugUtils.error(getStatus(), DsfResumeCommand.this);
+                    }
+                });
              }
         });
     }

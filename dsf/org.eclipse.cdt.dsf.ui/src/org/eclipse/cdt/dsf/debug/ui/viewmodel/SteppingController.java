@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems and others.
+ * Copyright (c) 2006, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     John Dallaway - Report command execution error (Bug 539455)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel;
 
@@ -20,6 +21,8 @@ import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -452,6 +455,12 @@ public final class SteppingController {
 		            return;
 		        } 
 		        super.handleFailure();
+		    }
+		    
+		    @Override
+		    protected void handleError() {
+		        super.handleError();
+		        CDebugUtils.error(getStatus(), SteppingController.this);
 		    }
 		});
 	}

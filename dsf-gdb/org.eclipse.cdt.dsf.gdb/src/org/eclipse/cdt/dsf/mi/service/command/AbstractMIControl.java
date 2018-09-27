@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - New method to properly created ErrorThread (Bug 350837)
  *     Jason Litton (Sage Electronic Engineering, LLC) - Use Dynamic Tracing option (Bug 379169)
  *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
+ *     John Dallaway - Decode line breaks in status message (Bug 539455)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -833,6 +834,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	clientMsg.append("Failed to execute MI command:\n"); //$NON-NLS-1$
         	clientMsg.append(origCommand.toString());
         	if (message != null) {
+        		message = message.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         		clientMsg.append("Error message from debugger back end:\n"); //$NON-NLS-1$
         		if (parameters != null) {
         			try {

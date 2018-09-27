@@ -16,6 +16,24 @@
       "revId": "87cd426861eac3a38a1d79f575d6002dd63e8f5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1fd8de1_facc7398",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SteppingController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-09-27T13:12:45Z",
+      "side": 1,
+      "message": "That was exactly my conclusion. handleError() is called only when super.handleFailure() is called.",
+      "parentUuid": "c1595b91_18f63536",
+      "revId": "87cd426861eac3a38a1d79f575d6002dd63e8f5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

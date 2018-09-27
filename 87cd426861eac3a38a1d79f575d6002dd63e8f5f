@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1595b91_18f63536",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SteppingController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-09-27T13:04:28Z",
+      "side": 1,
+      "message": "What is the behaviour here if you press step faster than target allows. The current behaviour is to suppress the error so that pressing and holding single-step just goes as fast as possible.\n\nAs handleError is called (indirectly) by super.handleFailure above it appears that this will be ok based on the error suppression on line 453, but it needs checking.",
+      "revId": "87cd426861eac3a38a1d79f575d6002dd63e8f5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

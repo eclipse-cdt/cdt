@@ -740,4 +740,20 @@ public class SemanticHighlightingTest extends TestCase {
 		ignoredHighlightings.add(SemanticHighlightings.OVERLOADED_OPERATOR);
 		makeAssertions(ignoredHighlightings);
 	}
+	
+	//	struct S {                                       //$class
+	//	    int waldo;                                   //$field
+	//	};
+	//	struct Iter {                                    //$class
+	//	    S operator*();                               //$class,methodDeclaration
+	//	};
+	//	int main() {                                     //$functionDeclaration
+	//	    Iter it;                                     //$class,localVariableDeclaration
+	//      // TODO: The fact that the opening parenthesis gets its own overloadedOperator
+	//      //       semantic highlighting is an (unrelated) bug.
+	//	    1 + (*it).waldo;                             //$overloadedOperator,overloadedOperator,localVariable,field
+	//	}
+	public void testOverloadedOperatorStar_539535() throws Exception {
+		makeAssertions();
+	}
 }

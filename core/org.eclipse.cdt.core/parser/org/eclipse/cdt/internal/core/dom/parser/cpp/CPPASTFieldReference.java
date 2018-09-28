@@ -292,43 +292,48 @@ public class CPPASTFieldReference extends ASTNode
 	}
 
 	private ICPPEvaluation createEvaluation() {
-		ICPPEvaluation ownerEval = fOwner.getEvaluation();
-		if (!ownerEval.isTypeDependent()) {
-			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(), fIsDeref, null, false);
-			if (ownerType != null) {
-				IBinding binding = fName.resolvePreBinding();
-				if (binding instanceof CPPFunctionSet)
-					binding= fName.resolveBinding();
-
-				if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) {
+		try {
+			CPPSemantics.pushLookupPoint(this);
+			ICPPEvaluation ownerEval = fOwner.getEvaluation();
+			if (!ownerEval.isTypeDependent()) {
+				IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(), fIsDeref, null, false);
+				if (ownerType != null) {
+					IBinding binding = fName.resolvePreBinding();
+					if (binding instanceof CPPFunctionSet)
+						binding= fName.resolveBinding();
+	
+					if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) {
+						return EvalFixed.INCOMPLETE;
+					}
+	
+					return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(), binding, ownerEval, fIsDeref, this);
+				}
+			}
+	
+			IBinding qualifier= null;
+			ICPPTemplateArgument[] args= null;
+			IASTName n= fName;
+			if (n instanceof ICPPASTQualifiedName) {
+				ICPPASTQualifiedName qn= (ICPPASTQualifiedName) n;
+				ICPPASTNameSpecifier[] ns= qn.getQualifier();
+				if (ns.length < 1)
+					return EvalFixed.INCOMPLETE;
+				qualifier= ns[ns.length - 1].resolveBinding();
+				if (qualifier instanceof IProblemBinding)
+					return EvalFixed.INCOMPLETE;
+				n= qn.getLastName();
+			}
+			if (n instanceof ICPPASTTemplateId) {
+				try {
+					args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
+				} catch (DOMException e) {
 					return EvalFixed.INCOMPLETE;
 				}
-
-				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(), binding, ownerEval, fIsDeref, this);
 			}
+			return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, fIsDeref, args, this);
+		} finally {
+			CPPSemantics.popLookupPoint();
 		}
-
-		IBinding qualifier= null;
-		ICPPTemplateArgument[] args= null;
-		IASTName n= fName;
-		if (n instanceof ICPPASTQualifiedName) {
-			ICPPASTQualifiedName qn= (ICPPASTQualifiedName) n;
-			ICPPASTNameSpecifier[] ns= qn.getQualifier();
-			if (ns.length < 1)
-				return EvalFixed.INCOMPLETE;
-			qualifier= ns[ns.length - 1].resolveBinding();
-			if (qualifier instanceof IProblemBinding)
-				return EvalFixed.INCOMPLETE;
-			n= qn.getLastName();
-		}
-		if (n instanceof ICPPASTTemplateId) {
-			try {
-				args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
-			} catch (DOMException e) {
-				return EvalFixed.INCOMPLETE;
-			}
-		}
-		return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, fIsDeref, args, this);
 	}
 
 	public static int getFieldPosition(ICPPField field) {

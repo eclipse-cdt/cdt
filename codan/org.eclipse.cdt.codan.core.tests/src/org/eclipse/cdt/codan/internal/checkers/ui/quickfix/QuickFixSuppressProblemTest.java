@@ -23,6 +23,11 @@ public class QuickFixSuppressProblemTest extends QuickFixTestCase {
 		return new QuickFixSuppressProblem();
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
 	//struct s {};
 	//void func() {
 	//	try {

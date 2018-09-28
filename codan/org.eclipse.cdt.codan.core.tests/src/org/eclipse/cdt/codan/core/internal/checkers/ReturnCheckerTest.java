@@ -26,7 +26,12 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		enableProblems(ReturnChecker.RET_NORET_ID,ReturnChecker.RET_ERR_VALUE_ID,ReturnChecker.RET_NO_VALUE_ID);
 	}
 
-	//	dummy() {
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
+	//	void dummy() {
 	//	  return; // no error here on line 2
 	//	}
 	public void testDummyFunction() throws Exception {

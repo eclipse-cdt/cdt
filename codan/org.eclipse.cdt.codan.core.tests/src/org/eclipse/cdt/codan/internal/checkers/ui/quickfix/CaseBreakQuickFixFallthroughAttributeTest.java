@@ -29,6 +29,11 @@ public class CaseBreakQuickFixFallthroughAttributeTest extends QuickFixTestCase 
 	}
 
 	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
+	@Override
 	protected AbstractCodanCMarkerResolution createQuickFix() {
 		return new CaseBreakQuickFixFallthroughAttribute();
 	}

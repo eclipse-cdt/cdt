@@ -27,6 +27,11 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 				UnusedSymbolInFileScopeChecker.ER_UNUSED_STATIC_FUNCTION_ID);
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	// extern function declarations
 	////////////////////////////////////////////////////////////////////////////
@@ -314,7 +319,7 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	// static void f4() __attribute__((unused)) {}
 	// static void __attribute__((unused)) f5();
 	public void testAttributeUnused() throws Exception {
-		loadCodeAndRun(getAboveComment());
+		loadCodeAndRunC(getAboveComment());
 		checkNoErrors();
 
 		loadCodeAndRunCpp(getAboveComment());

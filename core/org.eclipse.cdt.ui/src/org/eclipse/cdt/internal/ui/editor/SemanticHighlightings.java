@@ -225,7 +225,12 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of variables passed by non-const reference.
 	 */
 	public static final String VARIABLE_PASSED_BY_NONCONST_REF= "variablePassedByNonconstRef";  //$NON-NLS-1$
-	
+
+	/**
+	 * A named preference part that controls the highlighting UDL suffixes.
+	 */
+	public static final String UDL_SUFFIX = "udlSuffix";  //$NON-NLS-1$
+
 	/** Init debugging mode */
 	private static final boolean DEBUG= Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$
 
@@ -1785,6 +1790,7 @@ public class SemanticHighlightings {
 	 * the color and style of the 'Keyword' syntactic highlighting.
 	 */
 	private static final class ContextSensitiveKeywordHighlighting extends SemanticHighlighting {
+
 		@Override
 		public String getPreferenceKey() {
 			return ICColorConstants.C_KEYWORD;
@@ -1813,19 +1819,16 @@ public class SemanticHighlightings {
 
 	/**
 	 * Semantic highlighting for context-sensitive UDL like operator""if(...).
-	 * 
-	 * This does not get its own color and style; rather, it uses
-	 * the color and style of the 'Default' syntactic highlighting.
 	 */
-	private static final class ContextSensitiveUDLHighlighting extends SemanticHighlighting {
+	private static final class ContextSensitiveUDLHighlighting extends SemanticHighlightingWithOwnPreference {
 		@Override
 		public String getPreferenceKey() {
-			return ICColorConstants.C_DEFAULT;
+			return UDL_SUFFIX;
 		}
 
 		@Override
 		public boolean isEnabledByDefault() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -1837,6 +1840,16 @@ public class SemanticHighlightings {
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node = token.getNode();
 			return node instanceof IASTImplicitName && node.getParent() instanceof ICPPASTLiteralExpression;
+		}
+
+		@Override
+		public RGB getDefaultDefaultTextColor() {
+			return new RGB(92, 53, 102); // dark violet;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return CEditorMessages.SemanticHighlighting_udlSuffix;
 		}
 	}
 
@@ -1999,6 +2012,7 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(110), new LocalVariableHighlighting());
 		highlightings.put(new Key(120), new GlobalVariableHighlighting());
 		highlightings.put(new Key(130), new TemplateParameterHighlighting()); // before template arguments!
+		highlightings.put(new Key(139), new ContextSensitiveUDLHighlighting()); // before overload operator
 		highlightings.put(new Key(140), new OverloadedOperatorHighlighting()); // before both method and function
 		highlightings.put(new Key(150), new MethodHighlighting()); // before types to get ctors
 		highlightings.put(new Key(160), new EnumHighlighting());
@@ -2011,7 +2025,6 @@ public class SemanticHighlightings {
 		highlightings.put(new Key(230), new EnumeratorHighlighting());
 		highlightings.put(new Key(240), new ContextSensitiveKeywordHighlighting());
 		highlightings.put(new Key(250), new VariablePassedByNonconstRefHighlighting());
-		highlightings.put(new Key(260), new ContextSensitiveUDLHighlighting());
 	}
 
 	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$

@@ -3851,21 +3851,9 @@ public class CPPSemantics {
 
 
 	static enum LookupMode {NO_GLOBALS, GLOBALS_IF_NO_MEMBERS, LIMITED_GLOBALS, ALL_GLOBALS}
-	static ICPPFunction findOverloadedOperator(IScope pointOfDefinition, ICPPEvaluation[] args, 
-			IType methodLookupType, OverloadableOperator operator, LookupMode mode) {
-		IASTNode pointOfInstantiation = CPPSemantics.getCurrentLookupPoint();
-		while (pointOfInstantiation instanceof IASTName) {
-			pointOfInstantiation= pointOfInstantiation.getParent();
-		}
-
-		ICPPClassType callToObjectOfClassType= null;
-		IType type2= null;
-		if (args.length >= 2) {
-			type2 = args[1].getType();
-			type2= getNestedType(type2, TDEF | REF | CVTYPE);
-		}
-
-		// Find a method
+	
+	static LookupData findOverloadedMemberOperator(IType methodLookupType, OverloadableOperator operator, 
+			ICPPEvaluation[] args, IASTNode pointOfInstantiation) {
 		LookupData methodData = null;
 		if (methodLookupType instanceof ISemanticProblem)
 			return null;
@@ -3881,15 +3869,16 @@ public class CPPSemantics {
 					return null;
 				lookup(methodData, scope);
 
-				if (operator == OverloadableOperator.PAREN) {
-					callToObjectOfClassType= classType;
-				}
 			} catch (DOMException e) {
 				return null;
 			}
 		}
-
-		// Find a function
+		return methodData;
+	}
+	
+	static LookupData findOverloadedNonmemberOperator(IType methodLookupType, OverloadableOperator operator, 
+			ICPPEvaluation[] args, IASTNode pointOfInstantiation, IScope pointOfDefinition, 
+			LookupData methodData, LookupMode mode, IType type2, ICPPClassType callToObjectOfClassType) {
 		LookupData funcData = new LookupData(operator.toCharArray(), null, pointOfInstantiation);
 
 		// Global new and delete operators do not take an argument for the this pointer.
@@ -3909,7 +3898,7 @@ public class CPPSemantics {
 			try {
 				IScope scope = CPPVisitor.getContainingScope(pointOfInstantiation);
 				if (scope == null)
-					return null;
+					return funcData;
 				lookup(funcData, scope);
 				try {
 					doArgumentDependentLookup(funcData);
@@ -3947,7 +3936,7 @@ public class CPPSemantics {
 					}
 				}
 			} catch (DOMException e) {
-				return null;
+				return funcData;
 			}
 
 			if (operator == OverloadableOperator.NEW || operator == OverloadableOperator.DELETE
@@ -4021,7 +4010,7 @@ public class CPPSemantics {
 					}
 				}
 			} catch (DOMException e) {
-				return null;
+				return funcData;
 			}
 		}
 
@@ -4029,6 +4018,34 @@ public class CPPSemantics {
 			ICPPFunction[] builtins= BuiltinOperators.create(operator, args, (Object[]) funcData.foundItems);
 			mergeResults(funcData, builtins, false);
 		}
+		
+		return funcData;
+	}
+	
+	static ICPPFunction findOverloadedOperator(IScope pointOfDefinition, ICPPEvaluation[] args, 
+			IType methodLookupType, OverloadableOperator operator, LookupMode mode) {
+		IASTNode pointOfInstantiation = CPPSemantics.getCurrentLookupPoint();
+		while (pointOfInstantiation instanceof IASTName) {
+			pointOfInstantiation= pointOfInstantiation.getParent();
+		}
+
+		ICPPClassType callToObjectOfClassType= null;
+		IType type2= null;
+		if (args.length >= 2) {
+			type2 = args[1].getType();
+			type2= getNestedType(type2, TDEF | REF | CVTYPE);
+		}
+
+		// Find a method
+		LookupData methodData = findOverloadedMemberOperator(methodLookupType, operator, args, 
+				pointOfInstantiation);
+		if (methodData != null && operator == OverloadableOperator.PAREN) {
+			callToObjectOfClassType = (ICPPClassType) methodLookupType;
+		}
+
+		// Find a function
+		LookupData funcData = findOverloadedNonmemberOperator(methodLookupType, operator, args, 
+				pointOfInstantiation, pointOfDefinition, methodData, mode, type2, callToObjectOfClassType);
 
 		try {
 			IBinding binding = null;

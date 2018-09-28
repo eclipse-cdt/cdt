@@ -1,5 +1,6 @@
 /* This is sample C++ code */
 #include <cstdio>
+#include <complex>
 #define MACRO(x) x
 using namespace std;
 // This comment may span only this line
@@ -7,6 +8,9 @@ typedef unsigned int uint;
 int static myfunc(uint parameter) {
   if (parameter == 0) fprintf(stdout, "zero\n");
   cout << "hello\n";
+  using std::complex_literals;
+  auto c = 13if;
+  auto k = 13_d;
   return parameter - 1;
 }
 void mutator(int&);

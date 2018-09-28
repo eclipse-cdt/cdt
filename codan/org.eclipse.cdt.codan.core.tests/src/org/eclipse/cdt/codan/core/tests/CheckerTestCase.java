@@ -159,6 +159,11 @@ public class CheckerTestCase extends CodanTestCase {
 		runCodan();
 	}
 
+	public void loadCodeAndRunC(String code) throws CoreException {
+		loadcode(code, false);
+		runCodan();
+	}
+
 	public void loadCodeAndRunCpp(String code) throws CoreException {
 		loadcode(code, true);
 		runCodan();
@@ -251,6 +256,11 @@ public class CheckerTestCase extends CodanTestCase {
 
 	protected void checkSampleAbove() throws CoreException {
 		loadCodeAndRun(getAboveComment());
+		checkErrorComments();
+	}
+
+	protected void checkSampleAboveC() throws CoreException {
+		loadCodeAndRunC(getAboveComment());
 		checkErrorComments();
 	}
 

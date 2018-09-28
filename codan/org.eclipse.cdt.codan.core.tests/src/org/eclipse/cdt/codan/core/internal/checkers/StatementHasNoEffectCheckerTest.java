@@ -27,7 +27,12 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		enableProblems(StatementHasNoEffectChecker.ER_ID);
 	}
 
-	// main() {
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
+	// int main() {
 	// int a;
 	// +a; // error here on line 3
 	// }
@@ -35,7 +40,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a,b;
 	//
 	// b+a; // error here on line 4
@@ -44,7 +49,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a,b;
 	//
 	// a=b+a; // no error here
@@ -53,7 +58,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a,b;
 	//
 	// (a=b); // no errors here
@@ -71,7 +76,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a;
 	// a; // error here on line 3
 	// }
@@ -79,7 +84,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a=({foo();a;}); // no error here on line 2
 	// char *p=({char s[]="Some string";&s[0];}); // no error here on line 3
 	// }
@@ -87,19 +92,19 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int z=({int a=0; +a; a;}) // error here on line 2
 	// }
 	public void testGNUExpressionCompoundStmtInside() throws Exception {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a;
 	// +a; // error here on line 3
 	// }
 
-	// foo() {
+	// void foo() {
 	// int a;
 	//
 	// +a; // error here on line 4
@@ -114,7 +119,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkErrorLine(f2, 4);
 	}
 
-	// main() {
+	// int main() {
 	// 	for (a=b;a;a=a->next);
 	// }
 	public void testForTestExpression() throws Exception {
@@ -131,7 +136,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAboveCpp();
 	}
 
-	// main() {
+	// int main() {
 	// A a,b;
 	//
 	// b+=a; // no error here on line 4
@@ -141,7 +146,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	}
 
 	//#define FUNC(a) a
-	// main() {
+	// int main() {
 	// int a;
 	//   FUNC(a); // error by default
 	// }
@@ -152,7 +157,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	}
 
 	//#define FUNC(a) a
-	// main() {
+	// int main() {
 	// int x;
 	//   FUNC(x); //  error
 	// }
@@ -163,7 +168,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	}
 
 	//#define FUNC(a) a
-	// main() {
+	// int main() {
 	// int a;
 	//   FUNC(a); // no error if macro exp turned off
 	// }
@@ -173,7 +178,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-	// main() {
+	// int main() {
 	// int a;
 	// +a; // error here on line 3
 	// }

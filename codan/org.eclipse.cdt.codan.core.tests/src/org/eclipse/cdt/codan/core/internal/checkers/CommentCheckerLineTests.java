@@ -26,12 +26,17 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 		enableProblems(CommentChecker.COMMENT_NO_LINE);
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
 	//	void foo() {
 	//	  return; // error
 	//	}
 	@Test
 	public void testLineComment() throws Exception {
-		checkSampleAbove();
+		checkSampleAboveC();
 	}
 
 	//	void foo() {
@@ -39,7 +44,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	}
 	@Test
 	public void testNoLineComment() throws Exception {
-		checkSampleAbove();
+		checkSampleAboveC();
 	}
 
 	//	char * foo() {
@@ -47,7 +52,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	}
 	@Test
 	public void testNoLineCommentInString() throws Exception {
-		checkSampleAbove();
+		checkSampleAboveC();
 	}
 
 	//	void foo() {
@@ -61,7 +66,7 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	//	#define AAA // error even in prepro
 	@Test
 	public void testLineCommentInPrepro() throws Exception {
-		checkSampleAbove();
+		checkSampleAboveC();
 	}
 
 	// @file:test.h

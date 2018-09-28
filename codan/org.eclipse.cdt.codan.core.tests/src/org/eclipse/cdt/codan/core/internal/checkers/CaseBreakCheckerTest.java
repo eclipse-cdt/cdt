@@ -29,6 +29,11 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setLast(true);
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
 	// void foo(void) {
 	//  int a;
 	//  switch (a) {
@@ -256,7 +261,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 1:
 	//    b = 2;
 	//    /* no break */
-	//    bye();
+	//    foo();
 	//  }
 	// }
 	public void testLastCaseBadCommentNotLast() throws Exception {

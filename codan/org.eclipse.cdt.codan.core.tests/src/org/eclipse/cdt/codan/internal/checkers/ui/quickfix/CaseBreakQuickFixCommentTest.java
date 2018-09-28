@@ -17,6 +17,11 @@ public class CaseBreakQuickFixCommentTest extends QuickFixTestCase {
 		return new CaseBreakQuickFixComment();
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
 	//void hello() {}
 	//void func() {
 	//	int a;

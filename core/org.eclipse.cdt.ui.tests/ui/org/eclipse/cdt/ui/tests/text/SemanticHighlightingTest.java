@@ -465,7 +465,7 @@ public class SemanticHighlightingTest extends TestCase {
     
 	//	struct Duration {};                              //$class
 	//	Duration operator "" _d(unsigned long long);     //$class,functionDeclaration
-	//	Duration dur = 1000_d;                           //$class,globalVariable,overloadedOperator
+	//	Duration dur = 1000_d;                           //$class,globalVariable,udlSuffix
     public void testUserDefinedLiteralSuffix_484617() throws Exception {
 		makeAssertions();
 	}
@@ -701,31 +701,44 @@ public class SemanticHighlightingTest extends TestCase {
     //		return 1.6f;
     //	}
     //	int main() {                                     //$functionDeclaration
+    //		auto k = 1.3if;                              //$localVariableDeclaration,udlSuffix
+    //	}
+    public void testUDLOperatorIfCall_527954() throws Exception {
+    	makeAssertions();
+    }
+
+    //	float operator""if(long double) {                //$functionDeclaration
+    //		return 1.6f;
+    //	}
+    //	int main() {                                     //$functionDeclaration
     //		auto k = 1.3if;                              //$localVariableDeclaration,overloadedOperator
     //	}
-    public void testOverriddenUDLOperatorIfCall_527954() throws Exception {
-    	makeAssertions();
+    public void testOverriddenUDLOperatorIfCallnoUDL_539535() throws Exception {
+		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.UDL_SUFFIX);
+    	makeAssertions(ignoredHighlightings);
     }
 
 	//	float operator""if(long double) {                //$functionDeclaration
 	//		return 1.6f;
 	//	}
 	//	int main() {                                     //$functionDeclaration
-	//		auto k = 1.3if;                              //$localVariableDeclaration,c_default
+	//		auto k = 1.3if;                              //$localVariableDeclaration
 	//	}
-	public void testUDLOperatorIfCall_527954() throws Exception {
+	public void testUDLOperatorIfCallnoUDLnoOperator_539535() throws Exception {
 		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.UDL_SUFFIX);
 		ignoredHighlightings.add(SemanticHighlightings.OVERLOADED_OPERATOR);
 		makeAssertions(ignoredHighlightings);
 	}
-	
+
 	//	int operator""int(long double) {                 //$functionDeclaration
 	//		return -1;
 	//	}
 	//	int main() {                                     //$functionDeclaration
-	//		auto k = 1.3int;                             //$localVariableDeclaration,overloadedOperator
+	//		auto k = 1.3int;                             //$localVariableDeclaration,udlSuffix
 	//	}
-	public void testOverriddenUDLOperatorIntCall_527954() throws Exception {
+	public void testUDLOperatorIntCall_527954() throws Exception {
 		makeAssertions();
 	}
 
@@ -733,10 +746,23 @@ public class SemanticHighlightingTest extends TestCase {
 	//		return -1;
 	//	}
 	//	int main() {                                     //$functionDeclaration
-	//		auto k = 1.3int;                             //$localVariableDeclaration,c_default
+	//		auto k = 1.3int;                             //$localVariableDeclaration,overloadedOperator
 	//	}
-	public void testUDLOperatorIntCall_527954() throws Exception {
+	public void testUDLOperatorIntCallnoUDL_539535() throws Exception {
 		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.UDL_SUFFIX);
+		makeAssertions(ignoredHighlightings);
+	}
+
+	//	int operator""int(long double) {                 //$functionDeclaration
+	//		return -1;
+	//	}
+	//	int main() {                                     //$functionDeclaration
+	//		auto k = 1.3int;                             //$localVariableDeclaration
+	//	}
+	public void testUDLOperatorIntCallnoUDLnoOperator_539535() throws Exception {
+		Set<String> ignoredHighlightings = new HashSet<>();
+		ignoredHighlightings.add(SemanticHighlightings.UDL_SUFFIX);
 		ignoredHighlightings.add(SemanticHighlightings.OVERLOADED_OPERATOR);
 		makeAssertions(ignoredHighlightings);
 	}

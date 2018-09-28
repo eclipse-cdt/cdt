@@ -108,6 +108,7 @@ public final class CEditorMessages extends NLS {
 	public static String SemanticHighlighting_problem;
 	public static String SemanticHighlighting_externalSDK;
 	public static String SemanticHighlighting_variablePassedByNonConstReference;
+	public static String SemanticHighlighting_udlSuffix;
 	public static String CEditor_markOccurrences_job_name;
 	public static String CEditorActionContributor_ExpandSelectionMenu_label;
 	public static String IndexUpdateRequestor_job_name;

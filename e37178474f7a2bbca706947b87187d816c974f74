@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89d61047_d3326809",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-01T15:13:18Z",
+      "side": 1,
+      "message": "Please spell this out as \"User-defined literal suffixes\", since a user may not know what \"UDL\" stands for.",
+      "revId": "e37178474f7a2bbca706947b87187d816c974f74",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

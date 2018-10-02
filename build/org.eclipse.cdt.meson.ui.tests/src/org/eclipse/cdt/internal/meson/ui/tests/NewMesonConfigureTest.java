@@ -244,6 +244,12 @@ public class NewMesonConfigureTest {
 		assertTrue(lines[13+index].contains("-Werror"));
 		assertTrue(lines[14+index].startsWith("FAILED"));
 		assertTrue(lines[17+index].contains("Werror=unused-parameter"));
+		
+	    int i = 0;
+	    while (i < 10 && !lines[lines.length-1].startsWith("Build complete")) {
+	    	bot.sleep(1000);
+	    	++i;
+	    }
 		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	

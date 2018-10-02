@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePageRule;
 import org.eclipse.cdt.meson.core.MesonNature;
@@ -156,16 +157,30 @@ public class NewManualNinjaTest {
 		console.show();
 		console.setFocus();
 		
-		String[] lines = new String[0];
-		
-		while (lines.length < 15) {
-			String output = console.bot().styledText().getText();
+		boolean foundExecutable = false;
+		while (!foundExecutable) {
+			IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
+			if (binaries.length > 0) {
+				for (IBinary binary : binaries) {
+					if (binary.getResource().getName().startsWith(projectName)) {
+						foundExecutable = true;
+					}
+				}
+			}
+			bot.sleep(1000);
+		}
+		assertTrue(foundExecutable);
+
+		String output = console.bot().styledText().getText();
+
+		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
+
+		while (lines.length < 9) {
+			output = console.bot().styledText().getText();
 			lines = output.split("\\r?\\n"); //$NON-NLS-1$
 			bot.sleep(2000);
 		}
-		
-		bot.sleep(3000);
-		
+
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals("The Meson build system", lines[2]);
 		assertTrue(lines[3].startsWith("Version:"));
@@ -174,6 +189,12 @@ public class NewManualNinjaTest {
 		assertEquals("Build type: native build", lines[6]);
 		assertEquals("Project name: MesonTestProj3", lines[7]);
 		assertTrue(lines[8].startsWith("Native C compiler: cc"));
+		
+	    int i = 0;
+	    while (i < 10 && !lines[lines.length-1].startsWith("Build complete")) {
+	    	bot.sleep(1000);
+	    	++i;
+	    }
 		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	

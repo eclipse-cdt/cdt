@@ -143,6 +143,7 @@ public class NewMesonProjectTest {
 		SWTBotTreeItem proj = explorer.bot().tree().getTreeItem(projectName).select();
 		proj.contextMenu("Build Project").click();
 
+		// wait until the binary shows up before testing the console output
 		boolean foundExecutable = false;
 		while (!foundExecutable) {
 			IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
@@ -164,7 +165,13 @@ public class NewMesonProjectTest {
 		String output = console.bot().styledText().getText();
 
 		String[] lines = output.split("\\r?\\n"); //$NON-NLS-1$
-		
+
+		while (lines.length < 15) {
+			output = console.bot().styledText().getText();
+			lines = output.split("\\r?\\n"); //$NON-NLS-1$
+			bot.sleep(2000);
+		}
+
 		assertEquals("Building in: " + projectPath + "/build/default", lines[0]);
 		assertEquals(" sh -c \"meson   " + projectPath + "\"", lines[1]);
 		assertEquals("The Meson build system", lines[2]);
@@ -177,6 +184,12 @@ public class NewMesonProjectTest {
 		assertEquals("Build targets in project: 1", lines[11]);
 		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
 		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj"));
+		
+	    int i = 0;
+	    while (i < 10 && !lines[lines.length-1].startsWith("Build")) {
+	    	bot.sleep(1000);
+	    	++i;
+	    }
 		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	

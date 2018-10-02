@@ -177,6 +177,12 @@ public class NewMesonProjectTest {
 		assertEquals("Build targets in project: 1", lines[11]);
 		assertTrue(lines[lines.length-3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
 		assertTrue(lines[lines.length-2].startsWith("[2/2] cc  -o MesonTestProj"));
+		
+	    int i = 0;
+	    while (i < 10 && !lines[lines.length-1].startsWith("Build")) {
+	    	bot.sleep(1000);
+	    	++i;
+	    }
 		assertEquals("Build complete: " + projectPath + "/build/default", lines[lines.length-1]);
 	}
 	

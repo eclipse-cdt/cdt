@@ -16,6 +16,24 @@
       "revId": "9b3ccf516fee412b48ff8b4fcfe76a22fdcb27cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3b84af_25b5ee45",
+        "filename": "build/org.eclipse.cdt.meson.ui.tests/src/org/eclipse/cdt/internal/meson/ui/tests/NewMesonConfigureTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2018-10-03T21:41:47Z",
+      "side": 1,
+      "message": "I guess it could, but I would just copy the code into the condition, minus the sleep and increment.  I figure if it isn\u0027t done in 10 seconds after the binary is created, it is a failure.  I don\u0027t think it should wait for the full SWT timeout of 50 seconds that has been specified for other operations.  I did notice that I forgot to refresh the lines after each check since they aren\u0027t automatically refreshed in a thread, etc... so I have updated the patch.",
+      "parentUuid": "5f9a3970_ecb028dc",
+      "revId": "9b3ccf516fee412b48ff8b4fcfe76a22fdcb27cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

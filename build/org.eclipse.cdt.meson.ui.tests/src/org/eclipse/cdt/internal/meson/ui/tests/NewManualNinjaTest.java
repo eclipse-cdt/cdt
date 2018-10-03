@@ -192,6 +192,8 @@ public class NewManualNinjaTest {
 		
 	    int i = 0;
 	    while (i < 10 && !lines[lines.length-1].startsWith("Build complete")) {
+	    	output = console.bot().styledText().getText();
+	    	lines = output.split("\\r?\\n"); //$NON-NLS-1$
 	    	bot.sleep(1000);
 	    	++i;
 	    }

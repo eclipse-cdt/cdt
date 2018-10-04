@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "619d1d7b_0a225c39",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-04T15:58:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9216e6ab_826f6396",
+      "revId": "317a7cadb5097969457f6504d4ff365e7cdc8c1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e8c6e1fe_9a9d3db1",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
         "patchSetId": 6

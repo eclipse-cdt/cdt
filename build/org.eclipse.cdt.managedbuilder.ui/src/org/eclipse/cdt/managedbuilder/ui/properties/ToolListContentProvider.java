@@ -120,7 +120,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		for (int i=0; i<cats.length; i++) {
 			ToolListElement e = new ToolListElement(parentElement, optHolder, cats[i]);
 			applicabilityCalculator = e.getOptionCategory().getApplicabilityCalculator();
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, optHolder, parent)) {
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, e.getHoldOptions(), e.getOptionCategory())) {
 				parentElement.addChildElement(e);
 				createChildElements(e,config);
 			}

@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCProjectPlatformPage;
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
+import org.eclipse.cdt.managedbuilder.ui.tests.properties.ToolListContentProviderTests;
 
 /**
  *
@@ -30,6 +31,7 @@ public class AutomatedIntegrationSuite {
 // TODO uncoment this		
 		suite.addTest(TestCustomPageManager.suite());
 		suite.addTestSuite(TestCProjectPlatformPage.class);
+		suite.addTest(ToolListContentProviderTests.suite());
 		
 		//$JUnit-END$
 		return suite;

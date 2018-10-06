@@ -187,7 +187,7 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/eclipse/updates/4.8milestones/"/>
+              url="http://download.eclipse.org/eclipse/updates/4.8/"/>
           <repository
               url="http://download.eclipse.org/tools/cdt/launchbar/photon/m7/"/>
           <repository

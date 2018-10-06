@@ -8,9 +8,12 @@
 
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.service.commands;
 
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
@@ -35,5 +38,35 @@ public class LLDBCommandFactory extends CommandFactory {
 	@Override
 	public ICommand<MIInfo> createMIGDBSetArgs(IMIContainerDMContext dmc, String[] arguments) {
 		return super.createMIExecArguments(dmc, arguments);
+	}
+
+	/**
+	 * lldb-mi (as of 8.0.0-r343825) doesn't implement "-gdb-set breakpoint pending"
+	 * so instead we always use "-break-insert -f" to always use pending breakpoints.
+	 * Once the -gdb-set is implemented in lldb-mi, we can remove this.
+	 * See also https://reviews.llvm.org/D52953
+	 */
+	@Override
+	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
+			boolean isHardware, String condition, int ignoreCount, String line, String tid) {
+		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, true);
+	}
+
+	/**
+	 * @see #createMIBreakInsert(IBreakpointsTargetDMContext, boolean, boolean, String, int, String, String)
+	 */
+	@Override
+	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
+			boolean isHardware, String condition, int ignoreCount, String location, String tid, boolean disabled,
+			boolean isTracepoint) {
+		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, true);
+	}
+
+	/**
+	 * @see #createMIBreakInsert(IBreakpointsTargetDMContext, boolean, boolean, String, int, String, String)
+	 */
+	@Override
+	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, String func) {
+		return new MIBreakInsert(ctx, func, true);
 	}
 }

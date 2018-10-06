@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf50c20b_b0241420",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-06T21:21:59Z",
+      "side": 1,
+      "message": "IASTDeclSpecifier extends IASTAttributeOwner, so the check and cast are unnecessary.",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e64da239_f4d63ddd",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-06T21:21:59Z",
+      "side": 1,
+      "message": "getDeclarationsInAST() traverses the AST with an ASTVisitor. If we\u0027re calling it for each function definition, that\u0027s potentially a lot of traversals and could have a performance impact.\n\nCould we not gather this information about declarations during the single traversal that the checker itself does, which already visits all declarations?",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82e23ee9_826b8b14",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-06T21:21:59Z",
+      "side": 1,
+      "message": "AttributeUtil.hasAttribute() takes an array of attribute names as its second parameter, and returns true if any of them are present.\n\nSo, we could accomplish this with a single call to hasAttribute() if we put all four attributes into a single array.",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d00cdb4_05e5c300",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolListContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-10-08T15:38:26Z",
+      "side": 1,
+      "message": "Looks ok to me. Only potential concern would be that this could break exiting implementations of the applicability calculator that may be assuming the original values. Though this version seems more correct to me.\n\nAny thoughts Jonah?",
+      "range": {
+        "startLine": 123,
+        "startChar": 98,
+        "endLine": 123,
+        "endChar": 139
+      },
+      "revId": "d30fe9721574c3f454abefc26e5e9f923fa717da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

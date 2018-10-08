@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
@@ -283,6 +284,9 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 								classType = (ICPPClassType) memberBinding;
 							} else if (memberBinding instanceof ICPPConstructor) {
 								classType = ((ICPPConstructor) memberBinding).getClassOwner();
+							}
+							if (classType instanceof ICPPDeferredClassInstance) {
+								classType = ((ICPPDeferredClassInstance) classType).getClassTemplate();
 							}
 							if (classType != null && classType.isSameType(constructor.getClassOwner()))
 								return null;

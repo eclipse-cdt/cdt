@@ -106,7 +106,7 @@
           name="CDT"
           activeRepositoryList="${eclipse.target.platform}">
         <requirement
-            name="org.eclipse.platform.ide"/>
+            name="org.eclipse.platform.feature.group"/>
         <requirement
             name="org.apache.log4j"/>
         <requirement

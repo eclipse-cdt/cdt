@@ -647,4 +647,24 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	// template <typename T>
+	// class TemplateWithWarning {
+	// public:
+	//   TemplateWithWarning(int number)
+	//   {
+	//     internalNumber = number;
+	//   }
+	//
+	//   TemplateWithWarning(int number, bool someFlag)
+	//      : TemplateWithWarning(number) {}
+	//
+	// protected:
+	//   int internalNumber;
+	// };
+	public void testChainConstructorInitialization_519311() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 }

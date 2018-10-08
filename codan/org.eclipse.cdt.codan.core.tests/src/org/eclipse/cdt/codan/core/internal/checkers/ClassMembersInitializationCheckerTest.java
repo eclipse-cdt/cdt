@@ -639,6 +639,24 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	//	template <typename T>
+	//	class TemplateWithWarning {
+	//	public:
+	//	  TemplateWithWarning(int number) {
+	//	    internalNumber = number;
+	//	  }
+	//
+	//	  TemplateWithWarning(int number, bool someFlag)
+	//	     : TemplateWithWarning(number) {}
+	//
+	//	protected:
+	//	  int internalNumber;
+	//	};
+	public void testDelegatingConstructorWithTemplate_519311() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 	//	struct A {
 	//	    A() {};
 	//	    int x = 0;

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad095929_7fdec9d7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-08T07:31:53Z",
+      "side": 1,
+      "message": "When the expression is coming from \"this-\u003e\" reference it is of type CPPFieldReference. In which case, we have to call getFieldName() to continue with the checking logic.",
+      "revId": "1ae18d7814da72e981690f8c4a1b1caa6965c8a0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

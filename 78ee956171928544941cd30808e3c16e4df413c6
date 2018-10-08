@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7155e05c_5189edf3",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-08T06:21:25Z",
+      "side": 1,
+      "message": "The main problem is that for non-templated classes the return type of getClassOwner() is the class itself. However, for templated classes the return of this function is CppDeferredClassInstance. That why we need to call getTemplateDefinition().",
+      "revId": "78ee956171928544941cd30808e3c16e4df413c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -647,4 +647,21 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	class ClassWithWarning {
+	//	public:
+	//	  ClassWithWarning(char* n) {
+	//	    this->initClass(n);
+	//	  }
+	//
+	//	private:
+	//	  char *name;
+	//	  void initClass(char *name) {
+	//	    this->name = name;
+	//	  }
+	//	};
+	public void testMemberFunctionCalling_519473() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

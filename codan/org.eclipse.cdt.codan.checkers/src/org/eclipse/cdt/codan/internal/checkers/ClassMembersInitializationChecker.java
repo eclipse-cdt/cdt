@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -127,9 +128,15 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				if (!actualConstructorFields.isEmpty()) {
 					IASTFunctionCallExpression fCall = (IASTFunctionCallExpression) expression;
 					IASTExpression fNameExp = fCall.getFunctionNameExpression();
+					IBinding fBinding = null;
 					if (fNameExp instanceof IASTIdExpression) {
 						IASTIdExpression fName = (IASTIdExpression) fNameExp;
-						IBinding fBinding = fName.getName().resolveBinding();
+						fBinding = fName.getName().resolveBinding();
+					} else if (fNameExp instanceof ICPPASTFieldReference) {
+						ICPPASTFieldReference fName = (ICPPASTFieldReference) fNameExp;
+						fBinding = fName.getFieldName().resolveBinding();
+					}
+					if (fBinding != null) {
 						if (fBinding instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod) fBinding;
 							ICompositeType constructorOwner = actualConstructorFields.iterator().next().getCompositeTypeOwner();

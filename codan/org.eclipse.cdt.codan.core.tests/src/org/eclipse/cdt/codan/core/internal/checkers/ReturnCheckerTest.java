@@ -453,4 +453,19 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//	void waldo() {
+	//	  return 5; // error here on line 2
+	//	}
+	public void testNonTemplateFunctionReturn_509751() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	template <typename T>
+	//	void waldoT() {
+	//	  return 5;  // error here on line 3
+	//	}
+	public void testTemplateFunctionReturn_509751() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

@@ -52,7 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+//import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -149,8 +149,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 
 	@Override
 	protected void processFunction(IASTFunctionDefinition func) {
-		if (func.getParent() instanceof ICPPASTTemplateDeclaration)
-			return; // If it is template get out of here.
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
 		boolean nonVoid = isNonVoid(func);

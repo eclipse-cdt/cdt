@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3d98c53_77c09ff1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-09T00:57:47Z",
+      "side": 0,
+      "message": "This can\u0027t be disabled by mistake. There has to be some major reason behind it. However, removing it seems to fix this bug.",
+      "revId": "d537c6030cabb87999a2a6617dcad948a70a5f7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

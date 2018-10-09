@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "610d5339_e466a9a9",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-09T00:57:47Z",
+      "side": 1,
+      "message": "Will remove.",
+      "revId": "df08d61bc0273a6c691f6a7bad05e33da0878b91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

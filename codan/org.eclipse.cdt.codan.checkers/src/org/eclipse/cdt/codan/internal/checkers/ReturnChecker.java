@@ -48,11 +48,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -104,12 +104,13 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				if (returnValue != null) {
 					hasret = true;
 				}
-				if (isNonVoid(func) && !isConstructorDestructor(func)) {
+				ReturnTypeKind returnKind = getReturnTypeKind(func);
+				if (returnKind == ReturnTypeKind.NonVoid && !isConstructorDestructor(func)) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
 						if (returnValue == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
-				} else {
+				} else if (returnKind == ReturnTypeKind.Void) {
 					if (returnValue instanceof IASTExpression) {
 						IType type = ((IASTExpression) returnValue).getExpressionType();
 						if (isVoid(type))
@@ -123,7 +124,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		}
 	}
 
-	public boolean isConstructorDestructor(IASTFunctionDefinition func) {
+	private static boolean isConstructorDestructor(IASTFunctionDefinition func) {
 		if (func instanceof ICPPASTFunctionDefinition) {
 			IBinding method = func.getDeclarator().getName().resolveBinding();
 			if (method instanceof ICPPConstructor
@@ -149,12 +150,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	@Override
 	protected void processFunction(IASTFunctionDefinition func) {
 		cachedReturnType = null;
-		if (func.getParent() instanceof ICPPASTTemplateDeclaration)
-			return; // If it is template get out of here.
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
-		boolean nonVoid = isNonVoid(func);
-		if (nonVoid && !isMain(func)) {
+		ReturnTypeKind returnKind = getReturnTypeKind(func);
+		if (returnKind == ReturnTypeKind.NonVoid && !isMain(func)) {
 			// There a return but maybe it is only on one branch.
 			IASTStatement body = func.getBody();
 			if (body instanceof IASTCompoundStatement) {
@@ -251,6 +250,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				&& ((IASTSimpleDeclSpecifier) declSpecifier).getType() == IASTSimpleDeclSpecifier.t_unspecified);
 	}
 
+	enum ReturnTypeKind {
+		Void, NonVoid, Unknown
+	}
+
 	/**
 	 * Checks if the function has a return type other than void. Constructors and destructors
 	 * don't have return type.
@@ -258,10 +261,19 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 * @param func the function to check
 	 * @return {@code true} if the function has a non void return type
 	 */
-	private boolean isNonVoid(IASTFunctionDefinition func) {
+	@SuppressWarnings("restriction")
+	private ReturnTypeKind getReturnTypeKind(IASTFunctionDefinition func) {
 		if (isConstructorDestructor(func))
-			return false;
-		return !isVoid(getReturnType(func));
+			return ReturnTypeKind.Void;
+		IType returnType = getReturnType(func);
+		if (CPPTemplates.isDependentType(returnType)) {
+			// Could instantiate to void or not.
+			// If we care to, we could do some more heuristic analysis.
+			// For example, if C is a class template, `C<T>` will always be non-void,
+			// but `typename C<T>::type` is still unknown.
+			return ReturnTypeKind.Unknown;
+		}
+		return isVoid(returnType) ? ReturnTypeKind.Void : ReturnTypeKind.NonVoid;
 	}
 
 	private IType getReturnType(IASTFunctionDefinition func) {
@@ -271,7 +283,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return cachedReturnType;
 	}
 
-	public boolean isVoid(IType type) {
+	private static boolean isVoid(IType type) {
 		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eVoid;
 	}
 

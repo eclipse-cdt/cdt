@@ -16,6 +16,24 @@
       "revId": "d537c6030cabb87999a2a6617dcad948a70a5f7c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26ea51f0_150d6ba2",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-09T01:04:28Z",
+      "side": 0,
+      "message": "commit b414adbb13d74f4d15b401a0abb048ab5ab8913a\nAuthor: Alena Laskavaia \u003celaskavaia.cdt@gmail.com\u003e 2011-02-23 21:03:10\nCommitter: Alena Laskavaia \u003celaskavaia.cdt@gmail.com\u003e 2011-02-23 21:03:10\nParent: 598b6fc042eacfacc007746e3e507889c3ac1c02 (auto-format code using project formatter)\nChild: 63ec2d8b003765d419bedd14b6e978a99650f612 (Bug 337677 - Warning about \"void\" in late-specified return type)\nBranches: fix-bug-509751, fix-bug-519311, fix-bug-519473, master, origin/cdt_8_0, origin/cdt_8_1, origin/cdt_8_2, origin/cdt_8_3, origin/cdt_8_4, origin/cdt_8_5, origin/cdt_8_6, origin/cdt_8_7, origin/cdt_8_8, origin/cdt_9_0, origin/cdt_9_1, origin/cdt_9_2, origin/cdt_9_3, origin/cdt_9_4, origin/cdt_9_5, origin/containerbuild, origin/master\n\nBug 333255 - Parser gives bogus warning about no return value when SFINAE is used",
+      "parentUuid": "c3d98c53_77c09ff1",
+      "revId": "d537c6030cabb87999a2a6617dcad948a70a5f7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

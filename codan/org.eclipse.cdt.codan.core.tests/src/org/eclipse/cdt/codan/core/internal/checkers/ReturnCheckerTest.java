@@ -464,4 +464,27 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testReturnTypeDeduction_540112() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//	void waldo() {
+	//	  return 5; // error here on line 2
+	//	}
+	public void testNonTemplateFunctionReturn_509751() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	template <typename T>
+	//	void waldoT() {
+	//	  return 5;  // error here on line 3
+	//	}
+	public void testTemplateFunctionReturn_509751a() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	template <typename T>
+	//	T waldoT() {
+	//		return 5;
+	//	}
+	public void testTemplateFunctionReturn_509751b() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

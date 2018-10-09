@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa85610e_21b78a96",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-09T05:03:23Z",
+      "side": 1,
+      "message": "Please include on the first line of the commit message a brief description of the patch. In this case, something like \"Handle delegating constructor in class template\" should work.",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "819945d6_da1d3742",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-09T05:03:23Z",
+      "side": 1,
+      "message": "This is the right idea, thanks!\n\nI have a suggestion for a slight modification that is a bit more general:\n\n  // ... compute classType as before ...\n  if (classType instanceof ICPPDeferredClassInstance) {\n      classType \u003d ((ICPPDeferredClassInstance) classType).getClassTemplate();\n  }\n\nThis has the following (minor) advantages:\n\n* We handle a deferred-class-instance even if it arises some other way than through a deferred-constructor. (I can\u0027t concretely think of another way it might arise, but it feels more general to allow for this.)\n* We don\u0027t assume that a deferred-constructor\u0027s class-owner is a deferred-class-instance. If it happens to be some other type, we\u0027ll just get a false-positive warning rather than a ClassCastException that interrupts codan and triggers an error dialog. (Again, I can\u0027t concretely think of a situation where that can happen in a member-initializer, but C++ has surprised me before.)\n* By using ICPPDeferredClassInstance rather than CPPDeferredClassInstance, we are allowing for other implementations of ICPPDeferredClassInstance. (Currently there aren\u0027t any, but e.g. ICPPFunction has other implementations beside CPPFunction.)\n* By using ICPPDeferredClassInstance.getClassTemplate() rather than getTemplateDefinition(), we are avoiding a cast to ICPPClassType.",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "860234cf_47927234",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ClassMembersInitializationCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-09T05:03:23Z",
+      "side": 1,
+      "message": "For consistency with the code style in test code, please put this brace on the previous line.",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

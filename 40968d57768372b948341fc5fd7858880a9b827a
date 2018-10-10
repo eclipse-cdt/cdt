@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "17f38ad6_88dff822",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-10-10T04:26:02Z",
+      "side": 1,
+      "message": "Interesting, I guess I hadn\u0027t noticed the warning.",
+      "parentUuid": "bf50c20b_b0241420",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e64da239_f4d63ddd",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "582de5ac_68d6ec3a",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-10-10T04:26:02Z",
+      "side": 1,
+      "message": "I think I found a better way to do this. We gather information about attributes during the first traversal and then remove the used candidates in filterOutUsedElements (second traversal), just like other cases.",
+      "parentUuid": "e64da239_f4d63ddd",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "82e23ee9_826b8b14",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2018-10-06T21:21:59Z",
       "side": 1,
       "message": "AttributeUtil.hasAttribute() takes an array of attribute names as its second parameter, and returns true if any of them are present.\n\nSo, we could accomplish this with a single call to hasAttribute() if we put all four attributes into a single array.",
+      "revId": "40968d57768372b948341fc5fd7858880a9b827a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8f9e6a4_7cfb9e9b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UnusedSymbolInFileScopeChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-10-10T04:26:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82e23ee9_826b8b14",
       "revId": "40968d57768372b948341fc5fd7858880a9b827a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

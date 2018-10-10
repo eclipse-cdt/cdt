@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "eb59f322_c76f5598",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-10T03:24:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa85610e_21b78a96",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "819945d6_da1d3742",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f95222b5_37cdc924",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-10T03:24:46Z",
+      "side": 1,
+      "message": "Nice reasoning! Thanks a lot for the explanation. Done!",
+      "parentUuid": "819945d6_da1d3742",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "860234cf_47927234",
         "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ClassMembersInitializationCheckerTest.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2018-10-09T05:03:23Z",
       "side": 1,
       "message": "For consistency with the code style in test code, please put this brace on the previous line.",
+      "revId": "d8f957496d279565a038941223a786f589f6cf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b46b6a13_abd8e0a7",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ClassMembersInitializationCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 196463
+      },
+      "writtenOn": "2018-10-10T03:24:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "860234cf_47927234",
       "revId": "d8f957496d279565a038941223a786f589f6cf56",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -22,6 +22,30 @@
       "revId": "8492296d24dfacd63f21972fd7e91ffd806b250c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7391ac12_f3554037",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPTemplateResolutionTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2226,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-11T22:51:40Z",
+      "side": 1,
+      "message": "Good question!\n\nThe purpose of the update() codepath is to handle cases where a subsequent declaration or definition of a entity adds new information that wasn\u0027t present in previous declarations. For example, a redeclaration of a class template could add new default arguments for template parameters that weren\u0027t there in the first declaration.\n\nIn this case, there is only one declaration of my_template, and the reason why we get into the update() codepath for it is accidental. The indexer populates the index by processing names in the order in which they occur in a file. We first see the name \"T1\", which triggers adding the template parameter T1 to the index, which in turn triggers adding the enclosing template my_template to the index. When we then see the name \"my_template\", we find the binding for my_template which was already added, but we don\u0027t track enough information to tell that this is in fact the same declaration we previously added, rather than a re-declaration. By tracking more information, we could avoid getting into the update() codepath in this case.\n\nNote that PDOMCPPTemplateTemplateParameter.update() does delete the previous parameters from the index, so we are not ultimately storing T1 in two different locations.",
+      "parentUuid": "037c4e29_e67d8426",
+      "range": {
+        "startLine": 2226,
+        "startChar": 31,
+        "endLine": 2226,
+        "endChar": 33
+      },
+      "revId": "8492296d24dfacd63f21972fd7e91ffd806b250c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

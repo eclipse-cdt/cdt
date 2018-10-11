@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "037c4e29_e67d8426",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPTemplateResolutionTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2226,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-10-11T20:47:20Z",
+      "side": 1,
+      "message": "Can you explain why the parameter T1 ends up in the index in two different locations? One coming from update(), which is later used when reading the index, and the other one is coming from the Constructor but is never read.",
+      "range": {
+        "startLine": 2226,
+        "startChar": 31,
+        "endLine": 2226,
+        "endChar": 33
+      },
+      "revId": "8492296d24dfacd63f21972fd7e91ffd806b250c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

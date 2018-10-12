@@ -101,7 +101,7 @@ public class CBuildConfigurationManager implements ICBuildConfigurationManager, 
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
-	private void initProviders() {
+	private synchronized void initProviders() {
 		if (providers == null) {
 			providers = new HashMap<>();
 

@@ -123,12 +123,25 @@ public class ContainerTargetTypeProvider
 		DockerConnectionManager.getInstance()
 				.addConnectionManagerListener(this);
 
-		// call the recheckConfigs method in case any disabled targets are now
-		// ok
-		ICBuildConfigurationManager mgr = CCorePlugin
-				.getService(ICBuildConfigurationManager.class);
-		ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
-		manager.recheckConfigs();
+		// re-check configs in case an enabled Connection has made old configs
+		// valid again do this in a separate job to prevent a possible
+		// deadlock trying to get the lock on the CBuildConfigurationManager
+		// "configs" map (Bug 540085)
+		Job checkConfigs = new Job("Check configs") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				// call the recheckConfigs method in case any disabled targets
+				// are now
+				// ok
+				ICBuildConfigurationManager mgr = CCorePlugin
+						.getService(ICBuildConfigurationManager.class);
+				ICBuildConfigurationManager2 cbuildmanager = (ICBuildConfigurationManager2) mgr;
+				cbuildmanager.recheckConfigs();
+				return Status.OK_STATUS;
+			}
+		};
+		checkConfigs.setUser(true);
+		checkConfigs.schedule();
 
 		try {
 			launchbarManager.setActiveLaunchTarget(defaultTarget);

@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -383,6 +384,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					nameSpec= (ICPPASTName) addTemplateArguments(name, strat);
 				}
 			}
+			else if(nameSpec instanceof IASTName && keywordTemplate) {
+				nameSpec = buildTemplateTemplateArgument((IASTName) nameSpec);
+			}
 
 			endOffset= calculateEndOffset(nameSpec);
 			if (qname != null) {
@@ -475,6 +479,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			throw backtrack;
 		}
 		return buildTemplateID(templateName, end.getEndOffset(), list);
+	}
+
+	private ICPPASTTemplateTemplateArgument buildTemplateTemplateArgument(IASTName name) {
+		ICPPASTTemplateTemplateArgument templateTemplateArg = getNodeFactory().newTemplateTemplateArgument(name);
+		setRange(templateTemplateArg, ((ASTNode) name).getOffset(), ((ASTNode) name).getOffset()+((ASTNode) name).getLength());
+		return templateTemplateArg;
 	}
 
 	private ICPPASTTemplateId buildTemplateID(IASTName templateName, int endOffset, List<IASTNode> args) {
@@ -3438,6 +3448,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					identifier= qualifiedName(CastExprCtx.eNotInBExpr, strat);
 					if (identifier.getLookupKey().length == 0 && LT(1) != IToken.tEOC)
 						throwBacktrack(LA(1));
+
+					if(identifier.getLastName() instanceof ICPPASTTemplateTemplateArgument ) {
+						isTypename = true;
+					}
 
 					endOffset= calculateEndOffset(identifier);
 					encounteredTypename= true;

@@ -365,6 +365,8 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTTemplateId newTemplateId(IASTName templateName);
 
+	public ICPPASTTemplateTemplateArgument newTemplateTemplateArgument(IASTName templateName);
+
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration);
 
 	/**

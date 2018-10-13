@@ -65,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -581,6 +582,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Override
 	public  ICPPASTName newName(String name) {
 		return newName(name.toCharArray());
+	}
+
+	@Override
+	public ICPPASTTemplateName newTemplateName(char[] templateName) {
+		return new CPPASTTemplateName(templateName);
 	}
 
 	@Override

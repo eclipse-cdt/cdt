@@ -305,6 +305,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTName newName(String name);
 
 	/**
+	 * @since 9.6
+	 */
+	public ICPPASTTemplateName newTemplateName(char[] templateName);
+
+	/**
 	 * @since 5.11
 	 */
 	public ICPPASTNamedTypeSpecifier newNamedTypeSpecifier(IASTName name);

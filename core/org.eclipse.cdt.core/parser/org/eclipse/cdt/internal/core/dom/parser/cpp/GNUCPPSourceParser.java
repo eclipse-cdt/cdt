@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -269,7 +270,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tIDENTIFIER:
 		case IToken.tCOMPLETION:
 		case IToken.tEOC:
-			return buildName(-1, consume());
+			return buildName(-1, consume(), false);
 		}
 
 		throw backtrack;
@@ -335,7 +336,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			case IToken.tCOMPLETION:
 			case IToken.tEOC:
 				IToken nt= consume();
-				nameSpec = (ICPPASTName) buildName(destructorOffset, nt);
+				nameSpec = (ICPPASTName) buildName(destructorOffset, nt, keywordTemplate);
 				break;
 
 			case IToken.t_operator:
@@ -436,10 +437,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			qname.addNameSpecifier(nameSpec);
 	}
 
-	private IASTName buildName(int destructorOffset, IToken nt) {
+	private IASTName buildName(int destructorOffset, IToken nt, boolean keywordTemplate) {
 		IASTName name;
 		if (destructorOffset < 0) {
-			name= getNodeFactory().newName(nt.getCharImage());
+			name= keywordTemplate ? getNodeFactory().newTemplateName(nt.getCharImage()) : getNodeFactory().newName(nt.getCharImage());
 			setRange(name, nt.getOffset(), nt.getEndOffset());
 		} else {
 			char[] nchars= nt.getCharImage();
@@ -447,7 +448,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			char[] image = new char[len + 1];
 			image[0]= '~';
 			System.arraycopy(nchars, 0, image, 1, len);
-			name= getNodeFactory().newName(image);
+			name= keywordTemplate ? getNodeFactory().newTemplateName(image) : getNodeFactory().newName(image);
 			setRange(name, destructorOffset, nt.getEndOffset());
 		}
 		switch (nt.getType()) {
@@ -2266,7 +2267,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private IASTDeclaration aliasDeclaration(final int offset) throws EndOfFileException,
 			BacktrackException {
 		IToken identifierToken = consume();
-		IASTName aliasName = buildName(-1, identifierToken);
+		IASTName aliasName = buildName(-1, identifierToken, false);
 
 		List<IASTAttributeSpecifier> attributes = attributeSpecifierSeq();
 
@@ -3438,6 +3439,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					identifier= qualifiedName(CastExprCtx.eNotInBExpr, strat);
 					if (identifier.getLookupKey().length == 0 && LT(1) != IToken.tEOC)
 						throwBacktrack(LA(1));
+
+					if(identifier.getLastName() instanceof ICPPASTTemplateName ) {
+						isTypename = true;
+					}
 
 					endOffset= calculateEndOffset(identifier);
 					encounteredTypename= true;

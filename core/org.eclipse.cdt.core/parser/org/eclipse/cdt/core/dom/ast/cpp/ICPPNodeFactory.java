@@ -304,6 +304,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Override
 	public ICPPASTName newName(String name);
 
+    /**
+     * @since 9.6
+     */
+	public ICPPASTTemplateName newTemplateName(char[] templateName);
+
 	/**
 	 * @since 5.11
 	 */

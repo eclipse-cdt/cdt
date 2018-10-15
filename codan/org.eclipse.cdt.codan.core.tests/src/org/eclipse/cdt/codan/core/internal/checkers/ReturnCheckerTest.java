@@ -453,4 +453,9 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//	auto f() {}
+	public void testReturnTypeDeduction_540112() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

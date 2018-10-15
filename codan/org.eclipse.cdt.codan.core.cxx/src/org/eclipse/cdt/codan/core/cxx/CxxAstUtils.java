@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.index.IIndex;
@@ -57,6 +58,8 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
@@ -421,5 +424,17 @@ public final class CxxAstUtils {
 			}
 		}
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
+	}
+	
+	@SuppressWarnings("restriction")
+	public static IType getReturnType(IASTFunctionDefinition func) {
+		// We could do this with public API (func.getDeclarator().getName().resolveBinding().getType()
+		// .getReturnType()), but that would trigger resolution of the parameter types as well,
+		// which is needless extra work.
+		if (func instanceof ICPPASTFunctionDefinition) {
+			return CPPVisitor.createType(func.getDeclarator(), 
+					CPPVisitor.RESOLVE_PLACEHOLDERS | CPPVisitor.ONLY_RETURN_TYPE);
+		}
+		return CVisitor.createType(func.getDeclarator(), CVisitor.ONLY_RETURN_TYPE);
 	}
 }

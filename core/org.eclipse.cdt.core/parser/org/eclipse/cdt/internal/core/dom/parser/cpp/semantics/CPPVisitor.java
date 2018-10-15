@@ -249,7 +249,13 @@ public class CPPVisitor extends ASTQueries {
 	public static final IASTInitializerClause[] NO_ARGS = {};
 
 	// Flags for createType().
+	
+	// Attempt to resolve placeholders ('auto' and 'decltype(auto)').
 	public static final int RESOLVE_PLACEHOLDERS = 0x1;
+	
+	// Given a function declarator, compute only the return type rather than
+	// the entire function type.
+	public static final int ONLY_RETURN_TYPE = 0x2;
 	
 	// Common combinations of flags.
 	public static final int DO_NOT_RESOLVE_PLACEHOLDERS = 0;
@@ -2149,7 +2155,7 @@ public class CPPVisitor extends ASTQueries {
 	
 			IType type = createType(declSpec);
 			type = makeConstIfConstexpr(type, declSpec, declarator);
-			type = createType(type, declarator);
+			type = createType(type, declarator, flags);
 	
 			// C++ specification 8.3.4.3 and 8.5.1.4
 			IASTNode initClause= declarator.getInitializer();
@@ -2537,6 +2543,10 @@ public class CPPVisitor extends ASTQueries {
 		}
 		
 		if (returnType != null) {
+			if ((flags & ONLY_RETURN_TYPE) != 0) {
+				return returnType;
+			}
+			
 			// Do not use createFunctionType() because that would decorate the return type
 			// with pointer operators from e.g. an 'auto &', but we have already done that
 			// above.
@@ -2601,7 +2611,7 @@ public class CPPVisitor extends ASTQueries {
 		type = qualifyType(type, declSpec);
 		type = makeConstIfConstexpr(type, declSpec, declarator);
 		// Ignore function declarator because we already handled that in createAutoFunctionType().
-		return createType(type, declarator, true /* ignore function declarator */);
+		return createType(type, declarator, ONLY_RETURN_TYPE);
 	}
 
 	private static IType makeConstIfConstexpr(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
@@ -2621,11 +2631,11 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType createType(IType baseType, IASTDeclarator declarator) {
-		return createType(baseType, declarator, false);
+		return createType(baseType, declarator, 0);
 	}
 	
-	private static IType createType(IType baseType, IASTDeclarator declarator, boolean ignoreFunctionDeclarator) {
-	    if (!ignoreFunctionDeclarator && declarator instanceof ICPPASTFunctionDeclarator)
+	private static IType createType(IType baseType, IASTDeclarator declarator, int flags) {
+	    if (((flags & ONLY_RETURN_TYPE) == 0) && declarator instanceof ICPPASTFunctionDeclarator)
 	        return createFunctionType(baseType, (ICPPASTFunctionDeclarator) declarator);
 
 		IType type = baseType;

@@ -120,6 +120,12 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 public class CVisitor extends ASTQueries {
 	private static final CBasicType UNSIGNED_LONG_INT = new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 
+	// Flags for createType().
+	
+	// Given a function declarator, compute only the return type rather than
+	// the entire function type.
+	public static final int ONLY_RETURN_TYPE = 0x1;
+	
 	public static class CollectProblemsAction extends ASTVisitor {
 		{
 			shouldVisitDeclarations = true;
@@ -1217,6 +1223,9 @@ public class CVisitor extends ASTQueries {
 	 * @return the IType of the IASTDeclarator parameter
 	 */
 	public static IType createType(IASTDeclarator declarator) {
+		return createType(declarator, 0);
+	}
+	public static IType createType(IASTDeclarator declarator, int flags) {
 	    IASTDeclSpecifier declSpec = null;
 
 		IASTNode node = declarator.getParent();
@@ -1238,7 +1247,7 @@ public class CVisitor extends ASTQueries {
 		boolean isParameter = (node instanceof IASTParameterDeclaration || node.getParent() instanceof ICASTKnRFunctionDeclarator);
 
 		IType type = createType((ICASTDeclSpecifier) declSpec);
-		type = createType(type, declarator);
+		type = createType(type, declarator, flags);
 
         if (isParameter) {
         	IType paramType = type;
@@ -1271,8 +1280,8 @@ public class CVisitor extends ASTQueries {
 		return createType(typeId.getAbstractDeclarator());
 	}
 
-	public static IType createType(IType baseType, IASTDeclarator declarator) {
-	    if (declarator instanceof IASTFunctionDeclarator)
+	public static IType createType(IType baseType, IASTDeclarator declarator, int flags) {
+	    if (((flags & ONLY_RETURN_TYPE) == 0) && declarator instanceof IASTFunctionDeclarator)
 	        return createType(baseType, (IASTFunctionDeclarator) declarator);
 
 		IType type = baseType;
@@ -1282,7 +1291,7 @@ public class CVisitor extends ASTQueries {
 
 	    IASTDeclarator nested = declarator.getNestedDeclarator();
 	    if (nested != null) {
-	    	return createType(type, nested);
+	    	return createType(type, nested, flags);
 	    }
 	    return type;
 	}
@@ -1340,7 +1349,7 @@ public class CVisitor extends ASTQueries {
 
 	    IASTDeclarator nested = declarator.getNestedDeclarator();
 	    if (nested != null) {
-	    	return createType(type, nested);
+	    	return createType(type, nested, 0);
 	    }
 	    return type;
 	}

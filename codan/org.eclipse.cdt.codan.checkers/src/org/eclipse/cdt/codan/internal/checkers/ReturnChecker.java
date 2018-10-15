@@ -25,38 +25,32 @@ import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -70,6 +64,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
 	public static final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
 	public static final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
+	
+	private IType cachedReturnType = null;
 
 	class ReturnStmpVisitor extends ASTVisitor {
 		private final IASTFunctionDefinition func;
@@ -149,6 +145,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 
 	@Override
 	protected void processFunction(IASTFunctionDefinition func) {
+		cachedReturnType = null;
 		if (func.getParent() instanceof ICPPASTTemplateDeclaration)
 			return; // If it is template get out of here.
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
@@ -190,6 +187,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return false;
 	}
 	
+	@SuppressWarnings("restriction")
+	// TODO: Any reason not to just expose getDeadNodes() in IControlFlowGraph?
 	public Collection<IBasicBlock> getDeadBlocks(IASTFunctionDefinition func) {
 		IControlFlowGraph graph = getModelCache().getControlFlowGraph(func);
 		return ((ControlFlowGraph) graph).getDeadNodes();
@@ -245,7 +244,9 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	}
 
 	protected boolean isExplicitReturn(IASTFunctionDefinition func) {
-		return getDeclSpecType(func) != IASTSimpleDeclSpecifier.t_unspecified;
+		IASTDeclSpecifier declSpecifier = func.getDeclSpecifier();
+		return !(declSpecifier instanceof IASTSimpleDeclSpecifier && 
+				 ((IASTSimpleDeclSpecifier) declSpecifier).getType() == IASTSimpleDeclSpecifier.t_unspecified);
 	}
 
 	/**
@@ -258,39 +259,24 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	private boolean isNonVoid(IASTFunctionDefinition func) {
 		if (isConstructorDestructor(func))
 			return false;
-		int type = getDeclSpecType(func);
-		if (type == IASTSimpleDeclSpecifier.t_void) {
-			IASTFunctionDeclarator declarator = func.getDeclarator();
-			if (declarator.getPointerOperators().length == 0)
-				return false;
-		} else if (type == IASTSimpleDeclSpecifier.t_auto && isAutoVoid(func)) {
-			return false;
+		return !isVoid(getReturnType(func));
+	}
+	
+	
+	@SuppressWarnings("restriction")
+	private IType getReturnType(IASTFunctionDefinition func) {
+		if (cachedReturnType == null) {
+			// We could do this with public API (func.getDeclarator().getName().resolveBinding().getType()
+			// .getReturnType()), but that would trigger resolution of the parameter types as well,
+			// which is needless extra work.
+			cachedReturnType = CPPVisitor.createType(func.getDeclarator(), 
+					CPPVisitor.RESOLVE_PLACEHOLDERS | CPPVisitor.ONLY_RETURN_TYPE);
 		}
-		return true;
+		return cachedReturnType;
 	}
 
-	/**
-	 * Checks if type if void.
-	 * 
-	 * @param type
-	 * @throws DOMException
-	 */
 	public boolean isVoid(IType type) {
 		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eVoid;
-	}
-
-	protected int getDeclSpecType(IASTFunctionDefinition func) {
-		IASTDeclSpecifier declSpecifier = func.getDeclSpecifier();
-		int type = -1;
-		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
-			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
-		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
-			IBinding binding = ((IASTNamedTypeSpecifier) declSpecifier).getName().resolveBinding();
-			IType utype = CxxAstUtils.unwindTypedef((IType) binding);
-			if (isVoid(utype))
-				return IASTSimpleDeclSpecifier.t_void;
-		}
-		return type;
 	}
 
 	@Override
@@ -299,39 +285,5 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		if (problem.getId().equals(RET_NO_VALUE_ID) || problem.getId().equals(RET_NORET_ID)) {
 			addPreference(problem, PARAM_IMPLICIT, CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
-	}
-
-	/**
-	 * Checks if a {@code void} return type is specified using the C++11 late-specified return type
-	 * for a given function definition.
-	 * <p>
-	 * For example, <code>auto f() -> void {}</code> would return {@code true}.
-	 * 
-	 * @param functionDefinition
-	 * @return {@code true} if the function has a void (late-specified) return type,
-	 *         {@code false} otherwise
-	 */
-	private boolean isAutoVoid(IASTFunctionDefinition functionDefinition) {
-		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
-		if (declarator instanceof ICPPASTFunctionDeclarator) {
-			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) declarator;
-			IASTTypeId trailingReturnType = functionDeclarator.getTrailingReturnType();
-			if (trailingReturnType != null) {
-				IASTDeclarator abstractDeclarator = trailingReturnType.getAbstractDeclarator();
-				if (abstractDeclarator != null) {
-					if (abstractDeclarator.getPointerOperators().length != 0) {
-						return false;
-					}
-					IASTDeclSpecifier declSpecifier = trailingReturnType.getDeclSpecifier();
-					if (declSpecifier instanceof ICPPASTSimpleDeclSpecifier) {
-						ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpecifier;
-						if (simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_void) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
 	}
 }

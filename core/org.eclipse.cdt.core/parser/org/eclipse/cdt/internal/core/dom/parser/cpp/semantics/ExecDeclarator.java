@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -248,8 +249,15 @@ public final class ExecDeclarator implements ICPPExecution {
 	}
 
 	public static ICPPExecution unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		ICPPBinding declaredBinding = (ICPPBinding) buffer.unmarshalBinding();
+		IBinding declaredBinding = buffer.unmarshalBinding();
+		if (declaredBinding instanceof IProblemBinding) {
+			// The declared binding could not be stored in the index.
+			// If this happens, it's almost certainly a bug, but the severity
+			// is mitigated by returning a problem evaluation instead of just
+			// trying to cast to ICPPBinding and throwing a ClassCastException.
+			return ExecIncomplete.INSTANCE;
+		}
 		ICPPEvaluation initializerEval = buffer.unmarshalEvaluation();
-		return new ExecDeclarator(declaredBinding, initializerEval);
+		return new ExecDeclarator((ICPPBinding) declaredBinding, initializerEval);
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
     // partitioning tests
 	PartitionTokenScannerTest.class,
 	CPartitionerTest.class,
+	AsmTextEditorTest.class,
 	AsmPartitionerTest.class,
 
     // smart edit tests

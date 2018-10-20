@@ -141,8 +141,10 @@ public class AlignConstAction extends TextEditorAction {
 
 		try {
 			IASTTranslationUnit ast = translationUnit.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
-			IASTNode enclosingNode = ast.getNodeSelector(null).findEnclosingNode(offset, length);
-			rewriteMisalignedConstSpecifiers(enclosingNode, new NullProgressMonitor());
+			if (ast != null) {
+				IASTNode enclosingNode = ast.getNodeSelector(null).findEnclosingNode(offset, length);
+				rewriteMisalignedConstSpecifiers(enclosingNode, new NullProgressMonitor());
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}

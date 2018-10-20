@@ -32,7 +32,9 @@ public class AlignConstSaveAction {
 	private void alignConstInActiveEditor(ITranslationUnit translationUnit, IProgressMonitor monitor) {
 		try {
 			IASTTranslationUnit ast = translationUnit.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
-			AlignConstAction.rewriteMisalignedConstSpecifiers(ast, monitor);
+			if (ast != null) {
+				AlignConstAction.rewriteMisalignedConstSpecifiers(ast, monitor);
+			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}

@@ -12,7 +12,9 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +88,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	
 	// Used to handle line continuations in the build output.
 	private String partialLine;
+
+	private Map<String, Pattern> compilerPatterns = new HashMap<String, Pattern>();
 
 	/**
 	 * The compiler command pattern without specifying compiler options.
@@ -201,11 +205,12 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Make search pattern for compiler command based on template.
 	 */
 	private String makePattern(String template) {
+		String compilerPatternExtended = getCompilerPatternExtended();
 		@SuppressWarnings("nls")
 		String pattern = template
-				.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
+				.replace("${COMPILER_PATTERN}", compilerPatternExtended)
 				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
+				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(compilerPatternExtended) + 1));
 		return pattern;
 	}
 
@@ -215,15 +220,22 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			return null;
 		}
 
-		for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
-			String pattern = makePattern(template);
-			Matcher fileMatcher = Pattern.compile(pattern).matcher(line);
-			if (fileMatcher.matches()) {
-				int fileGroup = adjustFileGroup();
-				String sourceFileName = fileMatcher.group(fileGroup);
-				return sourceFileName;
+		if (compilerPatterns.isEmpty()) {
+			for (int i = 0; i < COMPILER_COMMAND_PATTERN_TEMPLATES.length; i++) {
+				String patternTemplate = COMPILER_COMMAND_PATTERN_TEMPLATES[i];
+				String patternString = makePattern(patternTemplate);
+				compilerPatterns.put(patternString, Pattern.compile(patternString));
 			}
 		}
+
+		Pattern pattern = compilerPatterns.get(line);
+		Matcher fileMatcher = pattern != null ? pattern.matcher(line) : null;
+		if (fileMatcher != null && fileMatcher.matches()) {
+			int fileGroup = adjustFileGroup();
+			String sourceFileName = fileMatcher.group(fileGroup);
+			return sourceFileName;
+		}
+
 		return null;
 	}
 

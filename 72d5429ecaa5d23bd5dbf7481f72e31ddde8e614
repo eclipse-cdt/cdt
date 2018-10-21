@@ -16,6 +16,23 @@
       "revId": "72d5429ecaa5d23bd5dbf7481f72e31ddde8e614",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a59b83a_69578f72",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/BuildRunnerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-10-21T16:50:51Z",
+      "side": 1,
+      "message": "Not sure if the message should me more specific in case of exitValue \u003d\u003d 127 (command not found)",
+      "revId": "72d5429ecaa5d23bd5dbf7481f72e31ddde8e614",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

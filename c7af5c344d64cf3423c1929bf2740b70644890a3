@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f87c048_fbfd1f92",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-10-21T09:35:10Z",
+      "side": 1,
+      "message": "This does not make sense to me. Does this work?",
+      "revId": "c7af5c344d64cf3423c1929bf2740b70644890a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

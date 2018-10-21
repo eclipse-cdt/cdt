@@ -277,6 +277,10 @@ public class BuildRunnerHelper implements Closeable {
 				if (status != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
+				else if(p.exitValue() != 0) {
+					errMsg = CCorePlugin.getFormattedString("BuildRunnerHelper.commandNonZeroExitCode", //$NON-NLS-1$
+							new String[] { guessCommandLine(buildCommand.toString(), args), Integer.toString(p.exitValue())});
+				}
 			} else {
 				errMsg = launcher.getErrorMessage();
 			}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09c61f87_411bf759",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/BuildRunnerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-10-21T16:26:57Z",
+      "side": 1,
+      "message": "If this solves the user visible problem of the error not being visible, then this is in the right direction.\n\nI have a slight concern that this could overwrite the error message set above.\n\nHowever, my larger concern is that this should be handled by the implementations of ICommandLauncher. AFAICT the local launch (CommandLauncher) does handle this in the execute by returning null, the part of the outer if/else. So I wonder if there is some missing error checking in ContainerCommandLauncher\u0027s execute to ensure the error message is being passed on.\n\n(I have not had a chance to run the code yet)",
+      "revId": "72d5429ecaa5d23bd5dbf7481f72e31ddde8e614",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

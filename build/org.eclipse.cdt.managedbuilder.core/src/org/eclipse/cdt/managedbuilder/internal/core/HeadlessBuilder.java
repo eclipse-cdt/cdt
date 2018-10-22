@@ -114,7 +114,7 @@ public class HeadlessBuilder implements IApplication {
 	/**
 	 * IProgressMonitor to provide printing of task
 	 */
-	private static class PrintingProgressMonitor extends NullProgressMonitor {
+	public static class PrintingProgressMonitor extends NullProgressMonitor {
 		@Override
 		public void beginTask(String name, int totalWork) {
 			if (name != null && name.length() > 0)
@@ -125,7 +125,7 @@ public class HeadlessBuilder implements IApplication {
 	/**
 	 * A class representing a new tool option value
 	 */
-	private static class ToolOption {
+	protected static class ToolOption {
 		public static final int REPLACE = 0;
 		public static final int APPEND = 1;
 		public static final int PREPEND = 2;
@@ -146,7 +146,7 @@ public class HeadlessBuilder implements IApplication {
 	/**
 	 * A class representing a backed-up tool option to restored at the end of the build
 	 */
-	private static class SavedToolOption {
+	protected static class SavedToolOption {
 		final String toolId;
 		final String optionId;
 		final Object value;
@@ -175,32 +175,32 @@ public class HeadlessBuilder implements IApplication {
 	public static final Integer OK = IApplication.EXIT_OK;
 
 	/** Set of project URIs / paths to import */
-	private final Set<String> projectsToImport = new HashSet<String>();
+	protected final Set<String> projectsToImport = new HashSet<String>();
 	/** Tree of projects to recursively import */
-	private final Set<String> projectTreeToImport = new HashSet<String>();
+	protected final Set<String> projectTreeToImport = new HashSet<String>();
 	/** Set of project names to build */
-	private final Set<String> projectRegExToBuild = new HashSet<String>();
+	protected final Set<String> projectRegExToBuild = new HashSet<String>();
 	/** Set of project names to clean */
-	private final Set<String> projectRegExToClean = new HashSet<String>();
-	private boolean buildAll = false;
-	private boolean cleanAll = false;
-	private boolean disableIndexer = false;
+	protected final Set<String> projectRegExToClean = new HashSet<String>();
+	protected boolean buildAll = false;
+	protected boolean cleanAll = false;
+	protected boolean disableIndexer = false;
 
 	/** List of Tool Option values being set */
-	private List<ToolOption> toolOptions = new ArrayList<ToolOption>();
+	protected List<ToolOption> toolOptions = new ArrayList<ToolOption>();
 	/** Map from configuration ID -> Set of SavedToolOptions */
-	private Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<String, Set<SavedToolOption>>();
-	private boolean markerTypesDefault = true;
-	private boolean markerTypesAll = false;
-	private Set<String> markerTypes = new HashSet<>();
-	private boolean printErrorMarkers = false;
+	protected Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<String, Set<SavedToolOption>>();
+	protected boolean markerTypesDefault = true;
+	protected boolean markerTypesAll = false;
+	protected Set<String> markerTypes = new HashSet<>();
+	protected boolean printErrorMarkers = false;
 
-	private static final String MATCH_ALL_CONFIGS = ".*"; //$NON-NLS-1$
+	protected static final String MATCH_ALL_CONFIGS = ".*"; //$NON-NLS-1$
 
 	/*
 	 *  Find all project build configurations that match the regular expression ("project/config")
 	 */
-	private Map<IProject, Set<ICConfigurationDescription>> matchConfigurations(String regularExpression, IProject[] projectList, Map<IProject, Set<ICConfigurationDescription>> cfgMap) {
+	protected Map<IProject, Set<ICConfigurationDescription>> matchConfigurations(String regularExpression, IProject[] projectList, Map<IProject, Set<ICConfigurationDescription>> cfgMap) {
 		try {
 			int separatorIndex = regularExpression.indexOf('/');
 
@@ -263,7 +263,7 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Build the given configurations using the specified build type (FULL, CLEAN, INCREMENTAL)
 	 */
-	private void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
+	protected void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
 		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
 			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
 
@@ -282,7 +282,7 @@ public class HeadlessBuilder implements IApplication {
 	 * @param recurse should we recurse down the URI importing all projects?
 	 * @return int OK / ERROR
 	 */
-	private int importProject(String projURIStr, boolean recurse) throws CoreException {
+	protected int importProject(String projURIStr, boolean recurse) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProgressMonitor monitor = new PrintingProgressMonitor();
 		InputStream in = null;
@@ -376,7 +376,7 @@ public class HeadlessBuilder implements IApplication {
 		return OK;
 	}
 
-	private boolean isProjectSuccesfullyBuild(IProject project) {
+	protected boolean isProjectSuccesfullyBuild(IProject project) {
 		try {
 			for (String markerType : markerTypes) {
 				int findMaxProblemSeverity = project.findMaxProblemSeverity(markerType, true, IResource.DEPTH_INFINITE);
@@ -391,7 +391,7 @@ public class HeadlessBuilder implements IApplication {
 		return true;
 	}
 
-	private void accumulateErrorMarkers(IProject project, List<String> allBuildErrors) {
+	protected void accumulateErrorMarkers(IProject project, List<String> allBuildErrors) {
 		try {
 			for (String markerType : markerTypes) {
 				IMarker[] findMarkers = project.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
@@ -603,7 +603,7 @@ public class HeadlessBuilder implements IApplication {
 	 *
 	 * @return true if a valid instance location has been set and false otherwise
 	 */
-	private boolean checkInstanceLocation() {
+	protected boolean checkInstanceLocation() {
 		// -data @none was specified but an ide requires workspace
 		Location instanceLoc = Platform.getInstanceLocation();
 		if (instanceLoc == null || !instanceLoc.isSet()) {
@@ -755,7 +755,7 @@ public class HeadlessBuilder implements IApplication {
 		return true;
 	}
 
-	private void addEnvironmentVariable(String string, int op) throws Exception {
+	protected void addEnvironmentVariable(String string, int op) throws Exception {
 		String[] parts = string.split("=", 2); //$NON-NLS-1$
 		String name = parts[0];
 		String value = ""; //$NON-NLS-1$
@@ -764,7 +764,7 @@ public class HeadlessBuilder implements IApplication {
 		EnvironmentVariableManager.fUserSupplier.createOverrideVariable(name, value, op, null);
 	}
 
-	private void addToolOption(String toolId, String option, int operation) {
+	protected void addToolOption(String toolId, String option, int operation) {
 		String optionId = option;
 		String value = ""; //$NON-NLS-1$
 		if (option.indexOf('=') != -1) {
@@ -774,7 +774,7 @@ public class HeadlessBuilder implements IApplication {
 		toolOptions.add(new ToolOption(toolId, optionId, value, operation));
 	}
 
-	private void addMarkerType(String markerType) {
+	protected void addMarkerType(String markerType) {
 		markerTypesDefault = false;
 		if ("all".equals(markerType)) { //$NON-NLS-1$
 			markerTypesAll = true;
@@ -791,7 +791,7 @@ public class HeadlessBuilder implements IApplication {
 	 * by calls to {@link #resetToolOptions(IConfiguration)}.
 	 */
 	@SuppressWarnings("unchecked")
-	private void setToolOptions(IConfiguration configuration) throws BuildException {
+	protected void setToolOptions(IConfiguration configuration) throws BuildException {
 		if (!savedToolOptions.containsKey(configuration.getId()))
 			savedToolOptions.put(configuration.getId(), new HashSet<SavedToolOption>());
 		Set<SavedToolOption> savedToolOptionsSet = savedToolOptions.get(configuration.getId());
@@ -870,7 +870,7 @@ public class HeadlessBuilder implements IApplication {
 	/**
 	 * Reset the tool options that were set using {@link #setToolOptions(IConfiguration)}
 	 */
-	private void resetToolOptions(IConfiguration configuration) throws BuildException {
+	protected void resetToolOptions(IConfiguration configuration) throws BuildException {
 		for (SavedToolOption toolOption : savedToolOptions.get(configuration.getId())) {
 			IOption option = configuration.getTool(toolOption.toolId).getOptionById(toolOption.optionId);
 			option.setValue(toolOption.value);

@@ -1,5 +1,7 @@
 /*/*/bin
 /*/*/index
 /*/*/target
+/workspace/
 .DS_Store
 .nfs*
+.polyglot.build.properties

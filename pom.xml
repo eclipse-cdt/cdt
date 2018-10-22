@@ -29,7 +29,14 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-
+		<comparator.repo>http://download.eclipse.org/tools/cdt/releases/9.5/cdt-9.5.4/</comparator.repo>
+		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
+		<!--
+			Valid options: error, warning, and ignore
+			jgit.dirtyWorkingTree checking was added as of Tycho 0.19.0
+			see: https://bugs.eclipse.org/419030
+		-->
+		<jgit.dirtyWorkingTree-cdtDefault>error</jgit.dirtyWorkingTree-cdtDefault>
 		<!-- By default cdt-other.skip.tests will be false as none of
 		     the skip-tests profiles will be activated. When one is
 		     activated, this allows us to skip all other cdt tests not
@@ -337,6 +344,24 @@
 								<phase>none</phase>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-p2-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<baselineMode>warn</baselineMode>
+							<baselineReplace>all</baselineReplace>
+							<baselineRepositories>
+								<repository>
+									<url>${comparator.repo}</url>
+								</repository>
+							</baselineRepositories>
+							<ignoredPatterns>
+								<pattern>META-INF/ECLIPSE_.RSA</pattern>
+								<pattern>META-INF/ECLIPSE_.SF</pattern>
+							</ignoredPatterns>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -655,6 +680,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution> <!-- Checks versions are properly bumped from one stream to the other -->
+						<id>compare-attached-artifacts-with-release</id>
+						<goals>
+							<goal>compare-version-with-baselines</goal>
+						</goals>
+						<configuration>
+							<skip>${compare-version-with-baselines.skip}</skip>
+							<baselines>
+								<baseline>${comparator.repo}</baseline> <!-- Previous release) -->
+							</baselines>
+							<comparator>zip</comparator>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -685,11 +730,22 @@
 					<artifactId>tycho-packaging-plugin</artifactId>
 					<version>${tycho-version}</version>
 					<configuration>
+						<format>${qualifier.format}</format>
+						<timestampProvider>jgit</timestampProvider>
+						<jgit.ignore>
+							pom.xml
+						</jgit.ignore>
+						<jgit.dirtyWorkingTree>${jgit.dirtyWorkingTree-cdtDefault}</jgit.dirtyWorkingTree>
 						<sourceReferences>
 							<generate>true</generate>
 						</sourceReferences>
 					</configuration>
 					<dependencies>
+						<dependency>
+							<groupId>org.eclipse.tycho.extras</groupId>
+							<artifactId>tycho-buildtimestamp-jgit</artifactId>
+							<version>${tycho-extras-version}</version>
+						</dependency>
 						<dependency>
 							<groupId>org.eclipse.tycho.extras</groupId>
 							<artifactId>tycho-sourceref-jgit</artifactId>

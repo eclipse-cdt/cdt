@@ -16,6 +16,24 @@
       "revId": "c7af5c344d64cf3423c1929bf2740b70644890a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9a366d9_d7d767e7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-10-22T13:40:27Z",
+      "side": 1,
+      "message": "Isn\u0027t it what Doug advice was? https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d516587#c3 \nInstead of storing the patterns in an array I use a hashmap so we don\u0027t have to check all the possible patterns and the time used to retrieved the wanted pattern if it exists or not is lower.",
+      "parentUuid": "6f87c048_fbfd1f92",
+      "revId": "c7af5c344d64cf3423c1929bf2740b70644890a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

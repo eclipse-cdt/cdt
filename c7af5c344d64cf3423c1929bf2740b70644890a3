@@ -34,6 +34,24 @@
       "revId": "c7af5c344d64cf3423c1929bf2740b70644890a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2236c1ff_f097ffc7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-10-23T21:36:16Z",
+      "side": 1,
+      "message": "no it doesn\u0027t... the line needs to be matched to the pattern and we need to test each pattern to see if there is a match... so using a hashmap is useless in that case...",
+      "parentUuid": "f9a366d9_d7d767e7",
+      "revId": "c7af5c344d64cf3423c1929bf2740b70644890a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

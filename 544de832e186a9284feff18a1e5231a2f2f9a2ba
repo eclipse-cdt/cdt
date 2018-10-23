@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "480aade7_55ad1db9",
+        "filename": "core/org.eclipse.cdt.core.linux.ppc64/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-10-23T15:20:27Z",
+      "side": 1,
+      "message": "Original file used Windows line endings.",
+      "revId": "544de832e186a9284feff18a1e5231a2f2f9a2ba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

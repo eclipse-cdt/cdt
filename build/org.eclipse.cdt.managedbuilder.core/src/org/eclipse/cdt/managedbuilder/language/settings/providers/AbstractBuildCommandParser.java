@@ -88,6 +88,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	// Used to handle line continuations in the build output.
 	private String partialLine;
 
+	private Pattern[] compilerPatterns;
+
 	/**
 	 * The compiler command pattern without specifying compiler options.
 	 * The options are intended to be handled with option parsers,
@@ -202,10 +204,11 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Make search pattern for compiler command based on template.
 	 */
 	private String makePattern(String template) {
+		String compilerPatternExtended = getCompilerPatternExtended();
 		@SuppressWarnings("nls")
-		String pattern = template.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
+		String pattern = template.replace("${COMPILER_PATTERN}", compilerPatternExtended)
 				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
+				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(compilerPatternExtended) + 1));
 		return pattern;
 	}
 
@@ -215,9 +218,17 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			return null;
 		}
 
-		for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
-			String pattern = makePattern(template);
-			Matcher fileMatcher = Pattern.compile(pattern).matcher(line);
+		if (compilerPatterns == null) {
+			compilerPatterns = new Pattern[COMPILER_COMMAND_PATTERN_TEMPLATES.length];
+			for (int i = 0; i < COMPILER_COMMAND_PATTERN_TEMPLATES.length; i++) {
+				String patternTemplate = COMPILER_COMMAND_PATTERN_TEMPLATES[i];
+				String patternString = makePattern(patternTemplate);
+				compilerPatterns[i] = Pattern.compile(patternString);
+			}
+		}
+
+		for (Pattern pattern : compilerPatterns) {
+			Matcher fileMatcher = pattern.matcher(line);
 			if (fileMatcher.matches()) {
 				int fileGroup = adjustFileGroup();
 				String sourceFileName = fileMatcher.group(fileGroup);

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "707d79ea_83dc2be7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-10-24T16:50:43Z",
+      "side": 1,
+      "message": "Would it make sense to replace java.lang.string.replace by something more efficient? See https://stackoverflow.com/questions/26735276/alternative-to-successive-string-replace for example.",
+      "revId": "755c07db69d52546cc743b369b42414a74c547ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

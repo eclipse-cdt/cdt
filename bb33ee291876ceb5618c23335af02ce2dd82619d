@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b4cced2_183ffe85",
+        "filename": ".gitignore",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-10-24T08:42:27Z",
+      "side": 1,
+      "message": "I\u0027d be concerned this could cause some confusion in the future if we start have folders called \"workspace\" we actually need to track (e.g. if we ever had a package name \"*.workspace.*\"). Probably unlikely though so not going to object to your version, just want to be sure this has been considered.\n\nI\u0027ve already pushed a version to https://git.eclipse.org/r/#/c/131319/ which just ignores the two specific instances, however I will remove that part from my change if this version is merged.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 9
+      },
+      "revId": "bb33ee291876ceb5618c23335af02ce2dd82619d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

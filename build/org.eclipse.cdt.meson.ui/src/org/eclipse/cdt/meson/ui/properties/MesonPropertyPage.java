@@ -299,16 +299,18 @@ public class MesonPropertyPage extends PropertyPage {
 				return false;
 			}
 		} else {
-			StringBuilder mesonargs = new StringBuilder();
-			for (IMesonPropertyPageControl control : componentList) {
-				if (!control.getUnconfiguredString().isEmpty()) {
-					mesonargs.append(control.getUnconfiguredString());
-					mesonargs.append(" "); //$NON-NLS-1$
+			if (buildConfig != null) {
+				StringBuilder mesonargs = new StringBuilder();
+				for (IMesonPropertyPageControl control : componentList) {
+					if (!control.getUnconfiguredString().isEmpty()) {
+						mesonargs.append(control.getUnconfiguredString());
+						mesonargs.append(" "); //$NON-NLS-1$
+					}
 				}
+				buildConfig.setProperty(IMesonConstants.MESON_ARGUMENTS, mesonargs.toString());
+				buildConfig.setProperty(IMesonConstants.MESON_ENV, envText.getText().trim());
+				buildConfig.setProperty(IMesonConstants.MESON_PROJECT_OPTIONS, projText.getText().trim());
 			}
-			buildConfig.setProperty(IMesonConstants.MESON_ARGUMENTS, mesonargs.toString());
-			buildConfig.setProperty(IMesonConstants.MESON_ENV, envText.getText().trim());
-			buildConfig.setProperty(IMesonConstants.MESON_PROJECT_OPTIONS, projText.getText().trim());
 		}
 		return true;
 	}

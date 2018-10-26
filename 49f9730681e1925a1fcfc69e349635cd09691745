@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce644316_cb0df101",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12759,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-26T05:07:16Z",
+      "side": 1,
+      "message": "Please put template-related related test cases in AST2TemplateTests.java.",
+      "revId": "49f9730681e1925a1fcfc69e349635cd09691745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf62e738_669acdc6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplateTemplateArgument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-26T05:07:16Z",
+      "side": 1,
+      "message": "I would call this ICPPASTTemplateName.\n\nWe\u0027re not actually using it to represent the entire template template argument (which would be the entire qualified name), only the last segment. Also, we don\u0027t use it to represent all template template arguments (namely, we don\u0027t use it for non-dependent ones).\n\nMoreover, \"template-name\" is a production in the C++ grammar, although this AST node type would only be an approximation of it. (The C++ grammar calls every name that resolves to a template a template-name; the way our parser is designed, however, we don\u0027t in general know at parsing time whether a name resolves to a template. We would only use this node type for template-names that use the \"template\" keyword.)",
+      "revId": "49f9730681e1925a1fcfc69e349635cd09691745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe33e1b1_c866d51a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-26T05:07:16Z",
+      "side": 1,
+      "message": "Rather than wrapping an existing name into an ICPPASTTemplateName, let\u0027s just create an ICPPASTTemplateName to begin with.\n\nWe can do this by passing in \u0027keywordTemplate\u0027 as an extra parameter to buildName(), and having buildName() call either ICPPNodeFactory.newName() or ICPPNodeFactory.newTemplateName() depending on that parameter.\n\nThis does mean that we\u0027ll create an ICPPASTTemplateName for any segment of a qualified name that uses the keyword \u0027template\u0027, not just the last segment, but I think that\u0027s fine.",
+      "revId": "49f9730681e1925a1fcfc69e349635cd09691745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

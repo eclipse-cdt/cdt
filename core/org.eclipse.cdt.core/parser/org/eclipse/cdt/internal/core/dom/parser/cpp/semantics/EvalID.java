@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
@@ -481,7 +482,10 @@ public class EvalID extends CPPDependentEvaluation {
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = fFieldOwner != null ? fFieldOwner.determinePackSize(tpMap) : CPPTemplates.PACK_SIZE_NOT_FOUND;
-		if (fNameOwner instanceof ICPPUnknownBinding) {
+		if (fNameOwner instanceof ICPPTemplateParameter) {
+			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPTemplateParameter) fNameOwner, tpMap));
+		}
+		else if (fNameOwner instanceof ICPPUnknownBinding) {
 			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPUnknownBinding) fNameOwner, tpMap));
 		}
 		if (fTemplateArgs != null) {

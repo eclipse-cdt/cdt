@@ -10954,4 +10954,18 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		IType waldo = helper.assertNonProblem("waldo");
 		assertSameType(SemanticUtil.getSimplifiedType(waldo), CommonCPPTypes.int_);
 	}
+
+	//	template <bool...>
+	//	struct list {};
+	//
+	//	template <class... Ts>
+	//	using foo = list<Ts::value...>;
+	//
+	//	template<class T> struct trigger{};
+	//
+	//	template <class T>
+	//	using evaluate = trigger<foo<T>>;
+	public void testNonTypePackExpansion_540538() throws Exception {
+		parseAndCheckBindings();
+	}
 }

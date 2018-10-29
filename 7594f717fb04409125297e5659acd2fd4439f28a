@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd637806_e3691735",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplateName.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "There\u0027s no need to include this line. Contributors to a file are now tracked via git.",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7afe4579_3cc94ffd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplateName.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "Please mention that this is only used for template-names which use the \"template\" keyword disambiguator.",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12d3bee7_4ae08536",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTTemplateName.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "No need for this line.",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68647d86_65074ef6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "Please wrap the line to respect a 110 character line length limit. (You could also use if/else.)",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a52ab96a_775392b1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "A destructor name will never use the template keyword, so this change is not necessary.",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ea3938c_8714d402",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3443,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T02:50:25Z",
+      "side": 1,
+      "message": "nit: space before \u0027(\u0027",
+      "revId": "7594f717fb04409125297e5659acd2fd4439f28a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

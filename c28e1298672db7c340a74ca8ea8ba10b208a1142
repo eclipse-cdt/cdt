@@ -16,6 +16,24 @@
       "revId": "c28e1298672db7c340a74ca8ea8ba10b208a1142",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51ebe87e_a6dac637",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-10-29T04:10:33Z",
+      "side": 1,
+      "message": "Filed bug 540549 for this.",
+      "parentUuid": "fca9c829_744a98d4",
+      "revId": "c28e1298672db7c340a74ca8ea8ba10b208a1142",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

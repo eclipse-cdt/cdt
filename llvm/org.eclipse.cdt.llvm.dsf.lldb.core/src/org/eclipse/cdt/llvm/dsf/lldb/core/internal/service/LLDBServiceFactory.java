@@ -36,7 +36,7 @@ public class LLDBServiceFactory extends GdbDebugServicesFactory {
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
-		return new LLDBControl(session, config, new LLDBCommandFactory());
+		return new LLDBControl(session, config, new LLDBCommandFactory(session));
 	}
 
 	@Override

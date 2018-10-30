@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Ericsson.
+ * Copyright (c) 2017 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,13 @@ public enum LLDBTrait {
 	 * Inserting a breakpoint with full path would not work.
 	 * TODO: Remove for versions < 4.0.0 eventually
 	 */
-	BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709;
+	BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709,
+	/**
+	 * Trait for LLDBs that do not have "-gdb-set breakpoint pending"
+	 * implemented. It was added in LLDB 8.0 as of r345563.
+	 * See https://reviews.llvm.org/D52953
+	 */
+	MISSING_GDB_SET_BREAKPOINT_PENDING;
 
 	/**
 	 * Returns whether or not the given session has this trait.

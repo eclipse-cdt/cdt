@@ -232,6 +232,10 @@ public class LLDBLaunch extends GdbLaunch {
 			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0 || fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 37)) < 0) {
 				fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
 			}
+
+			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(8, 0, 0)) < 0 || fLldbRevision != null) {
+				fTraits.add(LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING);
+			}
 		}
 	}
 

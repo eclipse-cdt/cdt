@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
 Export-Package: org.eclipse.cdt.launch.serial
 Bundle-Activator: org.eclipse.cdt.launch.serial.internal.Activator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.cdt.launch.serial.core

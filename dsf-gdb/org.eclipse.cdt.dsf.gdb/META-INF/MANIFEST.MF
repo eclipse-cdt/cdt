@@ -48,3 +48,4 @@ Export-Package: org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.dsf.mi.service.command.events,
  org.eclipse.cdt.dsf.mi.service.command.output
 Import-Package: com.ibm.icu.text
+Automatic-Module-Name: org.eclipse.cdt.dsf.gdb

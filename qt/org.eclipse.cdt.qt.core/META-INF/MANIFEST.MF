@@ -36,4 +36,5 @@ Export-Package: org.eclipse.cdt.internal.qt.core;x-friends:="org.eclipse.cdt.qt.
  org.eclipse.cdt.qt.core.qmldir,
  org.eclipse.cdt.qt.core.qmljs
 Import-Package: javax.xml.bind;version="2.2.0"
+Automatic-Module-Name: org.eclipse.cdt.qt.core
 

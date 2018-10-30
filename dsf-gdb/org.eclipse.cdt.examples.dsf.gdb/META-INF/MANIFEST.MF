@@ -27,3 +27,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.service.command;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.service.command.commands;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.viewmodel;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.examples.dsf.gdb

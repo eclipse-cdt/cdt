@@ -12,3 +12,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.gdb.ui.internal;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.gdb.ui

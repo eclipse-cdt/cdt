@@ -33,3 +33,4 @@ Export-Package: org.eclipse.cdt.autotools.core,
  org.eclipse.cdt.internal.autotools.core.configure;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core.wizards;x-friends:="org.eclipse.cdt.autotools.ui"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.autotools.core

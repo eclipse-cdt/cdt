@@ -19,3 +19,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.cdt.managedbuilder.bupc.ui

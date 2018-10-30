@@ -33,3 +33,4 @@ Export-Package: org.eclipse.cdt.managedbuilder.llvm.makegen;
    org.eclipse.core.runtime.preferences,
    org.eclipse.swt.widgets",
  org.eclipse.cdt.managedbuilder.llvm.util
+Automatic-Module-Name: org.eclipse.cdt.managedbuilder.llvm.ui

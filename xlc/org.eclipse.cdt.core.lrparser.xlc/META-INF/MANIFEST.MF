@@ -23,3 +23,4 @@ Export-Package: org.eclipse.cdt.core.lrparser.xlc,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.core.lrparser.xlc.activator.XlcParserPlugin
 Bundle-Vendor: %Bundle-Vendor.0
+Automatic-Module-Name: org.eclipse.cdt.core.lrparser.xlc

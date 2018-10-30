@@ -26,3 +26,4 @@ Bundle-Vendor: %Bundle-Vendor.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.core.dom.lrparser.LRParserPlugin
+Automatic-Module-Name: org.eclipse.cdt.core.lrparser

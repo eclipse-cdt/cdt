@@ -20,3 +20,4 @@ Export-Package: org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.cdt.debug.gdbjtag.core.jtagdevice
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.debug.gdbjtag.core

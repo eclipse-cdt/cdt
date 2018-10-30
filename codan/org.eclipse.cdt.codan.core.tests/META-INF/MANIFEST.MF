@@ -27,3 +27,4 @@ Export-Package: org.eclipse.cdt.codan.core.cfg,
  org.eclipse.cdt.codan.core.internal.checkers,
  org.eclipse.cdt.codan.core.param,
  org.eclipse.cdt.codan.core.tests
+Automatic-Module-Name: org.eclipse.cdt.codan.core.tests

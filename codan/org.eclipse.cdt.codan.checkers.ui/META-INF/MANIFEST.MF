@@ -21,4 +21,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.internal.checkers.ui;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers.ui.quickfix;x-friends:="org.eclipse.cdt.codan.checkers.ui.tests"
+Automatic-Module-Name: org.eclipse.cdt.codan.checkers.ui
 

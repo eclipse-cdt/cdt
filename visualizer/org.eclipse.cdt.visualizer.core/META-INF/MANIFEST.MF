@@ -13,3 +13,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.visualizer.core,
  org.eclipse.cdt.visualizer.core.plugin
+Automatic-Module-Name: org.eclipse.cdt.visualizer.core

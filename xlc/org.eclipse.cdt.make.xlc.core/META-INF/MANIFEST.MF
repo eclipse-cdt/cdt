@@ -17,3 +17,4 @@ Export-Package: org.eclipse.cdt.make.xlc.core.activator,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.make.xlc.core.activator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.make.xlc.core

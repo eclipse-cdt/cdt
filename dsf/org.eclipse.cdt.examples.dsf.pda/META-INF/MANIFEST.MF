@@ -22,3 +22,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.pda,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
 Import-Package: com.ibm.icu.text
+Automatic-Module-Name: org.eclipse.cdt.examples.dsf.pda

@@ -35,3 +35,4 @@ Export-Package: org.eclipse.cdt.testsrunner.internal,
  org.eclipse.cdt.testsrunner.internal.ui.view.actions,
  org.eclipse.cdt.testsrunner.launcher,
  org.eclipse.cdt.testsrunner.model
+Automatic-Module-Name: org.eclipse.cdt.testsrunner

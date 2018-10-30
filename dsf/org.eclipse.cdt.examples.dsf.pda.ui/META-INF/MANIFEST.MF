@@ -26,3 +26,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.pda.ui,
  org.eclipse.cdt.examples.dsf.pda.ui.launcher
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
+Automatic-Module-Name: org.eclipse.cdt.examples.dsf.pda.ui

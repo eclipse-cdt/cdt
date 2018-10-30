@@ -15,3 +15,4 @@ Export-Package: org.eclipse.cdt.errorparsers.xlc.tests
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.errorparsers.xlc.tests

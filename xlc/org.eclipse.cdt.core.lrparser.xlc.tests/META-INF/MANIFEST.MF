@@ -15,3 +15,4 @@ Require-Bundle: org.junit,
 Export-Package: org.eclipse.cdt.core.parser.xlc.tests,
  org.eclipse.cdt.core.parser.xlc.tests.base,
  org.eclipse.cdt.core.parser.xlc.tests.suite
+Automatic-Module-Name: org.eclipse.cdt.core.lrparser.xlc.tests

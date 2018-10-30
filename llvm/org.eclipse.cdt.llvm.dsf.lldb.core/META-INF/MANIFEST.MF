@@ -20,3 +20,4 @@ Export-Package: org.eclipse.cdt.llvm.dsf.lldb.core,
  org.eclipse.cdt.llvm.dsf.lldb.core.internal.service;x-internal:=true
 Bundle-Activator: org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.cdt.llvm.dsf.lldb.core

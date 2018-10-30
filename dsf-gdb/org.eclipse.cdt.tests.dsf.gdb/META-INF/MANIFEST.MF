@@ -26,3 +26,4 @@ Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.launching;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests.nonstop;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.tests.dsf.gdb

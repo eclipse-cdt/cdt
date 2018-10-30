@@ -20,3 +20,4 @@ Require-Bundle: org.eclipse.cdt.debug.ui,
 Bundle-Activator: org.eclipse.cdt.llvm.dsf.lldb.ui.internal.LLDBUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.llvm.dsf.lldb.ui.internal;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.llvm.dsf.lldb.ui

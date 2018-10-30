@@ -25,3 +25,4 @@ Export-Package: org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui;x-intern
  org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui

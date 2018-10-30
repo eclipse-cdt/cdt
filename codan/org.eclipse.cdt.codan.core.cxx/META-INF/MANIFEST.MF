@@ -18,3 +18,4 @@ Export-Package: org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.cxx.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: org.eclipse.cdt.codan.core.cxx

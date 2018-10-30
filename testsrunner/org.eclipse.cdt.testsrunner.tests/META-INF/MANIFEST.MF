@@ -18,3 +18,4 @@ Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.testsrunner.core,
  org.eclipse.cdt.testsrunner.test,
  org.eclipse.cdt.testsrunner.testsrunners
+Automatic-Module-Name: org.eclipse.cdt.testsrunner.tests

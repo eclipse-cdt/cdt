@@ -37,3 +37,4 @@ Export-Package: org.eclipse.cdt.autotools.ui,
  org.eclipse.cdt.internal.autotools.ui.properties;x-friends:="org.eclipse.linuxtools.cdt.autotools.tests,org.eclipse.linuxtools.cdt.autotools",
  org.eclipse.cdt.internal.autotools.ui.text.hover;x-friends:="org.eclipse.linuxtools.cdt.autotools.tests,org.eclipse.linuxtools.cdt.autotools",
  org.eclipse.cdt.internal.autotools.ui.wizards;x-friends:="org.eclipse.linuxtools.cdt.autotools.tests,org.eclipse.linuxtools.cdt.autotools"
+Automatic-Module-Name: org.eclipse.cdt.autotools.ui

@@ -20,3 +20,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui.cxx;x-internal:=true,
  org.eclipse.cdt.codan.ui
+Automatic-Module-Name: org.eclipse.cdt.codan.ui.cxx

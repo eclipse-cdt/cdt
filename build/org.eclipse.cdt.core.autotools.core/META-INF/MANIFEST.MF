@@ -13,3 +13,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.core.autotools.core
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.cdt.core.autotools.core

@@ -16,3 +16,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.managedbuilder.xlc.core.XLCCorePlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.managedbuilder.xlc.core
+Automatic-Module-Name: org.eclipse.cdt.managedbuilder.xlc.core

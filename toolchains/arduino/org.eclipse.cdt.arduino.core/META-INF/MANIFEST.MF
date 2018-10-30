@@ -26,3 +26,4 @@ Export-Package: org.eclipse.cdt.arduino.core.internal;x-friends:="org.eclipse.cd
  org.eclipse.cdt.arduino.core.internal.build;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.remote;x-friends:="org.eclipse.cdt.arduino.ui"
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.cdt.arduino.core

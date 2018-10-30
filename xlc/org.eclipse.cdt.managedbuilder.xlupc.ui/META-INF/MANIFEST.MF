@@ -21,3 +21,4 @@ Bundle-Vendor: %Bundle-Vendor.0
 Export-Package: org.eclipse.cdt.managedbuilder.xlupc.ui,
  org.eclipse.cdt.managedbuilder.xlupc.ui.wizards
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.cdt.managedbuilder.xlupc.ui

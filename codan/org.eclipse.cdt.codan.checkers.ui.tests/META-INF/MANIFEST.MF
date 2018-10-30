@@ -21,3 +21,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: org.eclipse.cdt.codan.checkers.ui.tests

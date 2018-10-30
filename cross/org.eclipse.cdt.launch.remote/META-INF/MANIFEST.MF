@@ -29,3 +29,4 @@ Export-Package: org.eclipse.cdt.internal.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote.launching;x-internal:=true,
  org.eclipse.cdt.launch.remote.tabs;x-internal:=true
+Automatic-Module-Name: org.eclipse.cdt.launch.remote

@@ -16,3 +16,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.examples,
  org.eclipse.cdt.codan.examples.checkers,
  org.eclipse.cdt.codan.examples.uicontrib
+Automatic-Module-Name: org.eclipse.cdt.codan.examples

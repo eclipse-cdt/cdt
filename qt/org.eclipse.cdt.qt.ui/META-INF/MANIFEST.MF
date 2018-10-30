@@ -28,3 +28,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.internal.qt.ui.assist;x-friends:="org.eclipse.cdt.qt.ui.tests",
  org.eclipse.cdt.internal.qt.ui.pro.parser;x-friends:="org.eclipse.cdt.qt.ui.tests"
+Automatic-Module-Name: org.eclipse.cdt.qt.ui

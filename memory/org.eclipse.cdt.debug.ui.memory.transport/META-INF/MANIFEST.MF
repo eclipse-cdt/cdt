@@ -17,3 +17,4 @@ Bundle-Activator: org.eclipse.cdt.debug.ui.memory.transport.MemoryTransportPlugi
 Export-Package: org.eclipse.cdt.debug.ui.memory.transport,
  org.eclipse.cdt.debug.ui.memory.transport.actions,
  org.eclipse.cdt.debug.ui.memory.transport.model
+Automatic-Module-Name: org.eclipse.cdt.debug.ui.memory.transport

@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Fragment-Host: org.eclipse.cdt.autotools.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %provider
+Automatic-Module-Name: org.eclipse.cdt.autotools.ui.tests

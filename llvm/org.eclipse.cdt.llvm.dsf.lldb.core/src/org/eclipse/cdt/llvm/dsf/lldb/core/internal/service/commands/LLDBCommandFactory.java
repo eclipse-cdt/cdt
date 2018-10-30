@@ -15,12 +15,25 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBTrait;
 
 /**
  * A command factory specific to LLDB for cases where some commands need any
  * kind of tweaks to account for discrepancies with GDB.
  */
 public class LLDBCommandFactory extends CommandFactory {
+
+	private DsfSession fSession;
+
+	/**
+	 * Construct a command factory specific to LLDB.
+	 *
+	 * @param session the debugging session
+	 */
+	public LLDBCommandFactory(DsfSession session) {
+		fSession = session;
+	}
 
 	/**
 	 * lldb-mi (as of 8.0.0-r341271) doesn't implement "-gdb-set args" but it does
@@ -41,15 +54,17 @@ public class LLDBCommandFactory extends CommandFactory {
 	}
 
 	/**
-	 * lldb-mi (as of 8.0.0-r343825) doesn't implement "-gdb-set breakpoint pending"
-	 * so instead we always use "-break-insert -f" to always use pending breakpoints.
-	 * Once the -gdb-set is implemented in lldb-mi, we can remove this.
-	 * See also https://reviews.llvm.org/D52953
+	 * lldb-mi implements "-gdb-set breakpoint pending" starting with 8.0.0-r345563.
+	 * For earlier version we use "-break-insert -f" to always use pending
+	 * breakpoints. See also https://reviews.llvm.org/D52953
 	 */
 	@Override
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
 			boolean isHardware, String condition, int ignoreCount, String line, String tid) {
-		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, true);
+		if (LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING.isTraitOf(fSession)) {
+			return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, true);
+		}
+		return super.createMIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid);
 	}
 
 	/**
@@ -59,7 +74,10 @@ public class LLDBCommandFactory extends CommandFactory {
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary,
 			boolean isHardware, String condition, int ignoreCount, String location, String tid, boolean disabled,
 			boolean isTracepoint) {
-		return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, true);
+		if (LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING.isTraitOf(fSession)) {
+			return new MIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint, true);
+		}
+		return super.createMIBreakInsert(ctx, isTemporary, isHardware, condition, ignoreCount, location, tid, disabled, isTracepoint);
 	}
 
 	/**
@@ -67,6 +85,9 @@ public class LLDBCommandFactory extends CommandFactory {
 	 */
 	@Override
 	public ICommand<MIBreakInsertInfo> createMIBreakInsert(IBreakpointsTargetDMContext ctx, String func) {
-		return new MIBreakInsert(ctx, func, true);
+		if (LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING.isTraitOf(fSession)) {
+			return new MIBreakInsert(ctx, func, true);
+		}
+		return super.createMIBreakInsert(ctx, func);
 	}
 }

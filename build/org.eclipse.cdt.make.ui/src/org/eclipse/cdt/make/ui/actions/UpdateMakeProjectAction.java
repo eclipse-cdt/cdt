@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -210,16 +211,16 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		try {
 			for (int i = 0; i < project.length; i++) {
 				// remove old builder
-				project[i].refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
+				project[i].refreshLocal(IResource.DEPTH_ONE, SubMonitor.convert(monitor, 1));
 				MakeProjectNature.removeFromBuildSpec(
 					project[i],
 					MakeCorePlugin.OLD_BUILDER_ID,
-					new SubProgressMonitor(monitor, 1));
+					SubMonitor.convert(monitor, 1));
 
 				// convert .cdtproject
 				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.MAKE_PROJECT_ID, true);
 				// add new nature
-				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
+				MakeProjectNature.addNature(project[i], SubMonitor.convert(monitor, 1));
 
 				// move existing build properties to new
 				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);

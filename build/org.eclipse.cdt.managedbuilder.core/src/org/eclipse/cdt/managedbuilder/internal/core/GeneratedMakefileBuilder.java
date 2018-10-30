@@ -74,6 +74,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -452,7 +453,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				//full rebuild is needed in any case
 				//clean first, then make a full build
 				outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
-				clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+				clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 				fullBuild(info, generator, monitor);
 			} else {
 				boolean fullBuildNeeded = info.needsRebuild();
@@ -480,7 +481,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						//in case an error occured, make it behave in the old stile:
 						if(info.needsRebuild()){
 							//make a full clean if an info needs a rebuild
-							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+							clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 							fullBuildNeeded = true;
 						}
 						else if(delta != null && !fullBuildNeeded){
@@ -488,7 +489,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
 							delta.accept(visitor);
 							if (visitor.shouldBuildFull()) {
-								clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+								clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 								fullBuildNeeded = true;
 							}
 						}
@@ -685,7 +686,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		//in case one or more of the generated makefiles (e.g. dep files) are corrupted,
 		//the builder invocation might fail because of the possible syntax errors, so e.g. "make clean" will not work
 		//we need to explicitly clean the generated directories
-//		clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+//		clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 
 		// Regenerate the makefiles for this project
 		checkCancel(monitor);
@@ -1029,7 +1030,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						} catch (IOException e) {
 						}
 						if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
-								new SubProgressMonitor(monitor,
+								SubMonitor.convert(monitor,
 										IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 							errMsg = launcher.getErrorMessage();
 						}
@@ -1096,7 +1097,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					}
 
 					int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
-							new SubProgressMonitor(monitor,
+							SubMonitor.convert(monitor,
 									IProgressMonitor.UNKNOWN));
 					if(state != ICommandLauncher.OK){
 						errMsg = launcher.getErrorMessage();
@@ -1447,7 +1448,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, null, console, SubMonitor.convert(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
@@ -1576,7 +1577,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
-			buildRunnerHelper.prepareStreams(epm, null , console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, null , console, SubMonitor.convert(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.cleanSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
 			buildRunnerHelper.printLine(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$

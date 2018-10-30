@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -115,7 +115,7 @@ public class CodanRunner {
 				for (IResource child : children) {
 					if (monitor.isCanceled())
 						return;
-					processResource(child, null, checkerLaunchMode, new SubProgressMonitor(monitor, childWeight));
+					processResource(child, null, checkerLaunchMode, SubMonitor.convert(monitor, childWeight));
 				}
 			}
 		} finally {

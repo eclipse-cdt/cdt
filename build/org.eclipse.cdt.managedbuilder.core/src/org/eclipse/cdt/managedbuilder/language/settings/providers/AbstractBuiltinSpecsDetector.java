@@ -70,6 +70,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -563,7 +564,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(currentCfgDescription, null, languageId);
 					try {
 						startupForLanguage(languageId);
-						runForLanguage(new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
+						runForLanguage(SubMonitor.convert(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
 					} catch (Exception e) {
 						IStatus s = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e); //$NON-NLS-1$
 						ManagedBuilderCorePlugin.log(s);
@@ -684,7 +685,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			parsers.add(consoleParser);
 
 			buildRunnerHelper.setLaunchParameters(launcher, program, args, buildDirURI, envp);
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_OUTPUT_PARSING));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, SubMonitor.convert(monitor, TICKS_OUTPUT_PARSING));
 
 			buildRunnerHelper.greeting(ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.RunningScannerDiscovery",  getName())); //$NON-NLS-1$
 

@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -74,11 +74,11 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					// Download the binary to the remote before debugging.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
 					RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-							remoteExePath, new SubProgressMonitor(monitor, 80));
+							remoteExePath, SubMonitor.convert(monitor, 80));
 					// Use a remote shell to launch the binary.
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
 					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
+							remoteExePath, arguments, SubMonitor.convert(
 									monitor, 20));
 					DebugPlugin.newProcess(launch, remoteProcess,
 							renderProcessLabel(exePath.toOSString()));

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Invokes an external tool to perform checks on a single file.
@@ -88,7 +88,7 @@ public class ExternalToolInvoker {
 			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 			launcher.showCommand(true);
 			launcher.setProject(project);
-			Process p = launcher.execute(commandPath, commandArgs, commandEnv, workingDirectory, new SubProgressMonitor(monitor, 50));
+			Process p = launcher.execute(commandPath, commandArgs, commandEnv, workingDirectory, SubMonitor.convert(monitor, 50));
 			if (p == null) {
 				String format = "Unable to launch external tool '%s': %s"; //$NON-NLS-1$
 				throw new InvocationFailure(String.format(format, commandPath, launcher.getErrorMessage()));
@@ -100,7 +100,7 @@ public class ExternalToolInvoker {
 				// ignore
 			}
 			try {
-				launcher.waitAndRead(out, err, new SubProgressMonitor(monitor, 50));
+				launcher.waitAndRead(out, err, SubMonitor.convert(monitor, 50));
 			} finally {
 				p.destroy();
 			}

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -393,7 +393,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
 
 					// LAUNCH child here
-					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / launches.size()));
+					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, SubMonitor.convert(monitor, 1000 / launches.size()));
 					((MultiLaunch)launch).addSubLaunch(subLaunch);
 
 					// Now that we added the launch in our list, we have already

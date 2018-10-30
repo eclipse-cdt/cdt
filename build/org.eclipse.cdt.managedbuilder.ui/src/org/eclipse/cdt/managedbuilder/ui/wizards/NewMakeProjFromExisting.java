@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -94,7 +94,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 
 					// Optionally C++ natures
 					if (isCPP)
-						CCProjectNature.addCCNature(project, new SubProgressMonitor(monitor, 1));
+						CCProjectNature.addCCNature(project, SubMonitor.convert(monitor, 1));
 
 					// Set up build information
 					ICProjectDescriptionManager pdMgr = CoreModel.getDefault().getProjectDescriptionManager();

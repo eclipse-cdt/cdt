@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -100,7 +101,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 			ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, SubMonitor.convert(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
 			DescriptionBuilder dBuilder = null;

@@ -14,7 +14,7 @@ package org.eclipse.cdt.ui.wizards;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
@@ -43,7 +43,7 @@ public class CProjectWizard extends CDTCommonProjectWizard {
 		
 		try {
 			continueCreationMonitor.beginTask(Messages.CProjectWizard_0, 1);
-			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
+			CProjectNature.addCNature(prj, SubMonitor.convert(continueCreationMonitor, 1));
 		} catch (CoreException e) {}
 		finally {continueCreationMonitor.done();}
 		return prj;

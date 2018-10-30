@@ -74,7 +74,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -487,7 +487,7 @@ public class CommonBuilder extends ACBuilder {
 			monitor.beginTask("", num + rcfgs.length); //$NON-NLS-1$
 
 			if(rcfgs.length != 0){
-				Set<IProject> set = buildReferencedConfigs(rcfgs, new SubProgressMonitor(monitor, 1), isBuild);// = getProjectsSet(cfgs);
+				Set<IProject> set = buildReferencedConfigs(rcfgs, SubMonitor.convert(monitor, 1), isBuild);// = getProjectsSet(cfgs);
 				if(set.size() != 0){
 					set.addAll(Arrays.asList(refProjects));
 					refProjects = set.toArray(new IProject[set.size()]);
@@ -501,16 +501,16 @@ public class CommonBuilder extends ACBuilder {
     			        IResourceDelta delta = getDelta(project);
                         if (delta != null && delta.getAffectedChildren().length > 0) { //project resource has changed within Eclipse, need to build this configuration
                             isBuild.setValue(true);
-                            build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+                            build(kind, new CfgBuildInfo(builders[i], isForeground), SubMonitor.convert(monitor, 1));
                         }
                         else if (isBuild.getValue()) { //one of its dependencies have rebuilt, need to rebuild this configuration
-                            build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+                            build(kind, new CfgBuildInfo(builders[i], isForeground), SubMonitor.convert(monitor, 1));
                         }
     			    } else { //the default behaviour: 'make' is invoked on all configurations and incremental build is handled by 'make'
-    			        build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+    			        build(kind, new CfgBuildInfo(builders[i], isForeground), SubMonitor.convert(monitor, 1));
     			    }
 			    } else { //FULL_BUILD or CLEAN
-			        build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+			        build(kind, new CfgBuildInfo(builders[i], isForeground), SubMonitor.convert(monitor, 1));
 			    }
 			}
 		}
@@ -530,7 +530,7 @@ public class CommonBuilder extends ACBuilder {
 		if(cfgs.length != 0){
 			monitor.beginTask(ManagedMakeMessages.getResourceString("CommonBuilder.22"), cfgs.length); //$NON-NLS-1$
 			for (IConfiguration cfg : cfgs) {
-				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				IProgressMonitor subMonitor = SubMonitor.convert(monitor, 1);
 				nextConfigChanged.setValue(false);
 				try {
 					IBuilder builder = cfg.getEditableBuilder();
@@ -939,7 +939,7 @@ public class CommonBuilder extends ACBuilder {
 			//full rebuild is needed in any case
 			//clean first, then make a full build
 			outputTrace(curProject.getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
-			clean(bInfo, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			clean(bInfo, SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 			makefileRegenerationNeeded = true;
 		} else {
 			makefileRegenerationNeeded = cfg.needsRebuild();
@@ -967,7 +967,7 @@ public class CommonBuilder extends ACBuilder {
 					//in case an error occured, make it behave in the old stile:
 					if(cfg.needsRebuild()){
 						//make a full clean if an info needs a rebuild
-						clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+						clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 						makefileRegenerationNeeded = true;
 					}
 					else if(delta != null && !makefileRegenerationNeeded){
@@ -975,7 +975,7 @@ public class CommonBuilder extends ACBuilder {
 						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(cfg, bInfo.getBuildInfo().getManagedProject().getConfigurations());
 						delta.accept(visitor);
 						if (visitor.shouldBuildFull()) {
-							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+							clean(SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN));
 							makefileRegenerationNeeded = true;
 						}
 					}
@@ -1197,7 +1197,7 @@ public class CommonBuilder extends ACBuilder {
 			URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
 			ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, null, console, SubMonitor.convert(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
@@ -1206,12 +1206,12 @@ public class CommonBuilder extends ACBuilder {
 			boolean isConfigurationSupported = configuration.isSupported();
 
 			buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
-			int status = sBuilder.build(stdout, stderr,  new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND));
+			int status = sBuilder.build(stdout, stderr,  SubMonitor.convert(monitor, TICKS_EXECUTE_COMMAND));
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
 
 			if (status != ICommandLauncher.ILLEGAL_COMMAND) {
-				buildRunnerHelper.refreshProject(cfgName, new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT));
+				buildRunnerHelper.refreshProject(cfgName, SubMonitor.convert(monitor, TICKS_REFRESH_PROJECT));
 			}
 
 			//Throw a core exception indicating that the clean command failed
@@ -1289,14 +1289,14 @@ public class CommonBuilder extends ACBuilder {
 				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
 				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
 
-				buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+				buildRunnerHelper.prepareStreams(epm, null, console, SubMonitor.convert(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 				String cfgName = configuration.getName();
 				String toolchainName = configuration.getToolChain().getName();
 				boolean isConfigurationSupported = configuration.isSupported();
 
 				buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
-				workspace.delete(new IResource[]{buildDir}, true, new SubProgressMonitor(monitor, TICKS_DELETE_OUTPUTS));
+				workspace.delete(new IResource[]{buildDir}, true, SubMonitor.convert(monitor, TICKS_DELETE_OUTPUTS));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 

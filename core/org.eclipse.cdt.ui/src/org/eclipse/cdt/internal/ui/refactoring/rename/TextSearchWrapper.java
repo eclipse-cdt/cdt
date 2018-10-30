@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
@@ -288,9 +288,9 @@ public class TextSearchWrapper {
             }
         };
         IStatus result= engine.search(searchscope, requestor, pattern, 
-        		new SubProgressMonitor(monitor, 95));
+        		SubMonitor.convert(monitor, 95));
         categorizeMatches(target.subList(startPos, target.size()), 
-                new SubProgressMonitor(monitor, 5));
+                SubMonitor.convert(monitor, 5));
 
         return result;
     }

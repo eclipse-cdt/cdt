@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -55,10 +55,10 @@ public class BuildOutputReaderJob extends Job {
         monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$ 
                 project.getName());
 
-        boolean rc = SCJobsUtil.readBuildOutputFile(project, context, buildInfo, new SubProgressMonitor(monitor, 70));
-        rc |= SCJobsUtil.getProviderScannerInfo(project, context, buildInfo, new SubProgressMonitor(monitor, 20));
+        boolean rc = SCJobsUtil.readBuildOutputFile(project, context, buildInfo, SubMonitor.convert(monitor, 70));
+        rc |= SCJobsUtil.getProviderScannerInfo(project, context, buildInfo, SubMonitor.convert(monitor, 20));
         if (rc) {
-            rc = SCJobsUtil.updateScannerConfiguration(project, context, buildInfo, new SubProgressMonitor(monitor, 10));
+            rc = SCJobsUtil.updateScannerConfiguration(project, context, buildInfo, SubMonitor.convert(monitor, 10));
         }
         
         monitor.done();

@@ -16,7 +16,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * This wizard was used for 3.X style projects. It is left here for compatibility
@@ -57,11 +57,11 @@ public class NewMakeCCProjectWizard extends NewMakeProjectWizard {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(MakeUIPlugin.getResourceString("MakeCCWizard.task_name"), 10); //$NON-NLS-1$
-		super.doRun(new SubProgressMonitor(monitor, 9));
+		super.doRun(SubMonitor.convert(monitor, 9));
 		// Add C++ Nature.
 		if (newProject != null) {
 			// Add C++ Nature to the newly created project.
-			CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, new SubProgressMonitor(monitor, 1));
+			CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, SubMonitor.convert(monitor, 1));
 		}
 		monitor.done();
 	}

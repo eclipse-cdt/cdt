@@ -30,7 +30,7 @@ import org.eclipse.cdt.ui.wizards.conversion.ConvertProjectWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -268,7 +268,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
-			super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
+			super.convertProject(project, bsId, SubMonitor.convert(monitor, 1));
 			if (!wasCDTProject && isSetProjectType()) {
 				h_selected.convertProject(project, monitor);
 			}
@@ -282,7 +282,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
-			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			super.convertProject(project, SubMonitor.convert(monitor, 1), projectID);
 			if (!wasCDTProject && isSetProjectType()) {
 				h_selected.convertProject(project, monitor);
 			}

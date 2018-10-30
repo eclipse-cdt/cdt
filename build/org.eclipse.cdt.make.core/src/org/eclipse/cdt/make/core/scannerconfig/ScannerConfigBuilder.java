@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Runs after standard make builder.
@@ -76,7 +76,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 //                monitor.beginTask("ScannerConfigBuilder.Invoking_Builder", 100); //$NON-NLS-1$
 //                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
 //                        getProject().getName());
-//                ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
+//                ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), SubMonitor.convert(monitor, 100));
 //            }
 
             buildInfo2 = ScannerConfigProfileManager.createScannerConfigBuildInfo2(getProject());
@@ -88,10 +88,10 @@ public class ScannerConfigBuilder extends ACBuilder {
                         getProject().getName());
 
                 // get scanner info from all external providers
-                SCJobsUtil.getProviderScannerInfo(getProject(), buildInfo2, new SubProgressMonitor(monitor, 70));
+                SCJobsUtil.getProviderScannerInfo(getProject(), buildInfo2, SubMonitor.convert(monitor, 70));
 
                 // update and persist scanner configuration
-                SCJobsUtil.updateScannerConfiguration(getProject(), buildInfo2, new SubProgressMonitor(monitor, 30));
+                SCJobsUtil.updateScannerConfiguration(getProject(), buildInfo2, SubMonitor.convert(monitor, 30));
             }
 		}
 		catch (CoreException e) {
@@ -122,12 +122,12 @@ public class ScannerConfigBuilder extends ACBuilder {
 				info = container.getInfo(new InfoContext(project));
 			}
 
-			if(build(project, context, info, new SubProgressMonitor(monitor, 1)))
+			if(build(project, context, info, SubMonitor.convert(monitor, 1)))
 				wasbuilt = true;
 		}
 
 		if(wasbuilt)
-			CCorePlugin.getDefault().updateProjectDescriptions(new IProject[]{project}, new SubProgressMonitor(monitor, 1));
+			CCorePlugin.getDefault().updateProjectDescriptions(new IProject[]{project}, SubMonitor.convert(monitor, 1));
 
 		monitor.done();
 		return true;
@@ -142,10 +142,10 @@ public class ScannerConfigBuilder extends ACBuilder {
 						getProject().getName());
 
 				// get scanner info from all external providers
-				SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 70));
+				SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, SubMonitor.convert(monitor, 70));
 
 				// update and persist scanner configuration
-				SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 30));
+				SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, SubMonitor.convert(monitor, 30));
 				return true;
 			}
 		}

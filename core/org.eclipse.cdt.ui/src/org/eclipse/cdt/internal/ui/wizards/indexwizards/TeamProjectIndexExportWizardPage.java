@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -340,7 +340,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 						op.setOptions(TeamPDOMExportOperation.EXPORT_OPTION_RESOURCE_SNAPSHOT);
 					}
 					try {
-						op.run(new SubProgressMonitor(monitor, 1));
+						op.run(SubMonitor.convert(monitor, 1));
 					} catch (CoreException e) {
 						status.merge(e.getStatus());
 					}

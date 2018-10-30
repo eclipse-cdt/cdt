@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  *
@@ -115,7 +115,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 				}
 
 				// Wrapping out and err streams to avoid their closure
-				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
+				int st = launcher.waitAndRead(wrap(out), wrap(err), SubMonitor.convert(monitor,	getNumCommands()));
 				switch (st) {
 				case ICommandLauncher.OK:
 					// assuming that compiler returns error code after compilation errors

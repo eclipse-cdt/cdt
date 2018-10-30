@@ -134,7 +134,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -4631,10 +4631,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 								newArgs.putAll(command.getArguments());
 							}
 						}
-						project.build(buildKind, builderName, newArgs, new SubProgressMonitor(monitor, 1));
+						project.build(buildKind, builderName, newArgs, SubMonitor.convert(monitor, 1));
 					}
 				} else {
-					project.build(buildKind, CommonBuilder.BUILDER_ID, args, new SubProgressMonitor(monitor, 1));
+					project.build(buildKind, CommonBuilder.BUILDER_ID, args, SubMonitor.convert(monitor, 1));
 				}
 			}
 		};

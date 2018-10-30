@@ -31,7 +31,7 @@ import org.eclipse.cdt.launch.remote.RemoteHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -59,7 +59,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 					""); //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
 			RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-					remoteExePath, new SubProgressMonitor(monitor, 80));
+					remoteExePath, SubMonitor.convert(monitor, 80));
 			// 2.Launch gdbserver on target
 			String gdbserverPortNumber = config
 					.getAttribute(
@@ -92,7 +92,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			try {
 				remoteShell = RemoteHelper.execCmdInRemoteShell(config, prelaunchCmd,
 						gdbserverCommand, commandArguments,
-						new SubProgressMonitor(monitor, 5));
+						SubMonitor.convert(monitor, 5));
 			} catch (Exception e1) {
 				RemoteHelper.abort(e1.getMessage(), e1,
 						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

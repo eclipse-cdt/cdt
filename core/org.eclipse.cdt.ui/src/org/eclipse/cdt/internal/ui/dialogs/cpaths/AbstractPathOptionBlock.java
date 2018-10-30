@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -338,7 +338,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		monitor.worked(1);
 
 		getCProject().setRawPathEntries(cpath.toArray(new IPathEntry[cpath.size()]),
-				new SubProgressMonitor(monitor, 7));
+				SubMonitor.convert(monitor, 7));
 	}
 
 	// -------- creation -------------------------------

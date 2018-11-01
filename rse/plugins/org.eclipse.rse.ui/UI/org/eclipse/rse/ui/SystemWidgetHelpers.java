@@ -1,8 +1,10 @@
 /********************************************************************************
  * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * of the Eclipse Public License 2.0 which accompanies this distribution, and is
+ * available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
@@ -11,7 +13,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
+ * Javier Montalvo Orï¿½s (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry

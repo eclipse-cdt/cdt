@@ -1,9 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
@@ -12,7 +14,7 @@
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
- * David McKnight  (IBM)  - [290290] [dstore] Error message when copy a file from another user’s folder
+ * David McKnight  (IBM)  - [290290] [dstore] Error message when copy a file from another userï¿½s folder
  * David McKnight   (IBM) - [414016] [dstore] new server audit log requirements
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;

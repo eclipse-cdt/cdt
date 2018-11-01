@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
+ * are made available under the terms of the Eclipse Public License 2.0 
  * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
+ * https://www.eclipse.org/legal/epl-2.0/ 
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation

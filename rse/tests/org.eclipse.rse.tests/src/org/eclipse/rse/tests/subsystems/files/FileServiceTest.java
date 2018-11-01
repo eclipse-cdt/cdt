@@ -1,9 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
@@ -12,7 +14,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh] Return proper "Root" IHostFile
- * Patrick Tassé    (Ericsson)   - [285226] Empty directory shown as an error message
+ * Patrick Tassï¿½    (Ericsson)   - [285226] Empty directory shown as an error message
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -335,7 +337,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testListEmptyFolder() throws SystemMessageException {
-		// -test-author-:PatrickTassé
+		// -test-author-:PatrickTassï¿½
 		if (isTestDisabled()) return;
 
 		String testName = "empty";
@@ -365,7 +367,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testListNonExistentFolder() throws SystemMessageException, InterruptedException {
-		// -test-author-:PatrickTassé
+		// -test-author-:PatrickTassï¿½
 		if (isTestDisabled()) return;
 
 		String testPath = tempDirPath + "/non/existent";
@@ -390,7 +392,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testListNotAFolder() throws SystemMessageException {
-		// -test-author-:PatrickTassé
+		// -test-author-:PatrickTassï¿½
 		if (isTestDisabled()) return;
 
 		String testName = getTestFileName();

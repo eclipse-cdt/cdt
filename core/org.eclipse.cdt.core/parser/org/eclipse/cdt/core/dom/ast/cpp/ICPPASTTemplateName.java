@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * @since 9.6
+ * @since 6.6
  */
 public interface ICPPASTTemplateName extends ICPPASTName {
 }

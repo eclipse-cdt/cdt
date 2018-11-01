@@ -12,13 +12,31 @@ package org.eclipse.cdt.internal.docker.launcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
 import org.eclipse.linuxtools.docker.core.IDockerConnectionManagerListener;
@@ -47,6 +65,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.osgi.service.prefs.Preferences;
 
 public class ContainerTab extends AbstractLaunchConfigurationTab implements
@@ -65,11 +85,20 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 
 	private Button newButton;
 	private Button removeButton;
+
+	private CheckboxTableViewer tableViewer;
+
 	private Button keepButton;
 	private Button stdinButton;
 	private Button privilegedButton;
 	private Combo imageCombo;
 	private Combo connectionSelector;
+
+	private ContainerTabModel model;
+
+	private static final int INDENT = 1;
+
+	private final DataBindingContext dbc = new DataBindingContext();
 
 	private ModifyListener connectionModifyListener = new ModifyListener() {
 
@@ -92,6 +121,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	public ContainerTab() {
 		super();
 		containerTab = this;
+		model = new ContainerTabModel();
 	}
 
 	@Override
@@ -146,6 +176,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 
 		createDirectoryList(mainComposite);
 		createButtons(mainComposite);
+		createPortSettingsSection(mainComposite);
 		createOptions(mainComposite);
 	}
 
@@ -212,6 +243,205 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 			}
 		});
 		removeButton.setEnabled(false);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void createPortSettingsSection(final Composite parent) {
+		Font font = parent.getFont();
+		Composite comp = createComposite(parent, 1, 2, GridData.FILL_BOTH);
+
+		Group group = new Group(comp, SWT.NONE);
+		group.setFont(font);
+		group.setText(Messages.ContainerTab_Ports_Group_Name);
+
+		GridData gd2 = new GridData(GridData.FILL_BOTH);
+		group.setLayoutData(gd2);
+
+		group.setLayout(new GridLayout());
+
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(3, 1)
+				.grab(true, false).applyTo(group);
+
+		group.setLayout(new GridLayout());
+		// specify ports
+		final Label portSettingsLabel = new Label(group, SWT.NONE);
+		portSettingsLabel.setText(Messages.ContainerTab_Specify_Ports_Label);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
+				.grab(true, false).span(3, 1)
+				.applyTo(portSettingsLabel);
+		final CheckboxTableViewer exposedPortsTableViewer = createPortSettingsTable(
+				group);
+		tableViewer = exposedPortsTableViewer;
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
+				.grab(true, false).span(3 - 1, 1).indent(INDENT, 0)
+				.hint(200, 70).applyTo(exposedPortsTableViewer.getTable());
+		// buttons
+		final Composite buttonsContainers = new Composite(parent, SWT.NONE);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
+				.grab(false, false).applyTo(buttonsContainers);
+		GridLayoutFactory.fillDefaults().numColumns(1).margins(0, 0)
+				.spacing(SWT.DEFAULT, 0).applyTo(buttonsContainers);
+
+		final Button addButton = new Button(buttonsContainers, SWT.NONE);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
+				.grab(true, false).applyTo(addButton);
+		addButton.setText(Messages.ContainerTab_Add_Button);
+		addButton.addSelectionListener(onAddPort(exposedPortsTableViewer));
+		final Button editButton = new Button(buttonsContainers, SWT.NONE);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
+				.grab(true, false).applyTo(editButton);
+		editButton.setText(Messages.ContainerTab_Edit_Button);
+		editButton.setEnabled(false);
+		editButton.addSelectionListener(onEditPort(exposedPortsTableViewer));
+		final Button removeButton = new Button(buttonsContainers, SWT.NONE);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP)
+				.grab(true, false).applyTo(removeButton);
+		removeButton.setText(Messages.ContainerTab_Remove_Button);
+		removeButton
+				.addSelectionListener(onRemovePorts(exposedPortsTableViewer));
+		ViewerSupport.bind(exposedPortsTableViewer, model.getExposedPorts(),
+				BeanProperties.values(ExposedPortModel.class,
+						ExposedPortModel.CONTAINER_PORT,
+						ExposedPortModel.PORT_TYPE,
+						ExposedPortModel.HOST_ADDRESS,
+						ExposedPortModel.HOST_PORT));
+		dbc.bindSet(
+				ViewersObservables.observeCheckedElements(
+						exposedPortsTableViewer, ExposedPortModel.class),
+				BeanProperties.set(ContainerTabModel.SELECTED_PORTS)
+						.observe(model));
+		checkAllElements(exposedPortsTableViewer);
+
+		// disable the edit and removeButton if the table is empty
+		exposedPortsTableViewer.addSelectionChangedListener(
+				onSelectionChanged(editButton, removeButton));
+		exposedPortsTableViewer
+				.addCheckStateListener(new ICheckStateListener() {
+					@Override
+					public void checkStateChanged(
+							CheckStateChangedEvent event) {
+						ExposedPortModel e = (ExposedPortModel) event
+								.getElement();
+						e.setSelected(event.getChecked());
+						updateLaunchConfigurationDialog();
+					}
+				});
+	}
+
+	private void checkAllElements(
+			final CheckboxTableViewer exposedPortsTableViewer) {
+		exposedPortsTableViewer.setAllChecked(true);
+		model.setSelectedPorts(new HashSet<>(model.getExposedPorts()));
+	}
+
+	private SelectionListener onAddPort(
+			final CheckboxTableViewer exposedPortsTableViewer) {
+		return SelectionListener.widgetSelectedAdapter(e -> {
+			final ContainerPortDialog dialog = new ContainerPortDialog(
+					getShell());
+			dialog.create();
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				final ExposedPortModel port = dialog.getPort();
+				port.setSelected(true);
+				model.addAvailablePort(port);
+				model.getSelectedPorts().add(port);
+				exposedPortsTableViewer.setChecked(port, true);
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+
+	private SelectionListener onEditPort(
+			final CheckboxTableViewer exposedPortsTableViewer) {
+		return SelectionListener.widgetSelectedAdapter(e -> {
+			final IStructuredSelection selection = exposedPortsTableViewer
+					.getStructuredSelection();
+			final ExposedPortModel selectedContainerPort = (ExposedPortModel) selection
+					.getFirstElement();
+			final ContainerPortDialog dialog = new ContainerPortDialog(
+					getShell(), selectedContainerPort);
+			dialog.create();
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				final ExposedPortModel configuredPort = dialog.getPort();
+				selectedContainerPort
+						.setContainerPort(configuredPort.getContainerPort());
+				selectedContainerPort
+						.setHostAddress(configuredPort.getHostAddress());
+				selectedContainerPort.setHostPort(configuredPort.getHostPort());
+				exposedPortsTableViewer.refresh();
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+
+	private SelectionListener onRemovePorts(
+			final TableViewer portsTableViewer) {
+		return SelectionListener.widgetSelectedAdapter(e -> {
+			final IStructuredSelection selection = portsTableViewer
+					.getStructuredSelection();
+			for (@SuppressWarnings("unchecked")
+			Iterator<ExposedPortModel> iterator = selection.iterator(); iterator
+					.hasNext();) {
+				final ExposedPortModel port = iterator.next();
+				model.removeAvailablePort(port);
+				model.getSelectedPorts().remove(port);
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+
+	private ISelectionChangedListener onSelectionChanged(
+			final Button... targetButtons) {
+		return e -> {
+			if (e.getSelection().isEmpty()) {
+				setControlsEnabled(targetButtons, false);
+			} else {
+				setControlsEnabled(targetButtons, true);
+			}
+		};
+	}
+
+	private static void setControlsEnabled(final Control[] controls,
+			final boolean enabled) {
+		for (Control control : controls) {
+			control.setEnabled(enabled);
+		}
+	}
+
+	private CheckboxTableViewer createPortSettingsTable(
+			final Composite container) {
+		final Table table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION
+				| SWT.V_SCROLL | SWT.H_SCROLL | SWT.CHECK);
+		final CheckboxTableViewer tableViewer = new CheckboxTableViewer(table);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		createTableViewerColum(tableViewer,
+				Messages.ContainerTab_Port_Column,
+				100);
+		createTableViewerColum(tableViewer,
+				Messages.ContainerTab_Type_Column,
+				50);
+		createTableViewerColum(tableViewer,
+				Messages.ContainerTab_HostAddress_Column,
+				100);
+		createTableViewerColum(tableViewer,
+				Messages.ContainerTab_HostPort_Column,
+				100);
+		tableViewer.setContentProvider(new ObservableListContentProvider());
+		return tableViewer;
+	}
+
+	private TableViewerColumn createTableViewerColum(
+			final TableViewer tableViewer, final String title,
+			final int width) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(
+				tableViewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		if (title != null) {
+			column.setText(title);
+		}
+		column.setWidth(width);
+		return viewerColumn;
 	}
 
 	private void createOptions(Composite parent) {
@@ -406,6 +636,8 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ILaunchConstants.ATTR_ADDITIONAL_DIRS,
 				(String) null);
+		configuration.setAttribute(ILaunchConstants.ATTR_EXPOSED_PORTS,
+				(String) null);
 		configuration.setAttribute(ILaunchConstants.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
 		Preferences prefs = InstanceScope.INSTANCE
 				.getNode(DockerLaunchUIPlugin.PLUGIN_ID);
@@ -427,6 +659,19 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 
 			if (additionalDirs != null)
 				directoriesList.setItems(additionalDirs.toArray(new String[0]));
+
+			java.util.List<String> exposedPortInfos = configuration
+					.getAttribute(ILaunchConstants.ATTR_EXPOSED_PORTS,
+							Collections.<String> emptyList());
+			model.removeExposedPorts();
+			for (String port : exposedPortInfos) {
+				ExposedPortModel m = ExposedPortModel.createPortModel(port);
+				model.addAvailablePort(m);
+				if (m.getSelected()) {
+					model.getSelectedPorts().add(m);
+					tableViewer.setChecked(m, true);
+				}
+			}
 			connectionUri = configuration.getAttribute(
 					ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
 			int defaultIndex = 0;
@@ -480,6 +725,8 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				stdinButton.getSelection());
 		configuration.setAttribute(ILaunchConstants.ATTR_PRIVILEGED_MODE,
 				privilegedButton.getSelection());
+		configuration.setAttribute(ILaunchConstants.ATTR_EXPOSED_PORTS,
+				ExposedPortModel.toArrayString(model.getExposedPorts()));
 	}
 
 	@Override

@@ -21,6 +21,9 @@ public interface ILaunchConstants {
 	public final static String ATTR_ADDITIONAL_DIRS = DockerLaunchUIPlugin
 			.getUniqueIdentifier() + ".additional_dirs"; //$NON-NLS-1$
 
+	public final static String ATTR_EXPOSED_PORTS = DockerLaunchUIPlugin
+			.getUniqueIdentifier() + ".exposed_ports"; //$NON-NLS-1$
+
 	public final static String ATTR_IMAGE = DockerLaunchUIPlugin.getUniqueIdentifier()
 			+ ".image"; //$NON-NLS-1$
 

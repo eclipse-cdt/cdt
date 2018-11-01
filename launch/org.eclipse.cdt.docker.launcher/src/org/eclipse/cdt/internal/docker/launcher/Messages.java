@@ -15,8 +15,6 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.docker.launcher.messages"; //$NON-NLS-1$
 
-
-
 	public static String LaunchShortcut_Binaries;
 	public static String LaunchShortcut_Binary_not_found;
 	public static String LaunchShortcut_Choose_a_launch_configuration;
@@ -34,14 +32,25 @@ public class Messages extends NLS {
 	public static String ContainerTab_Name;
 	public static String ContainerTab_Group_Name;
 	public static String ContainerTab_Option_Group_Name;
+	public static String ContainerTab_Ports_Group_Name;
+	public static String ContainerTab_Specify_Ports_Label;
+
+	public static String ContainerTab_Add_Button;
+	public static String ContainerTab_Edit_Button;
 	public static String ContainerTab_New_Button;
 	public static String ContainerTab_Remove_Button;
 	public static String ContainerTab_Keep_Label;
+	public static String ContainerTab_Publish_All_Ports_Label;
 	public static String ContainerTab_Stdin_Support_Label;
 	public static String ContainerTab_Privileged_Mode_Label;
 	public static String ContainerTab_Error_Reading_Configuration;
 	public static String ContainerTab_Connection_Selector_Label;
 	public static String ContainerTab_Image_Selector_Label;
+	public static String ContainerTab_Port_Column;
+	public static String ContainerTab_Type_Column;
+	public static String ContainerTab_HostAddress_Column;
+	public static String ContainerTab_HostPort_Column;
+
 	public static String ContainerTab_Error_No_Connections;
 	public static String ContainerTab_Error_No_Images;
 	public static String ContainerTab_Warning_Connection_Not_Found;
@@ -112,6 +121,12 @@ public class Messages extends NLS {
 	public static String Gdbserver_Settings_Remotetimeout_label;
 
 	public static String Gdbserver_Settings_Remotetimeout_tooltip;
+
+	public static String ContainerPortDialog_hostAddressLabel;
+	public static String ContainerPortDialog_hostPortLabel;
+	public static String ContainerPortDialog_shellTitle;
+	public static String ContainerPortDialog_containerLabel;
+	public static String ContainerPortDialog_explanationLabel;
 
 	static {
 		// initialize resource bundle

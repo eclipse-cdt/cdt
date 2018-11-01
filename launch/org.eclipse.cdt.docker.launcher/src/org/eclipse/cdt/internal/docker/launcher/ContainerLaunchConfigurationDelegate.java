@@ -15,7 +15,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,6 +223,39 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 					}
 					additionalDirs = dirs;
 				}
+
+				List<String> ports = new ArrayList<>();
+				List<String> portInfos = configuration.getAttribute(
+						ILaunchConstants.ATTR_EXPOSED_PORTS,
+						Collections.emptyList());
+				for (String portInfo : portInfos) {
+					ExposedPortModel m = ExposedPortModel
+							.createPortModel(portInfo);
+					if (m.getSelected()) {
+						StringBuilder b1 = new StringBuilder();
+						if (m.getHostAddress() != null
+								&& !m.getHostAddress().isEmpty()) {
+							b1.append(m.getHostAddress());
+							b1.append(":"); //$NON-NLS-1$
+						}
+						if (m.getHostPort() != null
+								&& !m.getHostPort().isEmpty()) {
+							b1.append(m.getHostPort());
+						}
+						// regardless if we have a host port or not,
+						// we may need to add a separator so we can determine
+						// the case where we don't have a host port vs where we
+						// don't have a host address
+						if (b1.length() > 0) {
+							b1.append(":"); //$NON-NLS-1$
+						}
+						String containerPort = m.getContainerPort() + "/" //$NON-NLS-1$
+								+ m.getPortType();
+						b1.append(containerPort);
+						ports.add(b1.toString());
+					}
+				}
+
 				String image = configuration.getAttribute(
 						ILaunchConstants.ATTR_IMAGE, (String) null);
 				String connectionUri = configuration.getAttribute(
@@ -240,14 +273,49 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 						connectionUri,
 						image, command,
 						commandDir, workingDir, additionalDirs, origEnv,
-						envMap, null, keepContainer, supportStdin,
+						envMap, ports.isEmpty() ? null : ports, keepContainer,
+						supportStdin,
 						privilegedMode, labels);
 			} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				String gdbserverPortNumber = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_PORT,
 						ILaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
-				List<String> ports = Arrays
-						.asList(gdbserverPortNumber + "/tcp"); //$NON-NLS-1$
+				
+				List<String> ports = new ArrayList<>();
+				List<String> portInfos = configuration.getAttribute(
+						ILaunchConstants.ATTR_EXPOSED_PORTS, Collections.emptyList());
+				String gdbserverPort = gdbserverPortNumber + "/tcp"; //$NON-NLS-1$
+				boolean gdbserverPortSpecified = false;
+				for (String portInfo : portInfos) {
+					ExposedPortModel m = ExposedPortModel.createPortModel(portInfo);
+					if (m.getSelected()) {
+						StringBuilder b = new StringBuilder();
+						if (m.getHostAddress() != null && !m.getHostAddress().isEmpty()) {
+							b.append(m.getHostAddress());
+							b.append(":"); //$NON-NLS-1$
+						}
+						if (m.getHostPort() != null && !m.getHostPort().isEmpty()) {
+							b.append(m.getHostPort());
+						}
+						// regardless if we have a host port or not,
+						// we may need to add a separator so we can determine
+						// the case where we don't have a host port vs where we
+						// don't have a host address
+						if (b.length() > 0) {
+							b.append(":"); //$NON-NLS-1$
+						}
+						String containerPort = m.getContainerPort() + "/" + m.getPortType(); //$NON-NLS-1$
+						b.append(containerPort);
+						if (gdbserverPort.equals(containerPort)) {
+							gdbserverPortSpecified = true;
+						}
+						ports.add(b.toString());
+					}
+				}
+				// if user hasn't already specified gdbserver port, we need to add it by default
+				if (!gdbserverPortSpecified) {
+				   ports.add(gdbserverPortNumber + "/tcp"); //$NON-NLS-1$
+				}
 				String gdbserverCommand = configuration.getAttribute(
 						ILaunchConstants.ATTR_GDBSERVER_COMMAND,
 						ILaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);

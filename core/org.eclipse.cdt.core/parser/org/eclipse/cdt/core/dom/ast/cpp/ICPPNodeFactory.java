@@ -305,7 +305,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTName newName(String name);
 
 	/**
-	 * @since 9.6
+	 * @since 6.6
 	 */
 	public ICPPASTTemplateName newTemplateName(char[] templateName);
 

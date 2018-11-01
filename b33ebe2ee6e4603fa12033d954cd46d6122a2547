@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aae6ddfa_c6fb40e9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTemplateName.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-11-01T03:53:32Z",
+      "side": 1,
+      "message": "This should be 6.6, do you have API tooling working?\nhttps://wiki.eclipse.org/CDT/policy#Using_API_Tooling",
+      "revId": "b33ebe2ee6e4603fa12033d954cd46d6122a2547",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

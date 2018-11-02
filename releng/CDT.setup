@@ -108,6 +108,12 @@
         <requirement
             name="org.eclipse.platform.feature.group"/>
         <requirement
+            name="com.sun.xml.bind"/>
+        <requirement
+            name="javax.xml.bind"/>
+        <requirement
+            name="javax.xml.stream"/>
+        <requirement
             name="org.apache.log4j"/>
         <requirement
             name="org.apache.log4j.source"/>

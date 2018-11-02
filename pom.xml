@@ -34,7 +34,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.8milestones/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.9/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -44,7 +44,7 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/S20180504181223/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

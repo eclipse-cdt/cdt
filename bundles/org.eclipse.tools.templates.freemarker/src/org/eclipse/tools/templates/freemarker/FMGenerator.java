@@ -47,6 +47,8 @@ import org.eclipse.tools.templates.freemarker.internal.Activator;
 import org.eclipse.tools.templates.freemarker.internal.Messages;
 import org.osgi.framework.Bundle;
 
+import com.sun.xml.bind.v2.ContextFactory;
+
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -98,7 +100,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 		try {
 			StringWriter writer = new StringWriter();
 			loadFile(manifestPath, model, writer); // $NON-NLS-1$
-			JAXBContext xmlContext = JAXBContext.newInstance(getManifestClass());
+			JAXBContext xmlContext = ContextFactory.createContext(new Class[] { getManifestClass() }, null);
 			Unmarshaller unmarshaller = xmlContext.createUnmarshaller();
 			manifest = (TemplateManifest) unmarshaller.unmarshal(new StringReader(writer.toString()));
 		} catch (JAXBException e) {

@@ -18,5 +18,8 @@
    <bundle id="org.eclipse.tools.templates.ui.source" version="0.0.0">
       <category name="main"/>
    </bundle>
+   <bundle id="com.sun.xml.bind" version="0.0.0"/>
+   <bundle id="javax.xml.bind" version="0.0.0"/>
+   <bundle id="javax.xml.stream" version="0.0.0"/>
    <category-def name="main" label="Template Engine"/>
 </site>

@@ -10984,4 +10984,44 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testDependentTemplateTemplateArgument_540450() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	struct type{};
+	//
+	//	template <template <class> class T1>
+	//	using template_template_alias = type;
+	//
+	//	template<typename T2>
+	//	struct foo{
+	//		template <typename T3>
+	//		struct apply{};
+	//	};
+	//
+	//	template <class T4>
+	//	using trigger = template_template_alias<foo<T4>::template apply>;
+	public void testAliasTemplateWithTemplateTemplateParameter_540676() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct type{};
+	//
+	//	template <template <class, class> class T1> // number of arguments doesn't match
+	//	using template_template_alias = type;
+	//
+	//	template<typename T2>
+	//	struct foo{
+	//		template <typename T3>
+	//		struct apply{};
+	//	};
+	//
+	//	template <class T4>
+	//	using trigger = template_template_alias<foo<T4>::template apply>;
+	//
+	//	using A = trigger<type>;
+	//
+	//	template <typename> struct B;
+	//	using C = B<A>;
+	public void testInvalidAliasTemplateWithTemplateTemplateParameter_540676() throws Exception {
+		BindingAssertionHelper bh= new AST2AssertionHelper(getAboveComment(), CPP);
+		bh.assertProblem("B<A>", 4);
+	}
 }

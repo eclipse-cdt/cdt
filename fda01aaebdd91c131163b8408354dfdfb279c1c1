@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d9917de_6d3c6cbc",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11025,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-11-03T21:35:58Z",
+      "side": 1,
+      "message": "Is there a way to assert any problem? Since ideally the error could be caught on \"using A \u003d trigger\u003ctype\u003e;\", so in case someone improves the diagnostic, this test will trigger incorrectly.",
+      "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

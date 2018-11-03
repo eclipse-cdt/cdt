@@ -1629,9 +1629,13 @@ public class CPPTemplates {
 							IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 				} else if (args != newArgs) {
 					IType target = instantiateType(instance.getType(), context);
-					CPPTemplateParameterMap map = 
-							instantiateArgumentMap(instance.getTemplateParameterMap(), context);
-					result = new CPPAliasTemplateInstance(template, target, instance.getOwner(), map, newArgs);
+					CPPTemplateParameterMap map = createParameterMap(template, newArgs);
+					if (map == null) {
+						result = (IType) createProblem(template,
+								IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+					} else {
+						result = new CPPAliasTemplateInstance(template, target, instance.getOwner(), map, newArgs);
+					}
 				} else {
 					result = type;
 				}
@@ -2737,6 +2741,8 @@ public class CPPTemplates {
 
 		if (param instanceof ICPPTemplateTemplateParameter) {
 			IType t= arg.getTypeValue();
+			if (t instanceof ICPPUnknownType)
+				return arg;
 			while (!(t instanceof ICPPTemplateDefinition)) {
 				if (t instanceof ICPPClassSpecialization) {
 					// Undo the effect of specializing a template when the unqualified name

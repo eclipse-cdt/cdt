@@ -34,6 +34,24 @@
       "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34a4388e_47c166ae",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11025,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-11-04T10:35:54Z",
+      "side": 1,
+      "message": "Of course, my bad.",
+      "parentUuid": "15dd902e_3aafbb65",
+      "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

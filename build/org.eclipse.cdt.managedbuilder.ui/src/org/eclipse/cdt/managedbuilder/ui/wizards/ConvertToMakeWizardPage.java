@@ -30,7 +30,7 @@ import org.eclipse.cdt.ui.wizards.conversion.ConvertProjectWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -265,29 +265,29 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 
     @Override
 	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException{
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
-			super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
+			super.convertProject(project, bsId, progress.split(1));
 			if (!wasCDTProject && isSetProjectType()) {
-				h_selected.convertProject(project, monitor);
+				h_selected.convertProject(project, progress);
 			}
 		} finally {
-			monitor.done();
+			progress.done();
 		}
     }
 
 	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
-			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			super.convertProject(project, progress.split(1), projectID);
 			if (!wasCDTProject && isSetProjectType()) {
-				h_selected.convertProject(project, monitor);
+				h_selected.convertProject(project, progress);
 			}
 		} finally {
-			monitor.done();
+			progress.done();
 		}
 	}
 

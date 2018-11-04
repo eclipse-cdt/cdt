@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -499,26 +499,26 @@ public abstract class ConvertProjectWizardPage
      */
     private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID)
                           throws CoreException {
-        monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING),
+        SubMonitor progress = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
                           selected.length);
 		try {
 	        for (Object element : selected) {
 	            IProject project = (IProject)element;
-    	        convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+    	        convertProject(project, progress.split(1), projectID);
         	}
 		} finally {
-	        monitor.done();
+			monitor.done();
 		}
     }
 
     private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor)
     						throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING),
-		    selected.length);
+        SubMonitor progress = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
+                selected.length);
 		try {
 			for (Object element : selected) {
 			IProject project = (IProject)element;
-			convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
+			convertProject(project, bsId, progress.split(1));
 			}
 		} finally {
 			monitor.done();

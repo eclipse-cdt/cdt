@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  *
@@ -97,16 +97,12 @@ public class CommandBuilder implements IBuildModelBuilder {
 		int status = STATUS_ERROR_LAUNCH;
 
 		try {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask("", getNumCommands()); //$NON-NLS-1$
-			monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + getCommandLine()); //$NON-NLS-1$
+			SubMonitor progress = SubMonitor.convert(monitor, ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + getCommandLine(), getNumCommands()); //$NON-NLS-1$
 
 			ICommandLauncher launcher = createLauncher();
 			launcher.showCommand(true);
 
-			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
+			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), progress);
 			if (fProcess != null) {
 				try {
 					// Close the input of the process since we will never write to it
@@ -115,7 +111,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 				}
 
 				// Wrapping out and err streams to avoid their closure
-				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
+				int st = launcher.waitAndRead(wrap(out), wrap(err), progress.split(getNumCommands()));
 				switch (st) {
 				case ICommandLauncher.OK:
 					// assuming that compiler returns error code after compilation errors

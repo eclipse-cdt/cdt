@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -123,11 +123,10 @@ public class LaunchShortcut implements ILaunchShortcut {
 					public void run(IProgressMonitor pm)
 							throws InterruptedException {
 						int nElements = elements.length;
-						pm.beginTask(
+						SubMonitor sub = SubMonitor.convert(pm,
 								Messages.LaunchShortcut_Looking_for_executables,
 								nElements);
 						try {
-							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
 									IResource r = (IResource) ((IAdaptable) elements[i])
@@ -154,10 +153,10 @@ public class LaunchShortcut implements ILaunchShortcut {
 										}
 									}
 								}
-								if (pm.isCanceled()) {
+								if (sub.isCanceled()) {
 									throw new InterruptedException();
 								}
-								sub.done();
+								sub.worked(1);
 							}
 						} finally {
 							pm.done();

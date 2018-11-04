@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -206,20 +207,21 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	protected static void doProjectUpdate(IProgressMonitor monitor, IProject[] project) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("UpdateMakeProjectAction.monitor.update"), project.length * 4); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeUIPlugin.getResourceString("UpdateMakeProjectAction.monitor.update"), project.length); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < project.length; i++) {
+				SubMonitor progressPerProject = progress.split(4);
 				// remove old builder
-				project[i].refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
+				project[i].refreshLocal(IResource.DEPTH_ONE, progressPerProject.split(1));
 				MakeProjectNature.removeFromBuildSpec(
 					project[i],
 					MakeCorePlugin.OLD_BUILDER_ID,
-					new SubProgressMonitor(monitor, 1));
+					progressPerProject.split(1));
 
 				// convert .cdtproject
 				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.MAKE_PROJECT_ID, true);
 				// add new nature
-				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
+				MakeProjectNature.addNature(project[i], progressPerProject.split(1));
 
 				// move existing build properties to new
 				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
@@ -251,9 +253,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					project[i].setPersistentProperty(qName[j], null);
 				}
 
-				IProgressMonitor subMon = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-				project[i].accept(new TargetConvertVisitor(subMon), 0);
-				monitor.worked(1);
+				project[i].accept(new TargetConvertVisitor(progressPerProject.split(1)), 0);
 			}
 		} finally {
 			monitor.done();

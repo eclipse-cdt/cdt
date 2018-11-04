@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -298,8 +298,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	protected void internalConfigureCProject(List<CPElement> cPathEntries, IProgressMonitor monitor) throws CoreException,
 			InterruptedException {
 		// 10 monitor steps to go
-
-		monitor.worked(2);
+		SubMonitor progress = SubMonitor.convert(monitor, 10);
+		progress.worked(2);
 		
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 		
@@ -308,7 +308,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		int[] applyTypes = getAppliedFilteredTypes(); 
 		// create and set the paths
 		for (int i = 0; i < cPathEntries.size(); i++) {
-			CPElement entry = (cPathEntries.get(i));			
+			CPElement entry = (cPathEntries.get(i));
 			for (int applyType : applyTypes) {
 				if (entry.getEntryKind() == applyType) {
 					IResource res = entry.getResource();
@@ -335,10 +335,10 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 				cpath.add(entrie);
 			}
 		}
-		monitor.worked(1);
+		progress.worked(1);
 
 		getCProject().setRawPathEntries(cpath.toArray(new IPathEntry[cpath.size()]),
-				new SubProgressMonitor(monitor, 7));
+				progress.split(7));
 	}
 
 	// -------- creation -------------------------------

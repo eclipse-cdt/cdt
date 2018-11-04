@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -223,12 +223,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(CUIMessages.BinaryParserBlock_settingBinaryParser, 2);
 		List<BinaryParserConfiguration> parsers = binaryList.getElements();
 		final List<BinaryParserConfiguration> selected = new ArrayList<BinaryParserConfiguration>(); // must do this to get proper order.
+		SubMonitor progress = SubMonitor.convert(monitor, CUIMessages.BinaryParserBlock_settingBinaryParser, 2 + selected.size());
 		for (int i = 0; i < parsers.size(); i++) {
 			if (binaryList.isChecked(parsers.get(i))) {
 				selected.add(parsers.get(i));
@@ -246,7 +243,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 									selected.get(i).getID());
 						}
 					}
-					monitor.worked(1);
+					progress.worked(1);
 					// Give a chance to the contributions to save.
 					// We have to do it last to make sure the parser id
 					// is save
@@ -254,12 +251,12 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					for (int i = 0; i < selected.size(); i++) {
 						ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
 						if (page != null && page.getControl() != null) {
-							page.performApply(new SubProgressMonitor(monitor, 1));
+							page.performApply(progress.split(1));
 						}
 					}
 				}
 			};
-			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
+			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, progress.split(1));
 		} else {
 			if (initialSelected == null || !selected.equals(initialSelected)) {
 				Preferences store = getContainer().getPreferences();
@@ -267,17 +264,16 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					store.setValue(CCorePlugin.PREF_BINARY_PARSER, arrayToString(selected.toArray()));
 				}
 			}
-			monitor.worked(1);
+			progress.worked(2);
 			// Give a chance to the contributions to save.
 			for (int i = 0; i < selected.size(); i++) {
 				ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
 				if (page != null && page.getControl() != null) {
-					page.performApply(new SubProgressMonitor(monitor, 1));
+					page.performApply(progress.split(1));
 				}
 			}
 		}
 		initialSelected = selected;
-		monitor.done();
 	}
 
 	@Override

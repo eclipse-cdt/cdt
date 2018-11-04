@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Runs after standard make builder.
@@ -76,22 +76,22 @@ public class ScannerConfigBuilder extends ACBuilder {
 //                monitor.beginTask("ScannerConfigBuilder.Invoking_Builder", 100); //$NON-NLS-1$
 //                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
 //                        getProject().getName());
-//                ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
+//                ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), SubMonitor.convert(monitor, 100));
 //            }
 
             buildInfo2 = ScannerConfigProfileManager.createScannerConfigBuildInfo2(getProject());
             autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
 
             if (autodiscoveryEnabled2) {
-                monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
+                SubMonitor progress = SubMonitor.convert(monitor, MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
+                progress.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
                         getProject().getName());
 
                 // get scanner info from all external providers
-                SCJobsUtil.getProviderScannerInfo(getProject(), buildInfo2, new SubProgressMonitor(monitor, 70));
+                SCJobsUtil.getProviderScannerInfo(getProject(), buildInfo2, progress.split(70));
 
                 // update and persist scanner configuration
-                SCJobsUtil.updateScannerConfiguration(getProject(), buildInfo2, new SubProgressMonitor(monitor, 30));
+                SCJobsUtil.updateScannerConfiguration(getProject(), buildInfo2, progress.split(30));
             }
 		}
 		catch (CoreException e) {
@@ -110,7 +110,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 
 		ICConfigurationDescription[] cfgs = des.getConfigurations();
 		IScannerConfigBuilderInfo2Set container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
-		monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.0"), cfgs.length + 1); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeMessages.getString("ScannerConfigBuilder.0"), cfgs.length + 1); //$NON-NLS-1$
 		boolean wasbuilt = false;
 		for(int i = 0; i < cfgs.length; i++){
 			ICConfigurationDescription cfg = cfgs[i];
@@ -122,12 +122,12 @@ public class ScannerConfigBuilder extends ACBuilder {
 				info = container.getInfo(new InfoContext(project));
 			}
 
-			if(build(project, context, info, new SubProgressMonitor(monitor, 1)))
+			if(build(project, context, info, progress.split(1)))
 				wasbuilt = true;
 		}
 
 		if(wasbuilt)
-			CCorePlugin.getDefault().updateProjectDescriptions(new IProject[]{project}, new SubProgressMonitor(monitor, 1));
+			CCorePlugin.getDefault().updateProjectDescriptions(new IProject[]{project}, progress.split(1));
 
 		monitor.done();
 		return true;
@@ -137,15 +137,15 @@ public class ScannerConfigBuilder extends ACBuilder {
 		if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(getProject())) {
 			boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
 			if (autodiscoveryEnabled2) {
-				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-				monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
+				SubMonitor progress = SubMonitor.convert(monitor, MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
+				progress.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
 						getProject().getName());
 
 				// get scanner info from all external providers
-				SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 70));
+				SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, progress.split(70));
 
 				// update and persist scanner configuration
-				SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 30));
+				SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, progress.split(30));
 				return true;
 			}
 		}

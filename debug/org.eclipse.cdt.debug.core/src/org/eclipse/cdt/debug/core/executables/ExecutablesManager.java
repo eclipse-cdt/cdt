@@ -56,7 +56,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -498,7 +497,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				}});
 
 			for (IExecutableImporter importer : executableImporters) {
-				handled = importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+				handled = importer.importExecutables(fileNames, SubMonitor.convert(monitor, 1));
 				if (handled || monitor.isCanceled()) {
 					break;
 				}
@@ -555,7 +554,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 			
 			monitor.beginTask("Finding source files in " + executable.getName(), sourceFileProviders.size() * 1000); //$NON-NLS-1$
 			for (ISourceFilesProvider provider : sourceFileProviders) {
-				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1000));
+				String[] sourceFiles = provider.getSourceFiles(executable, SubMonitor.convert(monitor, 1000));
 				if (sourceFiles.length > 0) {
 					result = sourceFiles;
 					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Got " + sourceFiles.length + " files from " + provider.toString()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -585,7 +584,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 			
 			IProjectExecutablesProvider provider = getExecutablesProviderForProject(executable.getProject());
 			if (provider != null) {
-				IStatus result = provider.removeExecutable(executable, new SubProgressMonitor(monitor, 1));
+				IStatus result = provider.removeExecutable(executable, SubMonitor.convert(monitor, 1));
 				if (!result.isOK()) {
 					status.add(result);
 				}

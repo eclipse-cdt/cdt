@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -68,24 +68,23 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
-				monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100);
+				SubMonitor progress = SubMonitor.convert(monitor, Messages.RemoteRunLaunchDelegate_0, 100);
 				Process remoteProcess = null;
 				try {
 					// Download the binary to the remote before debugging.
-					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
+					progress.subTask(Messages.RemoteRunLaunchDelegate_2);
 					RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-							remoteExePath, new SubProgressMonitor(monitor, 80));
+							remoteExePath, progress.split(80));
 					// Use a remote shell to launch the binary.
-					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
+					progress.subTask(Messages.RemoteRunLaunchDelegate_12);
 					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd,
-							remoteExePath, arguments, new SubProgressMonitor(
-									monitor, 20));
+							remoteExePath, arguments, progress.split(20));
 					DebugPlugin.newProcess(launch, remoteProcess,
 							renderProcessLabel(exePath.toOSString()));
 				} catch (CoreException e) {
 					throw e;
 				} finally {
-					monitor.done();
+					progress.done();
 				}
 
 			} else {

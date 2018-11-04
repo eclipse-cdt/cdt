@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -153,11 +153,10 @@ public class ImportExecutablePageOne extends WizardPage {
 		if (monitor.isCanceled())
 			return false;
 		File[] contents = directory.listFiles();
-		monitor.subTask(directory.getPath());
-		SubProgressMonitor sm = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-		sm.beginTask(directory.getPath(), contents.length);
+		SubMonitor progress = SubMonitor.convert(monitor, directory.getPath(), IProgressMonitor.UNKNOWN);
+		SubMonitor sm = progress.split(contents.length);
 		for (int i = 0; i < contents.length; i++) {
-			if (monitor.isCanceled())
+			if (progress.isCanceled())
 				return false;
 			File file = contents[i];
 			sm.worked(1);
@@ -167,7 +166,6 @@ public class ImportExecutablePageOne extends WizardPage {
 				files.add(file);
 			}
 		}
-		sm.done();
 		return true;
 	}
 

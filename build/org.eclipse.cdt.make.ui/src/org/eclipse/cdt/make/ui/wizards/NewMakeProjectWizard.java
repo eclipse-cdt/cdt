@@ -20,7 +20,7 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 
@@ -54,19 +54,19 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(MakeUIPlugin.getResourceString("MakeCWizard.task_name"), 10); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeUIPlugin.getResourceString("MakeCWizard.task_name"), 10); //$NON-NLS-1$
 
         // super.doRun() just creates the project and does not assign a builder to it.
-		super.doRun(new SubProgressMonitor(monitor, 5));
+		super.doRun(progress.split(5));
 
-		MakeProjectNature.addNature(getProjectHandle(), new SubProgressMonitor(monitor, 1));
+		MakeProjectNature.addNature(getProjectHandle(), progress.split(1));
 		ScannerConfigNature.addScannerConfigNature(getProjectHandle());
 		        
         // Modify the project based on what the user has selected
 		if (newProject != null) {
-			fOptionPage.performApply(new SubProgressMonitor(monitor, 4));
-			monitor.done();
+			fOptionPage.performApply(progress.split(4));
 		}
+		monitor.done();
 	}
 	
 	@Override

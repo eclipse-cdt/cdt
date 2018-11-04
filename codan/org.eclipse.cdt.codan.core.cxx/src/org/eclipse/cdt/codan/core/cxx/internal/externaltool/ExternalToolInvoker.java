@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Invokes an external tool to perform checks on a single file.
@@ -75,7 +75,7 @@ public class ExternalToolInvoker {
 	public void launchOnBuildConsole(IProject project, IConsoleParser[] parsers, final String toolName, final IPath commandPath,
 			final String[] commandArgs, final String[] commandEnv, final IPath workingDirectory, final IProgressMonitor monitor)
 			throws CoreException, InvocationFailure {
-		monitor.beginTask("Launching " + toolName, 100);
+		SubMonitor progress = SubMonitor.convert(monitor, "Launching " + toolName, 100);
 		IConsole c = CCorePlugin.getDefault().getConsole(null, DEFAULT_CONTEXT_MENU_ID, toolName, null);
 		
 		// Start Build Console so we can get the OutputStream and ErrorStream properly.
@@ -88,7 +88,7 @@ public class ExternalToolInvoker {
 			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher();
 			launcher.showCommand(true);
 			launcher.setProject(project);
-			Process p = launcher.execute(commandPath, commandArgs, commandEnv, workingDirectory, new SubProgressMonitor(monitor, 50));
+			Process p = launcher.execute(commandPath, commandArgs, commandEnv, workingDirectory, progress.split(50));
 			if (p == null) {
 				String format = "Unable to launch external tool '%s': %s"; //$NON-NLS-1$
 				throw new InvocationFailure(String.format(format, commandPath, launcher.getErrorMessage()));
@@ -100,7 +100,7 @@ public class ExternalToolInvoker {
 				// ignore
 			}
 			try {
-				launcher.waitAndRead(out, err, new SubProgressMonitor(monitor, 50));
+				launcher.waitAndRead(out, err, progress.split(50));
 			} finally {
 				p.destroy();
 			}

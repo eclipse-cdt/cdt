@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "efcb6445_3d6e9d4f",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/actions/UpdateMakeProjectAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-04T20:54:22Z",
+      "side": 1,
+      "message": "Counting seems to be off. (Was already off in the base version.) Original ticks is projects.length * 4, but the loop uses 5 ticks per iteration.\n\nLooks to me as if line 256 can be simply deleted.",
+      "revId": "08ddf2b33f3e4b5f8239bfbed716e11c662901e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9162813_b3780262",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/wizards/ConvertToMakeProjectWizardPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-04T20:54:22Z",
+      "side": 1,
+      "message": "progress.split(1) ?\n\nInterestingly, the counts seem to off quite frequently. Here only 2 of 3 ticks are consumed. I wonder if that was intentional?",
+      "range": {
+        "startLine": 94,
+        "startChar": 40,
+        "endLine": 94,
+        "endChar": 70
+      },
+      "revId": "08ddf2b33f3e4b5f8239bfbed716e11c662901e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8250cac2_7424e72c",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/wizards/NewMakeCCProjectWizard.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-04T20:54:22Z",
+      "side": 1,
+      "message": "SubMonitor.convert() takes care of that. Here it\u0027s needed only for the monitor.done() at the end.\n\nWhere is this called from? Maybe it\u0027s better to do the monitor.done() at the calling site?\n\nUsing SubMonitor consistently, you don\u0027t have to call done() anymore, _except_ for the top-level monitors that get passed in Job.run() and similar framework operations.\n\nUsing SubMonitor inconsistently in a call chain may lead to strange effects, since the convert(original_monitor) will consume whatever ticks are left in original_monitor. So if one switches to SubMonitor, one has to drill down from such top-level Job.run() or similar call sites. I can\u0027t tell if that has been done here.",
+      "range": {
+        "startLine": 56,
+        "startChar": 2,
+        "endLine": 58,
+        "endChar": 3
+      },
+      "revId": "08ddf2b33f3e4b5f8239bfbed716e11c662901e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0cbeb18_0d505f6a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4625,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-04T20:54:22Z",
+      "side": 1,
+      "message": "Is this still needed? I think split() does that (IIRC with a timer, so that in tight loops it doesn\u0027t check too frequently).",
+      "range": {
+        "startLine": 4624,
+        "startChar": 6,
+        "endLine": 4625,
+        "endChar": 13
+      },
+      "revId": "08ddf2b33f3e4b5f8239bfbed716e11c662901e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8de6beda_8d4935ad",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/CommandBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-04T20:54:22Z",
+      "side": 1,
+      "message": "Can\u0027t you just pass progress?",
+      "range": {
+        "startLine": 118,
+        "startChar": 56,
+        "endLine": 118,
+        "endChar": 88
+      },
+      "revId": "08ddf2b33f3e4b5f8239bfbed716e11c662901e4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

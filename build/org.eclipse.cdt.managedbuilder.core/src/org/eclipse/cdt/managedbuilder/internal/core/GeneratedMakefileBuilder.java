@@ -74,6 +74,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -431,11 +432,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			cfgs = new IConfiguration[] {info.getDefaultConfiguration() };
 		}
 
+		SubMonitor progress = SubMonitor.convert(monitor, cfgs.length);
 		for (IConfiguration cfg : cfgs) {
+			SubMonitor subProgress = progress.split(100);
 			updateOtherConfigs(cfg, kind);
 
 			if(((Configuration)cfg).isInternalBuilderEnabled()){
-				invokeInternalBuilder(cfg, kind != FULL_BUILD, ((Configuration)cfg).getInternalBuilderIgnoreErr(), monitor);
+				invokeInternalBuilder(cfg, kind != FULL_BUILD, ((Configuration)cfg).getInternalBuilderIgnoreErr(), progress.split(1));
 
 				// Scrub the build info the project
 				info.setRebuildState(false);
@@ -444,16 +447,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			// Create a makefile generator for the build
 			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
-			generator.initialize(getProject(), info, monitor);
+			generator.initialize(getProject(), info, subProgress.split(5));
 
 			//perform necessary cleaning and build type calculation
-			if(cfg.needsFullRebuild()){
+			if (cfg.needsFullRebuild()) {
 				//configuration rebuild state is set to true,
 				//full rebuild is needed in any case
 				//clean first, then make a full build
 				outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
-				clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
-				fullBuild(info, generator, monitor);
+				clean(subProgress.split(15));
+				fullBuild(info, generator, subProgress.split(80));
 			} else {
 				boolean fullBuildNeeded = info.needsRebuild();
 				IBuildDescription des = null;
@@ -474,13 +477,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						des = BuildDescriptionManager.createBuildDescription(info.getDefaultConfiguration(), getDelta(getProject()), flags);
 
 						BuildDescriptionManager.cleanGeneratedRebuildResources(des);
+						subProgress.worked(15);
 					} catch (Throwable e){
 						//TODO: log error
 						outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
 						//in case an error occured, make it behave in the old stile:
 						if(info.needsRebuild()){
 							//make a full clean if an info needs a rebuild
-							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+							clean(subProgress.split(15));
 							fullBuildNeeded = true;
 						}
 						else if(delta != null && !fullBuildNeeded){
@@ -488,7 +492,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
 							delta.accept(visitor);
 							if (visitor.shouldBuildFull()) {
-								clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+								clean(subProgress.split(15));
 								fullBuildNeeded = true;
 							}
 						}
@@ -497,10 +501,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				if(fullBuildNeeded){
 					outputTrace(getProject().getName(), "performing a full build");	//$NON-NLS-1$
-					fullBuild(info, generator, monitor);
+					fullBuild(info, generator, subProgress.split(80));
 				} else {
 					outputTrace(getProject().getName(), "performing an incremental build");	//$NON-NLS-1$
-					incrementalBuild(delta, info, generator, monitor);
+					incrementalBuild(delta, info, generator, subProgress.split(80));
 				}
 			}
 		}
@@ -1029,7 +1033,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						} catch (IOException e) {
 						}
 						if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
-								new SubProgressMonitor(monitor,
+								SubMonitor.convert(monitor,
 										IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 							errMsg = launcher.getErrorMessage();
 						}
@@ -1096,7 +1100,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					}
 
 					int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
-							new SubProgressMonitor(monitor,
+							SubMonitor.convert(monitor,
 									IProgressMonitor.UNKNOWN));
 					if(state != ICommandLauncher.OK){
 						errMsg = launcher.getErrorMessage();
@@ -1428,7 +1432,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 
 		try {
-			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName()) + ':', //$NON-NLS-1$
+			SubMonitor progress = SubMonitor.convert(monitor, ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName()) + ':', //$NON-NLS-1$
 					TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
@@ -1447,7 +1451,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, null, console, progress.split(TICKS_STREAM_PROGRESS_MONITOR));
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
@@ -1456,7 +1460,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			// Build artifacts for each file in the project
 			for (IFile file : files) {
-				if (monitor.isCanceled()) {
+				if (progress.isCanceled()) {
 					break;
 				}
 				String filePath = file.getProjectRelativePath().toString();
@@ -1471,25 +1475,25 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							dependentSteps.add(btype.getStep());
 					}
 
-					SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+					SubMonitor monitor2 = progress.split(1 * PROGRESS_MONITOR_SCALE);
 					try {
-						monitor2.beginTask("", TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
+						SubMonitor monitor3 = monitor2.split(TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE); //$NON-NLS-1
 
 						// Remove problem markers for the file
-						monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
-						buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, TICKS_DELETE_MARKERS, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						monitor3.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
+						buildRunnerHelper.removeOldMarkers(file, monitor3.split(TICKS_DELETE_MARKERS));
 
 						// Build dependent steps
 						for (IBuildStep step : dependentSteps) {
-							if (monitor2.isCanceled()) {
+							if (monitor3.isCanceled()) {
 								break;
 							}
 
-							monitor2.subTask(filePath);
+							monitor3.subTask(filePath);
 							StepBuilder stepBuilder = new StepBuilder(step, null);
-							stepBuilder.build(stdout, stderr, new SubProgressMonitor(monitor2, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							stepBuilder.build(stdout, stderr, monitor3.split(1 * PROGRESS_MONITOR_SCALE));
 
-							monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.refreshingArtifacts", filePath)); //$NON-NLS-1$
+							monitor3.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.refreshingArtifacts", filePath)); //$NON-NLS-1$
 							IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
 							for (IBuildIOType type : outputIOTypes) {
 								for (IBuildResource outResource : type.getResources()) {
@@ -1555,7 +1559,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		int countDeleted = 0;
 
 		try {
-			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", project.getName()) + ':', //$NON-NLS-1$
+			SubMonitor progress = SubMonitor.convert(monitor, ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", project.getName()) + ':', //$NON-NLS-1$
 					TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
@@ -1576,13 +1580,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
-			buildRunnerHelper.prepareStreams(epm, null , console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			buildRunnerHelper.prepareStreams(epm, null , console, progress.split(TICKS_STREAM_PROGRESS_MONITOR));
 
 			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.cleanSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
 			buildRunnerHelper.printLine(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$
 
 			for (IFile file : files) {
-				if (monitor.isCanceled()) {
+				if (progress.isCanceled()) {
 					break;
 				}
 				String filePath = file.getProjectRelativePath().toString();
@@ -1597,21 +1601,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								dependentSteps.add(btype.getStep());
 						}
 
-						SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+						SubMonitor monitor2 = progress.split(1 * PROGRESS_MONITOR_SCALE);
 						try {
-							monitor2.beginTask("", TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
+							SubMonitor monitor3 = monitor2.split(TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE);
 
 							// Remove problem markers for the file
-							monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
-							buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, TICKS_DELETE_MARKERS, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							monitor3.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
+							buildRunnerHelper.removeOldMarkers(file, monitor3.split(TICKS_DELETE_MARKERS));
 
 							// iterate through all build steps
 							for (IBuildStep step : dependentSteps) {
-								if (monitor2.isCanceled()) {
+								if (monitor3.isCanceled()) {
 									break;
 								}
 
-								monitor2.subTask(filePath);
+								monitor3.subTask(filePath);
 								// Delete the output resources
 								IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
 
@@ -1627,7 +1631,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 									}
 								}
 
-								monitor2.worked(1 * PROGRESS_MONITOR_SCALE);
+								monitor3.worked(1 * PROGRESS_MONITOR_SCALE);
 							}
 						} finally {
 							monitor2.done();

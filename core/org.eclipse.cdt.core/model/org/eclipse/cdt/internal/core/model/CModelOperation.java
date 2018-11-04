@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -450,11 +451,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Creates and returns a subprogress monitor if appropriate.
 	 */
 	protected IProgressMonitor getSubProgressMonitor(int workAmount) {
-		IProgressMonitor sub = null;
-		if (fMonitor != null) {
-			sub = new SubProgressMonitor(fMonitor, workAmount, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-		}
-		return sub;
+		return SubMonitor.convert(fMonitor, workAmount);
 	}
 
 	/**
@@ -509,13 +506,9 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * Convenience method to move resources
 	 */
 	protected void moveResources(IResource[] resources, IPath destinationPath) throws CModelException {
-		IProgressMonitor subProgressMonitor = null;
-		if (fMonitor != null) {
-			subProgressMonitor = new SubProgressMonitor(fMonitor, resources.length, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-		}
 		IWorkspace workspace = resources[0].getWorkspace();
 		try {
-			workspace.move(resources, destinationPath, false, subProgressMonitor);
+			workspace.move(resources, destinationPath, false, SubMonitor.convert(fMonitor, resources.length));
 			this.hasModifiedResource = true;
 		} catch (CoreException e) {
 			throw new CModelException(e);

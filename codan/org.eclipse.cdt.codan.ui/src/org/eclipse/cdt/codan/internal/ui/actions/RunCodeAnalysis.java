@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,9 +46,9 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 				protected IStatus run(final IProgressMonitor monitor) {
 					try {
 						int count = ss.size();
-						monitor.beginTask(getName(), count * 100);
 						if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
+						SubMonitor progress = SubMonitor.convert(monitor, getName(), count * 100);
 						for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
 							Object o = iterator.next();
 							if (o instanceof IAdaptable) {
@@ -56,12 +56,11 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 							}
 							if (o instanceof IResource) {
 								IResource res = (IResource) o;
-								SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
-								CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
-								if (subMon.isCanceled())
+								CodanRuntime.getInstance().getBuilder().processResource(res, progress.split(100), CheckerLaunchMode.RUN_ON_DEMAND);
+								if (progress.isCanceled())
 									return Status.CANCEL_STATUS;
 							}
-							if (monitor.isCanceled())
+							if (progress.isCanceled())
 								return Status.CANCEL_STATUS;
 						}
 						return Status.OK_STATUS;

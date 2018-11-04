@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  *
@@ -93,7 +93,7 @@ public class StepBuilder implements IBuildModelBuilder {
 						&& (fResumeOnErrs || status == STATUS_OK);
 					i++){
 				CommandBuilder builder = bs[i];
-				switch(builder.build(out, err, new SubProgressMonitor(monitor, builder.getNumCommands()))){
+				switch(builder.build(out, err, SubMonitor.convert(monitor, builder.getNumCommands()))){
 				case STATUS_OK:
 					break;
 				case STATUS_CANCELLED:

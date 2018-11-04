@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -74,7 +74,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException,
 					InterruptedException {
-				monitor.beginTask(Messages.NewMakeProjFromExisting_1, 10);
+				SubMonitor progress = SubMonitor.convert(monitor, Messages.NewMakeProjFromExisting_1, 10);
 
 				// Create Project
 				try {
@@ -90,11 +90,11 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 						description.setLocation(location);
 					}
 
-					CCorePlugin.getDefault().createCDTProject(description, project, monitor);
+					CCorePlugin.getDefault().createCDTProject(description, project, progress);
 
 					// Optionally C++ natures
 					if (isCPP)
-						CCProjectNature.addCCNature(project, new SubProgressMonitor(monitor, 1));
+						CCProjectNature.addCCNature(project, progress.split(1));
 
 					// Set up build information
 					ICProjectDescriptionManager pdMgr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -102,7 +102,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 					ManagedProject mProj = new ManagedProject(projDesc);
 					info.setManagedProject(mProj);
-					monitor.worked(1);
+					progress.worked(1);
 
 					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
 					String s = toolChain == null ? "0" : ((ToolChain)toolChain).getId(); //$NON-NLS-1$
@@ -111,13 +111,13 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					builder.setManagedBuildOn(false);
 					CConfigurationData data = config.getConfigurationData();
 					projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-					monitor.worked(1);
+					progress.worked(1);
 
 					pdMgr.setProjectDescription(project, projDesc);
 				} catch (Throwable e) {
 					ManagedBuilderUIPlugin.log(e);
 				}
-				monitor.done();
+				progress.done();
 			}
 		};
 

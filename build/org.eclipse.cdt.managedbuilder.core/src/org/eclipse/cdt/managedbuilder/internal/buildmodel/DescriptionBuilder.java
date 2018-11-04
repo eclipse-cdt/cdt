@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  *
@@ -89,7 +89,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 				StepBuilder builder = getStepBuilder(action);//new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
 
 				if(fBuild){
-					switch(builder.build(fOut, fErr, new SubProgressMonitor(fMonitor, builder.getNumCommands()))){
+					switch(builder.build(fOut, fErr, SubMonitor.convert(fMonitor, builder.getNumCommands()))){
 					case STATUS_OK:
 						break;
 					case STATUS_CANCELLED:

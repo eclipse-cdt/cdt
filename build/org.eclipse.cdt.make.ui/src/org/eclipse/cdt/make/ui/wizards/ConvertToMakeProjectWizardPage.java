@@ -19,7 +19,7 @@ import org.eclipse.cdt.ui.wizards.conversion.ConvertProjectWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
@@ -88,15 +88,15 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     
 	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 1); //$NON-NLS-1$
 		try {
-			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
-			MakeProjectNature.addNature(project, new SubProgressMonitor(monitor, 1));
+			super.convertProject(project, progress.split(1), projectID);
+			MakeProjectNature.addNature(project, SubMonitor.convert(monitor, 1));
 			ScannerConfigNature.addScannerConfigNature(project);
 			ScannerConfigNature.initializeDiscoveryOptions(project);
 			CCorePlugin.getDefault().mapCProjectOwner(project, projectID, true);
 		} finally {
-			monitor.done();
+			progress.worked(1);
 		}
 	}
 

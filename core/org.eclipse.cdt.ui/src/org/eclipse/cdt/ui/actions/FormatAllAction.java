@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -340,12 +340,8 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private void doRunOnMultiple(ITranslationUnit[] tus, MultiStatus status, IProgressMonitor monitor) throws OperationCanceledException {
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		monitor.setTaskName(ActionMessages.FormatAllAction_operation_description);
+		SubMonitor progress = SubMonitor.convert(monitor, ActionMessages.FormatAllAction_operation_description, tus.length * 4);
 
-		monitor.beginTask("", tus.length * 4); //$NON-NLS-1$
 		try {
 			Map<String, Object> lastOptions= null;
 			ICProject lastProject= null;
@@ -375,28 +371,28 @@ public class FormatAllAction extends SelectionDispatchAction {
 				lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
 				lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
 
-				if (monitor.isCanceled()) {
+				if (progress.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 
 				ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 				try {
 					try {
-						manager.connect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
+						manager.connect(path, LocationKind.IFILE, progress.split(1));
 
-						monitor.subTask(path.makeRelative().toString());
+						progress.subTask(path.makeRelative().toString());
 						ITextFileBuffer fileBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 						boolean wasDirty = fileBuffer.isDirty();
 
 						formatTranslationUnit(fileBuffer, lastOptions);
 
 						if (fileBuffer.isDirty() && !wasDirty) {
-							fileBuffer.commit(new SubProgressMonitor(monitor, 2), false);
+							fileBuffer.commit(progress.split(2), false);
 						} else {
-							monitor.worked(2);
+							progress.worked(2);
 						}
 					} finally {
-						manager.disconnect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
+						manager.disconnect(path, LocationKind.IFILE, progress.split(1));
 					}
 				} catch (CoreException e) {
 					status.add(e.getStatus());

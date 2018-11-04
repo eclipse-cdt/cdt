@@ -31,7 +31,7 @@ import org.eclipse.cdt.launch.remote.RemoteHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -57,9 +57,10 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			String remoteExePath = config.getAttribute(
 					IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
 					""); //$NON-NLS-1$
-			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
+			SubMonitor progress = SubMonitor.convert(monitor, 100);
+			progress.subTask(Messages.RemoteRunLaunchDelegate_2);
 			RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-					remoteExePath, new SubProgressMonitor(monitor, 80));
+					remoteExePath, progress.split(80));
 			// 2.Launch gdbserver on target
 			String gdbserverPortNumber = config
 					.getAttribute(
@@ -84,7 +85,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 
 			if (arguments != null && !arguments.isEmpty())
 				commandArguments += " " + arguments; //$NON-NLS-1$
-			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
+			progress.subTask(Messages.RemoteRunLaunchDelegate_9);
 			
 			// extending HostShellProcessAdapter here
 	        final GdbLaunch l = (GdbLaunch)launch;
@@ -92,7 +93,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			try {
 				remoteShell = RemoteHelper.execCmdInRemoteShell(config, prelaunchCmd,
 						gdbserverCommand, commandArguments,
-						new SubProgressMonitor(monitor, 5));
+						progress.split(5));
 			} catch (Exception e1) {
 				RemoteHelper.abort(e1.getMessage(), e1,
 						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
@@ -165,7 +166,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 				// Now wait until gdbserver is up and running on the remote host
 				synchronized (lock) {
 					while (gdbServerReady[0] == false) {
-						if (monitor.isCanceled() || iProcess.isTerminated()) {
+						if (progress.isCanceled() || iProcess.isTerminated()) {
 							//gdbserver launch failed
 							if (remoteShellProcess != null) {
 								remoteShellProcess.destroy();
@@ -205,7 +206,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 
 			}
 			try{
-				super.launch(config, mode, launch, monitor);
+				super.launch(config, mode, launch, progress.split(15));
 			} catch(CoreException ex) {
 				//launch failed, need to kill gdbserver
 				if (remoteShellProcess != null) {

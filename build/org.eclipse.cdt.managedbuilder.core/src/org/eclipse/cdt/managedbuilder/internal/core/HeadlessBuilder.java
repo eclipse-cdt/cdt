@@ -55,14 +55,12 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -72,7 +70,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -272,7 +270,7 @@ public class HeadlessBuilder implements IApplication {
 			for (ICConfigurationDescription cfgDesc : cfgDescs)
 				configs[i++] = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
 
-			ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true, buildType);
+			ManagedBuildManager.buildConfigurations(configs, null, SubMonitor.convert(monitor, 1), true, buildType);
 		}
 	}
 

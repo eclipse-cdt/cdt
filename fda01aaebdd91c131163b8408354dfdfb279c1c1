@@ -16,6 +16,24 @@
       "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15dd902e_3aafbb65",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11025,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-04T00:14:15Z",
+      "side": 1,
+      "message": "Even if we produce an error for \"using A \u003d trigger\u003ctype\u003e;\", \"B\u003cA\u003e\" should still resolve to a ProblemBinding, so the test should still pass.",
+      "parentUuid": "9d9917de_6d3c6cbc",
+      "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

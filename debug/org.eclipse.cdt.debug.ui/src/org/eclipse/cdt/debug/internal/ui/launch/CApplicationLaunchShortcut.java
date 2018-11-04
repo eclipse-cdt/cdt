@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -303,9 +303,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 					@Override
 					public void run(IProgressMonitor pm) throws InterruptedException {
 						int nElements = elements.length;
-						pm.beginTask("Looking for executables", nElements); //$NON-NLS-1$
+						SubMonitor progress = SubMonitor.convert(pm, "Looking for executables", nElements); //$NON-NLS-1$
 						try {
-							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
 									IResource r = ((IAdaptable) elements[i]).getAdapter(IResource.class);
@@ -325,13 +324,13 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 										}
 									}
 								}
-								if (pm.isCanceled()) {
+								if (progress.isCanceled()) {
 									throw new InterruptedException();
 								}
-								sub.done();
+								progress.worked(1);
 							}
 						} finally {
-							pm.done();
+							progress.done();
 						}
 					}
 				};

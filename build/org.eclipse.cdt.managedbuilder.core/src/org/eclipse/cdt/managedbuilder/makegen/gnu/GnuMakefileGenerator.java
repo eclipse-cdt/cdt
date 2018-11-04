@@ -98,7 +98,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * This is a specialized makefile generator that takes advantage of the
@@ -4206,7 +4206,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Create the file if it does not exist
 		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
 		try {
-			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
+			newFile.create(contents, false, SubMonitor.convert(monitor, 1));
 			// Make sure the new file is marked as derived
 			if (!newFile.isDerived()) {
 				newFile.setDerived(true, null);
@@ -4245,7 +4245,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IResource depFile = project.findMember(targetFilePath);
 		if (depFile != null && depFile.exists()) {
 			try {
-				depFile.delete(true, new SubProgressMonitor(monitor, 1));
+				depFile.delete(true, SubMonitor.convert(monitor, 1));
 			} catch (CoreException e) {
 				// This had better be allowed during a build
 
@@ -4310,11 +4310,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Delete the files if they exist
 		if (depFilePaths != null) {
 			for (IPath dfp : depFilePaths) {
+				SubMonitor progress = SubMonitor.convert(monitor, depFilePaths.length);
 				IPath depFilePath = getBuildWorkingDir().append(dfp);
 				IResource depFile = project.findMember(depFilePath);
 				if (depFile != null && depFile.exists()) {
 					try {
-						depFile.delete(true, new SubProgressMonitor(monitor, 1));
+						depFile.delete(true, progress.split(1));
 					} catch (CoreException e) {
 						// This had better be allowed during a build
 					}
@@ -4443,7 +4444,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IFolder folder = project.getFolder(moduleOutputPath);
 		if (folder.exists()) {
 			try {
-				folder.delete(true, new SubProgressMonitor(monitor, 1));
+				folder.delete(true, SubMonitor.convert(monitor, 1));
 			} catch (CoreException e) {
 				// TODO Log this
 			}

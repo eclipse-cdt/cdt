@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -77,14 +77,15 @@ public class CodanRunner {
 		int numChildren = children == null ? 0 : children.length;
 		int childWeight = 10;
 		// System.err.println("processing " + resource);
-		monitor.beginTask(NLS.bind(Messages.CodanRunner_Code_analysis_on, resource.getFullPath().toString()),
+		SubMonitor progress = SubMonitor.convert(monitor,
+				NLS.bind(Messages.CodanRunner_Code_analysis_on, resource.getFullPath().toString()),
 				checkers * (1 + numChildren * childWeight));
 		try {
 			CheckersTimeStats.getInstance().checkerStart(CheckersTimeStats.ALL);
 			ICheckerInvocationContext context = new CheckerInvocationContext(resource);
 			try {
 				for (IChecker checker : chegistry) {
-					if (monitor.isCanceled())
+					if (progress.isCanceled())
 						return;
 					if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
 						synchronized (checker) {
@@ -106,7 +107,7 @@ public class CodanRunner {
 							}
 						}
 					}
-					monitor.worked(1);
+					progress.worked(1);
 				}
 			} finally {
 				context.dispose();
@@ -117,13 +118,13 @@ public class CodanRunner {
 			if (children != null && (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD
 					|| checkerLaunchMode == CheckerLaunchMode.RUN_ON_DEMAND)) {
 				for (IResource child : children) {
-					if (monitor.isCanceled())
+					if (progress.isCanceled())
 						return;
-					processResource(child, null, checkerLaunchMode, new SubProgressMonitor(monitor, childWeight));
+					processResource(child, null, checkerLaunchMode, progress.split(childWeight));
 				}
 			}
 		} finally {
-			monitor.done();
+			progress.done();
 		}
 	}
 }

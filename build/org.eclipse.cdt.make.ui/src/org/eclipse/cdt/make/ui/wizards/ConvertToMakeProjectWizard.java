@@ -18,7 +18,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.wizards.conversion.ConversionWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
@@ -112,12 +112,8 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 
 	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
-				2);
-		try {
-			super.doRun(new SubProgressMonitor(monitor, 1));
-		} finally {
-			monitor.done();
-		}
+		super.doRun(SubMonitor.convert(monitor,
+				MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
+				1));
 	}
 }

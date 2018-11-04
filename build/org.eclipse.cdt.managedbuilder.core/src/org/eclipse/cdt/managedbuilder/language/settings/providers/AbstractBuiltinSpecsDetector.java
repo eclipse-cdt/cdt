@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,12 +69,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -558,37 +558,34 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		MultiStatus status = new MultiStatus(ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.OK,
 				"Problem running CDT Scanner Discovery provider " + getId(), null); //$NON-NLS-1$
 
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-
 		try {
 			boolean isChanged = false;
 
 			List<String> languageIds = getLanguageScope();
+			if (languageIds == null)
+				languageIds = Collections.emptyList();
 
-			if (languageIds != null) {
-				monitor.beginTask(
-						ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.ScannerDiscoveryTaskTitle"), //$NON-NLS-1$
-						TICKS_REMOVE_MARKERS + languageIds.size() * TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
-
+			SubMonitor progress = SubMonitor.convert(monitor,
+					ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.ScannerDiscoveryTaskTitle"), //$NON-NLS-1$
+					TICKS_REMOVE_MARKERS + languageIds.size() * TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
+			if (!languageIds.isEmpty()) {
 				IResource markersResource = currentProject != null ? currentProject
 						: ResourcesPlugin.getWorkspace().getRoot();
 
-				monitor.subTask(ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.ClearingMarkers", //$NON-NLS-1$
+				progress.subTask(ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.ClearingMarkers", //$NON-NLS-1$
 						markersResource.getFullPath().toString()));
 				markerGenerator.deleteMarkers(markersResource);
-				if (monitor.isCanceled())
+				if (progress.isCanceled())
 					throw new OperationCanceledException();
 
-				monitor.worked(TICKS_REMOVE_MARKERS);
+				progress.worked(TICKS_REMOVE_MARKERS);
 
 				for (String languageId : languageIds) {
 					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(currentCfgDescription, null,
 							languageId);
 					try {
 						startupForLanguage(languageId);
-						runForLanguage(new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
+						runForLanguage(progress.split(TICKS_RUN_FOR_ONE_LANGUAGE));
 					} catch (Exception e) {
 						IStatus s = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR,
 								"Error running Builtin Specs Detector", e); //$NON-NLS-1$
@@ -603,17 +600,19 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						isChanged = newEntries != oldEntries;
 					}
 
-					if (monitor.isCanceled())
+					if (progress.isCanceled())
 						throw new OperationCanceledException();
 				}
+			} else {
+				progress.worked(TICKS_REMOVE_MARKERS + languageIds.size() * TICKS_RUN_FOR_ONE_LANGUAGE);
 			}
 
-			monitor.subTask(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.SerializingResults")); //$NON-NLS-1$
+			progress.subTask(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.SerializingResults")); //$NON-NLS-1$
 			if (isChanged) { // avoids resource and settings change notifications
 				IStatus s = serializeLanguageSettings(currentCfgDescription);
 				status.merge(s);
 			}
-			monitor.worked(TICKS_SERIALIZATION);
+			progress.worked(TICKS_SERIALIZATION);
 
 		} catch (OperationCanceledException e) {
 			// user chose to cancel operation, do not threaten them with red error signs
@@ -622,7 +621,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					"Error running Builtin Specs Detector", e)); //$NON-NLS-1$
 			ManagedBuilderCorePlugin.log(status);
 		} finally {
-			monitor.done();
+			if (monitor != null)
+				monitor.done();
 		}
 
 		return status;
@@ -672,14 +672,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private void runForLanguage(IProgressMonitor monitor) throws CoreException {
 		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
+		SubMonitor progress = SubMonitor.convert(monitor,
+				ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.RunningScannerDiscovery", //$NON-NLS-1$
+						getName()),
+				TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
 		try {
-			monitor.beginTask(
-					ManagedMakeMessages.getFormattedString("AbstractBuiltinSpecsDetector.RunningScannerDiscovery", //$NON-NLS-1$
-							getName()),
-					TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
 
 			IConsole console;
 			if (isConsoleEnabled) {
@@ -715,8 +712,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			parsers.add(consoleParser);
 
 			buildRunnerHelper.setLaunchParameters(launcher, program, args, buildDirURI, envp);
-			buildRunnerHelper.prepareStreams(epm, parsers, console,
-					new SubProgressMonitor(monitor, TICKS_OUTPUT_PARSING));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, progress.split(TICKS_OUTPUT_PARSING));
 
 			buildRunnerHelper.greeting(ManagedMakeMessages
 					.getFormattedString("AbstractBuiltinSpecsDetector.RunningScannerDiscovery", getName())); //$NON-NLS-1$
@@ -724,8 +720,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			OutputStream outStream = buildRunnerHelper.getOutputStream();
 			OutputStream errStream = buildRunnerHelper.getErrorStream();
 			runProgramForLanguage(currentLanguageId, currentCommandResolved, envp, buildDirURI, outStream, errStream,
-					new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
-							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					progress.split(TICKS_EXECUTE_COMMAND));
 
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
@@ -739,7 +734,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			} catch (IOException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
-			monitor.done();
+			progress.done();
 		}
 	}
 

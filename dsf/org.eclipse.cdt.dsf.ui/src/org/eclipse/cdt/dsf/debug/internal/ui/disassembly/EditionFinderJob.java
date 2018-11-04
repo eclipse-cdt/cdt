@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -64,11 +64,11 @@ class EditionFinderJob extends Job {
 	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		monitor.beginTask(DisassemblyMessages.EditionFinderJob_name, 2);
-		monitor.subTask(DisassemblyMessages.EditionFinderJob_task_get_timestamp);
+		SubMonitor progress = SubMonitor.convert(monitor, DisassemblyMessages.EditionFinderJob_name, 2);
+		progress.subTask(DisassemblyMessages.EditionFinderJob_task_get_timestamp);
 		long moduleTime;
 		Object token = fDisassemblyPart.retrieveModuleTimestamp(fAddress);
-		if (token != null && !(token instanceof Long) && !monitor.isCanceled()) {
+		if (token != null && !(token instanceof Long) && !progress.isCanceled()) {
 			try {
 				synchronized (token) {
 					token.wait(1000);
@@ -78,16 +78,16 @@ class EditionFinderJob extends Job {
 			}
 			token = fDisassemblyPart.retrieveModuleTimestamp(fAddress);
 		}
-		monitor.worked(1);
-		if (token instanceof Long && !monitor.isCanceled()) {
+		progress.worked(1);
+		if (token instanceof Long && !progress.isCanceled()) {
 			moduleTime = ((Long) token).longValue();
 			long buildTime = moduleTime * 1000;
 			if (fFile.getLocalTimeStamp() > buildTime) {
-				monitor.subTask(DisassemblyMessages.EditionFinderJob_task_search_history);
+				progress.subTask(DisassemblyMessages.EditionFinderJob_task_search_history);
 				// get history - recent states first
 				IFileState[] states;
 				try {
-					states = fFile.getHistory(new SubProgressMonitor(monitor, 1));
+					states = fFile.getHistory(progress.split(1));
 				} catch (CoreException e) {
 					states = new IFileState[0];
 				}
@@ -100,10 +100,10 @@ class EditionFinderJob extends Job {
 					}
 				}
 			}
+		} else {
+			progress.worked(1);
 		}
 		fSourceInfo.fEditionJob = null;
-		monitor.worked(1);
-		monitor.done();
 		return Status.OK_STATUS;
 	}
 

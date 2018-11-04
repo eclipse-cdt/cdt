@@ -40,7 +40,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Runs after standard make builder.
@@ -119,9 +119,10 @@ public class ScannerConfigBuilder extends ACBuilder {
 				}
 				int numWork = cfgs.length;
 				if (numWork > 0) {
-					monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), numWork); //$NON-NLS-1$
+					SubMonitor progress = SubMonitor.convert(monitor,
+							MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), numWork); //$NON-NLS-1$
 					for (int i = 0; i < cfgs.length; i++) {
-						build(cfgs[i], 0, new SubProgressMonitor(monitor, 1));
+						build(cfgs[i], 0, progress.split(1));
 					}
 				}
 			}
@@ -149,13 +150,13 @@ public class ScannerConfigBuilder extends ACBuilder {
 			int num = infoMap.size();
 			if (num != 0) {
 				Properties envProps = calcEnvironment(cfg);
-				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), num); //$NON-NLS-1$
+				SubMonitor progress = SubMonitor.convert(monitor,
+						MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), num); //$NON-NLS-1$
 				for (Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : infoMap.entrySet()) {
 					try {
 						CfgInfoContext c = entry.getKey();
 						IScannerConfigBuilderInfo2 buildInfo2 = entry.getValue();
-						build(c, buildInfo2, (flags & (~PERFORM_CORE_UPDATE)), envProps,
-								new SubProgressMonitor(monitor, 1));
+						build(c, buildInfo2, (flags & (~PERFORM_CORE_UPDATE)), envProps, progress.split(1));
 					} catch (CoreException e) {
 						// builder not installed or disabled
 						//			autodiscoveryEnabled = false;
@@ -195,9 +196,9 @@ public class ScannerConfigBuilder extends ACBuilder {
 			boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
 
 			if (autodiscoveryEnabled2 || ((flags & FORCE_DISCOVERY) != 0)) {
-				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-				monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$
-						project.getName());
+				SubMonitor progress = SubMonitor.convert(monitor,
+						MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
+				progress.subTask(project.getName());
 
 				if (env == null)
 					env = calcEnvironment(cfg);
@@ -209,12 +210,11 @@ public class ScannerConfigBuilder extends ACBuilder {
 				if ((flags & SKIP_SI_DISCOVERY) == 0) {
 					if ((instance == null) || !buildInfo2.getProviderIdList().isEmpty())
 						instance = CfgSCJobsUtil.getProviderScannerInfo(project, context, instance, buildInfo2, env,
-								new SubProgressMonitor(monitor, 70));
+								progress.split(70));
 				}
 
 				// update and persist scanner configuration
-				CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2,
-						new SubProgressMonitor(monitor, 30));
+				CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, progress.split(30));
 
 				// Remove the previous discovered path info to ensure it get's regenerated.
 				// TODO we should really only do this if the information has changed

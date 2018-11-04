@@ -31,10 +31,9 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -221,21 +220,15 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 							@Override
 							public void run(IProgressMonitor monitor)
 									throws InvocationTargetException, InterruptedException {
-								final IProgressMonitor fMonitor;
-								if (monitor == null) {
-									fMonitor = new NullProgressMonitor();
-								} else {
-									fMonitor = monitor;
-								}
-								fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-								doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+								SubMonitor progress = SubMonitor.convert(monitor, CUIPlugin.getResourceString(OP_DESC),
+										3);
+								doRunPrologue(progress.split(1));
 								try {
-									doRun(new SubProgressMonitor(fMonitor, 1));
+									doRun(progress.split(1));
 								} catch (CoreException e) {
 									except[0] = e;
 								}
-								doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
-								fMonitor.done();
+								doRunEpilogue(progress.split(1));
 							}
 						});
 						try {

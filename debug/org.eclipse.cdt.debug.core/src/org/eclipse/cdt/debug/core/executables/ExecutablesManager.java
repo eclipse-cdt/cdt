@@ -59,7 +59,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -510,7 +509,7 @@ public class ExecutablesManager extends PlatformObject
 	public void importExecutables(final String[] fileNames, IProgressMonitor monitor) {
 
 		boolean handled = false;
-		monitor.beginTask("Import Executables", executableImporters.size()); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, "Import Executables", executableImporters.size()); //$NON-NLS-1$
 		synchronized (executableImporters) {
 			Collections.sort(executableImporters, new Comparator<IExecutableImporter>() {
 
@@ -527,7 +526,7 @@ public class ExecutablesManager extends PlatformObject
 			});
 
 			for (IExecutableImporter importer : executableImporters) {
-				handled = importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+				handled = importer.importExecutables(fileNames, progress.split(1));
 				if (handled || monitor.isCanceled()) {
 					break;
 				}
@@ -584,9 +583,10 @@ public class ExecutablesManager extends PlatformObject
 				}
 			});
 
-			monitor.beginTask("Finding source files in " + executable.getName(), sourceFileProviders.size() * 1000); //$NON-NLS-1$
+			SubMonitor progress = SubMonitor.convert(monitor, "Finding source files in " + executable.getName(), //$NON-NLS-1$
+					sourceFileProviders.size() * 1000);
 			for (ISourceFilesProvider provider : sourceFileProviders) {
-				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1000));
+				String[] sourceFiles = provider.getSourceFiles(executable, progress.split(1000));
 				if (sourceFiles.length > 0) {
 					result = sourceFiles;
 					if (Trace.DEBUG_EXECUTABLES)
@@ -615,12 +615,12 @@ public class ExecutablesManager extends PlatformObject
 		MultiStatus status = new MultiStatus(CDebugCorePlugin.PLUGIN_ID, IStatus.WARNING,
 				"Couldn't remove all of the selected executables", null); //$NON-NLS-1$
 
-		monitor.beginTask("Remove Executables", executables.length); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, "Remove Executables", executables.length); //$NON-NLS-1$
 		for (Executable executable : executables) {
 
 			IProjectExecutablesProvider provider = getExecutablesProviderForProject(executable.getProject());
 			if (provider != null) {
-				IStatus result = provider.removeExecutable(executable, new SubProgressMonitor(monitor, 1));
+				IStatus result = provider.removeExecutable(executable, progress.split(1));
 				if (!result.isOK()) {
 					status.add(result);
 				}

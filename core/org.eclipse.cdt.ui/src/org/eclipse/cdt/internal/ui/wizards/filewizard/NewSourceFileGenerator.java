@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 
@@ -123,8 +123,6 @@ public class NewSourceFileGenerator {
 		int totalWork = 100;
 		int createFileWork = totalWork;
 
-		monitor.beginTask(NewFileWizardMessages.NewSourceFileGenerator_createFile_task, totalWork);
-
 		IWorkspaceRoot root = CUIPlugin.getWorkspace().getRoot();
 		IFile newFile = root.getFileForLocation(newFilePath);
 		if (newFile == null)
@@ -134,18 +132,19 @@ public class NewSourceFileGenerator {
 			return newFile;
 		}
 
+		SubMonitor progress = SubMonitor.convert(monitor, NewFileWizardMessages.NewSourceFileGenerator_createFile_task,
+				totalWork);
 		if (newFilePath.segmentCount() > 1) {
 			IPath containerPath = newFilePath.removeLastSegments(1);
 			if (root.getContainerForLocation(containerPath) == null) {
 				int containerWork = totalWork / 2;
 				createFileWork = totalWork / 2;
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
-				generator.generateContainer(new SubProgressMonitor(monitor, containerWork));
+				generator.generateContainer(progress.split(containerWork));
 			}
 		}
 
-		createFile(newFile, contents, force, new SubProgressMonitor(monitor, createFileWork));
-		monitor.done();
+		createFile(newFile, contents, force, progress.split(createFileWork));
 
 		return newFile;
 	}

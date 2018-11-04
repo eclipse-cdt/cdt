@@ -73,7 +73,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -279,7 +279,7 @@ public class HeadlessBuilder implements IApplication {
 			for (ICConfigurationDescription cfgDesc : cfgDescs)
 				configs[i++] = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
 
-			ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true, buildType);
+			ManagedBuildManager.buildConfigurations(configs, null, SubMonitor.convert(monitor, 1), true, buildType);
 		}
 	}
 

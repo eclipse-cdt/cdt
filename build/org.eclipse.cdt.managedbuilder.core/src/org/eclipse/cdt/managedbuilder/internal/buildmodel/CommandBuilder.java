@@ -30,9 +30,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  *
@@ -99,18 +98,16 @@ public class CommandBuilder implements IBuildModelBuilder {
 	public int build(OutputStream out, OutputStream err, IProgressMonitor monitor) {
 		int status = STATUS_ERROR_LAUNCH;
 
+		SubMonitor progress = SubMonitor.convert(monitor,
+				ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + getCommandLine(), //$NON-NLS-1$
+				getNumCommands() + 1);
 		try {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask("", getNumCommands()); //$NON-NLS-1$
-			monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + getCommandLine()); //$NON-NLS-1$
 
 			ICommandLauncher launcher = createLauncher();
 			launcher.showCommand(true);
 
 			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()),
-					fCmd.getCWD(), monitor);
+					fCmd.getCWD(), progress.split(1));
 			if (fProcess != null) {
 				try {
 					// Close the input of the process since we will never write to it
@@ -119,7 +116,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 				}
 
 				// Wrapping out and err streams to avoid their closure
-				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor, getNumCommands()));
+				int st = launcher.waitAndRead(wrap(out), wrap(err), progress.split(getNumCommands()));
 				switch (st) {
 				case ICommandLauncher.OK:
 					// assuming that compiler returns error code after compilation errors
@@ -144,7 +141,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 					"Error launching command [" + fCmd.getCommand() + "]", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			status = STATUS_ERROR_LAUNCH;
 		} finally {
-			monitor.done();
+			progress.done();
 		}
 
 		return status;

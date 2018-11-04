@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -673,12 +674,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				try {
 					IProgressMonitor buildMonitor = new LaunchUtils.BuildProgressMonitor(monitor, 10,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-					buildMonitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10);
-					buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild);
-					if (buildForLaunch(configuration, mode, new SubProgressMonitor(buildMonitor, 7))) {
-						buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild);
+					SubMonitor progress = SubMonitor.convert(buildMonitor,
+							LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10);
+					progress.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild);
+					if (buildForLaunch(configuration, mode, progress.split(7))) {
+						progress.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild);
 						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
-								new SubProgressMonitor(buildMonitor, 3));
+								progress.split(3));
 					} else {
 						buildMonitor.worked(3); /* No incremental build required */
 					}
@@ -798,9 +800,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		int scale = 1000;
 		int totalWork = 2 * scale;
 
+		SubMonitor progress = SubMonitor.convert(monitor, LaunchMessages.AbstractCLaunchDelegate_20, totalWork);
 		try {
-			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_20, totalWork);
-
 			// build project list
 			orderedProjects = null;
 			ICProject cProject = CDebugUtils.getCProject(configuration);
@@ -810,12 +811,12 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				getReferencedProjectSet(project, projectSet);
 				orderedProjects = getBuildOrder(new ArrayList(projectSet));
 			}
-			monitor.worked(scale);
+			progress.worked(scale);
 
 			// do generic launch checks
-			return super.preLaunchCheck(configuration, mode, new SubProgressMonitor(monitor, scale));
+			return super.preLaunchCheck(configuration, mode, progress.split(scale));
 		} finally {
-			monitor.done();
+			progress.done();
 		}
 	}
 

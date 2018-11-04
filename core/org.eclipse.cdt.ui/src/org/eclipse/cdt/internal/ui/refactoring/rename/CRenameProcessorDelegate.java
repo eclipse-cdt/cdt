@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -209,7 +209,8 @@ public abstract class CRenameProcessorDelegate {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context)
 			throws CoreException, OperationCanceledException {
 		RefactoringStatus result = new RefactoringStatus();
-		monitor.beginTask(RenameMessages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
+		SubMonitor progress = SubMonitor.convert(monitor,
+				RenameMessages.CRenameProcessorDelegate_task_checkFinalCondition, 3);
 		IFile file = getArgument().getSourceFile();
 		//assert file != null;
 
@@ -224,8 +225,8 @@ public abstract class CRenameProcessorDelegate {
 		}
 		IStatus stat = txtSearch.searchWord(filesToSearch.toArray(new IFile[filesToSearch.size()]), getSearchScope(),
 				file, getSelectedWorkingSet(), getManager().getCCppPatterns(), getArgument().getName(),
-				new SubProgressMonitor(monitor, 1), fMatches);
-		if (monitor.isCanceled()) {
+				progress.split(1), fMatches);
+		if (progress.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 		result.merge(RefactoringStatus.create(stat));
@@ -233,7 +234,7 @@ public abstract class CRenameProcessorDelegate {
 			return result;
 		}
 		selectMatchesByLocation(fMatches);
-		analyzeTextMatches(renameBindings, fMatches, new SubProgressMonitor(monitor, 1), result);
+		analyzeTextMatches(renameBindings, fMatches, progress.split(1), result);
 		if (result.hasFatalError()) {
 			return result;
 		}
@@ -291,7 +292,7 @@ public abstract class CRenameProcessorDelegate {
 			fRenameModifications.buildDelta(deltaFactory);
 			fRenameModifications.buildValidateEdits(editChecker);
 		}
-		monitor.done();
+		progress.worked(1);
 		return result;
 	}
 

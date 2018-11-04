@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -357,11 +357,13 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		boolean dstore = prefStore.getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
 
 		try {
-			monitor.beginTask(LaunchMessages.MultiLaunchConfigurationDelegate_0 + configuration.getName(), 1000);
 
 			prefStore.setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 
 			List<LaunchElement> launches = createLaunchElements(configuration, new ArrayList<LaunchElement>());
+			SubMonitor progress = SubMonitor.convert(monitor,
+					LaunchMessages.MultiLaunchConfigurationDelegate_0 + configuration.getName(),
+					1050 * launches.size());
 			for (LaunchElement le : launches) {
 				if (!le.enabled)
 					continue;
@@ -396,8 +398,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 						throw new StackOverflowError();
 
 					// LAUNCH child here
-					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode,
-							new SubProgressMonitor(monitor, 1000 / launches.size()));
+					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, progress.split(1000));
 					((MultiLaunch) launch).addSubLaunch(subLaunch);
 
 					// Now that we added the launch in our list, we have already
@@ -410,7 +411,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					//for repeating the experience
 					DebugUIPlugin.getDefault().getLaunchConfigurationManager().setRecentLaunch(launch);
 
-					postLaunchAction(subLaunch, le.action, le.actionParam, monitor);
+					postLaunchAction(subLaunch, le.action, le.actionParam, progress.split(50));
 
 				} catch (StackOverflowError e) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {

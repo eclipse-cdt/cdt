@@ -52,6 +52,40 @@
       "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "354fa86b_40005229",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-06T00:24:54Z",
+      "side": 1,
+      "message": "nit: space before \u0027(\u0027",
+      "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31143eae_c9a27773",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2744,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-06T00:24:54Z",
+      "side": 1,
+      "message": "likewise",
+      "revId": "fda01aaebdd91c131163b8408354dfdfb279c1c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -18,3 +18,4 @@ Export-Package: org.eclipse.launchbar.ui,
  org.eclipse.launchbar.ui.internal.commands;x-internal:=true,
  org.eclipse.launchbar.ui.internal.dialogs;x-internal:=true,
  org.eclipse.launchbar.ui.target
+Automatic-Module-Name: org.eclipse.launchbar.ui

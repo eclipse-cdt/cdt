@@ -14,3 +14,4 @@ Export-Package: org.eclipse.launchbar.core,
  org.eclipse.launchbar.core.internal;x-friends:="org.eclipse.launchbar.core.tests,org.eclipse.launchbar.ui",
  org.eclipse.launchbar.core.target,
  org.eclipse.launchbar.core.target.launch
+Automatic-Module-Name: org.eclipse.launchbar.core

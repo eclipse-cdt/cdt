@@ -21,3 +21,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.launchbar.ui.controls.internal;x-friends:="org.eclipse.launchbar.ui.tests"
+Automatic-Module-Name: org.eclipse.launchbar.ui.controls

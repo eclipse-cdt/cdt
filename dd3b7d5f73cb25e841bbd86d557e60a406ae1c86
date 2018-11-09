@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7fba4735_3ac16acd",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/actions/UpdateMakeProjectAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2018-11-09T05:20:50Z",
+      "side": 1,
+      "message": "correct",
+      "parentUuid": "c64fd7e9_ceaf7b09",
+      "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d4c5fdd_1d02ad38",
         "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/wizards/ConvertToMakeProjectWizard.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2018-11-08T20:25:25Z",
       "side": 1,
       "message": "I don\u0027t get this. If progress has only one tick, then this consumes one too many now. And anyway, if there\u0027s only one operation using the monitor, why not simply pass it though: super.doRun(progress);",
+      "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff735c80_e64ba59b",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/wizards/ConvertToMakeProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2018-11-09T05:20:50Z",
+      "side": 1,
+      "message": "totally agree",
+      "parentUuid": "7d4c5fdd_1d02ad38",
       "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "eae99f3d_e13a7530",
+        "filename": "build/org.eclipse.cdt.make.ui/src/org/eclipse/cdt/make/ui/wizards/NewMakeCCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2018-11-09T05:20:50Z",
+      "side": 1,
+      "message": "sometimes I\u0027m confused when braces wanted or not. I remember a similar change where it was the opposite. Will add this.",
+      "parentUuid": "8ef0cf48_3fc997e7",
+      "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0171c7b7_2b54cacc",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/CommandBuilder.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2018-11-08T20:25:25Z",
       "side": 1,
       "message": "Using \"progress\" here and in line 114 will give strange effects. I don\u0027t know where the bulk of the work (from the Java side) happens, but probably in waitAndRead in line 114. If so, how about:\n\n* init with getNumCommands() + 1 ticks above\n* do a progress.split(1) here?",
+      "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1dd9dad5_48cb87df",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/CommandBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 12380
+      },
+      "writtenOn": "2018-11-09T05:20:50Z",
+      "side": 1,
+      "message": "good catch",
+      "parentUuid": "0171c7b7_2b54cacc",
       "revId": "dd3b7d5f73cb25e841bbd86d557e60a406ae1c86",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

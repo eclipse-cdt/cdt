@@ -6,18 +6,15 @@
 
     <parent>
         <groupId>org.eclipse.cdt</groupId>
-        <artifactId>org.eclipse.lsp4e.cpp-parent</artifactId>
-        <version>9.6.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+		<artifactId>cdt-parent</artifactId>
+		<version>9.6.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
     </parent>
 
     <version>1.0.0-SNAPSHOT</version>
-    <artifactId>org.eclipse.lsp4e.cpp.language.tests</artifactId>
+    <artifactId>org.eclipse.cdt.lsp.core.tests</artifactId>
     <packaging>eclipse-test-plugin</packaging>
 
-    <properties>
-        <skipTests>${lsp4e-cpp.skip.tests}</skipTests>
-    </properties>
     <build>
         <plugins>
             <plugin>

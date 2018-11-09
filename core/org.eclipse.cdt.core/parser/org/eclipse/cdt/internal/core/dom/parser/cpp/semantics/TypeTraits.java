@@ -475,7 +475,10 @@ public class TypeTraits {
 	public static IType underlyingType(IType type) {
 		if (CPPTemplates.isDependentType(type)) {
 			return new CPPUnaryTypeTransformation(Operator.underlying_type, type);
-		} else if (!(type instanceof ICPPEnumeration)) {
+		}
+		
+		type = SemanticUtil.getSimplifiedType(type);
+		if (!(type instanceof ICPPEnumeration)) {
 			return ProblemType.ENUMERATION_EXPECTED;
 		} else {
 			ICPPEnumeration enumeration = (ICPPEnumeration) type;

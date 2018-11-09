@@ -11346,6 +11346,23 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPBasicType.LONG);
 	}
 	
+	//	template <typename T>
+	//	struct underlying_type {
+	//	    typedef __underlying_type(T) type;
+	//	};
+	//
+	//	enum class FooBar { Foo, Bar };
+	//	using Alias = FooBar;
+	//
+	//	void bar(underlying_type<Alias>::type);
+	//
+	//	void test() {
+	//	  bar(2);
+	//	}
+	public void testUnderlyingType_540909() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+	}
+	
 	//	void ptrFunc(void*);
 	//	void intFunc(int);
 	//	void foo(int* pi, unsigned i) {

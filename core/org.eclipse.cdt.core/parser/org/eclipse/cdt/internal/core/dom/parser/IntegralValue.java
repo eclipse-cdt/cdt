@@ -65,7 +65,6 @@ public class IntegralValue implements IValue {
 
 	private static int sUnique= 0;
 
-	// The following invariant always holds: (fFixedValue == null) != (fEvaluation == null)
 	private final char[] fFixedValue;
 
 	private IntegralValue(char[] fixedValue) {
@@ -291,5 +290,14 @@ public class IntegralValue implements IValue {
 	@Override
 	public IValue clone() {
 		return new IntegralValue(Arrays.copyOf(fFixedValue, fFixedValue.length));
+	}
+	
+	@Override
+	public boolean isEquivalentTo(IValue other) {
+		if (!(other instanceof IntegralValue)) {
+			return false;
+		}
+		IntegralValue o = (IntegralValue) other;
+		return fFixedValue.equals(o.fFixedValue);
 	}
 }

@@ -212,4 +212,72 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return argument;
 	}
+	
+	protected static boolean areEquivalentOrNull(ICPPEvaluation a, ICPPEvaluation b) {
+		if (a == null) {
+			return (b == null);
+		}
+		return a.isEquivalentTo(b);
+	}
+	
+	protected static boolean areEquivalentEvaluations(ICPPEvaluation[] a, ICPPEvaluation[] b) {
+		if (a == null) {
+			return (b == null);
+		}
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (!a[i].isEquivalentTo(b[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected static boolean areEquivalentArguments(ICPPTemplateArgument[] a, ICPPTemplateArgument[] b) {
+		if (a == null) {
+			return (b == null);
+		}
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (!a[i].isSameValue(b[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected static boolean areEquivalentTypes(IType[] a, IType[] b) {
+		if (a == null) {
+			return (b == null);
+		}
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (!a[i].isSameType(b[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected static <T extends IBinding> boolean areEquivalentBindings(T[] a, T[] b) {
+		if (a == null) {
+			return (b == null);
+		}
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (!a[i].equals(b[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

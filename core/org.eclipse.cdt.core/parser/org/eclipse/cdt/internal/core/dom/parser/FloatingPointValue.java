@@ -163,4 +163,13 @@ public final class FloatingPointValue implements IValue {
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
 		return new FloatingPointValue(buf.getCharArray());
 	}
+	
+	@Override
+	public boolean isEquivalentTo(IValue other) {
+		if (!(other instanceof FloatingPointValue)) {
+			return false;
+		}
+		FloatingPointValue o = (FloatingPointValue) other;
+		return fFixedValue.equals(o.fFixedValue);
+	}
 }

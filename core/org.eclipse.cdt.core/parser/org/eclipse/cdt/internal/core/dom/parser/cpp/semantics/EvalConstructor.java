@@ -114,6 +114,17 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalConstructor)) {
+			return false;
+		}
+		EvalConstructor o = (EvalConstructor) other;
+		return fType.isSameType(o.fType)
+			&& fConstructor == o.fConstructor
+			&& areEquivalentEvaluations(fArguments, o.fArguments);
+	}
+	
+	@Override
 	public IType getType() {
 		return fType;
 	}

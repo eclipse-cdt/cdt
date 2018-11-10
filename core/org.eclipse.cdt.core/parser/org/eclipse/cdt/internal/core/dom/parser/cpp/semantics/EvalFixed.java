@@ -112,6 +112,16 @@ public final class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalFixed)) {
+			return false;
+		}
+		EvalFixed o = (EvalFixed) other;
+		return fType.isSameType(o.fType)
+			&& fValue.isEquivalentTo(o.fValue);
+	}
+	
+	@Override
 	public IType getType() {
 		return fType;
 	}

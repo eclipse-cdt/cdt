@@ -114,4 +114,10 @@ public interface IValue {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void marshal(ITypeMarshalBuffer buffer) throws CoreException;
+	
+	/**
+	 * Returns true if this value is equivalent to 'other' for declaration matching purposes.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	boolean isEquivalentTo(IValue other);
 }

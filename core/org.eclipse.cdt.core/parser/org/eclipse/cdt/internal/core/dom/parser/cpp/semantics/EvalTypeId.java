@@ -232,6 +232,18 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalTypeId)) {
+			return false;
+		}
+		EvalTypeId o = (EvalTypeId) other;
+		return fInputType.isSameType(o.fInputType)
+			&& areEquivalentEvaluations(fArguments, o.fArguments)
+			&& fRepresentsNewExpression == o.fRepresentsNewExpression
+			&& fUsesBracedInitList == o.fUsesBracedInitList;
+	}
+	
+	@Override
 	public ValueCategory getValueCategory() {
 		return valueCategoryFromReturnType(fInputType);
 	}

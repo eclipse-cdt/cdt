@@ -159,6 +159,15 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalFunctionSet)) {
+			return false;
+		}
+		EvalFunctionSet o = (EvalFunctionSet) other;
+		return fFunctionSet.equals(o.fFunctionSet);
+	}
+	
+	@Override
 	public IType getType() {
 		return new FunctionSetType(fFunctionSet, fAddressOf);
 	}

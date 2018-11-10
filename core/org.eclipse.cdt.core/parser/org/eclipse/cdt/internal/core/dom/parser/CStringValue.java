@@ -241,4 +241,13 @@ public final class CStringValue implements IValue {
 	public String toString() {
 		return new String(fFixedValue);
 	}
+	
+	@Override
+	public boolean isEquivalentTo(IValue other) {
+		if (!(other instanceof CStringValue)) {
+			return false;
+		}
+		CStringValue o = (CStringValue) other;
+		return fFixedValue.equals(o.fFixedValue);
+	}
 }

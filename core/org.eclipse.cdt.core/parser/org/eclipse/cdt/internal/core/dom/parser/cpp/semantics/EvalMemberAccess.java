@@ -188,6 +188,18 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		return false;
 	}
 
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalMemberAccess)) {
+			return false;
+		}
+		EvalMemberAccess o = (EvalMemberAccess) other;
+		return fOwnerType.isSameType(o.fOwnerType)
+			&& fMember == o.fMember
+			&& fOwnerValueCategory == o.fOwnerValueCategory
+			&& fIsPointerDeref == o.fIsPointerDeref;
+	}
+	
 	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref,
 			Collection<ICPPFunction> functionBindings, boolean returnDependent) {
     	IType type= fieldOwnerExpressionType;

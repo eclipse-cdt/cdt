@@ -87,6 +87,15 @@ public class EvalInitList extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalInitList)) {
+			return false;
+		}
+		EvalInitList o = (EvalInitList) other;
+		return areEquivalentEvaluations(fClauses, o.fClauses);
+	}
+	
+	@Override
 	public IType getType() {
 		return new InitializerListType(this);
 	}

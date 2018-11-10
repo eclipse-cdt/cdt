@@ -74,6 +74,15 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalCompoundStatementExpression)) {
+			return false;
+		}
+		EvalCompoundStatementExpression o = (EvalCompoundStatementExpression) other;
+		return fDelegate.isEquivalentTo(o.fDelegate);
+	}
+	
+	@Override
 	public IType getType() {
 		return fDelegate.getType();
 	}

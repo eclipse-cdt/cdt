@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -154,6 +155,21 @@ public class EvalID extends CPPDependentEvaluation {
 		return false;
 	}
 
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalID)) {
+			return false;
+		}
+		EvalID o = (EvalID) other;
+		return areEquivalentOrNull(fFieldOwner, o.fFieldOwner)
+			&& CharArrayUtils.equals(fName, o.fName)
+			&& fNameOwner == o.fNameOwner
+			&& fAddressOf == o.fAddressOf
+			&& fQualified == o.fQualified
+			&& fIsPointerDeref == o.fIsPointerDeref
+			&& areEquivalentArguments(fTemplateArgs, o.fTemplateArgs);
+	}
+	
 	@Override
 	public IType getType() {
 		return new TypeOfDependentExpression(this);

@@ -96,6 +96,15 @@ public class EvalComma extends CPPDependentEvaluation {
 		return true;
 	}
 
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalComma)) {
+			return false;
+		}
+		EvalComma o = (EvalComma) other;
+		return areEquivalentEvaluations(fArguments, o.fArguments);
+	}
+	
 	public ICPPFunction[] getOverloads() {
 		if (fOverloads == null) {
 			fOverloads= computeOverloads();

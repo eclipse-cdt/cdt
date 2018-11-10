@@ -79,6 +79,16 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalCompositeAccess)) {
+			return false;
+		}
+		EvalCompositeAccess o = (EvalCompositeAccess) other;
+		return parent.isEquivalentTo(o.parent)
+			&& elementId == o.elementId;
+	}
+	
+	@Override
 	public IType getType() {
 		IType type = getParent().getType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);

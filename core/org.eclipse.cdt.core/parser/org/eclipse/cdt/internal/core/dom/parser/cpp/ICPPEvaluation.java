@@ -46,6 +46,13 @@ public interface ICPPEvaluation {
 	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	boolean isConstantExpression();
+	
+	
+	/**
+	 * Returns {@code true} if this expression is equivalent to 'other' for
+	 * declaration matching purposes.
+	 */
+	boolean isEquivalentTo(ICPPEvaluation other);
 
 	/**
 	 * Returns the type of the expression.

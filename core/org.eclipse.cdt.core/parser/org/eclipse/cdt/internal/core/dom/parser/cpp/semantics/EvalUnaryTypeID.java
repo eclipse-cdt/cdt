@@ -137,6 +137,16 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalUnaryTypeID)) {
+			return false;
+		}
+		EvalUnaryTypeID o = (EvalUnaryTypeID) other;
+		return fOperator == o.fOperator
+			&& fOrigType.isSameType(o.fOrigType);
+	}
+	
+	@Override
 	public IType getType() {
 		if (fType == null)
 			fType= computeType();

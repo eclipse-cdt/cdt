@@ -65,7 +65,7 @@ public class TypeOfDependentExpression extends CPPUnknownBinding implements ICPP
 	@Override
 	public boolean isSameType(IType type) {
 		return type instanceof TypeOfDependentExpression
-				&& fEvaluation == ((TypeOfDependentExpression) type).fEvaluation;
+				&& fEvaluation.isEquivalentTo(((TypeOfDependentExpression) type).fEvaluation);
 	}
 
 	@Override

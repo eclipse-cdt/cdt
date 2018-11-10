@@ -70,6 +70,15 @@ public class EvalPackExpansion extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalPackExpansion)) {
+			return false;
+		}
+		EvalPackExpansion o = (EvalPackExpansion) other;
+		return fExpansionPattern.isEquivalentTo(o.fExpansionPattern);
+	}
+	
+	@Override
 	public IType getType() {
 		if (fType == null) {
 			IType type = fExpansionPattern.getType();

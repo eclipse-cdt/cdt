@@ -164,6 +164,17 @@ public class EvalConditional extends CPPDependentEvaluation {
 			&& fNegative.isConstantExpression();
 	}
 
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalConditional)) {
+			return false;
+		}
+		EvalConditional o = (EvalConditional) other;
+		return fCondition.isEquivalentTo(o.fCondition)
+			&& areEquivalentOrNull(fPositive, o.fPositive)
+			&& fNegative.isEquivalentTo(o.fNegative);
+	}
+	
 	private void evaluate() {
     	if (fValueCategory != null)
     		return;

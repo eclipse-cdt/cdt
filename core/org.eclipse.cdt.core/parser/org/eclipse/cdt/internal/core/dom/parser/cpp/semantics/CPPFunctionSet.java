@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
@@ -110,5 +111,16 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 		} catch (DOMException e) {
 			return super.toString();
 		}
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof CPPFunctionSet)) {
+			return false;
+		}
+		CPPFunctionSet o = (CPPFunctionSet) other;
+		return CPPEvaluation.areEquivalentBindings(fBindings, o.fBindings)
+			&& fName == o.fName
+			&& CPPEvaluation.areEquivalentArguments(fTemplateArguments, o.fTemplateArguments);
 	}
 }

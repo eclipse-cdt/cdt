@@ -261,6 +261,19 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalBinding)) {
+			return false;
+		}
+		EvalBinding o = (EvalBinding) other;
+		if (fBinding != null) {
+			return fBinding == o.fBinding;
+		}
+		return fParameterOwner == o.fParameterOwner
+			&& fParameterPosition == o.fParameterPosition;
+	}
+	
+	@Override
 	public IType getType() {
 		if (fType == null) {
 			fType= computeType();

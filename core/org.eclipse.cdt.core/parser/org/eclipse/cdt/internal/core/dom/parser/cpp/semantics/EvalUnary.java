@@ -171,6 +171,16 @@ public class EvalUnary extends CPPDependentEvaluation {
 			&& isNullOrConstexprFunc(getOverload());
 	}
 
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalUnary)) {
+			return false;
+		}
+		EvalUnary o = (EvalUnary) other;
+		return fOperator == o.fOperator
+			&& fArgument.isEquivalentTo(o.fArgument);
+	}
+	
 	public ICPPFunction getOverload() {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
 			fOverload= computeOverload();

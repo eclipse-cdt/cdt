@@ -299,4 +299,25 @@ public final class CompositeValue implements IValue {
 		}
 		return new CompositeValue(evaluation, values);
 	}
+	
+	@Override
+	public boolean isEquivalentTo(IValue other) {
+		if (!(other instanceof CompositeValue)) {
+			return false;
+		}
+		CompositeValue o = (CompositeValue) other;
+		if (!((evaluation == null && o.evaluation == null) || 
+			  (evaluation.isEquivalentTo(o.evaluation)))) {
+			return false;
+		}
+		if (values.length != o.values.length) {
+			return false;
+		}
+		for (int i = 0; i < values.length; i++) {
+			if (!values[i].isEquivalentTo(o.values[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

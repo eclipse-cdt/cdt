@@ -126,6 +126,15 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	private boolean computeIsConstantExpression() {
 		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
 	}
+	
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalFunctionCall)) {
+			return false;
+		}
+		EvalFunctionCall o = (EvalFunctionCall) other;
+		return areEquivalentEvaluations(fArguments, o.fArguments);
+	}
 
 	public ICPPFunction getOverload() {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {

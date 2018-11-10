@@ -108,6 +108,17 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	public boolean isConstantExpression() {
 		return true;
 	}
+	
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalBinaryTypeId)) {
+			return false;
+		}
+		EvalBinaryTypeId o = (EvalBinaryTypeId) other;
+		return fOperator == o.fOperator
+			&& fType1.isSameType(o.fType1)
+			&& fType2.isSameType(o.fType2);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {

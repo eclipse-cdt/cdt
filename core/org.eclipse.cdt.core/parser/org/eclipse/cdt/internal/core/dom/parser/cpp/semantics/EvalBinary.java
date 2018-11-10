@@ -256,6 +256,17 @@ public class EvalBinary extends CPPDependentEvaluation {
 		}
 		return fIsConstantExpression;
 	}
+	
+	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalBinary)) {
+			return false;
+		}
+		EvalBinary o = (EvalBinary) other;
+		return fOperator == o.fOperator
+			&& fArg1.isEquivalentTo(o.fArg1)
+			&& fArg2.isEquivalentTo(o.fArg2);
+	}
 
 	private boolean computeIsConstantExpression() {
 		return fArg1.isConstantExpression()

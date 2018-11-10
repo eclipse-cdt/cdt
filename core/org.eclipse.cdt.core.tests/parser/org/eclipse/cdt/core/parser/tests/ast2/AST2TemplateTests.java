@@ -9018,6 +9018,20 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <typename T>
+	//	T __declval();
+	//
+	//	template <typename T>
+	//	decltype(__declval<T>()) declval();
+	//
+	//	template <typename T>
+	//	decltype(__declval<T>()) declval();
+	//
+	//	using T = decltype(declval<int>());
+	public void testDeclvalDeclaration_540957() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename T> 
 	//	class meta {
 	//	    typedef T type;

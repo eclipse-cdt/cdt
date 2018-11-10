@@ -82,6 +82,13 @@ public class EvalReference extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		// This probably doesn't need to be implemented as this evaluation type
+		// only arises as an intermediate artifact during constexpr processing.
+		return false;
+	}
+	
+	@Override
 	public IType getType() {
 		return getTargetEvaluation().getType();
 	}

@@ -85,6 +85,16 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 	}
 
 	@Override
+	public boolean isEquivalentTo(ICPPEvaluation other) {
+		if (!(other instanceof EvalNaryTypeId)) {
+			return false;
+		}
+		EvalNaryTypeId o = (EvalNaryTypeId) other;
+		return fOperator == o.fOperator
+			&& areEquivalentTypes(fOperands, o.fOperands);
+	}
+	
+	@Override
 	public IType getType() {
 		switch (fOperator) {
 		case __is_trivially_constructible:

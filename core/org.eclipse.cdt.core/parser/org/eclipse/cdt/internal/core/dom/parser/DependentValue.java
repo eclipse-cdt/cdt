@@ -128,4 +128,12 @@ public class DependentValue implements IValue {
 		return new DependentValue(fEvaluation);
 	}
 
+	@Override
+	public boolean isEquivalentTo(IValue other) {
+		if (!(other instanceof DependentValue)) {
+			return false;
+		}
+		DependentValue o = (DependentValue) other;
+		return fEvaluation.isEquivalentTo(o.fEvaluation);
+	}
 }

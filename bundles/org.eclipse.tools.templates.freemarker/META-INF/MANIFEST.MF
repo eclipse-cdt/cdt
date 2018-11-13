@@ -13,5 +13,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.freemarker
 Bundle-Vendor: %providerName
-Import-Package: javax.xml.bind;version="2.2.0",
- javax.xml.bind.annotation;version="2.2.0"
+Automatic-Module-Name: org.eclipse.tools.templates.freemarker

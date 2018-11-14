@@ -78,7 +78,7 @@
 <unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.0-photon-rc2/"/>
+<repository location="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12-m2a/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="tm-feature.feature.group" version="0.0.0"/>

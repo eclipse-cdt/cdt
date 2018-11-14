@@ -93,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
@@ -127,6 +128,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpandable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -2685,21 +2687,69 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			break;
 		}
 
+		IToken beforeSimple= mark();
 		try {
 			return simpleDeclaration(option, attributes);
 		} catch (BacktrackException e) {
-			if (option != DeclarationOptions.CPP_MEMBER || declarationMark == null)
+			if (!option.fAllowDeductionGuide || declarationMark == null)
 				throw e;
-			BacktrackException orig = new BacktrackException(e); // copy the exception
-			IToken mark = mark();
-			backup(declarationMark);
+
+			BacktrackException original = new BacktrackException(e);
+			IToken mark= LAcatchEOF(1);
+			backup(beforeSimple);
+
 			try {
-				return usingDeclaration(declarationMark.getOffset());
+				return deductionGuide();
 			} catch (BacktrackException e2) {
+				if (option != DeclarationOptions.CPP_MEMBER) {
+					backup(mark);
+					throw original;
+				}
+			}
+
+			try {
+				backup(declarationMark);
+				return usingDeclaration(declarationMark.getOffset());
+			} catch (BacktrackException e3) {
 				backup(mark);
-				throw orig; // throw original exception;
+				throw original; // throw original exception;
 			}
 		}
+	}
+
+	/**
+	 * Parse a C++ deduction guide declaration
+	 * <p>
+	 * e.g:
+	 * <pre>
+	 * TypeTemplate(int, float) -> TypeTemplate<double>;
+	 * </pre>
+	 * </p>
+	 */
+	private ICPPASTDeductionGuide deductionGuide() throws BacktrackException, EndOfFileException {
+		CPPASTDeductionGuide guide = new CPPASTDeductionGuide();
+		IToken first = LA();
+
+		guide.setExplicit(LT(1) == IToken.t_explicit);
+		if(guide.isExplicit()) {
+			consume();
+		}
+
+		guide.setTemplateName(identifier());
+		IToken last = consume(IToken.tLPAREN);
+		parameterList(last.getOffset(), last.getEndOffset(), guide);
+		consume(IToken.tARROW);
+
+		ICPPASTNameSpecifier nameSpecifier = nameSpecifier(CastExprCtx.eNotInBExpr, new TemplateIdStrategy());
+		if(nameSpecifier instanceof ICPPASTTemplateId) {
+			guide.setSimpleTemplateId((ICPPASTTemplateId) nameSpecifier);
+		} else {
+			throw new BacktrackException();
+		}
+
+		last = consumeOrEOC(IToken.tSEMI);
+		setRange(guide, first.getOffset(), last.getEndOffset());
+		return guide;
 	}
 
 	/**
@@ -2995,6 +3045,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				}
 			}
 			throwBacktrack(LA(1));
+		}
+
+		if(dtor instanceof ICPPASTFunctionDeclarator && ((ICPPASTFunctionDeclarator) dtor).getTrailingReturnType() != null) {
+			if(declSpec instanceof IASTSimpleDeclSpecifier && ((IASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+				// we encountered something that looks like a ctor with trailing return type
+				throw new BacktrackException();
+			}
 		}
 
 		// no function body
@@ -4697,44 +4754,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		int endOffset = last.getEndOffset();
 
 		final ICPPASTFunctionDeclarator fc = getNodeFactory().newFunctionDeclarator(null);
-		ICPPASTParameterDeclaration pd = null;
-		paramLoop: while (true) {
-			switch (LT(1)) {
-			case IToken.tRPAREN:
-			case IToken.tEOC:
-				endOffset = consume().getEndOffset();
-				break paramLoop;
-			case IToken.tELLIPSIS:
-				consume();
-				endOffset = consume(IToken.tRPAREN).getEndOffset();
-				fc.setVarArgs(true);
-				break paramLoop;
-			case IToken.tCOMMA:
-				if (pd == null)
-					throwBacktrack(LA(1));
-				endOffset = consume().getEndOffset();
-				pd = null;
-				break;
-			default:
-				if (pd != null)
-					throwBacktrack(startOffset, endOffset - startOffset);
-
-				pd = parameterDeclaration();
-				fc.addParameterDeclaration(pd);
-				endOffset = calculateEndOffset(pd);
-				break;
-			}
-		}
-		// Handle ambiguity between parameter pack and varargs.
-		if (pd != null) {
-			ICPPASTDeclarator dtor = pd.getDeclarator();
-			if (dtor != null && !(dtor instanceof IASTAmbiguousDeclarator)) {
-				if (dtor.declaresParameterPack() && dtor.getNestedDeclarator() == null && dtor.getInitializer() == null
-						&& dtor.getName().getSimpleID().length == 0) {
-					((IASTAmbiguityParent) fc).replace(pd, new CPPASTAmbiguousParameterDeclaration(pd));
-				}
-			}
-		}
+		endOffset = parameterList(startOffset, endOffset, fc);
 
 		// Consume any number of __attribute__ tokens after the parameters
 		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers, false);
@@ -4844,6 +4864,49 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		return setRange(fc, startOffset, endOffset);
+	}
+
+	private int parameterList(int start, int end, ICPPASTParameterListOwner owner)
+			throws EndOfFileException, BacktrackException {
+		ICPPASTParameterDeclaration pd= null;
+		paramLoop: while (true) {
+			switch (LT(1)) {
+			case IToken.tRPAREN:
+			case IToken.tEOC:
+				end= consume().getEndOffset();
+				break paramLoop;
+			case IToken.tELLIPSIS:
+				consume();
+				end= consume(IToken.tRPAREN).getEndOffset();
+				owner.setVarArgs(true);
+				break paramLoop;
+			case IToken.tCOMMA:
+				if (pd == null)
+					throwBacktrack(LA(1));
+				end= consume().getEndOffset();
+				pd= null;
+				break;
+			default:
+				if (pd != null)
+					throwBacktrack(start, end - start);
+
+				pd = parameterDeclaration();
+				owner.addParameterDeclaration(pd);
+				end = calculateEndOffset(pd);
+				break;
+			}
+		}
+		// Handle ambiguity between parameter pack and varargs.
+		if (pd != null) {
+			ICPPASTDeclarator dtor = pd.getDeclarator();
+			if (dtor != null && !(dtor instanceof IASTAmbiguousDeclarator)) {
+				if (dtor.declaresParameterPack() && dtor.getNestedDeclarator() == null
+						&& dtor.getInitializer() == null && dtor.getName().getSimpleID().length == 0) {
+					((IASTAmbiguityParent) owner).replace(pd, new CPPASTAmbiguousParameterDeclaration(pd));
+				}
+			}
+		}
+		return end;
 	}
 
 	/**

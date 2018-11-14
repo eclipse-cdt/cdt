@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -352,6 +353,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// TODO [cmodel] problem declaration?
 		} else if (declaration instanceof ICPPASTStaticAssertDeclaration) {
 			// ignore
+		} else if (declaration instanceof ICPPASTDeductionGuide) {
+			// TODO [cmodel] deduction guide?
 		} else {
 			assert false : "TODO: " + declaration.getClass().getName(); //$NON-NLS-1$
 		}
@@ -416,6 +419,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration) declaration);
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			// ignore problem declarations (or create special elements for debugging?)
+		} else if (declaration instanceof ICPPASTDeductionGuide){
+			// TODO [cmodel] deduction guide?
 		} else {
 			assert false : "TODO: " + declaration.getClass().getName(); //$NON-NLS-1$
 		}

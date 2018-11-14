@@ -34,14 +34,15 @@ public class DeclarationOptions {
 	final public static int SINGLE_DTOR = 0x4000;
 	final public static int ALLOW_FUNCTION_DEFINITION = 0x8000;
 	final public static int NO_COMPOSITE_SPECIFIER = 0x10000;
+	final public static int ALLOW_DEDUCTION_GUIDE = 0x20000;
 
 	public static final DeclarationOptions GLOBAL = new DeclarationOptions(
-			ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM | ALLOW_FUNCTION_DEFINITION),
+			ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM | ALLOW_FUNCTION_DEFINITION | ALLOW_DEDUCTION_GUIDE),
 			FUNCTION_STYLE_ASM = new DeclarationOptions(
 					ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER | ALLOW_ABSTRACT | ALLOW_FUNCTION_DEFINITION),
 			C_MEMBER = new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
 			CPP_MEMBER = new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | ALLOW_OPAQUE_ENUM
-					| NO_CTOR_STYLE_INITIALIZER | ALLOW_FUNCTION_DEFINITION),
+					| NO_CTOR_STYLE_INITIALIZER | ALLOW_FUNCTION_DEFINITION | ALLOW_DEDUCTION_GUIDE),
 			LOCAL = new DeclarationOptions(ALLOW_OPAQUE_ENUM),
 			PARAMETER = new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS | REQUIRE_SIMPLE_NAME
 					| NO_BRACED_INITIALIZER | NO_CTOR_STYLE_INITIALIZER),
@@ -72,6 +73,7 @@ public class DeclarationOptions {
 	final public boolean fSingleDtor;
 	final public boolean fAllowFunctionDefinition;
 	final public boolean fAllowCompositeSpecifier;
+	final public boolean fAllowDeductionGuide;
 
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier = (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -90,5 +92,6 @@ public class DeclarationOptions {
 		fSingleDtor = (options & SINGLE_DTOR) != 0;
 		fAllowFunctionDefinition = (options & ALLOW_FUNCTION_DEFINITION) != 0;
 		fAllowCompositeSpecifier = (options & NO_COMPOSITE_SPECIFIER) == 0;
+		fAllowDeductionGuide = (options & ALLOW_DEDUCTION_GUIDE) != 0;
 	}
 }

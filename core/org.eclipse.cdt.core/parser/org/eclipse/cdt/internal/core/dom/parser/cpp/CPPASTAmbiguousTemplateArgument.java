@@ -47,6 +47,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		fNodes = new ArrayList<>(2);
 		for (IASTNode node : nodes) {
 			if (node instanceof IASTTypeId || node instanceof IASTExpression) {
+				node.setParent(this);
 				fNodes.add(node);
 			} else {
 				Assert.isLegal(false, node == null ? "null" : node.getClass().getName()); //$NON-NLS-1$

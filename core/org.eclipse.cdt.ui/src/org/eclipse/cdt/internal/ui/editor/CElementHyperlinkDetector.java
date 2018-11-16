@@ -206,12 +206,14 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 	 */
 	private static IRegion getIdentifier(IDocument document, int offset, ILanguage language)
 			throws BadLocationException {
-		IRegion wordRegion = CWordFinder.findWord(document, offset);
-		if (wordRegion != null && wordRegion.getLength() > 0) {
-			String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
-			if (!Character.isDigit(word.charAt(0))) {
-				if (SemanticUtil.isAutoOrDecltype(word) || !isLanguageKeyword(language, word)) {
-					return wordRegion;
+		if (language != null) {
+			IRegion wordRegion = CWordFinder.findWord(document, offset);
+			if (wordRegion != null && wordRegion.getLength() > 0) {
+				String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
+				if (!Character.isDigit(word.charAt(0))) {
+					if (SemanticUtil.isAutoOrDecltype(word) || !isLanguageKeyword(language, word)) {
+						return wordRegion;
+					}
 				}
 			}
 		}

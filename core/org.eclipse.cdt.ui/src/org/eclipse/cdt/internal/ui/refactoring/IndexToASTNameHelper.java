@@ -41,6 +41,10 @@ public class IndexToASTNameHelper {
 		} else if (!(name instanceof IIndexName)) {
 			return null;
 		}
+		
+		if (tu == null) {
+			return null;
+		}
 
 		IndexNameToAstNameMatcher visitor = new IndexNameToAstNameMatcher(tu, (IIndexName) name, index);
 		tu.accept(visitor);

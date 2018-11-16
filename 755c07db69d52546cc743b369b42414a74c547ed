@@ -16,6 +16,24 @@
       "revId": "755c07db69d52546cc743b369b42414a74c547ed",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c9a1416_f2c74746",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-16T10:07:56Z",
+      "side": 1,
+      "message": "Yes, give that a try.",
+      "parentUuid": "707d79ea_83dc2be7",
+      "revId": "755c07db69d52546cc743b369b42414a74c547ed",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

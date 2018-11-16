@@ -46,6 +46,30 @@
       "revId": "54f6c19de27012a9e7662ed5cfcbcf1377583bd6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc81e09a_59da11c7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-11-16T16:30:49Z",
+      "side": 1,
+      "message": "Fair enough. We preserve historic bad behaviour for the timebeing to avoid pain for existing GNU MCU Eclipse plugin users.",
+      "parentUuid": "bcc1ff27_3bc149db",
+      "range": {
+        "startLine": 484,
+        "startChar": 85,
+        "endLine": 484,
+        "endChar": 90
+      },
+      "revId": "54f6c19de27012a9e7662ed5cfcbcf1377583bd6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

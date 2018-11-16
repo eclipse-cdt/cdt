@@ -481,13 +481,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			}
 			if (gdb != null) {
 				IProject project = getProject();
-				gdb = new DebugStringVariableSubstitutor(project).performStringSubstitution(gdb);
+				gdb = new DebugStringVariableSubstitutor(project).performStringSubstitution(gdb, false);
 				return new Path(gdb);
 			} else {
 				return null;
 			}
 		} catch (CoreException e) {
-			GdbPlugin.log(e.getStatus());
+			GdbPlugin.log(e);
 			return null;
 		}
 	}

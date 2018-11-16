@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b71fa83c_11411f1b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-11-16T13:19:49Z",
+      "side": 1,
+      "message": "In what circumstances do we wish to ignore the failure to resolve a string variable here? Intuitively this seems like a bad idea.",
+      "range": {
+        "startLine": 484,
+        "startChar": 85,
+        "endLine": 484,
+        "endChar": 90
+      },
+      "revId": "54f6c19de27012a9e7662ed5cfcbcf1377583bd6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

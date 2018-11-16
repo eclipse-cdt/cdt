@@ -22,6 +22,30 @@
       "revId": "54f6c19de27012a9e7662ed5cfcbcf1377583bd6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcc1ff27_3bc149db",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-16T13:44:30Z",
+      "side": 1,
+      "message": "In the short term the case is that Gnu Eclipse plug-ins have been depending on this for a while - even though it leads you to a bad return from getGdbPath.\n\nAt the moment this method really should not return null ever (which it does if you have true as that causes a CoreException). The reason is that all callers to getGDBPath use the return value without checking for null.\n\nSo it does indeed seem like a bad idea, it is simply the bad idea that has been there for a while now. \n\nThe proper fix would be to handle the case of substitution failing -- and then make sure that Gnu Eclipse plug-ins could resolve.",
+      "parentUuid": "b71fa83c_11411f1b",
+      "range": {
+        "startLine": 484,
+        "startChar": 85,
+        "endLine": 484,
+        "endChar": 90
+      },
+      "revId": "54f6c19de27012a9e7662ed5cfcbcf1377583bd6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a2d8fdca_6eb256c4",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelOperation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-11-16T09:46:30Z",
+      "side": 1,
+      "message": "The original code was creating a new SubProgressMonitor from fMonitor, shouldn\u0027t this be doing the same with the SubMonitor to keep the same functionality?",
+      "range": {
+        "startLine": 454,
+        "startChar": 28,
+        "endLine": 454,
+        "endChar": 32
+      },
+      "revId": "671410ae0664a9dd9eba3585aa08a97861975c9e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

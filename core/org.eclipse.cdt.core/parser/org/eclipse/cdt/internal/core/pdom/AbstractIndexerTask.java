@@ -288,7 +288,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 		private static int getOffset(IIndexMacro[] macros, int m) throws CoreException {
 			if (m < macros.length) {
-				return macros[m].getFileLocation().getNodeOffset();
+				IASTFileLocation fileLoc = macros[m].getFileLocation();
+				if (fileLoc != null) {
+					return fileLoc.getNodeOffset();
+				}
 			}
 			return Integer.MAX_VALUE;
 		}

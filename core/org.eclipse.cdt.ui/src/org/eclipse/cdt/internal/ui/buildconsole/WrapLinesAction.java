@@ -31,16 +31,33 @@ public class WrapLinesAction extends Action {
 	public WrapLinesAction(BuildConsoleViewer viewer) {
 		super(ConsoleMessages.WrapLinesAction_WrapLines); 
 		fConsoleViewer = viewer;
-		setChecked(BuildConsolePreferencePage.isConsoleWrapLines());
-
+		propertyChange();
 		setToolTipText(ConsoleMessages.WrapLinesAction_WrapLines);
 		setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_WRAP_LINE)); 
+	}
+
+	public void propertyChange() {
+		if (BuildConsolePreferencePage.isConsoleWrapLinesAllowed()) {
+			setEnabled(true);
+			setChecked(BuildConsolePreferencePage.isConsoleWrapLines());
+		} else {
+			setEnabled(false);
+			setChecked(false);
+		}
 	}
 
 	private void setWordWrap(boolean wrap) {
 		StyledText styledText = fConsoleViewer.getTextWidget();
 		if (styledText != null) {
-			styledText.setWordWrap(wrap);
+			// It should not be possible for setWordWrap when disabled (aka
+			// isConsoleWrapLinesAllowed != true) - however if someone calls
+			// the method (or setChecked) programatically, ensure we don't
+			// let the wordwrap come on
+			if (BuildConsolePreferencePage.isConsoleWrapLinesAllowed() && wrap) {
+				styledText.setWordWrap(wrap);
+			} else {
+				styledText.setWordWrap(false);
+			}
 		}
 	}
 

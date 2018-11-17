@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -28,7 +29,10 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersWizard;
 
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -36,6 +40,10 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_WRAP_LINES = "buildConsoleWrapLines"; //$NON-NLS-1$
+	/**
+	 * Maximum number of lines for which the wrap lines is enabled in the build console
+	 */
+	public static final String PREF_BUILDCONSOLE_WRAP_LINES_MAX = "buildConsoleWrapLinesMax"; //$NON-NLS-1$
 
 	// In font registry
 	public static final String PREF_BUILDCONSOLE_FONT = "org.eclipse.cdt.ui.buildconsole.ConsoleFont"; //$NON-NLS-1$
@@ -66,6 +74,9 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	 * delay.
 	 */
 	public static final int DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS = 75;
+	private BooleanFieldEditor2 consoleWrapLines;
+	private IntegerFieldEditor buildCount;
+	private IntegerFieldEditor wrapLinesMax;
 
 	
 	public BuildConsolePreferencePage() {
@@ -92,11 +103,12 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		BooleanFieldEditor consoleOnTop = new BooleanFieldEditor(PREF_CONSOLE_ON_TOP,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleOnTop.label"), parent); //$NON-NLS-1$
 		addField(consoleOnTop);
-		BooleanFieldEditor consoleWrapLines = new BooleanFieldEditor(PREF_BUILDCONSOLE_WRAP_LINES,
+		consoleWrapLines = new BooleanFieldEditor2(PREF_BUILDCONSOLE_WRAP_LINES,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleWrapLines.label"), parent); //$NON-NLS-1$
 		addField(consoleWrapLines);
+		setWrapLinesEnablement();
 
-		IntegerFieldEditor buildCount = new IntegerFieldEditor(PREF_BUILDCONSOLE_LINES,
+		buildCount = new IntegerFieldEditor(PREF_BUILDCONSOLE_LINES,
 				CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.label"), parent); //$NON-NLS-1$
 		buildCount.getLabelControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
 		buildCount.getTextControl(parent).setToolTipText(CUIPlugin.getResourceString("ConsolePreferencePage.consoleLines.tooltip")); //$NON-NLS-1$
@@ -111,6 +123,17 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		updateDelay.setErrorMessage(CUIPlugin.getResourceString("ConsolePreferencePage.consoleUpdateDelay.errorMessage")); //$NON-NLS-1$
 		updateDelay.setValidRange(0, Integer.MAX_VALUE);
 		addField(updateDelay);
+
+		wrapLinesMax = new IntegerFieldEditor(PREF_BUILDCONSOLE_WRAP_LINES_MAX,
+				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.label"), parent); //$NON-NLS-1$
+		wrapLinesMax.getLabelControl(parent).setToolTipText(
+				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
+		wrapLinesMax.getTextControl(parent).setToolTipText(
+				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.tooltip")); //$NON-NLS-1$
+		wrapLinesMax.setErrorMessage(
+				CUIPlugin.getResourceString("ConsolePreferencePage.wrapLinesMax.errorMessage")); //$NON-NLS-1$
+		wrapLinesMax.setValidRange(0, Integer.MAX_VALUE);
+		addField(wrapLinesMax);
 
 		IntegerFieldEditor tabSize = new IntegerFieldEditor(PREF_BUILDCONSOLE_TAB_WIDTH,
 				CUIPlugin.getResourceString("ConsolePreferencePage.tabWidth.label"), parent); //$NON-NLS-1$
@@ -138,6 +161,29 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 				CUIPlugin.getResourceString("ConsolePreferencePage.problemHighlightedColor.label"), parent)); //$NON-NLS-1$
 	}
 
+	/**
+	 * @see #isConsoleWrapLinesAllowed()
+	 */
+	private void setWrapLinesEnablement() {
+		if ((buildCount == null || buildCount.isValid()) && (wrapLinesMax == null || wrapLinesMax.isValid())) {
+			int lineCount = buildCount != null ? buildCount.getIntValue() : buildConsoleLines();
+			int maxCount = wrapLinesMax != null ? wrapLinesMax.getIntValue() : wrapLinesMax();
+			boolean enabled = lineCount <= maxCount;
+			if (consoleWrapLines != null) {
+				consoleWrapLines.setEnabled(enabled, getFieldEditorParent());
+				if (!enabled) {
+					consoleWrapLines.getChangeControl(getFieldEditorParent()).setSelection(false);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		setWrapLinesEnablement();
+		super.propertyChange(event);
+	}
+	
 	private Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
@@ -177,6 +223,18 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_BUILDCONSOLE_WRAP_LINES);
 	}
 
+	/**
+	 * Bug 407405: This is a workaround for Bug 168557 in which wrapping is too slow to make it usable
+	 * for the build console unless there are not many lines.
+	 */
+	public static boolean isConsoleWrapLinesAllowed() {
+		return buildConsoleLines() <= wrapLinesMax();
+	}
+
+	public static int wrapLinesMax() {
+		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_WRAP_LINES_MAX);
+	}
+
 	public static int buildConsoleLines() {
 		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_LINES);
 	}
@@ -200,6 +258,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
 		if(!prefs.contains(PREF_BUILDCONSOLE_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
+		if(!prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES_MAX))
+			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES_MAX, 5000);
 		if(!prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
 			prefs.setDefault(PREF_BUILDCONSOLE_UPDATE_DELAY_MS, DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS);
 		if(!prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))

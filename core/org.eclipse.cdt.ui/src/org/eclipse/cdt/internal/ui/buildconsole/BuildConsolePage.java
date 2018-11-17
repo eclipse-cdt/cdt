@@ -298,8 +298,10 @@ public class BuildConsolePage extends Page
 			setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 		} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 			fViewer.getTextWidget().setBackground(fConsole.getBackground());
-		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES)) {
-			fWrapAction.setChecked(BuildConsolePreferencePage.isConsoleWrapLines());
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES)
+				|| property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_LINES)
+				|| property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES_MAX)) {
+			fWrapAction.propertyChange();
 		}
 	}
 

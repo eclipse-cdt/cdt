@@ -247,38 +247,38 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public void init(IWorkbench workbench) {
 	}
 
-	public static void initDefaults(IPreferenceStore prefs) {
-		if(!prefs.contains(PREF_CLEAR_CONSOLE))
+	public static void initDefaults(IPreferenceStore prefs, boolean unconditionally) {
+		if(unconditionally || !prefs.contains(PREF_CLEAR_CONSOLE))
 			prefs.setDefault(PREF_CLEAR_CONSOLE, true);
-		if(!prefs.contains(PREF_AUTO_OPEN_CONSOLE))
+		if(unconditionally || !prefs.contains(PREF_AUTO_OPEN_CONSOLE))
 			prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
-		if(!prefs.contains(PREF_CONSOLE_ON_TOP))
+		if(unconditionally || !prefs.contains(PREF_CONSOLE_ON_TOP))
 			prefs.setDefault(PREF_CONSOLE_ON_TOP, true);
-		if(!prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES, false);
-		if(!prefs.contains(PREF_BUILDCONSOLE_LINES))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_LINES))
 			prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
-		if(!prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES_MAX))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_WRAP_LINES_MAX))
 			prefs.setDefault(PREF_BUILDCONSOLE_WRAP_LINES_MAX, 5000);
-		if(!prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_UPDATE_DELAY_MS))
 			prefs.setDefault(PREF_BUILDCONSOLE_UPDATE_DELAY_MS, DEFAULT_BUILDCONSOLE_UPDATE_DELAY_MS);
-		if(!prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_TAB_WIDTH))
 			prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
-		if(!prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_OUTPUT_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));
-		if(!prefs.contains(PREF_BUILDCONSOLE_INFO_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_INFO_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
-		if(!prefs.contains(PREF_BUILDCONSOLE_ERROR_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_ERROR_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		if(!prefs.contains(PREF_BUILDCONSOLE_BACKGROUND_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
-		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
-		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR, new RGB(254, 243, 218));
-		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR, new RGB(244, 247, 254));
-		if(!prefs.contains(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR))
+		if(unconditionally || !prefs.contains(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR))
 			PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
 	}
 

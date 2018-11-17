@@ -602,7 +602,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// A workaround for black console bug 320723.
-				BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+				// As we are running initDefaults after preferences have already been
+				// initialized, we don't want to do it unconditionally as that
+				// would override the defaults set in plugin_customization.ini files
+				BuildConsolePreferencePage.initDefaults(getPreferenceStore(), false);
 				// Initialize ContentAssistMatcherPreference.
 				ContentAssistPreference.getInstance();
 				return Status.OK_STATUS;

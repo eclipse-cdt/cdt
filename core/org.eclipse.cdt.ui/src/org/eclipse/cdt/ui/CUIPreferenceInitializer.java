@@ -45,7 +45,7 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
         PreferenceConstants.initializeDefaultValues(store);
 		CPluginPreferencePage.initDefaults(store);
-		BuildConsolePreferencePage.initDefaults(store);
+		BuildConsolePreferencePage.initDefaults(store, true);
 		CView.initDefaults(store);
 		CEditorPreferencePage.initDefaults(store);
 		CodeAssistPreferencePage.initDefaults(store);

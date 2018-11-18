@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -92,6 +93,13 @@ public class CPPTemplateNonTypeParameterSpecialization extends CPPTemplateParame
 	@Override
 	@Deprecated
 	public IASTExpression getDefault() {
+		return null;
+	}
+
+	@Override
+	public ICPPScope asScope() throws DOMException {
+		// A non-type template parameter can never appear on the left hand side
+		// of a scope resolution operator.
 		return null;
 	}
 }

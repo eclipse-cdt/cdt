@@ -481,9 +481,6 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (binding instanceof IEnumerator) {
 			return CPPTemplates.determinePackSize(((IEnumerator) binding).getValue(), tpMap);
 		}
-		if (binding instanceof ICPPTemplateNonTypeParameter) {
-			return CPPTemplates.determinePackSize((ICPPTemplateNonTypeParameter) binding, tpMap);
-		}
 		if (binding instanceof ICPPUnknownBinding) {
 			return CPPTemplates.determinePackSize((ICPPUnknownBinding) binding, tpMap);
 		}
@@ -500,7 +497,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (binding instanceof ICPPTemplateDefinition) {
 			ICPPTemplateParameter[] parameters = ((ICPPTemplateDefinition) binding).getTemplateParameters();
 			for (ICPPTemplateParameter param : parameters) {
-				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(param, tpMap));
+				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(
+						(ICPPUnknownBinding) param, tpMap));
 			}
 		}
 

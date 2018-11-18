@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -698,6 +699,18 @@ public class ASTStringUtil {
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
 			appendQualifiedNameString(buffer, namedTypeSpec.getName());
+		} else if (declSpecifier instanceof ICPPASTTypeTransformationSpecifier) {
+			final ICPPASTTypeTransformationSpecifier typeTransformationSpec = 
+					(ICPPASTTypeTransformationSpecifier) declSpecifier;
+			switch (typeTransformationSpec.getOperator()) {
+			case underlying_type:
+				buffer.append(GCCKeywords.cp__underlying_type);
+				break;
+			default:
+			}
+			buffer.append('(');
+			appendTypeIdString(buffer, typeTransformationSpec.getOperand());
+			buffer.append(')');
 		}
 		return buffer;
 	}

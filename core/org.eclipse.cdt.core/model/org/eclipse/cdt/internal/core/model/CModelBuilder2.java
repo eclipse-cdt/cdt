@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
@@ -475,6 +476,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
+			if (declarator != null) {
+				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			}
+		} else if (declSpecifier instanceof ICPPASTTypeTransformationSpecifier) { 
 			if (declarator != null) {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}

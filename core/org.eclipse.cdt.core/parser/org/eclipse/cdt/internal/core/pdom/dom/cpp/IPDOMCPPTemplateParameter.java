@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IInternalPDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Interface for template parameters stored in the index.
  */
-public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTemplateParameter {
+public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTemplateParameter, 
+		ICPPUnknownBinding {
 	IPDOMCPPTemplateParameter[] EMPTY_ARRAY = {};
 
 	/**

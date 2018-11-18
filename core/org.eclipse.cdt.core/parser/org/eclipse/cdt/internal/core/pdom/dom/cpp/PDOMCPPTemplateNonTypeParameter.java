@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -229,6 +230,13 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 	@Override
 	@Deprecated
 	public IASTExpression getDefault() {
+		return null;
+	}
+
+	@Override
+	public ICPPScope asScope() throws DOMException {
+		// A non-type template parameter can never appear on the left hand side
+		// of a scope resolution operator.
 		return null;
 	}
 }

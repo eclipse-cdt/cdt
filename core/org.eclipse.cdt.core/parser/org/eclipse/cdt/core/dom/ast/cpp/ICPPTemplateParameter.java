@@ -14,6 +14,10 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * Base interface for all template parameters (non-type, type and template).
  * 
+ * All template parameters should implement ICPPUnknownBinding as well
+ * (but ICPPTemplateParameter cannot extend ICPPUnknownBinding because
+ * ICPPUnknownBinding is not API).
+ * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

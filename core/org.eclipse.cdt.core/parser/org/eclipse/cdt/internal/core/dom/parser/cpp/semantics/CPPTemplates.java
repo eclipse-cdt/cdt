@@ -1202,10 +1202,6 @@ public class CPPTemplates {
 			return r;
 		}
 
-		if (type instanceof ICPPTemplateParameter) {
-			return determinePackSize((ICPPTemplateParameter) type, tpMap);
-		}
-
 		if (type instanceof TypeOfDependentExpression) {
 			return ((TypeOfDependentExpression) type).getEvaluation().determinePackSize(tpMap);
 		}
@@ -1233,23 +1229,23 @@ public class CPPTemplates {
 		return r;
 	}
 
-	static int determinePackSize(ICPPTemplateParameter tpar, ICPPTemplateParameterMap tpMap) {
-		if (tpar.isParameterPack()) {
-			ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
-			if (args != null) {
-				return args.length;
-			}
-			return PACK_SIZE_DEFER;
-		}
-		return PACK_SIZE_NOT_FOUND;
-	}
-
 	static int determinePackSize(ICPPUnknownBinding binding, ICPPTemplateParameterMap tpMap) {
+		if (binding instanceof ICPPTemplateParameter) {
+			ICPPTemplateParameter tpar = (ICPPTemplateParameter) binding;
+			if (tpar.isParameterPack()) {
+				ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
+				if (args != null) {
+					return args.length;
+				}
+				return PACK_SIZE_DEFER;
+			}
+			return PACK_SIZE_NOT_FOUND;
+		}
 		int r= PACK_SIZE_NOT_FOUND;
 		if (binding instanceof ICPPDeferredClassInstance) {
 			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
 			if (dcl.getClassTemplate() instanceof ICPPTemplateTemplateParameter) {
-				r = combinePackSize(r, determinePackSize((ICPPTemplateParameter) dcl.getClassTemplate(),
+				r = combinePackSize(r, determinePackSize((ICPPUnknownBinding) dcl.getClassTemplate(),
 						tpMap));
 			}
 			ICPPTemplateArgument[] args = dcl.getTemplateArguments();

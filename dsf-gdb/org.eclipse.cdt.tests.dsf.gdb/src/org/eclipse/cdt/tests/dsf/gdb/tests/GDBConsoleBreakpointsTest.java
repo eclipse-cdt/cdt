@@ -566,22 +566,6 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
 		Assert.assertTrue(plBpt.isEnabled());
 
-		// Set the ignore count of the console breakpoint and 
-		// verify that the platform breakpoint's ignore count 
-		// is updated.
-		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 5);
-		flushCache.run();
-		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
-		Assert.assertTrue(plBpt.getIgnoreCount() == 5);
-
-		// Reset the ignore count of the console breakpoint and 
-		// verify that the platform breakpoint's ignore count 
-		// is updated.
-		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 0);
-		flushCache.run();
-		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
-		Assert.assertTrue(plBpt.getIgnoreCount() == 0);
-
 		// Set the condition of the console breakpoint and 
 		// verify that the platform breakpoint's condition 
 		// is updated.
@@ -703,11 +687,6 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
   	private void enableConsoleBreakpoint(String bpId, boolean enable) throws Throwable {
   		String cmd = (enable) ? "enable" : "disable";
   		queueConsoleCommand(String.format("%s %s", cmd, bpId));
-  	}
-
-  	private void setConsoleBreakpointIgnoreCount(String bpId, int ignoreCount) throws Throwable {
-  		Assert.assertTrue(ignoreCount >= 0);
-  		queueConsoleCommand(String.format("ignore %s %d", bpId, ignoreCount));
   	}
 
   	private void setConsoleBreakpointCondition(String bpId, String condition) throws Throwable {

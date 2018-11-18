@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * Base implementation for template parameter bindings in the AST.
  */
 public abstract class CPPTemplateParameter extends PlatformObject
-		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
+		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding, ICPPUnknownBinding {
 	private IASTName[] declarations;
 	private final int fParameterID;
 

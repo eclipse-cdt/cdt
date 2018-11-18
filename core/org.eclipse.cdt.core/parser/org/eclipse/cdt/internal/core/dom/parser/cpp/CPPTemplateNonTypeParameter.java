@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -170,5 +172,12 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	@Override
 	public boolean isConstexpr() {
 		return false;
+	}
+
+	@Override
+	public ICPPScope asScope() throws DOMException {
+		// A non-type template parameter can never appear on the left hand side
+		// of a scope resolution operator.
+		return null;
 	}
 }

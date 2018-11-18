@@ -31,6 +31,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
  */
 public class CPPTemplateTypeParameterSpecialization extends CPPTemplateParameterSpecialization
 		implements ICPPTemplateTypeParameter {
+	// The scope of the type named by the parameter specialization.
+	// Not to be confused with CPPTemplateParameterSpecialization.fScope,
+	// which is the enclosing scope in which the parameter specialization lives.
+	private ICPPScope fScope;
 
 	public CPPTemplateTypeParameterSpecialization(ICPPSpecialization owner, ICPPScope scope,
 			ICPPTemplateTypeParameter specialized, ICPPTemplateArgument defaultValue) {
@@ -68,5 +72,13 @@ public class CPPTemplateTypeParameterSpecialization extends CPPTemplateParameter
 			//not going to happen
 		}
 		return o;
+	}
+
+	@Override
+	public ICPPScope asScope() throws DOMException {
+		if (fScope == null) {
+			return new CPPUnknownTypeScope(this, new CPPASTName(getNameCharArray()));
+		}
+		return fScope;
 	}
 }

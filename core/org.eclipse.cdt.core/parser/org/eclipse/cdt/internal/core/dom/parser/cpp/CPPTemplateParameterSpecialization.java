@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * CPPTemplateTypeParameterSpecialization, and CPPTemplateTemplateParameterSpecialization.
  */
 public abstract class CPPTemplateParameterSpecialization extends PlatformObject
-		implements ICPPTemplateParameter, ICPPSpecialization {
+		implements ICPPTemplateParameter, ICPPSpecialization, ICPPUnknownBinding {
 	private final ICPPSpecialization fOwner;
 	private final ICPPScope fScope;
 	private final ICPPTemplateParameter fSpecialized;

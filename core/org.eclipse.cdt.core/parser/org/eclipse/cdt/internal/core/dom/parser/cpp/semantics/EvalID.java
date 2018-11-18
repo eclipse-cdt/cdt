@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -237,6 +236,9 @@ public class EvalID extends CPPDependentEvaluation {
 		if (binding instanceof CPPFunctionSet) {
 			return new EvalFunctionSet((CPPFunctionSet) binding, qualified, isAddressOf(expr), null, expr);
 		}
+		if (binding instanceof ICPPTemplateNonTypeParameter) { // has to come before ICPPUnknownBinding
+			return new EvalBinding(binding, null, expr);
+		}
 		if (binding instanceof ICPPUnknownBinding) {
 			// If the id-expression names a variable template, there is no need to defer name lookup.
 			if (binding instanceof ICPPDeferredVariableInstance) {
@@ -305,8 +307,7 @@ public class EvalID extends CPPDependentEvaluation {
 			}
 			return new EvalBinding(binding, null, expr);
 		}
-		if (binding instanceof ICPPTemplateNonTypeParameter || binding instanceof IVariable
-				|| binding instanceof IFunction) {
+		if (binding instanceof IVariable || binding instanceof IFunction) {
 			return new EvalBinding(binding, null, expr);
 		}
 		return EvalFixed.INCOMPLETE;
@@ -497,10 +498,7 @@ public class EvalID extends CPPDependentEvaluation {
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = fFieldOwner != null ? fFieldOwner.determinePackSize(tpMap) : CPPTemplates.PACK_SIZE_NOT_FOUND;
-		if (fNameOwner instanceof ICPPTemplateParameter) {
-			r = CPPTemplates.combinePackSize(r,
-					CPPTemplates.determinePackSize((ICPPTemplateParameter) fNameOwner, tpMap));
-		} else if (fNameOwner instanceof ICPPUnknownBinding) {
+		if (fNameOwner instanceof ICPPUnknownBinding) { // handles template parameters as well
 			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPUnknownBinding) fNameOwner, tpMap));
 		}
 		if (fTemplateArgs != null) {

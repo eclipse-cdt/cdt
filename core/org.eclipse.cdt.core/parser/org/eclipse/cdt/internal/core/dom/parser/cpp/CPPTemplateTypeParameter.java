@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * The standard template parameter (template<typename T> or template<class T>).
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter
-		implements ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
+		implements ICPPTemplateTypeParameter, ICPPUnknownType {
 	private ICPPScope unknownScope;
 	private final boolean fIsParameterPack;
 

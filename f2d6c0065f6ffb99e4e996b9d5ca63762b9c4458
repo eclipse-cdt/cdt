@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd45abe1_92ed723b",
+        "filename": "build/org.eclipse.cdt.autotools.core/about.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "Looks like the script needs a fix...",
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2198483c_fb9d2de4",
+        "filename": "build/org.eclipse.cdt.cmake-feature/feature.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "Something wrong here, too.",
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c440590_b5eb5b79",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "This looks broken, too.",
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "665140c5_529ddf90",
+        "filename": "lrparser/org.eclipse.cdt.core.lrparser/grammar/c99/C99ExpressionParser.g",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "Lost a dash.",
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f309db06_9aa106ce",
+        "filename": "lrparser/org.eclipse.cdt.core.lrparser/grammar/cpp/CPPGrammar.g",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "Should point to EPL 2?",
+      "range": {
+        "startLine": 6,
+        "startChar": 3,
+        "endLine": 6,
+        "endChar": 44
+      },
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b40f1c32_e152084a",
+        "filename": "lrparser/org.eclipse.cdt.core.lrparser/grammar/template/LRParserTemplate.g",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 44628
+      },
+      "writtenOn": "2018-11-19T15:01:23Z",
+      "side": 1,
+      "message": "Should point to EPL 2?",
+      "range": {
+        "startLine": 6,
+        "startChar": 3,
+        "endLine": 6,
+        "endChar": 44
+      },
+      "revId": "f2d6c0065f6ffb99e4e996b9d5ca63762b9c4458",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

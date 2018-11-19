@@ -69,7 +69,9 @@ Applicable Licenses
 Unless otherwise indicated, all Content made available by the
 Eclipse Foundation is provided to you under the terms and conditions of
 the Eclipse Public License Version 1.0 (&quot;EPL&quot;). A copy of the EPL is
-provided with this Content and is also available at http://www.eclipse.org/legal/epl-v10.html.
+t https://www.eclipse.org/legal/epl-2.0/
+t
+t SPDX-License-Identifier: EPL-2.0.
 For purposes of the EPL, &quot;Program&quot; will mean the Content.
 
 Content includes, but is not limited to, source code, object code,
